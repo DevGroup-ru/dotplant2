@@ -1,0 +1,314 @@
+<?php
+
+namespace app\backend\controllers;
+
+use app\models\Config;
+use app\models\Form;
+use app\models\Submission;
+use Yii;
+use yii\filters\AccessControl;
+use yii\helpers\Url;
+use app\models\Object;
+use app\models\Property;
+use app\models\PropertyGroup;
+use app\models\PropertyStaticValues;
+use yii\web\Controller;
+
+class PropertiesController extends Controller
+{
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['property manage'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    public function actionIndex()
+    {
+        $searchModel = new PropertyGroup();
+        $dataProvider = $searchModel->search($_GET);
+
+        return $this->render(
+            'index',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+            ]
+        );
+    }
+
+    public function actionGroup($id = null)
+    {
+        if ($id === null) {
+            $model = new PropertyGroup();
+        } else {
+            $model = PropertyGroup::findById($id);
+        }
+
+        if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+            $save_result = $model->save();
+            if ($save_result) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+                $this->redirect(Url::toRoute(['/backend/properties/group', 'id'=>$model->id]));
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
+            }
+        }
+
+        $searchModel = new Property();
+        $searchModel->property_group_id = $model->id;
+        $dataProvider = $searchModel->search($_GET);
+
+
+        return $this->render(
+            'group',
+            [
+                'model' => $model,
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+            ]
+        );
+    }
+
+    /**
+     * @param $value_type
+     * @return string
+     * @throws \Exception
+     */
+    private function getColumnType($value_type)
+    {
+        switch ($value_type) {
+            case 'STRING':
+                return 'TINYTEXT';
+            case 'NUMBER':
+                return 'FLOAT';
+            default:
+                throw new \Exception('Unknown value type');
+        }
+    }
+
+    public function actionEditProperty($property_group_id, $id = null)
+    {
+        if ($id === null) {
+            $model = new Property();
+            $model->handler_additional_params = '[]';
+        } else {
+            $model = Property::findById($id);
+        }
+        $model->property_group_id = $property_group_id;
+
+        if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
+            if ($model->is_column_type_stored) {
+                if ($model->isNewRecord) {
+                    $object = Object::findById($model->group->object_id);
+                    Yii::$app->db->createCommand()
+                        ->addColumn($object->column_properties_table_name, $model->key, "TINYTEXT")
+                        ->execute();
+                    if ($object->object_class == Form::className()) {
+                        $submissionObject = Object::getForClass(Submission::className());
+                        $col_type = $this->getColumnType($model->value_type);
+                        Yii::$app->db->createCommand()
+                            ->addColumn($submissionObject->column_properties_table_name, $model->key, $col_type)
+                            ->execute();
+                    }
+                } else {
+                    if ($model->key != $model->getOldAttribute('key')) {
+                        $object = Object::findById($model->group->object_id);
+                        Yii::$app->db->createCommand()
+                            ->renameColumn(
+                                $object->column_properties_table_name,
+                                $model->getOldAttribute('key'),
+                                $model->key
+                            )->execute();
+                        if ($object->object_class == Form::className()) {
+                            $submissionObject = Object::getForClass(Submission::className());
+                            Yii::$app->db->createCommand()
+                                ->renameColumn(
+                                    $submissionObject->column_properties_table_name,
+                                    $model->getOldAttribute('key'),
+                                    $model->key
+                                )->execute();
+                        }
+                    }
+                    if ($model->value_type != $model->getOldAttribute('value_type')) {
+                        $object = Object::findById($model->group->object_id);
+                        $new_type = $this->getColumnType($model->value_type);
+                        Yii::$app->db->createCommand()
+                            ->alterColumn(
+                                $object->column_properties_table_name,
+                                $model->getOldAttribute('key'),
+                                $new_type
+                            )->execute();
+                        if ($object->object_class == Form::className()) {
+                            $submissionObject = Object::getForClass(Submission::className());
+                            Yii::$app->db->createCommand()
+                                ->renameColumn(
+                                    $submissionObject->column_properties_table_name,
+                                    $model->getOldAttribute('key'),
+                                    $new_type
+                                )->execute();
+                        }
+                    }
+                }
+            }
+
+            $save_result = $model->save();
+            if ($save_result) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+                return $this->redirect(
+                    Url::toRoute(
+                        [
+                            '/backend/properties/edit-property',
+                            'id' => $model->id,
+                            'property_group_id' => $model->property_group_id
+                        ]
+                    )
+                );
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
+            }
+        }
+
+        $searchModel = new PropertyStaticValues();
+
+        $searchModel->property_id = $model->id;
+        $dataProvider = $searchModel->search($_GET);
+
+        $spamCheckerConfig = (new Config())->getValue("spamCheckerConfig.configFieldsParentId");
+
+        return $this->render(
+            'edit-property',
+            [
+                'model' => $model,
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'fieldinterpretParentId' => null == $spamCheckerConfig ? 0 : $spamCheckerConfig
+            ]
+        );
+    }
+
+    public function actionEditStaticValue($property_id, $id = null)
+    {
+        if ($id === null) {
+            $model = new PropertyStaticValues();
+        } else {
+            $model = PropertyStaticValues::findOne($id);
+        }
+        $model->property_id = $property_id;
+        $post = \Yii::$app->request->post();
+        if ($model->load($post) && $model->validate()) {
+            $save_result = $model->save();
+            if ($save_result) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+                return $this->redirect(
+                    Url::toRoute(
+                        [
+                            '/backend/properties/edit-property',
+                            'id' => $model->property_id,
+                            'property_group_id' => $model->property->property_group_id
+                        ]
+                    )
+                );
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
+            }
+        }
+
+        return $this->render(
+            'edit-static-value',
+            [
+                'model' => $model,
+            ]
+        );
+    }
+
+    public function actionDeleteStaticValue($id, $property_id, $property_group_id)
+    {
+        $model = PropertyStaticValues::findOne($id);
+        $model->delete();
+        Yii::$app->session->setFlash('danger', Yii::t('app', 'Object removed'));
+        return $this->redirect(
+            Url::to(
+                [
+                    '/backend/properties/edit-property',
+                    'id'=>$property_id,
+                    'property_group_id'=>$property_group_id
+                ]
+            )
+        );
+    }
+
+    public function actionDeleteProperty($id, $property_group_id)
+    {
+        $model = Property::findOne($id);
+        $static_values = PropertyStaticValues::find()
+            ->where(['property_id'=>$model->id])
+            ->all();
+        foreach ($static_values as $psv) {
+            $psv->delete();
+        }
+        if ($model->is_column_type_stored) {
+            $object = Object::findById($model->group->object_id);
+            Yii::$app->db->createCommand()
+                ->dropColumn($object->column_properties_table_name, $model->key)
+                ->execute();
+            if ($object->object_class == Form::className()) {
+                $submissionObject = Object::getForClass(Submission::className());
+                Yii::$app->db->createCommand()
+                    ->dropColumn($submissionObject->column_properties_table_name, $model->key)
+                    ->execute();
+            }
+        }
+        $model->delete();
+        Yii::$app->session->setFlash('danger', Yii::t('app', 'Object removed'));
+        return $this->redirect(
+            Url::to(
+                [
+                    '/backend/properties/group',
+                    'id'=>$property_group_id,
+                ]
+            )
+        );
+    }
+
+    public function actionDeleteGroup($id)
+    {
+        $model = PropertyGroup::findOne($id);
+        $properties = Property::find()
+            ->where(['property_group_id'=>$model->id])
+            ->all();
+        foreach ($properties as $prop) {
+            $static_values = PropertyStaticValues::find()
+                ->where(['property_id'=>$prop->id])
+                ->all();
+            foreach ($static_values as $psv) {
+                $psv->delete();
+            }
+            $prop->delete();
+        }
+        $model->delete();
+        Yii::$app->session->setFlash('danger', Yii::t('app', 'Object removed'));
+        return $this->redirect(
+            Url::to(
+                [
+                    '/backend/properties/index',
+                ]
+            )
+        );
+    }
+    
+
+    public function actionHandlers()
+    {
+        return $this->render('handlers');
+    }
+}

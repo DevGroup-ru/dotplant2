@@ -1,0 +1,72 @@
+{
+    "name": "DotPlant 2",
+    "description": "DotPlant 2 CMS on yii2",
+    "keywords": ["yii", "yii2", "dotplant"],
+    "homepage": "http://dotplant.ru/",
+    "type": "project",
+    "license": "Commercial, closed-source, under NDA",
+    "support": {
+        "source": "http://draco.devpulse.ru/dotplant2"
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "*",
+        "yiisoft/yii2-bootstrap": "*",
+        "yiisoft/yii2-swiftmailer": "*",
+        "yiisoft/yii2-authclient": "*",
+        "yiisoft/yii2-imagine": "*",
+        "bethrezen/yii2-cached-rbac-dbmanager": "*",
+        "kartik-v/yii2-widgets": "dev-master",
+        "kartik-v/yii2-dynagrid": "dev-master",
+        "kartik-v/yii2-datecontrol": "dev-master",
+        "kartik-v/yii2-context-menu": "dev-master",
+        "kartik-v/yii2-field-range": "dev-master",
+        "kartik-v/yii2-label-inplace": "dev-master",
+        "kartik-v/yii2-sortable": "dev-master",
+        "kartik-v/yii2-icons": "dev-master",
+        "kartik-v/yii2-helpers": "*",
+        "kartik-v/yii2-mpdf": "*",
+        "kartik-v/yii2-editable": "*",
+        "bethrezen/yii2-cached-rbac-dbmanager": "*",
+        "yiisoft/yii2-debug": "*",
+        "vova07/yii2-imperavi-widget": "*",
+        "thiagotalma/yii2-jstree": "*",
+        "smottt/wideimage": "dev-master",
+        "elasticsearch/elasticsearch": "~1.0"
+    },
+    "require-dev": {
+        "yiisoft/yii2-codeception": "*",
+        "yiisoft/yii2-gii": "*",
+        "codeception/codeception": "1.8.*@dev",
+        "codeception/specify": "*",
+        "codeception/verify": "*"
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "yii\\composer\\Installer::setPermission"
+        ]
+    },
+    "config": {
+        "process-timeout": 1800
+    },
+    "extra": {
+        "yii\\composer\\Installer::postCreateProject": {
+            "setPermission": [
+                {
+                    "runtime": "0777",
+                    "web/assets": "0777",
+                    "web/upload": "0777",
+                    "yii": "0755"
+                }
+            ],
+            "generateCookieValidationKey": [
+                "config/web.php"
+            ]
+        },
+        "asset-installer-paths": {
+            "npm-asset-library": "vendor/npm",
+            "bower-asset-library": "vendor/bower"
+        }
+    }
+}

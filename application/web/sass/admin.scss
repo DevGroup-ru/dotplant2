@@ -1,0 +1,101 @@
+@media print {
+    #left-panel, #header, #ribbon, .order-chat, .page-footer {
+        display: none;
+    }
+}
+
+body {
+  
+}
+
+.footer {
+    border-top: 1px solid #ddd;
+    margin-top: 30px;
+    padding-top: 15px;
+    padding-bottom: 30px;
+}
+
+.jumbotron {
+    text-align: center;
+    background-color: transparent;
+}
+.jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+}
+
+/* add sorting icons to gridview sort links */
+a.asc:after, a.desc:after {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-left: 5px;
+}
+
+a.asc:after  { content: /*"\e113"*/"\e151"; }
+a.desc:after { content: /*"\e114"*/"\e152"; }
+
+.sort-numerical a.asc:after { content: "\e153"; }
+.sort-numerical a.desc:after { content: "\e154"; }
+
+.sort-ordinal a.asc:after { content: "\e155"; }
+.sort-ordinal a.desc:after { content: "\e156"; }
+
+#logo {
+    width: auto;
+    margin-right: 60px;
+}
+
+.is_deleted .fa {
+    background-color: #d9534f;
+    color: #fff;
+    padding: 5px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+}
+
+.order-messages-list {
+    height: 250px;
+    overflow-y: scroll;
+    .message {
+        margin-bottom: 15px;
+    }
+    .message-user {
+        color: darkgreen;
+        font-weight: bold;
+    }
+    .message-date {
+        color: #666;
+        font-size: 10px;
+    }
+    .message-text {
+        border-left: 3px solid darkseagreen;
+        padding-left: 5px;
+    }
+}
+.ajax-notifications .show-more {
+    padding: 8px 0;
+    text-align: center;
+    a {
+        border-bottom: 1px dashed #428bca;
+    }
+}
+
+.notification-body > li a, .notification-body > li a span {
+    display: inline;
+}
+
+.redactor-toolbar, .redactor-dropdown {
+    z-index: 53 !important;
+}
+// .fixed-header #header,.fixed-ribbon #ribbon {
+//     z-index: 2000;
+// }
+// .fixed-header #header > .ajax-dropdown {
+//     z-index: 2002;
+// }

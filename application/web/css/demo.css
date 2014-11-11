@@ -1,0 +1,14 @@
+.moreOptopm.carousel .item img {
+    max-height: 65px;
+    width: 80px;
+}
+.moreOptopm.carousel .item a {
+    margin-right: 6px;
+}
+.moreOptopm.carousel .item a:last-child {
+    margin-right: 0;
+}
+#listView .span2 img, #blockView .thumbnail img {
+    max-height: 160px;
+    max-width: 160px;
+}

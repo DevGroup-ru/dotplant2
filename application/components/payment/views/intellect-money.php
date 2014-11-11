@@ -1,0 +1,29 @@
+<?php
+/**
+ * @var string $currency
+ * @var integer $eshopId
+ * @var string $language
+ * @var \yii\web\View $this
+ * @var \app\models\Order $order
+ * @var string $serviceName
+ * @var \app\models\OrderTransaction $transaction
+ */
+?>
+<form action="https://merchant.intellectmoney.ru/ru/" method="POST" id="intellect-money-form">
+    <input type="hidden" name="eshopId" value="<?= $eshopId ?>" />
+    <input type="hidden" name="orderId" value="<?= $order->id ?>" />
+    <input type="hidden" name="serviceName" value="<?= $serviceName ?>" />
+    <input type="hidden" name="recipientAmount" value="<?= $transaction->total_sum ?>" />
+    <input type="hidden" name="recipientCurrency" value="<?= $currency ?>" />
+    <input type="hidden" name="language" value="<?= $language ?>" />
+    <input type="hidden" name="successUrl" value="<?=
+        \yii\helpers\Url::toRoute(['/cart/payment-success', 'id' => $order->id], true)
+    ?>" />
+    <input type="hidden" name="failUrl" value="<?=
+        \yii\helpers\Url::toRoute(['/cart/payment-error', 'id' => $order->id], true)
+    ?>" />
+    <input type="submit" name="button" value="<?= Yii::t('shop', 'Pay') ?>" />
+</form>
+<script>
+jQuery('#intellect-money-form').submit();
+</script>

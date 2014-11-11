@@ -1,0 +1,119 @@
+<?php
+
+namespace app\models;
+
+use Yii;
+use yii\db\ActiveRecord;
+
+/**
+ * This is the model class for table "view_object".
+ *
+ * @property integer $id
+ * @property integer $object_id
+ * @property integer $object_model_id
+ * @property integer $view_id
+ */
+class ViewObject extends ActiveRecord
+{
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return '{{%view_object}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['object_id', 'object_model_id', 'view_id'], 'required'],
+            [['object_id', 'object_model_id', 'view_id'], 'integer']
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'object_id' => Yii::t('app', 'Object ID'),
+            'object_model_id' => Yii::t('app', 'Object Model ID'),
+            'view_id' => Yii::t('app', 'View'),
+        ];
+    }
+
+    /**
+     * Поиск представления по модели
+     *
+     * @param Object $model
+     * @return string|null Возвращает имя файла или null, если ничего не найдено
+     */
+    public static function getViewByModel($model = null)
+    {
+        if ((null === $model) || !is_object($model)) {
+            return null;
+        }
+
+        if (null === $object = Object::getForClass($model::className())) {
+            return null;
+        }
+
+        return (
+            null === $result = static::find()->where(
+                [
+                    'object_id' => $object->id,
+                    'object_model_id' => $model->id
+                ]
+            )->one())
+            ? null
+            : View::getViewById($result->view_id);
+    }
+
+    /**
+     * Поиск связи по модели
+     *
+     * @param \yii\db\ActiveRecord $model
+     * @param boolean $forceDefault Флаг для принудительного возврата модели
+     * @return \yii\db\ActiveRecord|null Возвращает модель или null, если ничего не найдено
+     */
+    public static function getByModel($model = null, $forceDefault = false)
+    {
+        if ((null === $model) || !is_object($model)) {
+            return null;
+        }
+
+        if (null === $object = Object::getForClass($model::className())) {
+            return null;
+        }
+
+        if (
+            null === $result = static::find()->where(
+                [
+                    'object_id' => $object->id,
+                    'object_model_id' => $model->id
+                ]
+            )->one()
+        ) {
+            if ($forceDefault) {
+                $result = new static;
+                    $result->object_id = $object->id;
+                    $result->object_model_id = $model->id;
+            }
+        }
+        return $result;
+    }
+
+    public static function deleteByViewId($view_id = null)
+    {
+        if (null === $view_id) {
+            return null;
+        }
+
+        return static::deleteAll(['view_id' => $view_id]);
+    }
+}
