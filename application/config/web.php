@@ -84,7 +84,7 @@ $config = [
             ],
         ],
         'user' => [
-            'class' => 'app\components\User',
+            'class' => '\yii\web\User',
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
             'loginUrl' => ['/login'],
