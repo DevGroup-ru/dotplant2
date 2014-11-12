@@ -1,7 +1,7 @@
 <?php
 
-use \kartik\widgets\ActiveForm;
-use \app\backend\widgets\BackendWidget;
+use app\backend\widgets\BackendWidget;
+use kartik\widgets\ActiveForm;
 
 /**
  * @var yii\web\View $this

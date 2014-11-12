@@ -1,8 +1,8 @@
-<?php 
+<?php
 
+use app\backgroundtasks\models\Task;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
-use app\backgroundtasks\models\Task;
 
 /**
  * @var yii\web\View $this

@@ -6,11 +6,11 @@
  */
 
 use app\backend\assets\BackendAsset;
-use yii\widgets\Breadcrumbs;
-use kartik\helpers\Html;
-use yii\helpers\Url;
 use app\backend\widgets\flushcache\FlushCacheButton;
+use kartik\helpers\Html;
 use kartik\icons\Icon;
+use yii\helpers\Url;
+use yii\widgets\Breadcrumbs;
 
 BackendAsset::register($this);
 Icon::map($this);

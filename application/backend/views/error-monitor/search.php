@@ -1,8 +1,6 @@
 <?php
 
-use \kartik\dynagrid\DynaGrid;
-use \kartik\widgets\ActiveForm;
-use \kartik\helpers\Html;
+use kartik\dynagrid\DynaGrid;
 
 $this->title = Yii::t('app', 'Error Monitor - Search');
 

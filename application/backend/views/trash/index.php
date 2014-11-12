@@ -1,10 +1,10 @@
 <?php
 
-    use kartik\dynagrid\DynaGrid;
-    use kartik\icons\Icon;
-    use yii\helpers\Url;
+use kartik\dynagrid\DynaGrid;
+use kartik\icons\Icon;
+use yii\helpers\Url;
 
-    $this->title = Yii::t('app', 'Trash');
+$this->title = Yii::t('app', 'Trash');
     $this->params['breadcrumbs'][] = $this->title;
 ?>
 

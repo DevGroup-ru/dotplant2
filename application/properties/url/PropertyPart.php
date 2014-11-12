@@ -2,9 +2,9 @@
 
 namespace app\properties\url;
 
-use Yii;
 use app\models\Property;
 use app\models\PropertyStaticValues;
+use Yii;
 
 class PropertyPart extends UrlPart
 {

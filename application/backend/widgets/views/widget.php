@@ -1,6 +1,7 @@
 <?php
 
 use kartik\helpers\Html;
+
 ?>
 <div class="jarviswidget" id="<?= Html::encode($_id) ?>">
  

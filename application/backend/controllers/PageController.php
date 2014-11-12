@@ -3,13 +3,13 @@
 namespace app\backend\controllers;
 
 use app\models\Object;
+use app\models\Page;
 use app\models\ViewObject;
 use app\properties\HasProperties;
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\helpers\Url;
-use app\models\Page;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 class PageController extends Controller

@@ -2,8 +2,8 @@
 
 namespace app\components;
 
-use Yii;
 use app\models\Config;
+use Yii;
 use yii\helpers\ArrayHelper;
 
 class LastViewedProducts

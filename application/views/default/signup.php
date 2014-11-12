@@ -5,8 +5,8 @@
  * @var $this \yii\web\View
  */
 
-use yii\helpers\Html;
 use kartik\widgets\ActiveForm;
+use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Signup');
 $this->params['breadcrumbs'][] = $this->title;

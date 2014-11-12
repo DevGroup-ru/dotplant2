@@ -2,10 +2,10 @@
 
 namespace app\components;
 
-use Yii;
 use app\backend\models\ErrorMonitorConfig;
 use app\models\ErrorLog;
 use app\models\ErrorUrl;
+use Yii;
 use yii\validators\EmailValidator;
 use yii\web\ErrorHandler;
 

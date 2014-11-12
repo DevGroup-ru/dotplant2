@@ -2,13 +2,13 @@
 
 namespace app\backgroundtasks\controllers;
 
-use Yii;
+use app\backgroundtasks\models\NotifyMessage;
 use app\backgroundtasks\models\Task;
+use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use app\backgroundtasks\models\NotifyMessage;
 
 /**
  * Class NotificationController

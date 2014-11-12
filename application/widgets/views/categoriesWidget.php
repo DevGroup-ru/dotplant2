@@ -1,10 +1,5 @@
 <?php
 
-use yii\helpers\Url;
-use kartik\helpers\Html;
-use kartik\widgets\ActiveForm;
-use kartik\icons\Icon;
-
 ?>
 
 <!-- begin categories widget -->

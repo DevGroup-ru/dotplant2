@@ -1,9 +1,9 @@
 <?php
 
 use app\backend\components\ActionColumn;
+use kartik\dynagrid\DynaGrid;
 use kartik\grid\BooleanColumn;
 use kartik\helpers\Html;
-use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
 
 $this->title = Yii::t('app', 'Property groups');

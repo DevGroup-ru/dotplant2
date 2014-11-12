@@ -1,8 +1,8 @@
 <?php
 
-use \yii\helpers\Url;
+use yii\helpers\Url;
 
-    /**
+/**
      * @var \app\models\Search $model
      * @var \yii\web\View $this
      */

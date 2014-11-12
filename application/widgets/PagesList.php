@@ -2,8 +2,8 @@
 
 namespace app\widgets;
 
-use Yii;
 use app\models\Page;
+use Yii;
 use yii\base\Widget;
 
 class PagesList extends Widget

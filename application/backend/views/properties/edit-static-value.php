@@ -1,15 +1,9 @@
 <?php
 
-use app\models\Product;
-use kartik\helpers\Html;
-use kartik\widgets\ActiveForm;
 use app\backend\widgets\BackendWidget;
-use vova07\imperavi\Widget as ImperaviWidget;
-use app\backend\widgets\Select2;
-use yii\helpers\Url;
-use yii\web\JsExpression;
+use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\dynagrid\DynaGrid;
+use kartik\widgets\ActiveForm;
 
 $this->title = Yii::t('app', 'Property static value edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/properties/index'], 'label' => Yii::t('app', 'Property groups')];

@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use app\backgroundtasks\models\NotifyMessage;
+use yii\helpers\Html;
 
 /**
  * @var yii\web\View $this

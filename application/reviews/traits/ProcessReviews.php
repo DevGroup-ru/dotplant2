@@ -2,8 +2,8 @@
 
 namespace app\reviews\traits;
 
-use Yii;
 use app\reviews\models\Review;
+use Yii;
 
 trait ProcessReviews
 {

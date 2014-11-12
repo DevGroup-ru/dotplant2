@@ -3,18 +3,18 @@
 namespace app\controllers;
 
 use app\components\Controller;
+use app\models\Config;
 use app\models\Object;
+use app\models\Page;
 use app\models\Search;
 use app\reviews\traits\ProcessReviews;
+use app\seo\behaviors\MetaBehavior;
 use app\traits\LoadModel;
 use Yii;
 use yii\data\Pagination;
 use yii\db\ActiveQuery;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use app\models\Page;
-use app\seo\behaviors\MetaBehavior;
-use app\models\Config;
 
 class PageController extends Controller
 {

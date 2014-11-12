@@ -7,9 +7,9 @@
  * @var array $children
  */
 
+use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use app\backend\widgets\BackendWidget;
 use kartik\widgets\ActiveForm;
 
 $isNewRecord = isset($isNewRecord) && $isNewRecord;

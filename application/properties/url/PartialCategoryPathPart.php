@@ -2,8 +2,8 @@
 
 namespace app\properties\url;
 
-use Yii;
 use app\models\Category;
+use Yii;
 
 class PartialCategoryPathPart extends CategoryPart
 {

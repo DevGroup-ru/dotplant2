@@ -2,9 +2,9 @@
 
 namespace app\backgroundtasks\commands;
 
-use yii\console\Controller;
 use app\backgroundtasks\helpers\BackgroundTasks;
 use app\backgroundtasks\models\Task;
+use yii\console\Controller;
 
 /**
  * Class TasksController

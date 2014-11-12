@@ -1,12 +1,12 @@
 <?php
 
-use kartik\helpers\Html;
-use kartik\widgets\ActiveForm;
 use app\backend\widgets\BackendWidget;
+use kartik\helpers\Html;
+use kartik\icons\Icon;
+use kartik\widgets\ActiveForm;
+use kartik\widgets\DateTimePicker;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\helpers\Url;
-use kartik\widgets\DateTimePicker;
-use kartik\icons\Icon;
 
 $this->title = Yii::t('app', 'Page edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/page/index'], 'label' => Yii::t('app', 'Pages')];

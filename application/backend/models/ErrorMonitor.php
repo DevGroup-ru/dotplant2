@@ -2,9 +2,9 @@
 
 namespace app\backend\models;
 
-use Yii;
-use app\models\ErrorUrl;
 use app\models\ErrorLog;
+use app\models\ErrorUrl;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;

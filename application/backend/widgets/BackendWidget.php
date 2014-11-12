@@ -2,9 +2,9 @@
 
 namespace app\backend\widgets;
 
-use Yii;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
+use Yii;
 
 class BackendWidget extends \yii\widgets\ContentDecorator
 {

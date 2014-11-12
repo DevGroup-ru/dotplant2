@@ -5,7 +5,7 @@ use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
 use yii\helpers\Url;
 
-    $this->params['breadcrumbs'][] = $this->title = Yii::t('app', 'Views');
+$this->params['breadcrumbs'][] = $this->title = Yii::t('app', 'Views');
 
 ?>
 

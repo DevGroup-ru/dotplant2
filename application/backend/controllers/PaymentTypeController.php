@@ -2,13 +2,13 @@
 
 namespace app\backend\controllers;
 
-use Yii;
-use app\models\PaymentType;
 use app\components\SearchModel;
+use app\models\PaymentType;
+use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * PaymentTypeController implements the CRUD actions for PaymentType model.

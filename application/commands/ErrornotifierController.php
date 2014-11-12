@@ -2,9 +2,9 @@
 
 namespace app\commands;
 
-use Yii;
 use app\backend\models\ErrorMonitorConfig;
 use app\models\ErrorLog;
+use Yii;
 use yii\console\Controller;
 
 class ErrornotifierController extends Controller

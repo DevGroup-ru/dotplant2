@@ -1,9 +1,9 @@
 <?php
 
-use \kartik\widgets\ActiveForm;
-use \yii\helpers\Html;
-use \kartik\icons\Icon;
-use \app\backend\widgets\BackendWidget;
+use app\backend\widgets\BackendWidget;
+use kartik\icons\Icon;
+use kartik\widgets\ActiveForm;
+use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Newsletter config');
 $this->params['breadcrumbs'][] = $this->title;

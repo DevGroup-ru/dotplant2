@@ -6,9 +6,9 @@
  * @var $this \yii\web\View
  */
 
+use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use app\backend\widgets\BackendWidget;
 use kartik\widgets\ActiveForm;
 
 $this->title = Yii::t('app', $model->isNewRecord ? 'Create' : 'Update');

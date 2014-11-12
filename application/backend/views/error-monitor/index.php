@@ -1,8 +1,8 @@
 <?php
 
-use \kartik\dynagrid\DynaGrid;
-use \kartik\widgets\ActiveForm;
-use \kartik\helpers\Html;
+use kartik\dynagrid\DynaGrid;
+use kartik\helpers\Html;
+use kartik\widgets\ActiveForm;
 
 $this->title = Yii::t('app', 'Error Monitor');
 

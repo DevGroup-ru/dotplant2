@@ -2,9 +2,9 @@
 
 namespace tests\unit\models;
 
+use app\models\User;
 use Yii;
 use yii\codeception\TestCase;
-use app\models\User;
 
 class LoginFormTest extends TestCase
 {

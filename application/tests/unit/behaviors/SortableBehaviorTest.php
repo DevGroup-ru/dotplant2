@@ -2,10 +2,10 @@
 
 namespace tests\unit\models;
 
-use Yii;
-use yii\codeception\DbTestCase;
 use app;
 use app\tests\fixtures\LinkAnchorsFixture;
+use Yii;
+use yii\codeception\DbTestCase;
 
 class SortableBehaviorTest extends DbTestCase
 {

@@ -2,8 +2,8 @@
 
 namespace app\widgets\navigation\models;
 
-use Yii;
 use app\backgroundtasks\traits\SearchModelTrait;
+use Yii;
 use yii\data\ActiveDataProvider;
 
 /**

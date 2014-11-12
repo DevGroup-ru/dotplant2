@@ -2,10 +2,9 @@
 
 namespace app\properties\handlers\select;
 
-use yii;
-
 use app;
 use app\properties\handlers\Handler;
+use yii;
 
 class SelectProperty extends Handler
 {

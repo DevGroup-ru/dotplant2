@@ -2,10 +2,10 @@
 
 namespace app\backend\controllers;
 
-use Yii;
+use app\backend\models\NewsletterConfig;
 use app\models\Page;
 use app\models\SubscribeEmail;
-use app\backend\models\NewsletterConfig;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 

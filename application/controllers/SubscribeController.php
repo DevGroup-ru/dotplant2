@@ -2,8 +2,8 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\SubscribeEmail;
+use Yii;
 use yii\web\Controller;
 
 class SubscribeController extends Controller

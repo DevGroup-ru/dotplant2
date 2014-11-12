@@ -2,11 +2,11 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\Order;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\User;
+use Yii;
 use yii\base\Security;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;

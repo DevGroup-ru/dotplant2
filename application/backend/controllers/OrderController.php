@@ -2,7 +2,6 @@
 
 namespace app\backend\controllers;
 
-use Yii;
 use app\backend\models\Notification;
 use app\backend\models\OrderChat;
 use app\components\Helper;
@@ -13,6 +12,7 @@ use app\models\PaymentType;
 use app\models\ShippingOption;
 use app\models\User;
 use kartik\helpers\Html;
+use Yii;
 use yii\caching\TagDependency;
 use yii\db\Expression;
 use yii\filters\AccessControl;

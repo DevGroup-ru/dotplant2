@@ -2,13 +2,13 @@
 
 namespace app\backend\controllers;
 
-use Yii;
-use app\models\ShippingOption;
 use app\components\SearchModel;
+use app\models\ShippingOption;
+use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * ShippingOptionController implements the CRUD actions for ShippingOption model.

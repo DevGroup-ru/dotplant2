@@ -1,5 +1,6 @@
 <?php
-use \kartik\widgets\ActiveForm;
+use kartik\widgets\ActiveForm;
+
 ?>
 
 <div class="row">

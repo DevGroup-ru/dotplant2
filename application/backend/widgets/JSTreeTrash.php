@@ -4,9 +4,9 @@ namespace app\backend\widgets;
 
 use Yii;
 use yii\base\Widget;
-use yii\web\JsExpression;
 use yii\helpers\Json;
 use yii\helpers\Url;
+use yii\web\JsExpression;
 
 class JSTreeTrash extends Widget
 {

@@ -5,9 +5,9 @@
  * @var $this \yii\web\View
  */
 
+use kartik\widgets\ActiveForm;
 use yii\authclient\widgets\AuthChoice;
 use yii\helpers\Html;
-use kartik\widgets\ActiveForm;
 
 $this->title = Yii::t('app', 'Login');
 $this->params['breadcrumbs'][] = $this->title;

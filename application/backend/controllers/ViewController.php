@@ -2,12 +2,12 @@
 
 namespace app\backend\controllers;
 
+use app\models\View;
 use Yii;
 use yii\caching\TagDependency;
 use yii\filters\AccessControl;
-use yii\web\Controller;
-use app\models\View;
 use yii\helpers\Url;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 

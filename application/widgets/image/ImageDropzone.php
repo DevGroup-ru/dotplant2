@@ -2,10 +2,10 @@
 
 namespace app\widgets\image;
 
-use Yii;
 use app\models\Image;
 use app\widgets\dropzone\DropZone;
 use WideImage\WideImage;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;

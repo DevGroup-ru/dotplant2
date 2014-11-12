@@ -2,7 +2,7 @@
 
 use kartik\helpers\Html;
 use yii\helpers\Json;
- 
+
 foreach ($items as $k => $v) {
     $items[$k]['values'] = ['0' => Yii::t('app', 'Choose')] + $items[$k]['values'];
 }

@@ -2,8 +2,8 @@
 
 namespace app\widgets;
 
-use Yii;
 use app\models\Product;
+use Yii;
 use yii\base\Widget;
 
 class LastViewedProducts extends Widget

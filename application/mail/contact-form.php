@@ -1,5 +1,6 @@
 <?php
 use kartik\helpers\Html;
+
 ?>
 
 <h1><?= Yii::t('app', 'New message from contact form received') ?></h1>

@@ -7,9 +7,9 @@
  * @var $pages \app\widgets\PagesList
  */
 
+use kartik\icons\Icon;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use kartik\icons\Icon;
 
 $this->params['breadcrumbs'] = $breadcrumbs;
 if ($model->title) {

@@ -2,11 +2,11 @@
 
 namespace app\properties;
 
-use Yii;
-use yii\base\Model;
-use app\models\Property;
 use app\models\Object;
 use app\models\ObjectStaticValues;
+use app\models\Property;
+use Yii;
+use yii\base\Model;
 use yii\helpers\ArrayHelper;
 
 class AbstractModel extends Model

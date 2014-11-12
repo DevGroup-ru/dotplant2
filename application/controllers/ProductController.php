@@ -2,24 +2,24 @@
 
 namespace app\controllers;
 
+use app\components\Controller;
 use app\components\fabric\FilterQueryInterface;
 use app\components\LastViewedProducts;
+use app\models\Category;
+use app\models\Config;
 use app\models\Object;
+use app\models\Product;
 use app\models\Search;
-use Yii;
+use app\properties\PropertiesHelper;
 use app\reviews\traits\ProcessReviews;
 use app\traits\DynamicContentTrait;
+use Yii;
 use yii\caching\TagDependency;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
-use app\models\Product;
-use app\models\Category;
-use app\properties\PropertiesHelper;
-use app\models\Config;
-use app\components\Controller;
-use yii\web\Response;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
 class ProductController extends Controller

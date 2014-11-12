@@ -1,14 +1,10 @@
 <?php
 
-use app\models\Product;
-use kartik\helpers\Html;
-use yii\helpers\Json;
-use kartik\widgets\ActiveForm;
 use app\backend\widgets\BackendWidget;
-
-use yii\helpers\Url;
-use yii\web\JsExpression;
+use kartik\helpers\Html;
 use kartik\icons\Icon;
+use kartik\widgets\ActiveForm;
+use yii\helpers\Json;
 
 $this->title = Yii::t('app', 'Route edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/route/index'], 'label' => Yii::t('app', 'Routes')];

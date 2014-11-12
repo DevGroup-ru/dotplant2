@@ -1,14 +1,14 @@
 <?php
 
-use app\models\Product;
-use kartik\helpers\Html;
-use kartik\widgets\ActiveForm;
 use app\backend\widgets\BackendWidget;
-use vova07\imperavi\Widget as ImperaviWidget;
-use yii\helpers\Url;
-use kartik\icons\Icon;
+use app\models\Product;
 use kartik\grid\GridView;
+use kartik\helpers\Html;
+use kartik\icons\Icon;
+use kartik\widgets\ActiveForm;
+use vova07\imperavi\Widget as ImperaviWidget;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Url;
 
 /**
  * @var $this \yii\web\View

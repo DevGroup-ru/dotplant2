@@ -2,8 +2,6 @@
 
 use karik\helpers\Html;
 use kartik\dynagrid\DynaGrid;
-use kartik\icons\Icon;
-use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Newsletter email list');
 $this->params['breadcrumbs'][] = $this->title;

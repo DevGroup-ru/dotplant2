@@ -1,8 +1,8 @@
 <?php
 
 use app\backend\components\ActionColumn;
-use kartik\grid\BooleanColumn;
 use kartik\dynagrid\DynaGrid;
+use kartik\grid\BooleanColumn;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 

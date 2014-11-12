@@ -2,8 +2,8 @@
 
 namespace app\traits;
 
-use Yii;
 use app\models\DynamicContent;
+use Yii;
 use yii\helpers\Json;
 
 trait DynamicContentTrait

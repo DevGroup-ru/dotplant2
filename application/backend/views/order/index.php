@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use kartik\dynagrid\DynaGrid;
+use yii\helpers\Html;
 
 /**
  * @var $dataProvider yii\data\ActiveDataProvider

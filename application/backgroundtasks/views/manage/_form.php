@@ -1,8 +1,8 @@
 <?php
 
+use app\backgroundtasks\models\Task;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\backgroundtasks\models\Task;
 
 /**
  * @var yii\web\View $this

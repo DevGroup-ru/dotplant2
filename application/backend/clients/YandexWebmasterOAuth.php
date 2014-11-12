@@ -3,8 +3,8 @@
 namespace app\backend\clients;
 
 use app\backend\models\ApiService;
-use yii\authclient\OAuthToken;
 use Yii;
+use yii\authclient\OAuthToken;
 
 class YandexWebmasterOAuth extends \yii\authclient\clients\YandexOAuth
 {

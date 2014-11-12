@@ -2,8 +2,8 @@
 
 namespace app\backend\models;
 
-use Yii;
 use app\models\Config;
+use Yii;
 use yii\base\Model;
 
 /**

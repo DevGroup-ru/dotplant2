@@ -1,8 +1,8 @@
 <?php
 
-use yii\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
+use yii\helpers\Html;
 
 ?>
 <div class = "widget-reviews">

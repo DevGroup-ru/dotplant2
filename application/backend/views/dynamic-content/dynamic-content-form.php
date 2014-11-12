@@ -1,15 +1,14 @@
 <?php
 
-use app\models\Product;
-use kartik\helpers\Html;
-use yii\helpers\Json;
-use kartik\widgets\ActiveForm;
 use app\backend\widgets\BackendWidget;
-use vova07\imperavi\Widget as ImperaviWidget;
 use app\backend\widgets\Select2;
+use kartik\helpers\Html;
+use kartik\icons\Icon;
+use kartik\widgets\ActiveForm;
+use vova07\imperavi\Widget as ImperaviWidget;
+use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JsExpression;
-use kartik\icons\Icon;
 
 $this->title = Yii::t('app', 'Dynamic content edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/dynamic-content/index'], 'label' => Yii::t('app', 'Dynamic content')];

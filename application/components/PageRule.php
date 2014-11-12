@@ -2,8 +2,8 @@
 
 namespace app\components;
 
-use Yii;
 use app\models\Page;
+use Yii;
 use yii\web\UrlRuleInterface;
 
 class PageRule implements UrlRuleInterface

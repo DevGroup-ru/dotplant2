@@ -1,9 +1,7 @@
 <?php
 
-use yii\helpers\Html;
-use yii\helpers\Url;
 use kartik\icons\Icon;
-use app\models\View;
+use yii\helpers\Url;
 
 
 ?>

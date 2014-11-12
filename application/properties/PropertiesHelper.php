@@ -3,8 +3,8 @@
 namespace app\properties;
 
 use app\models\ObjectStaticValues;
-use Yii;
 use app\models\Property;
+use Yii;
 
 class PropertiesHelper
 {

@@ -2,9 +2,9 @@
 
 namespace app\backend\controllers;
 
-use Yii;
-use app\models\Product;
 use app\models\Object;
+use app\models\Product;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
 use yii\filters\AccessControl;

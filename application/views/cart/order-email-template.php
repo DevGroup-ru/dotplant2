@@ -1,6 +1,7 @@
 <?php
 /** @var \app\models\Order $order */
 use yii\helpers\Html;
+
 ?>
 <h1><?= Yii::t('shop', 'Order #{orderId}', ['orderId' => $order->id]) ?></h1>
 <h2><?= Yii::t('shop', 'Order information') ?></h2>

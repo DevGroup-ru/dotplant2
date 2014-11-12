@@ -2,10 +2,10 @@
 
 namespace app\widgets;
 
+use app\models\Category;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\Url;
-use app\models\Category;
 
 class CategoriesWidget extends Widget
 {

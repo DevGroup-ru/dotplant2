@@ -1,9 +1,9 @@
 <?php
 
+use app\backgroundtasks\models\NotifyMessage;
+use app\backgroundtasks\widgets\notification\NewNotification;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
-use app\backgroundtasks\models\NotifyMessage;
-use \app\backgroundtasks\widgets\notification\NewNotification;
 
 /**
  * @var yii\web\View $this

@@ -2,14 +2,14 @@
 
 namespace app\components;
 
-use app\properties\url\StaticPart;
 use app\models\Object;
 use app\models\Route;
+use app\properties\url\StaticPart;
 use Yii;
+use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\UrlRuleInterface;
-use yii\caching\TagDependency;
 
 class ObjectRule implements UrlRuleInterface
 {

@@ -2,10 +2,10 @@
 
 namespace app\backgroundtasks\traits;
 
-use Yii;
-use app\properties\HasProperties;
 use app\models\Page;
 use app\models\SubscribeEmail;
+use app\properties\HasProperties;
+use Yii;
 
 trait NewsletterSenderTrait
 {

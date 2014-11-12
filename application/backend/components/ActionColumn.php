@@ -2,12 +2,12 @@
 
 namespace app\backend\components;
 
-use Yii;
 use Closure;
+use kartik\icons\Icon;
+use Yii;
 use yii\grid\Column;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use kartik\icons\Icon;
 
 class ActionColumn extends Column
 {

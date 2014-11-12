@@ -1,10 +1,6 @@
 <?php
 
-use kartik\helpers\Html;
-use kartik\icons\Icon;
 use yii\helpers\Url;
-use yii\web\JsExpression;
-use yii\helpers\Json;
 
 ?>
 <div id="<?= $id ?>"></div>

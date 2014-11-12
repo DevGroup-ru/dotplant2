@@ -3,7 +3,7 @@
 /** @var $this yii\web\View */
 /** @var $cart \app\models\Cart */
 
-use \kartik\helpers\Html;
+use kartik\helpers\Html;
 
 $this->title = Yii::t('shop', 'Cart');
 

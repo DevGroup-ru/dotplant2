@@ -3,14 +3,14 @@
 namespace app\backend\controllers;
 
 use app\components\SearchModel;
+use app\models\User;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
-use yii\filters\AccessControl;
-use app\models\User;
 use yii\rbac\Item;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * UserController implements the CRUD actions for User model.

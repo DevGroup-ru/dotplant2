@@ -3,8 +3,6 @@
 namespace app\controllers;
 
 use app\behaviors\Csrf;
-use app\properties\HasProperties;
-use Yii;
 use app\models\Cart;
 use app\models\Order;
 use app\models\OrderItem;
@@ -12,6 +10,8 @@ use app\models\OrderTransaction;
 use app\models\PaymentType;
 use app\models\Product;
 use app\models\ShippingOption;
+use app\properties\HasProperties;
+use Yii;
 use yii\base\Exception;
 use yii\caching\TagDependency;
 use yii\db\Expression;

@@ -1,9 +1,9 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
-use \kartik\icons\Icon;
-use \kartik\widgets\ActiveForm;
-use \kartik\helpers\Html;
+use kartik\helpers\Html;
+use kartik\icons\Icon;
+use kartik\widgets\ActiveForm;
 
 $this->title = Yii::t('app', 'Config');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/error-monitor/index'], 'label' => Yii::t('app', 'Error Monitor')];

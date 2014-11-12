@@ -5,7 +5,7 @@
  * @var \yii\web\View $this
  */
 
-use \kartik\helpers\Html;
+use kartik\helpers\Html;
 
 $this->title = Yii::t('shop', 'Order #{order}', ['order' => $order->id]);
 $this->params['breadcrumbs'] = [

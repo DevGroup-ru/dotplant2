@@ -2,13 +2,13 @@
 
 namespace app\backend\controllers;
 
-use Yii;
-use app\models\OrderStatus;
 use app\components\SearchModel;
+use app\models\OrderStatus;
+use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * OrderStatusController implements the CRUD actions for OrderStatus model.

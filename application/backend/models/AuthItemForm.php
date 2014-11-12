@@ -3,8 +3,8 @@
 namespace app\backend\models;
 
 use Yii;
-use yii\rbac\Item;
 use yii\base\Model;
+use yii\rbac\Item;
 
 /**
  * LoginForm is the model behind the login form.

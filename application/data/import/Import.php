@@ -2,10 +2,10 @@
 
 namespace app\data\import;
 
-use Yii;
+use app\models\Object;
 use app\models\Property;
 use app\models\PropertyGroup;
-use app\models\Object;
+use Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
 use yii\db\ActiveRecord;

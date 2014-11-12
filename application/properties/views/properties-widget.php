@@ -1,10 +1,4 @@
 <?php
-use app\models\Product;
-use kartik\helpers\Html;
-use app\backend\widgets\BackendWidget;
-use yii\helpers\Url;
-use yii\web\JsExpression;
-use kartik\icons\Icon;
 
 ?>
 <div id="properties-widget-<?= $widget_id ?>">

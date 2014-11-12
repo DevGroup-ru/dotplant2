@@ -2,12 +2,12 @@
 
 namespace app\backend\controllers;
 
-use Yii;
+use app\models\Form;
+use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\PropertyGroup;
 use app\models\Submission;
-use app\models\Form;
-use app\models\Object;
+use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;

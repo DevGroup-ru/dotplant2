@@ -2,13 +2,13 @@
 
 namespace app\backend\controllers;
 
-use yii\data\ArrayDataProvider;
-use yii\helpers\ArrayHelper;
-use yii\filters\AccessControl;
 use app\backend\models\AuthItemForm;
+use yii\data\ArrayDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\rbac\Item;
 use yii\web\Controller;
-use yii\filters\VerbFilter;
 
 /**
  * UserController implements the CRUD actions for User model.

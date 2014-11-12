@@ -5,11 +5,11 @@
  * @var $dataProvider \yii\data\ArrayDataProvider
  */
 
-use app\backend\widgets\BackendWidget;
 use app\backend\components\ActionColumn;
-use kartik\icons\Icon;
-use kartik\helpers\Html;
+use app\backend\widgets\BackendWidget;
 use kartik\grid\GridView;
+use kartik\helpers\Html;
+use kartik\icons\Icon;
 use yii\widgets\Pjax;
 
 $this->title = Yii::t('app', 'I18n');

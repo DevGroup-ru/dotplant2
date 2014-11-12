@@ -2,10 +2,10 @@
 
 namespace app\widgets\filter;
 
-use Yii;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
+use Yii;
 use yii\base\Widget;
 
 class FilterWidget extends Widget

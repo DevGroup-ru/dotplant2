@@ -4,8 +4,8 @@ namespace app\properties;
 
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
-use Yii;
 use app\models\PropertyGroup;
+use Yii;
 use yii\base\Widget;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;

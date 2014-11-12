@@ -6,8 +6,8 @@
  * @var app\backgroundtasks\models\Task $searchModel
  */
 
-use kartik\helpers\Html;
 use kartik\dynagrid\DynaGrid;
+use kartik\helpers\Html;
 
 $this->title = Yii::t('app', 'Reviews');
 $this->params['breadcrumbs'][] = $this->title;

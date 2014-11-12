@@ -3,8 +3,8 @@
 namespace app\controllers;
 
 use app\models\Config;
-use Yii;
 use app\models\Product;
+use Yii;
 use yii\web\Controller;
 
 class ProductCompareController extends Controller

@@ -2,10 +2,10 @@
 
 namespace app\widgets\options;
 
+use app\models\Property;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\Json;
-use app\models\Property;
 
 /**
  * Выводит список комплектаций

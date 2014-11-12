@@ -2,8 +2,8 @@
 
 namespace app\backend\controllers;
 
-use Yii;
 use app\widgets\navigation\models\Navigation;
+use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Controller;

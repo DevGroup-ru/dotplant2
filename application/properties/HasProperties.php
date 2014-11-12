@@ -2,16 +2,16 @@
 
 namespace app\properties;
 
+use app\models\Object;
+use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;
+use app\models\Property;
+use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
 use Yii;
 use yii\base\Behavior;
 use yii\caching\TagDependency;
 use yii\db\Query;
-use app\models\Object;
-use app\models\Property;
-use app\models\PropertyGroup;
-use app\models\ObjectPropertyGroup;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 

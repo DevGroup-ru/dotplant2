@@ -12,7 +12,6 @@
  * @var $values array
  */
 
-use app\models\Property;
 use kartik\helpers\Html;
 
 ?>

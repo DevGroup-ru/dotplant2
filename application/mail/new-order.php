@@ -1,5 +1,6 @@
 <?php
 use kartik\helpers\Html;
+
 ?>
 
 <h1><?= Yii::t('app', 'New order received') ?></h1>

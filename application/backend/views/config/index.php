@@ -7,9 +7,9 @@
  */
 
 use app\backend\components\ActionColumn;
-use kartik\icons\Icon;
-use kartik\helpers\Html;
 use kartik\dynagrid\DynaGrid;
+use kartik\helpers\Html;
+use kartik\icons\Icon;
 
 $this->title = Yii::t('app', 'Configs');
 $this->params['breadcrumbs'][] = $this->title;

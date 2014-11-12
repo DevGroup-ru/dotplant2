@@ -2,15 +2,15 @@
 
 namespace app\backend\controllers;
 
-use Yii;
-use yii\filters\AccessControl;
-use yii\web\Controller;
-use yii\helpers\Url;
-use yii\db\Query;
 use app\models\DynamicContent;
-use app\models\PropertyStaticValues;
 use app\models\Property;
 use app\models\PropertyGroup;
+use app\models\PropertyStaticValues;
+use Yii;
+use yii\db\Query;
+use yii\filters\AccessControl;
+use yii\helpers\Url;
+use yii\web\Controller;
 
 class DynamicContentController extends Controller
 {

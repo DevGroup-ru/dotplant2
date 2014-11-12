@@ -1,9 +1,9 @@
 <?php
 
-use yii\helpers\Html;
-use \app\backend\widgets\BackendWidget;
-use \kartik\widgets\ActiveForm;
+use app\backend\widgets\BackendWidget;
 use kartik\icons\Icon;
+use kartik\widgets\ActiveForm;
+use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Spam Checker Settings');
 $this->params['breadcrumbs'][] = $this->title;

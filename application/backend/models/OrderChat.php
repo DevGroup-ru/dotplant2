@@ -2,8 +2,8 @@
 
 namespace app\backend\models;
 
-use Yii;
 use app\models\User;
+use Yii;
 use yii\db\ActiveRecord;
 
 /**

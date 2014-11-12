@@ -2,8 +2,8 @@
 
 namespace app\widgets;
 
-use Yii;
 use app\models\Image;
+use Yii;
 use yii\base\Widget;
 
 class ImgSearch extends Widget

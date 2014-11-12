@@ -9,9 +9,9 @@ use app\seo\models\Redirect;
 use app\seo\models\Robots;
 use app\widgets\ace\AceHelper;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 class ManageController extends Controller
 {

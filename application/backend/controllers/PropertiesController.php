@@ -4,14 +4,14 @@ namespace app\backend\controllers;
 
 use app\models\Config;
 use app\models\Form;
-use app\models\Submission;
-use Yii;
-use yii\filters\AccessControl;
-use yii\helpers\Url;
 use app\models\Object;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
+use app\models\Submission;
+use Yii;
+use yii\filters\AccessControl;
+use yii\helpers\Url;
 use yii\web\Controller;
 
 class PropertiesController extends Controller

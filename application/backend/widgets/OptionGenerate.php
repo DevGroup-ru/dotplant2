@@ -3,11 +3,11 @@
 namespace app\backend\widgets;
 
 use app\models\Object;
-use Yii;
 use app\models\Property;
 use app\models\PropertyGroup;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
+use Yii;
 use yii\base\Widget;
 use yii\db\Query;
 use yii\helpers\Json;

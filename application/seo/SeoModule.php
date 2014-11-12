@@ -2,12 +2,12 @@
 
 namespace app\seo;
 
-use Yii;
 use app\seo\models\Counter;
+use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Module;
-use yii\web\View;
 use yii\web\Application;
+use yii\web\View;
 
 class SeoModule extends Module implements BootstrapInterface
 {

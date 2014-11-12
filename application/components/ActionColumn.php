@@ -2,9 +2,9 @@
 
 namespace app\components;
 
+use kartik\icons\Icon;
 use Yii;
 use yii\helpers\Html;
-use kartik\icons\Icon;
 
 class ActionColumn extends \yii\grid\ActionColumn
 {

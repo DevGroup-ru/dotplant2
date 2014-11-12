@@ -2,8 +2,8 @@
 
 use karik\helpers\Html;
 use kartik\dynagrid\DynaGrid;
-use yii\helpers\Url;
 use kartik\icons\Icon;
+use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Routes');
 $this->params['breadcrumbs'][] = $this->title;

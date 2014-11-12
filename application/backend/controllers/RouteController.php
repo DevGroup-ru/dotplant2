@@ -2,14 +2,14 @@
 
 namespace app\backend\controllers;
 
+use app\models\Route;
+use app\properties\url\FullCategoryPathPart;
+use app\properties\url\ObjectSlugPart;
+use app\properties\url\PartialCategoryPathPart;
+use app\properties\url\PropertyPart;
+use app\properties\url\StaticPart;
 use Yii;
 use yii\helpers\Url;
-use app\models\Route;
-use app\properties\url\StaticPart;
-use app\properties\url\PropertyPart;
-use app\properties\url\PartialCategoryPathPart;
-use app\properties\url\ObjectSlugPart;
-use app\properties\url\FullCategoryPathPart;
 use yii\web\Controller;
 
 class RouteController extends Controller
