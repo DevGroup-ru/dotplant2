@@ -34,9 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ],
                 'columns' => [
-                    [
-                        'class' => \kartik\grid\SerialColumn::className()
-                    ],
                     'id',
                     [
                         'attribute' => 'manager_id',
