@@ -27,7 +27,7 @@ class Sortable extends Behavior
 
     /**
      * Move current model before another specified model (ie. `$model->moveBefore($another_model);`)
-     * Note: you must manually cal refresh() on needed models
+     * Note: you must manually call refresh() on needed models
      * @param \yii\base\Model $another_model Model taht would be after current
      */
     public function moveBefore($another_model)
@@ -51,7 +51,7 @@ class Sortable extends Behavior
 
     /**
      * Move current model after another specified model (ie. `$model->moveAfter($another_model);`)
-     * Note: you must manually cal refresh() on needed models
+     * Note: you must manually call refresh() on needed models
      * @param \yii\base\Model $another_model Model taht would be before current model
      */
     public function moveAfter($another_model)
@@ -82,7 +82,7 @@ class Sortable extends Behavior
 
     /**
      * Move current model upper
-     * Note: you must manually cal refresh() on needed models
+     * Note: you must manually call refresh() on needed models
      */
     public function moveUp()
     {
@@ -101,7 +101,7 @@ class Sortable extends Behavior
 
     /**
      * Move current model down
-     * Note: you must manually cal refresh() on needed models
+     * Note: you must manually call refresh() on needed models
      */
     public function moveDown()
     {

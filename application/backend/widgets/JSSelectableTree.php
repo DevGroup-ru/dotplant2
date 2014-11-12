@@ -32,7 +32,7 @@ class JSSelectableTree extends JSTree
         }
         if (isset($this->routes['edit'])) {
             $items['edit'] = [
-                'label' => Yii::T('app', 'Edit'),
+                'label' => Yii::t('app', 'Edit'),
                 'icon' => 'fa fa-pencil',
                 'action' => new JsExpression(
                     "function (a) {
@@ -46,7 +46,7 @@ class JSSelectableTree extends JSTree
         }
         if (isset($this->routes['open'])) {
             $items['open'] = [
-                'label' => Yii::T('app', 'Open'),
+                'label' => Yii::t('app', 'Open'),
                 'icon' => 'fa fa-folder-open',
                 'action' => new JsExpression(
                     "function (a) {
@@ -59,7 +59,7 @@ class JSSelectableTree extends JSTree
         }
         if (isset($this->routes['create'])) {
             $items['create'] = [
-                'label' => Yii::T('app', 'Create'),
+                'label' => Yii::t('app', 'Create'),
                 'icon' => 'fa fa-plus-circle',
                 'action' => new JsExpression(
                     "function (a) {
@@ -72,7 +72,7 @@ class JSSelectableTree extends JSTree
         }
         if (isset($this->routes['delete'])) {
             $items['delete'] = [
-                'label' => Yii::T('app', 'Delete'),
+                'label' => Yii::t('app', 'Delete'),
                 'icon' => 'fa fa-trash-o',
                 'action' => new JsExpression(
                     "function (a) {

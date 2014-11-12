@@ -63,7 +63,7 @@ class Helper
         ];
         foreach ($ranges as $key => $range) {
             if ($interval->$key > 0) {
-                return Yii::t('app', '{key} ' . $range . ' ego', ['key' => $interval->$key]);
+                return Yii::t('app', '{key} ' . $range . ' ago', ['key' => $interval->$key]);
             }
         }
         return Yii::t('app', 'Right now');
