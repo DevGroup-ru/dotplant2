@@ -120,7 +120,7 @@ class User extends ActiveRecord implements IdentityInterface
             }
         }
     }
-    
+
     /**
      * Finds user by username
      *
@@ -211,6 +211,12 @@ class User extends ActiveRecord implements IdentityInterface
         return '{{%user}}';
     }
 
+    /**
+     * @param bool $insert
+     * @return bool
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
+     */
     public function beforeSave($insert)
     {
         if (!parent::beforeSave($insert)) {
@@ -227,6 +233,10 @@ class User extends ActiveRecord implements IdentityInterface
         return true;
     }
 
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
@@ -245,6 +255,11 @@ class User extends ActiveRecord implements IdentityInterface
         }
     }
 
+    /**
+     * Returns gravatar image link for user
+     * @param int $size
+     * @return string
+     */
     public function gravatar($size = 40)
     {
         $hash = md5(strtolower(trim($this->email)));
