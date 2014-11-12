@@ -4,7 +4,7 @@
 
 define("SILENT_MODE", getenv("SILENT") == "1");
 
-define("NEEDED_VERSION", '5.5.11');
+define("NEEDED_VERSION", '5.5.9');
 
 if (version_compare(PHP_VERSION, NEEDED_VERSION) < 0) {
     die('ERROR: DotPlant2 needs at least PHP ' . NEEDED_VERSION . '. You are using ' . PHP_VERSION . "\n");

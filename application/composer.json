@@ -4,13 +4,14 @@
     "keywords": ["yii", "yii2", "dotplant"],
     "homepage": "http://dotplant.ru/",
     "type": "project",
-    "license": "Commercial, closed-source, under NDA",
+    "license": "GPL-3.0+",
     "support": {
-        "source": "http://draco.devpulse.ru/dotplant2"
+        "issues": "https://github.com/DevGroup-ru/dotplant2/issues",
+        "source": "https://github.com/DevGroup-ru/dotplant2"
     },
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.5.9",
         "yiisoft/yii2": "*",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
