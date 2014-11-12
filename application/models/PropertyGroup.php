@@ -3,9 +3,9 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
-use yii\behaviors\AttributeBehavior;
 use yii\db\ActiveRecord;
 
 /**

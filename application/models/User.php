@@ -2,10 +2,10 @@
 
 namespace app\models;
 
-use Yii;
 use app\behaviors\TagDependency;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
+use Yii;
 use yii\base\NotSupportedException;
 use yii\base\Security;
 use yii\behaviors\TimestampBehavior;

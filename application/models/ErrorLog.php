@@ -2,8 +2,8 @@
 
 namespace app\models;
 
-use Yii;
 use app\backend\models\ErrorMonitorConfig;
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;

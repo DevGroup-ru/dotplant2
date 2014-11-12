@@ -4,7 +4,6 @@ namespace app\models;
 
 use Yii;
 use yii\caching\TagDependency;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "image".
