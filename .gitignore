@@ -5,5 +5,7 @@
 ## Directory-based project format
 .idea/
 /*.iml
+
+## composer files
 composer.phar
 application/composer.lock
