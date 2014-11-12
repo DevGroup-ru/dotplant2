@@ -28,7 +28,6 @@
         "kartik-v/yii2-helpers": "*",
         "kartik-v/yii2-mpdf": "*",
         "kartik-v/yii2-editable": "*",
-        "bethrezen/yii2-cached-rbac-dbmanager": "*",
         "yiisoft/yii2-debug": "*",
         "vova07/yii2-imperavi-widget": "*",
         "thiagotalma/yii2-jstree": "*",
