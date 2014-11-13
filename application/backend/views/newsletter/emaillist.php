@@ -1,6 +1,6 @@
 <?php
 
-use karik\helpers\Html;
+use kartik\helpers\Html;
 use kartik\dynagrid\DynaGrid;
 
 $this->title = Yii::t('app', 'Newsletter email list');
