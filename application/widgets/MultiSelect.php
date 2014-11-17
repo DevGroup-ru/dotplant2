@@ -2,7 +2,7 @@
 
 namespace app\widgets;
 
-use app\assets\JqueryUIAsset;
+use yii\jui\JuiAsset;
 use yii\base\Widget;
 use yii\web\JsExpression;
 use yii\web\View;
@@ -85,7 +85,7 @@ class MultiSelect extends Widget
         ]);
         if (self::$count == 1) {
             $view = $this->getView();
-            JqueryUIAsset::register($view);
+            JuiAsset::register($view);
             $view->registerJs(
                 "jQuery.fn.multiSelect = function(params){
                 var \$multiSelect = \$(this);
