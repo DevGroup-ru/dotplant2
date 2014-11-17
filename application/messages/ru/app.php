@@ -327,4 +327,13 @@ return array (
     'Social media' => 'Социальные сети',
     'Payment methods' => 'Методы оплаты',
     'Hello' => 'Привет',
+    'Backend menu' => 'Меню админки',
+    'Items inside item: ' => 'Элементы внутри элемента: ',
+    'Backend menu items' => 'Элементы меню панели администрирования',
+    'Backend menu item' => 'Элемент меню панели администрирования',
+    'Icon' => 'Иконка',
+    'Translation category' => 'Категория перевода',
+    'Added by extension' => 'Добавлено расширением',
+    'Rbac role' => 'Роль RBAC',
+    'Sort order' => 'Порядок сортировки',
 );

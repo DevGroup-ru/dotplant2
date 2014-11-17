@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="col-md-4">
         <?=
             app\backend\widgets\JSTree::widget([
-                'model' => new app\models\Page,
+                'model' => new app\models\Category,
                 'routes' => [
                     'getTree' => ['/backend/category/getTree', 'selected_id' => $parent_id],
                     'open' => ['/backend/category/index'],
