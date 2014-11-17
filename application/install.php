@@ -75,6 +75,16 @@ if ($composer_status != 0) {
 
 include('requirements.php');
 
+// предзагрузим yii
+defined('YII_DEBUG') or define('YII_DEBUG', true);
+
+// fcgi doesn't have STDIN defined by default
+defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
+
+require(__DIR__ . '/vendor/autoload.php');
+require(__DIR__ . '/vendor/yiisoft/yii2/Yii.php');
+
+
 // генерим локальный конфиг веб-а
 
 $web_data = [
@@ -98,7 +108,7 @@ if ($memcached_exists) {
     ];
 }
 
-file_put_contents("config/web-local.php", "<?php\n return " . var_export($web_data, true) . ";");
+file_put_contents("config/web-local.php", "<?php\n return " . \yii\helpers\VarDumper::export($web_data) . ";");
 
 
 // генерим конфиг базы, спросив у юзера данные или взяв их из ENV
@@ -138,7 +148,7 @@ $db_config = [
     'username' => $db_user,
     'password' => $db_pass,
 ];
-file_put_contents("config/db-local.php", "<?php\n return " . var_export($db_config, true) . ";");
+file_put_contents("config/db-local.php", "<?php\n return " . \yii\helpers\VarDumper::export($db_config) . ";");
 
 // все ENV будут автоматом переданы туда
 passthru('./yii migrate --interactive=0');
