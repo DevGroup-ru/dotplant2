@@ -32,7 +32,7 @@ class BackendAsset extends AssetBundle
     public $js = [
         'js/admin.js',
         'http://st-3.dotplant.ru/js/lib/jstree.min.js',
-        'http://st-4.dotplant.ru/js/plugin/SmartNotification_jarvis.uglify.js',
+        'http://st-4.dotplant.ru/js/plugin/SmartNotification_jarvis.uglify.min.js',
         'http://st-2.dotplant.ru/js/plugin/msie-fix/jquery.mb.browser.min.js',
         'http://st-3.dotplant.ru/js/app.min.js',
         'http://st-4.dotplant.ru/js/plugin/fullcalendar/jquery.fullcalendar.min.js',
