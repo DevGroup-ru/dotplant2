@@ -1,14 +1,12 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: dmitriy
- * Date: 18.11.14
- * Time: 14:05
- *
-* @var string $url
-* @var \app\models\Order $order
-* @var \app\models\OrderTransaction $transaction
-*/
+ * @var string $url
+ * @var \app\models\Order $order
+ * @var \app\models\OrderTransaction $transaction
+ */
+
+use yii\helpers\Html;
+
 ?>
-<a href='<?= $url ?>'><?= Yii::t('shop', 'Go To Payment') ?></a>
-<script>window.location='<?= $url ?>';</script>
+<?= Html::a(Yii::t('shop', 'Go To Payment'), $url) ?>
+<script>window.location = '<?= $url ?>';</script>

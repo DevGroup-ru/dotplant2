@@ -1,6 +1,5 @@
 <?php
 
-use yii\db\Schema;
 use yii\db\Migration;
 
 class m141118_151553_PlatronPayment extends Migration
@@ -15,25 +14,29 @@ class m141118_151553_PlatronPayment extends Migration
                 'class' => 'app\components\payment\PlatronPayment',
                 'params' => \yii\helpers\Json::encode(
                     [
-                        'merchant_id' => '',
-                        'secret_key' => '',
+                        'merchantId' => '',
+                        'secretKey' => '',
                         'strCurrency' => 'RUR',
-                        'merchantUrl' => 'www.platron.ru/payment.php',
+                        'merchantUrl' => 'www.platron.ru',
+                        'merchantScriptName' => 'payment.php'
                     ]
                 ),
             ]
-            );
+        );
 
     }
 
     public function down()
     {
-        echo "m141118_151553_PlatronPayment cannot be reverted.\n";
+        echo "m141118_151553_PlatronPayment can be reverted.\n";
 
-        $this->delete(
+        if ($this->delete(
             \app\models\PaymentType::tableName(),
-            ['name'=> 'Platron']
-        );
+            ['name' => 'Platron']
+        )
+        ) {
+            return true;
+        }
 
         return false;
     }
