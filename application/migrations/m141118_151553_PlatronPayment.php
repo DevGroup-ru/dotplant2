@@ -30,14 +30,11 @@ class m141118_151553_PlatronPayment extends Migration
     {
         echo "m141118_151553_PlatronPayment can be reverted.\n";
 
-        if ($this->delete(
+        $this->delete(
             \app\models\PaymentType::tableName(),
             ['name' => 'Platron']
-        )
-        ) {
-            return true;
-        }
+        );
 
-        return false;
+        return true;
     }
 }
