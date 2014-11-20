@@ -2,19 +2,24 @@
 
 namespace app\widgets\filter;
 
+use app\models\Object;
+use app\models\ObjectStaticValues;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
 use Yii;
 use yii\base\Widget;
+use yii\caching\TagDependency;
+use yii\db\Query;
 
 class FilterWidget extends Widget
 {
-    private $possible_selections = null;
-    public $category_group_id = 0;
-    public $current_selections = [];
-    public $go_back_alignment = 'left';
-    public $object_id = null;
+    private $possibleSelections = null;
+    public $categoryGroupId = 0;
+    public $currentSelections = [];
+    public $goBackAlignment = 'left';
+    public $objectId = null;
+    public $onlyAvailableFilters = true;
     public $route = '/product/list';
     public $title = 'Filter';
     public $viewFile = 'filterWidget';
@@ -31,41 +36,96 @@ class FilterWidget extends Widget
             $this->viewFile,
             [
                 'id' => $this->id,
-                'current_selections' => $this->current_selections,
-                'possible_selections' => $this->possible_selections,
-                'object_id' => $this->object_id,
+                'current_selections' => $this->currentSelections,
+                'possible_selections' => $this->possibleSelections,
+                'object_id' => $this->objectId,
                 'title' => $this->title,
-                'go_back_alignment' => $this->go_back_alignment,
+                'go_back_alignment' => $this->goBackAlignment,
                 'route' => $this->route,
-                'category_group_id' => $this->category_group_id,
+                'category_group_id' => $this->categoryGroupId,
             ]
         );
     }
 
     public function getPossibleSelections()
     {
-        $this->possible_selections = [];
-        $groups = PropertyGroup::getForObjectId($this->object_id);
+        $data = [
+            'propertyIds' => [],
+            'propertyStaticValueIds' => [],
+        ];
+        if ($this->onlyAvailableFilters) {
+            $object = Object::findById($this->objectId);
+            if (!is_null($object) && isset($this->currentSelections['lastCategoryIds'])) {
+                $cacheKey = 'FilterWidget: ' . $object->id . ':' . $this->currentSelections['lastCategoryId'];
+                $data = Yii::$app->cache->get($cacheKey);
+                if ($data === false) {
+                    $query = new Query();
+                    $ids = $query->select('object_model_id')
+                        ->distinct()
+                        ->from($object->categories_table_name)
+                        ->where(['category_id' => $this->currentSelections['lastCategoryId']])
+                        ->column();
+                    $query = null;
+                    $data['propertyStaticValueIds'] = ObjectStaticValues::find()
+                        ->select('property_static_value_id')
+                        ->distinct()
+                        ->where(['object_id' => $object->id, 'object_model_id' => $ids])
+                        ->column();
+                    $ids = null;
+                    $data['propertyIds'] = PropertyStaticValues::find()
+                        ->select('property_id')
+                        ->distinct()
+                        ->where(['id' => $data['propertyStaticValueIds']])
+                        ->column();
+                    Yii::$app->cache->set(
+                        $cacheKey,
+                        $data,
+                        86400,
+                        new TagDependency(
+                            [
+                                'tags' => [
+                                    \app\behaviors\TagDependency::getCommonTag($object->object_class)
+                                ],
+                            ]
+                        )
+                    );
+                    $object = null;
+                }
+            }
+        }
+        $this->possibleSelections = [];
+        $groups = PropertyGroup::getForObjectId($this->objectId);
         foreach ($groups as $group) {
             if ($group->is_internal) {
                 continue;
             }
-            $this->possible_selections[$group->id] = [
+            $this->possibleSelections[$group->id] = [
                 'group' => $group,
                 'selections' => [],
+                'static_selections' => [],
+                'dynamic_selections' => [],
             ];
-            /** @var Property[] $props */
             $props = Property::getForGroupId($group->id);
             foreach ($props as $p) {
+                if ($this->onlyAvailableFilters && !in_array($p->id, $data['propertyIds'])) {
+                    continue;
+                }
                 if ($p->has_static_values) {
-                    $this->possible_selections[$group->id]['static_selections'][$p->id]
-                        = PropertyStaticValues::getValuesForPropertyId($p->id);
+                    $propertyStaticValues = PropertyStaticValues::getValuesForPropertyId($p->id);
+                    if ($this->onlyAvailableFilters) {
+                        foreach ($propertyStaticValues as $key => $propertyStaticValue) {
+                            if (!in_array($propertyStaticValue['id'], $data['propertyStaticValueIds'])) {
+                                unset($propertyStaticValues[$key]);
+                            }
+                        }
+                    }
+                    $this->possibleSelections[$group->id]['static_selections'][$p->id] = $propertyStaticValues;
                 } elseif ($p->is_column_type_stored && $p->value_type == 'NUMBER') {
-                    $this->possible_selections[$group->id]['dynamic_selections'][] = $p->id;
+                    $this->possibleSelections[$group->id]['dynamic_selections'][] = $p->id;
                 }
             }
-            if (count($this->possible_selections[$group->id]) === 0) {
-                unset($this->possible_selections[$group->id]);
+            if (count($this->possibleSelections[$group->id]) === 0) {
+                unset($this->possibleSelections[$group->id]);
             }
         }
     }
