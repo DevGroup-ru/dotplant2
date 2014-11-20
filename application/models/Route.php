@@ -11,6 +11,9 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property string $route
+ * @property string $url_template
+ * @property integer $object_id
+ * @property string $name
  */
 class Route extends ActiveRecord
 {

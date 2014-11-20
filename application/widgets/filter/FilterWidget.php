@@ -55,15 +55,15 @@ class FilterWidget extends Widget
         ];
         if ($this->onlyAvailableFilters) {
             $object = Object::findById($this->objectId);
-            if (!is_null($object) && isset($this->currentSelections['lastCategoryIds'])) {
-                $cacheKey = 'FilterWidget: ' . $object->id . ':' . $this->currentSelections['lastCategoryId'];
+            if (!is_null($object) && isset($this->currentSelections['last_category_id'])) {
+                $cacheKey = 'FilterWidget: ' . $object->id . ':' . $this->currentSelections['last_category_id'];
                 $data = Yii::$app->cache->get($cacheKey);
                 if ($data === false) {
                     $query = new Query();
                     $ids = $query->select('object_model_id')
                         ->distinct()
                         ->from($object->categories_table_name)
-                        ->where(['category_id' => $this->currentSelections['lastCategoryId']])
+                        ->where(['category_id' => $this->currentSelections['last_category_id']])
                         ->column();
                     $query = null;
                     $data['propertyStaticValueIds'] = ObjectStaticValues::find()
