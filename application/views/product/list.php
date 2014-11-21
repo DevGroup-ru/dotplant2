@@ -90,7 +90,9 @@ $this->endBlock();
     </div>
 </div>
 <!--            <a href="compair.html" class="btn btn-large pull-right">Compair Product</a>-->
+<?php if (!isset($_GET['page'])): ?>
 <div class="content"><?= $selected_category->content ?></div>
+<?php endif; ?>
 <div class="pagination">
     <?php if ($pages->pageCount > 1):
         $_GET = $selections;
