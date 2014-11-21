@@ -18,7 +18,7 @@ $this->title = Yii::t('shop', 'Cart');
                 '/cart/shipping-option',
             ],
             [
-                'class' => 'btn btn-primary',
+                'class' => 'btn btn-primary pull-right',
             ]
         )
     ?>
@@ -27,7 +27,7 @@ $this->title = Yii::t('shop', 'Cart');
             Yii::t('shop', 'Print'),
             '#',
             [
-                'class' => 'btn btn-default pull-right',
+                'class' => 'btn btn-default',
                 'id' => 'print-page',
             ]
         )

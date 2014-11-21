@@ -46,13 +46,13 @@ $this->title = Yii::t('shop', 'Shipping options');
     <?php else: ?>
         <?= $this->render('order-items', ['order' => $order]); ?>
     <?php endif; ?>
-    <?= \kartik\helpers\Html::submitButton(Yii::t('shop', 'Payment'), ['class' => 'btn btn-primary']); ?>
+    <?= \kartik\helpers\Html::submitButton(Yii::t('shop', 'Payment'), ['class' => 'btn btn-primary pull-right']); ?>
     <?=
         \kartik\helpers\Html::a(
             Yii::t('shop', 'Print'),
             '#',
             [
-                'class' => 'btn btn-default pull-right',
+                'class' => 'btn btn-default',
                 'id' => 'print-page',
             ]
         )

@@ -39,7 +39,7 @@ class CartController extends Controller
             }
         }
         if (!is_null($allowedStatuses) && !in_array($model->order_status_id, (array) $allowedStatuses)) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change this order'));
+            Yii::$app->session->setFlash('error', Yii::t('shop', 'Cannot change this order'));
             return $this->redirect(['/cart']);
         }
         return $model;

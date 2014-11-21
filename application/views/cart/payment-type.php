@@ -19,13 +19,13 @@ $this->title = Yii::t('shop', 'Select payment type');
 
 <?= $form->field($order, 'payment_type_id')->radioList(\yii\helpers\ArrayHelper::map($paymentTypes, 'id', 'name')); ?>
 <?= $this->render('order-items', ['order' => $order]); ?>
-<?= \kartik\helpers\Html::submitButton(Yii::t('shop', 'Payment'), ['class' => 'btn btn-primary']); ?>
+<?= \kartik\helpers\Html::submitButton(Yii::t('shop', 'Pay'), ['class' => 'btn btn-primary pull-right']); ?>
 <?=
     \kartik\helpers\Html::a(
         Yii::t('shop', 'Print'),
         '#',
         [
-            'class' => 'btn btn-default pull-right',
+            'class' => 'btn btn-default',
             'id' => 'print-page',
         ]
     )

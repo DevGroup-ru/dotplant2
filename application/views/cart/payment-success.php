@@ -5,9 +5,9 @@
  */
 $this->title = Yii::t('shop', 'Your order has been formed');
 ?>
-    <p><?= Yii::t('shop', 'Your order has been formed') ?></p>
+    <p><?= Yii::t('shop', 'Your order has been formed') ?>.</p>
 <?php if (is_null($order)): ?>
-    <p>You can see your orders <?= \yii\helpers\Html::a('here', ['/cabinet/orders']) ?>.</p>
+    <p><?= Yii::t('shop', 'You can see your orders') ?> <?= \yii\helpers\Html::a(Yii::t('shop', 'here'), ['/cabinet/orders']) ?>.</p>
 <?php else: ?>
-    <p>You can see your order status <?= \yii\helpers\Html::a('here', ['/cabinet/order', 'id' => $order->hash]) ?>.</p>
+    <p><?= Yii::t('shop', 'You can see your order status') ?> <?= \yii\helpers\Html::a(Yii::t('shop', 'here'), ['/cabinet/order', 'id' => $order->hash]) ?>.</p>
 <?php endif; ?>
