@@ -89,8 +89,19 @@ $images = Image::getForModel($model->object->id, $model->id);
     <ul id="productDetail" class="nav nav-tabs">
         <li class="active"><a href="#home" data-toggle="tab"><?= Yii::t('shop', 'Product details') ?></a></li>
         <li class=""><a href="#profile" data-toggle="tab"><?= Yii::t('shop', 'Related products') ?></a></li>
+        <li class=""><a href="#properties" data-toggle="tab"><?= Yii::t('shop', 'Properties') ?></a></li>
     </ul>
     <div id="myTabContent" class="tab-content">
+    <div class="tab-pane fade" id="properties">
+        <?=
+            \app\properties\PropertiesWidget::widget(
+                [
+                    'model' => $model,
+                    'viewFile' => 'show-properties-widget',
+                ]
+            )
+        ?>
+    </div>
     <div class="tab-pane fade active in" id="home">
         <?= $model->content ?>
     </div>

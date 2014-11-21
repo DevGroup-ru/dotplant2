@@ -20,6 +20,19 @@ use yii\helpers\Url;
 $this->title = $selected_category->title;
 $this->params['breadcrumbs'] = $breadcrumbs;
 $listView = isset($_COOKIE['listViewType']) && $_COOKIE['listViewType'] == 'listView';
+$this->beginBlock('filters');
+echo app\widgets\filter\FilterWidget::widget(
+    [
+        'objectId' => $object->id,
+        'currentSelections' => [
+            'properties' => $values_by_property_id,
+            'last_category_id' => $selected_category_id,
+        ],
+        'categoryGroupId' => $category_group_id,
+        'title' => null,
+    ]
+);
+$this->endBlock();
 
 ?>
 <small class="pull-right"> <?= Yii::t('shop', '{n} products are available', ['n' => $pages ->totalCount]) ?> </small>

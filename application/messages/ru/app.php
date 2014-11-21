@@ -345,4 +345,5 @@ return array (
   'Download' => 'Загрузить',
   'complete' => 'завершено',
   'failed' => 'неудача',
+  'Filters' => 'Фильтры',
 );

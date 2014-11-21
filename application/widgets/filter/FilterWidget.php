@@ -56,15 +56,38 @@ class FilterWidget extends Widget
         if ($this->onlyAvailableFilters) {
             $object = Object::findById($this->objectId);
             if (!is_null($object) && isset($this->currentSelections['last_category_id'])) {
-                $cacheKey = 'FilterWidget: ' . $object->id . ':' . $this->currentSelections['last_category_id'];
+                $propertyStaticValues = [];
+                if (isset($this->currentSelections['properties'])) {
+                    foreach ($this->currentSelections['properties'] as $values) {
+                        foreach ($values as $value) {
+                            $propertyStaticValues[] = $value;
+                        }
+                    }
+                    sort($propertyStaticValues);
+                }
+                $cacheKey = 'FilterWidget: ' . $object->id . ':' . $this->currentSelections['last_category_id'] . ':'
+                    . implode('-', $propertyStaticValues);
                 $data = Yii::$app->cache->get($cacheKey);
                 if ($data === false) {
                     $query = new Query();
-                    $ids = $query->select('object_model_id')
+                    $query = $query->select($object->categories_table_name . '.object_model_id')
                         ->distinct()
                         ->from($object->categories_table_name)
-                        ->where(['category_id' => $this->currentSelections['last_category_id']])
-                        ->column();
+                        ->where(['category_id' => $this->currentSelections['last_category_id']]);
+                    foreach ($propertyStaticValues as $value) {
+                        $query->join(
+                            'JOIN',
+                            ObjectStaticValues::tableName() . ' value' . $value,
+                            'value' . $value . '.object_id = :objectId AND '
+                            . 'value' . $value . '.object_model_id = ' . $object->categories_table_name . '.object_model_id AND '
+                            . 'value' . $value . '.property_static_value_id=:staticValueId' . $value,
+                            [
+                                ':objectId' => $object->id,
+                                ':staticValueId' . $value => $value,
+                            ]
+                        );
+                    }
+                    $ids = $query->column();
                     $query = null;
                     $data['propertyStaticValueIds'] = ObjectStaticValues::find()
                         ->select('property_static_value_id')

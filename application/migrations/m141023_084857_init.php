@@ -1132,10 +1132,6 @@ class m141023_084857_init extends Migration
                                 ],
                             ],
                             [
-                                "class" => "app\\properties\\url\\PropertyPart",
-                                "property_id" => 1
-                            ],
-                            [
                                 "class" => "app\\properties\\url\\PartialCategoryPathPart",
                                 "category_group_id" => 1
                             ],
@@ -1151,11 +1147,6 @@ class m141023_084857_init extends Migration
                             [
                                 "class" => "app\\properties\\url\\StaticPart",
                                 "static_part" => "catalog",
-                            ],
-                            [
-                                "class" => "app\\properties\\url\\PropertyPart",
-                                "property_id" => 1,
-                                "include_if_value" => ["used"],
                             ],
                             [
                                 "class" => "app\\properties\\url\\FullCategoryPathPart",
@@ -1873,6 +1864,56 @@ class m141023_084857_init extends Migration
             fclose($stdIn);
         }
         if ($demo == 'y') {
+            $object = Object::getForClass(Product::className());
+            $propertyGroup = new PropertyGroup;
+            $propertyGroup->attributes = [
+                'object_id' => $object->id,
+                'name' => 'Тестовый набор свойств',
+                'hidden_group_title' => 1,
+            ];
+            $propertyGroup->save();
+            $propertyStaticValuesCount = [5, 3, 3, 2, 4, 5, 2];
+            $propertyValues = [];
+            for ($i = 1, $k = 1; $i <= 7; $i++) {
+                $property = new Property;
+                $property->attributes = [
+                    'property_group_id' => $propertyGroup->id,
+                    'name' => 'Свойство ' . $i,
+                    'key' => 'svoystvo_' . $i,
+                    'value_type' => 'STRING',
+                    'property_handler_id' => 2,
+                    'has_static_values' => 1,
+                    'has_slugs_in_values' => 1,
+                    'handler_additional_params' => '{}',
+                ];
+                $property->save();
+                $propertyValues[$property->id] = [];
+                for ($j = 1; $j <= $propertyStaticValuesCount[$i - 1]; $j++) {
+                    $psv = new PropertyStaticValues;
+                    $name = 'Значение ' . $k;
+                    $psv->attributes = [
+                        'property_id' => $property->id,
+                        'name' => $name,
+                        'value' => $name,
+                        'slug' => Helper::createSlug($name),
+                    ];
+                    $psv->save();
+                    $propertyValues[$property->id][] = $psv->id;
+                    $k++;
+                }
+            }
+            $property = $psv = $propertyStaticValuesCount = null;
+            $route = Route::findOne(['route' => 'product/list']);
+            $urlTemplate = Json::decode($route->url_template);
+            foreach ($propertyValues as $propertyId => $values) {
+                $urlTemplate[] = [
+                    'class' => 'app\\properties\\url\\PropertyPart',
+                    'property_id' => $propertyId,
+                ];
+            }
+            $route->url_template = Json::encode($urlTemplate);
+            $route->save(false, ['url_template']);
+            $route = null;
             $categories = [
                 'Фотоаппараты',
                 'Телевизоры',
@@ -1895,7 +1936,6 @@ class m141023_084857_init extends Migration
                 'h1' => 'Каталог',
             ];
             $category->save();
-            $object = Object::getForClass(Product::className());
             srand();
             $counter = 1;
             foreach ($categories as $categoryName) {
@@ -1977,6 +2017,22 @@ class m141023_084857_init extends Migration
                             [$category->id, $product->id],
                             [$newCategory->id, $product->id],
                         ]
+                    );
+                    $opg = new ObjectPropertyGroup;
+                    $opg->attributes = [
+                        'object_id' => $object->id,
+                        'object_model_id' => $product->id,
+                        'property_group_id' => $propertyGroup->id,
+                    ];
+                    $opg->save();
+                    $rows = [];
+                    foreach ($propertyValues as $propertyId => $values) {
+                        $rows[] = [$object->id, $product->id, $values[rand(0, count($values) - 1)]];
+                    }
+                    $this->batchInsert(
+                        ObjectStaticValues::tableName(),
+                        ['object_id', 'object_model_id', 'property_static_value_id'],
+                        $rows
                     );
                     $counter++;
                 }

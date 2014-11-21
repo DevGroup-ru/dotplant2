@@ -1,7 +1,6 @@
 <?php
 
 use kartik\helpers\Html;
-use kartik\icons\Icon;
 use yii\helpers\Url;
 
 /**
@@ -21,102 +20,105 @@ use yii\helpers\Url;
 <div id="<?= $id ?>" class="filter-container">
     <div class="filter-widget filter-static">
         <?php if (!empty($title)): ?>
-        <div class="filter-title">
-            <?= $title ?>
-        </div>
-        <?php endif; ?>
-        <?php foreach ($possible_selections as $group_id => $item): ?>
-        <?php
-            /** @var \app\models\PropertyGroup $group */
-            $group = $item['group'];
-        ?>
-        <div class="filter-group">
-        <?php if ($group->hidden_group_title == "0"): ?>
-            <div class="title">
-                <?= Html::encode($group->name) ?>
+            <div class="filter-title">
+                <?= $title ?>
             </div>
         <?php endif; ?>
+        <?php foreach ($possible_selections as $group_id => $item): ?>
             <?php
-                foreach ($item['static_selections'] as $property_id => $select) {
-                    $selects = [];
-                    $property = app\models\Property::findById($property_id);
-                    if ($category_group_id > 0 && $property->depends_on_category_group_id > 0 && $property->depends_on_category_group_id != $category_group_id) {
-                        continue;
-                    }
-                    if ($property->display_only_on_depended_property_selected) {
-                        $depended_property_id = $property->depends_on_property_id;
-                        if (isset($current_selections['properties'][$depended_property_id])) {
-                            $values_allowed = explode(",", $property->depended_property_values);
-                            if (!in_array($current_selections['properties'][$depended_property_id][0], $values_allowed)) {
-                                continue;
-                            }
-                        } else {
+                /** @var \app\models\PropertyGroup $group */
+                $group = $item['group'];
+            ?>
+            <ul class="filter-group nav nav-tabs nav-stacked">
+            <?php if ($group->hidden_group_title == "0"): ?>
+                <li class="title">
+                    <?= Html::encode($group->name) ?>
+                </li>
+            <?php endif; ?>
+                <?php
+                    foreach ($item['static_selections'] as $property_id => $select) {
+                        $selects = [];
+                        $property = app\models\Property::findById($property_id);
+                        if ($category_group_id > 0 && $property->depends_on_category_group_id > 0 && $property->depends_on_category_group_id != $category_group_id) {
                             continue;
                         }
-                    }
-                    if (count($select) > 1):?>
-                <div class="property-name property-<?= $property_id ?>">
-                    <?= Html::encode($property->name); ?>
-                </div>
-            <?php
-                    endif;
-                    $hide_others = false;
-                    $dont_hide_value_id = null;
-                    if (app\models\Property::findById($property_id)->hide_other_values_if_selected) {
-                        if (isset($current_selections['properties'][$property_id])) {
-                            $hide_others = true;
-                            $dont_hide_value_id = $current_selections['properties'][$property_id][0];
-                        }
-                    }
-                    foreach ($select as $value) {
-                        if ($hide_others) {
-                            if ($dont_hide_value_id != $value['id']) {
+                        if ($property->display_only_on_depended_property_selected) {
+                            $depended_property_id = $property->depends_on_property_id;
+                            if (isset($current_selections['properties'][$depended_property_id])) {
+                                $values_allowed = explode(",", $property->depended_property_values);
+                                if (!in_array($current_selections['properties'][$depended_property_id][0], $values_allowed)) {
+                                    continue;
+                                }
+                            } else {
                                 continue;
                             }
                         }
-                        $options = [
-                            'class' => 'filter-select ',
-                        ];
-                        $params = [$route];
-                        $params += $current_selections;
-                        $params['category_group_id'] = $category_group_id;
-                        foreach ($possible_selections as $u_group_id => $u_item) {
-                            foreach ($u_item['static_selections'] as $u_property_id => $select) {
-                                if (app\models\Property::findById($u_property_id)->depends_on_property_id == $property_id) {
-                                    unset($params['properties'][$u_property_id]);
-                                }
+                        if (count($select) > 0): ?>
+                    <li class="property-name property-<?= $property_id ?>">
+                        <a><?= Html::encode($property->name); ?></a>
+                    <?php
+                        $hide_others = false;
+                        $dont_hide_value_id = null;
+                        if (app\models\Property::findById($property_id)->hide_other_values_if_selected) {
+                            if (isset($current_selections['properties'][$property_id])) {
+                                $hide_others = true;
+                                $dont_hide_value_id = $current_selections['properties'][$property_id][0];
                             }
                         }
-                        $go_back = '';
-                        if (isset($params['properties'][$property_id]) && is_array($params['properties'][$property_id])) {
-                            if ($params['properties'][$property_id][0]==$value['id']) {
-                                $options['class'] .= 'active';
-                                if ($go_back_alignment != 'none'){
-                                    $params_clone = $params;
-                                    unset($params_clone['properties'][$property_id]);
-                                    $url = Url::toRoute($params_clone);
-                                    $go_back = Html::a(Icon::show('times'), $url, ['class'=>'go-back']);
+                        foreach ($select as $value) {
+                            if ($hide_others) {
+                                if ($dont_hide_value_id != $value['id']) {
+                                    continue;
                                 }
                             }
+                            $options = [
+                                'class' => 'filter-select ',
+                            ];
+                            $params = [$route];
+                            $params += $current_selections;
+                            $params['category_group_id'] = $category_group_id;
+                            foreach ($possible_selections as $u_group_id => $u_item) {
+                                foreach ($u_item['static_selections'] as $u_property_id => $select) {
+                                    if (app\models\Property::findById($u_property_id)->depends_on_property_id == $property_id) {
+                                        unset($params['properties'][$u_property_id]);
+                                    }
+                                }
+                            }
+                            $go_back = '';
+                            if (isset($params['properties'][$property_id]) && is_array($params['properties'][$property_id])) {
+                                if ($params['properties'][$property_id][0] == $value['id']) {
+                                    $options['class'] .= 'active';
+                                    if ($go_back_alignment != 'none'){
+                                        $params_clone = $params;
+                                        unset($params_clone['properties'][$property_id]);
+                                        $url = Url::toRoute($params_clone);
+                                        $go_back = Html::a(
+                                            Html::tag('i', '', ['class' => 'icon-white icon-remove']),
+                                            $url,
+                                            ['class'=>'go-back']
+                                        );
+                                    }
+                                }
+                            }
+                            $params['properties'][$property_id] = [$value['id']];
+                            $url = Url::toRoute($params);
+                            $label = Html::a($value['name'], $url);
+                            if ($go_back_alignment === 'left') {
+                                $label = $go_back.$label;
+                            } elseif ($go_back_alignment === 'right') {
+                                $label .= $go_back;
+                            }
+                            $selects[] = Html::tag(
+                                'li',
+                                $label,
+                                $options
+                            );
                         }
-                        $params['properties'][$property_id] = [$value['id']];
-                        $url = Url::toRoute($params);
-                        $label = Html::a($value['name'], $url);
-                        if ($go_back_alignment === 'left') {
-                            $label = $go_back.$label;
-                        } elseif ($go_back_alignment === 'right') {
-                            $label .= $go_back;
-                        }
-                        $selects[] = Html::tag(
-                            'li',
-                            $label,
-                            $options
-                        );
+                        echo Html::tag('ul', implode("\n", $selects), ['class'=>'property property-'.$property_id]); endif;
                     }
-                    echo Html::tag('ul', implode("\n", $selects), ['class'=>'property property-'.$property_id]);
-                }
-            ?>
-        </div>
+                ?>
+                </li>
+            </ul>
         <?php endforeach;?>
     </div>
     <div class="filter-widget filter-dynamic">
@@ -141,8 +143,12 @@ use yii\helpers\Url;
                         <?= Html::encode($property->name); ?>
                     </div>
                         <?php
-                            $minval = isset(Yii::$app->request->get("p", [])[$property->id]['min']) ? Yii::$app->request->get("p", [])[$property->id]['min'] : '';
-                            $maxval = isset(Yii::$app->request->get("p", [])[$property->id]['max']) ? Yii::$app->request->get("p", [])[$property->id]['max'] : '';
+                            $minval = isset(Yii::$app->request->get("p", [])[$property->id]['min'])
+                                ? Yii::$app->request->get("p", [])[$property->id]['min']
+                                : '';
+                            $maxval = isset(Yii::$app->request->get("p", [])[$property->id]['max'])
+                                ? Yii::$app->request->get("p", [])[$property->id]['max']
+                                : '';
                         ?>
                     <div class="input-group input-group-sm">
                         <?= Html::textInput(
