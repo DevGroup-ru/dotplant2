@@ -181,7 +181,7 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'exist', 'message' => 'There is no user with such email.', 'on' => 'requestPasswordResetToken'],
             ['password', 'required', 'on' => ['signup', 'adminSignup', 'changePassword']],
             ['password', 'string', 'min' => 6],
-            ['first_name, last_name', 'string', 'max' => 255],
+            [['first_name', 'last_name',], 'string', 'max' => 255],
             // change password
             [['newPassword', 'confirmPassword'], 'required'],
             [['newPassword', 'confirmPassword'], 'string', 'min' => 6],
