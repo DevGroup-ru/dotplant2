@@ -16,6 +16,10 @@ $config = [
             'class' => 'app\backgroundtasks\BackgroundTasksModule',
             'controllerNamespace' => 'app\backgroundtasks\commands'
         ],
+        'data' => [
+            'class' => 'app\data\Module',
+            'controllerNamespace' => 'app\data\commands'
+        ],
         'seo' => [
             'class' => 'app\seo\SeoModule',
             'mainPage' => '', // главная страница

@@ -4,39 +4,26 @@
 /* @var string $type */
 /* @var \app\backend\models\ImportModel $model */
 /* @var array $fields */
+/* @var \app\models\Object $object */
 
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
 
-$this->title = Yii::t('app', 'Import');
+$this->title = $object->name . ' ' . Yii::t('app', 'Import');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Data'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
-<?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
-    <?php
-        BackendWidget::begin(
-            [
-                'icon' => 'sign-in',
-                'title'=> $this->title,
-                'footer' => Html::submitButton(
-                    Icon::show('save') . Yii::t('app', 'Submit'),
-                    ['class' => 'btn btn-primary']
-                ),
-            ]
-        );
-    ?>
-        <?= $form->field($model, 'object')->dropDownList(\app\models\Object::getSelectArray()) ?>
-    <?php BackendWidget::end(); ?>
-<?php ActiveForm::end(); ?>
+
 <?php if (isset($fields['object']) && !empty($fields['object'])) : ?>
     <?= \yii\helpers\Html::beginForm('', 'post', ['class' => 'form-horizontal', 'enctype' => 'multipart/form-data']) ?>
     <?php
         BackendWidget::begin(
             [
                 'icon' => 'list',
-                'title'=> Yii::t('app', 'Import fields'),
+                'title'=> $object->name . ' - ' . Yii::t('app', 'Import fields'),
                 'footer' => Html::submitButton(
                     Icon::show('save') . Yii::t('app', 'Submit'),
                     ['class' => 'btn btn-primary']

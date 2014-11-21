@@ -1,6 +1,8 @@
 <?php
 
-namespace app\data\import;
+namespace app\data\components;
+
+use Yii;
 
 class ImportCsv extends Import
 {
@@ -13,14 +15,16 @@ class ImportCsv extends Import
             $importFields['property'] = [];
         }
         $fields = static::getFields($this->object->id);
+        $path = Yii::$app->getModule('data')->importDir . '/' . $this->filename;
         if (isset($fields['object'])) {
             $objAttributes = $fields['object'];
             $propAttributes = isset($fields['property']) ? $fields['property'] : [];
             $transaction = \Yii::$app->db->beginTransaction();
             try {
                 $titleFields = [];
+                $file = fopen($path, 'r');
                 $title = true;
-                while (($row = fgetcsv($this->file)) !== false) {
+                while (($row = fgetcsv($file)) !== false) {
                     if ($title) {
                         $titleFields = array_flip($row);
                         $title = false;
@@ -35,28 +39,30 @@ class ImportCsv extends Import
                         $propData[$attribute] = (isset($titleFields[$attribute])) ? $row[$titleFields[$attribute]] : '';
                     }
                     $objectId = isset($titleFields['internal_id']) ? $row[$titleFields['internal_id']] : 0;
+                    var_dump($objData);
                     $this->save($objectId, $objData, $importFields['object'], $propData, $importFields['property']);
                 }
+                fclose($file);
             } catch (\Exception $e) {
                 $transaction->rollBack();
                 return false;
             }
             $transaction->commit();
         }
+        if (file_exists($path)) {
+            unlink($path);
+        }
         return true;
     }
 
     public function getData($exportFields)
     {
-        $name = $this->object->name . '.csv';
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=' . $name);
         $objectFields = isset($exportFields['object']) ? $exportFields['object'] : [];
         $propertiesFields = isset($exportFields['property']) ? $exportFields['property'] : [];
         $class = $this->object->object_class;
         $objectFields = array_merge($objectFields, ['internal_id']);
         $title = array_merge($objectFields, $propertiesFields);
-        $output = fopen('php://output', 'w');
+        $output = fopen(Yii::$app->getModule('data')->exportDir . '/' . $this->filename, 'w');
         $objects = $class::find()->all();
         fputcsv($output, $title);
         foreach ($objects as $object) {
@@ -73,6 +79,6 @@ class ImportCsv extends Import
             }
             fputcsv($output, $row);
         }
-        \Yii::$app->end();
+        fclose($output);
     }
 }

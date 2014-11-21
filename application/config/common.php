@@ -5,6 +5,12 @@ $params = require(__DIR__ . '/params.php');
 
 return [
     'timeZone' => 'Europe/Moscow',
+    'modules' => [
+        'data' => [
+            'class' => 'app\data\Module',
+            'layout' => '@app/backend/views/layouts/main',
+        ],
+    ],
     'components' => [
         'db' => $db,
         'i18n' => [

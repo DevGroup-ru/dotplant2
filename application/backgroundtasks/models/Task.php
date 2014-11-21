@@ -34,14 +34,14 @@ class Task extends ActiveRecord
     const MAX_FAIL_COUNT = 5;
 
     const STATUS_ACTIVE     = 'ACTIVE';
-    const STATUS_STOPPED	= 'STOPPED';
-    const STATUS_RUNNING	= 'RUNNING';
-    const STATUS_PROCESS	= 'PROCESS';
-    const STATUS_COMPLETED	= 'COMPLETED';
+    const STATUS_STOPPED    = 'STOPPED';
+    const STATUS_RUNNING    = 'RUNNING';
+    const STATUS_PROCESS    = 'PROCESS';
+    const STATUS_COMPLETED  = 'COMPLETED';
+    const STATUS_FAILED     = 'FAILED';
 
-    const STATUS_FAILED = 'FAILED';
-    const TYPE_EVENT	= 'EVENT';
-    const TYPE_REPEAT	= 'REPEAT';
+    const TYPE_EVENT    = 'EVENT';
+    const TYPE_REPEAT   = 'REPEAT';
 
     private $logname = '';
 
@@ -266,11 +266,14 @@ class Task extends ActiveRecord
             $message = new NotifyMessage();
             $message->task_id = $this->id;
             \Yii::trace($this->name.' is running', $this->getLogname());
-            $command = \Yii::getAlias('@app/yii') .
-                ' ' .
-                ($this->action) .
-                ((isset($this->params) && strlen($this->params) > 0) ? ' ' . $this->params : '');
-            exec(escapeshellcmd($command), $output, $return_val);
+            $args = ' ' . escapeshellarg($this->action);
+            $params = explode(' ', $this->params);
+            if (!empty($params)) {
+                foreach ($params as $param) {
+                    $args .= ' ' . escapeshellarg($param);
+                }
+            }
+            exec(\Yii::getAlias('@app/yii') . $args, $output, $return_val);
             $message->result = $this->printCommandResult($output);
             if ($return_val === 0) {
                 switch ($this->type) {

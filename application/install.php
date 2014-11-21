@@ -61,6 +61,8 @@ if ($composer_status != 0) {
 system('chmod -R 777 ./runtime/');
 system('chmod -R 777 ./web/assets/');
 system('chmod -R 777 ./web/upload/');
+system('chmod -R 777 ./web/data/');
+system('chmod -R 777 ./message/');
 system('chmod +x ./yii');
 
 $composer_status = null;

@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use app\data\models\Export;
+use app\data\models\Import;
 use Yii;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
@@ -187,5 +189,25 @@ class Object extends ActiveRecord
             );
         }
         return static::$select_array_cache;
+    }
+
+    public function getLastExport()
+    {
+        return $this->hasOne(Export::className(), ['object_id' => 'id'])
+            ->andOnCondition(
+                [
+                    Export::tableName() . '.user_id' => Yii::$app->user->id,
+                ]
+            );
+    }
+
+    public function getLastImport()
+    {
+        return $this->hasOne(Import::className(), ['object_id' => 'id'])
+            ->andOnCondition(
+                [
+                    Import::tableName() . '.user_id' => Yii::$app->user->id,
+                ]
+            );
     }
 }

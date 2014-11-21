@@ -1,6 +1,6 @@
 <?php
 
-namespace app\data\import;
+namespace app\data\components;
 
 use app\models\Object;
 use app\models\Property;
@@ -15,26 +15,31 @@ abstract class Import extends Component
 {
     protected $object;
     protected $properties = null;
-    public $file;
+    public $filename;
 
     abstract public function getData($importFields);
     abstract public function setData($exportFields);
 
     /**
-     * @param $object
-     * @param $type
-     * @param null $file
+     * @param array $config
      * @return ImportCsv
      * @throws \Exception
      */
-    public static function createInstance($object, $type, $file = null)
+    public static function createInstance($config)
     {
-        switch ($type) {
-            case 'csv':
-                return new ImportCsv(['object' => $object, 'file' => $file]);
+        if (isset($config['type'])) {
+            $type = $config['type'];
+            unset($config['type']);
 
-            default:
-                throw new \Exception('Unsupported type');
+            switch ($type) {
+                case 'csv':
+                    return new ImportCsv($config);
+
+                default:
+                    throw new \Exception('Unsupported type');
+            }
+        } else {
+            throw new InvalidParamException('Parameter \'type\' is not set');
         }
     }
 
@@ -70,7 +75,7 @@ abstract class Import extends Component
     public function __construct($config = [])
     {
         if (!isset($config['object'])) {
-            throw new InvalidParamException('Parameters "file" and "object" must be set');
+            throw new InvalidParamException('Parameters \'object\' is not set');
         }
         $this->object = $config['object'];
         if (is_numeric($this->object)) {
