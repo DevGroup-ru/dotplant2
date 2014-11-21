@@ -29,7 +29,7 @@ trait SortModels
         $sql = "UPDATE "
             . static::tableName()
             . " SET $field = "
-            . static::_generateCase($priorities)
+            . static::generateCase($priorities)
             . " WHERE id IN(" . implode(', ', $ids)
             . ")";
         return Yii::$app->db->createCommand(
@@ -37,7 +37,7 @@ trait SortModels
         )->execute() > 0;
     }
 
-    public static function _generateCase($priorities)
+    public static function generateCase($priorities)
     {
         $result = 'CASE `id`';
         foreach ($priorities as $k => $v) {
