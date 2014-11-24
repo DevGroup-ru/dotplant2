@@ -28,8 +28,6 @@ class m141118_151553_PlatronPayment extends Migration
 
     public function down()
     {
-        echo "m141118_151553_PlatronPayment can be reverted.\n";
-
         $this->delete(
             \app\models\PaymentType::tableName(),
             ['name' => 'Platron']
