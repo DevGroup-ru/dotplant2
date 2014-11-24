@@ -39,7 +39,6 @@ class ImportCsv extends Import
                         $propData[$attribute] = (isset($titleFields[$attribute])) ? $row[$titleFields[$attribute]] : '';
                     }
                     $objectId = isset($titleFields['internal_id']) ? $row[$titleFields['internal_id']] : 0;
-                    var_dump($objData);
                     $this->save($objectId, $objData, $importFields['object'], $propData, $importFields['property']);
                 }
                 fclose($file);
