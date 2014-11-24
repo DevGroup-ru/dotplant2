@@ -132,4 +132,6 @@ return array (
     'You can try to' => 'Вы можете',
     'change payment type' => 'изменить способ оплаты',
     'or' => 'или',
+    'Products comparison' => 'Сравнение товаров',
+    'Compare products [{count}]' => 'Сравнить товары [{count}]',
 );

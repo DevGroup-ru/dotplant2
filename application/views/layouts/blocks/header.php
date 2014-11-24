@@ -48,6 +48,27 @@ unset($this->assetBundles['yii\bootstrap\BootstrapAsset']);
                     <strong><?= Html::a(Yii::$app->user->identity->username, ['/cabinet']) ?>!</strong>
                 <?php endif; ?>
             </div>
+            <div class="span3">
+                <?php if (is_array(Yii::$app->session->get('comparisonProductList')) && count(Yii::$app->session->get('comparisonProductList')) > 0): ?>
+                    <?=
+                    \kartik\helpers\Html::a(
+                        Yii::t(
+                            'shop',
+                            'Compare products [{count}]',
+                            [
+                                'count' => count(Yii::$app->session->get('comparisonProductList')),
+                            ]
+                        ),
+                        [
+                            '/product-compare/compare',
+                        ],
+                        [
+                            'class' => 'btn',
+                        ]
+                    )
+                    ?>
+                <?php endif; ?>
+            </div>
             <?php
                 echo \app\widgets\CartInfo::widget()
             ?>
@@ -59,7 +80,7 @@ unset($this->assetBundles['yii\bootstrap\BootstrapAsset']);
                 <span class="icon-bar"></span>
             </a>
             <div class="navbar-inner">
-                <a class="brand" href="/"><img src="/demo/images/logo.png" alt="Bootsshop"/></a>
+                <a class="brand" href="/"><img src="/demo/images/logo.png" alt="DotPlant" /></a>
                 <!--                -->
                 <?php
                     $form = \yii\widgets\ActiveForm::begin(

@@ -70,7 +70,27 @@ $images = Image::getForModel($model->object->id, $model->id);
                 <label class="control-label"><span itemprop="price"><?= Yii::$app->formatter->asDecimal($model->price, 2) ?> <?= Yii::$app->params['currency'] ?></span></label>
                 <div class="controls">
 <!--                    <input type="number" class="span1" placeholder="Qty.">-->
-                    <button type="submit" class="btn btn-large btn-primary pull-right" data-action="add-to-cart" data-id="<?= $model->id ?>"><?= Yii::t('shop', 'Add to') ?> <i class=" icon-shopping-cart"></i></button>
+                    <div class="pull-right" style="text-align: right;">
+                        <?=
+                        \kartik\helpers\Html::a(
+                            Yii::t(
+                                'shop',
+                                'Add to compare'
+                            ),
+                            [
+                                '/product-compare/add',
+                                'id' => $model->id,
+                                'backUrl' => Yii::$app->request->url,
+                            ],
+                            [
+                                'class' => 'btn',
+                            ]
+                        )
+                        ?>
+                        <br />
+                        <br />
+                        <button type="submit" class="btn btn-large btn-primary" data-action="add-to-cart" data-id="<?= $model->id ?>"><?= Yii::t('shop', 'Add to') ?> <i class=" icon-shopping-cart"></i></button>
+                    </div>
                 </div>
             </div>
         </form>

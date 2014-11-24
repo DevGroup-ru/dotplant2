@@ -1,71 +1,83 @@
 <?php
 
-if (isset($error) && $error == 1) {
-    echo $message;
-} else {
+/**
+ * @var $error integer
+ * @var $message string
+ * @var $object \app\models\Object
+ * @var $products \app\models\Product
+ * @var $this \yii\web\View
+ */
 
-    ?>
+$this->title = Yii::t('shop', 'Products comparison');
 
+?>
+<?php if (isset($error) && $error): ?>
+    <?= $message ?>
+<?php else: ?>
     <div class="row">
-        <div class="col-md-2 col-md-offset-10">
-            <?= \kartik\helpers\Html::beginForm('/product-compare/print', 'get') ?>
-            <?= \yii\helpers\Html::submitButton(Yii::t('shop', 'Print version'),
+        <div class="span9">
+            <?=
+            \yii\helpers\Html::a(
+                Yii::t('shop', 'Print version'),
                 [
-                    'class' => 'btn btn-xs btn-primary'
+                    '/product-compare/print',
+                ],
+                [
+                    'class' => 'btn pull-right'
                 ]
-            ) ?>
-            <?= \yii\helpers\Html::endForm() ?>
+            )
+            ?>
         </div>
     </div>
-
     <div class="row center-block">
     <?php
-
-    foreach ($prods as $prod) {
+    foreach ($products as $product):
         $url = \yii\helpers\Url::to(
             [
                 'product/show',
-                'model' => $prod,
-                'last_category_id' => $prod->main_category_id,
-                'category_group_id' => $prod->category->category_group_id,
+                'model' => $product,
+                'last_category_id' => $product->main_category_id,
+                'category_group_id' => $product->category->category_group_id,
             ]
         );
-
         $img = app\widgets\ImgSearch::widget(
             [
-                'object_id'=>1,
-                'object_model_id'=>$prod->id,
-                'displayCountPictures'=>1,
-                'viewFile' => 'img-thumbnail-list',
+                'objectId' => $object->id,
+                'objectModelId' => $product->id,
+                'limit' => 1,
             ]
         );
         ?>
-
-        <div class="col-md-4">
+        <div class="span3">
             <div class="row">
-                <div class="col-md-12">
+                <div class="span3">
                     <a href="<?= $url ?>">
-                        <?= $prod->name ?>
+                        <?= $product->name ?>
                     </a>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="span3">
                     <?= $img ?>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
-                    <dt><?= Yii::t('app', 'Price') ?>:</dt>
-                    <dd style="color:green;font-weight:bold; font-size:28px;"><?= $prod->price ?></dd>
+                <div class="span3">
+                    <dl>
+                        <dt><?= Yii::t('app', 'Price') ?>:</dt>
+                        <dd style="color:green;font-weight:bold; font-size:28px;">
+                            <?= Yii::$app->formatter->asDecimal($product->price, 2) ?>
+                            <?= Yii::$app->params['currency'] ?>
+                        </dd>
+                    </dl>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="span3">
                     <?=
                     \app\properties\PropertiesWidget::widget(
                         [
-                            'model' => $prod,
+                            'model' => $product,
                             'form' => null,
                             'viewFile' => 'show-properties-widget',
                         ]
@@ -74,31 +86,43 @@ if (isset($error) && $error == 1) {
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
-                    <a href="#" class="btn btn-lg btn-primary btn-red" onclick="Shop.addToCart(<?= $prod->id ?>, '1');">
-                        <?= Yii::t('shop', 'Add to cart') ?>
-                    </a>
+                <div class="span3">
+                    <?=
+                    \kartik\helpers\Html::a(
+                        Yii::t('shop', 'Delete'),
+                        [
+                            '/product-compare/remove',
+                            'id' => $product->id,
+                            'backUrl' => Yii::$app->request->url,
+                        ],
+                        [
+                            'class' => 'btn btn-warning',
+                        ]
+                    )
+                    ?>
+                    <br />
+                    <br />
+                    <a class="btn" href="#" data-action="add-to-cart" data-id="<?= $product->id ?>"><?= Yii::t('shop', 'Add to') ?> <i class="icon-shopping-cart"></i></a>
                 </div>
             </div>
         </div>
-
-        <?php
-    }
-    ?>
-    </div> <!-- div class="row" -->
+    <?php endforeach; ?>
+    </div>
+    <br />
     <div class="row">
-        <div class="col-md-2 col-md-offset-10">
-            <?= \kartik\helpers\Html::beginForm('/product-compare/remove-all', 'get') ?>
-            <?= \kartik\helpers\Html::hiddenInput('backUrl', Yii::$app->request->url) ?>
-            <?= \yii\helpers\Html::submitButton(Yii::t('shop', 'Remove all'),
+        <div class="span9">
+            <?=
+            \kartik\helpers\Html::a(
+                Yii::t('shop', 'Remove all'),
                 [
-                    'class' => 'btn btn-primary'
+                    '/product-compare/remove-all',
+                    'backUrl' => Yii::$app->request->url,
+                ],
+                [
+                    'class' => 'btn btn-danger',
                 ]
-            ) ?>
-            <?= \yii\helpers\Html::endForm() ?>
+            )
+            ?>
         </div>
     </div>
-    <?php
-}
-
-echo \app\widgets\form\Form::widget(['formId' => 3, 'isModal' => true, 'id' => 'order']);
+<?php endif; ?>
