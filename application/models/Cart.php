@@ -141,7 +141,6 @@ class Cart extends ActiveRecord
             $transaction->commit();
             return true;
         } catch (\Exception $e) {
-            print_r($e);exit;
             $transaction->rollBack();
             return false;
         }

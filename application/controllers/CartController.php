@@ -121,7 +121,6 @@ class CartController extends Controller
                 ),
             ];
         } catch (Exception $e) {
-            // @todo не добавляет первый товар
             $transaction->rollBack();
             return [
                 'success' => false,
