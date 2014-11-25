@@ -112,7 +112,7 @@ class Product extends ActiveRecord
                 'class' => HasProperties::className(),
             ],
             [
-                'class' => \app\behaviors\TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
             [
                 'class' => CleanRelations::className(),
@@ -171,7 +171,7 @@ class Product extends ActiveRecord
                         86400,
                         new TagDependency([
                             'tags' => [
-                                \app\behaviors\TagDependency::getCommonTag(static::className())
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
                             ]
                         ])
                     );
@@ -205,7 +205,7 @@ class Product extends ActiveRecord
                         86400,
                         new TagDependency([
                             'tags' => [
-                                \app\behaviors\TagDependency::getCommonTag(static::className())
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
                             ]
                         ])
                     );

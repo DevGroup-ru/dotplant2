@@ -72,7 +72,7 @@ class Review extends \yii\db\ActiveRecord
     {
         return [
             [
-                'class' => \app\behaviors\TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -148,9 +148,9 @@ class Review extends \yii\db\ActiveRecord
                     new TagDependency(
                         [
                             'tags' => [
-                                \app\behaviors\TagDependency::getObjectTag($object, $object_id),
-                                \app\behaviors\TagDependency::getObjectTag($object->object_class, $object_model_id),
-                                \app\behaviors\TagDependency::getCommonTag(Review::className()),
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object, $object_id),
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object->object_class, $object_model_id),
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Review::className()),
                             ],
                         ]
                     )

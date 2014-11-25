@@ -48,7 +48,7 @@ class OrderController extends Controller
                 new TagDependency(
                     [
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag(User::className())
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(User::className())
                         ],
                     ]
                 )

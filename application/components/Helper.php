@@ -32,7 +32,7 @@ class Helper
                     new TagDependency(
                         [
                             'tags' => [
-                                \app\behaviors\TagDependency::getCommonTag($className),
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($className),
                             ],
                         ]
                     )

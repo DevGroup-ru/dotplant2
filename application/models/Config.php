@@ -27,7 +27,7 @@ class Config extends ActiveRecord
     {
         return [
             [
-                'class' => \app\behaviors\TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -101,7 +101,7 @@ class Config extends ActiveRecord
                     86400,
                     new TagDependency(
                         [
-                            'tags' => [\app\behaviors\TagDependency::getCommonTag(Config::className())],
+                            'tags' => [\devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Config::className())],
                         ]
                     )
                 );
@@ -132,7 +132,7 @@ class Config extends ActiveRecord
                     86400,
                     new TagDependency(
                         [
-                            'tags' => [\app\behaviors\TagDependency::getObjectTag($item, $item->id)],
+                            'tags' => [\devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($item, $item->id)],
                         ]
                     )
                 );

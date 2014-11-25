@@ -67,7 +67,7 @@ class PropertiesWidget extends Widget
                 new TagDependency(
                     [
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag(get_class($this->model), $this->model->id),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(get_class($this->model), $this->model->id),
                         ],
                     ]
                 )

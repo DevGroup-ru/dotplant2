@@ -216,7 +216,7 @@ class HasProperties extends Behavior
                     new TagDependency(
                         [
                             'tags' => [
-                                \app\behaviors\TagDependency::getObjectTag($this->owner, $this->owner->id),
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($this->owner, $this->owner->id),
                             ],
                         ]
                     )
@@ -250,7 +250,7 @@ class HasProperties extends Behavior
                     new TagDependency(
                         [
                             'tags' => [
-                                \app\behaviors\TagDependency::getObjectTag($this->getObject(), $this->owner->id),
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($this->getObject(), $this->owner->id),
                             ],
                         ]
                     )

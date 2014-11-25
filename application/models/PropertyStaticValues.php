@@ -35,7 +35,7 @@ class PropertyStaticValues extends ActiveRecord
                 'value' => 0,
             ],
             [
-                'class' => \app\behaviors\TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -127,7 +127,7 @@ class PropertyStaticValues extends ActiveRecord
                         new TagDependency(
                             [
                                 'tags' => [
-                                    \app\behaviors\TagDependency::getObjectTag(static::className(), $id),
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id),
                                 ],
                             ]
                         )
@@ -191,7 +191,7 @@ class PropertyStaticValues extends ActiveRecord
                     0,
                     new TagDependency([
                         'tags' => [
-                            \app\behaviors\TagDependency::getObjectTag(Property::className(), $property_id)
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(Property::className(), $property_id)
                         ]
                     ])
                 );

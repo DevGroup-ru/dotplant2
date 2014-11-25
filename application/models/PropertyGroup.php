@@ -34,7 +34,7 @@ class PropertyGroup extends ActiveRecord
                 'value' => 0,
             ],
             [
-                'class' => \app\behaviors\TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -126,7 +126,7 @@ class PropertyGroup extends ActiveRecord
                         new TagDependency(
                             [
                                 'tags' => [
-                                    \app\behaviors\TagDependency::getObjectTag(static::className(), $id),
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id),
                                 ],
                             ]
                         )
@@ -178,8 +178,8 @@ class PropertyGroup extends ActiveRecord
                     new TagDependency(
                         [
                             'tags' => [
-                                \app\behaviors\TagDependency::getObjectTag($object, $object_id),
-                                \app\behaviors\TagDependency::getObjectTag($object->object_class, $object_model_id),
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object, $object_id),
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object->object_class, $object_model_id),
                             ],
                         ]
                     )

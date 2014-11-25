@@ -64,7 +64,7 @@ class Navigation extends \yii\db\ActiveRecord
     {
         return [
             [
-                'class' => \app\behaviors\TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ]
         ];
     }

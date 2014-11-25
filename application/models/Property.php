@@ -51,7 +51,7 @@ class Property extends ActiveRecord
                 'value' => 0,
             ],
             [
-                'class' => \app\behaviors\TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -174,7 +174,7 @@ class Property extends ActiveRecord
                     new TagDependency(
                         [
                             'tags' => [
-                                \app\behaviors\TagDependency::getObjectTag($prop, $id)
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($prop, $id)
                             ],
                         ]
                     )
@@ -202,7 +202,7 @@ class Property extends ActiveRecord
                         new TagDependency(
                             [
                                 'tags' => [
-                                    \app\behaviors\TagDependency::getObjectTag(PropertyGroup::className(), $group_id)
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(PropertyGroup::className(), $group_id)
                                 ],
                             ]
                         )
@@ -318,8 +318,8 @@ class Property extends ActiveRecord
         TagDependency::invalidate(
             Yii::$app->cache,
             [
-                \app\behaviors\TagDependency::getObjectTag(PropertyGroup::className(), $this->property_group_id),
-                \app\behaviors\TagDependency::getObjectTag(Property::className(), $this->id)
+                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(PropertyGroup::className(), $this->property_group_id),
+                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(Property::className(), $this->id)
             ]
         );
     }

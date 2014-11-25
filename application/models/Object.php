@@ -33,7 +33,7 @@ class Object extends ActiveRecord
     {
         return [
             [
-                'class' => \app\behaviors\TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -105,7 +105,7 @@ class Object extends ActiveRecord
                         new TagDependency(
                             [
                                 'tags' => [
-                                    \app\behaviors\TagDependency::getObjectTag(static::className(), $id),
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id),
                                 ],
                             ]
                         )
@@ -142,7 +142,7 @@ class Object extends ActiveRecord
                         new TagDependency(
                             [
                                 'tags' => [
-                                    \app\behaviors\TagDependency::getObjectTag($object, $object->id),
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object, $object->id),
                                 ],
                             ]
                         )
@@ -182,7 +182,7 @@ class Object extends ActiveRecord
                 new TagDependency(
                     [
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag(static::className()),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className()),
                         ],
                     ]
                 )

@@ -274,7 +274,7 @@ class CartController extends Controller
                 new TagDependency(
                     [
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag(ShippingOption::className()),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(ShippingOption::className()),
                         ],
                     ]
                 )
@@ -312,7 +312,7 @@ class CartController extends Controller
                 new TagDependency(
                     [
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag(PaymentType::className()),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(PaymentType::className()),
                         ],
                     ]
                 )

@@ -130,7 +130,7 @@ class ObjectRule implements UrlRuleInterface
                     86400,
                     new TagDependency([
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag(Route::className())
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Route::className())
                         ]
                     ])
                 );

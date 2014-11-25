@@ -75,7 +75,7 @@ class JSTreeGetTrees extends Action
                 new TagDependency(
                     [
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag($modelName::className()),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($modelName::className()),
                         ],
                     ]
                 )

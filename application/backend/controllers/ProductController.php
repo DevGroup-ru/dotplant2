@@ -2,7 +2,6 @@
 
 namespace app\backend\controllers;
 
-use app\behaviors\TagDependency;
 use app\models\Category;
 use app\models\Image;
 use app\models\Object;
@@ -119,7 +118,7 @@ class ProductController extends Controller
             throw new ServerErrorHttpException;
         }
 
-        /** @var null|Product|HasProperties|TagDependency $model */
+        /** @var null|Product|HasProperties|\devgroup\TagDependencyHelper\ActiveRecordHelper $model */
         $model = null;
         $parent = null;
         if (null === $id) {

@@ -62,7 +62,7 @@ class NavigationWidget extends Widget
                     0,
                     new TagDependency([
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag(Navigation::className())
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Navigation::className())
                         ]
                     ])
                 );

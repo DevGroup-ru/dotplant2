@@ -92,7 +92,7 @@ class Image extends \yii\db\ActiveRecord
                     new TagDependency(
                         [
                             'tags' => [
-                                \app\behaviors\TagDependency::getObjectTag($object->object_class, $objectModelId),
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object->object_class, $objectModelId),
                             ],
                         ]
                     )

@@ -30,7 +30,7 @@ class BackendMenu extends ActiveRecord
     {
         return [
             [
-                'class' => \app\behaviors\TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
             [
                 'class' => Tree::className(),
@@ -138,7 +138,7 @@ class BackendMenu extends ActiveRecord
                         86400,
                         new TagDependency([
                             'tags' => [
-                                \app\behaviors\TagDependency::getCommonTag(static::className())
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
                             ]
                         ])
                     );
@@ -168,8 +168,8 @@ class BackendMenu extends ActiveRecord
                 86400,
                 new TagDependency([
                     'tags' => [
-                                \app\behaviors\TagDependency::getCommonTag(static::className())
-                            ]
+                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                    ]
                 ])
             );
         }

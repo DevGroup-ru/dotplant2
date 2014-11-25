@@ -107,7 +107,7 @@ class FilterWidget extends Widget
                         new TagDependency(
                             [
                                 'tags' => [
-                                    \app\behaviors\TagDependency::getCommonTag($object->object_class)
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($object->object_class)
                                 ],
                             ]
                         )

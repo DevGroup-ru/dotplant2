@@ -29,7 +29,7 @@ class PropertyHandler extends ActiveRecord
     {
         return [
             [
-                'class' => \app\behaviors\TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -94,7 +94,7 @@ class PropertyHandler extends ActiveRecord
                         new TagDependency(
                             [
                                 'tags' => [
-                                    \app\behaviors\TagDependency::getObjectTag(static::className(), $id),
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id),
                                 ],
                             ]
                         )
@@ -128,7 +128,7 @@ class PropertyHandler extends ActiveRecord
                     new TagDependency(
                         [
                             'tags' => [
-                                \app\behaviors\TagDependency::getCommonTag(static::className()),
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className()),
                             ],
                         ]
                     )

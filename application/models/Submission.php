@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\behaviors\TagDependency;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use Yii;
@@ -68,7 +67,7 @@ class Submission extends \yii\db\ActiveRecord
                 'class' => HasProperties::className(),
             ],
             [
-                'class' => TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
     }

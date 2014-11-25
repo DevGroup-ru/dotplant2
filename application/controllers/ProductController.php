@@ -130,9 +130,9 @@ class ProductController extends Controller
                 new TagDependency(
                     [
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag(Category::className()),
-                            \app\behaviors\TagDependency::getCommonTag(Product::className()),
-                            \app\behaviors\TagDependency::getCommonTag(Config::className()),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Category::className()),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Product::className()),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Config::className()),
                         ]
                     ]
                 )
@@ -153,9 +153,9 @@ class ProductController extends Controller
                 new TagDependency(
                     [
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag(Category::className()),
-                            \app\behaviors\TagDependency::getCommonTag(Product::className()),
-                            \app\behaviors\TagDependency::getCommonTag(Config::className()),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Category::className()),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Product::className()),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Config::className()),
                         ]
                     ]
                 )
@@ -225,7 +225,7 @@ class ProductController extends Controller
                 new TagDependency(
                     [
                         'tags' => [
-                            \app\behaviors\TagDependency::getObjectTag(Product::className(), $model_id),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(Product::className(), $model_id),
                         ]
                     ]
                 )

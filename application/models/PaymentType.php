@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use app\behaviors\TagDependency;
+
 use app\components\payment\AbstractPayment;
 use Yii;
 use yii\base\Exception;
@@ -32,7 +32,7 @@ class PaymentType extends ActiveRecord
     {
         return [
             [
-                'class' => TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
     }

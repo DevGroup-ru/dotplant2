@@ -3,7 +3,6 @@
 namespace app\models;
 
 use app\behaviors\CleanRelations;
-use app\behaviors\TagDependency;
 use app\behaviors\Tree;
 use app\properties\HasProperties;
 use Yii;
@@ -99,7 +98,7 @@ class Page extends ActiveRecord
                 'class' => HasProperties::className(),
             ],
             [
-                'class' => TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
             [
                 'class' => CleanRelations::className(),
@@ -163,7 +162,7 @@ class Page extends ActiveRecord
                         86400,
                         new \yii\caching\TagDependency([
                             'tags' => [
-                                \app\behaviors\TagDependency::getCommonTag(static::className())
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
                             ]
                         ])
                     );
@@ -188,7 +187,7 @@ class Page extends ActiveRecord
         \yii\caching\TagDependency::invalidate(
             Yii::$app->cache,
             [
-                TagDependency::getCommonTag($this->className()),
+                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
                 'Page:'.$this->slug_compiled
             ]
         );
@@ -196,7 +195,7 @@ class Page extends ActiveRecord
         \yii\caching\TagDependency::invalidate(
             Yii::$app->cache,
             [
-                TagDependency::getCommonTag($this->className()),
+                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
                 'Page:'.$this->id.':0'
             ]
         );
@@ -204,7 +203,7 @@ class Page extends ActiveRecord
         \yii\caching\TagDependency::invalidate(
             Yii::$app->cache,
             [
-                TagDependency::getCommonTag($this->className()),
+                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
                 'Page:'.$this->id.':1'
             ]
         );
@@ -259,7 +258,7 @@ class Page extends ActiveRecord
                     86400,
                     new \yii\caching\TagDependency([
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag(static::className())
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
                         ]
                     ])
                 );

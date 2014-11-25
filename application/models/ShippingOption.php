@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\behaviors\TagDependency;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -24,7 +23,7 @@ class ShippingOption extends ActiveRecord
     {
         return [
             [
-                'class' => TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
     }

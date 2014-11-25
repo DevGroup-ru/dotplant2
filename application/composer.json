@@ -33,7 +33,8 @@
         "vova07/yii2-imperavi-widget": "*",
         "thiagotalma/yii2-jstree": "*",
         "smottt/wideimage": "dev-master",
-        "elasticsearch/elasticsearch": "~1.0"
+        "elasticsearch/elasticsearch": "~1.0",
+        "devgroup/yii2-tag-dependency-helper": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

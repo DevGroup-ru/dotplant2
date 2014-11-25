@@ -33,7 +33,7 @@ class View extends ActiveRecord
     {
         return [
             [
-                'class' => \app\behaviors\TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -115,7 +115,7 @@ class View extends ActiveRecord
                 new TagDependency(
                     [
                         'tags' => [
-                            \app\behaviors\TagDependency::getCommonTag(static::className()),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className()),
                         ],
                     ]
                 )

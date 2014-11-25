@@ -187,7 +187,7 @@ class ViewController extends Controller
                     86400,
                     new TagDependency(
                         [
-                            'tags' => [\app\behaviors\TagDependency::getCommonTag(View::className())]
+                            'tags' => [\devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(View::className())]
                         ]
                     )
                 );

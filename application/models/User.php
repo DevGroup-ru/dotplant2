@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\behaviors\TagDependency;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use Yii;
@@ -81,7 +80,7 @@ class User extends ActiveRecord implements IdentityInterface
                 'updatedAtAttribute' => 'update_time',
             ],
             [
-                'class' => TagDependency::className(),
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
             [
                 'class' => HasProperties::className(),
