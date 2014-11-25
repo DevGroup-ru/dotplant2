@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
         );
     ?>
     <?= \yii\helpers\Html::activeHiddenInput($model, 'object') ?>
-    <div class="form-group row">
+    <div class="form-group row fields-to-import">
     <div class="col-md-6">
     <?= \yii\helpers\Html::checkboxList(
             'ImportModel[fields][object][]',
@@ -110,10 +110,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <script>
     $(function() {
         $('#select_all').on('click', function() {
-            $('input:checkbox').prop('checked', true);
+            $('.fields-to-import input:checkbox').prop('checked', true);
         });
         $('#unselect_all').on('click', function() {
-            $('input:checkbox').prop('checked', false);
+            $('.fields-to-import input:checkbox').prop('checked', false);
         });
     });
 </script>

@@ -128,7 +128,7 @@ abstract class Import extends Component
                         $propertiesData[$field] = $properties[$field];
                     }
                 }
-                
+
                 if (!empty($propertiesData)) {
                     $objectModel->saveProperties(
                         [
