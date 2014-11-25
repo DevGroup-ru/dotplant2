@@ -13,7 +13,7 @@ class PlatronPayment extends AbstractPayment
 {
     protected $merchantId;
     protected $secretKey;
-    protected $currency = 'RUR';
+    protected $strCurrency = 'RUR';
     protected $merchantUrl = 'www.platron.ru';
     protected $merchantScriptName = 'payment.php';
 
@@ -24,7 +24,7 @@ class PlatronPayment extends AbstractPayment
         $arrReq = [
             'pg_merchant_id' => $this->merchantId,
             'pg_order_id' => $transaction->id,
-            'pg_currency' => $this->currency,
+            'pg_currency' => $this->strCurrency,
             'pg_amount' => $transaction->total_sum,
             'pg_lifetime' => 3600 * 24,
             'pg_description' => \Yii::t('shop', 'Payment of order #{orderId}', ['orderId' => $order->id]),
