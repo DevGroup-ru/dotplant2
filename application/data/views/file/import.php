@@ -18,7 +18,15 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <?php if (isset($fields['object']) && !empty($fields['object'])) : ?>
-    <?= \yii\helpers\Html::beginForm('', 'post', ['class' => 'form-horizontal', 'enctype' => 'multipart/form-data']) ?>
+    <?php
+        $form = ActiveForm::begin([
+            'id' => 'form-form',
+            'type'=>ActiveForm::TYPE_HORIZONTAL,
+            'options' => [
+                'enctype' => 'multipart/form-data',
+            ],
+        ]);
+    ?>
     <?php
         BackendWidget::begin(
             [
@@ -34,9 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= \yii\helpers\Html::activeHiddenInput($model, 'object') ?>
     <div class="form-group row fields-to-import">
     <div class="col-md-6">
-    <?= \yii\helpers\Html::checkboxList(
-            'ImportModel[fields][object][]',
-            isset($model->fields['object']) ? $model->fields['object'] : [],
+    <?= $form->field($model, 'fields[object][]')->checkboxList(
             $fields['object'],
             [
                 'item' => function ($index, $label, $name, $checked, $value) {
@@ -53,9 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <?php if (isset($fields['property']) && !empty($fields['property'])): ?>
         <div class="col-md-6">
-        <?= \yii\helpers\Html::checkboxList(
-            'ImportModel[fields][property][]',
-            isset($model->fields['property']) ? $model->fields['property'] : [],
+        <?= $form->field($model, 'fields[property][]')->checkboxList(
             $fields['property'],
             [
                 'item' => function ($index, $label, $name, $checked, $value) {
@@ -92,14 +96,14 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="form-group row">
         <div class="col-md-12">
-            <?= \yii\helpers\Html::activeFileInput($model, 'file') ?>
+            <?= $form->field($model, 'file')->fileInput() ?>
         </div>
     </div>
     <div class="form-group row">
         <div class="col-md-12">
             <fieldset>
                 <legend><?= Yii::t('app', 'Add property groups to each new object: ') ?></legend>
-                <?= Html::activeCheckboxList($model, 'addPropertyGroups', $availablePropertyGroups) ?>
+                <?= $form->field($model, 'addPropertyGroups')->checkboxList($availablePropertyGroups)->label('') ?>
             </fieldset>
         </div>
     </div>
@@ -107,12 +111,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-md-12">
             <fieldset>
                 <legend><?= Yii::t('app', 'Settings') ?></legend>
-                <?= Html::activeCheckbox($model, 'createIfNotExists') ?>
+                <?= $form->field($model, 'createIfNotExists')->checkbox() ?>
             </fieldset>
         </div>
     </div>
     <?php BackendWidget::end(); ?>
-    <?= \yii\helpers\Html::endForm() ?>
+    <?php ActiveForm::end() ?>
 <?php endif; ?>
 
 <script>
