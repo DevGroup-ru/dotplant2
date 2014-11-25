@@ -111,6 +111,9 @@ abstract class Import extends Component
             if ($objectModel->save()) {
 
                 // add PropertyGroup to object
+                if (!is_array($this->addPropertyGroups)) {
+                    $this->addPropertyGroups = [];
+                }
                 foreach ($this->addPropertyGroups as $propertyGroupId) {
                     $model = new ObjectPropertyGroup();
                     $model->object_id = $this->object->id;
