@@ -19,6 +19,7 @@
         "yiisoft/yii2-imagine": "*",
         "bethrezen/yii2-cached-rbac-dbmanager": "*",
         "kartik-v/yii2-widgets": "dev-master",
+        "kartik-v/yii2-krajee-base": "1.2.0",
         "kartik-v/yii2-dynagrid": "dev-master",
         "kartik-v/yii2-datecontrol": "dev-master",
         "kartik-v/yii2-context-menu": "dev-master",
