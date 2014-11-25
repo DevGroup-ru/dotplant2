@@ -30,7 +30,8 @@ class ObjectPropertyGroup extends ActiveRecord
     {
         return [
             [['object_id', 'object_model_id', 'property_group_id'], 'required'],
-            [['object_id', 'object_model_id', 'property_group_id'], 'integer']
+            [['object_id', 'object_model_id', 'property_group_id'], 'integer'],
+            [['object_id', 'object_model_id', 'property_group_id'], 'unique', 'targetAttribute' => ['object_id', 'object_model_id', 'property_group_id'], 'message' => 'Property group is already binded'],
         ];
     }
 
