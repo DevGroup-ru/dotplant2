@@ -7,7 +7,7 @@ use app\seo\models\Counter;
 use app\seo\models\Meta;
 use app\seo\models\Redirect;
 use app\seo\models\Robots;
-use app\widgets\ace\AceHelper;
+use devgroup\ace\AceHelper;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
