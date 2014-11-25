@@ -2,45 +2,73 @@
 
 namespace app\widgets;
 
-use yii\helpers\Html;
-
 /**
- * Alert widget renders a message from session flash. You can set message as following:
+ * Alert widget renders a message from session flash. All flash messages are displayed
+ * in the sequence they were assigned using setFlash. You can set message as following:
  *
- * - \Yii::$app->getSession()->setFlash('error', 'This is the message');
- * - \Yii::$app->getSession()->setFlash('success', 'This is the message');
- * - \Yii::$app->getSession()->setFlash('info', 'This is the message');
+ * ```php
+ * \Yii::$app->getSession()->setFlash('error', 'This is the message');
+ * \Yii::$app->getSession()->setFlash('success', 'This is the message');
+ * \Yii::$app->getSession()->setFlash('info', 'This is the message');
+ * ```
  *
- * @author Alexander Makarov <sam@rmcerative.ru>
+ * Multiple messages could be set as follows:
+ *
+ * ```php
+ * \Yii::$app->getSession()->setFlash('error', ['Error 1', 'Error 2']);
+ * ```
+ *
+ * @author Kartik Visweswaran <kartikv2@gmail.com>
+ * @author Alexander Makarov <sam@rmcreative.ru>
  */
-class Alert extends \yii\bootstrap\Alert
+class Alert extends \yii\bootstrap\Widget
 {
-    private $doNotRender = false;
+    /**
+     * @var array the alert types configuration for the flash messages.
+     * This array is setup as $key => $value, where:
+     * - $key is the name of the session flash variable
+     * - $value is the bootstrap alert type (i.e. danger, success, info, warning)
+     */
+    public $alertTypes = [
+        'error'   => 'alert-danger',
+        'danger'  => 'alert-danger',
+        'success' => 'alert-success',
+        'info'    => 'alert-info',
+        'warning' => 'alert-warning'
+    ];
+
+    /**
+     * @var array the options for rendering the close button tag.
+     */
+    public $closeButton = [];
 
     public function init()
     {
-        // @todo думаю надо прогонять все это в цикле и рендерить все алерты
-        if ($this->body = \Yii::$app->getSession()->getFlash('error', null, true)) {
-            Html::addCssClass($this->options, 'alert-danger');
-        } elseif ($this->body = \Yii::$app->getSession()->getFlash('success', null, true)) {
-            Html::addCssClass($this->options, 'alert-success');
-        } elseif ($this->body = \Yii::$app->getSession()->getFlash('info', null, true)) {
-            Html::addCssClass($this->options, 'alert-info');
-        } elseif ($this->body = \Yii::$app->getSession()->getFlash('warning', null, true)) {
-            Html::addCssClass($this->options, 'alert-warning');
-        } elseif ($this->body = \Yii::$app->getSession()->getFlash('danger', null, true)) {
-            Html::addCssClass($this->options, 'alert-danger');
-        } else {
-            $this->doNotRender = true;
-            return;
-        }
         parent::init();
-    }
 
-    public function run()
-    {
-        if (!$this->doNotRender) {
-            parent::run();
+        $session = \Yii::$app->getSession();
+        $flashes = $session->getAllFlashes();
+        $appendCss = isset($this->options['class']) ? ' ' . $this->options['class'] : '';
+
+        foreach ($flashes as $type => $data) {
+            if (isset($this->alertTypes[$type])) {
+                $data = (array) $data;
+                foreach ($data as $message) {
+                    /* initialize css class for each alert box */
+                    $this->options['class'] = $this->alertTypes[$type] . $appendCss;
+
+                    /* assign unique id to each alert box */
+                    $this->options['id'] = $this->getId() . '-' . $type;
+
+                    echo \yii\bootstrap\Alert::widget([
+                        'body' => $message,
+                        'closeButton' => $this->closeButton,
+                        'options' => $this->options,
+                    ]);
+                }
+
+                $session->removeFlash($type);
+            }
         }
     }
 }
