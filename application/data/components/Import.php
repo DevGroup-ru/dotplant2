@@ -3,6 +3,7 @@
 namespace app\data\components;
 
 use app\models\Object;
+use app\models\ObjectPropertyGroup;
 use app\models\Property;
 use app\models\PropertyGroup;
 use Yii;
@@ -16,6 +17,7 @@ abstract class Import extends Component
     protected $object;
     protected $properties = null;
     public $filename;
+    public $addPropertyGroups = [];
 
     abstract public function getData($importFields);
     abstract public function setData($exportFields);
@@ -107,18 +109,33 @@ abstract class Import extends Component
         if ($objectModel) {
             $objectModel->load([$objectModel->formName() => $objectData]);
             if ($objectModel->save()) {
+
+                // add PropertyGroup to object
+                foreach ($this->addPropertyGroups as $propertyGroupId) {
+                    $model = new ObjectPropertyGroup();
+                    $model->object_id = $this->object->id;
+                    $model->object_model_id = $objectModel->id;
+                    $model->property_group_id = $propertyGroupId;
+                    $model->save();
+                }
+                if (count($this->addPropertyGroups) > 0) {
+                    $objectModel->updatePropertyGroupsInformation();
+                }
+
                 $propertiesData = [];
                 foreach ($propertiesFields as $field) {
                     if (isset($properties[$field])) {
                         $propertiesData[$field] = $properties[$field];
                     }
                 }
+                
                 if (!empty($propertiesData)) {
                     $objectModel->saveProperties(
                         [
                             "Properties_{$objectModel->formName()}_{$objectModel->id}" => $propertiesData
                         ]
                     );
+
                 }
             } else {
                 throw new \Exception('Cannot save object');

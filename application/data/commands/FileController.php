@@ -45,6 +45,7 @@ class FileController extends Controller
                             'object' => $object,
                             'filename' => $filename,
                             'type' => $model->type,
+                            'addPropertyGroups' => $model->addPropertyGroups,
                         ]
                     );
                     if ($import->setData($model->fields)) {

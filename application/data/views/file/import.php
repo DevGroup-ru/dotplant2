@@ -95,6 +95,14 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= \yii\helpers\Html::activeFileInput($model, 'file') ?>
         </div>
     </div>
+    <div class="form-group row">
+        <div class="col-md-12">
+            <fieldset>
+                <legend><?= Yii::t('app', 'Add property groups to each new object: ') ?></legend>
+                <?= Html::activeCheckboxList($model, 'addPropertyGroups', $availablePropertyGroups) ?>
+            </fieldset>
+        </div>
+    </div>
     <?php BackendWidget::end(); ?>
     <?= \yii\helpers\Html::endForm() ?>
 <?php endif; ?>

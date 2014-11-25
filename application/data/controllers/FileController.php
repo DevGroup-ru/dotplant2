@@ -10,6 +10,7 @@ use app\backgroundtasks\helpers\BackgroundTasks;
 use app\data\components\Import;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 
@@ -103,11 +104,15 @@ class FileController extends Controller
                     return $this->redirect(['/data/file']);
                 }
             }
+
+            $availablePropertyGroups = ArrayHelper::map(\app\models\PropertyGroup::getForObjectId($object->id), 'id', 'name');
+
             \Yii::$app->session->setFlash('info', \Yii::t('app', 'Specify fields to import and select the file'));
             return $this->render('import', [
                 'model' => $model,
                 'object' => $object,
-                'fields' => $fieldList
+                'fields' => $fieldList,
+                'availablePropertyGroups' => $availablePropertyGroups,
             ]);
         } else {
             \Yii::$app->session->setFlash('error', \Yii::t('app', 'Object not found'));

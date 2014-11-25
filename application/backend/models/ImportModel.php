@@ -16,6 +16,7 @@ class ImportModel extends Model implements \Serializable
     public $file;
     public $fields;
     public $type;
+    public $addPropertyGroups=[];
 
     public function getFilename($prefix = '')
     {
@@ -46,6 +47,7 @@ class ImportModel extends Model implements \Serializable
             [['object'], 'integer'],
             [['object'], 'required'],
             [['fields', 'type'], 'safe'],
+            [['addPropertyGroups'], 'safe'],
         ];
     }
 
@@ -76,6 +78,7 @@ class ImportModel extends Model implements \Serializable
             'fields' => $this->fields,
             'type' => $this->type,
             'user' => Yii::$app->user->id,
+            'addPropertyGroups' => $this->addPropertyGroups,
         ]);
     }
 
@@ -87,5 +90,6 @@ class ImportModel extends Model implements \Serializable
         $this->fields = $fields['fields'];
         $this->type = $fields['type'];
         $this->user = $fields['user'];
+        $this->addPropertyGroups = $fields['addPropertyGroups'];
     }
 }

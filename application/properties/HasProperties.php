@@ -97,13 +97,7 @@ class HasProperties extends Behavior
             }
         }
         if ($should_update) {
-            $this->owner->invalidateTags();
-            $this->table_inheritance_row = null;
-            $this->eav_rows = null;
-            $this->static_values = null;
-            $this->abstract_model = null;
-            $this->property_key_to_id = [];
-            $this->getPropertyGroups(true);
+            $this->updatePropertyGroupsInformation();
         }
         if (isset($data['Properties_'.$this->owner->formName().'_'.$this->owner->id])) {
             $my_data = $data['Properties_'.$this->owner->formName().'_'.$this->owner->id];
@@ -122,6 +116,17 @@ class HasProperties extends Behavior
             }
             $this->abstract_model->updateValues($new_values_for_abstract, $this->getObject()->id, $this->owner->id);
         }
+    }
+
+    public function updatePropertyGroupsInformation()
+    {
+        $this->owner->invalidateTags();
+        $this->table_inheritance_row = null;
+        $this->eav_rows = null;
+        $this->static_values = null;
+        $this->abstract_model = null;
+        $this->property_key_to_id = [];
+        $this->getPropertyGroups(true);
     }
 
     public function getAbstractModel()
