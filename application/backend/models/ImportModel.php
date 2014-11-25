@@ -17,6 +17,7 @@ class ImportModel extends Model implements \Serializable
     public $fields;
     public $type;
     public $addPropertyGroups=[];
+    public $createIfNotExists = false;
 
     public function getFilename($prefix = '')
     {
@@ -48,6 +49,7 @@ class ImportModel extends Model implements \Serializable
             [['object'], 'required'],
             [['fields', 'type'], 'safe'],
             [['addPropertyGroups'], 'safe'],
+            [['createIfNotExists'], 'boolean'],
         ];
     }
 
@@ -68,6 +70,7 @@ class ImportModel extends Model implements \Serializable
             'object' => \Yii::t('app', 'Object'),
             'fields' => \Yii::t('app', 'Fields'),
             'type' => \Yii::t('app', 'Type'),
+            'createIfNotExists' => \Yii::t('app', 'Create record with supplied internal_id as ID if not exists.'),
         ];
     }
 
@@ -78,7 +81,8 @@ class ImportModel extends Model implements \Serializable
             'fields' => $this->fields,
             'type' => $this->type,
             'user' => Yii::$app->user->id,
-            'addPropertyGroups' => $this->addPropertyGroups,
+            'addPropertyGroups' => is_array($this->addPropertyGroups)?$this->addPropertyGroups:[],
+            'createIfNotExists' => $this->createIfNotExists,
         ]);
     }
 
@@ -91,5 +95,6 @@ class ImportModel extends Model implements \Serializable
         $this->type = $fields['type'];
         $this->user = $fields['user'];
         $this->addPropertyGroups = $fields['addPropertyGroups'];
+        $this->createIfNotExists = $fields['createIfNotExists'];
     }
 }

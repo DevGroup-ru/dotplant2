@@ -18,6 +18,7 @@ abstract class Import extends Component
     protected $properties = null;
     public $filename;
     public $addPropertyGroups = [];
+    public $createIfNotExists = false;
 
     abstract public function getData($importFields);
     abstract public function setData($exportFields);
@@ -94,7 +95,15 @@ abstract class Import extends Component
         $class = $this->object->object_class;
         if ($objectId > 0) {
             /** @var ActiveRecord $objectModel */
-            $objectModel = $class::findById($objectId);
+            $objectModel = $class::findOne($objectId);
+            if (!is_object($objectModel)) {
+                if ($this->createIfNotExists === true) {
+                    $objectModel = new $class;
+                    $objectModel->id = $objectId;
+                } else {
+                    return;
+                }
+            }
             $objectData = [];
             foreach ($objectFields as $field) {
                 if (isset($object[$field])) {

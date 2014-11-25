@@ -103,6 +103,14 @@ $this->params['breadcrumbs'][] = $this->title;
             </fieldset>
         </div>
     </div>
+    <div class="form-group row">
+        <div class="col-md-12">
+            <fieldset>
+                <legend><?= Yii::t('app', 'Settings') ?></legend>
+                <?= Html::activeCheckbox($model, 'createIfNotExists') ?>
+            </fieldset>
+        </div>
+    </div>
     <?php BackendWidget::end(); ?>
     <?= \yii\helpers\Html::endForm() ?>
 <?php endif; ?>

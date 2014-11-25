@@ -46,6 +46,7 @@ class FileController extends Controller
                             'filename' => $filename,
                             'type' => $model->type,
                             'addPropertyGroups' => $model->addPropertyGroups,
+                            'createIfNotExists' => boolval($model->createIfNotExists),
                         ]
                     );
                     if ($import->setData($model->fields)) {
