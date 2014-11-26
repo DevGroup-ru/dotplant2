@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><?= Yii::t('app', 'Cancel') ?></button>
-                <button type="button" class="btn btn-success" id="modal-apply">Yii::t('app', 'Choose')</button>
+                <button type="button" class="btn btn-success" id="modal-apply"><?=Yii::t('app', 'Choose')?></button>
             </div>
         </div>
     </div>
