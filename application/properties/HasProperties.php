@@ -101,6 +101,16 @@ class HasProperties extends Behavior
         }
         if (isset($data['Properties_'.$this->owner->formName().'_'.$this->owner->id])) {
             $my_data = $data['Properties_'.$this->owner->formName().'_'.$this->owner->id];
+
+            if (isset($data['AddProperty'])) {
+                // admin clicked add property button for multiple properties
+                if (!isset($my_data[$data['AddProperty']])) {
+                    $my_data[$data['AddProperty']] = [];
+                }
+                $my_data[$data['AddProperty']][] = '';
+
+            }
+
             $new_values_for_abstract = [];
             foreach ($my_data as $property_key => $values) {
                 if (isset($this->property_key_to_id[$property_key])) {
@@ -114,6 +124,7 @@ class HasProperties extends Behavior
                     $new_values_for_abstract[$property_key] = $val;
                 }
             }
+
             $this->abstract_model->updateValues($new_values_for_abstract, $this->getObject()->id, $this->owner->id);
         }
     }

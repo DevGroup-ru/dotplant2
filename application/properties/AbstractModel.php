@@ -21,6 +21,17 @@ class AbstractModel extends Model
     private $properties_models = [];
     private $rules = [];
 
+    /**
+     * Changes to behavior of getter and PropertyValue->toVal() to array mode.
+     * Useful in backend when you want to edit multiple-valued properties.
+     * @var bool
+     */
+    private $arrayMode = false;
+
+    public function setArrayMode($value) {
+        $this->arrayMode = $value;
+    }
+
     public function setFormName($name)
     {
         $this->form_name = $name;
@@ -75,7 +86,7 @@ class AbstractModel extends Model
     public function __get($name)
     {
         if (isset($this->values_by_property_key[$name])) {
-            return $this->values_by_property_key[$name]->toValue();
+            return $this->values_by_property_key[$name]->toValue($this->arrayMode);
         }
         return parent::__get($name);
     }

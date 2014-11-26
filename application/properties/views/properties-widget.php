@@ -78,7 +78,7 @@ $this->endBlock();
 <div class="tab-content">
 
 <?php
-
+$model->getAbstractModel()->setArrayMode(true);
 foreach ($object_property_groups as $i => $opg) {
     echo '<div class="tab-pane';
     if ($i==0) {
@@ -89,6 +89,7 @@ foreach ($object_property_groups as $i => $opg) {
     
     foreach ($properties as $prop) {
         $property_values = $model->getPropertyValuesByPropertyId($prop->id);
+
         echo $prop->handler($form, $model->getAbstractModel(), $property_values, 'backend_edit_view');
 
     }

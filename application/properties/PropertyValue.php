@@ -29,7 +29,7 @@ class PropertyValue
         return implode(", ", $actual_values);
     }
 
-    public function toValue()
+    public function toValue($arrayMode=false)
     {
         $actual_values = [];
         foreach ($this->values as $val) {
@@ -39,6 +39,10 @@ class PropertyValue
                 $actual_values[] = $val['value'];
             }
         }
-        return implode(", ", $actual_values);
+        if ($arrayMode === true) {
+            return $actual_values;
+        } else {
+            return implode(", ", $actual_values);
+        }
     }
 }
