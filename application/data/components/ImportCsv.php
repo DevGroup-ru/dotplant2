@@ -36,7 +36,20 @@ class ImportCsv extends Import
                         $objData[$attribute] = (isset($titleFields[$attribute])) ? $row[$titleFields[$attribute]] : '';
                     }
                     foreach ($propAttributes as $attribute) {
-                        $propData[$attribute] = (isset($titleFields[$attribute])) ? $row[$titleFields[$attribute]] : '';
+                        $propValue = (isset($titleFields[$attribute])) ? $row[$titleFields[$attribute]] : '';
+                        if (!empty($this->propertyMultipleValuesDelimiter)) {
+                            if (strpos($propValue, $this->propertyMultipleValuesDelimiter) > 0) {
+                                $values = explode($this->propertyMultipleValuesDelimiter, $propValue);
+                                $propValue = [];
+                                foreach($values as $value) {
+                                    $value = trim($value);
+                                    if (!empty($value)) {
+                                        $propValue[] = $value;
+                                    }
+                                }
+                            }
+                        }
+                        $propData[$attribute] = $propValue;
                     }
                     $objectId = isset($titleFields['internal_id']) ? $row[$titleFields['internal_id']] : 0;
                     $this->save($objectId, $objData, $importFields['object'], $propData, $importFields['property']);

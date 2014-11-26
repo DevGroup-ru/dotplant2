@@ -10,6 +10,7 @@ use app\backgroundtasks\helpers\BackgroundTasks;
 use app\data\components\Import;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\helpers\Json;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\UploadedFile;
@@ -91,7 +92,7 @@ class FileController extends Controller
                                 'name' => 'import',
                                 'description' => "import {$model->object}",
                                 'action' => 'data/file/import',
-                                'params' => serialize($model),
+                                'params' => $model->serialize(),
                                 'init_event' => 'import',
                             ]);
                             \Yii::$app->session->setFlash('info', \Yii::t('app', 'Task is queued. Come back later.'));
@@ -163,7 +164,7 @@ class FileController extends Controller
                                 'name' => 'export',
                                 'description' => "export {$model->object}",
                                 'action' => 'data/file/export',
-                                'params' => serialize($model),
+                                'params' => $model->serialize(),
                                 'init_event' => 'export',
                             ]);
                             \Yii::$app->session->setFlash('info', \Yii::t('app', 'Task is queued. Come back later.'));

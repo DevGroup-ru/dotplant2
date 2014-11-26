@@ -19,6 +19,7 @@ abstract class Import extends Component
     public $filename;
     public $addPropertyGroups = [];
     public $createIfNotExists = false;
+    public $propertyMultipleValuesDelimiter = '|';
 
     abstract public function getData($importFields);
     abstract public function setData($exportFields);

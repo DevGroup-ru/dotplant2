@@ -9,6 +9,7 @@ use app\models\Object;
 use yii\console\Controller;
 use yii\console\Exception;
 
+
 /**
  * Import/export
  * @package app\data\commands
@@ -18,7 +19,8 @@ class FileController extends Controller
     public function actionImport($importModel)
     {
         /** @var ImportModel $model */
-        $model = unserialize($importModel);
+        $model = new ImportModel();
+        $model->unserialize($importModel);
 
         if ($model->validate()) {
             /** @var Export $exportStatus */
@@ -47,6 +49,7 @@ class FileController extends Controller
                             'type' => $model->type,
                             'addPropertyGroups' => $model->addPropertyGroups,
                             'createIfNotExists' => boolval($model->createIfNotExists),
+                            'propertyMultipleValuesDelimiter' => $model->propertyMultipleValuesDelimiter,
                         ]
                     );
                     if ($import->setData($model->fields)) {
@@ -73,10 +76,11 @@ class FileController extends Controller
         }
     }
 
-    public function actionExport($inputModel)
+    public function actionExport($importModel)
     {
         /** @var ImportModel $model */
-        $model = unserialize($inputModel);
+        $model = new ImportModel();
+        $model->unserialize($importModel);
 
         if ($model->validate()) {
             /** @var Export $exportStatus */

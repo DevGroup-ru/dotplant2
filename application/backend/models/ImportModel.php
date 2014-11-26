@@ -4,6 +4,7 @@ namespace app\backend\models;
 
 use Yii;
 use yii\base\Model;
+use yii\helpers\Json;
 use yii\web\UploadedFile;
 
 class ImportModel extends Model implements \Serializable
@@ -16,8 +17,25 @@ class ImportModel extends Model implements \Serializable
     public $file;
     public $fields;
     public $type;
+
+    /**
+     * Array of PropertyGroup's ids to add to each record
+     * @var array
+     */
     public $addPropertyGroups=[];
+
+    /**
+     * Should we create new record if supplied 'internal_id' doesn't exist
+     * @var bool
+     */
     public $createIfNotExists = false;
+
+    /**
+     * Delimiter for multiple values of property which were supplied in one field
+     * @var string
+     */
+    public $propertyMultipleValuesDelimiter = '|';
+
 
     public function getFilename($prefix = '')
     {
@@ -48,7 +66,7 @@ class ImportModel extends Model implements \Serializable
             [['object'], 'integer'],
             [['object'], 'required'],
             [['fields', 'type'], 'safe'],
-            [['addPropertyGroups'], 'safe'],
+            [['addPropertyGroups', 'propertyMultipleValuesDelimiter'], 'safe'],
             [['createIfNotExists'], 'boolean'],
         ];
     }
@@ -76,19 +94,20 @@ class ImportModel extends Model implements \Serializable
 
     public function serialize()
     {
-        return serialize([
+        return Json::encode([
             'object' => $this->object,
             'fields' => $this->fields,
             'type' => $this->type,
             'user' => Yii::$app->user->id,
-            'addPropertyGroups' => is_array($this->addPropertyGroups)?$this->addPropertyGroups:[],
+            'addPropertyGroups' => is_array($this->addPropertyGroups) ? $this->addPropertyGroups : [],
             'createIfNotExists' => $this->createIfNotExists,
+            'propertyMultipleValuesDelimiter' => $this->propertyMultipleValuesDelimiter,
         ]);
     }
 
     public function unserialize($serialized)
     {
-        $fields = unserialize($serialized);
+        $fields = Json::decode($serialized);
 
         $this->object = $fields['object'];
         $this->fields = $fields['fields'];
@@ -96,5 +115,6 @@ class ImportModel extends Model implements \Serializable
         $this->user = $fields['user'];
         $this->addPropertyGroups = $fields['addPropertyGroups'];
         $this->createIfNotExists = $fields['createIfNotExists'];
+        $this->propertyMultipleValuesDelimiter = $fields['propertyMultipleValuesDelimiter'];
     }
 }

@@ -112,6 +112,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <fieldset>
                 <legend><?= Yii::t('app', 'Settings') ?></legend>
                 <?= $form->field($model, 'createIfNotExists')->checkbox() ?>
+                <?= $form->field($model, 'propertyMultipleValuesDelimiter') ?>
             </fieldset>
         </div>
     </div>
