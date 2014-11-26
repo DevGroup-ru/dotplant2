@@ -36,9 +36,12 @@ $(function(){
                 }
                 break;
             case 'select_node':
-                $('<option />').attr('value', data.node.id).text(data.node.text).appendTo($select);
+                if ($("#<?=$id?>-select").find('option[value='+data.node.id+']').length === 0) {
+                    $('<option />').attr('value', data.node.id).text(data.node.text).appendTo($select);
+                }
                 <?php if ($selectParents): ?>
                 data.instance.select_node(data.node.parent);
+
                 <?php endif; ?>
                 break;
             case 'deselect_node':
