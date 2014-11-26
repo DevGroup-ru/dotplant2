@@ -70,6 +70,7 @@ class Product extends ActiveRecord
             [['slug'], 'string', 'max' => 80],
             [['slug_compiled'], 'string', 'max' => 180],
             [['old_price', 'price'], 'default', 'value' => 0,],
+            [['active'], 'default', 'value'=>1],
 
         ];
     }

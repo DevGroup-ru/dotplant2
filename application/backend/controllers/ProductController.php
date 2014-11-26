@@ -123,6 +123,7 @@ class ProductController extends Controller
         $parent = null;
         if (null === $id) {
             $model = new Product();
+            $model->loadDefaultValues();
         } else {
             $model = Product::findById($id, null, null);
             if ((null !== $model) && ($model->parent_id > 0)) {
