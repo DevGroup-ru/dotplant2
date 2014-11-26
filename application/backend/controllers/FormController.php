@@ -49,7 +49,7 @@ class FormController extends Controller
     public function actionEdit($id = null)
     {
         $model = new Form();
-        if ($id != null) {
+        if ($id > 0) {
             $model = Form::findOne($id);
         }
 
@@ -163,7 +163,7 @@ class FormController extends Controller
     public function actionViewSubmission($id)
     {
         $submission = Submission::findOne($id);
-        if ($submission == null) {
+        if ($submission === null) {
             throw new NotFoundHttpException('Submission not found');
         }
 

@@ -88,7 +88,7 @@ class NewsletterController extends Controller
 
         $model = SubscribeEmail::findOne($condition);
 
-        if (null != $model) {
+        if (null !== $model) {
             SubscribeEmail::deleteAll($condition);
         }
 

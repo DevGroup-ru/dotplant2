@@ -16,7 +16,7 @@ class ProductCompareListWidget extends Widget
     {
         parent::run();
         $model_id = Yii::$app->request->get('model_id');
-        if (null == $model_id) {
+        if (null === $model_id) {
             return "<!-- Can't render the widget - model_id not found in request -->";
         }
         $cacheKey = "Product: " . $model_id;

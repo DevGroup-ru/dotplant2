@@ -27,7 +27,7 @@ class YandexSpamChecker implements SpamCheckable
         $query = http_build_query($this->data);
 
         $curl = curl_init();
-        if ($curl == false) {
+        if ($curl === false) {
             return [
                 'ok' => "0",
                 'message' => 'curl_init failed'
@@ -42,7 +42,7 @@ class YandexSpamChecker implements SpamCheckable
         $response = curl_exec($curl);
         curl_close($curl);
 
-        if ($response == false) {
+        if ($response === false) {
             return [
                 'ok' => "0",
                 'message' => curl_error($curl)

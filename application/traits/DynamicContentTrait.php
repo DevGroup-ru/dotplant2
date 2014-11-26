@@ -62,7 +62,7 @@ trait DynamicContentTrait
                 if (count($selections['properties']) != count($model_selections)) {
                     $matches = false;
                 }
-                if ($matches == true) {
+                if ($matches === true) {
                     if (!empty($model->content_block_name)) {
                         $this->view->blocks[$model->content_block_name] = $model->content;
                     }
