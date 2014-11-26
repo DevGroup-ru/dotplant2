@@ -36,7 +36,7 @@ $this->params['breadcrumbs'] = [
             <?=
                 $form->field($model, 'params')
                     ->widget(
-                        \app\backend\widgets\jsoneditor\Jsoneditor::className(),
+                        \devgroup\jsoneditor\Jsoneditor::className(),
                         [
                             'editorOptions' => [
                                 'modes' => ['code', 'tree'],

@@ -35,7 +35,7 @@ $this->params['breadcrumbs'] = [
             );
         ?>
             <?=
-                \app\backend\widgets\jsoneditor\Jsoneditor::widget(
+                \devgroup\jsoneditor\Jsoneditor::widget(
                     [
                         'editorOptions' => [
                             'modes' => ['tree'],

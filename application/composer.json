@@ -36,7 +36,8 @@
         "smottt/wideimage": "dev-master",
         "elasticsearch/elasticsearch": "~1.0",
         "devgroup/yii2-tag-dependency-helper": "*",
-        "devgroup/yii2-ace-widget": "*"
+        "devgroup/yii2-ace-widget": "*",
+        "devgroup/yii2-jsoneditor": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
