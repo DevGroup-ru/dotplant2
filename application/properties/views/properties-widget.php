@@ -112,7 +112,7 @@ $(function(){
                 'AddPropetryGroup[' + data.form_name + ']'
             ).val(data.id);
         $form.append($hidden);
-        $form.trigger('submit');
+        $form.find(":submit:first").mouseup().click();
         
         return false;
     });

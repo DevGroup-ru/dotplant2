@@ -16,6 +16,7 @@ $(function(){
         for (var key in ids) {
             $('<input />').attr('type', 'hidden').attr('name', '<?= Html::getInputName($model, $fieldName) . ($multiple ? '[]' : ''); ?>').attr('value', ids[key]).appendTo($('#<?= $id; ?>'));
         }
+        return true;
     });
     $("#<?= $id; ?>-jstree").bind("dblclick.jstree", function (event) {
         var $object = $(event.target).closest("a");
