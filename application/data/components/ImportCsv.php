@@ -38,14 +38,19 @@ class ImportCsv extends Import
                     foreach ($propAttributes as $attribute) {
                         $propValue = (isset($titleFields[$attribute])) ? $row[$titleFields[$attribute]] : '';
                         if (!empty($this->propertyMultipleValuesDelimiter)) {
+
                             if (strpos($propValue, $this->propertyMultipleValuesDelimiter) > 0) {
                                 $values = explode($this->propertyMultipleValuesDelimiter, $propValue);
-                                $propValue = [];
-                                foreach($values as $value) {
-                                    $value = trim($value);
-                                    if (!empty($value)) {
-                                        $propValue[] = $value;
-                                    }
+                            } elseif (strpos($this->propertyMultipleValuesDelimiter, '/') === 0) {
+                                $values = preg_split($this->propertyMultipleValuesDelimiter, $propValue);
+                            } else {
+                                $values = [$propValue];
+                            }
+                            $propValue = [];
+                            foreach($values as $value) {
+                                $value = trim($value);
+                                if (!empty($value)) {
+                                    $propValue[] = $value;
                                 }
                             }
                         }

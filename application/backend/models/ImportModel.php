@@ -32,6 +32,7 @@ class ImportModel extends Model implements \Serializable
 
     /**
      * Delimiter for multiple values of property which were supplied in one field
+     * Can be regexp starting with a slash - then preg_split used
      * @var string
      */
     public $propertyMultipleValuesDelimiter = '|';
