@@ -7,17 +7,19 @@ use \yii\helpers\Html;
 
 ?>
 
-<?= $form->field($model, 'fields[object][]')->checkboxList(
-    $fields['object'],
-    [
-        'item' => function ($index, $label, $name, $checked, $value) {
-            $line = Html::beginTag('div', ['class' => 'checkbox']);
-            $line .= Html::checkbox($name, $checked, [
-                'value' => $value,
-                'label' => Html::encode($label),
-            ]);
-            $line .= '</div>';
-            return $line;
-        }
-    ]
-) ?>
+<?=
+    $form->field($model, 'fields[object][]')->checkboxList(
+        $fields['object'],
+        [
+            'item' => function ($index, $label, $name, $checked, $value) {
+                $line = Html::beginTag('div', ['class' => 'checkbox']);
+                $line .= Html::checkbox($name, $checked, [
+                    'value' => $value,
+                    'label' => Html::encode($label),
+                ]);
+                $line .= '</div>';
+                return $line;
+            }
+        ]
+    )
+?>
