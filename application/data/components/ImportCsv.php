@@ -8,6 +8,7 @@ class ImportCsv extends Import
 {
     public function setData($importFields)
     {
+
         if (!isset($importFields['object'])) {
             $importFields['object'] = [];
         }
@@ -78,10 +79,21 @@ class ImportCsv extends Import
         $propertiesFields = isset($exportFields['property']) ? $exportFields['property'] : [];
         $class = $this->object->object_class;
         $objectFields = array_merge($objectFields, ['internal_id']);
-        $title = array_merge($objectFields, $propertiesFields);
+
+        /** @var array $propertiesKeys used for titles */
+        $propertiesKeys = [];
+        foreach ($propertiesFields as $field) {
+            $propertiesKeys[] = $field['key'];
+        }
+
+        $title = array_merge($objectFields, $propertiesKeys);
         $output = fopen(Yii::$app->getModule('data')->exportDir . '/' . $this->filename, 'w');
         $objects = $class::find()->all();
         fputcsv($output, $title);
+
+        /** @var array $propertyIds Array of propertyIds to export */
+        $propertyIds = array_keys($propertiesFields);
+
         foreach ($objects as $object) {
             $row = [];
             foreach ($objectFields as $field) {
@@ -91,8 +103,11 @@ class ImportCsv extends Import
                     $row[] = isset($object->$field) ? $object->$field : '';
                 }
             }
-            foreach ($propertiesFields as $field) {
-                $row[] = $object->getPropertyValuesByKey($field);
+
+            foreach ($propertyIds as $propertyId) {
+                $value = $object->getPropertyValuesByPropertyId($propertyId);
+
+                $row[] = $value;
             }
             fputcsv($output, $row);
         }

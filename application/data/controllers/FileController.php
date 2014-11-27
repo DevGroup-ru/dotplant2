@@ -60,7 +60,7 @@ class FileController extends Controller
      * @param string $id
      * @param string $import
      */
-    private function _unifiedAction($id, $importMode)
+    private function unifiedAction($id, $importMode)
     {
         $object = Object::findById($id);
         /* @var $className \app\data\models\Import */
@@ -85,10 +85,19 @@ class FileController extends Controller
                 if (
                     $model->load(\Yii::$app->request->post()) && $model->validate()
                 ) {
+                    $import = $className::find()->where(
+                        [
+                            'user_id' => Yii::$app->user->id,
+                            'object_id' => $id,
+                        ]
+                    )->one();
+
+                    $import->filename = null;
                     if ($importMode === true) {
                         $file = UploadedFile::getInstance($model, 'file');
                         $model->type = $file->extension;
                         $filename = $model->getFilename('Import');
+                        $import->filename = $filename;
                         $fullFilename =
                             Yii::$app->getModule('data')->importDir .
                             '/' .
@@ -99,14 +108,6 @@ class FileController extends Controller
                     }
 
 
-
-                    $import = $className::find()->where(
-                        [
-                            'user_id' => Yii::$app->user->id,
-                            'object_id' => $id,
-                        ]
-                    )->one();
-
                     if ($import === null) {
                         $import = new $className(
                             [
@@ -115,11 +116,7 @@ class FileController extends Controller
                             ]
                         );
                     }
-                    if ($importMode === true) {
-                        $import->filename = $filename;
-                    } else {
-                        $import->filename = null;
-                    }
+
                     $import->status = $className::STATUS_PROCESS;
 
                     if ($import->save()) {
@@ -154,17 +151,27 @@ class FileController extends Controller
                 }
             }
 
-            $availablePropertyGroups = ArrayHelper::map(\app\models\PropertyGroup::getForObjectId($object->id), 'id', 'name');
+            $availablePropertyGroups = [];
+
+            /** @var \app\models\Product $exampleModel - product for example */
+            $exampleModel = new $object->object_class;
+            if ($exampleModel->hasMethod('getPropertyGroups')) {
+                $availablePropertyGroups = $exampleModel->getPropertyGroups(
+                        false,
+                        true
+                    );
+            }
 
             \Yii::$app->session->setFlash(
                 'info',
                 \Yii::t('app', 'Specify fields to import and select the file')
             );
-            return $this->render(($importMode ? 'import' : 'export'), [
+            return $this->render('import-export', [
                 'model' => $model,
                 'object' => $object,
                 'fields' => $fieldList,
                 'availablePropertyGroups' => $availablePropertyGroups,
+                'importMode' => $importMode,
             ]);
         } else {
             \Yii::$app->session->setFlash(
@@ -182,7 +189,7 @@ class FileController extends Controller
      */
     public function actionImport($id)
     {
-        return $this->_unifiedAction($id, true);
+        return $this->unifiedAction($id, true);
     }
 
     /**
@@ -192,6 +199,6 @@ class FileController extends Controller
      */
     public function actionExport($id)
     {
-        return $this->_unifiedAction($id, false);
+        return $this->unifiedAction($id, false);
     }
 }

@@ -144,9 +144,10 @@ abstract class Import extends Component
                 }
 
                 $propertiesData = [];
+
                 foreach ($propertiesFields as $field) {
-                    if (isset($properties[$field])) {
-                        $propertiesData[$field] = $properties[$field];
+                    if (isset($properties[$field['key']])) {
+                        $propertiesData[$field['key']] = $properties[$field['key']];
                     }
                 }
 
@@ -162,7 +163,7 @@ abstract class Import extends Component
                     $objectModel->processImportAfterSave($rowFields, $this->multipleValuesDelimiter);
                 }
 
-                if (method_exists($objectModel, 'invalidateTags')) {
+                if ($objectModel->hasMethod('invalidateTags')) {
                     $objectModel->invalidateTags();
                 }
             } else {

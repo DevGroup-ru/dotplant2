@@ -5,14 +5,20 @@
 /* @var \app\data\models\ImportModel $model */
 /* @var array $fields */
 /* @var \app\models\Object $object */
+/* @var array $availablePropertyGroups */
 
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
 
-$this->title = $object->name . ' ' . Yii::t('app', 'Import');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Data'), 'url' => ['index']];
+$this->title = $object->name . ' ' .
+    ($importMode ? Yii::t('app', 'Import') : Yii::t('app', 'Export'));
+
+$this->params['breadcrumbs'][] = [
+    'label' => Yii::t('app', 'Data'),
+    'url' => ['index']
+];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -31,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
         BackendWidget::begin(
             [
                 'icon' => 'list',
-                'title'=> $object->name . ' - ' . Yii::t('app', 'Import fields'),
+                'title'=> $object->name . ' - ' . Yii::t('app', 'Fields'),
                 'footer' => Html::submitButton(
                     Icon::show('save') . Yii::t('app', 'Submit'),
                     ['class' => 'btn btn-primary']
@@ -73,11 +79,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'form' => $form,
                 'fields' => $fields,
                 'model' => $model,
+                'availablePropertyGroups' => $availablePropertyGroups,
             ]) ?>
         </div>
     <?php endif; ?>
     </div>
-
+    <?php if ($importMode === true): ?>
     <div class="form-group row">
         <div class="col-md-12">
             <?= $form->field($model, 'file')->fileInput() ?>
@@ -86,20 +93,55 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="form-group row">
         <div class="col-md-12">
             <fieldset>
-                <legend><?= Yii::t('app', 'Add property groups to each new object: ') ?></legend>
-                <?= $form->field($model, 'addPropertyGroups')->checkboxList($availablePropertyGroups)->label('') ?>
+                <legend>
+                    <?= Yii::t('app', 'Add property groups to each new object: ') ?>
+                </legend>
+                <?=
+                    $form->field(
+                        $model,
+                        'addPropertyGroups'
+                    )
+                    ->checkboxList(
+                        \yii\helpers\ArrayHelper::map(
+                                \app\models\PropertyGroup::getForObjectId($object->id),
+                                'id',
+                                'name'
+                            )
+                        )
+                    ->label('')
+                ?>
             </fieldset>
         </div>
     </div>
+    <?php endif; ?>
+
     <div class="form-group row">
         <div class="col-md-12">
             <fieldset>
                 <legend><?= Yii::t('app', 'Settings') ?></legend>
-                <?= $form->field($model, 'createIfNotExists')->checkbox() ?>
+                <?php if ($importMode === true): ?>
+                    <?= $form->field($model, 'createIfNotExists')->checkbox() ?>
+                <?php endif; ?>
                 <?= $form->field($model, 'multipleValuesDelimiter') ?>
             </fieldset>
         </div>
     </div>
+
+    <?php if (!$importMode): ?>
+        <div class="form-group row">
+            <div class="col-md-12">
+                <?= \yii\helpers\Html::activeDropDownList(
+                    $model,
+                    'type',
+                    \app\data\models\ImportModel::knownTypes(),
+                    [
+                        'class' => 'form-control'
+                    ]
+                ) ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php BackendWidget::end(); ?>
     <?php ActiveForm::end() ?>
 <?php endif; ?>

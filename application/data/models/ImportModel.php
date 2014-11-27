@@ -31,11 +31,12 @@ class ImportModel extends Model implements \Serializable
     public $createIfNotExists = false;
 
     /**
-     * Delimiter for multiple values of property which were supplied in one field
+     * Delimiter for multiple values of field which were supplied in one field
      * Can be regexp starting with a slash - then preg_split used
      * @var string
      */
     public $multipleValuesDelimiter = '|';
+
 
 
     public function getFilename($prefix = '')
