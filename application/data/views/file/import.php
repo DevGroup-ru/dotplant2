@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 /* @var string $type */
-/* @var \app\backend\models\ImportModel $model */
+/* @var \app\data\models\ImportModel $model */
 /* @var array $fields */
 /* @var \app\models\Object $object */
 

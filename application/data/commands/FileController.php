@@ -2,7 +2,7 @@
 
 namespace app\data\commands;
 
-use app\backend\models\ImportModel;
+use app\data\models\ImportModel;
 use app\data\models\Export;
 use app\data\models\Import;
 use app\models\Object;

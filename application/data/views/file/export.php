@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 /* @var string $type */
-/* @var \app\backend\models\ImportModel $model */
+/* @var \app\data\models\ImportModel $model */
 /* @var array $fields */
 /* @var \app\models\Object $object */
 
@@ -10,6 +10,7 @@ use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
+use app\data\models\ImportModel;
 
 $this->title = $object->name . ' ' . Yii::t('app', 'Export');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Data'), 'url' => ['index']];
@@ -95,7 +96,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= \yii\helpers\Html::activeDropDownList(
                     $model,
                     'type',
-                    \app\backend\models\ImportModel::knownTypes(),
+                    ImportModel::knownTypes(),
                     [
                         'class' => 'form-control'
                     ]
