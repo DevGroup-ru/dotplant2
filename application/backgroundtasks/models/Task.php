@@ -273,8 +273,9 @@ class Task extends ActiveRecord
                     $args .= ' ' . escapeshellarg($param);
                 }
             }
-            exec(\Yii::getAlias('@app/yii') . $args, $output, $return_val);
+            exec(\Yii::getAlias('@app/yii') . $args . ' 2>&1', $output, $return_val);
             $message->result = $this->printCommandResult($output);
+
             if ($return_val === 0) {
                 switch ($this->type) {
                     case self::TYPE_EVENT:

@@ -57,12 +57,12 @@ class ImportCsv extends Import
                         $propData[$attribute] = $propValue;
                     }
                     $objectId = isset($titleFields['internal_id']) ? $row[$titleFields['internal_id']] : 0;
-                    $this->save($objectId, $objData, $importFields['object'], $propData, $importFields['property']);
+                    $this->save($objectId, $objData, $importFields['object'], $propData, $importFields['property'], $row, $titleFields);
                 }
                 fclose($file);
             } catch (\Exception $e) {
                 $transaction->rollBack();
-                return false;
+                throw $e;
             }
             $transaction->commit();
         }

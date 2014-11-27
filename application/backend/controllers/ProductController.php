@@ -135,14 +135,10 @@ class ProductController extends Controller
             throw new ServerErrorHttpException;
         }
 
-        $catIds = (new Query())->select('category_id')
-            ->from([$object->categories_table_name])
-            ->where('object_model_id = :id', [':id' => $id])
-            ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])
-            ->column();
+
 
         $post = \Yii::$app->request->post();
-        $categories = isset($post['Product']['categories']) ? $post['Product']['categories'] : [];
+
 
         if ($model->load($post) && $model->validate()) {
             if (isset($post['GeneratePropertyValue'])) {
@@ -174,38 +170,12 @@ class ProductController extends Controller
             }
 
             if ($save_result) {
-                $id = $model->id;
+                $categories =
+                    isset($post['Product']['categories']) ?
+                        $post['Product']['categories'] :
+                        [];
 
-                $remove = [];
-                $add = [];
-
-                foreach ($catIds as $value) {
-                    $key = array_search($value, $categories);
-                    if ($key === false) {
-                        $remove[] = $value;
-                    } else {
-                        unset($categories[$key]);
-                    }
-                }
-                foreach ($categories as $value) {
-                    $add[] = [
-                        $value,
-                        $id
-                    ];
-                }
-
-                Yii::$app->db->createCommand()->delete(
-                    $object->categories_table_name,
-                    ['and', 'object_model_id = :id', ['in', 'category_id', $remove]],
-                    [':id' => $id]
-                )->execute();
-                if (!empty($add)) {
-                    Yii::$app->db->createCommand()->batchInsert(
-                        $object->categories_table_name,
-                        ['category_id', 'object_model_id'],
-                        $add
-                    )->execute();
-                }
+                $model->saveCategoriesBindings($categories);
 
                 $this->runAction('save-info');
                 $model->invalidateTags();
@@ -229,7 +199,7 @@ class ProductController extends Controller
                 'object' => $object,
                 'model' => $model,
                 'items' => $items,
-                'selected' => $catIds,
+                'selected' => $model->getCategoryIds(),
                 'parent' => $parent,
             ]
         );

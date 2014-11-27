@@ -4,11 +4,13 @@ namespace app\models;
 
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
+use app\data\components\ImportableInterface;
 use app\properties\HasProperties;
 use Yii;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
+use yii\db\Query;
 
 /**
  * This is the model class for table "product".
@@ -32,10 +34,11 @@ use yii\db\ActiveRecord;
  * @property integer $is_deleted
  * @property integer $parent_id
  */
-class Product extends ActiveRecord
+class Product extends ActiveRecord implements ImportableInterface
 {
     private static $identity_map = [];
     private static $slug_to_id = [];
+    private $category_ids = null;
 
     /**
      * @inheritdoc
@@ -290,5 +293,123 @@ class Product extends ActiveRecord
     {
         $this->is_deleted = 0;
         return $this->save();
+    }
+
+    public function saveCategoriesBindings(array $categories_ids)
+    {
+        $object = Object::getForClass(Product::className());
+
+        $catIds = $this->getCategoryIds();
+
+
+        $remove = [];
+        $add = [];
+
+        foreach ($catIds as $value) {
+            $key = array_search($value, $categories_ids);
+            if ($key === false) {
+                $remove[] = $value;
+            } else {
+                unset($categories_ids[$key]);
+            }
+        }
+        foreach ($categories_ids as $value) {
+            $add[] = [
+                $value,
+                $this->id
+            ];
+        }
+
+        Yii::$app->db->createCommand()->delete(
+            $object->categories_table_name,
+            ['and', 'object_model_id = :id', ['in', 'category_id', $remove]],
+            [':id' => $this->id]
+        )->execute();
+        if (!empty($add)) {
+            Yii::$app->db->createCommand()->batchInsert(
+                $object->categories_table_name,
+                ['category_id', 'object_model_id'],
+                $add
+            )->execute();
+        }
+
+    }
+
+    public function getCategoryIds()
+    {
+        if ($this->category_ids === null) {
+            $object = Object::getForClass(Product::className());
+            $this->category_ids = (new Query())->select('category_id')
+                ->from([$object->categories_table_name])
+                ->where('object_model_id = :id', [':id' => $this->id])
+                ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])
+                ->column();
+        }
+        return $this->category_ids;
+    }
+
+    /**
+     * Process fields before the actual model is saved(inserted or updated)
+     * @param array $fields
+     * @return void
+     */
+    public function processImportBeforeSave(array $fields, $propertyMultipleValuesDelimiter)
+    {
+
+        $categories = $this->unpackCategories($fields, $propertyMultipleValuesDelimiter);
+        if ($categories !== false && $this->main_category_id < 1) {
+            $this->main_category_id = $categories[0];
+        }
+
+        if (empty($this->slug)) {
+            $this->slug = 'unslugged-product';
+        } elseif (mb_strlen($this->slug) > 80) {
+            $this->slug = mb_substr($this->slug, 0, 80);
+        }
+
+        if (empty($this->name)) {
+            $this->name = 'unnamed-product';
+        }
+
+        if (!is_numeric($this->price)) {
+            $this->price = 0;
+        }
+        if (!is_numeric($this->old_price)) {
+            $this->old_price = 0;
+        }
+    }
+
+    /**
+     * Process fields after the actual model is saved(inserted or updated)
+     * @param array $fields
+     * @return void
+     */
+    public function processImportAfterSave(array $fields, $propertyMultipleValuesDelimiter)
+    {
+        $categories = $this->unpackCategories($fields, $propertyMultipleValuesDelimiter);
+
+        if ($categories !== false) {
+
+            $this->saveCategoriesBindings($categories);
+        }
+    }
+
+    private function unpackCategories(array $fields, $propertyMultipleValuesDelimiter) {
+        $categories =
+            isset($fields['categories']) ? $fields['categories'] :
+                (isset($fields['category']) ? $fields['category'] :
+                    false);
+        if ($categories !== false) {
+            if (strpos($categories, $propertyMultipleValuesDelimiter) > 0) {
+                $categories = explode($propertyMultipleValuesDelimiter, $categories);
+            } elseif (strpos($propertyMultipleValuesDelimiter, '/') === 0) {
+                $categories = preg_split($propertyMultipleValuesDelimiter, $categories);
+            } else {
+                $categories = [$categories];
+            }
+
+            $categories = array_map('intval', $categories);
+        }
+        return $categories;
     }
 }

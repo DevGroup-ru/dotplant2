@@ -91,8 +91,11 @@ abstract class Import extends Component
         parent::__construct($config);
     }
 
-    protected function save($objectId, $object, $objectFields = [], $properties = [], $propertiesFields = [])
+    protected function save($objectId, $object, $objectFields = [], $properties = [], $propertiesFields = [], $row=[], $titleFields=[])
     {
+
+        $rowFields = array_combine(array_keys($titleFields), $row);
+
         $class = $this->object->object_class;
         if ($objectId > 0) {
             /** @var ActiveRecord $objectModel */
@@ -118,6 +121,11 @@ abstract class Import extends Component
         }
         if ($objectModel) {
             $objectModel->load([$objectModel->formName() => $objectData]);
+
+            if ($objectModel instanceof ImportableInterface) {
+                $objectModel->processImportBeforeSave($rowFields, $this->propertyMultipleValuesDelimiter);
+            }
+
             if ($objectModel->save()) {
 
                 // add PropertyGroup to object
@@ -148,10 +156,17 @@ abstract class Import extends Component
                             "Properties_{$objectModel->formName()}_{$objectModel->id}" => $propertiesData
                         ]
                     );
+                }
 
+                if ($objectModel instanceof ImportableInterface) {
+                    $objectModel->processImportAfterSave($rowFields, $this->propertyMultipleValuesDelimiter);
+                }
+
+                if (method_exists($objectModel, 'invalidateTags')) {
+                    $objectModel->invalidateTags();
                 }
             } else {
-                throw new \Exception('Cannot save object');
+                throw new \Exception('Cannot save object: ' . var_export($objectModel->errors, true));
             }
         }
     }
