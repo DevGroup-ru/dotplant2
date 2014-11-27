@@ -19,7 +19,15 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <?php if (isset($fields['object']) && !empty($fields['object'])) : ?>
-    <?= \yii\helpers\Html::beginForm('', 'post', ['class' => 'form-horizontal']) ?>
+    <?php
+    $form = ActiveForm::begin([
+        'id' => 'form-data',
+        'type'=>ActiveForm::TYPE_HORIZONTAL,
+        'options' => [
+            'enctype' => 'multipart/form-data',
+        ],
+    ]);
+    ?>
     <?php
         BackendWidget::begin(
             [
@@ -35,61 +43,40 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= \yii\helpers\Html::activeHiddenInput($model, 'object') ?>
         <div class="form-group row">
             <div class="col-md-6">
-                <?= \yii\helpers\Html::checkboxList(
-                    'ImportModel[fields][object][]',
-                    isset($model->fields['object']) ? $model->fields['object'] : [],
-                    $fields['object'],
+                <?= \yii\helpers\Html::button(
+                    Yii::t('app', 'Select All'),
                     [
-                        'item' => function ($index, $label, $name, $checked, $value) {
-                                $line = \yii\helpers\Html::beginTag('div', ['class' => 'checkbox']);
-                                $line .= \yii\helpers\Html::checkbox($name, $checked, [
-                                    'value' => $value,
-                                    'label' => \yii\helpers\Html::encode($label),
-                                ]);
-                                $line .= '</div>';
-                                return $line;
-                            }
+                        'id' => 'select_all',
+                        'class' => 'btn btn-success btn-sm'
+                    ]
+                ) ?>
+                <?= \yii\helpers\Html::button(
+                    Yii::t('app', 'Unselect All'),
+                    [
+                        'id' => 'unselect_all',
+                        'class' => 'btn btn-warning btn-sm'
                     ]
                 ) ?>
             </div>
-            <?php if (isset($fields['property']) && !empty($fields['property'])) : ?>
+        </div>
+
+        <div class="form-group row fields-to-import">
+            <div class="col-md-6">
+                <?= $this->render('_objectFields',[
+                    'form' => $form,
+                    'fields' => $fields,
+                    'model' => $model,
+                ]) ?>
+            </div>
+            <?php if (isset($fields['property']) && !empty($fields['property'])): ?>
                 <div class="col-md-6">
-                    <?= \yii\helpers\Html::checkboxList(
-                        'ImportModel[fields][property][]',
-                        isset($model->fields['property']) ? $model->fields['property'] : [],
-                        $fields['property'],
-                        [
-                            'item' => function ($index, $label, $name, $checked, $value) {
-                                    $line = \yii\helpers\Html::beginTag('div', ['class' => 'checkbox']);
-                                    $line .= \yii\helpers\Html::checkbox($name, $checked, [
-                                        'value' => $value,
-                                        'label' => \yii\helpers\Html::encode($label),
-                                    ]);
-                                    $line .= '</div>';
-                                    return $line;
-                                }
-                        ]
-                    ) ?>
+                    <?= $this->render('_propertyFields',[
+                        'form' => $form,
+                        'fields' => $fields,
+                        'model' => $model,
+                    ]) ?>
                 </div>
             <?php endif; ?>
-        </div>
-        <div class="form-group row">
-            <div class="col-md-6">
-            <?= \yii\helpers\Html::button(
-                Yii::t('app', 'Select All'),
-                [
-                    'id' => 'select_all',
-                    'class' => 'btn btn-success btn-sm'
-                ]
-            ) ?>
-            <?= \yii\helpers\Html::button(
-                Yii::t('app', 'Unselect All'),
-                [
-                    'id' => 'unselect_all',
-                    'class' => 'btn btn-warning btn-sm'
-                ]
-            ) ?>
-            </div>
         </div>
         <div class="form-group row">
             <div class="col-md-12">
