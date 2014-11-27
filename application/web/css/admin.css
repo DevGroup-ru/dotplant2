@@ -127,3 +127,13 @@ a.desc:after {
 .redactor-toolbar, .redactor-dropdown {
   z-index: 53 !important;
 }
+
+/* line 104, ../sass/admin.scss */
+.select2-container-multi .select2-choices .select2-search-choice {
+  padding: 1px 28px 1px 28px;
+}
+
+/* line 107, ../sass/admin.scss */
+.select2-container-multi .select2-search-choice-close {
+  background-image: none !important;
+}
