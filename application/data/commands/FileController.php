@@ -49,7 +49,7 @@ class FileController extends Controller
                             'type' => $model->type,
                             'addPropertyGroups' => $model->addPropertyGroups,
                             'createIfNotExists' => boolval($model->createIfNotExists),
-                            'propertyMultipleValuesDelimiter' => $model->propertyMultipleValuesDelimiter,
+                            'multipleValuesDelimiter' => $model->multipleValuesDelimiter,
                         ]
                     );
                     if ($import->setData($model->fields)) {

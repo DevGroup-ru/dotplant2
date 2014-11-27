@@ -19,7 +19,7 @@ abstract class Import extends Component
     public $filename;
     public $addPropertyGroups = [];
     public $createIfNotExists = false;
-    public $propertyMultipleValuesDelimiter = '|';
+    public $multipleValuesDelimiter = '|';
 
     abstract public function getData($importFields);
     abstract public function setData($exportFields);
@@ -123,7 +123,7 @@ abstract class Import extends Component
             $objectModel->load([$objectModel->formName() => $objectData]);
 
             if ($objectModel instanceof ImportableInterface) {
-                $objectModel->processImportBeforeSave($rowFields, $this->propertyMultipleValuesDelimiter);
+                $objectModel->processImportBeforeSave($rowFields, $this->multipleValuesDelimiter);
             }
 
             if ($objectModel->save()) {
@@ -159,7 +159,7 @@ abstract class Import extends Component
                 }
 
                 if ($objectModel instanceof ImportableInterface) {
-                    $objectModel->processImportAfterSave($rowFields, $this->propertyMultipleValuesDelimiter);
+                    $objectModel->processImportAfterSave($rowFields, $this->multipleValuesDelimiter);
                 }
 
                 if (method_exists($objectModel, 'invalidateTags')) {

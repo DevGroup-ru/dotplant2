@@ -353,10 +353,10 @@ class Product extends ActiveRecord implements ImportableInterface
      * @param array $fields
      * @return void
      */
-    public function processImportBeforeSave(array $fields, $propertyMultipleValuesDelimiter)
+    public function processImportBeforeSave(array $fields, $multipleValuesDelimiter)
     {
 
-        $categories = $this->unpackCategories($fields, $propertyMultipleValuesDelimiter);
+        $categories = $this->unpackCategories($fields, $multipleValuesDelimiter);
         if ($categories !== false && $this->main_category_id < 1) {
             $this->main_category_id = $categories[0];
         }
@@ -384,9 +384,9 @@ class Product extends ActiveRecord implements ImportableInterface
      * @param array $fields
      * @return void
      */
-    public function processImportAfterSave(array $fields, $propertyMultipleValuesDelimiter)
+    public function processImportAfterSave(array $fields, $multipleValuesDelimiter)
     {
-        $categories = $this->unpackCategories($fields, $propertyMultipleValuesDelimiter);
+        $categories = $this->unpackCategories($fields, $multipleValuesDelimiter);
 
         if ($categories !== false) {
 
@@ -394,16 +394,16 @@ class Product extends ActiveRecord implements ImportableInterface
         }
     }
 
-    private function unpackCategories(array $fields, $propertyMultipleValuesDelimiter) {
+    private function unpackCategories(array $fields, $multipleValuesDelimiter) {
         $categories =
             isset($fields['categories']) ? $fields['categories'] :
                 (isset($fields['category']) ? $fields['category'] :
                     false);
         if ($categories !== false) {
-            if (strpos($categories, $propertyMultipleValuesDelimiter) > 0) {
-                $categories = explode($propertyMultipleValuesDelimiter, $categories);
-            } elseif (strpos($propertyMultipleValuesDelimiter, '/') === 0) {
-                $categories = preg_split($propertyMultipleValuesDelimiter, $categories);
+            if (strpos($categories, $multipleValuesDelimiter) > 0) {
+                $categories = explode($multipleValuesDelimiter, $categories);
+            } elseif (strpos($multipleValuesDelimiter, '/') === 0) {
+                $categories = preg_split($multipleValuesDelimiter, $categories);
             } else {
                 $categories = [$categories];
             }

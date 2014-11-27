@@ -151,7 +151,6 @@ class AbstractModel extends Model
                     }
                 } elseif ($property->is_eav) {
                     // добавим новые
-                    $new_property_value = new PropertyValue([], $property->id, $object_id, $object_model_id);
                     foreach ($values->values as $val) {
                         $exist_in_old = false;
                         foreach ($this->values_by_property_key[$key]->values as $old_val) {

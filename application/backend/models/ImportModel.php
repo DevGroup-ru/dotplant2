@@ -35,7 +35,7 @@ class ImportModel extends Model implements \Serializable
      * Can be regexp starting with a slash - then preg_split used
      * @var string
      */
-    public $propertyMultipleValuesDelimiter = '|';
+    public $multipleValuesDelimiter = '|';
 
 
     public function getFilename($prefix = '')
@@ -67,7 +67,7 @@ class ImportModel extends Model implements \Serializable
             [['object'], 'integer'],
             [['object'], 'required'],
             [['fields', 'type'], 'safe'],
-            [['addPropertyGroups', 'propertyMultipleValuesDelimiter'], 'safe'],
+            [['addPropertyGroups', 'multipleValuesDelimiter'], 'safe'],
             [['createIfNotExists'], 'boolean'],
         ];
     }
@@ -102,7 +102,7 @@ class ImportModel extends Model implements \Serializable
             'user' => Yii::$app->user->id,
             'addPropertyGroups' => is_array($this->addPropertyGroups) ? $this->addPropertyGroups : [],
             'createIfNotExists' => $this->createIfNotExists,
-            'propertyMultipleValuesDelimiter' => $this->propertyMultipleValuesDelimiter,
+            'multipleValuesDelimiter' => $this->multipleValuesDelimiter,
         ]);
     }
 
@@ -116,6 +116,6 @@ class ImportModel extends Model implements \Serializable
         $this->user = $fields['user'];
         $this->addPropertyGroups = $fields['addPropertyGroups'];
         $this->createIfNotExists = $fields['createIfNotExists'];
-        $this->propertyMultipleValuesDelimiter = $fields['propertyMultipleValuesDelimiter'];
+        $this->multipleValuesDelimiter = $fields['multipleValuesDelimiter'];
     }
 }

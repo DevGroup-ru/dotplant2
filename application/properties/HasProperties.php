@@ -17,6 +17,9 @@ use yii\helpers\Json;
 
 class HasProperties extends Behavior
 {
+    /**
+     * @var AbstractModel
+     */
     private $abstract_model = null;
     private $eav_rows = null;
     private $object = null;
