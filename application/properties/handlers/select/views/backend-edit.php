@@ -25,7 +25,7 @@
                         'options' => [
                             'multiple' => true,
                         ],
-                        'value' => explode(', ', $model->$property_key),
+                        'value' => is_array($model->$property_key) ? $model->$property_key : explode(', ', $model->$property_key),
                     ]
                 )
             ?>
