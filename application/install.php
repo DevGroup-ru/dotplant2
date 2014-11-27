@@ -32,19 +32,18 @@ if ($memcached_exists === true) {
 
 } else {
     echo "WARNING: We suggest you to use memcached for caching.\n";
-    if (SILENT_MODE) {
-        continue;
-    }
-    echo "Continue using filecache instead? [y/N] ";
-    while (true) {
-        $answer = trim(fgets($f));
-        
-        if ($answer === 'y'  || $answer === 'Y') {
-            break;
-        } elseif ($answer === 'n' || $answer === 'N') {
-            die("\nINFO: User aborted.\n");
-        }
+    if (!SILENT_MODE) {
         echo "Continue using filecache instead? [y/N] ";
+        while (true) {
+            $answer = trim(fgets($f));
+
+            if ($answer === 'y' || $answer === 'Y') {
+                break;
+            } elseif ($answer === 'n' || $answer === 'N') {
+                die("\nINFO: User aborted.\n");
+            }
+            echo "Continue using filecache instead? [y/N] ";
+        }
     }
 }
 
