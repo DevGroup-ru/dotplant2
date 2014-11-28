@@ -73,10 +73,13 @@ class ImportCsv extends Import
         return true;
     }
 
-    public function getData($exportFields)
+    public function getData($exportFields, $batchSize = 100)
     {
         $objectFields = isset($exportFields['object']) ? $exportFields['object'] : [];
         $propertiesFields = isset($exportFields['property']) ? $exportFields['property'] : [];
+
+        $additionalFields = isset($exportFields['additionalFields']) ? $exportFields['additionalFields'] : [];
+
         $class = $this->object->object_class;
         $objectFields = array_merge($objectFields, ['internal_id']);
 
@@ -86,15 +89,20 @@ class ImportCsv extends Import
             $propertiesKeys[] = $field['key'];
         }
 
-        $title = array_merge($objectFields, $propertiesKeys);
+        $title = array_merge($objectFields, $propertiesKeys, $additionalFields);
+
+
+
         $output = fopen(Yii::$app->getModule('data')->exportDir . '/' . $this->filename, 'w');
-        $objects = $class::find()->all();
+
         fputcsv($output, $title);
 
         /** @var array $propertyIds Array of propertyIds to export */
         $propertyIds = array_keys($propertiesFields);
 
-        foreach ($objects as $object) {
+        $objects = $class::find();
+
+        foreach ($objects->each($batchSize) as $object) {
             $row = [];
             foreach ($objectFields as $field) {
                 if ($field === 'internal_id') {
@@ -127,6 +135,20 @@ class ImportCsv extends Import
                 }
                 $row[] = $value;
             }
+
+            if (count($additionalFields) > 0 && $object->hasMethod('getAdditionalFields')) {
+                $fieldsFromModel = $object->getAdditionalFields();
+                foreach ($additionalFields as $key) {
+                    if (isset($fieldsFromModel[$key]) && !empty($fieldsFromModel[$key])) {
+                        $value = (array) $fieldsFromModel[$key];
+                        $row[] = implode($this->multipleValuesDelimiter, $value);
+                    } else {
+                        // empty
+                        $row[] = '';
+                    }
+                }
+            }
+
             fputcsv($output, $row);
         }
         fclose($output);

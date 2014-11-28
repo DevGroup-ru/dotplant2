@@ -54,7 +54,9 @@ abstract class Import extends Component
         $object = Object::findById($objectId);
         if ($object) {
             $fields['object'] = array_diff((new $object->object_class)->attributes(), ['id']);
+            $fields['object'] = array_combine($fields['object'], $fields['object']);
             $fields['property'] = ArrayHelper::getColumn(static::getProperties($objectId), 'key');
+            $fields['additionalFields'] = [];
         }
         return $fields;
     }

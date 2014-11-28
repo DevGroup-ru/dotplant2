@@ -2,6 +2,7 @@
 
 namespace app\data\controllers;
 
+use app\data\components\ExportableInterface;
 use Yii;
 use app\data\models\Import;
 use app\data\models\Export;
@@ -75,13 +76,7 @@ class FileController extends Controller
             $model = new ImportModel(['object' => $id]);
 
             $fields = \app\data\components\Import::getFields($model->object);
-            $fieldList = [];
-            foreach ($fields['object'] as $field) {
-                $fieldList['object'][$field] = $field;
-            }
-            foreach ($fields['property'] as $field) {
-                $fieldList['property'][$field] = $field;
-            }
+
 
             if (\Yii::$app->request->isPost) {
                 if (
@@ -167,10 +162,16 @@ class FileController extends Controller
                 'info',
                 \Yii::t('app', 'Specify fields to import and select the file')
             );
+
+            $fields['additionalFields'] = [];
+            if ($exampleModel instanceof ExportableInterface) {
+                $fields['additionalFields'] = $exampleModel::exportableAdditionalFields();
+            }
+
             return $this->render('import-export', [
                 'model' => $model,
                 'object' => $object,
-                'fields' => $fieldList,
+                'fields' => $fields,
                 'availablePropertyGroups' => $availablePropertyGroups,
                 'importMode' => $importMode,
             ]);

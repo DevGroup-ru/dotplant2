@@ -5,12 +5,14 @@ namespace app\models;
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
 use app\data\components\ImportableInterface;
+use app\data\components\ExportableInterface;
 use app\properties\HasProperties;
 use Yii;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\db\Query;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "product".
@@ -34,7 +36,7 @@ use yii\db\Query;
  * @property integer $is_deleted
  * @property integer $parent_id
  */
-class Product extends ActiveRecord implements ImportableInterface
+class Product extends ActiveRecord implements ImportableInterface, ExportableInterface
 {
     private static $identity_map = [];
     private static $slug_to_id = [];
@@ -394,7 +396,8 @@ class Product extends ActiveRecord implements ImportableInterface
         }
     }
 
-    private function unpackCategories(array $fields, $multipleValuesDelimiter) {
+    private function unpackCategories(array $fields, $multipleValuesDelimiter)
+    {
         $categories =
             isset($fields['categories']) ? $fields['categories'] :
                 (isset($fields['category']) ? $fields['category'] :
@@ -411,5 +414,41 @@ class Product extends ActiveRecord implements ImportableInterface
             $categories = array_map('intval', $categories);
         }
         return $categories;
+    }
+
+    /**
+     * Additional fields with labels.
+     * Translation should be implemented internally in this function.
+     * For now will be rendered as checkbox list with label.
+     * Note: properties should not be in the result - they are served other way.
+     * Format:
+     * [
+     *      'field_key' => 'Your awesome translated field title',
+     *      'another' => 'Another field label',
+     * ]
+     * @return array
+     */
+    public static function exportableAdditionalFields()
+    {
+        return [
+            'categories' => Yii::t('app', 'Categories'),
+            'images' => Yii::t('app', 'Images'),
+        ];
+    }
+
+    /**
+     * Returns additional fields data by field key.
+     * If value of field is array it will be converted to string
+     * using multipleValuesDelimiter specified in ImportModel
+     * @return array
+     */
+    public function getAdditionalFields()
+    {
+        $object = Object::getForClass($this->className());
+        $images = Image::getForModel($object->id, $this->id);
+        return [
+            'categories' => $this->getCategoryIds(),
+            'images' => array_values(ArrayHelper::map($images, 'id', 'image_src')),
+        ];
     }
 }
