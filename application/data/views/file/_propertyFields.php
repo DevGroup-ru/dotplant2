@@ -41,8 +41,9 @@ use \yii\helpers\Html;
                                 $prefix . 'processValuesAs]'
                             )
                             ->dropDownList([
-                                'id' => 'id',
                                 'text' => Yii::t('app', 'Text representation'),
+                                'id' => 'id ' . Yii::t('app', '(static value record id)'),
+                                'value' => Yii::t('app', 'Value representation'),
                             ])
                             ->label(Yii::t('app', 'Process values as:'));
                     }

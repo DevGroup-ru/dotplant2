@@ -6,6 +6,7 @@ use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\Property;
 use app\models\PropertyGroup;
+use app\models\PropertyStaticValues;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
@@ -145,9 +146,35 @@ abstract class Import extends Component
 
                 $propertiesData = [];
 
-                foreach ($propertiesFields as $field) {
+                foreach ($propertiesFields as $propertyId => $field) {
                     if (isset($properties[$field['key']])) {
-                        $propertiesData[$field['key']] = $properties[$field['key']];
+                        $value = $properties[$field['key']];
+
+                        if (isset($field['processValuesAs'])) {
+                            // it is PSV in text
+                            // we should convert it to ids
+                            $staticValues = PropertyStaticValues::getValuesForPropertyId($propertyId);
+
+                            $representationConversions = [
+                                // from -> to
+                                'text' => 'name',
+                                'value' => 'value',
+                                'id' => 'id',
+                            ];
+                            $attributeToGet = $representationConversions[$field['processValuesAs']];
+                            $ids = [];
+                            foreach ($value as $initial) {
+                                $initial = mb_strtolower(trim($initial));
+                                foreach ($staticValues as $static) {
+                                    if (mb_strtolower(trim($static[$attributeToGet])) === $initial) {
+                                        $ids [] = $static['id'];
+                                    }
+                                }
+                            }
+                            $value = $ids;
+                        }
+
+                        $propertiesData[$field['key']] = $value;
                     }
                 }
 

@@ -107,6 +107,24 @@ class ImportCsv extends Import
             foreach ($propertyIds as $propertyId) {
                 $value = $object->getPropertyValuesByPropertyId($propertyId);
 
+                if (count($value->values) > 1 && isset($propertiesFields[$propertyId])) {
+                    // we should implode
+                    // respecting processValueAs
+                    if (isset($propertiesFields[$propertyId]['processValuesAs'])) {
+                        $representationConversions = [
+                            // from -> to
+                            'text' => 'name',
+                            'value' => 'value',
+                            'id' => 'psv_id',
+                        ];
+                        $attributeToGet = $representationConversions[$propertiesFields[$propertyId]['processValuesAs']];
+                        $newValues = [];
+                        foreach ($value->values as $val) {
+                            $newValues[] = $val[$attributeToGet];
+                        }
+                        $value = implode($this->multipleValuesDelimiter, $newValues);
+                    }
+                }
                 $row[] = $value;
             }
             fputcsv($output, $row);
