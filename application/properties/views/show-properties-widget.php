@@ -25,8 +25,9 @@
             $properties = app\models\Property::getForGroupId($opg->group->id);
 
             foreach ($properties as $prop) {
-                $property_values = $model->getPropertyValuesByPropertyId($prop->id);
-                echo $prop->handler($form, $model->getAbstractModel(), $property_values, 'frontend_render_view');
+                if ($property_values = $model->getPropertyValuesByPropertyId($prop->id)) {
+                    echo $prop->handler($form, $model->getAbstractModel(), $property_values, 'frontend_render_view');
+                }
             }
             echo "</div>";
         }

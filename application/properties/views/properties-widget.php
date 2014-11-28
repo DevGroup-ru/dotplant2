@@ -88,9 +88,10 @@ foreach ($object_property_groups as $i => $opg) {
     $properties = app\models\Property::getForGroupId($opg->group->id);
     
     foreach ($properties as $prop) {
-        $property_values = $model->getPropertyValuesByPropertyId($prop->id);
+        if ($property_values = $model->getPropertyValuesByPropertyId($prop->id)) {
+            echo $prop->handler($form, $model->getAbstractModel(), $property_values, 'backend_edit_view');
+        }
 
-        echo $prop->handler($form, $model->getAbstractModel(), $property_values, 'backend_edit_view');
 
     }
     echo "</div>";
