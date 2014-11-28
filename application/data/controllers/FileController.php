@@ -57,8 +57,10 @@ class FileController extends Controller
 
     /**
      * Unified action for import and export
-     * @param string $id
-     * @param string $import
+     * @param $id
+     * @param $importMode
+     * @return string|\yii\web\Response
+     * @throws ErrorException
      */
     private function unifiedAction($id, $importMode)
     {
@@ -92,6 +94,15 @@ class FileController extends Controller
                         ]
                     )->one();
 
+                    if ($import === null) {
+                        $import = new $className(
+                            [
+                                'user_id' => Yii::$app->user->id,
+                                'object_id' => $id,
+                            ]
+                        );
+                    }
+
                     $import->filename = null;
                     if ($importMode === true) {
                         $file = UploadedFile::getInstance($model, 'file');
@@ -105,16 +116,6 @@ class FileController extends Controller
                         if ($file->saveAs($fullFilename) === false) {
                             throw new ErrorException("Unable to save file");
                         }
-                    }
-
-
-                    if ($import === null) {
-                        $import = new $className(
-                            [
-                                'user_id' => Yii::$app->user->id,
-                                'object_id' => $id,
-                            ]
-                        );
                     }
 
                     $import->status = $className::STATUS_PROCESS;
