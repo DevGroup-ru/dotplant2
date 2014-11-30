@@ -212,6 +212,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'routes' => [
             'getTree' => ['/backend/product/getCatTree'],
         ],
+        'stateKey' => $model->id . $model->isNewRecord?time() : '',
     ]);
     ?>
     <br />
