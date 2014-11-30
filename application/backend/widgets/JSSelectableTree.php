@@ -24,12 +24,15 @@ class JSSelectableTree extends JSTree
         $id = $this->getId();
         $this->plugins = ArrayHelper::merge($this->plugins, ['checkbox']);
         $items =[];
-        if (!empty($this->selectedItems)) {
-            $this->routes['getTree'] = ArrayHelper::merge(
-                $this->routes['getTree'],
-                ['selectedItems' => implode(',', $this->selectedItems)]
-            );
+        if(empty($this->selectedItems)){
+            $this->selectedItems[] = Yii::$app->request->get('parent_id');
         }
+
+        $this->routes['getTree'] = ArrayHelper::merge(
+            $this->routes['getTree'],
+            ['selectedItems' => implode(',', $this->selectedItems)]
+        );
+
         if (isset($this->routes['edit'])) {
             $items['edit'] = [
                 'label' => Yii::t('app', 'Edit'),
