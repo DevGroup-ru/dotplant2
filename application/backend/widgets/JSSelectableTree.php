@@ -2,6 +2,7 @@
 
 namespace app\backend\widgets;
 
+use app\models\Category;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
@@ -18,6 +19,7 @@ class JSSelectableTree extends JSTree
     public $selectLabelOptions = ['class' => 'control-label'];
     public $selectOptions = [];
     public $selectParents = true;
+    public $stateKey = 'default';
 
     public function run()
     {
@@ -25,7 +27,10 @@ class JSSelectableTree extends JSTree
         $this->plugins = ArrayHelper::merge($this->plugins, ['checkbox']);
         $items =[];
         if(empty($this->selectedItems)){
-            $this->selectedItems[] = Yii::$app->request->get('parent_id');
+            $parent = Category::findById(Yii::$app->request->get('parent_id'));
+            do {
+                $this->selectedItems[] = $parent->id;
+            } while(is_object($parent = Category::findById($parent->parent_id)));
         }
         $this->routes['getTree'] = ArrayHelper::merge(
             $this->routes['getTree'],
@@ -86,6 +91,9 @@ class JSSelectableTree extends JSTree
         }
 
         $options = [
+            'state' => [
+                'key' => $this->stateKey,
+            ],
             'plugins' => $this->plugins,
             'core' => [
                 'check_callback' => true,
