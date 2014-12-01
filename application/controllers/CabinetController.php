@@ -76,10 +76,10 @@ class CabinetController extends Controller
         $doneOrders = [];
         foreach ($orders as $order) {
             switch ($order->order_status_id) {
-                case 6:
+                case Order::STATUS_DONE:
                     $doneOrders[] = $order;
                     break;
-                case 7:
+                case Order::STATUS_CANCEL:
                     $canceledOrders[] = $order;
                     break;
                 default:

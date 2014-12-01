@@ -32,6 +32,9 @@ use Yii;
  */
 class Order extends \yii\db\ActiveRecord
 {
+    const STATUS_DONE = 6;
+    const STATUS_CANCEL = 7;
+
     public function behaviors()
     {
         return [
