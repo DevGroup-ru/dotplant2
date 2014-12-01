@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 use app\components\Controller;
-use app\components\fabric\FilterQueryInterface;
+use app\components\filters\FilterQueryInterface;
 use app\components\LastViewedProducts;
 use app\models\Category;
 use app\models\Config;
@@ -74,10 +74,6 @@ class ProductController extends Controller
         $query = Product::find();
         $query->andWhere([Product::tableName() . '.parent_id' => 0, Product::tableName() . '.active' => 1]);
 
-        /** @var $filter FilterQueryInterface */
-        if (null !== $filter = Yii::$app->filterquery->getFilter()) {
-            $query = $filter->filter($query);
-        }
 
         if (null !== $selected_category_id) {
             $query->innerJoin(
@@ -119,6 +115,10 @@ class ProductController extends Controller
             $request->get('p', [])
         );
 
+        // apply additional filters
+        $cacheKeyAppend = "";
+        $query = Yii::$app->filterquery->filter($query, $cacheKeyAppend);
+
         $products_query = clone $query;
         $cacheKey = 'ProductsCount:' . implode(
             '_',
@@ -129,7 +129,7 @@ class ProductController extends Controller
                 $userSelectedSortingId,
                 $productsPerPage
             ]
-        );
+        ) . $cacheKeyAppend;
 
         if (false === $pages = Yii::$app->cache->get($cacheKey)) {
             $pages = new Pagination(

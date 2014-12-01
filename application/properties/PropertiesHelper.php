@@ -11,7 +11,6 @@ class PropertiesHelper
 
     /**
      * Добавляет к запросу фильтры по свойствам
-     * @todo Сделать возможность использования разных операторов(сейчас только равенство)
      */
     public static function appendPropertiesFilters(
         $object,

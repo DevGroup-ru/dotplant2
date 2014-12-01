@@ -143,8 +143,12 @@ $config = [
             ],
         ],
         'filterquery' => [
-            'class' => 'app\components\fabric\FilterQueryFabric',
-            'filter' => 'app\components\fabric\DummyFilterQuery'
+            'class' => 'app\components\filters\FilterQueryChain',
+            'filters' => [
+                [
+                    'class' => 'app\components\filters\ProductPriceRangeFilter',
+                ]
+            ]
         ],
     ],
 ];
