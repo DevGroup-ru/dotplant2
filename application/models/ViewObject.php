@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
 
 /**
@@ -63,15 +64,36 @@ class ViewObject extends ActiveRecord
             return null;
         }
 
-        return (
-            null === $result = static::find()->where(
-                [
-                    'object_id' => $object->id,
-                    'object_model_id' => $model->id
-                ]
-            )->one())
-            ? null
-            : View::getViewById($result->view_id);
+        $cacheKey = "View:Object:ModelId" . $object->id . ":" . $model->id;
+        $viewObject = Yii::$app->cache->get($cacheKey);
+        if (!is_object($viewObject)) {
+
+            $viewObject = static::find()
+                ->where(
+                    [
+                        'object_id' => $object->id,
+                        'object_model_id' => $model->id,
+                    ]
+                )->one();
+
+        }
+        if ($viewObject !== null) {
+            Yii::$app->cache->set(
+                $cacheKey,
+                $viewObject,
+                86400,
+                new TagDependency([
+                    'tags' => [
+                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($viewObject, $viewObject->id),
+                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object, $object->id),
+                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($model, $model->id)
+                    ]
+                ])
+            );
+        } else {
+            return null;
+        }
+
     }
 
     /**

@@ -4,6 +4,7 @@ namespace app\widgets\navigation\models;
 
 use app\backgroundtasks\traits\SearchModelTrait;
 use Yii;
+use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -70,13 +71,33 @@ class Navigation extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param Navigation $model
      * @return array|Navigation[]
-     * todo cache
      */
-    public static function getChildren($model)
+    public function getChildren()
     {
-        return Navigation::find()->where(['parent_id' => $model->id])->orderBy('sort_order')->all();
+        $cacheKey = 'Navigation:children:'.$this->id;
+        $children = Yii::$app->cache->get($cacheKey);
+        if (!is_array($children)) {
+            $children = Navigation::find()->where(['parent_id' => $this->id])->orderBy('sort_order')->all();
+
+            if (is_array($children)) {
+                $tags = [
+                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($this, $this->id),
+                ];
+                foreach ($children as $child) {
+                    $tags[] = \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($child, $child->id);
+                }
+                Yii::$app->cache->set(
+                    $cacheKey,
+                    $children,
+                    86400,
+                    new TagDependency([
+                        'tags' => $tags
+                    ])
+                );
+            }
+        }
+        return $children;
     }
 
     public function scenarios()
