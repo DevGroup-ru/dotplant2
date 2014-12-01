@@ -97,7 +97,7 @@ class NavigationWidget extends Widget
             'options' => ['class' => $model->advanced_css_class],
             'items' => [],
         ];
-        $children = Navigation::getChildren($model);
+        $children = $model->getChildren();
         foreach ($children as $child) {
             $tree['items'][] = self::getTree($child);
         }
