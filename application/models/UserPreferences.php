@@ -20,13 +20,16 @@ class UserPreferences extends Model {
 
     public $productListingSortId;
 
+    public $productsPerPage;
+
     public static $_cachedPreferences = null;
 
     public function rules()
     {
         return [
-            ['productListingSortId', 'default', 'value' => 1,],
             [['productListingSortId'], 'integer'],
+
+            ['productListingSortId', 'default', 'value' => 1,],
             [
                 'productListingSortId',
                 'in',
@@ -43,6 +46,20 @@ class UserPreferences extends Model {
                 ],
                 'strict'=>true
             ],
+
+            [
+                'productsPerPage',
+                'default',
+                'value' => Config::getValue('shop.productsPerPage', 20)
+            ],
+            [
+                'productsPerPage',
+                'integer',
+                'max' => 50,
+            ]
+
+
+
         ];
     }
 

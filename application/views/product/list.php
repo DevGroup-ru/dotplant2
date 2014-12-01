@@ -54,7 +54,21 @@ $this->endBlock();
                     'data-userpreference' => 'productListingSortId',
                 ]
         ) ?>
-
+    </div>
+    <div class="control-group">
+        <?= Html::activeLabel(UserPreferences::preferences(), 'productsPerPage', ['class'=>'control-label alignL']) ?>
+        <?= Html::activeDropDownList(
+            UserPreferences::preferences(),
+            'productsPerPage',
+            [
+                20 => 20,
+                30 => 30,
+                50 => 50,
+            ],
+            [
+                'data-userpreference' => 'productsPerPage',
+            ]
+        ) ?>
     </div>
 </form>
 

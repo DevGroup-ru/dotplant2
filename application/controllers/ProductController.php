@@ -110,6 +110,8 @@ class ProductController extends Controller
             $query->addOrderBy(Product::tableName() . '.sort_order');
         }
 
+        $productsPerPage = UserPreferences::preferences()->getAttributes()['productsPerPage'];
+
         PropertiesHelper::appendPropertiesFilters(
             $object,
             $query,
@@ -124,14 +126,15 @@ class ProductController extends Controller
                 $request->pathInfo,
                 $request->queryString,
                 Json::encode(Yii::$app->request->get('p', [])),
-                $userSelectedSortingId
+                $userSelectedSortingId,
+                $productsPerPage
             ]
         );
 
         if (false === $pages = Yii::$app->cache->get($cacheKey)) {
             $pages = new Pagination(
                 [
-                    'defaultPageSize' => Config::getValue('shop.productsPerPage', 20),
+                    'defaultPageSize' => $productsPerPage,
                     'totalCount' => $products_query->count(),
                 ]
             );
