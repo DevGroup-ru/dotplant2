@@ -200,7 +200,7 @@ class Category extends ActiveRecord
             }
         }
         $slugs = [$this->slug];
-        $parent_category = $this->parent;
+        $parent_category = $this->parent_id > 0 ? $this->parent : 0;
         while ($parent_category !== null) {
             $slugs[] = $parent_category->slug;
             $parent_category = $parent_category->parent;

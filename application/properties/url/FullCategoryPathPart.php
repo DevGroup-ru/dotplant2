@@ -21,7 +21,9 @@ class FullCategoryPathPart extends CategoryPart
         $attribute_name = $this->model_category_attribute;
         $category_id = $this->model->$attribute_name;
 
+        /** @var Category $category */
         $category = Category::findById($category_id);
+
         if (is_object($category) === true) {
             return $category->getUrlPath($this->include_root_category);
         } else {

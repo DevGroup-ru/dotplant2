@@ -13,6 +13,7 @@ use app\models\Search;
 use app\properties\PropertiesHelper;
 use app\reviews\traits\ProcessReviews;
 use app\traits\DynamicContentTrait;
+use \devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
 use yii\data\Pagination;
@@ -28,7 +29,7 @@ class ProductController extends Controller
     use ProcessReviews;
 
     /**
-     * Отображение категории
+     * Products listing by category with filtration support.
      *
      * @return string
      * @throws \Exception
@@ -129,9 +130,9 @@ class ProductController extends Controller
                 new TagDependency(
                     [
                         'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Category::className()),
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Product::className()),
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Config::className()),
+                            ActiveRecordHelper::getCommonTag(Category::className()),
+                            ActiveRecordHelper::getCommonTag(Product::className()),
+                            ActiveRecordHelper::getCommonTag(Config::className()),
                         ]
                     ]
                 )
@@ -152,9 +153,9 @@ class ProductController extends Controller
                 new TagDependency(
                     [
                         'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Category::className()),
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Product::className()),
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Config::className()),
+                            ActiveRecordHelper::getCommonTag(Category::className()),
+                            ActiveRecordHelper::getCommonTag(Product::className()),
+                            ActiveRecordHelper::getCommonTag(Config::className()),
                         ]
                     ]
                 )
@@ -163,7 +164,7 @@ class ProductController extends Controller
 
         if (null !== $selected_category = $selected_category_id) {
             if ($selected_category_id > 0) {
-                if (null !== $selected_category = Category::findOne($selected_category_id)) {
+                if (null !== $selected_category = Category::findById($selected_category_id, null, null)) {
                     if (!empty($selected_category->meta_description)) {
                         $this->view->registerMetaTag(
                             [
@@ -199,7 +200,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Отображение продукта
+     * Product page view
      *
      * @param null $model_id
      * @return string
@@ -224,7 +225,7 @@ class ProductController extends Controller
                 new TagDependency(
                     [
                         'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(Product::className(), $model_id),
+                            ActiveRecordHelper::getObjectTag(Product::className(), $model_id),
                         ]
                     ]
                 )
@@ -280,6 +281,10 @@ class ProductController extends Controller
         );
     }
 
+    /**
+     * Search handler
+     * @return array
+     */
     public function actionSearch()
     {
         $model = new Search();
@@ -342,7 +347,7 @@ class ProductController extends Controller
         $crumbs[$selCat->slug] = $selCat->breadcrumbs_label;
 
         // get basic data
-        $parent = Category::findById($selCat->parent_id);
+        $parent = $selCat->parent_id > 0 ? Category::findById($selCat->parent_id) : null;
         while ($parent !== null) {
             $crumbs[$parent->slug] = $parent->breadcrumbs_label;
             $parent = $parent->parent;

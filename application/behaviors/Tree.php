@@ -4,6 +4,7 @@ namespace app\behaviors;
 
 use Yii;
 use yii\base\Behavior;
+use yii\caching\TagDependency;
 use yii\helpers\Url;
 /**
  * Class Tree
@@ -20,7 +21,37 @@ class Tree extends Behavior
      */
     public function getParent()
     {
-        return $this->owner->hasOne($this->owner->className(), [$this->idAttribute => $this->parentIdAttribute]);
+
+        $cacheKey = "Parent:".$this->owner->className().":".$this->owner->getAttribute($this->idAttribute);
+
+        $parent_model = Yii::$app->cache->get($cacheKey);
+        if (!is_object($parent_model)) {
+            $className = $this->owner->className();
+            $parent_model = new $className;
+            $parent_id = $this->owner->getAttribute($this->parentIdAttribute);
+            if ($parent_id < 1) {
+                return null;
+            }
+            if ($parent_model->hasMethod('findById')) {
+                $parent_model = $parent_model->findById($parent_id);
+            } else {
+                $parent_model = $parent_model->findOne($parent_id);
+            }
+            if (is_object($parent_model)) {
+                Yii::$app->cache->set(
+                    $cacheKey,
+                    $parent_model,
+                    86400,
+                    new TagDependency([
+                        'tags' => [
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                        ]
+                    ])
+                );
+            }
+
+        }
+        return $parent_model;
     }
 
     /**

@@ -329,6 +329,7 @@ class ProductController extends Controller
         $newModel->id = null;
         if ($newModel->save()) {
             $object = Object::getForClass(get_class($newModel));
+            // save categories
             $categoriesTableName = Object::getForClass(Product::className())->categories_table_name;
             $query = new Query();
             $params = $query->select(['category_id', 'sort_order'])
@@ -354,16 +355,18 @@ class ProductController extends Controller
                         ],
                         $rows
                     )->execute();
-                $params = $query
-                    ->select(['object_id', 'filename', 'image_src', 'thumbnail_src', 'image_description', 'sort_order'])
-                    ->from(Image::tableName())
-                    ->where(
-                        [
-                            'object_id' => $object->id,
-                            'object_model_id' => $model->id
-                        ]
-                    )->all();
             }
+
+            // save images bindings
+            $params = $query
+                ->select(['object_id', 'filename', 'image_src', 'thumbnail_src', 'image_description', 'sort_order'])
+                ->from(Image::tableName())
+                ->where(
+                    [
+                        'object_id' => $object->id,
+                        'object_model_id' => $model->id
+                    ]
+                )->all();
             if (!empty($params)) {
                 $rows = [];
                 foreach ($params as $param) {
