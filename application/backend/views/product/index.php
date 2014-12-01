@@ -6,7 +6,7 @@ use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Products');
 $this->params['breadcrumbs'][] = $this->title;
-
+$parent_id = Yii::$app->request->get('parent_id', app\models\Category::findRootForCategoryGroup(1)->id);
 ?>
 
 <?= app\widgets\Alert::widget([
@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $this->beginBlock('add-button');
 ?>
-        <a href="<?= Url::toRoute('/backend/product/edit') ?>" class="btn btn-success">
+        <a href="<?= Url::toRoute(['/backend/product/edit', 'parent_id' => $parent_id]) ?>" class="btn btn-success">
             <?= Icon::show('plus') ?>
             <?= Yii::t('app', 'Add') ?>
         </a>
