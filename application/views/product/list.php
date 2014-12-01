@@ -15,11 +15,14 @@
  * @var $values_by_property_id
  */
 
+use \app\models\UserPreferences;
 use yii\helpers\Url;
+use yii\helpers\Html;
+
 
 $this->title = $selected_category->title;
 $this->params['breadcrumbs'] = $breadcrumbs;
-$listView = isset($_COOKIE['listViewType']) && $_COOKIE['listViewType'] == 'listView';
+$listView = UserPreferences::preferences()->getAttributes()['listViewType'];
 $this->beginBlock('filters');
 echo app\widgets\filter\FilterWidget::widget(
     [
@@ -42,53 +45,51 @@ $this->endBlock();
 <hr class="soft"/>
 <form class="form-horizontal span6">
     <div class="control-group">
-        <label class="control-label alignL"><?= Yii::t('shop', 'Sort by') ?></label>
-        <select>
-            <option><?= Yii::t('app', 'Date') ?></option>
-        </select>
+        <?= Html::activeLabel(UserPreferences::preferences(), 'productListingSortId', ['class'=>'control-label alignL']) ?>
+        <?= Html::activeDropDownList(
+                UserPreferences::preferences(),
+                'productListingSortId',
+                \yii\helpers\ArrayHelper::map(\app\models\ProductListingSort::enabledSorts(), 'id', 'name'),
+                [
+                    'data-userpreference' => 'productListingSortId',
+                ]
+        ) ?>
+
     </div>
 </form>
 
-<div id="myTab" class="pull-right">
-    <a href="#listView" data-toggle="tab"><span class="btn btn-large"><i class="icon-list"></i></span></a>
-    <a href="#blockView" data-toggle="tab"><span class="btn btn-large btn-primary"><i class="icon-th-large"></i></span></a>
+<div class="pull-right">
+    <a href="#" data-dotplant-listViewType="listView"><span class="btn btn-large"><i class="icon-list"></i></span></a>
+    <a href="#" data-dotplant-listViewType="blockView"><span class="btn btn-large btn-primary"><i class="icon-th-large"></i></span></a>
 </div>
 <br class="clr"/>
-<div class="tab-content">
-    <div class="tab-pane <?=  $listView ? 'active' : '' ?>" id="listView">
-        <?php foreach ($products as $product): ?>
-            <?php
-                $url = Url::to(
-                    [
-                        'product/show',
-                        'model' => $product,
-                        'properties' => $values_by_property_id,
-                        'category_group_id' => $category_group_id,
-                    ]
-                );
-            ?>
-            <?= $this->render('item-row', ['product' => $product, 'url' => $url]) ?>
-        <?php endforeach; ?>
-    </div>
-    <div class="tab-pane <?=  !$listView ? 'active' : '' ?>" id="blockView">
-        <ul class="thumbnails">
-            <?php foreach ($products as $product): ?>
-                <?php
-                    $url = Url::to(
-                        [
-                            'product/show',
-                            'model' => $product,
-                            'properties' => $values_by_property_id,
-                            'category_group_id' => $category_group_id,
-                        ]
-                    );
-                ?>
-                <?= $this->render('item', ['product' => $product, 'url' => $url]) ?>
-            <?php endforeach; ?>
-        </ul>
-        <hr class="soft"/>
-    </div>
+
+<div id="<?= ($listView === 'listView' ? 'listView' : 'blockView') ?>">
+    <?php
+    if ($listView === 'blockView') {
+        echo '<ul class="thumbnails">';
+    }
+    ?>
+    <?php foreach ($products as $product): ?>
+        <?php
+            $url = Url::to(
+                [
+                    'product/show',
+                    'model' => $product,
+                    'properties' => $values_by_property_id,
+                    'category_group_id' => $category_group_id,
+                ]
+            );
+        ?>
+        <?= $this->render(($listView === 'listView' ? 'item-row':'item'), ['product' => $product, 'url' => $url]) ?>
+    <?php endforeach; ?>
+    <?php
+    if ($listView === 'blockView') {
+        echo '</ul><hr class="soft">';
+    }
+    ?>
 </div>
+
 <!--            <a href="compair.html" class="btn btn-large pull-right">Compair Product</a>-->
 <?php if (!isset($_GET['page'])): ?>
 <div class="content"><?= $selected_category->content ?></div>
@@ -105,18 +106,3 @@ $this->endBlock();
     <?php endif; ?>
 </div>
 <br class="clr"/>
-<script>
-    function setCookie(name, value){
-        var valueEscaped = escape(value);
-        var expiresDate = new Date();
-        expiresDate.setTime(expiresDate.getTime() + 365 * 24 * 60 * 60 * 1000);
-        var expires = expiresDate.toGMTString();
-        var newCookie = name + "=" + valueEscaped + "; path=/; expires=" + expires;
-        if (valueEscaped.length <= 4000) document.cookie = newCookie + ";";
-    }
-    jQuery('#myTab a').click(function() {
-        var $link = jQuery(this);
-        setCookie('listViewType', $link.attr('href').substr(1));
-        return true;
-    });
-</script>

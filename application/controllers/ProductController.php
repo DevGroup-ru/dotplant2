@@ -9,7 +9,9 @@ use app\models\Category;
 use app\models\Config;
 use app\models\Object;
 use app\models\Product;
+use app\models\ProductListingSort;
 use app\models\Search;
+use app\models\UserPreferences;
 use app\properties\PropertiesHelper;
 use app\reviews\traits\ProcessReviews;
 use app\traits\DynamicContentTrait;
@@ -96,7 +98,17 @@ class ProductController extends Controller
             [':gcatid' => $category_group_id]
         );
 
-        $query->addOrderBy(Product::tableName() . '.sort_order');
+        $allSorts = ProductListingSort::enabledSorts();
+        $userSelectedSortingId = UserPreferences::preferences()->getAttributes()['productListingSortId'];
+        if (isset($allSorts[$userSelectedSortingId])) {
+            $query->addOrderBy(
+                $allSorts[$userSelectedSortingId]['sort_field'] .
+                ' ' .
+                $allSorts[$userSelectedSortingId]['asc_desc']
+            );
+        } else {
+            $query->addOrderBy(Product::tableName() . '.sort_order');
+        }
 
         PropertiesHelper::appendPropertiesFilters(
             $object,
@@ -111,7 +123,8 @@ class ProductController extends Controller
             [
                 $request->pathInfo,
                 $request->queryString,
-                Json::encode(Yii::$app->request->get('p', []))
+                Json::encode(Yii::$app->request->get('p', [])),
+                $userSelectedSortingId
             ]
         );
 
@@ -194,7 +207,8 @@ class ProductController extends Controller
                 'pages' => $pages,
                 'title_append' => $title_append,
                 'selections' => $request->get(),
-                'breadcrumbs' => $this->buildBreadcrumbsArray($selected_category)
+                'breadcrumbs' => $this->buildBreadcrumbsArray($selected_category),
+                'allSorts' => $allSorts,
             ]
         );
     }
