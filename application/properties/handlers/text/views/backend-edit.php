@@ -61,6 +61,6 @@ use kartik\icons\Icon;
     );
 
 } else {
-    echo $form->field($model, $property_key);
+    echo $form->field($model, $property_key.'[0]');
 }
 
