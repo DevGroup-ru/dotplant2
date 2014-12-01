@@ -141,10 +141,37 @@ class PropertyGroup extends ActiveRecord
     public static function getForObjectId($object_id)
     {
         if (!isset(static::$groups_by_object_id[$object_id])) {
-            static::$groups_by_object_id[$object_id] = static::find()
-                ->where(['object_id'=>$object_id])
-                ->orderBy('sort_order')
-                ->all();
+
+            $cacheKey = 'PropertyGroup:objectId:'.$object_id;
+            static::$groups_by_object_id[$object_id] = Yii::$app->cache->get($cacheKey);
+            if (!is_array(static::$groups_by_object_id[$object_id])) {
+                static::$groups_by_object_id[$object_id] = static::find()
+                    ->where(['object_id'=>$object_id])
+                    ->orderBy('sort_order')
+                    ->all();
+                if (null !== $object = Object::findById($object_id)) {
+                    $tags = [
+                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object, $object_id)
+                    ];
+                    foreach (static::$groups_by_object_id[$object_id] as $propertyGroup){
+                        $tags[] = \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($propertyGroup, $propertyGroup->id);
+                    }
+
+
+                    Yii::$app->cache->set(
+                        $cacheKey,
+                        static::$groups_by_object_id[$object_id],
+                        0,
+                        new TagDependency(
+                            [
+                                'tags' => $tags,
+                            ]
+                        )
+                    );
+                }
+            }
+
+
         }
         return static::$groups_by_object_id[$object_id];
     }
