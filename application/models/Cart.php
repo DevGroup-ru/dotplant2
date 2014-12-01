@@ -136,7 +136,7 @@ class Cart extends ActiveRecord
             $this->items_count = $itemsCount;
             $this->items = $items;
             if (!$this->save()) {
-                throw new Exception;
+                throw new \Exception('Can\'t save the object');
             }
             $transaction->commit();
             return true;
