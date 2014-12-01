@@ -70,7 +70,6 @@ class ProductController extends Controller
 
         $query = Product::find();
         $query->andWhere([Product::tableName() . '.parent_id' => 0, Product::tableName() . '.active' => 1]);
-        $query->andWhere([Product::tableName() . '.parent_id' => 0, Product::tableName() . '.active' => 1]);
 
         /** @var $filter FilterQueryInterface */
         if (null !== $filter = Yii::$app->filterquery->getFilter()) {
