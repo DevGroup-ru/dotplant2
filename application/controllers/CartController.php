@@ -12,7 +12,6 @@ use app\models\Product;
 use app\models\ShippingOption;
 use app\properties\HasProperties;
 use Yii;
-use yii\base\Exception;
 use yii\caching\TagDependency;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
@@ -102,12 +101,7 @@ class CartController extends Controller
         } else {
             $cart->items[$product->id] = $quantity;
         }
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-            if (!$cart->reCalc()) {
-                throw new Exception('Cannot save cart');
-            }
-            $transaction->commit();
+        if ($cart->reCalc()) {
             return [
                 'success' => true,
                 'itemsCount' => $cart->items_count,
@@ -120,8 +114,7 @@ class CartController extends Controller
                     ]
                 ),
             ];
-        } catch (Exception $e) {
-            $transaction->rollBack();
+        } else {
             return [
                 'success' => false,
                 'message' => Yii::t('shop', 'Cannot add product to cart'),
@@ -143,20 +136,14 @@ class CartController extends Controller
             throw new NotFoundHttpException;
         }
         $cart->items[$id] = Yii::$app->request->post('quantity');
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-            if (!$cart->reCalc()) {
-                throw new Exception;
-            }
-            $transaction->commit();
+        if ($cart->reCalc()) {
             return [
                 'success' => true,
                 'itemsCount' => $cart->items_count,
                 'itemPrice' => Yii::$app->formatter->asDecimal($cart->items[$id] * $product->price, 2),
                 'totalPrice' => Yii::$app->formatter->asDecimal($cart->total_price, 2),
             ];
-        } catch (Exception $e) {
-            $transaction->rollBack();
+        } else {
             return [
                 'success' => false,
                 'message' => Yii::t('shop', 'Cannot change quantity'),
@@ -172,19 +159,13 @@ class CartController extends Controller
             throw new NotFoundHttpException;
         }
         unset($cart->items[$id]);
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-            if (!$cart->reCalc()) {
-                throw new Exception;
-            }
-            $transaction->commit();
+        if ($cart->reCalc()) {
             return [
                 'success' => true,
                 'itemsCount' => $cart->items_count,
                 'totalPrice' => Yii::$app->formatter->asDecimal($cart->total_price, 2),
             ];
-        } catch (Exception $e) {
-            $transaction->rollBack();
+        } else {
             return [
                 'success' => false,
                 'message' => Yii::t('shop', 'Cannot delete'),

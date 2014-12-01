@@ -3,7 +3,6 @@
 namespace app\models;
 
 use Yii;
-use yii\base\Exception;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
@@ -117,33 +116,23 @@ class Cart extends ActiveRecord
     {
         $totalPrice = 0;
         $itemsCount = 0;
-        $transaction = Yii::$app->db->beginTransaction();
         $products = Product::find()->where(['in', 'id', array_keys($this->items)])->all();
         $items = [];
         if ($saveProducts) {
             $this->products = [];
         }
-        try {
-            foreach ($products as $product) {
-                $items[$product->id] = $this->items[$product->id];
-                $itemsCount += $this->items[$product->id];
-                $totalPrice += $this->items[$product->id] * $product->price;
-                if ($saveProducts) {
-                    $this->products[$product->id] = $product;
-                }
+        foreach ($products as $product) {
+            $items[$product->id] = $this->items[$product->id];
+            $itemsCount += $this->items[$product->id];
+            $totalPrice += $this->items[$product->id] * $product->price;
+            if ($saveProducts) {
+                $this->products[$product->id] = $product;
             }
-            $this->total_price = $totalPrice;
-            $this->items_count = $itemsCount;
-            $this->items = $items;
-            if (!$this->save()) {
-                throw new \Exception('Can\'t save the object');
-            }
-            $transaction->commit();
-            return true;
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            return false;
         }
+        $this->total_price = $totalPrice;
+        $this->items_count = $itemsCount;
+        $this->items = $items;
+        return $this->save();
     }
 
     public function getProducts()
