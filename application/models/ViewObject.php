@@ -90,6 +90,7 @@ class ViewObject extends ActiveRecord
                     ]
                 ])
             );
+            return $viewObject;
         } else {
             return null;
         }
