@@ -2,11 +2,10 @@
 
 namespace app\widgets\image;
 
-
-use app\models\Image;
 use Yii;
+use app\models\Image;
 
-class UploadAction extends \app\widgets\dropzone\UploadAction
+class UploadAction extends \devgroup\dropzone\UploadAction
 {
     public function init()
     {

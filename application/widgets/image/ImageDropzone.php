@@ -3,7 +3,7 @@
 namespace app\widgets\image;
 
 use app\models\Image;
-use app\widgets\dropzone\DropZone;
+use devgroup\dropzone\DropZone;
 use WideImage\WideImage;
 use Yii;
 use yii\helpers\ArrayHelper;
