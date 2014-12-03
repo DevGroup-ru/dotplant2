@@ -21,6 +21,7 @@ use yii\caching\TagDependency;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
@@ -301,9 +302,14 @@ class ProductController extends Controller
     /**
      * Search handler
      * @return array
+     * @throws ForbiddenHttpException
      */
     public function actionSearch()
     {
+        if (!Yii::$app->request->isAjax) {
+            throw new ForbiddenHttpException();
+        }
+
         $model = new Search();
         $model->load(Yii::$app->request->get());
         $ids = ArrayHelper::merge(

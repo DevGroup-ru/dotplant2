@@ -13,6 +13,7 @@ use app\traits\LoadModel;
 use Yii;
 use yii\data\Pagination;
 use yii\db\ActiveQuery;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -113,6 +114,10 @@ class PageController extends Controller
 
     public function actionSearch()
     {
+        if (!Yii::$app->request->isAjax) {
+            throw new ForbiddenHttpException();
+        }
+
         $model = new Search();
         $model->load(Yii::$app->request->get());
 
