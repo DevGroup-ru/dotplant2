@@ -241,7 +241,7 @@ class User extends ActiveRecord implements IdentityInterface
         parent::afterSave($insert, $changedAttributes);
         if ($insert) {
             // @todo Сделать через saveProperties
-            $propertyGroups = PropertyGroup::findAll(['object_id' => $this->id]);
+            $propertyGroups = PropertyGroup::findAll(['object_id' => $this->getObject()->id]);
             foreach ($propertyGroups as $propertyGroup) {
                 $objectPropertyGroup = new ObjectPropertyGroup;
                 $objectPropertyGroup->attributes = [

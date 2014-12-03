@@ -6,6 +6,7 @@ use app\models\Order;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\User;
+use app\properties\HasProperties;
 use Yii;
 use yii\base\Security;
 use yii\filters\AccessControl;
@@ -99,6 +100,7 @@ class CabinetController extends Controller
 
     public function actionProfile()
     {
+        /** @var User|HasProperties $model */
         $model = User::findOne(Yii::$app->user->id);
         $model->scenario = 'updateProfile';
         $model->abstractModel->setAttrubutesValues(Yii::$app->request->post());

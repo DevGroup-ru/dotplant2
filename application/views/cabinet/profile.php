@@ -35,12 +35,15 @@ $this->params['breadcrumbs'] = [
             <?= $form->field($model, 'last_name') ?>
             <?= $form->field($model, 'email') ?>
             <?php foreach ($propertyGroups as $group): ?>
-                <?php if ($group->hidden_group_title == 0): ?>
-                    <h4><?= $group->name; ?></h4>
+                <?php if ($group['group']->hidden_group_title == 0): ?>
+                    <h4><?= $group['group']->name; ?></h4>
                 <?php endif; ?>
-                <?php $properties = app\models\Property::getForGroupId($group->id); ?>
+                <?php
+                    /** @var \app\models\Property[] $properties */
+                    $properties = $group['properties'];
+                ?>
                 <?php foreach ($properties as $property): ?>
-                    <?= $property->handler($form, $order->abstractModel, [], 'frontend_edit_view'); ?>
+                    <?= $property->handler($form, $model->abstractModel, [], 'frontend_edit_view'); ?>
                 <?php endforeach; ?>
             <?php endforeach; ?>
             <div class="form-group">
