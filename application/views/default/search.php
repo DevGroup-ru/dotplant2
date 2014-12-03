@@ -23,28 +23,22 @@ use yii\helpers\Url;
 
 
 $(function() {
-    // jQuery('#products-list').load('<?= \yii\helpers\Url::to(['/product/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]); ?>');
-    // jQuery('#pages-list').load('<?= \yii\helpers\Url::to(['/page/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]); ?>');
-    
-    function searchCallback(data, $element) {
-        $element.empty().append($(data.view));
-        if (data.totalCount > 0) {
-            $(".no-results").hide();
-        }
+    function load(url, $element) {
+        $.ajax({
+            url: url
+        }).done(function (data) {
+            $element.empty().append($(data.view));
+            if (data.totalCount > 0) {
+                $(".no-results").hide();
+            }
+        });
     }
-    $.ajax({
-        url: "<?= Url::to(['/product/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]) ?>",
-    }).done(function(data) {
-        return searchCallback(data, $('#products-list'));
-    });
-    $.ajax({
-        url: "<?= Url::to(['/page/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]) ?>",
-    }).done(function(data) {
-        return searchCallback(data, $('#pages-list'));
-    });
+
+    load("<?= Url::to(['/product/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]) ?>", $('#products-list'));
+    load("<?= Url::to(['/page/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]) ?>", $('#pages-list'));
 
     $('#products-list').on('click', '.pagination a', function() {
-        $('#products-list').load($(this).attr('href'));
+        load($(this).attr('href'), $('#products-list'));
         return false;
     });
 });
