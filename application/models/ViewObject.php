@@ -64,9 +64,9 @@ class ViewObject extends ActiveRecord
             return null;
         }
 
-        $cacheKey = "View:Object:ModelId" . $object->id . ":" . $model->id;
-        $viewObject = Yii::$app->cache->get($cacheKey);
-        if (!is_object($viewObject)) {
+        $cacheKey = "View:Object:ModelId:template" . $object->id . ":" . $model->id;
+        $template = Yii::$app->cache->get($cacheKey);
+        if (!$template) {
 
             $viewObject = static::find()
                 ->where(
@@ -76,24 +76,31 @@ class ViewObject extends ActiveRecord
                     ]
                 )->one();
 
+            if ($viewObject !== null) {
+                $template = View::getViewById($viewObject->view_id);
+                Yii::$app->cache->set(
+                    $cacheKey,
+                    $template,
+                    86400,
+                    new TagDependency([
+                        'tags' => [
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($viewObject, $viewObject->id),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object, $object->id),
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($model, $model->id)
+                        ]
+                    ])
+                );
+
+
+            }
+
         }
-        if ($viewObject !== null) {
-            Yii::$app->cache->set(
-                $cacheKey,
-                $viewObject,
-                86400,
-                new TagDependency([
-                    'tags' => [
-                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($viewObject, $viewObject->id),
-                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object, $object->id),
-                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($model, $model->id)
-                    ]
-                ])
-            );
-            return $viewObject;
-        } else {
-            return null;
+
+        if ($template) {
+            return $template;
         }
+
+        return null;
 
     }
 
