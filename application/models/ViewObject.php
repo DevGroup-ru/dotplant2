@@ -90,7 +90,7 @@ class ViewObject extends ActiveRecord
                     ]
                 ])
             );
-            return $viewObject;
+            return View::getViewById($viewObject->view_id);
         } else {
             return null;
         }
