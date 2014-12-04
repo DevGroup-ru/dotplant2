@@ -50,6 +50,10 @@ $hideControls = isset($hideControls) && $hideControls;
             <td><span class="item-price"><?= Yii::$app->formatter->asDecimal($cart->products[$productId]->price * $quantity, 2) ?></span> <?= Yii::$app->params['currency'] ?></td>
         </tr>
     <?php endforeach; ?>
+    <tr style="display: none" class="shipping-data">
+        <td class="name" colspan="4"></td>
+        <td class="price" ></td>
+    </tr>
     <tr>
         <td colspan="3"></td>
         <td><strong><span class="items-count"><?= $cart->items_count ?></span></strong></td>

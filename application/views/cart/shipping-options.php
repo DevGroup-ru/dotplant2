@@ -10,6 +10,7 @@ use app\models\Property;
 use app\models\PropertyGroup;
 
 $this->title = Yii::t('shop', 'Shipping options');
+$this->registerJsFile('/js/order.js');
 
 ?>
 <h1><?= $this->title ?></h1>
@@ -34,7 +35,7 @@ $this->title = Yii::t('shop', 'Shipping options');
                 <?php endforeach; ?>
             <?php endforeach; ?>
         </div>
-        <div class="span4 well">
+        <div id="shipping_options" class="span4 well">
             <?=
             $form->field($order, 'shipping_option_id')
                 ->radioList(\yii\helpers\ArrayHelper::map($shippingOptions, 'id', 'name'));
@@ -57,4 +58,10 @@ $this->title = Yii::t('shop', 'Shipping options');
             ]
         )
     ?>
-<?php \kartik\widgets\ActiveForm::end();
+<?php \kartik\widgets\ActiveForm::end(); ?>
+<script>
+    $('#shipping_options input:radio').change(function(){
+
+        Order.getDeliveryPrice( $(this).val())
+    });
+</script>
