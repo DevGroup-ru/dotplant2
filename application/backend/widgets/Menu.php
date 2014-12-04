@@ -62,6 +62,9 @@ class Menu extends Widget
         $lines = [];
         $tag = ArrayHelper::remove($options, 'tag', 'li');
         foreach ($items as $i => $item) {
+            if (isset($item['rback_check']) && $item['rback_check'] && !Yii::$app->user->can($item['rbac_check'])) {
+                continue;
+            }
             if (isset($item['active']) && !$item['active']) {
                 continue;
             }
@@ -91,7 +94,6 @@ class Menu extends Widget
      */
     protected function renderItem($item)
     {
-
         $template = ArrayHelper::getValue($item, 'template', $this->linkTemplate);
         return strtr(
             $template,

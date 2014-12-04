@@ -21,6 +21,7 @@ use app\behaviors\Tree;
  * @property string $css_class CSS class attribute for menu item
  * @property string $translation_category Translation category for Yii::t()
  * @property integer $sort_order
+ * @property string $rbac_check
  */
 class BackendMenu extends ActiveRecord
 {
