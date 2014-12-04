@@ -10,7 +10,6 @@ use app\models\Property;
 use app\models\PropertyGroup;
 
 $this->title = Yii::t('shop', 'Shipping options');
-$this->registerJsFile('/js/order.js');
 
 ?>
 <h1><?= $this->title ?></h1>
@@ -61,7 +60,6 @@ $this->registerJsFile('/js/order.js');
 <?php \kartik\widgets\ActiveForm::end(); ?>
 <script>
     $('#shipping_options input:radio').change(function(){
-
         Order.getDeliveryPrice( $(this).val())
     });
 </script>
