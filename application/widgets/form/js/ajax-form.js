@@ -9,7 +9,7 @@ jQuery(function() {
         var dataType = $form.attr('enctype') == 'multipart/form-data' ? 'file' : 'text';
         if(dataType == 'file'){
             $form.find(':file').each(function(indx, $input){
-                $formData.append($input.attr('name'), $input.files[0]);
+                $formData.append($($input.attr('name')), $input.files[0]);
             });
         }
         xhr = new XMLHttpRequest();

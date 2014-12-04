@@ -122,6 +122,10 @@ class SubmitFormAction extends Action
         }
         foreach($post[$form->abstractModel->formName()] as $key => &$value){
             if($file=yii\web\UploadedFile::getInstance($model, $key)){
+                $folder=Config::getValue('core.fileUploadPath', 'upload/user-uploads/');
+                if(!file_exists(\Yii::getAlias('@webroot' . '/' . $folder))){
+                    mkdir(\Yii::getAlias('@webroot' . '/' . $folder), 0755, true);
+                }
                 $value = '/upload/' . $file->baseName . '.' . $file->extension;
                 $file->saveAs('upload/' . $file->baseName . '.' . $file->extension);
             }

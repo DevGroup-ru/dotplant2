@@ -1,6 +1,5 @@
 <?php
 
-use yii\db\Schema;
 use yii\db\Migration;
 
 class m141203_130945_fileinput extends Migration
@@ -15,10 +14,20 @@ class m141203_130945_fileinput extends Migration
             'backend_edit_view' => 'backend-edit',
             'handler_class_name' => 'app\properties\handlers\fileInput\FileInputProperty',
         ]);
+        $core = \app\models\Config::find()->where(['name' => 'Core'])->one();
+        $this->insert(\app\models\Config::tableName(),[
+            'parent_id' => $core->id,
+            'name' => 'Путь к загружаемым файлам',
+            'key' => 'fileUploadPath',
+            'value' => 'upload/user-uploads/',
+            'preload' => 0,
+            'path' => $core->path.'.fileUploadPath',
+        ]);
     }
 
     public function down()
     {
         $this->delete(\app\models\PropertyHandler::tableName(),['name'=>'File']);
+        $this->delete(\app\models\Config::tableName(),['name'=>'fileUploadPath']);
     }
 }

@@ -25,10 +25,7 @@ use kartik\helpers\Html;
     echo Html::tag('dt', $property->name);
     foreach ($values->values as $val) {
         if (isset($val['value'])) {
-            if(\Yii::$app->request->get('download') == $val['key']){
-                \Yii::$app->response->sendFile(Yii::getAlias("@webroot") . $val['value']);
-            }
-            echo Html::tag('dd', Html::a($val['value'],\yii\helpers\Url::to(['form/view-submission', 'download' => $val['key'], 'id' => $values->object_model_id])));
+            echo Html::tag('dd', Html::a($val['value'],\yii\helpers\Url::to(['form/download', 'key' => $val['key'], 'id' => $values->object_model_id])));
         }
     }
     ?>
