@@ -151,6 +151,44 @@ class CartController extends Controller
         }
     }
 
+
+    public function actionGetDeliveryPrice()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (is_null(Yii::$app->request->post('shipping_option_id'))) {
+            throw new BadRequestHttpException;
+        }
+
+        $cart = Cart::getCart(false);
+        if ($cart) {
+
+            $shippingOption = ShippingOption::findOne(Yii::$app->request->post('shipping_option_id'));
+
+            if ($shippingOption) {
+
+                return [
+                    'success' =>true,
+                    'name' => $shippingOption->name,
+                    'shipping_price' => $shippingOption->cost,
+                    'total_price' => Yii::$app->formatter->asDecimal($cart->total_price),
+                    'full_price' => Yii::$app->formatter->asDecimal($cart->total_price + $shippingOption->cost),
+                    'currency' => Yii::$app->params['currency']
+                ];
+
+            }
+
+        }
+
+        return [
+            'success' => false,
+            'message' => Yii::t('shop', 'Error data'),
+        ];
+
+
+    }
+
+
     public function actionDelete($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
