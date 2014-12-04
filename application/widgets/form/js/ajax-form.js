@@ -13,8 +13,6 @@ jQuery(function() {
             });
         }
         xhr = new XMLHttpRequest();
-
-
         xhr.onreadystatechange = function(response) {
             if (xhr.readyState == 4){
                 if (xhr.status == 200) {

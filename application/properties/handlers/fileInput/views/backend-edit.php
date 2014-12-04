@@ -13,4 +13,4 @@
  */
 
 ?>
-<?= $form->field($model, $property_key.'[0]')->widget(\kartik\widgets\FileInput::classname())?>
+<?= $form->field($model, $property_key)->widget(\kartik\widgets\FileInput::classname())?>
