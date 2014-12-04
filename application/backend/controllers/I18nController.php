@@ -20,21 +20,22 @@ class I18nController extends Controller
         if ($this->aliases === null) {
             $this->aliases = [];
             foreach (Yii::$app->i18n->translations as $name => $translation) {
-                if ($translation['class'] != PhpMessageSource::className() || $name == 'yii') {
+                if (is_array($translation)) {
+                    $translation = Yii::createObject($translation);
+                }
+                if (!($translation instanceof PhpMessageSource) || $name == 'yii') {
                     continue;
                 }
-                if (isset($translation['basePath'])) {
-                    $basePath = Yii::getAlias($translation['basePath']);
-                    $rdi = new \RecursiveDirectoryIterator(
-                        $basePath,
-                        \RecursiveDirectoryIterator::SKIP_DOTS
-                    );
-                    foreach (new \RecursiveIteratorIterator($rdi, \RecursiveIteratorIterator::CHILD_FIRST) as $file) {
-                        $fileName = $file->getRealpath();
-                        if (pathinfo($fileName, PATHINFO_EXTENSION) == 'php') {
-                            $alias = $translation['basePath'] . substr($fileName, strlen($basePath));
-                            $this->aliases[$alias] = $fileName;
-                        }
+                $basePath = Yii::getAlias($translation->basePath);
+                $rdi = new \RecursiveDirectoryIterator(
+                    $basePath,
+                    \RecursiveDirectoryIterator::SKIP_DOTS
+                );
+                foreach (new \RecursiveIteratorIterator($rdi, \RecursiveIteratorIterator::CHILD_FIRST) as $file) {
+                    $fileName = $file->getRealpath();
+                    if (pathinfo($fileName, PATHINFO_EXTENSION) == 'php') {
+                        $alias = $translation->basePath . substr($fileName, strlen($basePath));
+                        $this->aliases[$alias] = $fileName;
                     }
                 }
             }
