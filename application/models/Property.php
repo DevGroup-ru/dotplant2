@@ -289,6 +289,17 @@ class Property extends ActiveRecord
                 ]
             );
         }
+        $fileHandler = PropertyHandler::find()->where(['name' => 'File'])->one();
+        if($this->property_handler_id == $fileHandler->id){
+            $handlerAdditionalParams = ArrayHelper::merge(
+                $handlerAdditionalParams,
+                [
+                    'rules' => [
+                        'file',
+                    ],
+                ]
+            );
+        }
         $handlerAdditionalParams = ArrayHelper::merge(
             $handlerAdditionalParams,
             [

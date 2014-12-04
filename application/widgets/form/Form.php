@@ -13,7 +13,7 @@ class Form extends Widget
     public $isModal = false;
     public $formId;
     public $route = 'default/submit-form';
-
+    public $options = ['data-type' => 'form-widget'];
     private $model;
     private $modal = null;
 
@@ -62,6 +62,7 @@ class Form extends Widget
                 'id' => $this->id,
                 'model' => $this->model,
                 'groups' => $groups,
+                'options' => $this->options,
             ]);
         if ($this->isModal) {
             Modal::end();

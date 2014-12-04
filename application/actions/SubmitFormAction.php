@@ -120,6 +120,12 @@ class SubmitFormAction extends Action
         if (!($form->abstractModel->validate()  && $submission->save())) {
             return "0";
         }
+        foreach($post[$form->abstractModel->formName()] as $key => &$value){
+            if($file=yii\web\UploadedFile::getInstance($model, $key)){
+                $value = '/upload/' . $file->baseName . '.' . $file->extension;
+                $file->saveAs('upload/' . $file->baseName . '.' . $file->extension);
+            }
+        }
         $data = [
             'AddPropetryGroup' => [
                 $submission->formName() => array_keys($form->getPropertyGroups()),
