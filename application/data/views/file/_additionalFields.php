@@ -8,22 +8,37 @@ use \yii\helpers\Html;
 ?>
 <fieldset>
     <legend><?=Yii::t('app', 'Additional fields')?></legend>
+    <?php
 
-    <?=
-        $form->field($model, 'fields[additionalFields][]')->checkboxList(
-            $fields['additionalFields'],
-            [
-                'item' => function ($index, $label, $name, $checked, $value) {
-                    $line = Html::beginTag('div', ['class' => 'checkbox']);
-                    $line .= Html::checkbox($name, $checked, [
-                        'value' => $value,
-                        'label' => Html::encode($label),
-                    ]);
-                    $line .= '</div>';
-                    return $line;
-                },
+        foreach ($fields['additionalFields'] as $field_key => $options) {
+            echo
+                '<div class="well well-sm well-light"><b>' .
+                $field_key .
+                '</b>';
 
-            ]
-        )->label(false)
+            $prefix =
+                'fields[additionalFields][' .
+                $field_key .
+                '][';
+
+            echo $form->field(
+                $model,
+                $prefix . 'enabled]'
+            )->checkbox(['label'=>Yii::t('app', 'Process')]);
+
+
+            if (isset($options['processValueAs'])) {
+                echo
+                $form->field(
+                    $model,
+                    $prefix . 'processValuesAs]'
+                )
+                    ->dropDownList($options['processValueAs'])
+                    ->label(Yii::t('app', 'Process values as:'));
+            }
+            echo Html::activeHiddenInput($model, $prefix.'key]',['value'=>$field_key]);
+            echo '</div><br>';
+        }
     ?>
+
 </fieldset>

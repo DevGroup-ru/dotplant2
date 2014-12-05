@@ -83,7 +83,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         </div>
     <?php endif; ?>
-    <?php if ($importMode === false): ?>
+
         <div class="col-md-4">
             <?= $this->render('_additionalFields',[
                 'form' => $form,
@@ -91,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'model' => $model,
             ]) ?>
         </div>
-    <?php endif;?>
+
     </div>
     <?php if ($importMode === true): ?>
     <div class="form-group row">

@@ -89,7 +89,7 @@ class ImportCsv extends Import
             $propertiesKeys[] = $field['key'];
         }
 
-        $title = array_merge($objectFields, $propertiesKeys, $additionalFields);
+        $title = array_merge($objectFields, $propertiesKeys, array_keys($additionalFields));
 
 
 
@@ -101,7 +101,7 @@ class ImportCsv extends Import
         $propertyIds = array_keys($propertiesFields);
 
         $objects = $class::find();
-
+        gc_disable();
         foreach ($objects->each($batchSize) as $object) {
             $row = [];
             foreach ($objectFields as $field) {
@@ -137,20 +137,27 @@ class ImportCsv extends Import
             }
 
             if (count($additionalFields) > 0 && $object->hasMethod('getAdditionalFields')) {
-                $fieldsFromModel = $object->getAdditionalFields();
-                foreach ($additionalFields as $key) {
-                    if (isset($fieldsFromModel[$key]) && !empty($fieldsFromModel[$key])) {
-                        $value = (array) $fieldsFromModel[$key];
-                        $row[] = implode($this->multipleValuesDelimiter, $value);
-                    } else {
-                        // empty
-                        $row[] = '';
+                $fieldsFromModel = $object->getAdditionalFields($additionalFields);
+                foreach ($additionalFields as $key => $configuration) {
+                    if ($configuration['enabled']) {
+                        if (!isset($fieldsFromModel[$key])) {
+                            $fieldsFromModel[$key] = '';
+                        }
+
+                        if (!empty($fieldsFromModel[$key])) {
+                            $value = (array)$fieldsFromModel[$key];
+                            $row[] = implode($this->multipleValuesDelimiter, $value);
+                        } else {
+                            // empty
+                            $row[] = '';
+                        }
                     }
                 }
             }
 
             fputcsv($output, $row);
         }
+        gc_enable();
         fclose($output);
     }
 }
