@@ -44,7 +44,9 @@
         "yiisoft/yii2-gii": "*",
         "codeception/codeception": "1.8.*@dev",
         "codeception/specify": "*",
-        "codeception/verify": "*"
+        "codeception/verify": "*",
+        "yiisoft/yii2-elasticsearch": "*",
+        "devgroup/yii2-arangodb": "*"
     },
     "scripts": {
         "post-create-project-cmd": [

@@ -10,6 +10,9 @@ return [
             'class' => 'app\data\Module',
             'layout' => '@app/backend/views/layouts/main',
         ],
+        'index' => [
+            'class' => 'app\index\Module',
+        ],
     ],
     'components' => [
         'db' => $db,
@@ -22,6 +25,10 @@ return [
                     ],
                 ],
             ],
+        ],
+        'index' => [
+            'class' => 'app\index\IndexComponent',
+            'storageComponent' => 'elasticsearch',
         ],
     ],
     'params' => $params,

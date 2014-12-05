@@ -150,6 +150,22 @@ $config = [
                 ]
             ]
         ],
+        'elasticsearch' => [
+            'class' => 'yii\elasticsearch\Connection',
+            'nodes' => [
+                ['http_address' => 'inet[/127.0.0.1:9200]'],
+                // configure more hosts if you have a cluster
+            ],
+        ],
+        'arangodb' => [
+            'class' => '\devgroup\arangodb\Connection',
+            'connectionOptions' => [
+                triagens\ArangoDb\ConnectionOptions::OPTION_DATABASE => "dotplant2",
+                triagens\ArangoDb\ConnectionOptions::OPTION_ENDPOINT => 'tcp://127.0.0.1:8529',
+                triagens\ArangoDb\ConnectionOptions::OPTION_AUTH_USER   => 'dotplant2',
+                triagens\ArangoDb\ConnectionOptions::OPTION_AUTH_PASSWD => 'dotplant2',
+            ],
+        ],
     ],
 ];
 
@@ -174,6 +190,9 @@ if (YII_ENV_DEV) {
         'panels' => [
             'holmes' => [
                 'class' => 'app\panels\holmes\HolmesPanel',
+            ],
+            'elasticsearch' => [
+                'class' => 'yii\\elasticsearch\\DebugPanel',
             ],
         ],
     ];
