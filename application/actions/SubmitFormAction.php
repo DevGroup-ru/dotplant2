@@ -126,8 +126,8 @@ class SubmitFormAction extends Action
                 if(!file_exists(\Yii::getAlias('@webroot' . '/' . $folder))){
                     mkdir(\Yii::getAlias('@webroot' . '/' . $folder), 0755, true);
                 }
-                $value = '/upload/' . $file->baseName . '.' . $file->extension;
-                $file->saveAs('upload/' . $file->baseName . '.' . $file->extension);
+                $value = '/' . $folder . $file->baseName . '.' . $file->extension;
+                $file->saveAs($folder . $file->baseName . '.' . $file->extension);
             }
         }
         $data = [
