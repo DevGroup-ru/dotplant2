@@ -51,10 +51,23 @@ $this->params['breadcrumbs'][] = $this->title;
                                         ['/backend/config/update', 'parent_id'
                                             => Yii::$app->request->get('parent_id', 0)],
                                         ['class' => 'btn btn-success']
-                                    ),
+                                    ) . \app\backend\widgets\RemoveAllButton::widget([
+                                        'url' => \yii\helpers\Url::to(['/backend/config/remove-all', 'parent_id'
+                                        => Yii::$app->request->get('parent_id', 0)]),
+                                        'gridSelector' => '.grid-view',
+                                        'htmlOptions' => [
+                                            'class' => 'btn btn-danger pull-right'
+                                        ],
+                                    ]),
                                 ],
                             ],
                             'columns' => [
+                                [
+                                    'class' => \kartik\grid\CheckboxColumn::className(),
+                                    'options' => [
+                                        'width' => '10px',
+                                    ],
+                                ],
                                 'id',
                                 'parent_id',
                                 'name',

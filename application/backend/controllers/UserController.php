@@ -131,6 +131,21 @@ class UserController extends Controller
         return $this->redirect(['index']);
     }
 
+    public function actionRemoveAll()
+    {
+        $items = \Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = User::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->scenario = 'admin';
+                $item->status = User::STATUS_DELETED;
+                $item->save(true, ['status']);
+            }
+        }
+
+        return $this->redirect(['index']);
+    }
+
     public function actionAddAssignment($id, $userId)
     {
         try {

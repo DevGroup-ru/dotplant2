@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ]); ?>
 
 <div class="row">
-    <div class="col-md-8" id="jstree-more">
+    <div class="col-md-12" id="jstree-more">
         <?php
 
         echo DynaGrid::widget(

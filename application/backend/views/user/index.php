@@ -22,6 +22,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'id' => 'users-grid',
             ],
             'columns' => [
+                [
+                    'class' => \kartik\grid\CheckboxColumn::className(),
+                    'options' => [
+                        'width' => '10px',
+                    ],
+                ],
                 'id',
                 'username',
                 'email:email',
@@ -60,7 +66,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         Icon::show('plus') . Yii::t('app', 'Add'),
                         ['/backend/user/update'],
                         ['class' => 'btn btn-success']
-                    ),
+                    ) . \app\backend\widgets\RemoveAllButton::widget([
+                        'url' => '/backend/user/remove-all',
+                        'gridSelector' => '.grid-view',
+                        'htmlOptions' => [
+                            'class' => 'btn btn-danger pull-right'
+                        ],
+                    ]),
 
                 ],
             ]

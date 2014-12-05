@@ -22,6 +22,12 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         'columns' => [
             [
+                'class' => \kartik\grid\CheckboxColumn::className(),
+                'options' => [
+                    'width' => '10px',
+                ],
+            ],
+            [
                 'class' => 'yii\grid\DataColumn',
                 'attribute' => 'id',
             ],
@@ -72,7 +78,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     Icon::show('plus') . Yii::t('app', 'Add'),
                     ['/backend/properties/group'],
                     ['class' => 'btn btn-success']
-                ),
+                ) . \app\backend\widgets\RemoveAllButton::widget([
+                    'url' => '/backend/properties/remove-all-groups',
+                    'gridSelector' => '.grid-view',
+                    'htmlOptions' => [
+                        'class' => 'btn btn-danger pull-right'
+                    ],
+                ]),
             ],
             
         ]

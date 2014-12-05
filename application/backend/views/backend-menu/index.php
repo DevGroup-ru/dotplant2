@@ -43,6 +43,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Icon::show('plus') ?>
                     <?= Yii::t('app', 'Add') ?>
                 </a>
+            <?= \app\backend\widgets\RemoveAllButton::widget([
+                'url' => Url::to(['/backend/backend-menu/remove-all', 'parent_id' => (is_object($model) ? $model->id : 0)]),
+                'gridSelector' => '.grid-view',
+                'htmlOptions' => [
+                    'class' => 'btn btn-danger pull-right'
+                ],
+            ]); ?>
         <?php
         $this->endBlock();
         ?>
@@ -52,6 +59,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'id' => 'backend-menu-grid',
                 ],
                 'columns' => [
+                    [
+                        'class' => \kartik\grid\CheckboxColumn::className(),
+                        'options' => [
+                            'width' => '10px',
+                        ],
+                    ],
                     [
                         'class' => 'yii\grid\DataColumn',
                         'attribute' => 'id',
@@ -92,7 +105,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'panel'=>[
                         'heading'=>'<h3 class="panel-title">'.$this->title.'</h3>',
                         'after' => $this->blocks['add-button'],
-
                     ],
                     
                 ]

@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= Html::endForm() ?>
     <?php $this->endBlock(); ?>
 
-    <div class="col-md-10">
+    <div class="col-md-12">
         <?=
         DynaGrid::widget(
             [
@@ -42,6 +42,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'url',
                     [
                         'class' => 'app\backend\components\ActionColumn',
+                        'options' => [
+                            'width' => '50px',
+                        ],
                         'buttons' => [
                             [
                                 'url' => 'details',

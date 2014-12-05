@@ -111,6 +111,19 @@ class OrderStatusController extends Controller
         return $this->redirect(['index']);
     }
 
+    public function actionRemoveAll()
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = OrderStatus::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['index']);
+    }
+
     /**
      * Finds the OrderStatus model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

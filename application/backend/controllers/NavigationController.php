@@ -105,4 +105,17 @@ class NavigationController extends Controller
             )
         );
     }
+
+    public function actionRemoveAll($parent_id)
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = Navigation::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['index', 'parent_id' => $parent_id]);
+    }
 }

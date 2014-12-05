@@ -21,6 +21,13 @@ $this->beginBlock('add-button');
             <?= Icon::show('plus') ?>
             <?= Yii::t('app', 'Add') ?>
         </a>
+        <?= \app\backend\widgets\RemoveAllButton::widget([
+            'url' => Url::toRoute(['/backend/product/remove-all', 'parent_id' => $parent_id]),
+            'gridSelector' => '.grid-view',
+            'htmlOptions' => [
+                'class' => 'btn btn-danger pull-right'
+            ],
+        ]); ?>
 <?php
 $this->endBlock();
 ?>
@@ -48,6 +55,12 @@ $this->endBlock();
             'storage' => DynaGrid::TYPE_SESSION
         ],
         'columns' => [
+            [
+                'class' => \kartik\grid\CheckboxColumn::className(),
+                'options' => [
+                    'width' => '10px',
+                ],
+            ],
             [
                 'class' => 'yii\grid\DataColumn',
                 'attribute' => 'id',

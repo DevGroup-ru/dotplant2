@@ -36,7 +36,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Newsletter config'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
                 <?= $form->field($model, 'isActive')->textInput()->widget(\kartik\widgets\SwitchInput::className()); ?>
-                <?php //= //$form->field($model, 'notifyType')->dropDownList(\app\backend\models\NewsletterConfig::getNotifyTypeList()); ?>
             <?php BackendWidget::end(); ?>
 
         <?php ActiveForm::end(); ?>

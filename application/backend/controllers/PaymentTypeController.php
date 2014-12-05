@@ -100,6 +100,19 @@ class PaymentTypeController extends Controller
         return $this->redirect(['index']);
     }
 
+    public function actionRemoveAll()
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = PaymentType::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['index']);
+    }
+
     /**
      * Finds the PaymentType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

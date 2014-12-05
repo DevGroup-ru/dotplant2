@@ -22,6 +22,13 @@ $this->params['breadcrumbs'][] = $this->title = Yii::t('app', 'Views');
             <?= Icon::show('plus') ?>
             <?= Yii::t('app', 'Add') ?>
         </a>
+        <?= \app\backend\widgets\RemoveAllButton::widget([
+            'url' => '/backend/view/remove-all',
+            'gridSelector' => '.grid-view',
+            'htmlOptions' => [
+                'class' => 'btn btn-danger pull-right'
+            ],
+        ]); ?>
         <?php
         $this->endBlock();
         ?>
@@ -31,6 +38,12 @@ $this->params['breadcrumbs'][] = $this->title = Yii::t('app', 'Views');
                 'id' => 'views-grid',
             ],
             'columns' => [
+                [
+                    'class' => \kartik\grid\CheckboxColumn::className(),
+                    'options' => [
+                        'width' => '10px',
+                    ],
+                ],
                 [
                     'class' => 'yii\grid\DataColumn',
                     'attribute' => 'id',

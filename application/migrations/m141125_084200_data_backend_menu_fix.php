@@ -14,7 +14,7 @@ class m141125_084200_data_backend_menu_fix extends Migration
             [
                 'parent_id' => '18',
                 'name' => 'Data',
-                'route' => '/data/file/',
+                'route' => '/data/file/index',
                 'icon' => 'database',
                 'sort_order' => '0',
                 'added_by_ext' => 'core',
@@ -28,8 +28,6 @@ class m141125_084200_data_backend_menu_fix extends Migration
 
     public function down()
     {
-        echo "m141125_084200_data_backend_menu_fix cannot be reverted.\n";
 
-        return false;
     }
 }

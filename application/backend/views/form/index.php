@@ -21,6 +21,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'class' => 'btn btn-success',
     ]
 ) ?>
+<?= \app\backend\widgets\RemoveAllButton::widget([
+    'url' => '/backend/form/remove-all',
+    'gridSelector' => '.grid-view',
+    'htmlOptions' => [
+        'class' => 'btn btn-danger pull-right'
+    ],
+]); ?>
 <?php $this->endBlock(); ?>
 
 <?= DynaGrid::widget([
@@ -28,6 +35,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'id' => 'form-grid',
         ],
         'columns' => [
+            [
+                'class' => \kartik\grid\CheckboxColumn::className(),
+                'options' => [
+                    'width' => '10px',
+                ],
+            ],
             'id',
             'name',
             'form_view',

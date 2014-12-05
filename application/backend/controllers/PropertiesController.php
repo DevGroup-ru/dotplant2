@@ -280,6 +280,37 @@ class PropertiesController extends Controller
         );
     }
 
+    public function actionRemoveAllProperties($group_id)
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = Property::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $static_values = PropertyStaticValues::find()
+                    ->where(['property_id' => $item->id])
+                    ->all();
+                foreach ($static_values as $psv) {
+                    $psv->delete();
+                }
+                if ($item->is_column_type_stored) {
+                    $object = Object::findById($item->group->object_id);
+                    Yii::$app->db->createCommand()
+                        ->dropColumn($object->column_properties_table_name, $item->key)
+                        ->execute();
+                    if ($object->object_class == Form::className()) {
+                        $submissionObject = Object::getForClass(Submission::className());
+                        Yii::$app->db->createCommand()
+                            ->dropColumn($submissionObject->column_properties_table_name, $item->key)
+                            ->execute();
+                    }
+                }
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['group', 'id' => $group_id]);
+    }
+
     public function actionDeleteGroup($id)
     {
         $model = PropertyGroup::findOne($id);
@@ -304,6 +335,31 @@ class PropertiesController extends Controller
                 ]
             )
         );
+    }
+
+    public function actionRemoveAllGroups()
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = PropertyGroup::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $properties = Property::find()
+                    ->where(['property_group_id' => $item->id])
+                    ->all();
+                foreach ($properties as $prop) {
+                    $static_values = PropertyStaticValues::find()
+                        ->where(['property_id' => $prop->id])
+                        ->all();
+                    foreach ($static_values as $psv) {
+                        $psv->delete();
+                    }
+                    $prop->delete();
+                }
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['index']);
     }
     
 

@@ -118,12 +118,6 @@ class BackendMenuController extends Controller
         );
     }
 
-    public function actionTest()
-    {
-        echo "<PRE>";
-        return \yii\helpers\VarDumper::dump(\app\backend\models\BackendMenu::getAllMenu());
-    }
-
     public function actionDelete($id = null, $parent_id = null)
     {
 
@@ -140,4 +134,16 @@ class BackendMenuController extends Controller
         return $this->redirect(Url::to(['index', 'parent_id' => $model->parent_id]));
     }
 
+    public function actionRemoveAll($parent_id)
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = BackendMenu::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['index', 'parent_id' => $parent_id]);
+    }
 }

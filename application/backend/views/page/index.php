@@ -1,8 +1,14 @@
 <?php
 
+
+/**
+ * @var yii\web\View $this
+ * @var yii\data\ActiveDataProvider $dataProvider
+ * @var \app\models\Page $searchModel
+ */
+
 use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
-use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Pages');
 if (is_object($model)) {
@@ -35,22 +41,40 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
     </div>
     <div class="col-md-8" id="jstree-more">
-        <?php
-        $this->beginBlock('add-button');
-        ?>
-                <a href="<?= Url::to(['/backend/page/edit', 'parent_id'=>(is_object($model)?$model->id:0)]) ?>" class="btn btn-success">
-                    <?= Icon::show('plus') ?>
-                    <?= Yii::t('app', 'Add') ?>
-                </a>
-        <?php
-        $this->endBlock();
-        ?>
+
+        <?php $this->beginBlock('buttonGroup'); ?>
+        <div class="btn-toolbar" role="toolbar">
+            <div class="btn-group">
+                <?=
+                \yii\helpers\Html::a(
+                    Icon::show('plus') . Yii::t('app', 'Add'),
+                    ['/backend/page/edit', 'parent_id' => (is_object($model) ? $model->id : 0)],
+                    ['class' => 'btn btn-success']
+                )
+                ?>
+            </div>
+            <?= \app\backend\widgets\RemoveAllButton::widget([
+                'url' => \yii\helpers\Url::toRoute(['/backend/page/remove-all', 'parent_id' => (is_object($model) ? $model->id : 0)]),
+                'gridSelector' => '.grid-view',
+                'htmlOptions' => [
+                    'class' => 'btn btn-danger pull-right'
+                ],
+            ]); ?>
+        </div>
+        <?php $this->endBlock(); ?>
+
         <?=
             DynaGrid::widget([
                 'options' => [
                     'id' => 'page-grid',
                 ],
                 'columns' => [
+                    [
+                        'class' => \kartik\grid\CheckboxColumn::className(),
+                        'options' => [
+                            'width' => '10px',
+                        ],
+                    ],
                     [
                         'class' => 'yii\grid\DataColumn',
                         'attribute' => 'id',
@@ -125,7 +149,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     'panel'=>[
                         'heading'=>'<h3 class="panel-title">'.$this->title.'</h3>',
-                        'after' => $this->blocks['add-button'],
+                        'after' => $this->blocks['buttonGroup'],
 
                     ],
                     
@@ -134,6 +158,3 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
     </div>
 </div>
-
-
-

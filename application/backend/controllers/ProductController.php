@@ -435,6 +435,19 @@ class ProductController extends Controller
         return $this->redirect($redirect);
     }
 
+    public function actionRemoveAll($parent_id)
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = Product::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['index', 'parent_id' => $parent_id]);
+    }
+
     public static function sortModels($tableName, $ids, $field = 'sort_order')
     {
         $priorities = [];

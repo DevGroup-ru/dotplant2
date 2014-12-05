@@ -152,6 +152,19 @@ class CategoryController extends Controller
         return $this->redirect(Url::to(['index', 'parent_id' => $model->parent_id]));
     }
 
+    public function actionRemoveAll($parent_id)
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = Category::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['index', 'parent_id' => $parent_id]);
+    }
+
     public function actionAutocomplete($search = null, $id = null)
     {
         /**

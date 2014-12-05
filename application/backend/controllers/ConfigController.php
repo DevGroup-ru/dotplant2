@@ -112,6 +112,19 @@ class ConfigController extends Controller
         return $this->redirect(['index']);
     }
 
+    public function actionRemoveAll($parent_id)
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = Config::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['index', 'parent_id' => $parent_id]);
+    }
+
     /**
      * Finds the Config model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

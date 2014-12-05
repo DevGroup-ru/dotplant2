@@ -309,6 +309,7 @@ return array (
     'Record has been saved' => 'Запись успешно сохранена',
     'Cannot save data' => 'Невозможно сохранить данные',
     'Are you sure you want to delete this object?' => 'Вы точно желаете удалить объект?',
+    'Are you sure you want to delete these objects?' => 'Вы точно желаете удалить эти объекты?',
     'Export fields' => 'Поля для экспорта',
     'Import fields' => 'Поля для импорта',
     'Change a password' => 'Сменить пароль',

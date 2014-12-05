@@ -47,6 +47,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         'class' => 'btn btn-success',
                     ]
                 ) ?>
+                <?= \app\backend\widgets\RemoveAllButton::widget([
+                    'url' => \yii\helpers\Url::to([
+                        '/backend/navigation/remove-all',
+                        'parent_id' => $parent_id,
+                    ]),
+                    'gridSelector' => '.grid-view',
+                    'htmlOptions' => [
+                        'class' => 'btn btn-danger pull-right'
+                    ],
+                ]); ?>
         <?php
         $this->endBlock();
         ?>
@@ -56,6 +66,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'id' => 'nav-grid',
                 ],
                 'columns' => [
+                    [
+                        'class' => \kartik\grid\CheckboxColumn::className(),
+                        'options' => [
+                            'width' => '10px',
+                        ],
+                    ],
                     [
                         'class' => 'yii\grid\DataColumn',
                         'attribute' => 'id',
