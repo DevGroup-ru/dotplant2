@@ -17,7 +17,7 @@ class m141203_130945_fileinput extends Migration
         $core = \app\models\Config::find()->where(['name' => 'Core'])->one();
         $this->insert(\app\models\Config::tableName(),[
             'parent_id' => $core->id,
-            'name' => 'Путь к загружаемым файлам',
+            'name' => 'Path to user uploaded files',
             'key' => 'fileUploadPath',
             'value' => 'upload/user-uploads/',
             'preload' => 0,
