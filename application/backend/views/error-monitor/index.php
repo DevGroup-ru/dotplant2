@@ -1,8 +1,13 @@
 <?php
 
+/**
+ * @var $this yii\web\View
+ * @var $searchModel app\components\SearchModel
+ * @var $dataProvider yii\data\ActiveDataProvider
+ */
+
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
-use kartik\widgets\ActiveForm;
 
 $this->title = Yii::t('app', 'Error Monitor');
 
@@ -17,6 +22,15 @@ $this->params['breadcrumbs'][] = $this->title;
 ); ?>
 
 <div class="row">
+
+    <?php $this->beginBlock('search-form'); ?>
+    <?= Html::beginForm('search', 'get', ['id' => 'code_sorter', 'class' => 'form-inline', 'role' => 'form']) ?>
+    <?= Html::label('HTTP code: ', 'code') ?>
+    <?= Html::input('text', 'ErrorMonitor[http_code]', null, ['class' => 'form-control']); ?>
+    <?= Html::submitButton('Search', ['class' => 'btn btn-primary']); ?>
+    <?= Html::endForm() ?>
+    <?php $this->endBlock(); ?>
+
     <div class="col-md-10">
         <?=
         DynaGrid::widget(
@@ -44,27 +58,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filterModel' => $searchModel,
                     'panel' => [
                         'heading'=>'<h3 class="panel-title">'.$this->title.'</h3>',
+                        'before' => $this->blocks['search-form'],
                     ]
                 ]
             ]
         );
         ?>
-
-        <?php
-        $form = ActiveForm::begin(
-            [
-                'id' => 'code_sorter',
-                'type' => ActiveForm::TYPE_HORIZONTAL,
-                'action' => 'search',
-                'method' => 'get'
-            ]
-        );
-        ?>
-
-        <?= Html::label('HTTP code: ', 'code') ?>
-        <?= Html::input('text', 'http_code', ''); ?>
-        <?= Html::submitButton('Search'); ?>
-        <?php ActiveForm::end(); ?>
     </div>
 </div>
 
