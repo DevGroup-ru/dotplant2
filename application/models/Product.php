@@ -436,6 +436,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 'processValueAs' => [
                     'id' => Yii::t('app', 'ID'),
                     'name' => Yii::t('app', 'Name'),
+                    'slug' => Yii::t('app', 'Slug'),
                 ]
             ],
             'images' => [

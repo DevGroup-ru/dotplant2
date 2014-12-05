@@ -2,6 +2,7 @@
 
 namespace app\data\components;
 
+
 use Yii;
 
 class ImportCsv extends Import
@@ -114,8 +115,9 @@ class ImportCsv extends Import
 
             foreach ($propertyIds as $propertyId) {
                 $value = $object->getPropertyValuesByPropertyId($propertyId);
-
-                if (count($value->values) > 1 && isset($propertiesFields[$propertyId])) {
+                if (!is_object($value)) {
+                    $value = '';
+                } elseif (count($value->values) > 1 && isset($propertiesFields[$propertyId])) {
                     // we should implode
                     // respecting processValueAs
                     if (isset($propertiesFields[$propertyId]['processValuesAs'])) {
@@ -132,6 +134,8 @@ class ImportCsv extends Import
                         }
                         $value = implode($this->multipleValuesDelimiter, $newValues);
                     }
+                } else {
+                    $value = (string) $value; // костыль
                 }
                 $row[] = $value;
             }
