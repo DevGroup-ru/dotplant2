@@ -338,4 +338,5 @@ return array (
     'Rbac role' => 'Роль RBAC',
     'Sort order' => 'Порядок сортировки',
     'Filters' => 'Фильтры',
+    'Send' => 'Отправить'
 );
