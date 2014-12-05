@@ -8,7 +8,7 @@ class Select2Asset extends \kartik\widgets\AssetBundle
 {
     public function init()
     {
-        $this->setSourcePath(Yii::getAlias('@vendor/kartik-v/yii2-widgets/lib/select2'));
+        $this->setSourcePath(Yii::getAlias('@kartik/select2/lib'));
         $this->setupAssets('js', ['select2']);
         parent::init();
     }
