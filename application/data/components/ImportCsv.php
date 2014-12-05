@@ -2,6 +2,7 @@
 
 namespace app\data\components;
 
+
 use Yii;
 
 class ImportCsv extends Import
@@ -89,7 +90,7 @@ class ImportCsv extends Import
             $propertiesKeys[] = $field['key'];
         }
 
-        $title = array_merge($objectFields, $propertiesKeys, $additionalFields);
+        $title = array_merge($objectFields, $propertiesKeys, array_keys($additionalFields));
 
 
 
@@ -101,7 +102,7 @@ class ImportCsv extends Import
         $propertyIds = array_keys($propertiesFields);
 
         $objects = $class::find();
-
+        gc_disable();
         foreach ($objects->each($batchSize) as $object) {
             $row = [];
             foreach ($objectFields as $field) {
@@ -114,8 +115,9 @@ class ImportCsv extends Import
 
             foreach ($propertyIds as $propertyId) {
                 $value = $object->getPropertyValuesByPropertyId($propertyId);
-
-                if (count($value->values) > 1 && isset($propertiesFields[$propertyId])) {
+                if (!is_object($value)) {
+                    $value = '';
+                } elseif (count($value->values) > 1 && isset($propertiesFields[$propertyId])) {
                     // we should implode
                     // respecting processValueAs
                     if (isset($propertiesFields[$propertyId]['processValuesAs'])) {
@@ -132,25 +134,34 @@ class ImportCsv extends Import
                         }
                         $value = implode($this->multipleValuesDelimiter, $newValues);
                     }
+                } else {
+                    $value = (string) $value; // костыль
                 }
                 $row[] = $value;
             }
 
             if (count($additionalFields) > 0 && $object->hasMethod('getAdditionalFields')) {
-                $fieldsFromModel = $object->getAdditionalFields();
-                foreach ($additionalFields as $key) {
-                    if (isset($fieldsFromModel[$key]) && !empty($fieldsFromModel[$key])) {
-                        $value = (array) $fieldsFromModel[$key];
-                        $row[] = implode($this->multipleValuesDelimiter, $value);
-                    } else {
-                        // empty
-                        $row[] = '';
+                $fieldsFromModel = $object->getAdditionalFields($additionalFields);
+                foreach ($additionalFields as $key => $configuration) {
+                    if ($configuration['enabled']) {
+                        if (!isset($fieldsFromModel[$key])) {
+                            $fieldsFromModel[$key] = '';
+                        }
+
+                        if (!empty($fieldsFromModel[$key])) {
+                            $value = (array)$fieldsFromModel[$key];
+                            $row[] = implode($this->multipleValuesDelimiter, $value);
+                        } else {
+                            // empty
+                            $row[] = '';
+                        }
                     }
                 }
             }
 
             fputcsv($output, $row);
         }
+        gc_enable();
         fclose($output);
     }
 }

@@ -431,8 +431,21 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     public static function exportableAdditionalFields()
     {
         return [
-            'categories' => Yii::t('app', 'Categories'),
-            'images' => Yii::t('app', 'Images'),
+            'categories' => [
+                'label' => Yii::t('app', 'Categories'),
+                'processValueAs' => [
+                    'id' => Yii::t('app', 'ID'),
+                    'name' => Yii::t('app', 'Name'),
+                    'slug' => Yii::t('app', 'Slug'),
+                ]
+            ],
+            'images' => [
+                'label' => Yii::t('app', 'Images'),
+                'processValueAs' => [
+                    'id' => Yii::t('app', 'ID'),
+                    'image_src' => Yii::t('app', 'Filename'),
+                ]
+            ],
         ];
     }
 
@@ -442,13 +455,33 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      * using multipleValuesDelimiter specified in ImportModel
      * @return array
      */
-    public function getAdditionalFields()
+    public function getAdditionalFields(array $configuration)
     {
-        $object = Object::getForClass($this->className());
-        $images = Image::getForModel($object->id, $this->id);
-        return [
-            'categories' => $this->getCategoryIds(),
-            'images' => array_values(ArrayHelper::map($images, 'id', 'image_src')),
-        ];
+        $result = [];
+
+        if (isset($configuration['categories'], $configuration['categories']['processValuesAs']) && $configuration['categories']['enabled']) {
+            if ($configuration['categories']['processValuesAs'] === 'id') {
+                $result['categories'] = $this->getCategoryIds();
+            } else {
+                $ids = $this->getCategoryIds();
+                $result['categories'] = [];
+
+                foreach ($ids as $id) {
+                    $category = Category::findById($id);
+                    if ($category) {
+                        $result['categories'][] = $category->getAttribute($configuration['categories']['processValuesAs']);
+                    }
+                    unset($category);
+                }
+            }
+        }
+        if (isset($configuration['images'], $configuration['images']['processValuesAs']) && $configuration['images']['enabled']) {
+            $object = Object::getForClass($this->className());
+            $images = Image::getForModel($object->id, $this->id);
+            $result['images'] = ArrayHelper::getColumn($images, $configuration['images']['processValuesAs']);
+        }
+
+
+        return $result;
     }
 }
