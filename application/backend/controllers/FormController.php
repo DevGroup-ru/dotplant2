@@ -174,4 +174,14 @@ class FormController extends Controller
             ]
         );
     }
+
+    public function actionDownload($key, $sumissionId)
+    {
+        $submission = Submission::findOne($sumissionId);
+        if ($submission === null) {
+            throw new NotFoundHttpException('Submission not found');
+        }
+        $prop = $submission->getPropertyValuesByKey($key);
+        return \Yii::$app->response->sendFile(Yii::getAlias("@webroot") . $prop->values[0]['value']);
+    }
 }
