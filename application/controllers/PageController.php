@@ -121,8 +121,24 @@ class PageController extends Controller
         $model = new Search();
         $model->load(Yii::$app->request->get());
 
-        //@todo Сделать пагинацию
-        $pages = Page::find()->where(['in', '`id`', $model->searchPagesByDescription()])->orderBy('sort_order')->all();
+        $ids = $model->searchPagesByDescription();
+        $pages = new Pagination(
+            [
+                'defaultPageSize' => 10,
+                'totalCount' => count($ids),
+            ]
+        );
+        $pagelist = Page::find()->where(
+            [
+                'in',
+                '`id`',
+                array_slice(
+                    $ids,
+                    $pages->offset,
+                    $pages->limit
+                )
+            ]
+        )->addOrderBy('sort_order')->all();
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -131,10 +147,11 @@ class PageController extends Controller
                 'search',
                 [
                     'model' => $model,
+                    'pagelist' => $pagelist,
                     'pages' => $pages,
                 ]
             ),
-            'totalCount' => count($pages),
+            'totalCount' => count($ids),
         ];
 
     }

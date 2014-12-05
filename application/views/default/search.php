@@ -34,11 +34,16 @@ $(function() {
         });
     }
 
-    load("<?= Url::to(['/product/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]) ?>", $('#products-list'));
     load("<?= Url::to(['/page/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]) ?>", $('#pages-list'));
+    load("<?= Url::to(['/product/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]) ?>", $('#products-list'));
 
     $('#products-list').on('click', '.pagination a', function() {
         load($(this).attr('href'), $('#products-list'));
+        return false;
+    });
+
+    $('#pages-list').on('click', '.pagination a', function() {
+        load($(this).attr('href'), $('#pages-list'));
         return false;
     });
 });
