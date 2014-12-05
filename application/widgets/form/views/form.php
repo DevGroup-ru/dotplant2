@@ -15,7 +15,7 @@ use kartik\widgets\ActiveForm;
     $form = ActiveForm::begin([
         'id' => $id,
         'action' => [$this->context->route, 'id' => $this->context->formId],
-        'options' => ['data-type' => 'form-widget'],
+        'options' => $options,
     ]);
 ?>
     <?php if (!$this->context->modal): ?>
