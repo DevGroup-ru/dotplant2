@@ -355,11 +355,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      * @param array $fields
      * @return void
      */
-    public function processImportBeforeSave(array $fields, $multipleValuesDelimiter)
+    public function processImportBeforeSave(array $fields, $multipleValuesDelimiter, array $additionalFields)
     {
 
-        $categories = $this->unpackCategories($fields, $multipleValuesDelimiter);
+        $categories = $this->unpackCategories($fields, $multipleValuesDelimiter, $additionalFields);
         if ($categories !== false && $this->main_category_id < 1) {
+            if (count($categories)==0) {
+                $categories=[1];
+            }
             $this->main_category_id = $categories[0];
         }
 
@@ -386,9 +389,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      * @param array $fields
      * @return void
      */
-    public function processImportAfterSave(array $fields, $multipleValuesDelimiter)
+    public function processImportAfterSave(array $fields, $multipleValuesDelimiter, array $additionalFields)
     {
-        $categories = $this->unpackCategories($fields, $multipleValuesDelimiter);
+        $categories = $this->unpackCategories($fields, $multipleValuesDelimiter, $additionalFields);
 
         if ($categories !== false) {
 
@@ -396,7 +399,15 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         }
     }
 
-    private function unpackCategories(array $fields, $multipleValuesDelimiter)
+    /**
+     * Makes an array of category ids from string
+     *
+     * @param array $fields
+     * @param $multipleValuesDelimiter
+     * @param array $additionalFields
+     * @return array|bool
+     */
+    private function unpackCategories(array $fields, $multipleValuesDelimiter, array $additionalFields)
     {
         $categories =
             isset($fields['categories']) ? $fields['categories'] :
@@ -410,8 +421,31 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             } else {
                 $categories = [$categories];
             }
+            $typecast = 'id';
 
-            $categories = array_map('intval', $categories);
+            if (isset($additionalFields['categories'])) {
+                if (isset($additionalFields['categories']['processValuesAs'])) {
+                    $typecast = $additionalFields['categories']['processValuesAs'];
+                }
+            }
+            if ($typecast === 'id') {
+                $categories = array_map('intval', $categories);
+            } elseif ($typecast === 'slug' || $typecast == 'name') {
+                $categories = array_map('trim', $categories);
+                $categoryIds = [];
+                foreach ($categories as $part) {
+                    $cat = Category::findBySlug($part, 1, -1);
+                    if (is_object($cat)) {
+                        $categoryIds[] = $cat->id;
+                    }
+                    unset($cat);
+                }
+                $categories = array_map('intval', $categoryIds);
+            } else {
+                // that's unusual behavior
+                $categories = false;
+            }
+
         }
         return $categories;
     }
@@ -467,7 +501,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 $result['categories'] = [];
 
                 foreach ($ids as $id) {
-                    $category = Category::findById($id);
+                    $category = Category::findById($id, null, null);
                     if ($category) {
                         $result['categories'][] = $category->getAttribute($configuration['categories']['processValuesAs']);
                     }

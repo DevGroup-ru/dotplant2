@@ -13,12 +13,12 @@ interface ImportableInterface {
      * @param array $fields
      * @return void
      */
-    public function processImportBeforeSave(array $fields, $multipleValuesDelimiter);
+    public function processImportBeforeSave(array $fields, $multipleValuesDelimiter, array $additionalFields);
 
     /**
      * Process fields after the actual model is saved(inserted or updated)
      * @param array $fields
      * @return void
      */
-    public function processImportAfterSave(array $fields, $multipleValuesDelimiter);
+    public function processImportAfterSave(array $fields, $multipleValuesDelimiter, array $additionalFields);
 }

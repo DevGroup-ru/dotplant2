@@ -5,6 +5,7 @@ namespace app\models;
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
 use app\properties\HasProperties;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
@@ -33,7 +34,23 @@ use yii\helpers\Url;
  */
 class Category extends ActiveRecord
 {
+    /**
+     * Category identity map
+     * [
+     *      'category_id' => $category_model_instance,
+     * ]
+     *
+     * Used by findById
+     * @var array
+     */
     private static $identity_map = [];
+
+    /**
+     * Special caching for findBySlug
+     * Stores category->id for pair slug:category_group_id:parent_id
+     * @var array
+     */
+    private static $id_by_slug_group_parent = [];
 
     public function behaviors()
     {
@@ -162,7 +179,7 @@ class Category extends ActiveRecord
                         86400,
                         new TagDependency([
                             'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                                ActiveRecordHelper::getObjectTag($model, $model->id)
                             ]
                         ])
                     );
@@ -183,14 +200,35 @@ class Category extends ActiveRecord
         $params = [
             'slug'=>$slug,
             'category_group_id' => $category_group_id,
-            'parent_id' => $parent_id,
         ];
-        $category = Category::find()->where($params)->one();
-        if (is_object($category)) {
-            static::$identity_map[$category->id] = $category;
-            return $category;
+        if ($parent_id >= 0) {
+            $params['parent_id'] = $parent_id;
+        }
+
+        $identity_key = $slug . ':' . $category_group_id . ':' . $parent_id;
+        if (isset(static::$id_by_slug_group_parent[$identity_key])) {
+            return static::findById(static::$id_by_slug_group_parent[$identity_key], null, null);
+        }
+        $category = Yii::$app->cache->get("Category:bySlug:".$identity_key);
+        if (!is_object($category)) {
+            $category = Category::find()->where($params)->one();
+            if (is_object($category)) {
+                static::$identity_map[$category->id] = $category;
+                static::$id_by_slug_group_parent[$identity_key] = $category->id;
+                Yii::$app->cache->set(
+                    "Category:bySlug:".$identity_key,
+                    $category,
+                    86400,
+                    new TagDependency([
+                        'tags' => ActiveRecordHelper::getObjectTag($category, $category->id)
+                    ])
+                );
+                return $category;
+            } else {
+                return null;
+            }
         } else {
-            return null;
+            return $category;
         }
     }
 
@@ -260,14 +298,20 @@ class Category extends ActiveRecord
                 ->all();
 
             if (null !== $models) {
+
+                $cache_tags = [];
+                foreach ($models as $model) {
+                    $cache_tags [] = ActiveRecordHelper::getObjectTag($model, $model->id);
+                }
+                $cache_tags [] = ActiveRecordHelper::getObjectTag(static::className(), $level);
+
+
                 Yii::$app->cache->set(
                     $cacheKey,
                     $models,
                     86400,
                     new TagDependency([
-                        'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
-                        ]
+                        'tags' => $cache_tags
                     ])
                 );
             }
@@ -287,14 +331,18 @@ class Category extends ActiveRecord
                 ->orderBy('sort_order')
                 ->all();
             if (null !== $models) {
+                $cache_tags = [];
+                foreach ($models as $model) {
+                    $cache_tags [] = ActiveRecordHelper::getObjectTag($model, $model->id);
+                }
+                $cache_tags [] = ActiveRecordHelper::getObjectTag(static::className(), $parent_id);
+
                 Yii::$app->cache->set(
                     $cacheKey,
                     $models,
                     86400,
                     new TagDependency([
-                        'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className()),
-                        ]
+                        'tags' => $cache_tags
                     ])
                 );
             }
@@ -381,6 +429,8 @@ class Category extends ActiveRecord
             ->select(['id', 'name'])
             ->where(['parent_id' => $parentId, 'active' => 1])
             ->all();
+        $cache_tags = [];
+
         foreach ($categories as $category) {
             $items[] = [
                 'label' => $category->name,
@@ -393,16 +443,16 @@ class Category extends ActiveRecord
                 ),
                 'items' => static::getMenuItems($category->id, is_null($depth) ? null : $depth - 1),
             ];
+            $cache_tags[] = ActiveRecordHelper::getObjectTag(static::className(), $category->id);
         }
+        $cache_tags [] = ActiveRecordHelper::getObjectTag(static::className(), $parentId);
         Yii::$app->cache->set(
             $cacheKey,
             $items,
             86400,
             new TagDependency(
                 [
-                    'tags' => [
-                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className()),
-                    ],
+                    'tags' => $cache_tags,
                 ]
             )
         );

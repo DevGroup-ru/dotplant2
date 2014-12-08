@@ -21,6 +21,7 @@ abstract class Import extends Component
     public $addPropertyGroups = [];
     public $createIfNotExists = false;
     public $multipleValuesDelimiter = '|';
+    public $additionalFields = [];
 
     abstract public function getData($importFields);
     abstract public function setData($exportFields);
@@ -126,7 +127,7 @@ abstract class Import extends Component
             $objectModel->load([$objectModel->formName() => $objectData]);
 
             if ($objectModel instanceof ImportableInterface) {
-                $objectModel->processImportBeforeSave($rowFields, $this->multipleValuesDelimiter);
+                $objectModel->processImportBeforeSave($rowFields, $this->multipleValuesDelimiter, $this->additionalFields);
             }
 
             if ($objectModel->save()) {
@@ -189,7 +190,7 @@ abstract class Import extends Component
                 }
 
                 if ($objectModel instanceof ImportableInterface) {
-                    $objectModel->processImportAfterSave($rowFields, $this->multipleValuesDelimiter);
+                    $objectModel->processImportAfterSave($rowFields, $this->multipleValuesDelimiter, $this->additionalFields);
                 }
 
                 if ($objectModel->hasMethod('invalidateTags')) {

@@ -22,7 +22,7 @@ class ImportModel extends Model implements \Serializable
      * Array of PropertyGroup's ids to add to each record
      * @var array
      */
-    public $addPropertyGroups=[];
+    public $addPropertyGroups = [];
 
     /**
      * Should we create new record if supplied 'internal_id' doesn't exist
@@ -36,6 +36,13 @@ class ImportModel extends Model implements \Serializable
      * @var string
      */
     public $multipleValuesDelimiter = '|';
+
+    /**
+     * Array of additional fields to process
+     * (see ExportableInterface::exportableAdditionalFields for format)
+     * @var array
+     */
+    public $additionalFields = [];
 
 
 
@@ -68,7 +75,7 @@ class ImportModel extends Model implements \Serializable
             [['object'], 'integer'],
             [['object'], 'required'],
             [['fields', 'type'], 'safe'],
-            [['addPropertyGroups', 'multipleValuesDelimiter'], 'safe'],
+            [['addPropertyGroups', 'multipleValuesDelimiter', 'additionalFields'], 'safe'],
             [['createIfNotExists'], 'boolean'],
         ];
     }
@@ -104,6 +111,7 @@ class ImportModel extends Model implements \Serializable
             'addPropertyGroups' => is_array($this->addPropertyGroups) ? $this->addPropertyGroups : [],
             'createIfNotExists' => $this->createIfNotExists,
             'multipleValuesDelimiter' => $this->multipleValuesDelimiter,
+            'additionalFields' => $this->additionalFields,
         ]);
     }
 
@@ -118,5 +126,7 @@ class ImportModel extends Model implements \Serializable
         $this->addPropertyGroups = $fields['addPropertyGroups'];
         $this->createIfNotExists = $fields['createIfNotExists'];
         $this->multipleValuesDelimiter = $fields['multipleValuesDelimiter'];
+        $this->additionalFields = $fields['fields']['additionalFields'];
+
     }
 }

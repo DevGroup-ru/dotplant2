@@ -115,8 +115,19 @@ $this->params['breadcrumbs'][] = $this->title;
                                 \app\models\PropertyGroup::getForObjectId($object->id),
                                 'id',
                                 'name'
-                            )
-                        )
+                            ),
+                            [
+                                'item' => function ($index, $label, $name, $checked, $value) {
+                                    $line = Html::beginTag('div', ['class' => 'checkbox']);
+                                    $line .= Html::checkbox($name, $checked, [
+                                        'value' => $value,
+                                        'label' => Html::encode($label),
+                                    ]);
+                                    $line .= '</div>';
+                                    return $line;
+                                }
+                            ]
+                    )
                     ->label('')
                 ?>
             </fieldset>
