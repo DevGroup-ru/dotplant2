@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @var yii\web\View $this
+ * @var yii\data\ActiveDataProvider $dataProvider
+ * @var \app\models\Form $searchModel
+ */
+
 use app\backend\components\ActionColumn;
 use app\backend\widgets\BackendWidget;
 use kartik\dynagrid\DynaGrid;

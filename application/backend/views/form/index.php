@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ],
                 'options' => [
-                    'width' => '210px',
+                    'width' => '125px',
                 ]
             ],
         ],

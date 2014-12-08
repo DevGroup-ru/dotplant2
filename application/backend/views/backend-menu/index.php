@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @var yii\web\View $this
+ * @var yii\data\ActiveDataProvider $dataProvider
+ * @var app\seo\models\Redirect $searchModel
+ */
+
 use kartik\helpers\Html;
 use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
@@ -77,6 +83,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'translation_category',
                     [
                         'class' => 'app\backend\components\ActionColumn',
+                        'options' => [
+                            'width' => '95px',
+                        ],
                         'buttons' => [
                                 [
                                     'url' => 'edit',

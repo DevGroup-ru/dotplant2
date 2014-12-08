@@ -56,11 +56,24 @@ use yii\widgets\Pjax;
             ],
         ],
         [
-            'class' => 'app\components\ActionColumn',
-            'template' => '{update} {delete}',
+            'class' => 'app\backend\components\ActionColumn',
             'options' => [
-                'width' => '60px',
-            ]
+                'width' => '95px',
+            ],
+            'buttons' => [
+                [
+                    'url' => 'update',
+                    'icon' => 'pencil',
+                    'class' => 'btn-primary',
+                    'label' => Yii::t('app', 'Edit'),
+                ],
+                [
+                    'url' => 'delete',
+                    'icon' => 'trash-o',
+                    'class' => 'btn-danger',
+                    'label' => Yii::t('app', 'Delete'),
+                ],
+            ],
         ],
     ],
     'tableOptions' => [

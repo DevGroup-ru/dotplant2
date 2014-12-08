@@ -96,16 +96,18 @@ class ActionColumn extends Column
             }
         }
 
-        $data = '<div class="btn-group" style="width: 100px;">';
+        $data = Html::beginTag('div', ['class' => 'btn-group']);
         foreach ($this->buttons as $button) {
+            Html::addCssClass($button, 'btn');
+            Html::addCssClass($button, 'btn-sm');
             $data .= Html::a(
                 Icon::show($button['icon']),
                 $url = $this->createUrl($button['url'], $model, $key, $index),
                 [
                     'data-pjax' => 0,
-                    'class' => 'btn btn-sm '.$button['class'],
+                    'class' => $button['class'],
                     'data-action' => $button['url'],
-                    'title' => $button['label']
+                    'title' => Yii::t('app', $button['label']),
                 ]
             ) . ' ';
         }

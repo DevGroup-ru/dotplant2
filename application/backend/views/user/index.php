@@ -38,6 +38,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'create_time:datetime',
                 [
                     'class' => ActionColumn::className(),
+                    'options' => [
+                        'width' => '95px',
+                    ],
                     'buttons' => [
                         [
                             'url' => 'update',

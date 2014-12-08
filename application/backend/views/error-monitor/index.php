@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'class' => 'btn-primary',
                                 'label' => 'Detailed info',
                             ],
-                        ], // /buttons
+                        ],
                     ]
                 ],
                 'theme' => 'panel-default',

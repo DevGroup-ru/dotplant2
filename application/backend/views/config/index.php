@@ -75,6 +75,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'value',
                                 [
                                     'class' => ActionColumn::className(),
+                                    'options' => [
+                                        'width' => '95px',
+                                    ],
                                     'buttons' => [
                                         [
                                             'url' => 'update',

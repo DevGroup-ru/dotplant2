@@ -50,6 +50,9 @@ $this->params['breadcrumbs'] = [
                     ],
                     [
                         'class' => ActionColumn::className(),
+                        'options' => [
+                            'width' => '50px',
+                        ],
                         'buttons' => [
                             [
                                 'url' => 'update',

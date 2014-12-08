@@ -99,8 +99,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     'items_count',
                     'total_price',
                     [
-                        'class' => \kartik\grid\ActionColumn::className(),
-                        'template' => '{view}',
+                        'class' => 'app\backend\components\ActionColumn',
+                        'buttons' => [
+                            [
+                                'url' => 'view',
+                                'icon' => 'eye',
+                                'class' => 'btn-info',
+                                'label' => 'View',
+                            ],
+                        ],
                     ],
                 ],
             ]

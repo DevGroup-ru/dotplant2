@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @var yii\web\View $this
+ * @var yii\data\ActiveDataProvider $dataProvider
+ * @var \app\models\Form $searchModel
+ */
+
 use kartik\helpers\Html;
 use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
@@ -54,6 +60,9 @@ $this->params['breadcrumbs'][] = $this->title = Yii::t('app', 'Views');
                 'internal_name',
                 [
                     'class' => 'app\backend\components\ActionColumn',
+                    'options' => [
+                        'width' => '95px',
+                    ],
                     'buttons' => [
                         [
                             'url' => 'edit',

@@ -113,4 +113,17 @@ class DynamicContentController extends Controller
             )
         );
     }
+
+    public function actionRemoveAll()
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = DynamicContent::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['index']);
+    }
 }

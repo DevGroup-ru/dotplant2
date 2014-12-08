@@ -50,17 +50,30 @@ use yii\widgets\Pjax;
             ],
         ],
         [
-            'class' => 'app\components\ActionColumn',
+            'class' => 'app\backend\components\ActionColumn',
             'urlCreator' => function ($action, $model, $key, $index) {
                 $params = is_array($key) ? $key : ['id' => (string)$key];
                 $action .= '-redirect';
                 $params[0] = $this->context->id ? $this->context->id . '/' . $action : $action;
                 return Url::toRoute($params);
             },
-            'template' => '{update} {delete}',
             'options' => [
-                'width' => '60px',
-            ]
+                'width' => '95px',
+            ],
+            'buttons' => [
+                [
+                    'url' => 'update',
+                    'icon' => 'pencil',
+                    'class' => 'btn-primary',
+                    'label' => Yii::t('app', 'Edit'),
+                ],
+                [
+                    'url' => 'delete',
+                    'icon' => 'trash-o',
+                    'class' => 'btn-danger',
+                    'label' => Yii::t('app', 'Delete'),
+                ],
+            ],
         ],
     ],
     'tableOptions' => [

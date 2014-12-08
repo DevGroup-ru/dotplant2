@@ -112,12 +112,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ],
                 'options' => [
-                    'width' => '100px',
+                    'width' => '95px',
                 ],
             ],
         ],
         'tableOptions' => [
-            'class' => 'table table-striped table-condensed table-hover',
+            'class' => 'table table-striped table-condensed table-hover table-bordered',
         ]
     ]);
     ?>

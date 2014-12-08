@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @var yii\web\View $this
+ * @var yii\data\ActiveDataProvider $dataProvider
+ * @var \app\models\Form $searchModel
+ */
+
 use app\backend\components\ActionColumn;
 use kartik\dynagrid\DynaGrid;
 use kartik\grid\BooleanColumn;
@@ -51,6 +57,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => ActionColumn::className(),
+                'options' => [
+                    'width' => '95px',
+                ],
                 'buttons' => [
                     [
                         'url' => 'group',

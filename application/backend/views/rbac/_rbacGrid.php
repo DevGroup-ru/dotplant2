@@ -61,6 +61,9 @@ use yii\widgets\Pjax;
         ],
         [
             'class' => ActionColumn::className(),
+            'options' => [
+                'width' => '95px',
+            ],
             'buttons' => [
                 [
                     'url' => 'update',

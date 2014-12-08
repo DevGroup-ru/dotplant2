@@ -1,4 +1,11 @@
 <?php
+
+/**
+ * @var yii\web\View $this
+ * @var yii\data\ActiveDataProvider $dataProvider
+ * @var app\seo\models\Redirect $searchModel
+ */
+
 use kartik\dynagrid\DynaGrid;
 
 $this->title = Yii::t('app', 'Newsletter now');
@@ -25,6 +32,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'date_added',
                     [
                         'class' => 'app\backend\components\ActionColumn',
+                        'options' => [
+                            'width' => '50px',
+                        ],
                         'buttons' => [
                             [
                                 'url' => 'sendnow',
@@ -32,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'class' => 'btn-primary',
                                 'label' => 'Send now',
                             ]
-                        ], // /buttons
+                        ],
                     ],
                 ],
                 'theme' => 'panel-default',
