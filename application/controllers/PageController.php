@@ -107,11 +107,6 @@ class PageController extends Controller
         );
     }
 
-    public function actionImg()
-    {
-        return $this->render('img');
-    }
-
     public function actionSearch()
     {
         if (!Yii::$app->request->isAjax) {
