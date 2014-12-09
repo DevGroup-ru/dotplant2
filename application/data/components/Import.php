@@ -121,6 +121,7 @@ abstract class Import extends Component
         } else {
             /** @var ActiveRecord $objectModel */
             $objectModel = new $class;
+            $objectModel->loadDefaultValues();
             $objectData = $object;
         }
         if ($objectModel) {

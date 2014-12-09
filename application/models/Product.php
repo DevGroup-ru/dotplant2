@@ -76,6 +76,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             [['slug_compiled'], 'string', 'max' => 180],
             [['old_price', 'price'], 'default', 'value' => 0,],
             [['active'], 'default', 'value' => 1],
+            [['parent_id', 'slug_absolute', 'sort_order', 'is_deleted'], 'default', 'value' => 0],
 
         ];
     }
