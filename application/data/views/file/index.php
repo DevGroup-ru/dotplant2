@@ -100,13 +100,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons' => [
                     [
                         'url' => 'export',
-                        'icon' => 'sign-out',
+                        'icon' => 'download',
                         'class' => 'btn-primary',
                         'label' => 'Export',
                     ],
                     [
                         'url' => 'import',
-                        'icon' => 'sign-in',
+                        'icon' => 'upload',
                         'class' => 'btn-primary',
                         'label' => 'Import',
                     ],
