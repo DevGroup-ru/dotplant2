@@ -10,51 +10,57 @@ use yii\web\HttpException;
 
 class LiqPayPayment extends AbstractPayment
 {
+    protected $supportedCurrencies = ['EUR','UAH','USD','RUB','RUR'];
     protected $currency;
     protected $language;
     protected $privateKey;
     protected $publicKey;
     protected $testMode;
 
-    protected function getSignature($data)
+    protected function getParams($params)
     {
-        if ($data['currency'] == 'RUR') {
-            $data['currency'] = 'RUB';
-        }
-        foreach (['order_id', 'type', 'result_url', 'server_url'] as $name) {
-            if (!isset($data[$name])) {
-                $data[$name] = '';
+        $params['public_key'] = $this->publicKey;
+        foreach (['version', 'amount', 'currency', 'description'] as $paramName) {
+            if (!isset($params[$paramName])) {
+                throw new \InvalidArgumentException($paramName . ' is null');
             }
         }
-        $signature = base64_encode(
-            sha1(
-                $this->privateKey . $data['amount'] . $data['currency'] . $this->publicKey . $data['order_id']
-                . $data['type'] . $data['description'] . $data['result_url'] . $data['server_url'],
-                1
-            )
-        );
-        return $signature;
+        if (!in_array($params['currency'], $this->supportedCurrencies)) {
+            throw new \InvalidArgumentException('currency is not supported');
+        }
+        if ($params['currency'] == 'RUR') {
+            $params['currency'] = 'RUB';
+        }
+        return $params;
+    }
+
+    protected function getSignature($str)
+    {
+        return base64_encode(sha1($this->privateKey . $str . $this->privateKey, 1));
     }
 
     public function content($order, $transaction)
     {
-        $formData = [
-            "public_key" => $this->publicKey,
-            "amount" => $transaction->total_sum,
-            "currency" => $this->currency,
-            "description" => "Order #" . $order->id,
-            "order_id" => $transaction->id,
-            "result_url" => Url::toRoute(['/cart/payment-success', 'id' => $order->id], true),
-            "server_url" => Url::toRoute(['/cart/payment-result', 'id' => $transaction->payment_type_id], true),
-            "type" => "buy",
-            "language" => $this->language,
-            "sandbox" => $this->testMode,
+        $params = [
+            'version' => 3,
+            'amount' => $transaction->total_sum,
+            'currency' => $this->currency,
+            'description' => "Order #" . $order->id,
+            'order_id' => $transaction->id,
+            'result_url' => Url::toRoute(['/cart/payment-success', 'id' => $order->id], true),
+            'server_url' => Url::toRoute(['/cart/payment-result', 'id' => $transaction->payment_type_id], true),
+            'type' => 'buy',
+            'language' => $this->language,
+            'sandbox' => $this->testMode,
         ];
-        $formData['signature'] = $this->getSignature($formData);
+        $data = base64_encode(Json::encode($this->getParams($params)));
         return $this->render(
             'liqpay',
             [
-                'formData' => $formData,
+                'formData' => [
+                    'data' => $data,
+                    'signature' => $this->getSignature($data),
+                ],
                 'order' => $order,
                 'transaction' => $transaction,
             ]
@@ -63,46 +69,18 @@ class LiqPayPayment extends AbstractPayment
 
     public function checkResult()
     {
-        if (!isset($_POST['public_key'], $_POST['amount'], $_POST['currency'], $_POST['description'],
-            $_POST['order_id'], $_POST['signature'] )
-        ) {
+        if (!isset($_POST['data'], $_POST['signature'])) {
             throw new BadRequestHttpException;
         }
-        $transaction = $this->loadTransaction($_POST['order_id']);
+        $data = Json::decode(base64_decode($_POST['data']));
+        $transaction = $this->loadTransaction($data['order_id']);
         $transaction->result_data = Json::encode($_POST);
-        foreach (['status', 'transaction_id', 'sender_phone'] as $name) {
-            if (!isset($_POST[$name])) {
-                $_POST[$name] = '';
-            }
-        }
-        $signature = base64_encode(
-            sha1(
-                $this->privateKey . $_POST['amount'] . $_POST['currency']
-                . $_POST['public_key'] . $_POST['order_id'] . $_POST['type'] . $_POST['description']
-                . $_POST['status'] . $_POST['transaction_id'] . $_POST['sender_phone'],
-                1
-            )
-        );
-        if ($_POST['signature'] != $signature) {
-            $transaction->status = OrderTransaction::TRANSACTION_ERROR;
-            if ($transaction->save(true, ['status', 'result_data'])) {
-                throw new HttpException(500);
-            }
-            throw new BadRequestHttpException;
-        }
-        if ($_POST['status'] == 'success') {
-            $transaction->status = OrderTransaction::TRANSACTION_SUCCESS;
-            if ($transaction->save(true, ['status', 'result_data'])) {
-                throw new HttpException(500);
-            }
-            $this->redirect(true, $transaction->order_id);
-        } else {
-            $transaction->status = OrderTransaction::TRANSACTION_ERROR;
-            if ($transaction->save(true, ['status', 'result_data'])) {
-                throw new HttpException(500);
-            }
-            // @todo wat error
-            echo 'Error';
+        $signature = $this->getSignature($_POST['data']);
+        $transaction->status = ($_POST['signature'] == $signature && $data['status'] == 'success')
+            ? OrderTransaction::TRANSACTION_SUCCESS
+            : OrderTransaction::TRANSACTION_ERROR;
+        if (!$transaction->save(true, ['status', 'result_data'])) {
+            throw new HttpException(500);
         }
     }
 }
