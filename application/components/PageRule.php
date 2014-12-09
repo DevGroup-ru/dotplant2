@@ -2,6 +2,7 @@
 
 namespace app\components;
 
+use app\models\Config;
 use app\models\Page;
 use Yii;
 use yii\web\UrlRuleInterface;
@@ -24,7 +25,11 @@ class PageRule implements UrlRuleInterface
 
     public function parseRequest($manager, $request)
     {
-        $_path = $request->getPathInfo();
+        if($request->serverName == Config::getValue('core.serverName', $request->serverName)){
+            $_path = $request->getPathInfo();
+        }else{
+            $_path = $request->absoluteUrl;
+        }
         $_path = !empty($_path) ? $_path : ':mainpage:';
         if (null !== $model = Page::getByUrlPath($_path)) {
             return [
