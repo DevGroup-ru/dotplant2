@@ -100,8 +100,9 @@ class ActionColumn extends Column
         foreach ($this->buttons as $button) {
             Html::addCssClass($button, 'btn');
             Html::addCssClass($button, 'btn-sm');
+            $buttonText = isset($button['text']) ? ' ' . $button['text'] : '';
             $data .= Html::a(
-                Icon::show($button['icon']),
+                Icon::show($button['icon']) . $buttonText,
                 $url = $this->createUrl($button['url'], $model, $key, $index),
                 [
                     'data-pjax' => 0,
