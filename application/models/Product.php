@@ -366,6 +366,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $this->main_category_id = $categories[0];
         }
 
+
         if (empty($this->slug)) {
             $this->slug = 'unslugged-product';
         } elseif (mb_strlen($this->slug) > 80) {
@@ -393,10 +394,11 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     {
         $categories = $this->unpackCategories($fields, $multipleValuesDelimiter, $additionalFields);
 
-        if ($categories !== false) {
-
-            $this->saveCategoriesBindings($categories);
+        if ($categories === false) {
+            $categories = [$this->main_category_id];
         }
+        $this->saveCategoriesBindings($categories);
+
 
         $images =
             isset($fields['images']) ? $fields['images'] :
