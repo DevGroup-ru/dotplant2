@@ -2,8 +2,10 @@
 
 namespace app\models;
 
+use app\widgets\image\ImageDropzone;
 use Yii;
 use yii\caching\TagDependency;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "image".
@@ -100,5 +102,84 @@ class Image extends \yii\db\ActiveRecord
             }
         }
         return self::$identityMap[$objectId][$objectModelId];
+    }
+
+    /**
+     * Replaces images for specified model
+     * $images array format:
+     * [
+     *      0 => [
+     *          'image_src' => 'something.png',
+     *          'image_description' => 'desc',
+     *      ],
+     *      1 => [
+     *          'image_src' => 'another-image.jpg',
+     *          'image_description' => 'alt for image',
+     *      ],
+     * ]
+     * @param \yii\db\ActiveRecord $model
+     * @param array $images array of data
+     * @throws \Exception
+     */
+    public static function replaceForModel(\yii\db\ActiveRecord $model, array $images)
+    {
+        $object = Object::getForClass($model->className());
+        if ($object) {
+            $current_images = static::getForModel($object->id, $model->id);
+
+            // first find existing images in input array
+            foreach ($current_images as $current) {
+                $found = false;
+                foreach ($images as $key => $new) {
+                    if ($new['image_src'] === $current->image_src) {
+                        $found = true;
+                        $current->setAttributes($new);
+                        $current->sort_order = $key;
+                        $current->save();
+
+                        // delete processed image from input array
+                        unset($images[$key]);
+                    }
+                }
+                if (!$found) {
+                    $current->delete();
+                }
+            }
+            unset($current_images);
+
+            $dir = '/theme/resources/product-images/';
+            // insert new images
+            foreach ($images as $key => $new) {
+                if (isset($new['image_src'])) {
+                    $image_model = new Image;
+                    $image_model->object_id = $object->id;
+                    $image_model->object_model_id = $model->id;
+                    $image_model->filename = basename($new['image_src']);
+                    if (preg_match("#^https?://#Us", $new['image_src'])) {
+                        $image_model->filename = basename(preg_replace("#^https?://[^/]#Us", "", $new['image_src']));
+                        file_put_contents(
+                            Yii::getAlias('@webroot').$dir . $image_model->filename,
+                            file_get_contents($new['image_src'])
+                        );
+                        $image_model->image_src = $dir . $image_model->filename;
+                    } else {
+                        $image_model->image_src = $new['image_src'];
+                    }
+                    try {
+                        $image_model->thumbnail_src = $dir . ImageDropzone::saveThumbnail('@webroot' . $dir,
+                                $image_model->filename);
+                    } catch (\Exception $e) {
+                        // error here :-(
+                    }
+
+
+                    $image_model->image_description = isset($new['image_description']) ? $new['image_description'] : '';
+                    $image_model->sort_order = $key;
+                    $image_model->save();
+                    unset($image_model);
+                }
+            }
+
+        }
     }
 }

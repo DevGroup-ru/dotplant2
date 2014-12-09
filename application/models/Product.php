@@ -75,7 +75,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             [['slug'], 'string', 'max' => 80],
             [['slug_compiled'], 'string', 'max' => 180],
             [['old_price', 'price'], 'default', 'value' => 0,],
-            [['active'], 'default', 'value'=>1],
+            [['active'], 'default', 'value' => 1],
 
         ];
     }
@@ -194,9 +194,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $cacheKey = static::tableName() . "$slug:$in_category_id";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
                 $model = static::find()->where([
-                        static::tableName() . '.slug' => $slug,
-                        static::tableName() . '.active' => $is_active
-                    ]);
+                    static::tableName() . '.slug' => $slug,
+                    static::tableName() . '.active' => $is_active
+                ]);
                 if ($in_category_id !== null) {
                     $model = $model->innerJoin(
                         Object::getForClass(Product::className())->categories_table_name . ' ocats',
@@ -258,7 +258,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (empty($this->title)) {
             $this->title = $this->name;
         }
-        
+
         return parent::beforeSave($insert);
     }
 
@@ -360,8 +360,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
         $categories = $this->unpackCategories($fields, $multipleValuesDelimiter, $additionalFields);
         if ($categories !== false && $this->main_category_id < 1) {
-            if (count($categories)==0) {
-                $categories=[1];
+            if (count($categories) == 0) {
+                $categories = [1];
             }
             $this->main_category_id = $categories[0];
         }
@@ -396,6 +396,27 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if ($categories !== false) {
 
             $this->saveCategoriesBindings($categories);
+        }
+
+        $images =
+            isset($fields['images']) ? $fields['images'] :
+                (isset($fields['image']) ? $fields['image'] :
+                    false);
+        if ($images !== false) {
+            if (strpos($images, $multipleValuesDelimiter) > 0) {
+                $images = explode($multipleValuesDelimiter, $images);
+            } elseif (strpos($multipleValuesDelimiter, '/') === 0) {
+                $images = preg_split($multipleValuesDelimiter, $images);
+            } else {
+                $images = [$images];
+            }
+            $input_array = [];
+            foreach ($images as $image_src) {
+                $input_array[] = [
+                    'image_src' => $image_src,
+                ];
+            }
+            Image::replaceForModel($this, $input_array);
         }
     }
 
@@ -517,5 +538,32 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
 
         return $result;
+    }
+
+    /**
+     * Returns products for special filtration query
+     * Used in ProductsWidget and ProductController
+     *
+     * @param $category_group_id
+     * @param array $values_by_property_id
+     * @param array $selected_category_ids
+     * @param null|integer|string $selected_category_id
+     * @param bool|string $force_sorting If false - use UserPreferences, if string - use supplied orderBy condition
+     * @param null|integer $limit limit query results
+     * @param bool $apply_filterquery Should we apply filter query(filters based on query params ie. price_min/max)
+     * @param bool $force_limit False to use Pagination, true to use $limit and ignore pagination
+     */
+    public static function filteredProducts(
+        $category_group_id,
+        array $values_by_property_id = [],
+        array $selected_category_ids = [],
+        $selected_category_id = null,
+        $force_sorting = false,
+        $limit = null,
+        $apply_filterquery = true,
+        $force_limit = false
+    )
+    {
+
     }
 }
