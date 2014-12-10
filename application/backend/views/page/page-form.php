@@ -113,6 +113,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <?= $form->field($model, 'published')->checkbox() ?>
 
+                <?= $form->field($model, 'slug_absolute')->checkbox() ?>
+
             <?php BackendWidget::end(); ?>
 
             

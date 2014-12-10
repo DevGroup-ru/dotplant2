@@ -15,6 +15,7 @@ unset($this->assetBundles['yii\bootstrap\BootstrapAsset']);
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
+    <base href="http://<?=Config::getValue('core.serverName', Yii::$app->request->serverName)?>">
     <meta charset="<?= Yii::$app->charset ?>">
     <title><?= Html::encode($this->title) ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
