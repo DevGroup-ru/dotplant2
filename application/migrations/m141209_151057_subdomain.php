@@ -6,7 +6,6 @@ class m141209_151057_subdomain extends Migration
 {
     public function up()
     {
-        $serverName = '';
         if (getenv("SERVER_NAME")) {
             $serverName = getenv("SERVER_NAME");
         } else {
