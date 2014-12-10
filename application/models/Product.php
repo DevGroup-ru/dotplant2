@@ -470,6 +470,25 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 $categories = false;
             }
 
+            // post-process categories
+            // find & add parent category
+            // if we need to show products of child categories in products list
+            if (is_array($categories) && Config::getValue('shop.showProductsOfChildCategories')) {
+
+                do {
+                    $repeat = false;
+                    foreach ($categories as $cat) {
+                        $model = Category::findById($cat, null, null);
+                        if (intval($model->parent_id) > 0 && in_array($model->parent_id, $categories) === false) {
+                            $categories[] = $model->parent_id;
+                            $repeat = true;
+                        }
+
+                        unset($model);
+                    }
+                } while($repeat === true);
+            }
+
         }
         return $categories;
     }
@@ -500,8 +519,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'images' => [
                 'label' => Yii::t('app', 'Images'),
                 'processValueAs' => [
-                    'id' => Yii::t('app', 'ID'),
                     'image_src' => Yii::t('app', 'Filename'),
+                    'id' => Yii::t('app', 'ID'),
+
                 ]
             ],
         ];
