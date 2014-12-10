@@ -5,6 +5,7 @@
  */
 
 use app\assets\AppAsset;
+use app\models\Config;
 use kartik\helpers\Html;
 
 AppAsset::register($this);
