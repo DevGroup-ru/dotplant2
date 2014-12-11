@@ -22,14 +22,14 @@ function getUrl(url) {
     });
     var query = "";
     if (Object.keys(params).length > 0) {
-        query += $.param(params) + query_params;
+        query += $.param(params);
     }
-    return url + query;
+    return url + query + query_params;
 }
 
 jQuery.fn.getFilters = function() {
     $(this).on('click', 'a', function() {
-        
+
         location.href = getUrl($(this).attr('href'));
 
         return false;
