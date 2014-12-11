@@ -150,6 +150,9 @@ $config = [
                 ]
             ]
         ],
+        'session' => [
+            'timeout' => 604800, // one week
+        ],
     ],
 ];
 
