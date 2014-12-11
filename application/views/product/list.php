@@ -61,9 +61,9 @@ $this->endBlock();
             UserPreferences::preferences(),
             'productsPerPage',
             [
-                20 => 20,
+                9 => 9,
+                18 => 18,
                 30 => 30,
-                50 => 50,
             ],
             [
                 'data-userpreference' => 'productsPerPage',
@@ -105,9 +105,7 @@ $this->endBlock();
 </div>
 
 <!--            <a href="compair.html" class="btn btn-large pull-right">Compair Product</a>-->
-<?php if (!isset($_GET['page'])): ?>
-<div class="content"><?= $selected_category->content ?></div>
-<?php endif; ?>
+
 <div class="pagination">
     <?php if ($pages->pageCount > 1):
         $_GET = $selections;
@@ -119,4 +117,8 @@ $this->endBlock();
         ?>
     <?php endif; ?>
 </div>
+
+<?php if (!isset($_GET['page'])): ?>
+    <div class="content"><?= $selected_category->content ?></div>
+<?php endif; ?>
 <br class="clr"/>

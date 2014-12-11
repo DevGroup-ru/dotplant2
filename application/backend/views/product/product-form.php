@@ -60,10 +60,10 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ); ?>
 
+    <?= $form->field($model, 'active')->widget(\kartik\switchinput\SwitchInput::className()) ?>
     <?= $form->field($model, 'name')?>
     <?= $form->field($model, 'price')?>
     <?= $form->field($model, 'old_price')?>
-    <?= $form->field($model, 'active')->checkbox() ?>
 
     <?=
     $form->field(app\models\ViewObject::getByModel($model, true), 'view_id')

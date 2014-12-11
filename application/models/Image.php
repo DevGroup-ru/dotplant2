@@ -159,11 +159,16 @@ class Image extends \yii\db\ActiveRecord
                         if (preg_match("#^https?://#Us", $new['image_src'])) {
                             $image_model->filename = basename(preg_replace("#^https?://[^/]#Us", "",
                                     $new['image_src']));
-                            file_put_contents(
-                                Yii::getAlias('@webroot') . $dir . $image_model->filename,
-                                file_get_contents($new['image_src'])
-                            );
+                            try {
+                                file_put_contents(
+                                    Yii::getAlias('@webroot') . $dir . $image_model->filename,
+                                    file_get_contents($new['image_src'])
+                                );
+                            } catch (\Exception $e) {
+                                // whoops :-(
+                            }
                             $image_model->image_src = $dir . $image_model->filename;
+
                         } else {
                             $image_model->image_src = $new['image_src'];
                         }

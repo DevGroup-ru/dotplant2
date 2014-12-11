@@ -49,6 +49,8 @@ use yii\helpers\Url;
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Category'), 'icon'=>'tree', 'footer'=>$this->blocks['submit']]); ?>
+
+            <?= $form->field($model, 'active')->widget(\kartik\switchinput\SwitchInput::className()) ?>
                 
                 <?= $form->field($model, 'name')?>
 
@@ -108,8 +110,6 @@ use yii\helpers\Url;
                 ]); ?>
                 
                 <?= $form->field($model, 'sort_order'); ?>
-
-                <?= $form->field($model, 'active')->checkbox() ?>
 
             <?php BackendWidget::end(); ?>
 
