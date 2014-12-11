@@ -7,6 +7,7 @@ use app\models\ObjectPropertyGroup;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
@@ -187,6 +188,16 @@ abstract class Import extends Component
                                     if ($model->save()) {
                                         $ids[] = $model->id;
                                     }
+
+                                    //flush cache!
+                                    unset(PropertyStaticValues::$identity_map_by_property_id[$propertyId]);
+
+                                    \yii\caching\TagDependency::invalidate(
+                                        Yii::$app->cache,
+                                        [
+                                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(Property::className(), $propertyId)
+                                        ]
+                                    );
                                 }
                             }
                             $value = $ids;
