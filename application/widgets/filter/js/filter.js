@@ -29,7 +29,7 @@ function getUrl(url) {
 
 jQuery.fn.getFilters = function() {
     $(this).on('click', 'a', function() {
-        console.log(getUrl($(this).attr('href')));
+        
         location.href = getUrl($(this).attr('href'));
 
         return false;
