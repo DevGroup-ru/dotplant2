@@ -134,7 +134,7 @@ class View extends ActiveRecord
         if (null === $model = static::find()->asArray()->all()) {
             return [];
         }
-        $result = [];
+        $result = [0 => Yii::t('app', 'Parent')];
         foreach ($model as $item) {
             $result[$item['id']] = $item['name'];
         }

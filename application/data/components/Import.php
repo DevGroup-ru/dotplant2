@@ -168,10 +168,24 @@ abstract class Import extends Component
                             $attributeToGet = $representationConversions[$field['processValuesAs']];
                             $ids = [];
                             foreach ($value as $initial) {
-                                $initial = mb_strtolower(trim($initial));
+                                $original = $initial;
+                                $initial = mb_strtolower(trim($original));
+                                $added = false;
                                 foreach ($staticValues as $static) {
                                     if (mb_strtolower(trim($static[$attributeToGet])) === $initial) {
                                         $ids [] = $static['id'];
+                                        $added = true;
+                                    }
+                                }
+                                if (!$added) {
+                                    // create PSV!
+                                    $model = new PropertyStaticValues();
+                                    $model->property_id = $propertyId;
+                                    $model->name = $model->value = $model->slug = $original;
+                                    $model->sort_order = 0;
+                                    $model->title_append = '';
+                                    if ($model->save()) {
+                                        $ids[] = $model->id;
                                     }
                                 }
                             }

@@ -9,5 +9,4 @@
 ## composer files
 composer.phar
 application/composer.lock
-application/web/theme/resources/product-images
 sitemap.xml

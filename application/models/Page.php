@@ -223,10 +223,17 @@ class Page extends ActiveRecord
 
     public function compileSlug()
     {
+        if($this->slug_absolute == 1){
+            return 'http://' . $this->slug . '.' . Config::getValue('core.serverName', Yii::$app->request->serverName) . '/';
+        }
         $url_parts = [$this->slug];
         $parent_model = $this->parent;
         while ($parent_model !== null) {
             if ($parent_model->slug == ':mainpage:') {
+                break;
+            }
+            if($parent_model->slug_absolute == 1){
+                $url_parts[] = 'http://' . $parent_model->slug . '.' . Config::getValue('core.serverName', Yii::$app->request->serverName);
                 break;
             }
             $url_parts[] = $parent_model->slug;
