@@ -220,4 +220,25 @@ class Order extends \yii\db\ActiveRecord
         }
         return $fullPrice;
     }
+
+    /**
+     * @return bool
+     * @throws \Exception
+     */
+    public function reCalc()
+    {
+        $totalPrice = 0;
+        $itemsCount = 0;
+        foreach ($this->items as $item) {
+            if (is_null($item->product)) {
+                $item->delete();
+            } else {
+                $totalPrice += $item->quantity * $item->product->price;
+                $itemsCount += $item->quantity;
+            }
+        }
+        $this->total_price = $totalPrice;
+        $this->items_count = $itemsCount;
+        return $this->save(true, ['total_price', 'items_count']);
+    }
 }

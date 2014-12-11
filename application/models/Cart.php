@@ -93,6 +93,10 @@ class Cart extends ActiveRecord
         $this->items = Json::decode($this->items_json);
     }
 
+    /**
+     * @param bool $create
+     * @return Cart
+     */
     public static function getCart($create = false)
     {
         if (is_null(self::$cart) && Yii::$app->session->has('cartId')) {
@@ -112,6 +116,10 @@ class Cart extends ActiveRecord
         return self::$cart;
     }
 
+    /**
+     * @param bool $saveProducts
+     * @return bool
+     */
     public function reCalc($saveProducts = false)
     {
         $totalPrice = 0;
