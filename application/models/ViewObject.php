@@ -118,14 +118,15 @@ class ViewObject extends ActiveRecord
             null === $result = static::find()->where(
                 [
                     'object_id' => $object->id,
-                    'object_model_id' => $model->id
+                    'object_model_id' => $model->id,
                 ]
             )->one()
         ) {
             if ($forceDefault) {
                 $result = new static;
-                    $result->object_id = $object->id;
-                    $result->object_model_id = $model->id;
+                $result->object_id = $object->id;
+                $result->object_model_id = $model->id;
+                $result->view_id = 1;
             }
         }
         return $result;

@@ -105,7 +105,7 @@ class CategoryController extends Controller
 
             if (null !== $view_object = ViewObject::getByModel($model, true)) {
                 if ($view_object->load($post, 'ViewObject')) {
-                    if ($view_object->view_id <= 1) {
+                    if ($view_object->view_id <= 0) {
                         $view_object->delete();
                     } else {
                         $view_object->save();
