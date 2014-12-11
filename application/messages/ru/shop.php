@@ -134,4 +134,5 @@ return array (
     'or' => 'или',
     'Products comparison' => 'Сравнение товаров',
     'Compare products [{count}]' => 'Сравнить товары [{count}]',
+    'Add a new product to order' => 'Добавить новый товар к заказу',
 );

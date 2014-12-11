@@ -1,6 +1,6 @@
 @media print {
   /* line 2, ../sass/admin.scss */
-  #left-panel, #header, #ribbon, .order-chat, .page-footer {
+  #left-panel, #header, #ribbon, .order-chat, .page-footer, .do-not-print {
     display: none;
   }
 }

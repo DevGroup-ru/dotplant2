@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  * @property integer $order_id
  * @property integer $product_id
  * @property double $quantity
+ * @property Order $order
  * @property Product $product
  */
 class OrderItem extends ActiveRecord
@@ -30,8 +31,8 @@ class OrderItem extends ActiveRecord
     public function rules()
     {
         return [
-            [['order_id', 'product_id'], 'required'],
-            [['quantity'], 'number'],
+            [['order_id', 'product_id', 'quantity'], 'required'],
+            [['quantity'], 'number', 'min' => 1, 'integerOnly' => true],
             [['order_id', 'product_id'], 'integer']
         ];
     }

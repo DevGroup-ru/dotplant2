@@ -7,8 +7,10 @@ use app\backend\models\OrderChat;
 use app\components\Helper;
 use app\components\SearchModel;
 use app\models\Order;
+use app\models\OrderItem;
 use app\models\OrderStatus;
 use app\models\PaymentType;
+use app\models\Product;
 use app\models\ShippingOption;
 use app\models\User;
 use kartik\helpers\Html;
@@ -186,30 +188,6 @@ class OrderController extends Controller
     }
 
     /**
-     * Update order internal comment action.
-     * @param integer $id
-     * @return array
-     * @throws \yii\web\BadRequestHttpException
-     */
-    public function actionUpdateInternalComment($id)
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $order = $this->findModel($id);
-        if (!isset($_POST['Order']['internal_comment'])) {
-            throw new BadRequestHttpException;
-        }
-        $order->internal_comment = $_POST['Order']['internal_comment'];
-        if (!$order->save(true, ['internal_comment'])) {
-            return [
-                'message' => Yii::t('shop', 'Cannot change internal comment'),
-            ];
-        }
-        return [
-            'output' => Html::encode($order->internal_comment),
-        ];
-    }
-
-    /**
      * @param integer $id
      * @return array
      * @throws \yii\web\BadRequestHttpException
@@ -305,6 +283,75 @@ class OrderController extends Controller
         return [
             'output' => Html::encode($user->username),
         ];
+    }
+
+    public function actionDeleteOrderItem($id)
+    {
+        $orderItem = OrderItem::findOne($id);
+        if (is_null($orderItem)) {
+            throw new NotFoundHttpException();
+        }
+        $orderItem->delete();
+        $orderItem->order->reCalc();
+        return $this->redirect(['view', 'id' => $orderItem->order->id]);
+    }
+
+    public function actionChangeOrderItemQuantity($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $orderItem = OrderItem::findOne($id);
+        if (!$orderItem->load(Yii::$app->request->post()) || !$orderItem->save(true, ['quantity'])
+            || !$orderItem->order->reCalc()
+        ) {
+            return [
+                'message' => Yii::t('shop', 'Cannot change quantity'),
+            ];
+        }
+        return [
+            'output' => $orderItem->quantity,
+        ];
+    }
+
+    public function actionAutoCompleteSearch($orderId, $term)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $query = Product::find()->orderBy('sort_order');
+        foreach (['name', 'content'] as $attribute) {
+            $query->orWhere(['like', $attribute, $term]);
+        }
+        $products = $query->limit(20)->all();
+        $result = [];
+        foreach ($products as $product) {
+            $result[] = [
+                'template' => $this->renderPartial(
+                    'auto-complete-item-template',
+                    [
+                        'orderId' => $orderId,
+                        'product' => $product,
+                    ]
+                ),
+            ];
+        }
+        return $result;
+    }
+
+    public function actionAddProduct($orderId, $productId)
+    {
+        $order = $this->findModel($orderId);
+        $orderItem = OrderItem::findOne(['product_id' => $productId, 'order_id' => $orderId]);
+        if (is_null($orderItem)) {
+            $orderItem = new OrderItem;
+            $orderItem->attributes = [
+                'product_id' => $productId,
+                'order_id' => $orderId,
+                'quantity' => 1,
+            ];
+        } else {
+            $orderItem->quantity++;
+        }
+        $orderItem->save();
+        $order->reCalc();
+        return $this->redirect(['view', 'id' => $orderId]);
     }
 
     /**

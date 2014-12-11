@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1 class="page-title txt-color-blueDark">
     <?= Html::encode($this->title) ?>
-    <a href="#" class="btn btn-default pull-right" id="print-button"><em class="glyphicon glyphicon-print"></em>&nbsp;&nbsp;<?= Yii::t('shop', 'Print') ?></a>
+    <a href="#" class="btn btn-default pull-right" id="print-button"><?= \kartik\icons\Icon::show('print') ?>&nbsp;&nbsp;<?= Yii::t('shop', 'Print') ?></a>
 </h1>
 <div class="row">
     <div class="col-xs-8">
@@ -149,6 +149,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <th><?= Yii::t('shop', 'Price') ?></th>
                             <th><?= Yii::t('shop', 'Quantity') ?></th>
                             <th><?= Yii::t('shop', 'Price sum') ?></th>
+                            <th style="width: 43px;"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -156,23 +157,67 @@ $this->params['breadcrumbs'][] = $this->title;
                             <tr>
                                 <td><?= $item->product->name ?></td>
                                 <td><?= Yii::$app->formatter->asDecimal($item->product->price, 2) ?></td>
-                                <td><?= $item->quantity ?></td>
+                                <td>
+                                    <?=
+                                    Editable::widget(
+                                        [
+                                            'attribute' => 'quantity',
+                                            'options' => [
+                                                'id' => 'edit-quantity' . $item->id,
+                                            ],
+                                            'formOptions' => [
+                                                'action' => [
+                                                    '/backend/order/change-order-item-quantity',
+                                                    'id' => $item->id,
+                                                ],
+                                            ],
+                                            'inputType' => Editable::INPUT_TEXT,
+                                            'model' => $item,
+                                        ]
+                                    )
+                                    ?>
+                                </td>
                                 <td><?= Yii::$app->formatter->asDecimal($item->quantity * $item->product->price, 2) ?></td>
+                                <td><?= Html::a(\kartik\icons\Icon::show('remove'), ['delete-order-item', 'id' => $item->id], ['class' => 'btn btn-primary btn-xs do-not-print']) ?></td>
                             </tr>
                         <?php endforeach; ?>
                         <?php if (isset($model->shippingOption)): ?>
                             <tr>
                                 <td colspan="3"><?= Html::encode($model->shippingOption->name) ?></td>
-                                <td><?= Yii::$app->formatter->asDecimal($model->shippingOption->cost, 2) ?></td>
+                                <td colspan="2"><?= Yii::$app->formatter->asDecimal($model->shippingOption->cost, 2) ?></td>
                             </tr>
                         <?php endif; ?>
                         <tr>
                             <th colspan="2"><?= Yii::t('shop', 'Summary') ?></th>
                             <th><?= $model->items_count ?></th>
-                            <th><?= Yii::$app->formatter->asDecimal($model->total_price, 2) ?></th>
+                            <th colspan="2"><?= Yii::$app->formatter->asDecimal($model->total_price, 2) ?></th>
                         </tr>
                     </tbody>
                 </table>
+                <div class="do-not-print">
+                    <br />
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <label for="add-product"><?= Yii::t('shop', 'Add a new product to order') ?></label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <?=
+                            \app\widgets\AutoCompleteSearch::widget(
+                                [
+                                    'options' => [
+                                        'class' => 'form-control',
+                                    ],
+                                    'id' => 'add-product',
+                                    'name' => 'add-product',
+                                    'route' => ['auto-complete-search', 'orderId' => $model->id],
+                                ]
+                            )
+                            ?>
+                        </div>
+                    </div>
+                </div>
             <?php BackendWidget::end(); ?>
         </div>
     </div>
@@ -236,6 +281,9 @@ jQuery('#orderchat-message').keypress(function(event) {
     if (event.keyCode == 10) {
         jQuery(this).parents('form').eq(0).submit();
     }
+});
+jQuery('body').on('editableSuccess', function() {
+    location.reload();
 });
 jQuery('#print-button').click(function() {
     window.print();
