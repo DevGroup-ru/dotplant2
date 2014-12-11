@@ -87,6 +87,7 @@ class CategoryController extends Controller
         } else {
             if (null !== $parent = Category::findById($parent_id, null, null)) {
                 $model = new Category;
+                $model->loadDefaultValues();
                 $model->parent_id = $parent_id;
                 $model->category_group_id = $parent->category_group_id;
             } else {
