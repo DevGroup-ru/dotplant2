@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         )
                                         : 'Not set',
                                     'formOptions' => [
-                                        'action' => ['/backend/order/update-status', 'id' => $model->id],
+                                        'action' => ['update-status', 'id' => $model->id],
                                     ],
                                     'inputType' => Editable::INPUT_DROPDOWN_LIST,
                                     'model' => $model,
@@ -103,9 +103,27 @@ $this->params['breadcrumbs'][] = $this->title;
                         <th><?= $model->getAttributeLabel('shipping_option_id') ?></th>
                         <td>
                             <?=
-                            $model->shippingOption !== null
-                                ? $model->shippingOption->name
-                                : '<em>' . Yii::t('yii', '(not set)') . '</em>'
+                            Editable::widget(
+                                [
+                                    'attribute' => 'shipping_option_id',
+                                    'data' => \app\components\Helper::getModelMap(
+                                        \app\models\ShippingOption::className(),
+                                        'id',
+                                        'name'
+                                    ),
+                                    'displayValue' => !is_null($model->shippingOption)
+                                        ? Html::tag(
+                                            'span',
+                                            $model->shippingOption->name
+                                        )
+                                        : 'Not set',
+                                    'formOptions' => [
+                                        'action' => ['update-shipping-option', 'id' => $model->id],
+                                    ],
+                                    'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                                    'model' => $model,
+                                ]
+                            )
                             ?>
                         </td>
                     </tr>

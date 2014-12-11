@@ -188,6 +188,33 @@ class OrderController extends Controller
     }
 
     /**
+     * @param $id
+     * @return array
+     * @throws BadRequestHttpException
+     * @throws NotFoundHttpException
+     */
+    public function actionUpdateShippingOption($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $post = Yii::$app->request->post();
+        if (!isset($post['Order']['shipping_option_id'])) {
+            throw new BadRequestHttpException;
+        }
+        $value = $post['Order']['shipping_option_id'];
+        $order = $this->findModel($id);
+        $order->shipping_option_id = $value;
+        $shippingOption = ShippingOption::findOne($value);
+        if (is_null($shippingOption) || !$order->save(true, ['shipping_option_id'])) {
+            return [
+                'message' => Yii::t('shop', 'Cannot change shipping option'),
+            ];
+        }
+        return [
+            'output' => $shippingOption->name,
+        ];
+    }
+
+    /**
      * @param integer $id
      * @return array
      * @throws \yii\web\BadRequestHttpException
