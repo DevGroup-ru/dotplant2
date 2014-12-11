@@ -131,7 +131,7 @@ class Image extends \yii\db\ActiveRecord
             foreach ($current_images as $current) {
                 $found = false;
                 foreach ($images as $key => $new) {
-                    if ($new['image_src'] === $current->image_src) {
+                    if ($new['image_src'] === $current->image_src && !empty($new['image_src'])) {
                         $found = true;
                         $current->setAttributes($new);
                         $current->sort_order = $key;
@@ -151,32 +151,35 @@ class Image extends \yii\db\ActiveRecord
             // insert new images
             foreach ($images as $key => $new) {
                 if (isset($new['image_src'])) {
-                    $image_model = new Image;
-                    $image_model->object_id = $object->id;
-                    $image_model->object_model_id = $model->id;
-                    $image_model->filename = basename($new['image_src']);
-                    if (preg_match("#^https?://#Us", $new['image_src'])) {
-                        $image_model->filename = basename(preg_replace("#^https?://[^/]#Us", "", $new['image_src']));
-                        file_put_contents(
-                            Yii::getAlias('@webroot').$dir . $image_model->filename,
-                            file_get_contents($new['image_src'])
-                        );
-                        $image_model->image_src = $dir . $image_model->filename;
-                    } else {
-                        $image_model->image_src = $new['image_src'];
-                    }
-                    try {
-                        $image_model->thumbnail_src = $dir . ImageDropzone::saveThumbnail('@webroot' . $dir,
-                                $image_model->filename);
-                    } catch (\Exception $e) {
-                        // error here :-(
-                    }
+                    if (!empty($new['image_src'])) {
+                        $image_model = new Image;
+                        $image_model->object_id = $object->id;
+                        $image_model->object_model_id = $model->id;
+                        $image_model->filename = basename($new['image_src']);
+                        if (preg_match("#^https?://#Us", $new['image_src'])) {
+                            $image_model->filename = basename(preg_replace("#^https?://[^/]#Us", "",
+                                    $new['image_src']));
+                            file_put_contents(
+                                Yii::getAlias('@webroot') . $dir . $image_model->filename,
+                                file_get_contents($new['image_src'])
+                            );
+                            $image_model->image_src = $dir . $image_model->filename;
+                        } else {
+                            $image_model->image_src = $new['image_src'];
+                        }
+                        try {
+                            $image_model->thumbnail_src = $dir . ImageDropzone::saveThumbnail('@webroot' . $dir,
+                                    $image_model->filename);
+                        } catch (\Exception $e) {
+                            // error here :-(
+                        }
 
 
-                    $image_model->image_description = isset($new['image_description']) ? $new['image_description'] : '';
-                    $image_model->sort_order = $key;
-                    $image_model->save();
-                    unset($image_model);
+                        $image_model->image_description = isset($new['image_description']) ? $new['image_description'] : '';
+                        $image_model->sort_order = $key;
+                        $image_model->save();
+                        unset($image_model);
+                    }
                 }
             }
 

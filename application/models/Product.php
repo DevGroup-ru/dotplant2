@@ -57,7 +57,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     {
         return [
             [['main_category_id', 'name', 'slug'], 'required'],
-            [['main_category_id', 'slug_absolute', 'sort_order', 'active', 'parent_id', 'is_deleted'], 'integer'],
+            [['main_category_id', 'slug_absolute', 'sort_order', 'active', 'parent_id', 'is_deleted', 'in_warehouse', 'unlimited_count', 'reserved_count'], 'integer'],
             [
                 [
                     'name',
@@ -67,15 +67,16 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     'breadcrumbs_label',
                     'content',
                     'announce',
-                    'option_generate'
+                    'option_generate',
+                    'sku'
                 ],
                 'string'
             ],
             [['price', 'old_price'], 'number'],
             [['slug'], 'string', 'max' => 80],
             [['slug_compiled'], 'string', 'max' => 180],
-            [['old_price', 'price'], 'default', 'value' => 0,],
-            [['active'], 'default', 'value' => 1],
+            [['old_price', 'price', 'in_warehouse', 'reserved_count'], 'default', 'value' => 0,],
+            [['active', 'unlimited_count'], 'default', 'value' => 1],
             [['parent_id', 'slug_absolute', 'sort_order', 'is_deleted'], 'default', 'value' => 0],
 
         ];
@@ -106,6 +107,10 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'old_price' => Yii::t('app', 'Old Price'),
             'option_generate' => Yii::t('app', 'Option Generate'),
             'is_deleted' => Yii::t('app', 'Is Deleted'),
+            'in_warehouse' => Yii::t('app', 'Items in warehouse'),
+            'sku' => Yii::t('app', 'SKU'),
+            'unlimited_count' => Yii::t('app', 'Unlimited items(don\'t count in warehouse)'),
+            'reserved_count' => Yii::t('app', 'Items reserved'),
         ];
     }
 
@@ -479,6 +484,10 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     $repeat = false;
                     foreach ($categories as $cat) {
                         $model = Category::findById($cat, null, null);
+                        if ($model === null) {
+                            echo "\n\nUnknown category with id ".intval($cat) ." for model with id:".$this->id."\n\n";
+                            continue;
+                        }
                         if (intval($model->parent_id) > 0 && in_array($model->parent_id, $categories) === false) {
                             $categories[] = $model->parent_id;
                             $repeat = true;
