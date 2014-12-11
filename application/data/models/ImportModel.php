@@ -126,7 +126,7 @@ class ImportModel extends Model implements \Serializable
         $this->addPropertyGroups = $fields['addPropertyGroups'];
         $this->createIfNotExists = $fields['createIfNotExists'];
         $this->multipleValuesDelimiter = $fields['multipleValuesDelimiter'];
-        $this->additionalFields = $fields['fields']['additionalFields'];
+        $this->additionalFields = isset($fields['fields']['additionalFields'])?$fields['fields']['additionalFields']:[];
 
     }
 }

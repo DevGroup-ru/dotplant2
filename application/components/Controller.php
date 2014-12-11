@@ -19,7 +19,7 @@ class Controller extends \yii\web\Controller
         do {
             $view = ViewObject::getViewByModel($model);
             if (!is_null($view)) {
-                return $view;
+                return $view == 'default' ? $defaultView : $view;
             }
             $model = $model->parent;
         } while (!is_null($model));

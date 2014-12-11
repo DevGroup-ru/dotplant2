@@ -212,7 +212,7 @@ abstract class Import extends Component
                     $objectModel->invalidateTags();
                 }
             } else {
-                throw new \Exception('Cannot save object: ' . var_export($objectModel->errors, true));
+                throw new \Exception('Cannot save object: ' . var_export($objectModel->errors, true) . var_export($objectData, true) . var_export($objectModel->getAttributes(), true));
             }
         }
     }
