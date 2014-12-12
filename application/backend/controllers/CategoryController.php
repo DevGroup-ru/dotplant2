@@ -46,7 +46,7 @@ class CategoryController extends Controller
         ];
     }
 
-    public function actionIndex($parent_id = 1)
+    public function actionIndex($parent_id = 0)
     {
         $searchModel = new Category();
         $searchModel->parent_id = $parent_id;
@@ -85,11 +85,14 @@ class CategoryController extends Controller
         if (null !== $id) {
             $model = Category::findById($id, null, null);
         } else {
-            if (null !== $parent = Category::findById($parent_id, null, null)) {
+            $parent = Category::findById($parent_id, null, null);
+            if ($parent_id === '0' || !is_null($parent)) {
                 $model = new Category;
                 $model->loadDefaultValues();
                 $model->parent_id = $parent_id;
-                $model->category_group_id = $parent->category_group_id;
+                if ($parent_id !== '0') {
+                    $model->category_group_id = $parent->category_group_id;
+                }
             } else {
                 throw new ServerErrorHttpException;
             }
