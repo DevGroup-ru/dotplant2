@@ -7,6 +7,7 @@ use app\behaviors\Tree;
 use app\data\components\ImportableInterface;
 use app\data\components\ExportableInterface;
 use app\properties\HasProperties;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
@@ -596,6 +597,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $force_limit = false
     )
     {
+        Yii::beginProfile("FilteredProducts");
         if (null === $object = Object::getForClass(Product::className())) {
             throw new \yii\web\ServerErrorHttpException('Object not found.');
         }
@@ -662,6 +664,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     Yii::$app->request->queryString,
                     Json::encode(Yii::$app->request->get('p', [])),
                     $userSelectedSortingId,
+                    $limit ? '1' : '0',
+                    $force_limit ? '1' : '0',
                     $productsPerPage
                 ]
             ) . $cacheKeyAppend;
@@ -720,7 +724,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 )
             );
         }
-
+        Yii::endProfile("FilteredProducts");
         return [
             'products' => $products,
             'pages' => $pages,
