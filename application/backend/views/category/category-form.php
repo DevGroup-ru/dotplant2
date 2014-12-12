@@ -51,6 +51,15 @@ use yii\helpers\Url;
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Category'), 'icon'=>'tree', 'footer'=>$this->blocks['submit']]); ?>
 
             <?= $form->field($model, 'active')->widget(\kartik\switchinput\SwitchInput::className()) ?>
+
+            <?php if ($model->parent_id == 0): ?>
+            <?=
+            $form->field($model, 'category_group_id')
+                ->dropDownList(
+                    \app\components\Helper::getModelMap(\app\models\CategoryGroup::className(), 'id', 'name')
+                )
+            ?>
+            <?php endif; ?>
                 
                 <?= $form->field($model, 'name')?>
 

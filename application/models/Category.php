@@ -361,6 +361,18 @@ class Category extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        if (isset($changedAttributes['category_group_id'])) {
+            foreach ($this->children as $child) {
+                /** @var $child Category */
+                $child->category_group_id = $this->category_group_id;
+                $child->save(true, ['category_group_id']);
+            }
+        }
+    }
+
     /**
      * "Мягкое" удаление категории, включая все вложенные категории и продукты
      * Повторный вызов удаляет из БД
