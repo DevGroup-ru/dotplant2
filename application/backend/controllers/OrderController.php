@@ -381,6 +381,17 @@ class OrderController extends Controller
         return $this->redirect(['view', 'id' => $orderId]);
     }
 
+    public function actionUpdateOrderProperties($id)
+    {
+        $model = $this->findModel($id);
+        $model->abstractModel->setAttrubutesValues(Yii::$app->request->post());
+        if ($model->abstractModel->validate()) {
+            $model->getPropertyGroups(true);
+            $model->saveProperties(Yii::$app->request->post());
+        }
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
     /**
      * Finds the Order model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

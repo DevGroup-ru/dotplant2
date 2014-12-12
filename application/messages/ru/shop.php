@@ -136,4 +136,5 @@ return array (
     'Compare products [{count}]' => 'Сравнить товары [{count}]',
     'Add a new product to order' => 'Добавить новый товар к заказу',
     'Cannot change shipping option' => 'Невозможно изменить способ доставки',
+    'Edit order properties' => 'Редактировать свойства заказа',
 );
