@@ -72,112 +72,18 @@ class ProductController extends Controller
             $selected_category_id = intval($selected_category_id);
         }
 
-        $query = Product::find();
-        $query->andWhere([Product::tableName() . '.parent_id' => 0, Product::tableName() . '.active' => 1]);
-
-
-        if (null !== $selected_category_id) {
-            $query->innerJoin(
-                $object->categories_table_name . ' ocats',
-                'ocats.category_id = :catid AND ocats.object_model_id = ' . Product::tableName() . '.id',
-                [':catid' => $selected_category_id]
-            );
-        } else {
-            $query->innerJoin(
-                $object->categories_table_name . ' ocats',
-                'ocats.object_model_id = ' . Product::tableName() . '.id'
-            );
-        }
-
-        $query->innerJoin(
-            Category::tableName() . ' ocatt',
-            'ocatt.id = ocats.category_id AND ocatt.category_group_id = :gcatid',
-            [':gcatid' => $category_group_id]
-        );
-
-        $allSorts = ProductListingSort::enabledSorts();
-        $userSelectedSortingId = UserPreferences::preferences()->getAttributes()['productListingSortId'];
-        if (isset($allSorts[$userSelectedSortingId])) {
-            $query->addOrderBy(
-                $allSorts[$userSelectedSortingId]['sort_field'] .
-                ' ' .
-                $allSorts[$userSelectedSortingId]['asc_desc']
-            );
-        } else {
-            $query->addOrderBy(Product::tableName() . '.sort_order');
-        }
-
-        $productsPerPage = UserPreferences::preferences()->getAttributes()['productsPerPage'];
-
-        PropertiesHelper::appendPropertiesFilters(
-            $object,
-            $query,
+        $result = Product::filteredProducts(
+            $category_group_id,
             $values_by_property_id,
-            $request->get('p', [])
+            $selected_category_id,
+            false,
+            null,
+            true,
+            false
         );
-
-        // apply additional filters
-        $cacheKeyAppend = "";
-        $query = Yii::$app->filterquery->filter($query, $cacheKeyAppend);
-
-        $products_query = clone $query;
-        $cacheKey = 'ProductsCount:' . implode(
-            '_',
-            [
-                $request->pathInfo,
-                $request->queryString,
-                Json::encode(Yii::$app->request->get('p', [])),
-                $userSelectedSortingId,
-                $productsPerPage
-            ]
-        ) . $cacheKeyAppend;
-
-        if (false === $pages = Yii::$app->cache->get($cacheKey)) {
-            $pages = new Pagination(
-                [
-                    'defaultPageSize' => $productsPerPage,
-                    'totalCount' => $products_query->count(),
-                ]
-            );
-
-            Yii::$app->cache->set(
-                $cacheKey,
-                $pages,
-                86400,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(Category::className()),
-                            ActiveRecordHelper::getCommonTag(Product::className()),
-                            ActiveRecordHelper::getCommonTag(Config::className()),
-                        ]
-                    ]
-                )
-            );
-        }
-
-        $query->offset($pages->offset)->limit($pages->limit);
-
-        $cacheKey .= '-' . $request->get('page', 1);
-
-        if (false === $products = Yii::$app->cache->get($cacheKey)) {
-            $products = $query->all();
-
-            Yii::$app->cache->set(
-                $cacheKey,
-                $products,
-                86400,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(Category::className()),
-                            ActiveRecordHelper::getCommonTag(Product::className()),
-                            ActiveRecordHelper::getCommonTag(Config::className()),
-                        ]
-                    ]
-                )
-            );
-        }
+        $pages = $result['pages'];
+        $allSorts = $result['allSorts'];
+        $products = $result['products'];
 
         if (null !== $selected_category = $selected_category_id) {
             if ($selected_category_id > 0) {

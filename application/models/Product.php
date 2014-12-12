@@ -7,12 +7,15 @@ use app\behaviors\Tree;
 use app\data\components\ImportableInterface;
 use app\data\components\ExportableInterface;
 use app\properties\HasProperties;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
+use yii\data\Pagination;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "product".
@@ -578,7 +581,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      *
      * @param $category_group_id
      * @param array $values_by_property_id
-     * @param array $selected_category_ids
      * @param null|integer|string $selected_category_id
      * @param bool|string $force_sorting If false - use UserPreferences, if string - use supplied orderBy condition
      * @param null|integer $limit limit query results
@@ -588,7 +590,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     public static function filteredProducts(
         $category_group_id,
         array $values_by_property_id = [],
-        array $selected_category_ids = [],
         $selected_category_id = null,
         $force_sorting = false,
         $limit = null,
@@ -596,6 +597,139 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $force_limit = false
     )
     {
+        Yii::beginProfile("FilteredProducts");
+        if (null === $object = Object::getForClass(Product::className())) {
+            throw new \yii\web\ServerErrorHttpException('Object not found.');
+        }
+
+        $query = Product::find();
+        $query->andWhere([Product::tableName() . '.parent_id' => 0, Product::tableName() . '.active' => 1]);
+
+
+        if (null !== $selected_category_id) {
+            $query->innerJoin(
+                $object->categories_table_name . ' ocats',
+                'ocats.category_id = :catid AND ocats.object_model_id = ' . Product::tableName() . '.id',
+                [':catid' => $selected_category_id]
+            );
+        } else {
+            $query->innerJoin(
+                $object->categories_table_name . ' ocats',
+                'ocats.object_model_id = ' . Product::tableName() . '.id'
+            );
+        }
+
+        $query->innerJoin(
+            Category::tableName() . ' ocatt',
+            'ocatt.id = ocats.category_id AND ocatt.category_group_id = :gcatid',
+            [':gcatid' => $category_group_id]
+        );
+
+
+        $userSelectedSortingId = UserPreferences::preferences()->getAttributes()['productListingSortId'];
+        if ($force_sorting === false) {
+            $allSorts = ProductListingSort::enabledSorts();
+            if (isset($allSorts[$userSelectedSortingId])) {
+                $query->addOrderBy(
+                    $allSorts[$userSelectedSortingId]['sort_field'] .
+                    ' ' .
+                    $allSorts[$userSelectedSortingId]['asc_desc']
+                );
+            } else {
+                $query->addOrderBy(Product::tableName() . '.sort_order');
+            }
+        } elseif (!empty($force_sorting)) {
+            $query->addOrderBy($force_sorting);
+        }
+
+        $productsPerPage = $limit === null ? UserPreferences::preferences()->getAttributes()['productsPerPage'] : $limit;
+
+        \app\properties\PropertiesHelper::appendPropertiesFilters(
+            $object,
+            $query,
+            $values_by_property_id,
+            Yii::$app->request->get('p', [])
+        );
+
+        // apply additional filters
+        $cacheKeyAppend = "";
+        if ($apply_filterquery) {
+            $query = Yii::$app->filterquery->filter($query, $cacheKeyAppend);
+        }
+
+        $cacheKey = 'ProductsCount:' . implode(
+                '_',
+                [
+                    Yii::$app->request->pathInfo,
+                    Yii::$app->request->queryString,
+                    Json::encode(Yii::$app->request->get('p', [])),
+                    $userSelectedSortingId,
+                    $limit ? '1' : '0',
+                    $force_limit ? '1' : '0',
+                    $productsPerPage
+                ]
+            ) . $cacheKeyAppend;
+
+        $pages = null;
+
+        if ($force_limit === true) {
+            $query->limit($limit);
+        } else {
+            $products_query = clone $query;
+
+            if (false === $pages = Yii::$app->cache->get($cacheKey)) {
+                $pages = new Pagination(
+                    [
+                        'defaultPageSize' => $productsPerPage,
+                        'totalCount' => $products_query->count(),
+                    ]
+                );
+
+                Yii::$app->cache->set(
+                    $cacheKey,
+                    $pages,
+                    86400,
+                    new TagDependency(
+                        [
+                            'tags' => [
+                                ActiveRecordHelper::getCommonTag(Category::className()),
+                                ActiveRecordHelper::getCommonTag(Product::className()),
+                                ActiveRecordHelper::getCommonTag(Config::className()),
+                            ]
+                        ]
+                    )
+                );
+            }
+
+            $query->offset($pages->offset)->limit($pages->limit);
+        }
+
+        $cacheKey .= '-' . Yii::$app->request->get('page', 1);
+
+        if (false === $products = Yii::$app->cache->get($cacheKey)) {
+            $products = $query->all();
+
+            Yii::$app->cache->set(
+                $cacheKey,
+                $products,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            ActiveRecordHelper::getCommonTag(Category::className()),
+                            ActiveRecordHelper::getCommonTag(Product::className()),
+                            ActiveRecordHelper::getCommonTag(Config::className()),
+                        ]
+                    ]
+                )
+            );
+        }
+        Yii::endProfile("FilteredProducts");
+        return [
+            'products' => $products,
+            'pages' => $pages,
+            'allSorts' => $allSorts,
+        ];
 
     }
 }
