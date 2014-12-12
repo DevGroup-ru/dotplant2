@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         )
                                         : 'Not set',
                                     'formOptions' => [
-                                        'action' => ['/backend/order/update-status', 'id' => $model->id],
+                                        'action' => ['update-status', 'id' => $model->id],
                                     ],
                                     'inputType' => Editable::INPUT_DROPDOWN_LIST,
                                     'model' => $model,
@@ -103,9 +103,27 @@ $this->params['breadcrumbs'][] = $this->title;
                         <th><?= $model->getAttributeLabel('shipping_option_id') ?></th>
                         <td>
                             <?=
-                            $model->shippingOption !== null
-                                ? $model->shippingOption->name
-                                : '<em>' . Yii::t('yii', '(not set)') . '</em>'
+                            Editable::widget(
+                                [
+                                    'attribute' => 'shipping_option_id',
+                                    'data' => \app\components\Helper::getModelMap(
+                                        \app\models\ShippingOption::className(),
+                                        'id',
+                                        'name'
+                                    ),
+                                    'displayValue' => !is_null($model->shippingOption)
+                                        ? Html::tag(
+                                            'span',
+                                            $model->shippingOption->name
+                                        )
+                                        : 'Not set',
+                                    'formOptions' => [
+                                        'action' => ['update-shipping-option', 'id' => $model->id],
+                                    ],
+                                    'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                                    'model' => $model,
+                                ]
+                            )
                             ?>
                         </td>
                     </tr>
@@ -113,7 +131,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <th><?= $model->getAttributeLabel('payment_type_id') ?></th>
                         <td>
                             <?=
-                            $model->paymentType !== null
+                            is_null($model->paymentType)
                                 ? $model->paymentType->name
                                 : '<em>' . Yii::t('yii', '(not set)') . '</em>'
                             ?>
@@ -123,11 +141,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         <tr>
                             <th><?= $model->abstractModel->getAttributeLabel($name) ?></th>
                             <td>
+                                <button data-toggle="modal" data-target="#custom-fields-modal" class="kv-editable-value kv-editable-link">
                                 <?=
                                 !empty($attribute)
                                     ? Html::encode($attribute)
                                     : '<em>' . Yii::t('yii', '(not set)') . '</em>'
                                 ?>
+                                </button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -268,7 +288,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             </div>
                         </div>
                         <span class="textarea-controls">
-                            <?= Html::submitButton(Yii::t('shop', 'Submit'), ['class' => 'btn btn-sm btn-primary pull-right']) ?>
+                            <?=
+                            Html::submitButton(
+                                Yii::t('shop', 'Submit'),
+                                ['class' => 'btn btn-sm btn-primary pull-right']
+                            )
+                            ?>
                         </span>
                     <?php \kartik\widgets\ActiveForm::end(); ?>
                 </div>
@@ -276,6 +301,22 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
+
+<?php \yii\bootstrap\Modal::begin(['id' => 'custom-fields-modal', 'header' => Yii::t('shop', 'Edit order properties')]) ?>
+<?php $form = \kartik\widgets\ActiveForm::begin(['action' => ['update-order-properties', 'id' => $model->id]])?>
+<?php foreach (\app\models\PropertyGroup::getForModel($model->object->id, $model->id) as $group): ?>
+    <?php if ($group->hidden_group_title == 0): ?>
+        <h4><?= $group->name; ?></h4>
+    <?php endif; ?>
+    <?php $properties = \app\models\Property::getForGroupId($group->id); ?>
+    <?php foreach ($properties as $property): ?>
+        <?= $property->handler($form, $model->abstractModel, [], 'frontend_edit_view'); ?>
+    <?php endforeach; ?>
+<?php endforeach; ?>
+<?= Html::submitButton(Yii::t('app', 'Send'), ['class' => 'btn btn-primary']) ?>
+<?php \kartik\widgets\ActiveForm::end() ?>
+<?php \yii\bootstrap\Modal::end() ?>
+
 <script>
 jQuery('#orderchat-message').keypress(function(event) {
     if (event.keyCode == 10) {
