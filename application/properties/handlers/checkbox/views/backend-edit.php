@@ -13,4 +13,4 @@
  */
 
 ?>
-<?= $form->field($model, $property_key.'[0]') ->textInput()->widget(\kartik\widgets\SwitchInput::className());
+<?= $form->field($model, $property_key.'[0]')->checkbox() ?>
