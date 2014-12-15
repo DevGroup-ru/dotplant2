@@ -9,11 +9,27 @@ use app\properties\url\PartialCategoryPathPart;
 use app\properties\url\PropertyPart;
 use app\properties\url\StaticPart;
 use Yii;
+use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Controller;
 
 class RouteController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['setting manage'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         $searchModel = new Route();
