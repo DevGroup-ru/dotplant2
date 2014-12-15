@@ -77,7 +77,6 @@ class RouteController extends Controller
             $settings_by_class[get_class($obj)] = $vars_by_type;
         }
 
-
         return $this->render(
             'edit',
             [
