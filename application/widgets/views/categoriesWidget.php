@@ -3,7 +3,7 @@
 ?>
 
 <!-- begin categories widget -->
-
+<?php Yii::beginProfile("CategoriesWidget - menu render"); ?>
 <?=
     yii\widgets\Menu::Widget([
         'items' => $possible_selections,
@@ -12,5 +12,5 @@
         ],
     ])
 ?>
-
+<?php Yii::endProfile("CategoriesWidget - menu render"); ?>
 <!-- end of categories widget -->

@@ -16,13 +16,30 @@ class ImgSearch extends Widget
 
     public function run()
     {
-        $images = Image::getForModel($this->objectId, $this->objectModelId);
-        if ($this->offset > 0 || !is_null($this->limit)) {
-            $images = array_slice($images, $this->offset, $this->limit);
-        }
-        return $this->render(
+        $cacheKey = "ImgSearch:" . implode("_", [
+            $this->objectId,
+            $this->objectModelId,
             $this->viewFile,
-            ['images' => $images]
-        );
+            $this->limit,
+            $this->offset
+        ]);
+        $result = Yii::$app->cache->get($cacheKey);
+
+        if ($result === false) {
+            $images = Image::getForModel($this->objectId, $this->objectModelId);
+            if ($this->offset > 0 || !is_null($this->limit)) {
+                $images = array_slice($images, $this->offset, $this->limit);
+            }
+            $result = $this->render(
+                $this->viewFile,
+                ['images' => $images]
+            );
+            Yii::$app->cache->set($cacheKey, $result, 86400, new \yii\caching\TagDependency([
+                'tags' => 'Images:'.$this->objectId.':'.$this->objectModelId
+            ]));
+        }
+
+
+        return $result;
     }
 }

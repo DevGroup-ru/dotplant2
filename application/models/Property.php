@@ -85,7 +85,7 @@ class Property extends ActiveRecord
             [['key'], 'string', 'max' => 20],
             [['key'], 'match', 'pattern' => '#^[\w]+$#'],
             [['depends_on_property_id', 'depends_on_category_group_id'], 'default', 'value' => 0],
-            [['required', 'captcha'], 'integer', 'min' => 0, 'max' => 1],
+            [['required', 'captcha', 'dont_filter'], 'integer', 'min' => 0, 'max' => 1],
         ];
     }
 
@@ -111,6 +111,7 @@ class Property extends ActiveRecord
             'required' => Yii::t('app', 'Required'),
             'interpret_as' => Yii::t('app', 'Interpret Field As'),
             'captcha' => Yii::t('app', 'Captcha'),
+            'dont_filter' => Yii::t('app', 'Don\'t use in filtration'),
         ];
     }
 

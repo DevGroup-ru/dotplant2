@@ -1,5 +1,5 @@
 <?php
-
+use app\backend\components\ActionColumn;
 use kartik\helpers\Html;
 use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
@@ -27,6 +27,9 @@ $this->endBlock();
 
 <?=
     DynaGrid::widget([
+        'options' => [
+            'id' => 'routes-grid',
+        ],
         'columns' => [
             [
                 'class' => 'yii\grid\DataColumn',
@@ -35,7 +38,21 @@ $this->endBlock();
             'name',
             'route',
             [
-                'class' => 'app\backend\components\ActionColumn',
+                'class' => ActionColumn::className(),
+                'buttons' => [
+                    [
+                        'url' => 'edit',
+                        'icon' => 'pencil',
+                        'class' => 'btn-primary',
+                        'label' => Yii::t('app', 'Edit'),
+                    ],
+                    [
+                        'url' => 'delete',
+                        'icon' => 'trash-o',
+                        'class' => 'btn-danger',
+                        'label' => Yii::t('app', 'Delete'),
+                    ],
+                ],
             ],
         ],
         

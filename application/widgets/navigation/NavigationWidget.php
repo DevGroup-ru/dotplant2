@@ -49,17 +49,20 @@ class NavigationWidget extends Widget
             }
         }
         if (null === $items) {
+
             $root = Navigation::findOne($this->rootId);
             $children = $root->getChildren();
             $items = [];
             foreach ($children as $child) {
                 $items[] = self::getTree($child);
             }
-            if (!empty($items)) {
+
+            if (count($items)>0) {
+
                 \Yii::$app->cache->set(
                     $cacheKey,
                     $items,
-                    0,
+                    86400,
                     new TagDependency([
                         'tags' => [
                             \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Navigation::className())

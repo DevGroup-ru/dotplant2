@@ -1,8 +1,9 @@
 <div id="sidebar" class="span3">
+    <?php if ($this->beginCache('SidebarMenu', ['duration'=>86400, 'dependency'=>new yii\caching\TagDependency(['tags'=>\devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(\app\models\Category::className())])])): ?>
     <?=
         \yii\widgets\Menu::widget(
             [
-                'id' => 'sideManu',
+                'id' => 'sideMenu',
                 'options' => [
                     'class' => 'nav nav-tabs nav-stacked',
                 ],
@@ -10,6 +11,8 @@
             ]
         )
     ?>
+    <?php $this->endCache();
+    endif;?>
     <?php if (isset($this->blocks['filters'])): ?>
         <h5><?= Yii::t('app', 'Filters') ?></h5>
         <?= $this->blocks['filters'] ?>

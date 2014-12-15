@@ -267,6 +267,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (empty($this->title)) {
             $this->title = $this->name;
         }
+        $object = Object::getForClass($this);
+
+        \yii\caching\TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                'Images:'.$object->id.':'.$this->id
+            ]
+        );
 
         return parent::beforeSave($insert);
     }
@@ -624,6 +632,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'ocatt.id = ocats.category_id AND ocatt.category_group_id = :gcatid',
             [':gcatid' => $category_group_id]
         );
+        $query->groupBy(Product::tableName().".id");
 
 
         $userSelectedSortingId = UserPreferences::preferences()->getAttributes()['productListingSortId'];
@@ -707,7 +716,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $cacheKey .= '-' . Yii::$app->request->get('page', 1);
 
         if (false === $products = Yii::$app->cache->get($cacheKey)) {
+
             $products = $query->all();
+
 
             Yii::$app->cache->set(
                 $cacheKey,
@@ -724,6 +735,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 )
             );
         }
+
         Yii::endProfile("FilteredProducts");
         return [
             'products' => $products,

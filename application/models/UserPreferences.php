@@ -87,6 +87,7 @@ class UserPreferences extends Model {
     {
         return [
             'productListingSortId' => Yii::t('app', 'Sort by:'),
+            'productsPerPage' => Yii::t('app', 'Products per page:'),
         ];
     }
 } 

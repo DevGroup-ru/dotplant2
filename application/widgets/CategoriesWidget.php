@@ -19,7 +19,9 @@ class CategoriesWidget extends Widget
 
     public function run()
     {
+        Yii::beginProfile("CategoriesWidget - get possible selections");
         $this->getPossibleSelections();
+        Yii::endProfile("CategoriesWidget - get possible selections");
         return $this->render(
             $this->viewFile,
             [

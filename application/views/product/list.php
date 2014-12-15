@@ -20,7 +20,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 
 
-$this->title = $selected_category->title;
+
 $this->params['breadcrumbs'] = $breadcrumbs;
 $listView = UserPreferences::preferences()->getAttributes()['listViewType'];
 $this->beginBlock('filters');
@@ -118,7 +118,7 @@ $this->endBlock();
     <?php endif; ?>
 </div>
 
-<?php if (!isset($_GET['page'])): ?>
+<?php if (!isset($_GET['page']) && count($values_by_property_id) === 0): ?>
     <div class="content"><?= $selected_category->content ?></div>
 <?php endif; ?>
 <br class="clr"/>

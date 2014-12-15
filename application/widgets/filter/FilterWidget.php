@@ -26,13 +26,19 @@ class FilterWidget extends Widget
 
     public function run()
     {
+        Yii::beginProfile("FilterWidget");
+
         $view = $this->getView();
         FilterWidgetAsset::register($view);
         $view->registerJs(
             "jQuery('#{$this->id}').getFilters();"
         );
+
+        Yii::beginProfile("GetPossibleSelections");
         $this->getPossibleSelections();
-        return $this->render(
+        Yii::endProfile("GetPossibleSelections");
+
+        $result = $this->render(
             $this->viewFile,
             [
                 'id' => $this->id,
@@ -45,6 +51,10 @@ class FilterWidget extends Widget
                 'category_group_id' => $this->categoryGroupId,
             ]
         );
+
+        Yii::endProfile("FilterWidget");
+
+        return $result;
     }
 
     public function getPossibleSelections()
@@ -116,8 +126,11 @@ class FilterWidget extends Widget
                 }
             }
         }
+
         $this->possibleSelections = [];
+
         $groups = PropertyGroup::getForObjectId($this->objectId);
+
         foreach ($groups as $group) {
             if ($group->is_internal) {
                 continue;
@@ -131,6 +144,9 @@ class FilterWidget extends Widget
             $props = Property::getForGroupId($group->id);
             foreach ($props as $p) {
                 if ($this->onlyAvailableFilters && !in_array($p->id, $data['propertyIds'])) {
+                    continue;
+                }
+                if ($p->dont_filter) {
                     continue;
                 }
                 if ($p->has_static_values) {
