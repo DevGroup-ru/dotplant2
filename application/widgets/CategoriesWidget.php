@@ -16,6 +16,7 @@ class CategoriesWidget extends Widget
     public $route = '/product/list';
     public $title = 'Catalogue';
     public $viewFile = 'categoriesWidget';
+    public $recursive = true;
 
 
     public function run()
@@ -66,10 +67,12 @@ class CategoriesWidget extends Widget
             'active' => in_array($model->id, $params['categories']),
             //'items' => $this->recursiveGetTree($model),
         ];
-        $children = Category::getByParentId($model->id);
+        if ($this->recursive === true) {
+            $children = Category::getByParentId($model->id);
 
-        foreach ($children as $child) {
-            $result['items'][] = $this->recursiveGetTree($child);
+            foreach ($children as $child) {
+                $result['items'][] = $this->recursiveGetTree($child);
+            }
         }
         return $result;
     }
