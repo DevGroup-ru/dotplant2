@@ -10,7 +10,9 @@ use app\models\Search;
 use app\reviews\traits\ProcessReviews;
 use app\seo\behaviors\MetaBehavior;
 use app\traits\LoadModel;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\caching\TagDependency;
 use yii\data\Pagination;
 use yii\db\ActiveQuery;
 use yii\web\ForbiddenHttpException;
@@ -112,31 +114,55 @@ class PageController extends Controller
         if (!Yii::$app->request->isAjax) {
             throw new ForbiddenHttpException();
         }
-
         $model = new Search();
         $model->load(Yii::$app->request->get());
-
-        $ids = $model->searchPagesByDescription();
+        $cacheKey = 'PageSearchIds: ' . $model->q;
+        $ids = Yii::$app->cache->get($cacheKey);
+        if ($ids === false) {
+            $ids = $model->searchPagesByDescription();
+            Yii::$app->cache->set(
+                $cacheKey,
+                $ids,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => ActiveRecordHelper::getCommonTag(Page::className()),
+                    ]
+                )
+            );
+        }
         $pages = new Pagination(
             [
                 'defaultPageSize' => 10,
                 'totalCount' => count($ids),
             ]
         );
-        $pagelist = Page::find()->where(
-            [
-                'in',
-                '`id`',
-                array_slice(
-                    $ids,
-                    $pages->offset,
-                    $pages->limit
+        $cacheKey .= ' : ' . $pages->offset;
+        $pagelist = Yii::$app->cache->get($cacheKey);
+        if ($pagelist === false) {
+            $pagelist = Page::find()->where(
+                [
+                    'in',
+                    '`id`',
+                    array_slice(
+                        $ids,
+                        $pages->offset,
+                        $pages->limit
+                    )
+                ]
+            )->addOrderBy('sort_order')->all();
+            Yii::$app->cache->set(
+                $cacheKey,
+                $pagelist,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => ActiveRecordHelper::getCommonTag(Page::className()),
+                    ]
                 )
-            ]
-        )->addOrderBy('sort_order')->all();
-
+            );
+        }
         Yii::$app->response->format = Response::FORMAT_JSON;
-
         return [
             'view' => $this->renderPartial(
                 'search',
@@ -148,7 +174,6 @@ class PageController extends Controller
             ),
             'totalCount' => count($ids),
         ];
-
     }
 
     /*
