@@ -2,9 +2,13 @@
 
 namespace app\widgets;
 
+use app\models\ObjectStaticValues;
+use app\models\Product;
+use app\models\Object;
 use app\models\Category;
 use Yii;
 use yii\base\Widget;
+use yii\db\Query;
 use yii\helpers\Url;
 
 class CategoriesWidget extends Widget
@@ -17,7 +21,7 @@ class CategoriesWidget extends Widget
     public $title = 'Catalogue';
     public $viewFile = 'categoriesWidget';
     public $recursive = true;
-
+    public $onlyAvailableProducts = false;
 
     public function run()
     {
@@ -38,6 +42,63 @@ class CategoriesWidget extends Widget
 
     public function getPossibleSelections()
     {
+        $allowed_category_ids = [];
+
+        if ($this->onlyAvailableProducts) {
+            $object = Object::getForClass(Product::className());
+            if (!is_null($object) && isset($this->current_selections['last_category_id'])) {
+                $propertyStaticValues = [];
+                if (isset($this->current_selections['properties'])) {
+                    foreach ($this->current_selections['properties'] as $values) {
+                        foreach ($values as $value) {
+                            $propertyStaticValues[] = $value;
+                        }
+                    }
+                    sort($propertyStaticValues);
+                }
+                $cacheKey = 'CategoriesFilterWidget: ' . $object->id . ':' . $this->current_selections['last_category_id'] . ':'
+                    . implode('-', $propertyStaticValues);
+                $allowed_category_ids = Yii::$app->cache->get($cacheKey);
+                if ($allowed_category_ids === false) {
+
+                    $query = new Query();
+                    $query = $query->select($object->categories_table_name . '.category_id')
+                        ->distinct()
+                        ->from($object->categories_table_name);
+
+                    foreach ($propertyStaticValues as $value) {
+                        $query->join(
+                            'JOIN',
+                            ObjectStaticValues::tableName() . ' value' . $value,
+                            'value' . $value . '.object_id = :objectId AND '
+                            . 'value' . $value . '.object_model_id = ' . $object->categories_table_name . '.object_model_id AND '
+                            . 'value' . $value . '.property_static_value_id=:staticValueId' . $value,
+                            [
+                                ':objectId' => $object->id,
+                                ':staticValueId' . $value => $value,
+                            ]
+                        );
+                    }
+                    $allowed_category_ids = $query->column();
+
+                    Yii::$app->cache->set(
+                        $cacheKey,
+                        $allowed_category_ids,
+                        86400,
+                        new \yii\caching\TagDependency(
+                            [
+                                'tags' => [
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($object->object_class),
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Category::className())
+                                ],
+                            ]
+                        )
+                    );
+                    $object = null;
+                }
+            }
+        }
+
         $this->possible_selections = [];
         $models = Category::getByLevel($this->category_group_id);
         if (isset($models[0]) && $this->omit_root == true) {
@@ -45,12 +106,18 @@ class CategoriesWidget extends Widget
         }
         $this->possible_selections = [];
         foreach ($models as $model) {
-            $this->possible_selections [] = $this->recursiveGetTree($model);
+            if ($this->onlyAvailableProducts === true && !in_array($model->id, $allowed_category_ids)) {
+                continue;
+            }
+            $this->possible_selections [] = $this->recursiveGetTree($model, $allowed_category_ids);
         }
+
+
+
         return $this->possible_selections;
     }
 
-    private function recursiveGetTree($model)
+    private function recursiveGetTree($model, $allowed_category_ids)
     {
         $params = [$this->route];
         $params += $this->current_selections;
@@ -71,6 +138,9 @@ class CategoriesWidget extends Widget
             $children = Category::getByParentId($model->id);
 
             foreach ($children as $child) {
+                if ($this->onlyAvailableProducts === true && !in_array($child->id, $allowed_category_ids)) {
+                    continue;
+                }
                 $result['items'][] = $this->recursiveGetTree($child);
             }
         }
