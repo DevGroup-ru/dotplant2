@@ -17,6 +17,7 @@ class CategoriesWidget extends Widget
     public $title = 'Catalogue';
     public $viewFile = 'categoriesWidget';
 
+
     public function run()
     {
         Yii::beginProfile("CategoriesWidget - get possible selections");

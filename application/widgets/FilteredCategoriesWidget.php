@@ -1,0 +1,62 @@
+<?php
+
+namespace app\widgets;
+
+use app\models\Object;
+use app\models\Category;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
+use Yii;
+use yii\base\Widget;
+use yii\helpers\Url;
+
+class FilteredCategoriesWidget extends PlainCategoriesWidget
+{
+
+    public $viewFile = 'categories-list';
+    public $values_by_property_id = [];
+    
+
+    public function run()
+    {
+        $query = Category::find();
+        $query->andWhere([Category::tableName() . '.active' => 1]);
+        if ($this->root_category_id !== null) {
+            $query->andWhere([Category::tableName() . '.parent_id' => $this->root_category_id]);
+        }
+        $query->groupBy(Category::tableName().".id");
+        $query->orderBy(Category::tableName().".sort_order");
+
+        $object = Object::getForClass(Category::className());
+
+        \app\properties\PropertiesHelper::appendPropertiesFilters(
+            $object,
+            $query,
+            $this->values_by_property_id,
+            []
+        );
+        $categories = Category::findBySql($query->createCommand()->getRawSql())->all();
+
+        $cacheKey = "FilteredCategoriesWidget:".$this->root_category_id.":".$this->viewFile;
+        $result = Yii::$app->cache->get($cacheKey);
+        if (!is_array($result)) {
+            $result = $this->render(
+                $this->viewFile,
+                [
+                    'categories' => $categories,
+                ]
+            );
+            Yii::$app->cache->set(
+                $cacheKey,
+                $result,
+                86400,
+                new \yii\caching\TagDependency([
+                    'tags' => ActiveRecordHelper::getCommonTag(Category::tableName())
+                ])
+            );
+        }
+
+        return $result;
+    }
+
+
+}
