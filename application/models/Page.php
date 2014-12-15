@@ -255,21 +255,22 @@ class Page extends ActiveRecord
         }
         $cacheKey = "Page:$path";
         $page = Yii::$app->cache->get($cacheKey);
-        if (!is_array($page)) {
+        if ($page === false) {
             $page = static::find()->where(['slug_compiled' => $path, 'published' => 1])->asArray()->one();
-
-            if (is_array($page)) {
-                Yii::$app->cache->set(
-                    $cacheKey,
-                    $page,
-                    86400,
-                    new \yii\caching\TagDependency([
-                        'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
-                        ]
-                    ])
-                );
+            $duration = 86400;
+            if (!is_array($page)) {
+                $duration = 3600;
             }
+            Yii::$app->cache->set(
+                $cacheKey,
+                $page,
+                $duration,
+                new \yii\caching\TagDependency([
+                    'tags' => [
+                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                    ]
+                ])
+            );
         }
         return $page;
     }
