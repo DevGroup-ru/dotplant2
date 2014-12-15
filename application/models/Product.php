@@ -267,6 +267,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (empty($this->title)) {
             $this->title = $this->name;
         }
+        $object = Object::getForClass($this);
+
+        \yii\caching\TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                'Images:'.$object->id.':'.$this->id
+            ]
+        );
 
         return parent::beforeSave($insert);
     }

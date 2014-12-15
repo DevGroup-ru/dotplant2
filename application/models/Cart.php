@@ -99,6 +99,7 @@ class Cart extends ActiveRecord
      */
     public static function getCart($create = false)
     {
+        Yii::beginProfile("GetCart");
         if (is_null(self::$cart) && Yii::$app->session->has('cartId')) {
             self::$cart = self::findOne(['id' => Yii::$app->session->get('cartId')]);
         }
@@ -113,6 +114,7 @@ class Cart extends ActiveRecord
                 Yii::$app->session->set('cartId', $cart->id);
             }
         }
+        Yii::endProfile("GetCart");
         return self::$cart;
     }
 
