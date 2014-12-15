@@ -7,6 +7,7 @@ use app\models\Category;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Widget;
+use yii\helpers\Json;
 use yii\helpers\Url;
 
 class FilteredCategoriesWidget extends PlainCategoriesWidget
@@ -36,7 +37,7 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
         );
         $categories = Category::findBySql($query->createCommand()->getRawSql())->all();
 
-        $cacheKey = "FilteredCategoriesWidget:".$this->root_category_id.":".$this->viewFile;
+        $cacheKey = "FilteredCategoriesWidget:".$this->root_category_id.":".$this->viewFile.":".Json::encode($this->values_by_property_id);
         $result = Yii::$app->cache->get($cacheKey);
         if (!is_array($result)) {
             $result = $this->render(
