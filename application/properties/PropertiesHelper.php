@@ -18,6 +18,7 @@ class PropertiesHelper
         $values_by_property_id,
         $dynamic_values_by_property_id = []
     ) {
+
         // сначала сгруппируем свойства по типу хранения
         $by_storage = [
             'eav' => [],
