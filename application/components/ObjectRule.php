@@ -23,6 +23,7 @@ class ObjectRule implements UrlRuleInterface
 
     public function createUrl($manager, $route, $params)
     {
+
         $handler_model = null;
         $handler_object = null;
         if (isset($params['model'])) {
@@ -72,10 +73,11 @@ class ObjectRule implements UrlRuleInterface
 
     public function parseRequest($manager, $request)
     {
-        
+        Yii::beginProfile("ObjectRule::parseRequest");
         
         $url = $request->getPathInfo();
         if (empty($url)) {
+            Yii::endProfile("ObjectRule::parseRequest");
             return false;
         }
         foreach (ObjectRule::getRoutes() as $model) {
@@ -108,9 +110,11 @@ class ObjectRule implements UrlRuleInterface
             }
             // в конце удачного парсинга next_part должен остаться пустым
             if (empty($next_part)) {
+                Yii::endProfile("ObjectRule::parseRequest");
                 return [$model->route, $parameters];
             }
         }
+        Yii::endProfile("ObjectRule::parseRequest");
         return false;  // this rule does not apply
     }
 
