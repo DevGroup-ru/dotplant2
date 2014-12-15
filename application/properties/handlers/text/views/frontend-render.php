@@ -22,11 +22,14 @@ use kartik\helpers\Html;
             return;
         }
         $property = Property::findById($property_id);
-        echo Html::tag('dt', $property->name);
+        $result = "";
         foreach ($values->values as $val) {
             if (isset($val['value'])) {
-                echo Html::tag('dd', $val['value']);
+                $result .= Html::tag('dd', $val['value']);
             }
+        }
+        if (!empty($result)) {
+            echo Html::tag('dt', $property->name) . $result . "\n\n";
         }
     ?>
 </dl>
