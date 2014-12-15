@@ -631,7 +631,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'ocatt.id = ocats.category_id AND ocatt.category_group_id = :gcatid',
             [':gcatid' => $category_group_id]
         );
-        $query->groupBy(static::tableName().".id");
+        $query->addGroupBy(static::tableName().".id");
 
 
         $userSelectedSortingId = UserPreferences::preferences()->getAttributes()['productListingSortId'];
