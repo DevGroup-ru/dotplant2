@@ -126,13 +126,15 @@ class CategoriesWidget extends Widget
         if (!isset($params['categories'])) {
             $params['categories'] = [];
         }
-
+        $active = false;
+        if (isset($this->current_selections['last_category_id'])) {
+            $active = $this->current_selections['last_category_id'] == $model->id;
+        }
         $result = [
             'label' => $model->name,
             'url' => Url::to($params),
             'items' => [],
-            'active' => in_array($model->id, $params['categories']),
-            //'items' => $this->recursiveGetTree($model),
+            'active' => in_array($model->id, $params['categories']) || $active,
         ];
         if ($this->recursive === true) {
             $children = Category::getByParentId($model->id);
