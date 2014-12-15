@@ -41,6 +41,7 @@ class ProductController extends Controller
      */
     public function actionList()
     {
+
         $request = Yii::$app->request;
 
         if (null === $request->get('category_group_id')) {
@@ -100,6 +101,9 @@ class ProductController extends Controller
                     $this->view->title = $selected_category->title;
                 }
             }
+        }
+        if (!empty($title_append)) {
+            $this->view->title .= " " . $title_append;
         }
 
         $this->loadDynamicContent($object->id, 'product/list', $request->get());
