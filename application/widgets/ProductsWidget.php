@@ -12,6 +12,12 @@ class ProductsWidget extends Widget
 {
     public $limit = 3;
     public $category_group_id = null;
+    public $values_by_property_id = [];
+    public $selected_category_id = null;
+    public $force_sorting = false;
+
+    public $itemView = '@app/views/product/item';
+
 
     public function run()
     {
@@ -21,11 +27,21 @@ class ProductsWidget extends Widget
             throw new InvalidConfigException("ProductsWidget.category_group_id should be set");
         }
 
+        $products = Product::filteredProducts(
+            $this->category_group_id,
+            $this->values_by_property_id,
+            $this->selected_category_id,
+            $this->force_sorting,
+            $this->limit,
+            false,
+            true
+        );
+
         return $this->render(
             'products-widget',
             [
-                'elementNumber' => $this->limit,
-                'products' => $products
+                'products' => $products,
+                'itemView' => $this->itemView,
             ]
         );
     }
