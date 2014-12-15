@@ -215,33 +215,58 @@ class ProductController extends Controller
         if (!Yii::$app->request->isAjax) {
             throw new ForbiddenHttpException();
         }
-
         $model = new Search();
         $model->load(Yii::$app->request->get());
-        $ids = ArrayHelper::merge(
-            $model->searchProductsByDescription(),
-            $model->searchProductsByProperty()
-        );
+        $cacheKey = 'ProductSearchIds: ' . $model->q;
+        $ids = Yii::$app->cache->get($cacheKey);
+        if ($ids === false) {
+            $ids = ArrayHelper::merge(
+                $model->searchProductsByDescription(),
+                $model->searchProductsByProperty()
+            );
+            Yii::$app->cache->set(
+                $cacheKey,
+                $ids,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => ActiveRecordHelper::getCommonTag(Product::className()),
+                    ]
+                )
+            );
+        }
         $pages = new Pagination(
             [
                 'defaultPageSize' => 6,
                 'totalCount' => count($ids),
             ]
         );
-        $products = Product::find()->where(
-            [
-                'in',
-                '`id`',
-                array_slice(
-                    $ids,
-                    $pages->offset,
-                    $pages->limit
+        $cacheKey .= ' : ' . $pages->offset;
+        $products = Yii::$app->cache->get($cacheKey);
+        if ($products === false) {
+            $products = Product::find()->where(
+                [
+                    'in',
+                    '`id`',
+                    array_slice(
+                        $ids,
+                        $pages->offset,
+                        $pages->limit
+                    )
+                ]
+            )->addOrderBy('sort_order')->all();
+            Yii::$app->cache->set(
+                $cacheKey,
+                $products,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => ActiveRecordHelper::getCommonTag(Product::className()),
+                    ]
                 )
-            ]
-        )->addOrderBy('sort_order')->all();
-
+            );
+        }
         Yii::$app->response->format = Response::FORMAT_JSON;
-
         return [
             'view' => $this->renderPartial(
                 'search',
