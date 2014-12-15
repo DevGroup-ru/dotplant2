@@ -20,9 +20,12 @@ class FilterWidget extends Widget
     public $goBackAlignment = 'left';
     public $objectId = null;
     public $onlyAvailableFilters = true;
+    public $disableInsteadOfHide = false;
     public $route = '/product/list';
     public $title = 'Filter';
     public $viewFile = 'filterWidget';
+    private $disabled_ids = [];
+
 
     public function run()
     {
@@ -49,6 +52,7 @@ class FilterWidget extends Widget
                 'go_back_alignment' => $this->goBackAlignment,
                 'route' => $this->route,
                 'category_group_id' => $this->categoryGroupId,
+                'disabled_ids' => $this->disabled_ids,
             ]
         );
 
@@ -84,16 +88,18 @@ class FilterWidget extends Widget
                         ->distinct()
                         ->from($object->categories_table_name)
                         ->where(['category_id' => $this->currentSelections['last_category_id']]);
+                    $joinCounter=1;
                     foreach ($propertyStaticValues as $value) {
+                        $joinCounter++;
                         $query->join(
                             'JOIN',
-                            ObjectStaticValues::tableName() . ' value' . $value,
-                            'value' . $value . '.object_id = :objectId AND '
-                            . 'value' . $value . '.object_model_id = ' . $object->categories_table_name . '.object_model_id AND '
-                            . 'value' . $value . '.property_static_value_id=:staticValueId' . $value,
+                            ObjectStaticValues::tableName() . ' value' . $joinCounter,
+                            'value' . $joinCounter . '.object_id = :objectId AND '
+                            . 'value' . $joinCounter . '.object_model_id = ' . $object->categories_table_name . '.object_model_id AND '
+                            . 'value' . $joinCounter . '.property_static_value_id=:staticValueId' . $joinCounter,
                             [
                                 ':objectId' => $object->id,
-                                ':staticValueId' . $value => $value,
+                                ':staticValueId' . $joinCounter => $value,
                             ]
                         );
                     }
@@ -143,8 +149,11 @@ class FilterWidget extends Widget
             ];
             $props = Property::getForGroupId($group->id);
             foreach ($props as $p) {
+
                 if ($this->onlyAvailableFilters && !in_array($p->id, $data['propertyIds'])) {
-                    continue;
+                    if ($this->disableInsteadOfHide === false) {
+                        continue;
+                    }
                 }
                 if ($p->dont_filter) {
                     continue;
@@ -154,14 +163,20 @@ class FilterWidget extends Widget
                     if ($this->onlyAvailableFilters) {
                         foreach ($propertyStaticValues as $key => $propertyStaticValue) {
                             if (!in_array($propertyStaticValue['id'], $data['propertyStaticValueIds'])) {
-                                unset($propertyStaticValues[$key]);
+                                if ($this->disableInsteadOfHide === true) {
+                                    $this->disabled_ids[]=$propertyStaticValue['id'];
+                                } else {
+                                    unset($propertyStaticValues[$key]);
+                                }
                             }
                         }
                     }
+
                     $this->possibleSelections[$group->id]['static_selections'][$p->id] = $propertyStaticValues;
                 } elseif ($p->is_column_type_stored && $p->value_type == 'NUMBER') {
                     $this->possibleSelections[$group->id]['dynamic_selections'][] = $p->id;
                 }
+
             }
             if (count($this->possibleSelections[$group->id]) === 0) {
                 unset($this->possibleSelections[$group->id]);

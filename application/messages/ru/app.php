@@ -220,6 +220,7 @@ return array (
   'Server variables' => 'Переменные сервера',
   'Settings' => 'Настройки',
   'Shipping Options' => 'Способы доставки',
+  'Show' => 'Показать',
   'Show page' => 'Показать страницу',
   'Show Type' => 'Тип отображения',
   'Slug' => 'Урл',

@@ -109,18 +109,18 @@ class PropertiesHelper
                 " AND " . $ti_clauses
             );
         }
+        if (count($by_storage['static_values'])) {
+            $query = $query->innerJoin(
+                ObjectStaticValues::tableName() . " OSVJoinTable",
+                "OSVJoinTable.object_id = " . intval($object->id) .
+                " AND OSVJoinTable.object_model_id = " .
+                Yii::$app->db->quoteTableName($object->object_table_name) . ".id "
+            );
+        }
+
         foreach ($by_storage['static_values'] as $item) {
-            foreach ($item['values'] as $val) {
-                $join_table_name = "OSVJoinTable".$join_counter++;
-                $query = $query->innerJoin(
-                    ObjectStaticValues::tableName() . " ".$join_table_name,
-                    "$join_table_name.object_id = " . intval($object->id) .
-                    " AND $join_table_name.object_model_id = " .
-                    Yii::$app->db->quoteTableName($object->object_table_name) . ".id " .
-                    " AND $join_table_name.property_static_value_id = " .
-                    Yii::$app->db->quoteValue($val)
-                );
-            }
+
+            $query=$query->andWhere(['in', '`OSVJoinTable`.`property_static_value_id`',  $item['values']]);
         }
 
     }

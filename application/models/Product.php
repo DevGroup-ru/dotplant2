@@ -659,6 +659,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             Yii::$app->request->get('p', [])
         );
 
+
         // apply additional filters
         $cacheKeyAppend = "";
         if ($apply_filterquery) {
@@ -668,15 +669,13 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $cacheKey = 'ProductsCount:' . implode(
             '_',
             [
-                Yii::$app->request->pathInfo,
-                Yii::$app->request->queryString,
-                Json::encode(Yii::$app->request->get('p', [])),
-                $userSelectedSortingId,
+                md5($query->createCommand()->getRawSql()),
                 $limit ? '1' : '0',
                 $force_limit ? '1' : '0',
                 $productsPerPage
             ]
         ) . $cacheKeyAppend;
+
 
         $pages = null;
 

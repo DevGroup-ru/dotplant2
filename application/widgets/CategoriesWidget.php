@@ -65,17 +65,18 @@ class CategoriesWidget extends Widget
                     $query = $query->select($object->categories_table_name . '.category_id')
                         ->distinct()
                         ->from($object->categories_table_name);
-
+                    $joinCounter=1;
                     foreach ($propertyStaticValues as $value) {
+                        $joinCounter++;
                         $query->join(
                             'JOIN',
-                            ObjectStaticValues::tableName() . ' value' . $value,
-                            'value' . $value . '.object_id = :objectId AND '
-                            . 'value' . $value . '.object_model_id = ' . $object->categories_table_name . '.object_model_id AND '
-                            . 'value' . $value . '.property_static_value_id=:staticValueId' . $value,
+                            ObjectStaticValues::tableName() . ' value' . $joinCounter,
+                            'value' . $joinCounter . '.object_id = :objectId AND '
+                            . 'value' . $joinCounter . '.object_model_id = ' . $object->categories_table_name . '.object_model_id AND '
+                            . 'value' . $joinCounter . '.property_static_value_id=:staticValueId' . $joinCounter,
                             [
                                 ':objectId' => $object->id,
-                                ':staticValueId' . $value => $value,
+                                ':staticValueId' . $joinCounter => $value,
                             ]
                         );
                     }

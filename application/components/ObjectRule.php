@@ -108,8 +108,17 @@ class ObjectRule implements UrlRuleInterface
             if (count($url_parts)==0) {
                 continue;
             }
+
+
+
             // в конце удачного парсинга next_part должен остаться пустым
             if (empty($next_part)) {
+                if (isset($_POST['properties'], $parameters['properties'])) {
+
+                    $parameters['properties'] = ArrayHelper::merge($_POST['properties'], $parameters['properties']);
+                } elseif (isset($_POST['properties'])) {
+                    $parameters['properties'] = $_POST['properties'];
+                }
                 Yii::endProfile("ObjectRule::parseRequest");
                 return [$model->route, $parameters];
             }
