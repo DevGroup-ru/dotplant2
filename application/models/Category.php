@@ -31,6 +31,8 @@ use yii\helpers\Url;
  * @property integer $sort_order
  * @property integer $is_deleted
  * @property boolean $active
+ * @property Category[] $children
+ * @property Category $parent
  */
 class Category extends ActiveRecord
 {
@@ -366,7 +368,6 @@ class Category extends ActiveRecord
         parent::afterSave($insert, $changedAttributes);
         if (isset($changedAttributes['category_group_id'])) {
             foreach ($this->children as $child) {
-                /** @var $child Category */
                 $child->category_group_id = $this->category_group_id;
                 $child->save(true, ['category_group_id']);
             }
