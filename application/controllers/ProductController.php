@@ -188,7 +188,7 @@ class ProductController extends Controller
             );
         }
 
-        $selected_category = ($selected_category_id > 0) ? Category::findOne($selected_category_id) : null;
+        $selected_category = ($selected_category_id > 0) ? Category::findById($selected_category_id) : null;
 
         $this->processReviews($object->id, $product->id);
 
