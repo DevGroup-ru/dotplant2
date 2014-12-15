@@ -267,7 +267,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (empty($this->title)) {
             $this->title = $this->name;
         }
-        $object = Object::getForClass($this);
+        $object = Object::getForClass(Product::className());
 
         \yii\caching\TagDependency::invalidate(
             Yii::$app->cache,
