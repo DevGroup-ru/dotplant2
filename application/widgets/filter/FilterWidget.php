@@ -11,6 +11,7 @@ use Yii;
 use yii\base\Widget;
 use yii\caching\TagDependency;
 use yii\db\Query;
+use yii\helpers\Json;
 
 class FilterWidget extends Widget
 {
@@ -70,17 +71,9 @@ class FilterWidget extends Widget
         if ($this->onlyAvailableFilters) {
             $object = Object::findById($this->objectId);
             if (!is_null($object) && isset($this->currentSelections['last_category_id'])) {
-                $propertyStaticValues = [];
-                if (isset($this->currentSelections['properties'])) {
-                    foreach ($this->currentSelections['properties'] as $values) {
-                        foreach ($values as $value) {
-                            $propertyStaticValues[] = $value;
-                        }
-                    }
-                    sort($propertyStaticValues);
-                }
+
                 $cacheKey = 'FilterWidget: ' . $object->id . ':' . $this->currentSelections['last_category_id'] . ':'
-                    . implode('-', $propertyStaticValues);
+                    . Json::encode($this->currentSelections['properties']);
                 $data = Yii::$app->cache->get($cacheKey);
                 if ($data === false) {
                     $query = new Query();
@@ -88,21 +81,25 @@ class FilterWidget extends Widget
                         ->distinct()
                         ->from($object->categories_table_name)
                         ->where(['category_id' => $this->currentSelections['last_category_id']]);
-                    $joinCounter=1;
-                    foreach ($propertyStaticValues as $value) {
-                        $joinCounter++;
+
+                    if (count($this->currentSelections['properties']) > 0) {
+
                         $query->join(
                             'JOIN',
-                            ObjectStaticValues::tableName() . ' value' . $joinCounter,
-                            'value' . $joinCounter . '.object_id = :objectId AND '
-                            . 'value' . $joinCounter . '.object_model_id = ' . $object->categories_table_name . '.object_model_id AND '
-                            . 'value' . $joinCounter . '.property_static_value_id=:staticValueId' . $joinCounter,
+                            ObjectStaticValues::tableName() . ' OSVJoinTable',
+                            'OSVJoinTable.object_id = :objectId AND '
+                            . 'OSVJoinTable.object_model_id = ' . $object->categories_table_name . '.object_model_id  ',
                             [
                                 ':objectId' => $object->id,
-                                ':staticValueId' . $joinCounter => $value,
                             ]
                         );
+
+                        foreach ($this->currentSelections['properties'] as $property_id => $values) {
+                            $query->andWhere(['in', '`OSVJoinTable`.`property_static_value_id`', $values]);
+                        }
                     }
+
+
                     $ids = $query->column();
                     $query = null;
                     $data['propertyStaticValueIds'] = ObjectStaticValues::find()

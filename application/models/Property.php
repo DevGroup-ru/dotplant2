@@ -86,6 +86,7 @@ class Property extends ActiveRecord
             [['key'], 'match', 'pattern' => '#^[\w]+$#'],
             [['depends_on_property_id', 'depends_on_category_group_id'], 'default', 'value' => 0],
             [['required', 'captcha'], 'integer', 'min' => 0, 'max' => 1],
+            [['dont_filter'], 'safe'],
         ];
     }
 

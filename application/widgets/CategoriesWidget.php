@@ -9,6 +9,7 @@ use app\models\Category;
 use Yii;
 use yii\base\Widget;
 use yii\db\Query;
+use yii\helpers\Json;
 use yii\helpers\Url;
 
 class CategoriesWidget extends Widget
@@ -47,17 +48,9 @@ class CategoriesWidget extends Widget
         if ($this->onlyAvailableProducts) {
             $object = Object::getForClass(Product::className());
             if (!is_null($object) && isset($this->current_selections['last_category_id'])) {
-                $propertyStaticValues = [];
-                if (isset($this->current_selections['properties'])) {
-                    foreach ($this->current_selections['properties'] as $values) {
-                        foreach ($values as $value) {
-                            $propertyStaticValues[] = $value;
-                        }
-                    }
-                    sort($propertyStaticValues);
-                }
+
                 $cacheKey = 'CategoriesFilterWidget: ' . $object->id . ':' . $this->current_selections['last_category_id'] . ':'
-                    . implode('-', $propertyStaticValues);
+                    . Json::encode($this->current_selections['properties']);
                 $allowed_category_ids = Yii::$app->cache->get($cacheKey);
                 if ($allowed_category_ids === false) {
 
@@ -65,20 +58,22 @@ class CategoriesWidget extends Widget
                     $query = $query->select($object->categories_table_name . '.category_id')
                         ->distinct()
                         ->from($object->categories_table_name);
-                    $joinCounter=1;
-                    foreach ($propertyStaticValues as $value) {
-                        $joinCounter++;
+
+                    if (count($this->current_selections['properties']) > 0) {
+
                         $query->join(
                             'JOIN',
-                            ObjectStaticValues::tableName() . ' value' . $joinCounter,
-                            'value' . $joinCounter . '.object_id = :objectId AND '
-                            . 'value' . $joinCounter . '.object_model_id = ' . $object->categories_table_name . '.object_model_id AND '
-                            . 'value' . $joinCounter . '.property_static_value_id=:staticValueId' . $joinCounter,
+                            ObjectStaticValues::tableName() . ' OSVJoinTable',
+                            'OSVJoinTable.object_id = :objectId AND '
+                            . 'OSVJoinTable.object_model_id = ' . $object->categories_table_name . '.object_model_id  ',
                             [
                                 ':objectId' => $object->id,
-                                ':staticValueId' . $joinCounter => $value,
                             ]
                         );
+
+                        foreach ($this->current_selections['properties'] as $property_id => $values) {
+                            $query->andWhere(['in', '`OSVJoinTable`.`property_static_value_id`', $values]);
+                        }
                     }
                     $allowed_category_ids = $query->column();
 
