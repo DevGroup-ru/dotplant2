@@ -146,6 +146,9 @@ class FilterWidget extends Widget
                 if ($this->onlyAvailableFilters && !in_array($p->id, $data['propertyIds'])) {
                     continue;
                 }
+                if ($p->dont_filter) {
+                    continue;
+                }
                 if ($p->has_static_values) {
                     $propertyStaticValues = PropertyStaticValues::getValuesForPropertyId($p->id);
                     if ($this->onlyAvailableFilters) {

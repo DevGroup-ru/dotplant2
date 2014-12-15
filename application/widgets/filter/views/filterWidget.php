@@ -2,7 +2,7 @@
 
 use kartik\helpers\Html;
 use yii\helpers\Url;
-
+use app\models\Property;
 /**
  * @var int $category_group_id
  * @var array $possible_selections
@@ -38,7 +38,7 @@ use yii\helpers\Url;
                 <?php
                     foreach ($item['static_selections'] as $property_id => $select) {
                         $selects = [];
-                        $property = app\models\Property::findById($property_id);
+                        $property = Property::findById($property_id);
                         if ($category_group_id > 0 && $property->depends_on_category_group_id > 0 && $property->depends_on_category_group_id != $category_group_id) {
                             continue;
                         }
@@ -54,67 +54,68 @@ use yii\helpers\Url;
                             }
                         }
                         if (count($select) > 0): ?>
-                    <li class="property-name property-<?= $property_id ?>">
-                        <a><?= Html::encode($property->name); ?></a>
-                    <?php
-                        $hide_others = false;
-                        $dont_hide_value_id = null;
-                        if (app\models\Property::findById($property_id)->hide_other_values_if_selected) {
-                            if (isset($current_selections['properties'][$property_id])) {
-                                $hide_others = true;
-                                $dont_hide_value_id = $current_selections['properties'][$property_id][0];
-                            }
-                        }
-                        foreach ($select as $value) {
-                            if ($hide_others) {
-                                if ($dont_hide_value_id != $value['id']) {
-                                    continue;
-                                }
-                            }
-                            $options = [
-                                'class' => 'filter-select ',
-                            ];
-                            $params = [$route];
-                            $params += $current_selections;
-                            $params['category_group_id'] = $category_group_id;
-                            foreach ($possible_selections as $u_group_id => $u_item) {
-                                foreach ($u_item['static_selections'] as $u_property_id => $select) {
-                                    if (app\models\Property::findById($u_property_id)->depends_on_property_id == $property_id) {
-                                        unset($params['properties'][$u_property_id]);
+                            <li class="property-name property-<?= $property_id ?>">
+                                <a><?= Html::encode($property->name); ?></a>
+                            <?php
+                                $hide_others = false;
+                                $dont_hide_value_id = null;
+                                if (Property::findById($property_id)->hide_other_values_if_selected) {
+                                    if (isset($current_selections['properties'][$property_id])) {
+                                        $hide_others = true;
+                                        $dont_hide_value_id = $current_selections['properties'][$property_id][0];
                                     }
                                 }
-                            }
-                            $go_back = '';
-                            if (isset($params['properties'][$property_id]) && is_array($params['properties'][$property_id])) {
-                                if ($params['properties'][$property_id][0] == $value['id']) {
-                                    $options['class'] .= 'active';
-                                    if ($go_back_alignment != 'none'){
-                                        $params_clone = $params;
-                                        unset($params_clone['properties'][$property_id]);
-                                        $url = Url::toRoute($params_clone);
-                                        $go_back = Html::a(
-                                            Html::tag('i', '', ['class' => 'icon-white icon-remove']),
-                                            $url,
-                                            ['class'=>'go-back']
-                                        );
+                                foreach ($select as $value) {
+                                    if ($hide_others) {
+                                        if ($dont_hide_value_id != $value['id']) {
+                                            continue;
+                                        }
                                     }
+                                    $options = [
+                                        'class' => 'filter-select ',
+                                    ];
+                                    $params = [$route];
+                                    $params += $current_selections;
+                                    $params['category_group_id'] = $category_group_id;
+                                    foreach ($possible_selections as $u_group_id => $u_item) {
+                                        foreach ($u_item['static_selections'] as $u_property_id => $select) {
+                                            if (Property::findById($u_property_id)->depends_on_property_id == $property_id) {
+                                                unset($params['properties'][$u_property_id]);
+                                            }
+                                        }
+                                    }
+                                    $go_back = '';
+                                    if (isset($params['properties'][$property_id]) && is_array($params['properties'][$property_id])) {
+                                        if ($params['properties'][$property_id][0] == $value['id']) {
+                                            $options['class'] .= 'active';
+                                            if ($go_back_alignment != 'none'){
+                                                $params_clone = $params;
+                                                unset($params_clone['properties'][$property_id]);
+                                                $url = Url::toRoute($params_clone);
+                                                $go_back = Html::a(
+                                                    Html::tag('i', '', ['class' => 'icon-white icon-remove']),
+                                                    $url,
+                                                    ['class'=>'go-back']
+                                                );
+                                            }
+                                        }
+                                    }
+                                    $params['properties'][$property_id] = [$value['id']];
+                                    $url = Url::toRoute($params);
+                                    $label = Html::a($value['name'], $url);
+                                    if ($go_back_alignment === 'left') {
+                                        $label = $go_back.$label;
+                                    } elseif ($go_back_alignment === 'right') {
+                                        $label .= $go_back;
+                                    }
+                                    $selects[] = Html::tag(
+                                        'li',
+                                        $label,
+                                        $options
+                                    );
                                 }
-                            }
-                            $params['properties'][$property_id] = [$value['id']];
-                            $url = Url::toRoute($params);
-                            $label = Html::a($value['name'], $url);
-                            if ($go_back_alignment === 'left') {
-                                $label = $go_back.$label;
-                            } elseif ($go_back_alignment === 'right') {
-                                $label .= $go_back;
-                            }
-                            $selects[] = Html::tag(
-                                'li',
-                                $label,
-                                $options
-                            );
-                        }
-                        echo Html::tag('ul', implode("\n", $selects), ['class'=>'property property-'.$property_id]); endif;
+                                echo Html::tag('ul', implode("\n", $selects), ['class'=>'property property-'.$property_id]);
+                            endif;
                     }
                 ?>
                 </li>
@@ -137,7 +138,7 @@ use yii\helpers\Url;
                     <?php
                     if (isset($item['dynamic_selections'])):
                         foreach ($item['dynamic_selections'] as $property_id):
-                            $property = app\models\Property::findById($property_id);
+                            $property = Property::findById($property_id);
                     ?>
                     <div class="property-name property-<?= $property_id ?>">
                         <?= Html::encode($property->name); ?>

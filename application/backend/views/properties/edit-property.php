@@ -87,6 +87,7 @@ $this->endBlock();
                 <?= $form->field($model, 'depends_on_property_id') ?>
                 <?= $form->field($model, 'depended_property_values') ?>
                 <?= $form->field($model, 'depends_on_category_group_id'); ?>
+                <?= $form->field($model, 'dont_filter')->checkbox() ?>
 
             <?php BackendWidget::end(); ?>
 
