@@ -118,7 +118,7 @@ jQuery(function() {
 
 
             var imgtofly = jQuery($this.closest('div[itemtype="http://schema.org/Product"]'));
-            if (imgtofly) {
+            if (imgtofly.length) {
 
                 var imgclone = imgtofly.clone()
                     .offset({ top:imgtofly.offset().top, left:imgtofly.offset().left })
