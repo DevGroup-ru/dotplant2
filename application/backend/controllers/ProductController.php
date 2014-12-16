@@ -91,7 +91,7 @@ class ProductController extends Controller
                 [
                     'query' => $query,
                     'pagination' => new Pagination([
-                        'defaultPageSize' => 10
+                        'defaultPageSize' => 10,
                     ])
                 ]
             );
