@@ -16,7 +16,7 @@
     <?php if ($pages->pageCount > 1): ?>
         <div class="pagination">
             <?=
-            yii\widgets\LinkPager::widget(
+            \app\widgets\LinkPager::widget(
                 [
                     'firstPageLabel' => '&laquo;&laquo;',
                     'lastPageLabel' => '&raquo;&raquo;',

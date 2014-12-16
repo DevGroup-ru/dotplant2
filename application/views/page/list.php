@@ -49,7 +49,7 @@ if ($model->h1) {
 </ul>
 <?php if ($pages->pageCount > 1):?>
 <?=
-    yii\widgets\LinkPager::widget([
+    \app\widgets\LinkPager::widget([
         'pagination' => $pages,
     ]);
 ?>
