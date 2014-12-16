@@ -47,15 +47,6 @@ if ($memcached_exists === true) {
     }
 }
 
-echo "Getting composer...\n";
-
-$composer_status = null;
-
-system('cd ../ ; /usr/bin/env php -r "readfile(\'https://getcomposer.org/installer\');" | /usr/bin/env php', $composer_status);
-if ($composer_status != 0) {
-    die("ERROR: Something wrong getting composer.\n");
-}
-
 // some chmods
 system('chmod -R 777 ./runtime/');
 system('chmod -R 777 ./web/assets/');
@@ -67,7 +58,7 @@ system('chmod +x ./yii');
 $composer_status = null;
 system('/usr/bin/env php ../composer.phar global require "fxp/composer-asset-plugin:1.0.0-beta3"');
 
-system('/usr/bin/env php ../composer.phar update', $composer_status);
+system('/usr/bin/env php ../composer.phar install', $composer_status);
 if ($composer_status != 0) {
     die("ERROR: Something wrong updating composer.\n");
 }
