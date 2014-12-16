@@ -6,7 +6,4 @@
 .idea/
 /*.iml
 
-## composer files
-composer.phar
-application/composer.lock
 sitemap.xml

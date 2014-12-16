@@ -1864,6 +1864,7 @@ class m141023_084857_init extends Migration
             fclose($stdIn);
         }
         if ($demo == 'y') {
+            echo "INFO: Installing demo data\n";
             $object = Object::getForClass(Product::className());
             $propertyGroup = new PropertyGroup;
             $propertyGroup->attributes = [
@@ -1909,7 +1910,15 @@ class m141023_084857_init extends Migration
                         'value' => $name,
                         'slug' => Helper::createSlug($name),
                     ];
-                    $psv->save();
+                    $psv->save(
+                        true,
+                        [
+                          'property_id' ,
+                          'name' ,
+                          'value' ,
+                          'slug' ,
+                        ]
+                    );
                     $propertyValues[$property->id][] = $psv->id;
                     $k++;
                 }
