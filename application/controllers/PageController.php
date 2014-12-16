@@ -88,7 +88,8 @@ class PageController extends Controller
         $pages = new Pagination(
             [
                 'defaultPageSize' => Config::getValue('page.pagesPerList', 10),
-                'totalCount' => $countQuery->count()
+                'forcePageParam' => false,
+                'totalCount' => $countQuery->count(),
             ]
         );
 
@@ -134,6 +135,7 @@ class PageController extends Controller
         $pages = new Pagination(
             [
                 'defaultPageSize' => 10,
+                'forcePageParam' => false,
                 'totalCount' => count($ids),
             ]
         );

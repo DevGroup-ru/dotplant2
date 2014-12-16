@@ -243,6 +243,7 @@ class ProductController extends Controller
         $pages = new Pagination(
             [
                 'defaultPageSize' => 6,
+                'forcePageParam' => false,
                 'totalCount' => count($ids),
             ]
         );
