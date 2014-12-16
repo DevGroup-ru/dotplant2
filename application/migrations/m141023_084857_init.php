@@ -1886,7 +1886,19 @@ class m141023_084857_init extends Migration
                     'has_slugs_in_values' => 1,
                     'handler_additional_params' => '{}',
                 ];
-                $property->save();
+                $property->save(
+                    true,
+                    [
+                        'property_group_id',
+                        'name',
+                        'key',
+                        'value_type',
+                        'property_handler_id',
+                        'has_static_values',
+                        'has_slugs_in_values',
+                        'handler_additional_params',
+                    ]
+                );
                 $propertyValues[$property->id] = [];
                 for ($j = 1; $j <= $propertyStaticValuesCount[$i - 1]; $j++) {
                     $psv = new PropertyStaticValues;
