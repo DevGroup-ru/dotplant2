@@ -4,7 +4,7 @@ namespace app\widgets\image;
 
 use app\models\Image;
 use devgroup\dropzone\DropZone;
-use WideImage\WideImage;
+use Imagine\Image\ManipulatorInterface;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -23,16 +23,18 @@ class ImageDropzone extends DropZone
     public static function saveThumbnail($dir, $filename)
     {
         if (trim($filename) && file_exists(Yii::getAlias($dir . '/' . $filename))) {
-            $image = WideImage::load(Yii::getAlias($dir . '/' . $filename));
-            if ($image->getWidth() > $image->getHeight()) {
-                $image->resize(null, 80)
-                    ->crop('center', 'center', 80, 80)
-                    ->saveToFile($dir . '/small-' . $filename);
-            } else {
-                $image->resize(80)
-                    ->crop('center', 'center', 80, 80)
-                    ->saveToFile($dir . '/small-' . $filename);
-            }
+//            $image = WideImage::load();
+            $image = \yii\imagine\Image::thumbnail(Yii::getAlias($dir . '/' . $filename), 80, 80, ManipulatorInterface::THUMBNAIL_INSET);
+            $image->save($dir . '/small-' . $filename);
+//            if ($image->getWidth() > $image->getHeight()) {
+//                $image->resize(null, 80)
+//                    ->crop('center', 'center', 80, 80)
+//                    ->saveToFile($dir . '/small-' . $filename);
+//            } else {
+//                $image->resize(80)
+//                    ->crop('center', 'center', 80, 80)
+//                    ->saveToFile($dir . '/small-' . $filename);
+//            }
 
             return 'small-' . $filename;
         }
