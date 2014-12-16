@@ -1864,6 +1864,7 @@ class m141023_084857_init extends Migration
             fclose($stdIn);
         }
         if ($demo == 'y') {
+            echo "INFO: Installing demo data\n";
             $object = Object::getForClass(Product::className());
             $propertyGroup = new PropertyGroup;
             $propertyGroup->attributes = [
