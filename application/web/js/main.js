@@ -127,8 +127,8 @@ jQuery(function() {
                     .animate({
                         'top':$widget.offset().top + 10,
                         'left':$widget.offset().left + 30,
-                        'width':imgtofly.width(),
-                        'height':imgtofly.height()
+                        'width':50,
+                        'height':50
                     }, 1000, 'linear');
                 imgclone.animate({'width':0, 'height':0}, function(){ jQuery(this).detach() });
             }
