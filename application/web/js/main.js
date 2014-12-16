@@ -115,6 +115,26 @@ jQuery(function() {
             var $widget = jQuery('#cart-info-widget');
             $widget.find('.total-price').text(data['totalPrice']);
             $widget.find('.items-count').text(data['itemsCount']);
+
+
+            var imgtofly = jQuery($this.closest('div[itemtype="http://schema.org/Product"]'));
+            if (imgtofly) {
+
+                var imgclone = imgtofly.clone()
+                    .offset({ top:imgtofly.offset().top, left:imgtofly.offset().left })
+                    .css({'opacity':'0.2', 'position':'absolute','background':'white','z-index':'1000','transform': 'scale(0.5,0.5)'})
+                    .appendTo($('body'))
+                    .animate({
+                        'top':$widget.offset().top + 10,
+                        'left':$widget.offset().left + 30,
+                        'width':imgtofly.width(),
+                        'height':imgtofly.height()
+                    }, 1000, 'linear');
+                imgclone.animate({'width':0, 'height':0}, function(){ jQuery(this).detach() });
+            }
+            return false;
+
+
         });
         return false;
     });
