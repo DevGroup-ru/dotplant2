@@ -111,7 +111,7 @@ class FilterWidget extends Widget
                     $data['propertyIds'] = PropertyStaticValues::find()
                         ->select('property_id')
                         ->distinct()
-                        ->where(['id' => $data['propertyStaticValueIds']])
+                        ->where(['id' => $data['propertyStaticValueIds'], 'dont_filter' => 0])
                         ->column();
                     Yii::$app->cache->set(
                         $cacheKey,
@@ -157,8 +157,15 @@ class FilterWidget extends Widget
                 }
                 if ($p->has_static_values) {
                     $propertyStaticValues = PropertyStaticValues::getValuesForPropertyId($p->id);
+                    foreach ($propertyStaticValues as $key => $propertyStaticValue) {
+
+                        if ($propertyStaticValue['dont_filter']) {
+                            unset($propertyStaticValues[$key]);
+                        }
+                    }
                     if ($this->onlyAvailableFilters) {
                         foreach ($propertyStaticValues as $key => $propertyStaticValue) {
+
                             if (!in_array($propertyStaticValue['id'], $data['propertyStaticValueIds'])) {
                                 if ($this->disableInsteadOfHide === true) {
                                     $this->disabled_ids[]=$propertyStaticValue['id'];

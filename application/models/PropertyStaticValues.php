@@ -55,7 +55,7 @@ class PropertyStaticValues extends ActiveRecord
     {
         return [
             [['property_id', 'name', 'value'], 'required'],
-            [['property_id', 'sort_order'], 'integer'],
+            [['property_id', 'sort_order', 'dont_filter'], 'integer'],
             [['name', 'value', 'slug', 'title_append'], 'string']
         ];
     }

@@ -75,6 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]
                         ]
                     ])?>
+                <?= $form->field($model, 'dont_filter')->checkbox() ?>
 
 
             <?php BackendWidget::end(); ?>
