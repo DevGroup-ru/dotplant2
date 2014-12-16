@@ -57,6 +57,7 @@ class ProductController extends Controller
         $title_append = $request->get('title_append', '');
         if (!empty($title_append)) {
             $title_append = is_array($title_append) ? implode(' ', $title_append) : $title_append;
+            unset($_GET['title_append']);
         }
 
         $values_by_property_id = $request->get('properties', []);

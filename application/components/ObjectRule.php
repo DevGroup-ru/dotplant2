@@ -121,7 +121,7 @@ class ObjectRule implements UrlRuleInterface
                             $parameters['properties'][$key]=ArrayHelper::merge($values,$_POST['properties'][$key]);
                         }
                     }
-                    
+
                 } elseif (isset($_POST['properties'])) {
                     $parameters['properties'] = $_POST['properties'];
                 }
