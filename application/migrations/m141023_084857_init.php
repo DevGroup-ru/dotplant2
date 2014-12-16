@@ -1910,7 +1910,15 @@ class m141023_084857_init extends Migration
                         'value' => $name,
                         'slug' => Helper::createSlug($name),
                     ];
-                    $psv->save();
+                    $psv->save(
+                        true,
+                        [
+                          'property_id' ,
+                          'name' ,
+                          'value' ,
+                          'slug' ,
+                        ]
+                    );
                     $propertyValues[$property->id][] = $psv->id;
                     $k++;
                 }
