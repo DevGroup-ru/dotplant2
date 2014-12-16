@@ -77,7 +77,7 @@ var Order = {
 
     setContentDeliveryPrice: function(data) {
 
-        if (data.success  == true) {
+        if (data.success === true) {
 
             $('.shipping-data .name').html(data.name);
             $('.shipping-data .price').html(data.shipping_price + ' ' + data.currency);
@@ -130,7 +130,7 @@ jQuery(function() {
                         'width':50,
                         'height':50
                     }, 1000, 'linear');
-                imgclone.animate({'width':0, 'height':0}, function(){ jQuery(this).detach() });
+                imgclone.animate({'width':0, 'height':0}, function(){ jQuery(this).detach(); });
             }
             return false;
 
@@ -150,5 +150,5 @@ jQuery(function() {
         var $this = jQuery(this);
         DotPlant.setPreference($this.data('userpreference'), $this.val());
         return false;
-    })
+    });
 });
