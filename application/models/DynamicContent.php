@@ -23,6 +23,7 @@ use yii\db\ActiveRecord;
  * @property integer $append_meta_description
  * @property integer $apply_if_last_category_id
  * @property string $apply_if_params
+ * @property integer $object_id
  */
 class DynamicContent extends ActiveRecord
 {
@@ -43,7 +44,14 @@ class DynamicContent extends ActiveRecord
         return [
             [['route', 'name', 'content', 'title', 'h1', 'meta_description', 'apply_if_params'], 'string'],
             [
-                ['append_content', 'append_title', 'append_h1', 'append_meta_description', 'apply_if_last_category_id'],
+                [
+                    'append_content',
+                    'append_title',
+                    'append_h1',
+                    'append_meta_description',
+                    'apply_if_last_category_id',
+                    'object_id'
+                ],
                 'integer'
             ],
             [['content_block_name'], 'string', 'max' => 80],
@@ -72,6 +80,7 @@ class DynamicContent extends ActiveRecord
             'append_meta_description' => Yii::t('app', 'Append Meta Description'),
             'apply_if_last_category_id' => Yii::t('app', 'Apply If Last Category ID'),
             'apply_if_params' => Yii::t('app', 'Apply If Params'),
+            'object_id' => Yii::t('app', 'Object'),
         ];
     }
 
