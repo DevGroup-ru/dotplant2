@@ -7,6 +7,10 @@ use app\models\Image;
 
 class UploadAction extends \devgroup\dropzone\UploadAction
 {
+    public $thumbnail_width = 80;
+    public $thumbnail_height = 80;
+
+
     public function init()
     {
         parent::init();
@@ -17,7 +21,9 @@ class UploadAction extends \devgroup\dropzone\UploadAction
 
     public function afterUpload($data)
     {
-        ImageDropzone::saveThumbnail($this->uploadDir . '/', $data['filename']);
+        ImageDropzone::saveThumbnail($this->uploadDir . '/', $data['filename'], $this->thumbnail_width, $this->thumbnail_height);
+
+
         $image = new Image([
             'object_id' => $data['params']['objectId'],
             'object_model_id' => $data['params']['modelId'],
@@ -32,5 +38,6 @@ class UploadAction extends \devgroup\dropzone\UploadAction
         } else {
             return $image->getErrors();
         }
+
     }
 }
