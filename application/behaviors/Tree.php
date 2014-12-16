@@ -5,7 +5,8 @@ namespace app\behaviors;
 use Yii;
 use yii\base\Behavior;
 use yii\caching\TagDependency;
-use yii\helpers\Url;
+use yii\db\ActiveRecord;
+
 /**
  * Class Tree
  * @package app\behaviors
@@ -17,49 +18,67 @@ class Tree extends Behavior
     public $parentIdAttribute = 'parent_id';
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveRecord
      */
     public function getParent()
     {
-
-        $cacheKey = "Parent:".$this->owner->className().":".$this->owner->getAttribute($this->idAttribute);
-
-        $parent_model = Yii::$app->cache->get($cacheKey);
-        if (!is_object($parent_model)) {
+        $cacheKey = 'TreeParent:' . $this->owner->className() . ':' . $this->owner->getAttribute($this->idAttribute);
+        /** @var $parent ActiveRecord */
+        $parent = Yii::$app->cache->get($cacheKey);
+        if ($parent === false) {
             $className = $this->owner->className();
-            $parent_model = new $className;
+            $parent = new $className;
             $parent_id = $this->owner->getAttribute($this->parentIdAttribute);
             if ($parent_id < 1) {
                 return null;
             }
-            if ($parent_model->hasMethod('findById')) {
-                $parent_model = $parent_model->findById($parent_id);
+            if ($parent->hasMethod('findById')) {
+                $parent = $parent->findById($parent_id);
             } else {
-                $parent_model = $parent_model->findOne($parent_id);
+                $parent = $parent->findOne($parent_id);
             }
-            if (is_object($parent_model)) {
-                Yii::$app->cache->set(
-                    $cacheKey,
-                    $parent_model,
-                    86400,
-                    new TagDependency([
+            Yii::$app->cache->set(
+                $cacheKey,
+                $parent,
+                86400,
+                new TagDependency(
+                    [
                         'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($className),
                         ]
-                    ])
-                );
-            }
+                    ]
+                )
+            );
 
         }
-        return $parent_model;
+        return $parent;
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveRecord[]
      */
     public function getChildren()
     {
-        return $this->owner->hasMany($this->owner->className(), [$this->parentIdAttribute => $this->idAttribute]);
+        $cacheKey = 'TreeChildren:' . $this->owner->className() . ':' . $this->owner->{$this->parentIdAttribute};
+        $children = Yii::$app->cache->get($cacheKey);
+        if ($children === false) {
+            /** @var $className ActiveRecord */
+            $className = $this->owner->className();
+            $children = $className::findAll([$this->parentIdAttribute => $this->owner->{$this->idAttribute}]);
+            Yii::$app->cache->set(
+                $cacheKey,
+                $children,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($className),
+                        ]
+                    ]
+                )
+            );
+        }
+        return $children;
     }
 
     /**
@@ -107,7 +126,7 @@ class Tree extends Behavior
             }
 
             if (array_key_exists('rbac_check', $item)) {
-                $tree_item['visible'] = Yii::$app->user->can($item['rbac_check']);   
+                $tree_item['visible'] = Yii::$app->user->can($item['rbac_check']);
             }
 
             if ($native_menu_mode === false) {
@@ -132,6 +151,4 @@ class Tree extends Behavior
         }
         return $tree;
     }
-
-
 }
