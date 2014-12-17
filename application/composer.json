@@ -31,7 +31,7 @@
         "kartik-v/yii2-mpdf": "*",
         "kartik-v/yii2-editable": "*",
         "yiisoft/yii2-debug": "*",
-        "vova07/yii2-imperavi-widget": "*",
+        "vova07/yii2-imperavi-widget": "~1.1.6",
         "thiagotalma/yii2-jstree": "*",
         "elasticsearch/elasticsearch": "~1.0",
         "devgroup/yii2-tag-dependency-helper": "*",
