@@ -2,13 +2,19 @@
 
 namespace app\backend\controllers;
 
+use app\models\Slide;
 use app\slider\BaseSliderEditModel;
+use kartik\icons\Icon;
 use Yii;
 use app\models\Slider;
 use app\components\SearchModel;
 use yii\filters\AccessControl;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * SliderController implements the CRUD actions for Slider model.
@@ -32,6 +38,7 @@ class SliderController extends Controller
             ],
         ];
     }
+
 
     /**
      * Lists all Slider models.
@@ -101,13 +108,121 @@ class SliderController extends Controller
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
             }
         }
+
+        $searchModel = new Slide();
+        $searchModel->slider_id = $model->id;
+        $dataProvider = $searchModel->search($_GET);
+
         return $this->render(
             'update',
             [
                 'model' => $model,
                 'abstractModel' => $abstractModel,
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
             ]
         );
+    }
+
+    /**
+     * @param integer $slider_id
+     */
+    public function actionNewSlide($slider_id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $slider = $this->findModel($slider_id);
+        $model = new Slide();
+        $model->slider_id = $slider->id;
+        return $this->renderAjax(
+            'new-slide',
+            [
+                'model' => $model,
+            ]
+        );
+    }
+
+    /**
+     * Update slide attributes
+     * @return array
+     * @throws \yii\web\BadRequestHttpException
+     */
+    public function actionUpdateSlide()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $post = Yii::$app->request->post();
+
+        if (!isset($post['editableIndex'], $post['editableKey'])) {
+            throw new BadRequestHttpException;
+        }
+        $id = $post['editableKey'];
+        /** @var Slide $model */
+        $model = Slide::findOne($id);
+        if ($model === null) {
+            throw new BadRequestHttpException;
+        }
+        $index = $post['editableIndex'];
+        if (!is_array($post['Slide'][$index])) {
+            throw new BadRequestHttpException;
+        }
+        if (count($post['Slide'][$index])===0) {
+            throw new BadRequestHttpException;
+        }
+
+        $modifiedAttribute = array_keys($post['Slide'][$index])[0];
+
+        $model->setAttributes($post['Slide'][$index]);
+
+
+        if (!$model->save()) {
+            return [
+                'message' => Yii::t('app', 'Cannot save object'),
+            ];
+        }
+
+        if ($modifiedAttribute === 'active') {
+            $model->active ? Icon::show('check txt-color-green') : Icon::show('times txt-color-red');
+        }
+
+        return [
+            'output' => $model->getAttribute($modifiedAttribute),
+        ];
+    }
+
+    public function actionUploadSlide()
+    {
+        if (!isset($_POST['slide_id'], $_POST['attribute'], $_POST['slider_id'])) {
+var_dump($_POST);die();
+            throw new BadRequestHttpException();
+        }
+
+        $model = Slider::findById($_POST['slider_id']);
+        $slide = Slide::findOne($_POST['slide_id']);
+        if ($model === null || $slide === null) {
+            throw new NotFoundHttpException;
+        }
+
+        $file = UploadedFile::getInstanceByName('file');
+        if ($file === null) {
+            throw new HttpException(500, "Upload file error");
+        }
+        if ($file->hasError) {
+            throw new HttpException(500, 'Upload error');
+        }
+
+        $fileName = $file->name;
+        $uploadDir = '/theme/resources/sliders/';
+        $fn = $uploadDir . $fileName;
+        if (file_exists('.' . $uploadDir . $fileName)) {
+            $fileName = $file->baseName . '-' . uniqid() . '.' . $file->extension;
+            $fn = $uploadDir . $fileName;
+        }
+
+
+        $file->saveAs('.'. $fn);
+        $slide->setAttribute($_POST['attribute'], $fn);
+        $slide->save();
+
+        return $this->redirect(['update', 'id' => $model->id]);
     }
 
     /**

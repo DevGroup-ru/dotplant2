@@ -137,3 +137,15 @@ a.desc:after {
 .select2-container-multi .select2-search-choice-close {
   background-image: none !important;
 }
+
+/* line 111, ../sass/admin.scss */
+span.file-input > div.file-preview {
+  display: none;
+}
+
+/* line 115, ../sass/admin.scss */
+img.image-column {
+  max-height: 80px;
+  max-width: 80px;
+  margin-right: 8px;
+}

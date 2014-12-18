@@ -86,6 +86,7 @@ class m141216_111515_slider extends Migration
                 'link' => 'VARCHAR(255) NOT NULL DEFAULT \'\'',
                 'custom_view_file' => 'VARCHAR(255) NOT NULL DEFAULT \'\'',
                 'css_class' => 'VARCHAR(255) NOT NULL DEFAULT \'\'',
+                'active' => 'TINYINT(1) UNSIGNED NOT NULL DEFAULT 1',
             ],
             $tableOptions
         );
