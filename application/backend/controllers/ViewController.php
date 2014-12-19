@@ -137,6 +137,7 @@ class ViewController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
+
         if (is_dir($_dir = $this->view->theme->getBaseUrl())) {
             $cacheKey = 'ViewDirectoryTree';
             if (false === $items = Yii::$app->cache->get($cacheKey)) {
@@ -154,7 +155,8 @@ class ViewController extends Controller
 
                     $_parent = '#';
                     if ($_dir !== $file->getPath()) {
-                        $_parent = '#' . array_pop(explode('/', str_replace($_dir, '', $file->getPath())));
+                        $arr = explode('/', str_replace($_dir, '', $file->getPath()));
+                        $_parent = '#' . array_pop($arr);
                     }
 
                     if ($file->isDir()) {
