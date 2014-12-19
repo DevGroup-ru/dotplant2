@@ -12,7 +12,7 @@ use kartik\icons\Icon;
 
 $this->title = Yii::t('app', 'Pages');
 if (is_object($model)) {
-    $this->title = Yii::t('app', 'Pages inside page: ') . '"' . $model->title . '"';
+    $this->title = Yii::t('app', 'Pages inside page: ') . '"' . $model->breadcrumbs_label . '"';
 
 }
 $parent_id = is_object($model) ? $model->id : '0';

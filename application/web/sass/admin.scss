@@ -117,3 +117,12 @@ img.image-column {
   max-width: 80px;
   margin-right: 8px;
 }
+
+#ribbon li {
+  max-width: 200px;
+  overflow: hidden;
+  height: 18px;
+  &.active{
+    max-width: 400px;
+  }
+}

@@ -8,10 +8,11 @@ use kartik\widgets\DateTimePicker;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\helpers\Url;
 
+
 $this->title = Yii::t('app', 'Page edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/page/index'], 'label' => Yii::t('app', 'Pages')];
 if ($model->parent_id>0) {
-    $this->params['breadcrumbs'][] = ['url' => ['/backend/page/index', 'id'=>$model->parent_id, 'parent_id'=>$model->parent->parent_id], 'label' => $model->parent->title];
+    $this->params['breadcrumbs'][] = ['url' => ['/backend/page/index', 'id'=>$model->parent_id, 'parent_id'=>$model->parent->parent_id], 'label' => $model->parent->breadcrumbs_label];
 }
 $this->params['breadcrumbs'][] = $this->title;
 

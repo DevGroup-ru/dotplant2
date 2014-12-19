@@ -149,3 +149,14 @@ img.image-column {
   max-width: 80px;
   margin-right: 8px;
 }
+
+/* line 121, ../sass/admin.scss */
+#ribbon li {
+  max-width: 200px;
+  overflow: hidden;
+  height: 18px;
+}
+/* line 125, ../sass/admin.scss */
+#ribbon li.active {
+  max-width: 400px;
+}

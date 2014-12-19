@@ -96,3 +96,10 @@ img.image-column {
   max-height: 80px;
   max-width: 80px;
   margin-right: 8px; }
+
+#ribbon li {
+  max-width: 200px;
+  overflow: hidden;
+  height: 18px; }
+  #ribbon li.active {
+    max-width: 400px; }
