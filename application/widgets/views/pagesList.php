@@ -10,7 +10,7 @@ use yii\helpers\Url;
         <?php foreach ($children as $child): ?>
             <li class="media">
                 <a href="<?= Url::to(['/page/show', 'id'=>$child->id])?>" class="page-title">
-                    <?= Yii::t('shop', $child->title) ?>
+                    <?= \yii\helpers\Html::encode($child->title) ?>
                 </a>
                 <div class="page-date_added label label-default">
                     <?= Icon::show('calendar') ?>
