@@ -5,6 +5,7 @@ namespace app\models;
 
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%slider}}".
@@ -80,7 +81,7 @@ class Slider extends \yii\db\ActiveRecord
      * Returns corresponding slides with cache support(not real relation!)
      * @return Slide[]
      */
-    public function getSlides()
+    public function getSlides($onlyActive = false)
     {
         if ($this->_slides === null) {
             $this->_slides = Yii::$app->cache->get("Slides:" . $this->id);
@@ -101,7 +102,17 @@ class Slider extends \yii\db\ActiveRecord
                 );
             }
         }
-        return $this->_slides;
+        if ($onlyActive === true) {
+            $activeSlides = [];
+            foreach ($this->_slides as $slide) {
+                if ($slide->active) {
+                    $activeSlides[] = $slide;
+                }
+            }
+            return $activeSlides;
+        } else {
+            return $this->_slides;
+        }
     }
 
     /**

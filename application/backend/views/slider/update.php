@@ -174,10 +174,14 @@ $editable_formOptions = [
                 'panel'=>[
                     'heading'=>'<h3 class="panel-title">'.Yii::t('app', 'Slides').'</h3>',
                     'after' =>
-                        '<a href="#" class="add-slide btn btn-primary">'.
-                        Icon::show('plus') . ' ' .
-                        Yii::t('app', 'Add slide').
-                        '</a>',
+                        Html::a(
+                            Icon::show('plus') . ' ' .
+                            Yii::t('app', 'Add slide'),
+                            ['new-slide', 'slider_id' => $model->id,],
+                            [
+                                'class' => 'btn btn-primary'
+                            ]
+                        )
 
                 ],
 

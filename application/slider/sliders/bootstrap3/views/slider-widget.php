@@ -3,12 +3,15 @@
 /** @var array $slider_params */
 /** @var string $slide_viewFile */
 /** @var string $css_class */
+$slides = $slider->getSlides(true);
 ?>
 
 <div id="<?= $id ?>" class="carousel slide <?= $css_class ?>" <?php if(count($slider_params)==0) {echo 'data-ride="carousel"';}; ?>>
     <!-- Indicators -->
     <ol class="carousel-indicators">
-        <?php foreach ($slider->getSlides() as $index => $slide) : ?>
+        <?php
+        foreach ($slides as $index => $slide) :
+        ?>
         <li data-target="#<?= $id ?>" data-slide-to="<?=$index?>" class="<?= ($index==0?'active':'') ?>"></li>
         <?php endforeach; ?>
 
@@ -17,7 +20,8 @@
     <!-- Wrapper for slides -->
     <div class="carousel-inner" role="listbox">
         <?php
-            foreach ($slider->getSlides() as $index => $slide) {
+            foreach ($slides as $index => $slide) {
+
                 echo $this->render(
                     $slide_viewFile,
                     [
@@ -25,6 +29,7 @@
                         'slide_index' => $index,
                     ]
                 );
+
             }
         ?>
 

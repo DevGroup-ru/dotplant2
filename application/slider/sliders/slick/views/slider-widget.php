@@ -8,7 +8,9 @@
     <div id="<?= $id ?>" class="<?= $css_class ?>">
 
         <?php
-        foreach ($slider->getSlides() as $index => $slide) {
+        $slides = $slider->getSlides(true);
+        foreach ($slides as $index => $slide) {
+
             echo $this->render(
                 $slide_viewFile,
                 [
@@ -16,6 +18,7 @@
                     'slide_index' => $index,
                 ]
             );
+
         }
         ?>
 

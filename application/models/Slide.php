@@ -18,6 +18,16 @@ use yii\data\ActiveDataProvider;
  */
 class Slide extends \yii\db\ActiveRecord
 {
+    use \app\traits\FindById;
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+        ];
+    }
     /**
      * @inheritdoc
      */

@@ -4,6 +4,7 @@ namespace app\backend\controllers;
 
 use app\models\Slide;
 use app\slider\BaseSliderEditModel;
+use Imagine\Image\ManipulatorInterface;
 use kartik\icons\Icon;
 use Yii;
 use app\models\Slider;
@@ -133,12 +134,10 @@ class SliderController extends Controller
         $slider = $this->findModel($slider_id);
         $model = new Slide();
         $model->slider_id = $slider->id;
-        return $this->renderAjax(
-            'new-slide',
-            [
-                'model' => $model,
-            ]
-        );
+        $model->active = 0;
+        $model->sort_order = count($slider->getSlides());
+        $model->save();
+        return $this->redirect(['update', 'id' => $slider_id]);
     }
 
     /**
@@ -188,10 +187,17 @@ class SliderController extends Controller
         ];
     }
 
+    public function actionDeleteSlide($id)
+    {
+        $slide = Slide::findOne($id);
+        $slider_id = $slide->slider_id;
+        $slide->delete();
+        return $this->redirect(['update', 'id'=>$slider_id]);
+    }
+
     public function actionUploadSlide()
     {
         if (!isset($_POST['slide_id'], $_POST['attribute'], $_POST['slider_id'])) {
-var_dump($_POST);die();
             throw new BadRequestHttpException();
         }
 
@@ -219,7 +225,16 @@ var_dump($_POST);die();
 
 
         $file->saveAs('.'. $fn);
-        $slide->setAttribute($_POST['attribute'], $fn);
+
+        $image = \yii\imagine\Image::thumbnail(
+            '.'.Yii::getAlias($uploadDir . '/' . $fileName),
+            $model->image_width,
+            $model->image_height,
+            ManipulatorInterface::THUMBNAIL_INSET
+        );
+        $image->save('.'.$uploadDir . 'small-' . $fileName);
+
+        $slide->setAttribute($_POST['attribute'], $uploadDir . 'small-' . $fileName);
         $slide->save();
 
         return $this->redirect(['update', 'id' => $model->id]);
