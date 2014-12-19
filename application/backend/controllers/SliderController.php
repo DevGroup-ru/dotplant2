@@ -232,7 +232,7 @@ class SliderController extends Controller
             $model->image_height,
             ManipulatorInterface::THUMBNAIL_INSET
         );
-        $image->save('.'.$uploadDir . 'small-' . $fileName);
+        $image->save('.'.$uploadDir . 'small-' . $fileName, ['quality'=>95]);
 
         $slide->setAttribute($_POST['attribute'], $uploadDir . 'small-' . $fileName);
         $slide->save();
