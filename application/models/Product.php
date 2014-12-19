@@ -593,6 +593,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      * @param null|integer $limit limit query results
      * @param bool $apply_filterquery Should we apply filter query(filters based on query params ie. price_min/max)
      * @param bool $force_limit False to use Pagination, true to use $limit and ignore pagination
+     * @param array $additional_filters Array of callables that will apply additional filters to query
      */
     public static function filteredProducts(
         $category_group_id,
@@ -601,7 +602,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $force_sorting = false,
         $limit = null,
         $apply_filterquery = true,
-        $force_limit = false
+        $force_limit = false,
+        array $additional_filters = []
     )
     {
         Yii::beginProfile("FilteredProducts");
@@ -628,7 +630,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
         $query->innerJoin(
             Category::tableName() . ' ocatt',
-            'ocatt.id = ocats.category_id AND ocatt.category_group_id = :gcatid',
+            'ocatt.id = ocats.category_id AND ocatt.category_group_id = :gcatid AND ocatt.active = 1',
             [':gcatid' => $category_group_id]
         );
         $query->addGroupBy(static::tableName().".id");
@@ -664,6 +666,18 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $cacheKeyAppend = "";
         if ($apply_filterquery) {
             $query = Yii::$app->filterquery->filter($query, $cacheKeyAppend);
+        }
+
+        foreach ($additional_filters as $filter) {
+            if (is_callable($filter)) {
+                call_user_func_array(
+                    $filter,
+                    [
+                        &$query,
+                        &$cacheKeyAppend
+                    ]
+                );
+            }
         }
 
         $cacheKey = 'ProductsCount:' . implode(

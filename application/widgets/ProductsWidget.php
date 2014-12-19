@@ -15,8 +15,12 @@ class ProductsWidget extends Widget
     public $values_by_property_id = [];
     public $selected_category_id = null;
     public $force_sorting = false;
+    public $force_limit = true;
+    public $additional_filters = [];
+
 
     public $itemView = '@app/views/product/item';
+    public $viewFile = 'products-widgets';
 
 
     public function run()
@@ -34,14 +38,18 @@ class ProductsWidget extends Widget
             $this->force_sorting,
             $this->limit,
             false,
-            true
+            $this->force_limit,
+            $this->additional_filters
         );
 
         return $this->render(
-            'products-widget',
+            $this->viewFile,
             [
                 'products' => $products,
                 'itemView' => $this->itemView,
+                'values_by_property_id' => $this->values_by_property_id,
+                'category_group_id' => $this->category_group_id,
+                'selected_category_id' => $this->selected_category_id,
             ]
         );
     }
