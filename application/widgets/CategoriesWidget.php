@@ -139,7 +139,7 @@ class CategoriesWidget extends Widget
                 if ($this->onlyAvailableProducts === true && !in_array($child->id, $allowed_category_ids)) {
                     continue;
                 }
-                $result['items'][] = $this->recursiveGetTree($child);
+                $result['items'][] = $this->recursiveGetTree($child, $allowed_category_ids);
             }
         }
         return $result;
