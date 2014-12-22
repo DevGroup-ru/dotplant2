@@ -223,7 +223,7 @@ return array (
   'Show' => 'Показать',
   'Show page' => 'Показать страницу',
   'Show Type' => 'Тип отображения',
-  'Slider' => 'Слайдеры',
+  'Sliders' => 'Слайдеры',
   'Slug' => 'Урл',
   'Slug Absolute' => '',
   'Slug Compiled' => '',
