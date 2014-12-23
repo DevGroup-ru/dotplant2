@@ -16,11 +16,14 @@ use app\models\Property;
 use kartik\helpers\Html;
 
 ?>
-<dl>
+
     <?php
     if (count($values->values) == 0) {
         return;
     }
+    ?>
+<dl>
+    <?php
     $property = Property::findById($property_id);
     $result = "";
     foreach ($values->values as $val) {
