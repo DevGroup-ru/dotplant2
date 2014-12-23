@@ -122,6 +122,7 @@ use app\models\Property;
             </ul>
         <?php endforeach;?>
     </div>
+    <?php if ($render_dynamic === true) : ?>
     <div class="filter-widget filter-dynamic">
         <?= Html::beginForm('', 'get', ['class' => 'filter-form']) ?>
             <?php foreach ($possible_selections as $group_id => $item): ?>
@@ -173,4 +174,5 @@ use app\models\Property;
             <?php endforeach; ?>
         <?= Html::endForm() ?>
     </div>
+    <?php endif; ?>
 </div>

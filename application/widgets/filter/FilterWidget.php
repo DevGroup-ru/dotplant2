@@ -26,6 +26,7 @@ class FilterWidget extends Widget
     public $title = 'Filter';
     public $viewFile = 'filterWidget';
     private $disabled_ids = [];
+    public $render_dynamic = true;
 
 
     public function run()
@@ -54,6 +55,7 @@ class FilterWidget extends Widget
                 'route' => $this->route,
                 'category_group_id' => $this->categoryGroupId,
                 'disabled_ids' => $this->disabled_ids,
+                'render_dynamic' => $this->render_dynamic,
             ]
         );
 

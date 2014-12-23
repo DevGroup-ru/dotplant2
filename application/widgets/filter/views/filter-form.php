@@ -94,6 +94,7 @@ use kartik\form\ActiveForm;
                                         }
                                     }
                                     $params['properties'][$property_id] = [$value['id']];
+
                                     $disabled = in_array($value['id'], $disabled_ids);
                                     $disabled_array = $disabled ? ['disabled'=>'disabled'] : [];
 
