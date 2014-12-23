@@ -82,7 +82,7 @@ return array (
   'Edit profile' => 'Редактировать профиль',
   'Email' => '',
   'Email list' => 'E-mail адреса',
-  'Email Notification Addresses' => 'Адрес для оповищения',
+  'Email Notification Addresses' => 'Адрес для оповещения',
   'Email Notification View' => 'Представление e-mail оповещений',
   'Email notify' => 'Оповещение',
   'Enabled Api Key' => 'Включенный Api ключ',
