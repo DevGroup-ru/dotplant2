@@ -23,6 +23,6 @@ class m141222_151034_slider_backend_menu_item extends Migration
 
     public function down()
     {
-        $this->delete(\app\backend\models\BackendMenu::tableName(), ['name' => 'Slider']);
+        $this->delete(\app\backend\models\BackendMenu::tableName(), ['name' => 'Sliders']);
     }
 }
