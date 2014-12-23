@@ -53,6 +53,7 @@ class Category extends ActiveRecord
      * @var array
      */
     private static $id_by_slug_group_parent = [];
+    private static $id_by_name_group_parent = [];
 
     public function behaviors()
     {
@@ -219,6 +220,47 @@ class Category extends ActiveRecord
                 static::$id_by_slug_group_parent[$identity_key] = $category->id;
                 Yii::$app->cache->set(
                     "Category:bySlug:".$identity_key,
+                    $category,
+                    86400,
+                    new TagDependency([
+                        'tags' => ActiveRecordHelper::getObjectTag($category, $category->id)
+                    ])
+                );
+                return $category;
+            } else {
+                return null;
+            }
+        } else {
+            return $category;
+        }
+    }
+
+    /**
+     * Ищет по name в рамках category_group_id
+     * Заносит в identity_map
+     */
+    public static function findByName($name, $category_group_id, $parent_id = 0)
+    {
+        $params = [
+            'name'=>$name,
+            'category_group_id' => $category_group_id,
+        ];
+        if ($parent_id >= 0) {
+            $params['parent_id'] = $parent_id;
+        }
+
+        $identity_key = $name . ':' . $category_group_id . ':' . $parent_id;
+        if (isset(static::$id_by_name_group_parent[$identity_key])) {
+            return static::findById(static::$id_by_name_group_parent[$identity_key], null, null);
+        }
+        $category = Yii::$app->cache->get("Category:byName:".$identity_key);
+        if (!is_object($category)) {
+            $category = Category::find()->where($params)->one();
+            if (is_object($category)) {
+                static::$identity_map[$category->id] = $category;
+                static::$id_by_name_group_parent[$identity_key] = $category->id;
+                Yii::$app->cache->set(
+                    "Category:byName:".$identity_key,
                     $category,
                     86400,
                     new TagDependency([

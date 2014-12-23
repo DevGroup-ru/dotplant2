@@ -470,11 +470,22 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             }
             if ($typecast === 'id') {
                 $categories = array_map('intval', $categories);
-            } elseif ($typecast === 'slug' || $typecast == 'name') {
+            } elseif ($typecast === 'slug') {
                 $categories = array_map('trim', $categories);
                 $categoryIds = [];
                 foreach ($categories as $part) {
                     $cat = Category::findBySlug($part, 1, -1);
+                    if (is_object($cat)) {
+                        $categoryIds[] = $cat->id;
+                    }
+                    unset($cat);
+                }
+                $categories = array_map('intval', $categoryIds);
+            } elseif ($typecast === 'name') {
+                $categories = array_map('trim', $categories);
+                $categoryIds = [];
+                foreach ($categories as $part) {
+                    $cat = Category::findByName($part, 1, -1);
                     if (is_object($cat)) {
                         $categoryIds[] = $cat->id;
                     }
