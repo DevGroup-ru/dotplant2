@@ -22,6 +22,7 @@ use yii\data\ActiveDataProvider;
  */
 class Form extends \yii\db\ActiveRecord
 {
+    private static $identity_map = [];
 
     public function behaviors()
     {
@@ -109,5 +110,31 @@ class Form extends \yii\db\ActiveRecord
     public function getSubmissions()
     {
         return $this->hasMany(Submission::className(), ['form_id' => 'id'])->inverseOf('form');
+    }
+
+    public static function findById($id)
+    {
+        if (!isset(static::$identity_map[$id])) {
+
+            $cacheKey = "Form:$id";
+            static::$identity_map[$id] = Yii::$app->cache->get($cacheKey);
+            if (!is_object(static::$identity_map[$id])) {
+                static::$identity_map[$id] = Form::findOne($id);
+
+                if (is_object(static::$identity_map[$id])) {
+                    Yii::$app->cache->set(
+                        $cacheKey,
+                        static::$identity_map[$id],
+                        86400,
+                        new \yii\caching\TagDependency([
+                            'tags' => [
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id)
+                            ]
+                        ])
+                    );
+                }
+            }
+        }
+        return static::$identity_map[$id];
     }
 }

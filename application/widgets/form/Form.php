@@ -25,18 +25,18 @@ class Form extends Widget
     public function init()
     {
         FormAsset::register($this->view);
-        $this->model = \app\models\Form::findOne($this->formId);
+        $this->model = \app\models\Form::findById($this->formId);
         if ($this->model === null) {
             throw new \InvalidArgumentException;
         }
+
         if ($this->isModal) {
-            if ($this->isModal) {
-                $this->modal = Modal::begin([
-                    'id' => 'modal-form-' . $this->id,
-                    'header' => $this->model->name,
-                ]);
-            }
+            $this->modal = Modal::begin([
+                'id' => 'modal-form-' . $this->id,
+                'header' => $this->model->name,
+            ]);
         }
+
     }
 
     public function run()
