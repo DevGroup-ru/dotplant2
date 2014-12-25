@@ -266,6 +266,22 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php BackendWidget::end(); ?>
 
+    <?php
+    BackendWidget::begin(
+        [
+            'title'=> Yii::t('app', 'Warehouse'),
+            'icon'=>'archive',
+            'footer'=>$this->blocks['submit']
+        ]
+    ); ?>
+
+    <?= $form->field($model, 'sku') ?>
+    <?= $form->field($model, 'in_warehouse')?>
+    <?= $form->field($model, 'unlimited_count')->widget(\kartik\switchinput\SwitchInput::className())?>
+    <?= $form->field($model, 'reserved_count')?>
+    
+    <?php BackendWidget::end(); ?>
+
     <?php if ($model->parent_id == 0) : ?>
 
         <?= \app\backend\widgets\OptionGenerate::widget([
