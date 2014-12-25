@@ -203,7 +203,7 @@ class PageController extends Controller
 
         // build array for widget
         $url = '';
-        $crumbs = array_reverse($crumbs);
+        $crumbs = array_reverse($crumbs, true);
         foreach ($crumbs as $slug => $label) {
             $url .= '/' . $slug;
             $breadcrumbs[] = [
