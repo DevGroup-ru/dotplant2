@@ -17,5 +17,10 @@ use kartik\helpers\Html;
 ?>
 <dl>
     <?= Html::tag('dt', $model->getAttributeLabel($property_key)) ?>
-    <?= Html::tag('dd', Yii::t('app', $model->$property_key == 1 ? 'Yes' : 'No')) ?>
+    <?= Html::tag(
+        'dd',
+        ($model->$property_key == 1) ?
+            Yii::t('app', 'Yes') :
+            Yii::t('app', 'No')
+    ) ?>
 </dl>

@@ -3271,12 +3271,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "67d760c13911729793e1d6cff6496c3c3fc32913"
+                "reference": "85543eaa36b3c1861566673a35f913df57a49f5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/67d760c13911729793e1d6cff6496c3c3fc32913",
-                "reference": "67d760c13911729793e1d6cff6496c3c3fc32913",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/85543eaa36b3c1861566673a35f913df57a49f5e",
+                "reference": "85543eaa36b3c1861566673a35f913df57a49f5e",
                 "shasum": ""
             },
             "require": {
@@ -3352,7 +3352,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2014-12-23 22:59:13"
+            "time": "2014-12-24 15:19:34"
         },
         {
             "name": "yiisoft/yii2-authclient",
@@ -4738,12 +4738,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "77966eddd2982c312e53a768b9e0eec210698081"
+                "reference": "b2d63b962688615d9b895a3d0be8bca7c3acf2fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/77966eddd2982c312e53a768b9e0eec210698081",
-                "reference": "77966eddd2982c312e53a768b9e0eec210698081",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/b2d63b962688615d9b895a3d0be8bca7c3acf2fd",
+                "reference": "b2d63b962688615d9b895a3d0be8bca7c3acf2fd",
                 "shasum": ""
             },
             "require": {
@@ -4786,7 +4786,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2014-12-23 11:23:33"
+            "time": "2014-12-24 10:55:26"
         },
         {
             "name": "symfony/css-selector",
