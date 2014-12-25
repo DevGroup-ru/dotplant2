@@ -6,6 +6,7 @@ use Yii;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+use Imagine\Image\ManipulatorInterface;
 
 class Helper
 {
@@ -84,5 +85,16 @@ class Helper
         ];
         $source = preg_replace('#[^a-z0-9\-]#is', '', strtr($source, $translateArray));
         return trim(preg_replace('#-{2,}#is', '-', $source));
+    }
+
+    public static function thumbnailOnDemand($filename, $width, $height, $relative_part = '.')
+    {
+        $dir = dirname($filename);
+        $thumb_filename = $dir . '/thumb-'.$width.'x'.$height.'-' . basename($filename);
+        if (file_exists($relative_part.$thumb_filename) === false) {
+            $image = \yii\imagine\Image::thumbnail($relative_part.$filename, $width, $height, ManipulatorInterface::THUMBNAIL_INSET);
+            $image->save($relative_part.$thumb_filename, ['quality'=>90]);
+        }
+        return $thumb_filename;
     }
 }

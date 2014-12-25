@@ -1,5 +1,5 @@
 <?php
-
+ini_set("memory_limit", 512*1024*1024);
 include_once(__DIR__ . '/../seo/redirects/redirects.php');
 
 // comment out the following two lines when deployed to production

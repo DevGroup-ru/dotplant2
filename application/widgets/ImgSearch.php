@@ -14,6 +14,10 @@ class ImgSearch extends Widget
     public $limit = null;
     public $offset = 0;
 
+    public $thumbnailOnDemand = false;
+    public $thumbnailWidth = 400;
+    public $thumbnailHeight = 200;
+
     public function run()
     {
         $cacheKey = "ImgSearch:" . implode("_", [
@@ -21,7 +25,10 @@ class ImgSearch extends Widget
             $this->objectModelId,
             $this->viewFile,
             $this->limit,
-            $this->offset
+            $this->offset,
+            $this->thumbnailOnDemand?'1':'0',
+            $this->thumbnailWidth,
+            $this->thumbnailHeight
         ]);
         $result = Yii::$app->cache->get($cacheKey);
 
@@ -32,7 +39,12 @@ class ImgSearch extends Widget
             }
             $result = $this->render(
                 $this->viewFile,
-                ['images' => $images]
+                [
+                    'images' => $images,
+                    'thumbnailOnDemand' => $this->thumbnailOnDemand,
+                    'thumbnailWidth' => $this->thumbnailWidth,
+                    'thumbnailHeight' => $this->thumbnailHeight,
+                ]
             );
             Yii::$app->cache->set($cacheKey, $result, 86400, new \yii\caching\TagDependency([
                 'tags' => 'Images:'.$this->objectId.':'.$this->objectModelId

@@ -279,7 +279,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $form->field($model, 'in_warehouse')?>
     <?= $form->field($model, 'unlimited_count')->widget(\kartik\switchinput\SwitchInput::className())?>
     <?= $form->field($model, 'reserved_count')?>
-    
+
     <?php BackendWidget::end(); ?>
 
     <?php if ($model->parent_id == 0) : ?>
