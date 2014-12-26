@@ -89,6 +89,10 @@ class PageController extends Controller
             [
                 'defaultPageSize' => Config::getValue('page.pagesPerList', 10),
                 'forcePageParam' => false,
+                'pageSizeLimit' => [
+                    Config::getValue('page.minPagesPerList', 1),
+                    Config::getValue('page.maxPagesPerList', 50)
+                ],
                 'totalCount' => $countQuery->count(),
             ]
         );
