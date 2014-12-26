@@ -71,6 +71,7 @@ class Navigation extends \yii\db\ActiveRecord
             ],
             [
                 'class' => Tree::className(),
+                'sortOrder' => 'sort_order ASC'
             ],
         ];
     }

@@ -16,6 +16,7 @@ class Tree extends Behavior
 {
     public $idAttribute = 'id';
     public $parentIdAttribute = 'parent_id';
+    public $sortOrder = 'id ASC';
 
     /**
      * @return ActiveRecord
@@ -64,7 +65,10 @@ class Tree extends Behavior
         if ($children === false) {
             /** @var $className ActiveRecord */
             $className = $this->owner->className();
-            $children = $className::findAll([$this->parentIdAttribute => $this->owner->{$this->idAttribute}]);
+            $children = $className::find()
+                ->where([$this->parentIdAttribute => $this->owner->{$this->idAttribute}])
+                ->orderBy($this->sortOrder)
+                ->all();
             Yii::$app->cache->set(
                 $cacheKey,
                 $children,
