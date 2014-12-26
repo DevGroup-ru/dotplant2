@@ -49,16 +49,12 @@ class NavigationWidget extends Widget
             }
         }
         if (null === $items) {
-
             $root = Navigation::findOne($this->rootId);
-            $children = $root->getChildren();
             $items = [];
-            foreach ($children as $child) {
+            foreach ($root->children as $child) {
                 $items[] = self::getTree($child);
             }
-
-            if (count($items)>0) {
-
+            if (count($items) > 0) {
                 \Yii::$app->cache->set(
                     $cacheKey,
                     $items,
@@ -100,8 +96,7 @@ class NavigationWidget extends Widget
             'options' => ['class' => $model->advanced_css_class],
             'items' => [],
         ];
-        $children = $model->getChildren();
-        foreach ($children as $child) {
+        foreach ($model->children as $child) {
             $tree['items'][] = self::getTree($child);
         }
         return $tree;

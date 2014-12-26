@@ -59,7 +59,7 @@ class Tree extends Behavior
      */
     public function getChildren()
     {
-        $cacheKey = 'TreeChildren:' . $this->owner->className() . ':' . $this->owner->{$this->parentIdAttribute};
+        $cacheKey = 'TreeChildren:' . $this->owner->className() . ':' . $this->owner->{$this->idAttribute};
         $children = Yii::$app->cache->get($cacheKey);
         if ($children === false) {
             /** @var $className ActiveRecord */
