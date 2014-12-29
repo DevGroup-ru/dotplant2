@@ -119,7 +119,6 @@ class PropertiesHelper
                         " AND $joinTableName.object_model_id = " .
                         Yii::$app->db->quoteTableName($object->object_table_name) . ".id "
                     );
-                }
 
 
                 $query=$query->andWhere(['in', '`'.$joinTableName.'`.`property_static_value_id`',  $item['values']]);
