@@ -102,7 +102,7 @@ class PropertiesHelper
         }
         if (count($ti_clauses) > 0) {
             $ti_clauses = implode(" AND ", $ti_clauses);
-            
+
             $query = $query->innerJoin(
                 $object->column_properties_table_name . " $join_table_name",
                 "$join_table_name.object_model_id = " .
@@ -114,14 +114,21 @@ class PropertiesHelper
             foreach ($by_storage['static_values'] as $item) {
                 $joinTableName = 'OSVJoinTable'.$item['property']->id;
                 $query = $query->innerJoin(
-                        ObjectStaticValues::tableName() . " ".$joinTableName,
-                        "$joinTableName.object_id = " . intval($object->id) .
-                        " AND $joinTableName.object_model_id = " .
-                        Yii::$app->db->quoteTableName($object->object_table_name) . ".id "
-                    );
+                    ObjectStaticValues::tableName() . " " . $joinTableName,
+                    "$joinTableName.object_id = " . intval($object->id) .
+                    " AND $joinTableName.object_model_id = " .
+                    Yii::$app->db->quoteTableName($object->object_table_name) . ".id "
+                );
 
 
-            $query=$query->andWhere(['in', '`'.$joinTableName.'`.`property_static_value_id`',  $item['values']]);
+                $query = $query->andWhere([
+                        'in',
+                        '`' . $joinTableName . '`.`property_static_value_id`',
+                        $item['values']
+                    ]);
+            }
         }
+
+
     }
 }
