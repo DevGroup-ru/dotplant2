@@ -85,19 +85,20 @@ class FilterWidget extends Widget
                         ->where(['category_id' => $this->currentSelections['last_category_id']]);
 
                     if (count($this->currentSelections['properties']) > 0) {
-
-                        $query->join(
-                            'JOIN',
-                            ObjectStaticValues::tableName() . ' OSVJoinTable',
-                            'OSVJoinTable.object_id = :objectId AND '
-                            . 'OSVJoinTable.object_model_id = ' . $object->categories_table_name . '.object_model_id  ',
-                            [
-                                ':objectId' => $object->id,
-                            ]
-                        );
-
                         foreach ($this->currentSelections['properties'] as $property_id => $values) {
-                            $query->andWhere(['in', '`OSVJoinTable`.`property_static_value_id`', $values]);
+                            $joinTableName = 'OSVJoinTable'.$property_id;
+                            $query->join(
+                                'JOIN',
+                                ObjectStaticValues::tableName() . ' '.$joinTableName,
+                                $joinTableName.'.object_id = :objectId AND '
+                                . $joinTableName.'.object_model_id = ' . $object->categories_table_name . '.object_model_id  ',
+                                [
+                                    ':objectId' => $object->id,
+                                ]
+                            );
+
+
+                            $query->andWhere(['in', '`'.$joinTableName.'`.`property_static_value_id`', $values]);
                         }
                     }
 
