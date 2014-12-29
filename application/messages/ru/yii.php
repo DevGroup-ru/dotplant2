@@ -17,9 +17,9 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    '(not set)' => '',
-    'Are you sure to delete this item?' => '',
-    'Delete' => '',
-    'Update' => '',
-    'View' => '',
+    '(not set)' => '(не задано)',
+    'Are you sure to delete this item?' => 'Действительно удалить?',
+    'Delete' => 'Удалить',
+    'Update' => 'Редактировать',
+    'View' => 'Показать',
 ];
