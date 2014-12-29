@@ -122,11 +122,7 @@ class PropertiesHelper
                 }
 
 
-                $query=$query->andWhere(['in', '`'.$joinTableName.'`.`property_static_value_id`',  $item['values']]);
-            }
+            $query=$query->andWhere(['in', '`'.$joinTableName.'`.`property_static_value_id`',  $item['values']]);
         }
-
-
-
     }
 }
