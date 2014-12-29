@@ -10,7 +10,7 @@ use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
 
-$this->title = Yii::t('app', $model->isNewRecord ? 'Create' : 'Update');
+$this->title = $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update');
 $this->params['breadcrumbs'] = [
     ['label' => Yii::t('app', 'Shipping Options'), 'url' => ['index']],
     $this->params['breadcrumbs'][] = $this->title,

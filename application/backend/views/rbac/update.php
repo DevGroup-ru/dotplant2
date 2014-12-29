@@ -13,7 +13,7 @@ use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
 
 $isNewRecord = isset($isNewRecord) && $isNewRecord;
-$this->title = Yii::t('app', ($isNewRecord ? 'Create ' : 'Update ') . Yii::$app->params['rbacType'][$model->type]);
+$this->title = $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update') . Yii::$app->params['rbacType'][$model->type];
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Rbac'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 

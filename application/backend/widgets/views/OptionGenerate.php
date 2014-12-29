@@ -29,7 +29,7 @@ use yii\helpers\Url;
                 foreach ($properties as $prop) :
                     $property_values = app\models\PropertyStaticValues::getValuesForPropertyId($prop->id); ?>
                     <div class="form-group">
-                        <label class="col-md-2 control-label"><?= Yii::t('app', $prop->name) ?></label>
+                        <label class="col-md-2 control-label"><?= $prop->name ?></label>
                         <div class="col-md-10">
                             <?php foreach ($property_values as $property_value) : ?>
                             <?php

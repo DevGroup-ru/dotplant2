@@ -19,9 +19,9 @@ class BooleanStatus extends DataColumn
     {
         $content = parent::renderDataCellContent($model, $key, $index);
         if ($content == "1") {
-            return "<span class=\"label ".$this->true_label_class."\">". Yii::t('app', $this->true_value) ."</span>";
+            return "<span class=\"label ".$this->true_label_class."\">". $this->true_value ."</span>";
         } else {
-            return "<span class=\"label ".$this->false_label_class."\">". Yii::t('app', $this->false_value) ."</span>";
+            return "<span class=\"label ".$this->false_label_class."\">". $this->false_value ."</span>";
         }
     }
 }

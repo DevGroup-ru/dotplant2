@@ -108,7 +108,7 @@ class ActionColumn extends Column
                     'data-pjax' => 0,
                     'class' => $button['class'],
                     'data-action' => $button['url'],
-                    'title' => Yii::t('app', $button['label']),
+                    'title' => $button['label'],
                 ]
             ) . ' ';
         }

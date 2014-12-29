@@ -11,7 +11,7 @@ use kartik\widgets\ActiveForm;
 use kartik\editable\Editable;
 use kartik\popover\PopoverX;
 
-$this->title = Yii::t('app', $model->isNewRecord ? 'Create' : 'Update');
+$this->title = $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update');
 $this->params['breadcrumbs'] = [
     ['label' => Yii::t('shop', 'Sliders'), 'url' => ['index']],
     $this->params['breadcrumbs'][] = $this->title,

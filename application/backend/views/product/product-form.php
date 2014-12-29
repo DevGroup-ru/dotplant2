@@ -18,7 +18,7 @@ $this->title = Yii::t('app', 'Product edit');
 
 $this->params['breadcrumbs'][] = ['url' => ['/backend/product/index'], 'label' => Yii::t('app', 'Products')];
 if ($parent !== null) {
-    $this->params['breadcrumbs'][] = ['url' => ['/backend/product/edit?id='.$parent->id], 'label' => Yii::t('app', $parent->name)];
+    $this->params['breadcrumbs'][] = ['url' => ['/backend/product/edit?id='.$parent->id], 'label' => $parent->name];
 }
 $this->params['breadcrumbs'][] = $this->title;
 
