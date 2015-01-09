@@ -83,7 +83,7 @@ use yii\helpers\Url;
                 );
             ?>
 
-            <?= $form->field($model, 'content')->widget(ImperaviWidget::className(), [
+            <?= $form->field($model, 'announce')->widget(ImperaviWidget::className(), [
                 'settings' => [
                     'replaceDivs' => false,
                     'minHeight' => 200,
@@ -100,7 +100,7 @@ use yii\helpers\Url;
                 ],
             ]); ?>
 
-            <?= $form->field($model, 'announce')->widget(ImperaviWidget::className(), [
+            <?= $form->field($model, 'content')->widget(ImperaviWidget::className(), [
                 'settings' => [
                     'replaceDivs' => false,
                     'minHeight' => 200,
