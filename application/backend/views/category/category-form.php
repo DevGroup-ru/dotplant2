@@ -45,7 +45,6 @@ use yii\helpers\Url;
 
 <section id="widget-grid">
     <div class="row">
-        
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Category'), 'icon'=>'tree', 'footer'=>$this->blocks['submit']]); ?>
@@ -53,72 +52,72 @@ use yii\helpers\Url;
             <?= $form->field($model, 'active')->widget(\kartik\switchinput\SwitchInput::className()) ?>
 
             <?php if ($model->parent_id == 0): ?>
-            <?=
-            $form->field($model, 'category_group_id')
-                ->dropDownList(
-                    \app\components\Helper::getModelMap(\app\models\CategoryGroup::className(), 'id', 'name')
-                )
-            ?>
-            <?php endif; ?>
-                
-                <?= $form->field($model, 'name')?>
-
                 <?=
-                    $form->field($model, 'title', [
-                        'addon' => [
-                            'append' => [
-                                'content' => Html::button(
-                                    Icon::show('copy'),
-                                    ['class'=>'btn btn-primary', 'id'=>'copy-title']
-                                ),
-                                'asButton' => true,
-                            ]
-                        ]
-                    ])
-                ?>
-
-                <?=
-                $form->field(app\models\ViewObject::getByModel($model, true), 'view_id')
+                $form->field($model, 'category_group_id')
                     ->dropDownList(
-                        app\models\View::getAllAsArray()
-                    );
+                        \app\components\Helper::getModelMap(\app\models\CategoryGroup::className(), 'id', 'name')
+                    )
                 ?>
+            <?php endif; ?>
 
-                <?= $form->field($model, 'content')->widget(ImperaviWidget::className(), [
-                    'settings' => [
-                        'replaceDivs' => false,
-                        'minHeight' => 200,
-                        'paragraphize' => true,
-                        'pastePlainText' => true,
-                        'buttonSource' => true,
-                        'plugins' => [
-                            'table',
-                            'fontsize',
-                            'fontfamily',
-                            'fontcolor',
-                            'video',
-                        ],
-                    ],
-                ]); ?>
+            <?= $form->field($model, 'name')?>
 
-                <?= $form->field($model, 'announce')->widget(ImperaviWidget::className(), [
-                    'settings' => [
-                        'replaceDivs' => false,
-                        'minHeight' => 200,
-                        'paragraphize' => true,
-                        'pastePlainText' => true,
-                        'buttonSource' => true,
-                        'plugins' => [
-                            'table',
-                            'fontsize',
-                            'fontfamily',
-                            'fontcolor',
-                            'video',
-                        ],
+            <?=
+                $form->field($model, 'title', [
+                    'addon' => [
+                        'append' => [
+                            'content' => Html::button(
+                                Icon::show('copy'),
+                                ['class'=>'btn btn-primary', 'id'=>'copy-title']
+                            ),
+                            'asButton' => true,
+                        ]
+                    ]
+                ])
+            ?>
+
+            <?=
+            $form->field(app\models\ViewObject::getByModel($model, true), 'view_id')
+                ->dropDownList(
+                    app\models\View::getAllAsArray()
+                );
+            ?>
+
+            <?= $form->field($model, 'content')->widget(ImperaviWidget::className(), [
+                'settings' => [
+                    'replaceDivs' => false,
+                    'minHeight' => 200,
+                    'paragraphize' => true,
+                    'pastePlainText' => true,
+                    'buttonSource' => true,
+                    'plugins' => [
+                        'table',
+                        'fontsize',
+                        'fontfamily',
+                        'fontcolor',
+                        'video',
                     ],
-                ]); ?>
-                
-                <?= $form->field($model, 'sort_order'); ?>
+                ],
+            ]); ?>
+
+            <?= $form->field($model, 'announce')->widget(ImperaviWidget::className(), [
+                'settings' => [
+                    'replaceDivs' => false,
+                    'minHeight' => 200,
+                    'paragraphize' => true,
+                    'pastePlainText' => true,
+                    'buttonSource' => true,
+                    'plugins' => [
+                        'table',
+                        'fontsize',
+                        'fontfamily',
+                        'fontcolor',
+                        'video',
+                    ],
+                ],
+            ]); ?>
+
+            <?= $form->field($model, 'sort_order'); ?>
 
             <?php BackendWidget::end(); ?>
 
@@ -165,7 +164,6 @@ use yii\helpers\Url;
             <?php BackendWidget::end(); ?>
         </article>
 
-        
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'SEO'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
 
@@ -196,7 +194,7 @@ use yii\helpers\Url;
                         ]
                     ])
                 ?>
-                
+
                 <?=
                     $form->field($model, 'breadcrumbs_label', [
                         'addon' => [
@@ -224,9 +222,7 @@ use yii\helpers\Url;
                 ]);
             ?>
 
-
         </article>
-
     </div>
 </section>
 
@@ -236,11 +232,11 @@ use yii\helpers\Url;
         $("#translit-slug").click(function () {
             Admin.makeSlug(
                 [
-                    "#category-name", 
-                    "#category-title", 
-                    "#category-h1", 
+                    "#category-name",
+                    "#category-title",
+                    "#category-h1",
                     "#category-breadcrumbs_label"
-                ], 
+                ],
                 "#category-slug"
             );
             return false;
@@ -249,10 +245,10 @@ use yii\helpers\Url;
         $("#copy-title").click(function () {
             Admin.copyFrom(
                 [
-                    "#category-name", 
-                    "#category-h1", 
+                    "#category-name",
+                    "#category-h1",
                     "#category-breadcrumbs_label"
-                ], 
+                ],
                 "#category-title"
             );
             return false;
@@ -261,10 +257,10 @@ use yii\helpers\Url;
         $("#copy-h1").click(function () {
             Admin.copyFrom(
                 [
-                    "#category-name", 
-                    "#category-title", 
+                    "#category-name",
+                    "#category-title",
                     "#category-breadcrumbs_label"
-                ], 
+                ],
                 "#category-h1"
             );
             return false;
@@ -274,10 +270,10 @@ use yii\helpers\Url;
         $("#copy-breadcrumbs_label").click(function () {
             Admin.copyFrom(
                 [
-                    "#category-name", 
-                    "#category-title", 
+                    "#category-name",
+                    "#category-title",
                     "#category-h1"
-                ], 
+                ],
                 "#category-breadcrumbs_label"
             );
             return false;
