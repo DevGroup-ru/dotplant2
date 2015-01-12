@@ -56,20 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Content block'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
                 <?= $form->field($model, 'content_block_name')?>
-                <?php
-                    $url = Url::to(['/backend/category/autocomplete']);
-                    $initScript = <<< SCRIPT
-function (element, callback) {
-    var id=$(element).val();
-    if (id !== "") {
-        $.ajax("{$url}?id=" + id, {
-            dataType: "json"
-        }).done(function(data) { callback(data.results);});
-    }
-}
-SCRIPT;
 
-                ?>
                 <?= $form->field($model, 'content')->widget(ImperaviWidget::className(), [
                     'settings' => [
                         'replaceDivs' => false,
@@ -100,6 +87,20 @@ SCRIPT;
 
 <?php BackendWidget::begin(['title'=> Yii::t('app', 'Match settings'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
     <div id="properties">
+        <?php
+            $url = Url::to(['/backend/category/autocomplete']);
+            $initScript = <<< SCRIPT
+    function (element, callback) {
+        var id=$(element).val();
+        if (id !== "") {
+            $.ajax("{$url}?id=" + id, {
+                dataType: "json"
+            }).done(function(data) { callback(data.results);});
+        }
+    }
+SCRIPT;
+
+            ?>
         <?= $form->field($model, 'apply_if_last_category_id')->widget(Select2::classname(), [
             'options' => ['placeholder' => 'Search for a category ...'],
             'pluginOptions' => [
