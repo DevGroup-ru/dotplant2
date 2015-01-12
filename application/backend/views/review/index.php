@@ -60,6 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'class' => \kartik\grid\EditableColumn::className(),
                         'editableOptions' => [
                             'inputType' => \kartik\editable\Editable::INPUT_DROPDOWN_LIST,
+                            'placement' => \kartik\popover\PopoverX::ALIGN_LEFT,
                             'data' => \app\reviews\models\Review::getStatuses(),
                             'formOptions' => [
                                 'action' => 'update-status',
