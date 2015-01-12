@@ -18,7 +18,7 @@ use app\widgets\ImgSearch;
 use kartik\helpers\Html;
 use yii\helpers\Url;
 
-$this->title = $model->title;
+$this->title = $this->blocks['title'];
 $this->params['breadcrumbs'] = $breadcrumbs;
 $listView = isset($_COOKIE['listViewType']) && $_COOKIE['listViewType'] == 'listView';
 $products = Product::find()->where(['active' => 1])->limit(3)->all();
@@ -99,7 +99,7 @@ $images = Image::getForModel($model->object->id, $model->id);
 <!--        <h4>100 items in stock</h4>-->
 <!--        <hr class="soft clr">-->
         <div itemprop="description">
-            <?= $model->announce ?>
+            <?= $this->blocks['announce'] ?>
         </div>
 <!--        <a class="btn btn-small pull-right" href="#detail">More Details</a>-->
 <!--        <br class="clr">-->
@@ -123,7 +123,7 @@ $images = Image::getForModel($model->object->id, $model->id);
         ?>
     </div>
     <div class="tab-pane fade active in" id="home">
-        <?= $model->content ?>
+        <?= $this->blocks['content'] ?>
     </div>
     <div class="tab-pane fade" id="profile">
     <div id="myTab" class="pull-right">

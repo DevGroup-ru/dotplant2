@@ -53,6 +53,11 @@ class PageController extends Controller
         $this->processReviews(Object::getForClass($model->className())->id, $model->id);
 
         $this->view->title = $model->title;
+        if (!empty($model->h1)) {
+            $this->view->blocks['h1'] = $model->h1;
+        }
+        $this->view->blocks['content'] = $model->content;
+        $this->view->blocks['announce'] = $model->announce;
 
         return $this->render(
             $this->computeViewFile($model, 'show'),
@@ -102,6 +107,11 @@ class PageController extends Controller
             ->all();
 
         $this->view->title = $model->title;
+        if (!empty($model->h1)) {
+            $this->view->blocks['h1'] = $model->h1;
+        }
+        $this->view->blocks['content'] = $model->content;
+        $this->view->blocks['announce'] = $model->announce;
 
         return $this->render(
             $this->computeViewFile($model, 'list'),

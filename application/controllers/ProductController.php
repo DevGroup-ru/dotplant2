@@ -109,7 +109,9 @@ class ProductController extends Controller
         }
 
 
-
+        $this->view->blocks['h1'] = $selected_category->h1;
+        $this->view->blocks['announce'] = $selected_category->announce;
+        $this->view->blocks['content'] = $selected_category->content;
 
         $this->loadDynamicContent($object->id, 'product/list', $request->get());
 
@@ -198,6 +200,10 @@ class ProductController extends Controller
         $this->processReviews($object->id, $product->id);
 
         $this->view->title = $product->title;
+        $this->view->blocks['announce'] = $product->announce;
+        $this->view->blocks['content'] = $product->content;
+        $this->view->blocks['title'] = $product->title;
+
 
         return $this->render(
             $this->computeViewFile($product, 'show'),

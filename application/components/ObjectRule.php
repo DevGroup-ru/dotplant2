@@ -96,25 +96,23 @@ class ObjectRule implements UrlRuleInterface
             $params['category_group_id'] = $category->category_group_id;
             $params['last_category_id'] = $category->id;
 
-            $set_if_not_empty = [
-                'content_rewrite' => 'content',
-                'announce_rewrite' => 'announce',
-                'title_rewrite' => 'title',
-                'h1_rewrite' => 'h1',
-                'meta_description_rewrite' => 'meta_description',
-                'breadcrumbs_label_rewrite' => 'breadrumbs_label',
-
+            if (!empty($prefilteredPage['title'])) {
+                Yii::$app->response->title = $prefilteredPage['title'];
+            }
+            $blocks = [
+                'content',
+                'announce',
+                'breadcrumbs_label',
+                'h1',
             ];
 
-            foreach ($set_if_not_empty as $param => $attribute) {
-                // unset for safety
-                unset($_GET[$param]);
+            foreach ($blocks as $block_name) {
 
-                if (!empty($prefilteredPage[$attribute])) {
-                    $params[$param] = $prefilteredPage[$attribute];
+                if (!empty($prefilteredPage[$block_name])) {
+                    Yii::$app->response->blocks[$block_name] = $prefilteredPage[$block_name];
                 }
             }
-
+            Yii::$app->response->is_prefiltered_page = true;
             return [
                 'product/list',
                 $params

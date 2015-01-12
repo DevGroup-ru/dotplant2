@@ -10,6 +10,10 @@ trait DynamicContentTrait
 {
     public function loadDynamicContent($object_id, $route, $selections)
     {
+        if (Yii::$app->response->is_prefiltered_page === true) {
+            // DynamicContent should not work on prefiltered pages - all needed content is set in corresponding model
+            return;
+        }
         /**
          * @var $this \yii\web\Controller
          */
@@ -64,23 +68,17 @@ trait DynamicContentTrait
                 }
                 if ($matches === true) {
                     if (!empty($model->content_block_name)) {
-                        $this->view->blocks[$model->content_block_name] = $model->content;
+                        Yii::$app->response->blocks[$model->content_block_name] = $model->content;
                     }
                     if (!empty($model->title)) {
-                        $this->view->title = $model->title;
+                        Yii::$app->response->title = $model->title;
                     }
                     if (!empty($model->h1)) {
-                        $this->view->blocks['h1'] = $model->h1;
+                        Yii::$app->response->blocks['h1'] = $model->h1;
                     }
 
                     if (!empty($model->meta_description)) {
-                        $this->view->registerMetaTag(
-                            [
-                                'name' => 'description',
-                                'content' => $model->meta_description,
-                            ],
-                            'meta_description'
-                        );
+                        Yii::$app->response->meta_description = $model->meta_description;
 
                     }
 
@@ -89,31 +87,6 @@ trait DynamicContentTrait
             } else {
                 $matches = true;
             }
-        }
-
-        // rewrites through prefiltered page
-
-
-        if (isset($_GET['title_rewrite'])) {
-            $this->view->title = $_GET['title_rewrite'];
-            unset($_GET['title_rewrite']);
-        }
-
-        if (isset($_GET['h1_rewrite'])) {
-            $this->view->blocks['h1'] = $_GET['h1_rewrite'];
-            unset($_GET['h1_rewrite']);
-        }
-
-        if (isset($_GET['meta_description_rewrite'])) {
-            $this->view->registerMetaTag(
-                [
-                    'name' => 'description',
-                    'content' => $_GET['meta_description_rewrite'],
-                ],
-                'meta_description'
-            );
-
-            unset($_GET['meta_description_rewrite']);
         }
 
     }

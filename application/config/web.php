@@ -51,6 +51,9 @@ $config = [
             'enableCsrfValidation' => true,
             'cookieValidationKey' => 'njandsfkasbf',
         ],
+        'response' => [
+            'class' => 'app\components\Response',
+        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,

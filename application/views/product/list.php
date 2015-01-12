@@ -39,9 +39,9 @@ $this->endBlock();
 
 ?>
 <small class="pull-right"> <?= Yii::t('shop', '{n} products are available', ['n' => $pages ->totalCount]) ?> </small>
-<h1> <?= $selected_category->h1 ?></h1>
+<h1> <?= $this->blocks['h1'] ?></h1>
 <hr class="soft"/>
-<?= $selected_category->announce ?>
+<?= $this->blocks['announce'] ?>
 <hr class="soft"/>
 <form class="form-horizontal span6">
     <div class="control-group">
@@ -119,6 +119,6 @@ $this->endBlock();
 </div>
 
 <?php if (!isset($_GET['page']) && count($values_by_property_id) === 0): ?>
-    <div class="content"><?= $selected_category->content ?></div>
+    <div class="content"><?= $this->blocks['content'] ?></div>
 <?php endif; ?>
 <br class="clr"/>
