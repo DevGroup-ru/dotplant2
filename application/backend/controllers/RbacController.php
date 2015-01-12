@@ -89,7 +89,7 @@ class RbacController extends Controller
     public function actionCreate($type)
     {
         $rules = ArrayHelper::map(\Yii::$app->getAuthManager()->getRules(), 'name', 'name');
-        $model = new AuthItemForm();
+        $model = new AuthItemForm(['isNewRecord' => true]);
         if ($model->load($_POST) && $model->validate()) {
             $item = $model->createItem();
             if (strlen($model->getErrorMessage()) > 0) {

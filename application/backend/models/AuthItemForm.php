@@ -16,6 +16,7 @@ class AuthItemForm extends Model
     public $type;
     public $description = '';
     public $ruleName = null;
+    public $isNewRecord = false;
 
     public $children = [];
 
@@ -29,6 +30,7 @@ class AuthItemForm extends Model
         return [
             [['name', 'type'], 'required'],
             ['name', 'check'],
+            ['isNewRecord', 'boolean'],
         ];
     }
 

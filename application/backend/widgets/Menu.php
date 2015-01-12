@@ -65,7 +65,7 @@ class Menu extends Widget
             if (isset($item['rback_check']) && $item['rback_check'] && !Yii::$app->user->can($item['rbac_check'])) {
                 continue;
             }
-            if (isset($item['active']) && !$item['active']) {
+            if (isset($item['visible']) && !$item['visible']) {
                 continue;
             }
             $menu = $this->renderItem($item);
