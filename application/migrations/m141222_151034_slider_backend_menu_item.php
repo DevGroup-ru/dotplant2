@@ -14,7 +14,7 @@ class m141222_151034_slider_backend_menu_item extends Migration
             'icon' => 'arrows-h',
             'sort_order' => '10',
             'added_by_ext' => 'core',
-            'rbac_check' => '',
+            'rbac_check' => 'content manage',
             'css_class' => '',
             'translation_category' => 'app'
         ];
