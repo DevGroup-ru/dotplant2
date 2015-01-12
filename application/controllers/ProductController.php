@@ -108,6 +108,9 @@ class ProductController extends Controller
             $this->view->title .= " " . $title_append;
         }
 
+
+
+
         $this->loadDynamicContent($object->id, 'product/list', $request->get());
 
         return $this->render(

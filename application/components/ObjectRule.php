@@ -2,13 +2,17 @@
 
 namespace app\components;
 
+use app\models\Category;
 use app\models\Object;
+use app\models\PrefilteredPages;
 use app\models\Route;
 use app\properties\url\StaticPart;
 use Yii;
 use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 use yii\helpers\Url;
+use yii\web\NotFoundHttpException;
 use yii\web\UrlRuleInterface;
 
 class ObjectRule implements UrlRuleInterface
@@ -80,6 +84,43 @@ class ObjectRule implements UrlRuleInterface
             Yii::endProfile("ObjectRule::parseRequest");
             return false;
         }
+
+        $prefilteredPage = PrefilteredPages::getActiveByUrl($url);
+
+        if ($prefilteredPage !== null) {
+            $params = Json::decode($prefilteredPage['params']);
+            $category = Category::findById($prefilteredPage['last_category_id']);
+            if ($category === null) {
+                throw new NotFoundHttpException;
+            }
+            $params['category_group_id'] = $category->category_group_id;
+            $params['last_category_id'] = $category->id;
+
+            $set_if_not_empty = [
+                'content_rewrite' => 'content',
+                'announce_rewrite' => 'announce',
+                'title_rewrite' => 'title',
+                'h1_rewrite' => 'h1',
+                'meta_description_rewrite' => 'meta_description',
+                'breadcrumbs_label_rewrite' => 'breadrumbs_label',
+
+            ];
+
+            foreach ($set_if_not_empty as $param => $attribute) {
+                // unset for safety
+                unset($_GET[$param]);
+
+                if (!empty($prefilteredPage[$attribute])) {
+                    $params[$param] = $prefilteredPage[$attribute];
+                }
+            }
+
+            return [
+                'product/list',
+                $params
+            ];
+        }
+
         foreach (ObjectRule::getRoutes() as $model) {
             $handlers = [];
             $object = Object::findById($model->object_id);

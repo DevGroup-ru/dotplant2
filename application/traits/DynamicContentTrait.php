@@ -90,5 +90,31 @@ trait DynamicContentTrait
                 $matches = true;
             }
         }
+
+        // rewrites through prefiltered page
+
+
+        if (isset($_GET['title_rewrite'])) {
+            $this->view->title = $_GET['title_rewrite'];
+            unset($_GET['title_rewrite']);
+        }
+
+        if (isset($_GET['h1_rewrite'])) {
+            $this->view->blocks['h1'] = $_GET['h1_rewrite'];
+            unset($_GET['h1_rewrite']);
+        }
+
+        if (isset($_GET['meta_description_rewrite'])) {
+            $this->view->registerMetaTag(
+                [
+                    'name' => 'description',
+                    'content' => $_GET['meta_description_rewrite'],
+                ],
+                'meta_description'
+            );
+
+            unset($_GET['meta_description_rewrite']);
+        }
+
     }
 }
