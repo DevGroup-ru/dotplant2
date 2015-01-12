@@ -47,8 +47,7 @@ class DynamicContentController extends Controller
     public function actionEdit($id = null)
     {
         $model = new DynamicContent;
-        $model->content_block_name = 'bottom_text';
-        $model->route = 'product/list';
+        $model->loadDefaultValues();
         
         if ($id !== null) {
             $model = DynamicContent::findOne($id);
