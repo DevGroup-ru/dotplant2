@@ -93,6 +93,7 @@ class Category extends ActiveRecord
             [['slug'], 'string', 'max' => 80],
             [['slug_compiled'], 'string', 'max' => 180],
             [['title_append'], 'string'],
+            [['active'], 'default', 'value' => 1],
         ];
     }
 
