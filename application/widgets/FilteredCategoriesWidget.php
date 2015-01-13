@@ -15,7 +15,7 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
 
     public $viewFile = 'categories-list';
     public $values_by_property_id = [];
-    
+    public $limit = null;
 
     public function run()
     {
@@ -26,6 +26,10 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
         }
         $query->groupBy(Category::tableName().".id");
         $query->orderBy(Category::tableName().".sort_order");
+
+        if ($this->limit !== null) {
+            $query->limit($this->limit);
+        }
 
         $object = Object::getForClass(Category::className());
 
