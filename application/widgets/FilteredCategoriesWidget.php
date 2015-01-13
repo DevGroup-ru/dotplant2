@@ -39,12 +39,12 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
             $this->values_by_property_id,
             []
         );
-
-        $cacheKey = "FilteredCategoriesWidget:".$this->root_category_id.":".$this->viewFile.":".Json::encode($this->values_by_property_id);
+        $sql = $query->createCommand()->getRawSql();
+        $cacheKey = "FilteredCategoriesWidget:".md5($sql);
         $result = Yii::$app->cache->get($cacheKey);
-        
+
         if ($result === false) {
-            $categories = Category::findBySql($query->createCommand()->getRawSql())->all();
+            $categories = Category::findBySql($sql)->all();
 
             $result = $this->render(
                 $this->viewFile,
