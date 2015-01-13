@@ -7,7 +7,10 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Widget;
 
-
+/**
+ * ProductsWidget displays products by specified filtration criteria
+ * @package app\widgets
+ */
 class ProductsWidget extends Widget
 {
     public $limit = 3;
