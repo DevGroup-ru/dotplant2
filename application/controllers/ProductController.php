@@ -334,6 +334,12 @@ class ProductController extends Controller
             ];
         }
         unset($breadcrumbs[count($breadcrumbs) - 1]['url']); // last item is not a link
+
+        if (isset(Yii::$app->response->blocks['breadcrumbs_label'])) {
+            // last item label rewrited through prefiltered page or something similar
+            $breadcrumbs[count($breadcrumbs) - 1]['label'] = Yii::$app->response->blocks['breadcrumbs_label'];
+        }
+
         return $breadcrumbs;
     }
 }
