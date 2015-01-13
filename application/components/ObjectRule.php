@@ -115,6 +115,11 @@ class ObjectRule implements UrlRuleInterface
                 }
             }
             Yii::$app->response->is_prefiltered_page = true;
+
+            if ($prefilteredPage['view_id']>0) {
+                Yii::$app->response->view_id = $prefilteredPage['view_id'];
+            }
+
             return [
                 'product/list',
                 $params
