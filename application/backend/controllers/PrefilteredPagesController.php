@@ -67,17 +67,13 @@ class PrefilteredPagesController extends Controller
             )->column();
 
         $properties = Property::find()
-            ->where(
-                [
-                'has_static_values' => 1,
-                'has_slugs_in_values' => 1,
-                ]
-            )->andWhere(['in', 'property_group_id', $property_groups_ids_for_object])
+            ->andWhere(['in', 'property_group_id', $property_groups_ids_for_object])
             ->all();
         foreach ($properties as $prop) {
             $static_values_properties[$prop->id] = [
                 'property' => $prop,
                 'static_values_select' => PropertyStaticValues::getSelectForPropertyId($prop->id),
+                'has_static_values' => $prop->has_static_values === 1,
             ];
         }
 

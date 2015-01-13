@@ -165,11 +165,12 @@ $(function(){
     var static_values_properties = <?= Json::encode($static_values_properties) ?>;
 
     function addProperty(property_id, selected) {
-        var $property = $(
+        var index = $('.add-property .parameter').length,
+            $property = $(
             _.template(
                 $("#parameter-template").html(),
                 {
-                    index : $('.add-property .parameter').length
+                    'index' : index
                 }
             )
         );
@@ -179,13 +180,17 @@ $(function(){
             $select.empty();
             var property_id = $(this).val();
             if (property_id>0){
-                var static_values = static_values_properties[property_id]['static_values_select'];
-                for (var i in static_values) {
-                    var $option = $('<option>');
-                    $option
-                        .val(i)
-                        .html(static_values[i]);
-                    $select.append($option);
+                if (static_values_properties[property_id]['has_static_values'] === false) {
+                    $select.replaceWith($('<input type="text" id="PropertyValue_'+index+'" class="form-control select">'));
+                } else {
+                    var static_values = static_values_properties[property_id]['static_values_select'];
+                    for (var i in static_values) {
+                        var $option = $('<option>');
+                        $option
+                            .val(i)
+                            .html(static_values[i]);
+                        $select.append($option);
+                    }
                 }
             }
         });
@@ -218,7 +223,7 @@ $(function(){
             var value = $(this).find('.select').val();
             serialized[key]=value;
         });
-        
+
         $("#params").val(JSON.stringify(serialized));
 
         return true;
