@@ -56,7 +56,9 @@ class PrefilteredPages extends \yii\db\ActiveRecord
         return [
             [['active', 'view_id', 'last_category_id'], 'integer'],
             [['params', 'announce', 'content'], 'string'],
-            [['slug', 'title', 'h1', 'meta_description', 'breadcrumbs_label'], 'string', 'max' => 255]
+            [['slug', 'title', 'h1', 'meta_description', 'breadcrumbs_label'], 'string', 'max' => 255],
+            [['active'], 'default', 'value'=>1],
+            [['last_category_id'], 'required'],
         ];
     }
 

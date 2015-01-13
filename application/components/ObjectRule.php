@@ -88,7 +88,9 @@ class ObjectRule implements UrlRuleInterface
         $prefilteredPage = PrefilteredPages::getActiveByUrl($url);
 
         if ($prefilteredPage !== null) {
-            $params = Json::decode($prefilteredPage['params']);
+            $params = [
+                'properties' => Json::decode($prefilteredPage['params'])
+            ];
             $category = Category::findById($prefilteredPage['last_category_id']);
             if ($category === null) {
                 throw new NotFoundHttpException;

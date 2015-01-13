@@ -49,7 +49,7 @@ class PrefilteredPagesController extends Controller
     public function actionEdit($id = null)
     {
         $model = new PrefilteredPages;
-
+        $model->loadDefaultValues();
 
         if ($id !== null) {
             $model = PrefilteredPages::findOne($id);
