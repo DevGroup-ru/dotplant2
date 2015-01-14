@@ -41,6 +41,7 @@ class ProductOption extends Widget
         } else {
             $propertyGroup = Json::decode($this->model->option_generate)['group'];
             $items = [];
+            $optionsJson = [];
             foreach ($this->model->options as $option) {
                 $optionProperties = $option->getPropertyGroups()[$propertyGroup];
                 $itemsJson = [];
@@ -56,14 +57,16 @@ class ProductOption extends Widget
                         }
                         $items[$key]['values'][$propValue['psv_id']] = $propValue['name'];
                         $itemsJson[$key] = $propValue['psv_id'];
+
+                        $optionsJson[] = [
+                            'id' => $option->id,
+                            'values' => $itemsJson,
+                            'price' => $option->price,
+                            'old_price' => $option->old_price,
+                        ];
                     }
                 }
-                $optionsJson[] = [
-                    'id' => $option->id,
-                    'values' => $itemsJson,
-                    'price' => $option->price,
-                    'old_price' => $option->old_price,
-                ];
+
             }
             return $this->render(
                 $this->formView,
