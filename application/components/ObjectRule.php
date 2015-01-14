@@ -126,7 +126,8 @@ class ObjectRule implements UrlRuleInterface
             ];
         }
 
-        foreach (ObjectRule::getRoutes() as $model) {
+        $routes = ObjectRule::getRoutes();
+        foreach ($routes as $model) {
             $handlers = [];
             $object = Object::findById($model->object_id);
             foreach ($model->template as $t) {
