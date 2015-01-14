@@ -57,7 +57,12 @@ $hideControls = isset($hideControls) && $hideControls;
     <tr>
         <td colspan="3"></td>
         <td><strong><span class="items-count"><?= $cart->items_count ?></span></strong></td>
-        <td class="label label-important" style="display:block"> <strong><span class="total-price"><?= Yii::$app->formatter->asDecimal($cart->total_price, 2) ?></span> <?= Yii::$app->params['currency'] ?></strong></td>
+        <td>
+            <span class="label label-info">
+                <span class="total-price "><?= Yii::$app->formatter->asDecimal($cart->total_price, 2) ?></span>
+                <?= Yii::$app->params['currency'] ?>
+            </span>
+        </td>
     </tr>
     </tbody>
 </table>
