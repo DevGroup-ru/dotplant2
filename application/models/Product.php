@@ -117,6 +117,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -166,6 +169,13 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         return $dataProvider;
     }
 
+    /**
+     * Returns model instance by ID using per-request Identity Map and cache
+     * @param $id
+     * @param int $is_active Return only active
+     * @param int $is_deleted Return not deleted
+     * @return mixed
+     */
     public static function findById($id, $is_active = 1, $is_deleted = 0)
     {
         if (!isset(static::$identity_map[$id])) {
@@ -648,6 +658,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
 
         $userSelectedSortingId = UserPreferences::preferences()->getAttributes()['productListingSortId'];
+        $allSorts = [];
         if ($force_sorting === false) {
             $allSorts = ProductListingSort::enabledSorts();
             if (isset($allSorts[$userSelectedSortingId])) {
@@ -659,7 +670,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             } else {
                 $query->addOrderBy(static::tableName() . '.sort_order');
             }
-        } elseif (!empty($force_sorting)) {
+        } elseif (empty($force_sorting) === false || is_array($force_sorting) === true) {
             $query->addOrderBy($force_sorting);
         }
 
@@ -767,5 +778,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'allSorts' => $allSorts,
         ];
 
+    }
+
+    /**
+     * Returns product main category model instance using per-request Identity Map
+     * @return Category|null
+     */
+    public function getMainCategory()
+    {
+        return Category::findById($this->main_category_id, null, null);
     }
 }

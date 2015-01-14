@@ -23,7 +23,7 @@ class ProductsWidget extends Widget
 
 
     public $itemView = '@app/views/product/item';
-    public $viewFile = 'products-widgets';
+    public $viewFile = 'products-widget';
 
 
     public function run()

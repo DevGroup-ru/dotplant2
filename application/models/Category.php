@@ -160,8 +160,8 @@ class Category extends ActiveRecord
     /**
      * Returns model using indentity map and cache
      * @param string $id
-     * @param int $is_active
-     * @param int $is_deleted
+     * @param int|null $is_active
+     * @param int|null $is_deleted
      * @return Category|null
      */
     public static function findById($id, $is_active = 1, $is_deleted = 0)
