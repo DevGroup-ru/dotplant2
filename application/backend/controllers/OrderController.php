@@ -82,6 +82,7 @@ class OrderController extends Controller
     {
         $searchModel = new SearchModel(
             [
+                'defaultOrder' => ['id' => SORT_DESC],
                 'model' => Order::className(),
                 'relations' => ['user' => ['username']],
                 'partialMatchAttributes' => ['start_date', 'end_date', 'user_username'],
