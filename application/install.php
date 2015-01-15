@@ -93,19 +93,29 @@ if ($memcached_exists) {
     ];
     if ($memcached_type === true) {
         $web_data['components']['cache']['useMemcached'] = true;
-        echo "\nEnter keyPrefix (leave it blank to generate random value): ";
-        $keyPrefix = trim(fgets($f));
-        if ($keyPrefix === "") {
-            $keyPrefix = randomPassword(16);
+        if (getenv('KEY_PREFIX')) {
+            $keyPrefix = getenv('KEY_PREFIX');
+        }
+        else {
+            echo "\nEnter keyPrefix (leave it blank to generate random value): ";
+            $keyPrefix = trim(fgets($f));
+            if ($keyPrefix === "") {
+                $keyPrefix = randomPassword(16);
+            }
         }
         $web_data['components']['cache']['keyPrefix'] = $keyPrefix;
         echo "\nsetting cache keyPrefix to {$keyPrefix}\n";
     }
 } elseif (extension_loaded('apc')) {
-    echo "\nEnter keyPrefix (leave it blank to generate random value): ";
-    $keyPrefix = trim(fgets($f));
-    if ($keyPrefix === "") {
-        $keyPrefix = randomPassword(16);
+    if (getenv('KEY_PREFIX')) {
+        $keyPrefix = getenv('KEY_PREFIX');
+    }
+    else {
+        echo "\nEnter keyPrefix (leave it blank to generate random value): ";
+        $keyPrefix = trim(fgets($f));
+        if ($keyPrefix === "") {
+            $keyPrefix = randomPassword(16);
+        }
     }
     echo "\nsetting cache keyPrefix to {$keyPrefix}\n";
 
