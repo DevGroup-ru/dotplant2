@@ -74,7 +74,7 @@ class ImportCsv extends Import
         return true;
     }
 
-    public function getData($exportFields, $batchSize = 100)
+    public function getData($exportFields, $batchSize = 25)
     {
         $objectFields = isset($exportFields['object']) ? $exportFields['object'] : [];
         $propertiesFields = isset($exportFields['property']) ? $exportFields['property'] : [];
@@ -160,6 +160,9 @@ class ImportCsv extends Import
             }
 
             fputcsv($output, $row);
+            gc_enable();
+            gc_collect_cycles();
+            gc_disable();
         }
         gc_enable();
         fclose($output);
