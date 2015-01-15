@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
+use app\components\Helper;
 use app\data\components\ImportableInterface;
 use app\data\components\ExportableInterface;
 use app\properties\HasProperties;
@@ -395,7 +396,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
 
         if (empty($this->slug)) {
-            $this->slug = 'unslugged-product';
+            $this->slug = Helper::createSlug($this->name);
         } elseif (mb_strlen($this->slug) > 80) {
             $this->slug = mb_substr($this->slug, 0, 80);
         }
@@ -445,7 +446,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     'image_src' => $image_src,
                 ];
             }
-            Image::replaceForModel($this, $input_array);
+            if (count($input_array) > 0) {
+                Image::replaceForModel($this, $input_array);
+            }
         }
     }
 
