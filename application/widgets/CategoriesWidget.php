@@ -132,6 +132,7 @@ class CategoriesWidget extends Widget
             'url' => Url::to($params),
             'items' => [],
             'active' => in_array($model->id, $params['categories']) || $active,
+            '_model' => &$model,
         ];
         if ($this->recursive === true) {
             $children = Category::getByParentId($model->id);
