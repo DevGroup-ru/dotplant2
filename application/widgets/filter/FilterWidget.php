@@ -28,6 +28,11 @@ class FilterWidget extends Widget
     private $disabled_ids = [];
     public $render_dynamic = true;
 
+    /**
+     * @var null|array Array of group ids to display in filter, null to display all available for Object
+     */
+    public $onlyGroupsIds = null;
+
 
     public function run()
     {
@@ -138,6 +143,14 @@ class FilterWidget extends Widget
         $groups = PropertyGroup::getForObjectId($this->objectId);
 
         foreach ($groups as $group) {
+
+            if ($this->onlyGroupsIds !== null) {
+                if (in_array($group->id, $this->onlyGroupsIds) === false) {
+                    // skip this group
+                    continue;
+                }
+            }
+
             if ($group->is_internal) {
                 continue;
             }
