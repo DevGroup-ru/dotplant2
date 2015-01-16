@@ -93,31 +93,11 @@ if ($memcached_exists) {
     ];
     if ($memcached_type === true) {
         $web_data['components']['cache']['useMemcached'] = true;
-        if (getenv('KEY_PREFIX')) {
-            $keyPrefix = getenv('KEY_PREFIX');
-        }
-        else {
-            echo "\nEnter keyPrefix (leave it blank to generate random value): ";
-            $keyPrefix = trim(fgets($f));
-            if ($keyPrefix === "") {
-                $keyPrefix = randomPassword(16);
-            }
-        }
+        $keyPrefix = getVariable('KEY_PREFIX', randomPassword());
         $web_data['components']['cache']['keyPrefix'] = $keyPrefix;
-        echo "\nsetting cache keyPrefix to {$keyPrefix}\n";
     }
 } elseif (extension_loaded('apc')) {
-    if (getenv('KEY_PREFIX')) {
-        $keyPrefix = getenv('KEY_PREFIX');
-    }
-    else {
-        echo "\nEnter keyPrefix (leave it blank to generate random value): ";
-        $keyPrefix = trim(fgets($f));
-        if ($keyPrefix === "") {
-            $keyPrefix = randomPassword(16);
-        }
-    }
-    echo "\nsetting cache keyPrefix to {$keyPrefix}\n";
+    $keyPrefix = getVariable('KEY_PREFIX', randomPassword());
 
     $web_data['components']['cache'] = [
         'class' => 'yii\caching\ApcCache',
@@ -181,4 +161,17 @@ function randomPassword($num=14) {
         $pass[] = $alphabet[$n];
     }
     return implode($pass); //turn the array into a string
+}
+
+function getVariable($envVar, $defaultValue) {
+    if (($var = getenv($envVar)) === false) {
+        echo "\nEnter {$envVar} (leave it blank to generate random value): ";
+        $var = trim(fgets($f));
+        if ($var === "") {
+            $var = $defaultValue;
+        }
+    }
+    echo "\nsetting cache {$envVar} to {$var}\n";
+
+    return $var;
 }
