@@ -67,6 +67,7 @@ class NavigationWidget extends Widget
                 );
             }
         }
+
         return $this->render(
             $this->viewFile,
             [
@@ -86,9 +87,8 @@ class NavigationWidget extends Widget
         if (trim($model->url)) {
             $url = trim($model->url);
         } else {
-            $params[] = $model->route;
-            $params += (trim($model->route_params)) ? Json::decode($model->route_params) : [];
-            $url = Url::to($params);
+            $params = (trim($model->route_params)) ? Json::decode($model->route_params) : [];
+            $url = ArrayHelper::merge([$model->route], $params);
         }
         $tree = [
             'label' => $model->name,
