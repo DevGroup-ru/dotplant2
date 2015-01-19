@@ -93,7 +93,7 @@ use app\models\Property;
                                                 unset($params_clone['properties'][$property_id]);
                                                 $url = Url::toRoute($params_clone);
                                                 $go_back = Html::a(
-                                                    Html::tag('i', '', ['class' => 'icon-white icon-remove']),
+                                                    Html::tag('i', '', ['class' => 'fa fa-times']),
                                                     $url,
                                                     ['class'=>'go-back']
                                                 );
