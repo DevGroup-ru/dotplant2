@@ -86,7 +86,7 @@ use app\models\Property;
                                     }
                                     $go_back = '';
                                     if (isset($params['properties'][$property_id]) && is_array($params['properties'][$property_id])) {
-                                        if (in_array($value['id'],$params['properties'][$property_id])) {
+                                        if (in_array($value['id'], $params['properties'][$property_id])) {
                                             $options['class'] .= 'active';
                                             if ($go_back_alignment != 'none'){
                                                 $params_clone = $params;

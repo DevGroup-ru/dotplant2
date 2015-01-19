@@ -165,7 +165,7 @@ class ObjectRule implements UrlRuleInterface
 
                     foreach ($parameters['properties'] as $key=>$values) {
                         if (isset($_POST['properties'][$key])) {
-                            $parameters['properties'][$key]=ArrayHelper::merge($values,$_POST['properties'][$key]);
+                            $parameters['properties'][$key]=ArrayHelper::merge($values, $_POST['properties'][$key]);
                         }
                     }
 

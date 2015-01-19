@@ -14,6 +14,7 @@
 
 use app\models\Property;
 use kartik\helpers\Html;
+use yii\helpers\Url;
 
 ?>
 <dl>
@@ -25,7 +26,11 @@ use kartik\helpers\Html;
     echo Html::tag('dt', $property->name);
     foreach ($values->values as $val) {
         if (isset($val['value'])) {
-            echo Html::tag('dd', Html::a($val['value'],\yii\helpers\Url::to(['form/download', 'key' => $val['key'], 'id' => $values->object_model_id])));
+            echo Html::tag('dd', Html::a($val['value'], Url::to([
+                'form/download',
+                'key' => $val['key'],
+                'id' => $values->object_model_id
+            ])));
         }
     }
     ?>

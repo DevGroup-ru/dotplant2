@@ -177,7 +177,7 @@ $editable_formOptions = [
                         Html::a(
                             Icon::show('plus') . ' ' .
                             Yii::t('app', 'Add slide'),
-                            ['new-slide', 'slider_id' => $model->id,],
+                            ['new-slide', 'slider_id' => $model->id, ],
                             [
                                 'class' => 'btn btn-primary'
                             ]

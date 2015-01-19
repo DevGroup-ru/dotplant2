@@ -88,7 +88,7 @@ use kartik\form\ActiveForm;
                                     }
                                     $active = false;
                                     if (isset($params['properties'][$property_id]) && is_array($params['properties'][$property_id])) {
-                                        if (in_array($value['id'],$params['properties'][$property_id])) {
+                                        if (in_array($value['id'], $params['properties'][$property_id])) {
                                             $options['class'] .= 'active';
                                             $active=true;
                                         }
@@ -104,9 +104,9 @@ use kartik\form\ActiveForm;
                                             Html::checkBox(
                                                 "properties[$property_id][]",
                                                 $active,
-                                                ['class' => '', 'id'=>"p_$property_id"."_".$value['id'], 'value'=>$value['id']]
+                                                ['class' => '', 'id' => "p_{$property_id}_{$value['id']}", 'value'=>$value['id']]
                                             )." ".$value['name'],
-                                            "p_$property_id"."_".$value['id'],
+                                            "p_{$property_id}_{$value['id']}",
                                             [
                                                 'class'=>($disabled?'muted':'')
                                             ]

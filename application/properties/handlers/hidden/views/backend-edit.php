@@ -20,7 +20,7 @@ use kartik\icons\Icon;
     $totalCount = count($values->values);
 
     foreach ($values->values as $index=>$val) {
-        echo $form->field($model, "$property_key"."[$index]", [
+        echo $form->field($model, "{$property_key}[{$index}]", [
             'addon' => [
                 'append' => [
                     'content' =>

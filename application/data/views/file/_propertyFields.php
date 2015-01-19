@@ -47,7 +47,7 @@ use \yii\helpers\Html;
                             ])
                             ->label(Yii::t('app', 'Process values as:'));
                     }
-                    echo Html::activeHiddenInput($model, $prefix.'key]',['value'=>$key]);
+                    echo Html::activeHiddenInput($model, $prefix. 'key]', ['value' => $key]);
                     echo '</div><br>';
                 }
             ?>

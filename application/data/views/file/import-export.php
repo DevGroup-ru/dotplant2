@@ -67,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="form-group row fields-to-import">
         <div class="col-md-4">
-            <?= $this->render('_objectFields',[
+            <?= $this->render('_objectFields', [
                 'form' => $form,
                 'fields' => $fields,
                 'model' => $model,
@@ -75,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     <?php if (isset($fields['property']) && !empty($fields['property'])): ?>
         <div class="col-md-4">
-            <?= $this->render('_propertyFields',[
+            <?= $this->render('_propertyFields', [
                 'form' => $form,
                 'fields' => $fields,
                 'model' => $model,
@@ -85,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php endif; ?>
 
         <div class="col-md-4">
-            <?= $this->render('_additionalFields',[
+            <?= $this->render('_additionalFields', [
                 'form' => $form,
                 'fields' => $fields,
                 'model' => $model,

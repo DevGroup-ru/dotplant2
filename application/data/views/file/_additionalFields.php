@@ -36,7 +36,7 @@ use \yii\helpers\Html;
                     ->dropDownList($options['processValueAs'])
                     ->label(Yii::t('app', 'Process values as:'));
             }
-            echo Html::activeHiddenInput($model, $prefix.'key]',['value'=>$field_key]);
+            echo Html::activeHiddenInput($model, $prefix. 'key]', ['value' => $field_key]);
             echo '</div><br>';
         }
     ?>
