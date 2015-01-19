@@ -83,6 +83,7 @@ $this->endBlock();
             ],
             'price',
             'old_price',
+            'sku',
             [
                 'class' => 'app\backend\components\ActionColumn',
                 'buttons' => function($model, $key, $index, $parent) {
