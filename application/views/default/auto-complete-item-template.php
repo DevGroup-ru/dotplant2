@@ -7,7 +7,6 @@ $url = \yii\helpers\Url::to(
     [
         'product/show',
         'model' => $product,
-        'last_category_id' => $product->main_category_id,
         'category_group_id' => $product->category->category_group_id,
     ]
 );
