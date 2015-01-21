@@ -131,7 +131,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <th><?= $model->getAttributeLabel('payment_type_id') ?></th>
                         <td>
                             <?=
-                            is_null($model->paymentType)
+                            !is_null($model->paymentType)
                                 ? $model->paymentType->name
                                 : '<em>' . Yii::t('yii', '(not set)') . '</em>'
                             ?>

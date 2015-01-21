@@ -261,13 +261,9 @@ class CartController extends Controller
                     $cart->reCalc();
                 }
                 if (Yii::$app->session->has('orders')) {
-                    Yii::$app->session->set(
-                        'orders',
-                        ArrayHelper::merge(
-                            Yii::$app->session->get('orders'),
-                            [$order->id]
-                        )
-                    );
+                    $orders = Yii::$app->session->get('orders');
+                    $orders[] = $order->id;
+                    Yii::$app->session->set('orders', $orders);
                 } else {
                     Yii::$app->session->set('orders', [$order->id]);
                 }
