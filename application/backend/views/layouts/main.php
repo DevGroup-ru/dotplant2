@@ -80,10 +80,10 @@ Icon::map($this);
         </div>
         <div class="pull-right">
             <div id="hide-menu" class="btn-header pull-right">
-                <span> <a href="javascript:void(0);" data-action="toggleMenu" title="Collapse Menu"><i class="fa fa-reorder"></i></a> </span>
+                <span> <a href="javascript:void(0);" data-action="toggleMenu" title="<?= Yii::t('app', 'Collapse Menu') ?>"><i class="fa fa-reorder"></i></a> </span>
             </div>
             <div id="logout" class="btn-header transparent pull-right">
-                <span> <a href="/logout" title="Sign Out" data-action="userLogout" data-logout-msg="You can improve your security further after logging out by closing this opened browser"><i class="fa fa-sign-out"></i></a> </span>
+                <span> <a href="/logout" title="<?= Yii::t('app', 'Logout') ?>" data-action="userLogout" data-logout-msg="<?= Yii::t('app', 'Are you sure you want to exit') ?>"><i class="fa fa-sign-out"></i></a> </span>
             </div>
             <!--<form action="search.html" class="header-search pull-right">
                 <input id="search-fld"  type="text" name="param" placeholder="Find reports and more">
@@ -93,7 +93,7 @@ Icon::map($this);
                 <a href="javascript:void(0);" id="cancel-search-js" title="Cancel Search"><i class="fa fa-times"></i></a>
             </form>-->
             <div id="fullscreen" class="btn-header transparent pull-right">
-                <span> <a href="javascript:void(0);" data-action="launchFullscreen" title="Full Screen"><i class="fa fa-arrows-alt"></i></a> </span>
+                <span> <a href="javascript:void(0);" data-action="launchFullscreen" title="<?= Yii::t('app', 'Full Screen') ?>"><i class="fa fa-arrows-alt"></i></a> </span>
             </div>
             <?php if(Yii::$app->user->can('cache manage')): ?>
                 <div id="flush-cache" class="btn-header transparent pull-right">
@@ -122,6 +122,9 @@ Icon::map($this);
                         <li><a href="<?= Url::toRoute('/backend/trash/clean'); ?>"><?= Yii::t('shop', 'Clear the cart') ?></a></li>
                     </ul>
                 </span>
+            </div>
+            <div class="btn-header transparent pull-right">
+                <span> <a href="/" title="<?= Yii::t('app', 'Go to site') ?>"><i class="fa fa-newspaper-o"></i></a> </span>
             </div>
         </div>
     </header>

@@ -439,4 +439,10 @@ return [
     'select' => 'выбрать',
     '{currentModuleName} {componentName} is flushed' => '',
     '{key} ' => '',
+    'Full Screen' => 'Во весь экран',
+    'Collapse Menu' => 'Свернуть меню',
+    'Are you sure you want to exit' => 'Вы уверены, что хотите выйти',
+    'Hide Other Values If Selected' => 'Скрывать другие значения, если выбрано',
+    'Display Only On Depended Property Selected' => 'Отображать толькозависимые свойства',
+    'Go to site' => 'Вернуться на сайт',
 ];
