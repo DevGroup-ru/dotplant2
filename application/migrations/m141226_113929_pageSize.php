@@ -24,7 +24,7 @@ class m141226_113929_pageSize extends Migration
             [
                 [$id, 'Min pages per list', 'minPagesPerList', 1, 1, 'page.minPagesPerList'],
                 [$id, 'Max pages per list', 'maxPagesPerList', 50, 1, 'page.maxPagesPerList'],
-                [$id, 'Pages per list', 'pagesPerList', 1, 10, 'page.pagesPerList'],
+                [$id, 'Pages per list', 'pagesPerList', 10, 1, 'page.pagesPerList'],
             ]
         );
     }
