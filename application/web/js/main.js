@@ -17,7 +17,7 @@ var Shop = {
                 }
             },
             'type' : 'post',
-            'url' : '/cart/add'
+            'url' : baseUrl+'/cart/add'
         });
     },
     'changeAmount' : function(orderItemId, quantity, callback) {
@@ -34,7 +34,7 @@ var Shop = {
                 }
             },
             'type' : 'post',
-            'url' : '/cart/change-quantity'
+            'url' : baseUrl+'/cart/change-quantity'
         });
     }
 };
@@ -51,7 +51,7 @@ var DotPlant = {
                 location.reload(true);
                 return false;
             },
-            'url' : '/user-preferences/set'
+            'url' : baseUrl+'/user-preferences/set'
         });
         return false;
     }
@@ -70,7 +70,7 @@ var Order = {
                 self.setContentDeliveryPrice(data);
             } ,
             'type' : 'post',
-            'url' : '/cart/get-delivery-price'
+            'url' : baseUrl+'/cart/get-delivery-price'
         });
 
     },

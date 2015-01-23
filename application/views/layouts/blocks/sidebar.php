@@ -55,7 +55,7 @@
     <?php endif; ?>
     <br/>
     <div class="thumbnail">
-        <img src="/demo/images/payment_methods.png" title="Bootshop Payment Methods" alt="Payments Methods">
+        <img src="<?= Yii::$app->request->baseUrl ?>/demo/images/payment_methods.png" title="Bootshop Payment Methods" alt="Payments Methods">
         <div class="caption">
             <h5><?= Yii::t('app', 'Payment methods') ?></h5>
         </div>

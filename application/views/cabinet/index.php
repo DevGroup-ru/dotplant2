@@ -20,6 +20,6 @@ $links = [
 <h1><?= $this->title ?></h1>
 <ul>
     <?php foreach($links as $url => $anchor): ?>
-        <li><a href="<?= $url ?>"><?= Yii::t('app', $anchor) ?></a></li>
+        <li><a href="<?= Yii::$app->request->baseUrl.$url ?>"><?= Yii::t('app', $anchor) ?></a></li>
     <?php endforeach; ?>
 </ul>

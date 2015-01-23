@@ -8,5 +8,5 @@
 use kartik\helpers\Html;
 
 foreach ($images as $image) {
-    echo Html::a(Html::img($image->thumbnail_src, ['alt' => $image->image_description]), $image->image_src, []);
+    echo Html::a(Html::img(Yii::$app->request->baseUrl.$image->thumbnail_src, ['alt' => $image->image_description]), Yii::$app->request->baseUrl.$image->image_src, []);
 }

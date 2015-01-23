@@ -15,7 +15,7 @@ $this->title = Yii::t('app', 'Your profile');
 $this->params['breadcrumbs'] = [
     [
         'label' => Yii::t('app', 'Personal cabinet'),
-        'url' => '/cabinet'
+        'url' => Yii::$app->request->baseUrl.'/cabinet'
     ],
     $this->title,
 ];

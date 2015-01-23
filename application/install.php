@@ -48,17 +48,17 @@ if ($memcached_exists === true) {
 }
 
 // some chmods
-system('chmod -R 777 ./runtime/');
-system('chmod -R 777 ./web/assets/');
-system('chmod -R 777 ./web/upload/');
-system('chmod -R 777 ./web/data/');
-system('chmod -R 777 ./messages/');
-system('chmod +x ./yii');
+system('chmod -R 777 runtime/');
+system('chmod -R 777 web/assets/');
+system('chmod -R 777 web/upload/');
+system('chmod -R 777 web/data/');
+system('chmod -R 777 messages/');
+system('chmod +x yii');
 
 $composer_status = null;
-system('/usr/bin/env php ../composer.phar global require "fxp/composer-asset-plugin:1.0.0-beta3"');
+system('composer global require "fxp/composer-asset-plugin:1.0.0-beta3"');
 
-system('/usr/bin/env php ../composer.phar install', $composer_status);
+system('composer install', $composer_status);
 if ($composer_status != 0) {
     die("ERROR: Something wrong updating composer.\n");
 }
@@ -148,7 +148,7 @@ $db_config = [
 file_put_contents("config/db-local.php", "<?php\n return " . \yii\helpers\VarDumper::export($db_config) . ";");
 
 // все ENV будут автоматом переданы туда
-passthru('./yii migrate --interactive=0');
+passthru('yii migrate --interactive=0');
 
 
 

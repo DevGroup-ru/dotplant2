@@ -29,7 +29,7 @@ $images = Image::getForModel($model->object->id, $model->id);
     <div id="gallery" class="span3">
         <?php if (count($images) > 0): ?>
             <a href="<?= $images[0]->image_src ?>">
-                <img src="<?= $images[0]->thumbnail_src ?>" alt="<?= $images[0]->image_description ?>" />
+                <img src="<?= Yii::$app->request->baseUrl.$images[0]->thumbnail_src ?>" alt="<?= $images[0]->image_description ?>" />
             </a>
         <?php endif; ?>
         <div id="differentview" class="moreOptopm carousel slide">

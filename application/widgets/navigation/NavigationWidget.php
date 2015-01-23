@@ -92,7 +92,7 @@ class NavigationWidget extends Widget
         }
         $tree = [
             'label' => $model->name,
-            'url' => $url,
+            'url' => \Yii::$app->request->baseUrl.$url,
             'options' => ['class' => $model->advanced_css_class],
             'items' => [],
         ];

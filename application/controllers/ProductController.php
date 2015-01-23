@@ -330,7 +330,7 @@ class ProductController extends Controller
             $url .= '/' . $slug;
             $breadcrumbs[] = [
                 'label' => $label,
-                'url' => $url
+                'url' => Yii::$app->request->baseUrl.$url
             ];
         }
         unset($breadcrumbs[count($breadcrumbs) - 1]['url']); // last item is not a link

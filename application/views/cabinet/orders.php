@@ -11,7 +11,7 @@ $this->title = Yii::t('shop', 'Your orders');
 $this->params['breadcrumbs'] = [
     [
         'label' => Yii::t('app', 'Personal cabinet'),
-        'url' => '/cabinet'
+        'url' => Yii::$app->request->baseUrl.'/cabinet'
     ],
     $this->title,
 ];

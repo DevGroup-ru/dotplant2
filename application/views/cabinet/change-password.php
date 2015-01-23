@@ -12,7 +12,7 @@ $this->title = Yii::t('app', 'Change a password');
 $this->params['breadcrumbs'] = [
     [
         'label' => Yii::t('app', 'Personal cabinet'),
-        'url' => '/cabinet'
+        'url' => Yii::$app->request->baseUrl.'/cabinet'
     ],
     $this->title,
 ];

@@ -117,7 +117,7 @@ class ImageDropzone extends DropZone
             $this->storedFiles[] = [
                 'id' => $file->id,
                 'name' => $file->filename,
-                'thumbnail' => $file->thumbnail_src,
+                'thumbnail' => Yii::$app->request->baseUrl.$file->thumbnail_src,
                 'description' => $file->image_description,
             ];
         }
