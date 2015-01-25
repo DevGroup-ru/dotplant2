@@ -95,11 +95,18 @@ class CartController extends Controller
             throw new NotFoundHttpException;
         }
         $quantity = Yii::$app->request->post('quantity', 1);
+        $additionalParams = Yii::$app->request->post('additionalParams', '{"additionalPrice":0}');
         $cart = Cart::getCart(true);
         if (isset($cart->items[$product->id])) {
-            $cart->items[$product->id] += $quantity;
+            $cart->items[$product->id] = [
+                'quantity' => $quantity + $cart->items[$product->id]['quantity'],
+                'additionalParams' => $additionalParams
+            ];
         } else {
-            $cart->items[$product->id] = $quantity;
+            $cart->items[$product->id] = [
+                'quantity' => $quantity,
+                'additionalParams' => $additionalParams
+            ];
         }
         if ($cart->reCalc()) {
             return [

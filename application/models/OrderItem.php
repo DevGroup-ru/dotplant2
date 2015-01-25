@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  * @property double $quantity
  * @property Order $order
  * @property Product $product
+ * @property string $additional_options
  */
 class OrderItem extends ActiveRecord
 {
@@ -33,7 +34,8 @@ class OrderItem extends ActiveRecord
         return [
             [['order_id', 'product_id', 'quantity'], 'required'],
             [['quantity'], 'number', 'min' => 1, 'integerOnly' => true],
-            [['order_id', 'product_id'], 'integer']
+            [['order_id', 'product_id'], 'integer'],
+            [['additional_options'], 'string']
         ];
     }
 

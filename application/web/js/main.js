@@ -3,10 +3,11 @@
 "use strict";
 
 var Shop = {
-    'addToCart' : function(productId, quantity, callback) {
+    'addToCart' : function(productId, quantity, callback, additionalParams) {
         var data = {
             'id' : productId,
-            'quantity' : typeof(quantity) !== 'undefined' ? quantity : 1
+            'quantity' : typeof(quantity) !== 'undefined' ? quantity : 1,
+            'additionalParams' : typeof(additionalParams) !== 'undefined' ? additionalParams : '{"additionalPrice":0}'
         };
         jQuery.ajax({
             'data' : data,

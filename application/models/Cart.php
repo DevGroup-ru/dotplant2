@@ -132,9 +132,21 @@ class Cart extends ActiveRecord
             $this->products = [];
         }
         foreach ($products as $product) {
+            //backward compatibility
+            if(!is_array($this->items[$product->id])){
+                $this->items[$product->id] = [
+                    'quantity' => $this->items[$product->id],
+                    'additionalParams' => '{"additionalPrice":0}',
+                ];
+            }
             $items[$product->id] = $this->items[$product->id];
-            $itemsCount += $this->items[$product->id];
-            $totalPrice += $this->items[$product->id] * $product->price;
+            if(array_key_exists('additionalParams', $items[$product->id])){
+                $additionalParams = json_decode($items[$product->id]['additionalParams']);
+            }else{
+                $additionalParams =  json_decode('{"additionalPrice":0}');
+            }
+            $itemsCount += $this->items[$product->id]['quantity'];
+            $totalPrice += $this->items[$product->id]['quantity'] * ($product->price + $additionalParams->additionalPrice);
             if ($saveProducts) {
                 $this->products[$product->id] = $product;
             }
