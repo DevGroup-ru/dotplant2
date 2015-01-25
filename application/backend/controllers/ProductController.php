@@ -156,6 +156,10 @@ class ProductController extends Controller
             } else {
                 $model->option_generate = '';
             }
+            if (null !== $parent_id = Yii::$app->request->get('parent_product_id')) {
+                $model->parent_id = $parent_id;
+            }
+
             $save_result = $model->save();
             $model->saveProperties($post);
 
@@ -192,6 +196,7 @@ class ProductController extends Controller
             'id',
             'name'
         );
+
 
         return $this->render(
             'product-form',
