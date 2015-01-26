@@ -255,12 +255,13 @@ class CartController extends Controller
                 $formNameWithoutId = $order->abstractModel->formName();
                 $order->save();
                 if (!is_null($cart)) {
-                    foreach ($cart->items as $productId => $quantity) {
+                    foreach ($cart->items as $productId => $orderOptions) {
                         $orderItem = new OrderItem;
                         $orderItem->attributes = [
                             'order_id' => $order->id,
                             'product_id' => $productId,
-                            'quantity' => $quantity,
+                            'quantity' => $orderOptions['quantity'],
+                            'additional_options' => $orderOptions['additionalParams'],
                         ];
                         $orderItem->save();
                     }
