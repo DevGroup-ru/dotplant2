@@ -164,6 +164,8 @@ function randomPassword($num=14) {
 }
 
 function getVariable($envVar, $defaultValue) {
+    global $f; // dirty hack
+
     if (($var = getenv($envVar)) === false) {
         echo "\nEnter {$envVar} (leave it blank to generate random value): ";
         $var = trim(fgets($f));
