@@ -166,7 +166,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $query->andFilterWhere(['active' => $this->active]);
         $query->andFilterWhere(['price' => $this->price]);
         $query->andFilterWhere(['old_price' => $this->old_price]);
-        $query->andFilterWhere(['sku' => $this->sku]);
+        $query->andFilterWhere(['like', 'sku', $this->sku]);
         $query->andFilterWhere(['is_deleted' => $this->is_deleted]);
         return $dataProvider;
     }

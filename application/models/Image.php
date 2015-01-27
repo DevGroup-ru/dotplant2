@@ -152,6 +152,7 @@ class Image extends \yii\db\ActiveRecord
             foreach ($images as $key => $new) {
                 if (isset($new['image_src'])) {
                     if (!empty($new['image_src'])) {
+                        $new['image_src'] = urldecode(preg_replace("~[\\?#].*$~Usi", "", $new['image_src']));
                         $image_model = new Image;
                         $image_model->object_id = $object->id;
                         $image_model->object_model_id = $model->id;
