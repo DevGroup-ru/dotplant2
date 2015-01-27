@@ -104,10 +104,13 @@ class ProductController extends Controller
                 }
             }
         }
+        if (!$selected_category->active) {
+            throw new NotFoundHttpException;
+        }
+
         if (!empty($title_append)) {
             $this->view->title .= " " . $title_append;
         }
-
 
         $this->view->blocks['h1'] = $selected_category->h1;
         $this->view->blocks['announce'] = $selected_category->announce;
