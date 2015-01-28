@@ -40,9 +40,9 @@ $hideControls = isset($hideControls) && $hideControls;
                 <?php else: ?>
                     <div class="input-append">
                         <input class="span1" style="max-width:34px" placeholder="1" size="16" type="text" data-type="quantity" data-id="<?=$productId?>" value="<?=$cartOptions['quantity']?>" />
-                        <button class="btn btn-primary" type="button" data-action="change-quantity">
+                        <button class="btn btn-primary minus" type="button" data-action="change-quantity">
                             <i class="fa fa-minus"></i></button>
-                        <button class="btn btn-primary" type="button" data-action="change-quantity">
+                        <button class="btn btn-primary plus" type="button" data-action="change-quantity">
                             <i class="fa fa-plus"></i></button>
                         <button class="btn btn-danger" type="button" data-action="delete" data-url="<?=\yii\helpers\Url::toRoute([
                             'cart/delete',
