@@ -484,6 +484,7 @@ class Category extends ActiveRecord
         $categories = static::find()
             ->select(['id', 'name'])
             ->where(['parent_id' => $parentId, 'active' => 1])
+            ->orderBy('sort_order')
             ->all();
         $cache_tags = [];
 
