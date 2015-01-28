@@ -14,7 +14,6 @@ use app\properties\HasProperties;
 use Yii;
 use yii\caching\TagDependency;
 use yii\db\Expression;
-use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -22,6 +21,27 @@ use yii\web\Response;
 
 class CartController extends Controller
 {
+    private function getCachedData($cacheKey, $className)
+    {
+        $data = Yii::$app->cache->get($cacheKey);
+        if ($data === false) {
+            $data = call_user_func([$className, 'findAll'], ['active' => 1]);
+            Yii::$app->cache->set(
+                $cacheKey,
+                $data,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($className),
+                        ],
+                    ]
+                )
+            );
+        }
+        return $data;
+    }
+
     private function loadOrder($id, $allowedStatuses = null)
     {
         $model = Order::findOne($id);
@@ -287,22 +307,7 @@ class CartController extends Controller
                 Yii::$app->session->setFlash('error', Yii::t('shop', 'Please fill required form fields'));
             }
         }
-        $shippingOptions = Yii::$app->cache->get('CartShippingOptions');
-        if ($shippingOptions === false) {
-            $shippingOptions = ShippingOption::findAll(['active' => 1]);
-            Yii::$app->cache->set(
-                'CartShippingOptions',
-                $shippingOptions,
-                86400,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(ShippingOption::className()),
-                        ],
-                    ]
-                )
-            );
-        }
+        $shippingOptions = $this->getCachedData('CartShippingOptions', ShippingOption::className());
         return $this->render(
             'shipping-options',
             [
@@ -325,22 +330,7 @@ class CartController extends Controller
                 $this->redirect(['/cart/payment', 'id' => $order->id]);
             }
         }
-        $paymentTypes = Yii::$app->cache->get('CartPaymentTypes');
-        if ($paymentTypes === false) {
-            $paymentTypes = PaymentType::findAll(['active' => 1]);
-            Yii::$app->cache->set(
-                'CartPaymentTypes',
-                $paymentTypes,
-                86400,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(PaymentType::className()),
-                        ],
-                    ]
-                )
-            );
-        }
+        $paymentTypes = $this->getCachedData('CartPaymentTypes', PaymentType::className());
         return $this->render(
             'payment-type',
             [
