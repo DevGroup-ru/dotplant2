@@ -39,12 +39,15 @@ use yii\helpers\Json;
  * @property double $old_price
  * @property integer $is_deleted
  * @property integer $parent_id
+ * @property Product[] $relatedProducts
  */
 class Product extends ActiveRecord implements ImportableInterface, ExportableInterface
 {
     private static $identity_map = [];
     private static $slug_to_id = [];
     private $category_ids = null;
+
+    public $relatedProductsArray = [];
 
     /**
      * @inheritdoc
@@ -82,6 +85,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             [['old_price', 'price', 'in_warehouse', 'reserved_count'], 'default', 'value' => 0,],
             [['active', 'unlimited_count'], 'default', 'value' => 1],
             [['parent_id', 'slug_absolute', 'sort_order', 'is_deleted'], 'default', 'value' => 0],
+            [['relatedProductsArray'], 'safe'],
 
         ];
     }
@@ -115,6 +119,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'sku' => Yii::t('app', 'SKU'),
             'unlimited_count' => Yii::t('app', 'Unlimited items(don\'t count in warehouse)'),
             'reserved_count' => Yii::t('app', 'Items reserved'),
+            'relatedProductsArray' => Yii::t('app', 'Related products'),
         ];
     }
 
@@ -262,6 +267,12 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         return $this->hasMany(static::className(), ['parent_id' => 'id']);
     }
 
+    public function getRelatedProducts()
+    {
+        return $this->hasMany(Product::className(), ['id' => 'related_product_id'])
+            ->viaTable(RelatedProduct::tableName(), ['product_id' => 'id']);
+    }
+
     public function beforeSave($insert)
     {
         if (1 === $this->is_deleted) {
@@ -289,6 +300,33 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         );
 
         return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $addRelatedProductsArray = (array) $this->relatedProductsArray;
+        foreach ($this->relatedProducts as $product) {
+            $key = array_search($product->id, $addRelatedProductsArray);
+            if ($key === false) {
+                RelatedProduct::deleteAll(
+                    [
+                        'product_id' => $this->id,
+                        'related_product_id' => $product->id,
+                    ]
+                );
+            } else {
+                unset($addRelatedProductsArray[$key]);
+            }
+        }
+        foreach ($addRelatedProductsArray as $relatedProductId) {
+            $relation = new RelatedProduct;
+            $relation->attributes = [
+                'product_id' => $this->id,
+                'related_product_id' => $relatedProductId,
+            ];
+            $relation->save();
+        }
     }
 
     /**
@@ -791,5 +829,13 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     public function getMainCategory()
     {
         return Category::findById($this->main_category_id, null, null);
+    }
+
+    public function loadRelatedProductsArray()
+    {
+        $this->relatedProductsArray = [];
+        foreach ($this->relatedProducts as $product) {
+            $this->relatedProductsArray[] = $product->id;
+        }
     }
 }

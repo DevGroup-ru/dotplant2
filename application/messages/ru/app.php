@@ -445,4 +445,5 @@ return [
     'Hide Other Values If Selected' => 'Скрывать другие значения, если выбрано',
     'Display Only On Depended Property Selected' => 'Отображать толькозависимые свойства',
     'Go to site' => 'Вернуться на сайт',
+    'Related products' => 'Связанные продукты',
 ];

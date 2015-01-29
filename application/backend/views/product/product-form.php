@@ -2,11 +2,11 @@
 
 use app\backend\widgets\BackendWidget;
 use app\models\Product;
-use kartik\dynagrid\DynaGrid;
 use kartik\grid\GridView;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
+use kartik\select2\Select2;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
@@ -71,6 +71,19 @@ $this->params['breadcrumbs'][] = $this->title;
         ->dropDownList(
             app\models\View::getAllAsArray()
         );
+    ?>
+
+    <?=
+    $form->field($model, 'relatedProductsArray')
+        ->widget(
+            Select2::className(),
+            [
+                'data' => \app\components\Helper::getModelMap(Product::className(), 'id', 'name'),
+                'options' => [
+                    'multiple' => true,
+                ],
+            ]
+        )
     ?>
 
     <?php BackendWidget::end(); ?>

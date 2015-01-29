@@ -135,7 +135,7 @@ class ProductController extends Controller
             throw new ServerErrorHttpException;
         }
 
-
+        $model->loadRelatedProductsArray();
 
         $post = \Yii::$app->request->post();
 
