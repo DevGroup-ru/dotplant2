@@ -48,8 +48,8 @@
         "codeception/verify": "*"
     },
     "scripts": {
-        "post-create-project-cmd": [
-            "yii\\composer\\Installer::setPermission"
+        "pre-install-cmd": [
+            "yii\\composer\\Installer::postCreateProject"
         ]
     },
     "config": {
@@ -67,9 +67,6 @@
                     "web/upload": "0777",
                     "yii": "0755"
                 }
-            ],
-            "generateCookieValidationKey": [
-                "config/web.php"
             ]
         },
         "asset-installer-paths": {
