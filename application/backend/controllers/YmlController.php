@@ -199,157 +199,121 @@ class YmlController extends Controller
 
 
             // не общие
-            $fields = [
-                'delivery',
-                'local_delivery_cost',
-                'typePrefix',
-                'vendor',
-                'vendorCode',
-                'model',
-                'description',
-                'manufacturer_warranty',
-                'country_of_origin',
-                'author',
-                'name',
-                'publisher',
-                'series',
-                'year',
-                'ISBN',
-                'volume',
-                'part',
-                'language',
-                'page_extent',
-                'downloadable',
-                'binding',
-                'performed_by',
-                'performance_type',
-                'storage',
-                'format',
-                'recording_length',
-                'title',
-                'media',
-                'starring',
-                'director',
-                'originalName',
-                'country',
-                'worldRegion',
-                'region',
-                'days',
-                'dataTour',
-                'hotel_stars',
-                'room',
-                'meal',
-                'included',
-                'transport',
-                'place',
-                'hall',
-                'hall_part',
-                'date',
-                'is_premiere',
-                'is_kids'
-            ];
+            $offerType = $product->getPropertyValuesByKey('offerType');
+            $fields = [];
+            switch($offerType) {
+                case 'vendor.model':
+                    $fields = [
+                        'delivery',
+                        'local_delivery_cost',
+                        'typePrefix',
+                        'vendor',
+                        'vendorCode',
+                        'model',
+                        'description',
+                        'manufacturer_warranty',
+                        'country_of_origin',
+                    ];
+
+                    // TODO в vendor.model можно добавлять дополнительные параметры <param name="Вес" unit="кг">2.73</param> ...
+                    break;
+                case 'book':
+                    $fields = [
+                        'delivery',
+                        'local_delivery_cost',
+                        'description',
+                        'author',
+                        'name',
+                        'publisher',
+                        'series',
+                        'year',
+                        'ISBN',
+                        'volume',
+                        'part',
+                        'language',
+                        'page_extent',
+                        'downloadable',
+                    ];
+                    break;
+                case 'audiobook':
+                    $field = [
+                        'description',
+                        'author',
+                        'name',
+                        'publisher',
+                        'year',
+                        'ISBN',
+                        'language',
+                        'binding',
+                        'downloadable',
+                        'performed_by',
+                        'performance_type',
+                        'storage',
+                        'format',
+                        'recording_length',
+                    ];
+                    break;
+                case 'artist.title':
+                    $field = [
+                        'delivery',
+                        'description',
+                        'year',
+                        'title',
+                        'media',
+                        'starring',
+                        'director',
+                        'originalName',
+                        'country',
+                    ];
+                    break;
+                case 'tour':
+                    $fields = [
+                        'delivery',
+                        'local_delivery_cost',
+                        'description',
+                        'name',
+                        'country',
+                        'worldRegion',
+                        'region',
+                        'days',
+                        'dataTour',
+                        'hotel_stars',
+                        'room',
+                        'meal',
+                        'included',
+                        'transport',
+                    ];
+                    break;
+                case 'event-ticket':
+                    $fields = [
+                        'delivery',
+                        'local_delivery_cost',
+                        'description',
+                        'name',
+                        'place',
+                        'hall',
+                        'hall_part',
+                        'date',
+                        'is_premiere',
+                        'is_kids',
+                    ];
+                    break;
+                default: // 'simplified'
+                    $fields = [
+                        'delivery',
+                        'local_delivery_cost',
+                        'vendor',
+                        'vendorCode',
+                        'description',
+                        'country_of_origin',
+                        'name',
+                    ];
+            }
 
             foreach ($fields as $field) {
                 if ($val = $product->getPropertyValuesByKey($field)) {
                     $$field = $doc->createElement($field, $val);
                     $offer->appendChild($$field);
-                }
-            }
-
-
-            if ($offerType = $product->getPropertyValuesByKey('offerType')) {
-                switch($offerType) {
-                    case 'vendor.model':
-                        if (get_class($delivery) === "DOMElement") { $offer->appendChild($delivery); }
-                        if (get_class($local_delivery_cost) === "DOMElement") { $offer->appendChild($local_delivery_cost); }
-                        if (get_class($typePrefix) === "DOMElement") { $offer->appendChild($typePrefix); }
-                        if (get_class($vendor) === "DOMElement") { $offer->appendChild($vendor); }
-                        if (get_class($vendorCode) === "DOMElement") { $offer->appendChild($vendorCode); }
-                        if (get_class($model) === "DOMElement") { $offer->appendChild($model); }
-                        if (get_class($description) === "DOMElement") { $offer->appendChild($description); }
-                        if (get_class($manufacturer_warranty) === "DOMElement") { $offer->appendChild($manufacturer_warranty); }
-                        if (get_class($country_of_origin) === "DOMElement") { $offer->appendChild($country_of_origin); }
-                        // TODO в vendor.model можно добавлять дополнительные параметры <param name="Вес" unit="кг">2.73</param> ...
-                        break;
-                    case 'book':
-                        if (get_class($delivery) === "DOMElement") { $offer->appendChild($delivery); }
-                        if (get_class($local_delivery_cost) === "DOMElement") { $offer->appendChild($local_delivery_cost); }
-                        if (get_class($description) === "DOMElement") { $offer->appendChild($description); }
-                        if (get_class($author) === "DOMElement") { $offer->appendChild($author); }
-                        if (get_class($name) === "DOMElement") { $offer->appendChild($name); }
-                        if (get_class($publisher) === "DOMElement") { $offer->appendChild($publisher); }
-                        if (get_class($series) === "DOMElement") { $offer->appendChild($series); }
-                        if (get_class($year) === "DOMElement") { $offer->appendChild($year); }
-                        if (get_class($ISBN) === "DOMElement") { $offer->appendChild($ISBN); }
-                        if (get_class($volume) === "DOMElement") { $offer->appendChild($volume); }
-                        if (get_class($part) === "DOMElement") { $offer->appendChild($part); }
-                        if (get_class($language) === "DOMElement") { $offer->appendChild($language); }
-                        if (get_class($page_extent) === "DOMElement") { $offer->appendChild($page_extent); }
-                        if (get_class($downloadable) === "DOMElement") { $offer->appendChild($downloadable); }
-                        break;
-                    case 'audiobook':
-                        if (get_class($description) === "DOMElement") { $offer->appendChild($description); }
-                        if (get_class($author) === "DOMElement") { $offer->appendChild($author); }
-                        if (get_class($name) === "DOMElement") { $offer->appendChild($name); }
-                        if (get_class($publisher) === "DOMElement") { $offer->appendChild($publisher); }
-                        if (get_class($year) === "DOMElement") { $offer->appendChild($year); }
-                        if (get_class($ISBN) === "DOMElement") { $offer->appendChild($ISBN); }
-                        if (get_class($language) === "DOMElement") { $offer->appendChild($language); }
-                        if (get_class($binding) === "DOMElement") { $offer->appendChild($binding); }
-                        if (get_class($downloadable) === "DOMElement") { $offer->appendChild($downloadable); }
-                        if (get_class($performed_by) === "DOMElement") { $offer->appendChild($performed_by); }
-                        if (get_class($performance_type) === "DOMElement") { $offer->appendChild($performance_type); }
-                        if (get_class($storage) === "DOMElement") { $offer->appendChild($storage); }
-                        if (get_class($format) === "DOMElement") { $offer->appendChild($format); }
-                        if (get_class($recording_length) === "DOMElement") { $offer->appendChild($recording_length); }
-                        break;
-                    case 'artist.title':
-                        if (get_class($delivery) === "DOMElement") { $offer->appendChild($delivery); }
-                        if (get_class($description) === "DOMElement") { $offer->appendChild($description); }
-                        if (get_class($year) === "DOMElement") { $offer->appendChild($year); }
-                        if (get_class($title) === "DOMElement") { $offer->appendChild($title); }
-                        if (get_class($media) === "DOMElement") { $offer->appendChild($media); }
-                        if (get_class($starring) === "DOMElement") { $offer->appendChild($starring); }
-                        if (get_class($director) === "DOMElement") { $offer->appendChild($director); }
-                        if (get_class($originalName) === "DOMElement") { $offer->appendChild($originalName); }
-                        if (get_class($country) === "DOMElement") { $offer->appendChild($country); }
-                        break;
-                    case 'tour':
-                        if (get_class($delivery) === "DOMElement") { $offer->appendChild($delivery); }
-                        if (get_class($local_delivery_cost) === "DOMElement") { $offer->appendChild($local_delivery_cost); }
-                        if (get_class($description) === "DOMElement") { $offer->appendChild($description); }
-                        if (get_class($name) === "DOMElement") { $offer->appendChild($name); }
-                        if (get_class($country) === "DOMElement") { $offer->appendChild($country); }
-                        if (get_class($worldRegion) === "DOMElement") { $offer->appendChild($worldRegion); }
-                        if (get_class($region) === "DOMElement") { $offer->appendChild($region); }
-                        if (get_class($days) === "DOMElement") { $offer->appendChild($days); }
-                        if (get_class($dataTour) === "DOMElement") { $offer->appendChild($dataTour); }
-                        if (get_class($hotel_stars) === "DOMElement") { $offer->appendChild($hotel_stars); }
-                        if (get_class($room) === "DOMElement") { $offer->appendChild($room); }
-                        if (get_class($meal) === "DOMElement") { $offer->appendChild($meal); }
-                        if (get_class($included) === "DOMElement") { $offer->appendChild($included); }
-                        if (get_class($transport) === "DOMElement") { $offer->appendChild($transport); }
-                        break;
-                    case 'event-ticket':
-                        if (get_class($delivery) === "DOMElement") { $offer->appendChild($delivery); }
-                        if (get_class($local_delivery_cost) === "DOMElement") { $offer->appendChild($local_delivery_cost); }
-                        if (get_class($description) === "DOMElement") { $offer->appendChild($description); }
-                        if (get_class($name) === "DOMElement") { $offer->appendChild($name); }
-                        if (get_class($place) === "DOMElement") { $offer->appendChild($place); }
-                        if (get_class($hall) === "DOMElement") { $offer->appendChild($hall); } // todo + <hall plan="url плана зала">Большой  зал<hall>
-                        if (get_class($hall_part) === "DOMElement") { $offer->appendChild($hall_part); }
-                        if (get_class($date) === "DOMElement") { $offer->appendChild($date); }
-                        if (get_class($is_premiere) === "DOMElement") { $offer->appendChild($is_premiere); }
-                        if (get_class($is_kids) === "DOMElement") { $offer->appendChild($is_kids); }
-                        break;
-                    default: // 'simplified'
-                        if (get_class($delivery) === "DOMElement") { $offer->appendChild($delivery); }
-                        if (get_class($local_delivery_cost) === "DOMElement") { $offer->appendChild($local_delivery_cost); }
-                        if (get_class($vendor) === "DOMElement") { $offer->appendChild($vendor); }
-                        if (get_class($vendorCode) === "DOMElement") { $offer->appendChild($vendorCode); }
-                        if (get_class($description) === "DOMElement") { $offer->appendChild($description); }
-                        if (get_class($country_of_origin) === "DOMElement") { $offer->appendChild($country_of_origin); }
-                        if (get_class($name) === "DOMElement") { $offer->appendChild($name); }
                 }
             }
 
