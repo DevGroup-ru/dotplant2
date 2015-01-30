@@ -20,7 +20,6 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 
 
-
 $this->params['breadcrumbs'] = $breadcrumbs;
 $listView = UserPreferences::preferences()->getAttributes()['listViewType'];
 $this->beginBlock('filters');
@@ -38,26 +37,30 @@ echo app\widgets\filter\FilterWidget::widget(
 $this->endBlock();
 
 ?>
-<small class="pull-right"> <?= Yii::t('shop', '{n} products are available', ['n' => $pages ->totalCount]) ?> </small>
-<h1> <?= $this->blocks['h1'] ?></h1>
-<hr class="soft"/>
-<?= $this->blocks['announce'] ?>
-<hr class="soft"/>
+<small class="pull-right"> <?=Yii::t('shop', '{n} products are available', ['n' => $pages->totalCount])?> </small>
+<h1> <?=$this->blocks['h1']?></h1>
+<hr class="soft" />
+<?=$this->blocks['announce']?>
+<hr class="soft" />
 <form class="form-horizontal span6">
     <div class="control-group">
-        <?= Html::activeLabel(UserPreferences::preferences(), 'productListingSortId', ['class'=>'control-label alignL']) ?>
-        <?= Html::activeDropDownList(
-                UserPreferences::preferences(),
-                'productListingSortId',
-                \yii\helpers\ArrayHelper::map(\app\models\ProductListingSort::enabledSorts(), 'id', 'name'),
-                [
-                    'data-userpreference' => 'productListingSortId',
-                ]
-        ) ?>
+        <?=Html::activeLabel(
+            UserPreferences::preferences(),
+            'productListingSortId',
+            ['class' => 'control-label alignL']
+        )?>
+        <?=Html::activeDropDownList(
+            UserPreferences::preferences(),
+            'productListingSortId',
+            \yii\helpers\ArrayHelper::map(\app\models\ProductListingSort::enabledSorts(), 'id', 'name'),
+            [
+                'data-userpreference' => 'productListingSortId',
+            ]
+        )?>
     </div>
     <div class="control-group">
-        <?= Html::activeLabel(UserPreferences::preferences(), 'productsPerPage', ['class'=>'control-label alignL']) ?>
-        <?= Html::activeDropDownList(
+        <?=Html::activeLabel(UserPreferences::preferences(), 'productsPerPage', ['class' => 'control-label alignL'])?>
+        <?=Html::activeDropDownList(
             UserPreferences::preferences(),
             'productsPerPage',
             [
@@ -68,7 +71,7 @@ $this->endBlock();
             [
                 'data-userpreference' => 'productsPerPage',
             ]
-        ) ?>
+        )?>
     </div>
 </form>
 
@@ -76,9 +79,9 @@ $this->endBlock();
     <a href="#" data-dotplant-listViewType="listView"><span class="btn btn-large"><i class="icon-list"></i></span></a>
     <a href="#" data-dotplant-listViewType="blockView"><span class="btn btn-large btn-primary"><i class="icon-th-large"></i></span></a>
 </div>
-<br class="clr"/>
+<br class="clr" />
 
-<div id="<?= ($listView === 'listView' ? 'listView' : 'blockView') ?>">
+<div id="<?=($listView === 'listView' ? 'listView' : 'blockView')?>">
     <?php
     if ($listView === 'blockView') {
         echo '<ul class="thumbnails">';
@@ -86,16 +89,16 @@ $this->endBlock();
     ?>
     <?php foreach ($products as $product): ?>
         <?php
-            $url = Url::to(
-                [
-                    'product/show',
-                    'model' => $product,
-                    'properties' => $values_by_property_id,
-                    'category_group_id' => $category_group_id,
-                ]
-            );
+        $url = Url::to(
+            [
+                'product/show',
+                'model' => $product,
+                'properties' => $values_by_property_id,
+                'category_group_id' => $category_group_id,
+            ]
+        );
         ?>
-        <?= $this->render(($listView === 'listView' ? 'item-row':'item'), ['product' => $product, 'url' => $url]) ?>
+        <?=$this->render(($listView === 'listView' ? 'item-row' : 'item'), ['product' => $product, 'url' => $url])?>
     <?php endforeach; ?>
     <?php
     if ($listView === 'blockView') {
@@ -107,18 +110,19 @@ $this->endBlock();
 <!--            <a href="compair.html" class="btn btn-large pull-right">Compair Product</a>-->
 
 <div class="pagination">
-    <?php if ($pages->pageCount > 1):
+    <?php
+    if ($pages->pageCount > 1):
         $_GET = $selections;
-    ?>
-        <?=
-            yii\widgets\LinkPager::widget([
-                'pagination' => $pages,
-            ]);
         ?>
+        <?=yii\widgets\LinkPager::widget(
+        [
+            'pagination' => $pages,
+        ]
+    );?>
     <?php endif; ?>
 </div>
 
 <?php if (!isset($_GET['page']) && count($values_by_property_id) === 0): ?>
-    <div class="content"><?= $this->blocks['content'] ?></div>
+    <div class="content"><?=$this->blocks['content']?></div>
 <?php endif; ?>
-<br class="clr"/>
+<br class="clr" />

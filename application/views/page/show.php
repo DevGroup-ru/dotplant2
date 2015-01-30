@@ -19,4 +19,4 @@ if ($this->blocks['h1']) {
 }
 ?>
 
-<?= $this->blocks['content'];
+<?=$this->blocks['content'];

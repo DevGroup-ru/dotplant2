@@ -207,7 +207,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
     <?php
-    if ($model->parent_id == 0 && null === Yii::$app->request->get('parent_product_id')):
     BackendWidget::begin(
         [
             'title'=> Yii::t('app', 'Categories'),
@@ -234,7 +233,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
     BackendWidget::end();
-    endif;
     ?>
 
     <?php
@@ -333,26 +331,45 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\DataColumn',
                     'attribute' => 'id',
                 ],
-                'name',
+                [
+                    'class' => 'app\backend\columns\TextWrapper',
+                    'attribute' => 'name',
+                    'callback_wrapper' => function ($content, $model, $key, $index, $parent) {
+                        if (1 === $model->is_deleted) {
+                            $content = '<div class="is_deleted"><span class="fa fa-trash-o"></span>'.$content.'</div>';
+                        }
+                        return $content;
+                    }
+                ],
                 'price',
                 'old_price',
                 [
                     'class' => 'app\backend\components\ActionColumn',
-                    'buttons' => [
-                        [
-                            'url' => 'edit',
-                            'icon' => 'pencil',
-                            'class' => 'btn-primary',
-                            'label' => 'Edit',
-
-                        ],
-                        [
-                            'url' => 'delete',
-                            'icon' => 'trash-o',
-                            'class' => 'btn-danger',
-                            'label' => 'Delete',
-                        ],
-                    ],
+                    'buttons' => function($model, $key, $index, $parent) {
+                        if (1 === $model->is_deleted) {
+                            return [
+                                [
+                                    'url' => 'edit',
+                                    'icon' => 'pencil',
+                                    'class' => 'btn-primary',
+                                    'label' => 'Edit',
+                                ],
+                                [
+                                    'url' => 'restore',
+                                    'icon' => 'refresh',
+                                    'class' => 'btn-success',
+                                    'label' => 'Restore',
+                                ],
+                                [
+                                    'url' => 'delete',
+                                    'icon' => 'trash-o',
+                                    'class' => 'btn-danger',
+                                    'label' => 'Delete',
+                                ],
+                            ];
+                        }
+                        return null;
+                    }
                 ],
             ],
             'hover' => true,
@@ -361,77 +378,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php BackendWidget::end(); ?>
     <?php endif; ?>
 
-    <?php
-    BackendWidget::begin(
-        [
-            'title'=> Yii::t('app', 'Children products'),
-            'icon'=>'shopping-cart',
-            'footer'=> Html::a(Icon::show('plus') . Yii::t('app', 'Add'), [
-                '/backend/product/edit',
-                'parent_product_id' => $model->id,
-            ], ['class' => 'btn btn-success']),
-        ]
-    ); ?>
-    <?=
-    GridView::widget([
-        'dataProvider' =>  $dataProvider = new ActiveDataProvider(
-            [
-                'query' => Product::find()
-                    ->where(['parent_id' => $model->id]),
-            ]
-        ),
-        'columns' => [
-            [
-                'class' => 'yii\grid\DataColumn',
-                'attribute' => 'id',
-            ],
-            [
-                'class' => 'app\backend\columns\TextWrapper',
-                'attribute' => 'name',
-                'callback_wrapper' => function ($content, $model, $key, $index, $parent) {
-                    if (1 === $model->is_deleted) {
-                        $content = '<div class="is_deleted"><span class="fa fa-trash-o"></span>' . $content . '</div>';
-                    }
-
-                    return $content;
-                }
-            ],
-            [
-                'class' => 'app\backend\components\ActionColumn',
-                'buttons' => function ($model, $key, $index, $parent) {
-                    if (1 === $model->is_deleted) {
-                        return [
-                            [
-                                'url' => 'edit',
-                                'icon' => 'pencil',
-                                'class' => 'btn-primary',
-                                'label' => 'Edit',
-                            ],
-                            [
-                                'url' => 'restore',
-                                'icon' => 'refresh',
-                                'class' => 'btn-success',
-                                'label' => 'Restore',
-                            ],
-                            [
-                                'url' => 'delete',
-                                'icon' => 'trash-o',
-                                'class' => 'btn-danger',
-                                'label' => 'Delete',
-                            ],
-                        ];
-                    }
-                    return null;
-                },
-                'controller' => 'product',
-            ],
-        ],
-
-
-    ]);
-    ?>
-
-    <?php BackendWidget::end(); ?>
 </article>
 </div>
 </section>
