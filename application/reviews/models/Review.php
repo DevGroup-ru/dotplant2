@@ -54,6 +54,7 @@ class Review extends \yii\db\ActiveRecord
     public function rules()
     {
         $rules = [
+            [['author_name', 'text'], 'required', 'on' => 'default'],
             [['object_id', 'object_model_id', 'author_user_id', 'rate'], 'integer'],
             [['date_submitted', 'username', 'name', 'slug'], 'safe'],
             [['author_name', 'author_email', 'author_phone', 'text', 'status'], 'string'],
@@ -97,7 +98,7 @@ class Review extends \yii\db\ActiveRecord
             'object_model_id' => Yii::t('app', 'Object Model ID'),
             'date_submitted' => Yii::t('app', 'Date Submitted'),
             'author_user_id' => Yii::t('app', 'Author User ID'),
-            'author_name' => Yii::t('app', 'Name'),
+            'author_name' => Yii::t('app', 'Username'),
             'author_email' => Yii::t('app', 'Email'),
             'author_phone' => Yii::t('app', 'Phone'),
             'status' => Yii::t('app', 'Status'),

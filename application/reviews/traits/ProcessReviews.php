@@ -16,6 +16,9 @@ trait ProcessReviews
             $review->object_id = $object_id;
             $review->object_model_id = $object_model_id;
             $review->load($_POST);
+            if (!\Yii::$app->getUser()->isGuest) {
+                $review->author_name = \Yii::$app->user->identity->awesomeUsername;
+            }
             $review->status = Review::STATUS_NEW;
             $review->date_submitted = date("Y-m-d H:i:s");
             if ($review->validate() && $review->save()) {
