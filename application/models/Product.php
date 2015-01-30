@@ -302,33 +302,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         return parent::beforeSave($insert);
     }
 
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-        $addRelatedProductsArray = (array) $this->relatedProductsArray;
-        foreach ($this->relatedProducts as $product) {
-            $key = array_search($product->id, $addRelatedProductsArray);
-            if ($key === false) {
-                RelatedProduct::deleteAll(
-                    [
-                        'product_id' => $this->id,
-                        'related_product_id' => $product->id,
-                    ]
-                );
-            } else {
-                unset($addRelatedProductsArray[$key]);
-            }
-        }
-        foreach ($addRelatedProductsArray as $relatedProductId) {
-            $relation = new RelatedProduct;
-            $relation->attributes = [
-                'product_id' => $this->id,
-                'related_product_id' => $relatedProductId,
-            ];
-            $relation->save();
-        }
-    }
-
     /**
      * Первое удаление в корзину, второе из БД
      *
@@ -836,6 +809,32 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $this->relatedProductsArray = [];
         foreach ($this->relatedProducts as $product) {
             $this->relatedProductsArray[] = $product->id;
+        }
+    }
+
+    public function saveRelatedProducts()
+    {
+        $addRelatedProductsArray = (array) $this->relatedProductsArray;
+        foreach ($this->relatedProducts as $product) {
+            $key = array_search($product->id, $addRelatedProductsArray);
+            if ($key === false) {
+                RelatedProduct::deleteAll(
+                    [
+                        'product_id' => $this->id,
+                        'related_product_id' => $product->id,
+                    ]
+                );
+            } else {
+                unset($addRelatedProductsArray[$key]);
+            }
+        }
+        foreach ($addRelatedProductsArray as $relatedProductId) {
+            $relation = new RelatedProduct;
+            $relation->attributes = [
+                'product_id' => $this->id,
+                'related_product_id' => $relatedProductId,
+            ];
+            $relation->save();
         }
     }
 }

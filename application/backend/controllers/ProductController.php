@@ -162,6 +162,7 @@ class ProductController extends Controller
 
             $save_result = $model->save();
             $model->saveProperties($post);
+            $model->saveRelatedProducts();
 
             if (null !== $view_object = ViewObject::getByModel($model, true)) {
                 if ($view_object->load($post, 'ViewObject')) {
