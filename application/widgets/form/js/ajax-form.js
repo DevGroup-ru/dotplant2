@@ -14,7 +14,7 @@ jQuery(function() {
         }
         xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function(response) {
-            if (xhr.readyState == 4){
+            if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
                     if (xhr.responseText == '1') {
                         $form.trigger('reset');
@@ -27,16 +27,14 @@ jQuery(function() {
                     } else {
                         alert('Ошибка при отправке формы. Проверьте правильность заполнения полей.');
                     }
-
                 } else {
                     alert(xhr.statusText)
                 }
+                $btn.removeAttr('disabled');
             }
         };
         xhr.open('POST', $form.attr('action'), true );
         xhr.send($formData);
-
-        $btn.removeAttr('disabled');
         e.preventDefault();
     });
 });
