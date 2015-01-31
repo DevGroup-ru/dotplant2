@@ -11,6 +11,7 @@ use app\models\PaymentType;
 use app\models\Product;
 use app\models\ShippingOption;
 use app\properties\HasProperties;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
 use yii\db\Expression;
@@ -33,7 +34,7 @@ class CartController extends Controller
                 new TagDependency(
                     [
                         'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($className),
+                            ActiveRecordHelper::getCommonTag($className),
                         ],
                     ]
                 )
@@ -45,7 +46,7 @@ class CartController extends Controller
     private function loadOrder($id, $allowedStatuses = null)
     {
         $model = Order::findOne($id);
-        if (is_null($model)) {
+        if ($model === null) {
             throw new NotFoundHttpException;
         }
         if (Yii::$app->user->isGuest) {
@@ -57,7 +58,7 @@ class CartController extends Controller
                 throw new NotFoundHttpException;
             }
         }
-        if (!is_null($allowedStatuses) && !in_array($model->order_status_id, (array) $allowedStatuses)) {
+        if ($allowedStatuses !==null && !in_array($model->order_status_id, (array) $allowedStatuses)) {
             Yii::$app->session->setFlash('error', Yii::t('shop', 'Cannot change this order'));
             return $this->redirect(['/cart']);
         }
@@ -79,7 +80,7 @@ class CartController extends Controller
         } else {
             $query->where(['user_id' => Yii::$app->user->id]);
         }
-        if (is_null($allowedStatuses)) {
+        if ($allowedStatuses === null) {
             $query->andWhere(['in', 'id', $allowedStatuses]);
         }
         return $query->one();
@@ -98,7 +99,7 @@ class CartController extends Controller
     public function actionIndex()
     {
         $cart = Cart::getCart(false);
-        if (!is_null($cart)) {
+        if ($cart !== null) {
             $cart->reCalc(true);
         }
         return $this->render('index', ['cart' => $cart]);
@@ -107,7 +108,7 @@ class CartController extends Controller
     public function actionAdd()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        if (is_null(Yii::$app->request->post('id'))) {
+        if (Yii::$app->request->post('id') === null) {
             throw new BadRequestHttpException;
         }
         $product = Product::findOne(Yii::$app->request->post('id'));
@@ -152,22 +153,23 @@ class CartController extends Controller
     public function actionChangeQuantity()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        if (is_null(Yii::$app->request->post('id')) || is_null(Yii::$app->request->post('quantity'))
+        if (Yii::$app->request->post('id') === null || Yii::$app->request->post('quantity') === null
             || (int) Yii::$app->request->post('quantity') < 1) {
             throw new BadRequestHttpException;
         }
         $id = Yii::$app->request->post('id');
         $product = Product::findOne($id);
         $cart = Cart::getCart(false);
-        if (is_null($cart) || !isset($cart->items[$id]) || is_null($product)) {
+        if ($cart === null || !isset($cart->items[$id]) || $product === null) {
             throw new NotFoundHttpException;
         }
-        $cart->items[$id] = Yii::$app->request->post('quantity');
+        $cart->items[$id]['quantity'] = Yii::$app->request->post('quantity');
+        $additionalParams = json_decode($cart->items[$id]['additionalParams']);
         if ($cart->reCalc()) {
             return [
                 'success' => true,
                 'itemsCount' => $cart->items_count,
-                'itemPrice' => Yii::$app->formatter->asDecimal($cart->items[$id]['quantity'] * $product->price, 2),
+                'itemPrice' => Yii::$app->formatter->asDecimal(($cart->items[$id]['quantity'] + $additionalParams->additionalPrice) * $product->price, 2),
                 'totalPrice' => Yii::$app->formatter->asDecimal($cart->total_price, 2),
             ];
         } else {
@@ -183,7 +185,7 @@ class CartController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if (is_null(Yii::$app->request->post('shipping_option_id'))) {
+        if (Yii::$app->request->post('shipping_option_id') === null) {
             throw new BadRequestHttpException;
         }
 
@@ -220,7 +222,7 @@ class CartController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $cart = Cart::getCart(false);
-        if (is_null($cart) || !isset($cart->items[$id])) {
+        if ($cart === null || !isset($cart->items[$id])) {
             throw new NotFoundHttpException;
         }
         unset($cart->items[$id]);
@@ -240,9 +242,9 @@ class CartController extends Controller
 
     public function actionShippingOption($id = null)
     {
-        if (is_null($id)) {
+        if ($id === null) {
             $cart = Cart::getCart();
-            if (is_null($cart) || $cart->items_count == 0 || !$cart->reCalc(true)) {
+            if ($cart === null || $cart->items_count == 0 || !$cart->reCalc(true)) {
                 $this->redirect(['/cart']);
                 Yii::$app->end();
             }
@@ -274,7 +276,7 @@ class CartController extends Controller
                 $order->order_status_id = 2;
                 $formNameWithoutId = $order->abstractModel->formName();
                 $order->save();
-                if (!is_null($cart)) {
+                if ($cart !== null) {
                     foreach ($cart->items as $productId => $orderOptions) {
                         $orderItem = new OrderItem;
                         $orderItem->attributes = [
@@ -325,7 +327,7 @@ class CartController extends Controller
             $order->scenario = 'paymentType';
             $order->load(Yii::$app->request->post());
             $paymentType = PaymentType::find($order->payment_type_id);
-            if ($order->validate() && !is_null($paymentType)) {
+            if ($order->validate() && $paymentType !== null) {
                 $order->save();
                 $this->redirect(['/cart/payment', 'id' => $order->id]);
             }
@@ -389,7 +391,7 @@ class CartController extends Controller
             throw new BadRequestHttpException;
         }
         $paymentType = PaymentType::findOne($id);
-        if (is_null($paymentType)) {
+        if ($paymentType ===  null) {
             throw new NotFoundHttpException;
         }
         $paymentType->payment->checkResult();
