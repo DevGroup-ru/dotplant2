@@ -169,7 +169,7 @@ class CartController extends Controller
             return [
                 'success' => true,
                 'itemsCount' => $cart->items_count,
-                'itemPrice' => Yii::$app->formatter->asDecimal(($cart->items[$id]['quantity'] + $additionalParams->additionalPrice) * $product->price, 2),
+                'itemPrice' => Yii::$app->formatter->asDecimal($cart->items[$id]['quantity'] * ($product->price + $additionalParams->additionalPrice), 2),
                 'totalPrice' => Yii::$app->formatter->asDecimal($cart->total_price, 2),
             ];
         } else {
