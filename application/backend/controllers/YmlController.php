@@ -148,9 +148,9 @@ class YmlController extends Controller
 
         // set main currency
         $mainCurrency = Config::getValue('yml.main_currency');
-        if ($mainCurrency) {
+        if (!empty($mainCurrency)) {
             unset($exchangeRate[$mainCurrency]);
-            $exchangeRate[] = [$mainCurrency => '1'];
+            $exchangeRate[$mainCurrency] = '1';
         }
 
         foreach ($exchangeRate as $id => $rate) {
