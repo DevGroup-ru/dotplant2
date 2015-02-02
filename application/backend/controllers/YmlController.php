@@ -131,12 +131,19 @@ class YmlController extends Controller
 
         $exchangeRate = [
             // 'id' => 'rate'
-            "RUR" => "1",
+            "RUR" => "CB",
             "USD" => "CB",
             "EUR" => "CB",
             "UAH" => "CB",
             "KZT" => "CB",
         ];
+
+        // set main currency
+        $mainCurrency = Config::getValue('yml.main_currency');
+        if ($mainCurrency) {
+            unset($exchangeRate[$mainCurrency]);
+            $exchangeRate[] = [$mainCurrency => '1'];
+        }
 
         foreach ($exchangeRate as $id => $rate) {
             $currency = $doc->createElement('currency');
