@@ -67,11 +67,45 @@ $this->params['breadcrumbs'][] = $this->title;
             </tr>
         </table>
 
-        <?= Html::submitButton(
+        <?=
+        Html::submitButton(
             Icon::show('save') . Yii::t('app', 'Save'),
             ['class' => 'btn btn-primary']
-        ) ?>
+        )
+        ?>
+
+        <?=
+        Html::button(
+            Icon::show('code') . Yii::t('app', 'Create YML'),
+            ['class' => 'btn btn-primary', 'id' => 'create_yml']
+        )
+        ?>
 
         <?= Html::endForm() ?>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-6">
+        <div id="yml_link" style="font-weight: bold; font-size: 16px; padding: 15px; margin: 3px;"><label><?= Yii::t('app', 'It will be available according to the link:')?> <b>/yml/get</b></label></div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    $(document).ready(function(){
+        $('#create_yml').click(function(){
+            $.ajax({
+                url: "/yml/get?regenerate=yes",
+                success: function(data, textStatus, jqXHR){
+                    console.log("Received: " + textStatus);
+                    if (data !== "busy" && data !== "file not exist") {
+                        $('#yml_link').css({"color": "green"});
+                        $('#yml_link').html(textStatus);
+                    } else {
+                        $('#yml_link').css({"color": "green"});
+                        $('#yml_link').html(data);
+                    }
+                }
+            });
+        });
+    });
+</script>
