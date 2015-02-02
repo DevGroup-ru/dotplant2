@@ -58,6 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ); ?>
 
             <?= $form->field($model, 'properties')->widget('app\widgets\MultiSelect', [
+                    'defaultLabel' => Yii::t('app', 'Choose item'),
                     'items' => $items,
                     'selectedItems' => $selected,
                     'sortable' => false,

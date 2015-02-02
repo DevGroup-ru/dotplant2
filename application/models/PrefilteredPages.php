@@ -78,7 +78,7 @@ class PrefilteredPages extends \yii\db\ActiveRecord
             'h1' => Yii::t('app', 'H1'),
             'meta_description' => Yii::t('app', 'Meta Description'),
             'breadcrumbs_label' => Yii::t('app', 'Breadcrumbs Label'),
-            'view_id' => Yii::t('app', 'View ID'),
+            'view_id' => Yii::t('app', 'View'),
             'last_category_id' => Yii::t('app', 'Category'),
         ];
     }

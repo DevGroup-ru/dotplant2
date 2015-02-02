@@ -113,6 +113,11 @@ class Property extends ActiveRecord
             'interpret_as' => Yii::t('app', 'Interpret Field As'),
             'captcha' => Yii::t('app', 'Captcha'),
             'dont_filter' => Yii::t('app', 'Don\'t use in filtration'),
+            'hide_other_values_if_selected' => Yii::t('app', 'Hide Other Values If Selected'),
+            'display_only_on_depended_property_selected' => Yii::t('app', 'Display Only On Depended Property Selected'),
+            'depends_on_property_id' => Yii::t('app', 'Depends On Property Id'),
+            'depended_property_values' => Yii::t('app', 'Depended Property Values'),
+            'depends_on_category_group_id' => Yii::t('app', 'Depends On Category Group Id'),
         ];
     }
 

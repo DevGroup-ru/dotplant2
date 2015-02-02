@@ -163,4 +163,8 @@ return [
     'or' => 'или',
     'retry payment' => 'повторить оплату',
     '{n} products are available' => 'Доступно товаров: {n}',
+    'Shop' => 'Магазин',
+    'Products' => 'Протукты',
+    'Order statuses' => 'Статусы заказа',
+    'Payment types' => 'Типы оплаты',
 ];
