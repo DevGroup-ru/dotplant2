@@ -4,13 +4,12 @@ namespace app\backend\controllers;
 
 use app\models\Config;
 use app\models\Product;
-use kartik\widgets\Select2;
+use app\models\Property;
+use app\properties\PropertyValue;
 use Yii;
 use app\models\Category;
 use yii\base\Controller;
 use yii\base\InvalidParamException;
-use yii\helpers\ArrayHelper;
-use yii\web\Response;
 
 class YmlController extends Controller
 {
@@ -231,14 +230,15 @@ class YmlController extends Controller
                 $offer->setAttribute('type', $offerType);
             }
 
-            $available = $product->getPropertyValuesByKey('available');
-            if (empty($available)) {
-                $available = 'true';
-            } else {
-                $available = ($available & true) ? 'true' : 'false';
+
+            $available = "true";
+            /** @var PropertyValue $available */
+            $pAvailable = $product->getPropertyValuesByKey('available');
+            if (is_object($pAvailable)) {
+                $available = true && (int) $pAvailable->toValue() ? "true" : "false";
+                $offer->setAttribute('available', $available);
             }
 
-            $offer->setAttribute('available', $available);
 
             $fields = [];
             switch($offerType) {
@@ -260,6 +260,22 @@ class YmlController extends Controller
                     ];
 
                     // TODO в vendor.model можно добавлять дополнительные параметры <param name="Вес" unit="кг">2.73</param> ...
+                    $aGroups = $product->getPropertyGroups();
+
+                    foreach ($aGroups as $pGroup) {
+                        /** @var PropertyValue $propValue */
+                        foreach ($pGroup as $propValue) {
+                            $property = Property::findById($propValue->property_id);
+                            if (is_object($property)) {
+                                if ($property->as_yml_field) {
+                                    $param = $doc->createElement('param', $propValue->toValue());
+                                    $param->setAttribute('name', $property->name);
+
+                                    $offer->appendChild($param);
+                                }
+                            }
+                        }
+                    }
                     break;
                 case 'book':
                     $fields = [
