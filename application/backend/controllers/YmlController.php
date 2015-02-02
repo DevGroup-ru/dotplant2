@@ -259,7 +259,7 @@ class YmlController extends Controller
                         'adult',
                     ];
 
-                    // TODO в vendor.model можно добавлять дополнительные параметры <param name="Вес" unit="кг">2.73</param> ...
+                    // В vendor.model можно добавлять дополнительные параметры <param name="Вес" unit="кг">2.73</param> ...
                     $aGroups = $product->getPropertyGroups();
 
                     foreach ($aGroups as $pGroup) {
