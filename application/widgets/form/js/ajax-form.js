@@ -36,5 +36,6 @@ jQuery(function() {
         xhr.open('POST', $form.attr('action'), true );
         xhr.send($formData);
         e.preventDefault();
+        return false;
     });
 });
