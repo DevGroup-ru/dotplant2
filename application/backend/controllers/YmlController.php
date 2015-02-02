@@ -78,6 +78,8 @@ class YmlController extends Controller
     private function buildYmlCatalog($doc)
     {
         $yml_catalog = $doc->createElement('yml_catalog');
+        $yml_catalog->setAttribute('date', date("Y-m-d h:m", time()));
+
         $yml_catalog->appendChild($this->buildShop($doc));;
         return $yml_catalog;
     }
