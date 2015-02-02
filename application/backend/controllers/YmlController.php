@@ -202,6 +202,7 @@ class YmlController extends Controller
         /** @var Product $product */
         foreach ($products as $product) {
             $offer = $doc->createElement('offer');
+            $offer->setAttribute('id', $product->id);
 
             // общие для всех типов поля
             $url = $doc->createElement('url', '123'); // TODO запилить url
@@ -217,6 +218,28 @@ class YmlController extends Controller
 
             // не общие
             $offerType = $product->getPropertyValuesByKey('offerType');
+            if (!empty($offerType)) {
+                $offerType = ($offerType === 'simplified' ? '' : $offerType);
+            } else {
+                $offerType = Config::getValue('yml.default_offer_type');
+                if (!empty($offerType)) {
+                    $offerType = ($offerType === 'simplified' ? '' : $offerType);
+                }
+            }
+
+            if (!empty($offerType)) {
+                $offer->setAttribute('type', $offerType);
+            }
+
+            $available = $product->getPropertyValuesByKey('available');
+            if (empty($available)) {
+                $available = 'true';
+            } else {
+                $available = ($available & true) ? 'true' : 'false';
+            }
+
+            $offer->setAttribute('available', $available);
+
             $fields = [];
             switch($offerType) {
                 case 'vendor.model':
