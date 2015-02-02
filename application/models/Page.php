@@ -60,7 +60,7 @@ class Page extends ActiveRecord
             [['date_added', 'date_modified'], 'safe'],
             [['slug'], 'string', 'max' => 80],
             [['slug_compiled'], 'string', 'max' => 180],
-            [['show_type'], 'string'],
+            [['show_type', 'subdomain'], 'string'],
         ];
     }
 
@@ -88,6 +88,7 @@ class Page extends ActiveRecord
             'date_added' => Yii::t('app', 'Date Added'),
             'date_modified' => Yii::t('app', 'Date Modified'),
             'is_deleted' => Yii::t('app', 'Is Deleted'),
+            'subdomain' => Yii::t('app', 'Subdomain'),
         ];
     }
 
@@ -221,27 +222,54 @@ class Page extends ActiveRecord
         return parent::beforeSave($insert);
     }
 
+    /**
+     * Compiles slug based on parent compiled slug, slug absoluteness and subdomain property
+     * @return string
+     */
     public function compileSlug()
     {
-        if($this->slug_absolute == 1){
-            return 'http://' . $this->slug . '.' . Config::getValue('core.serverName', Yii::$app->request->serverName) . '/';
-        }
-        $url_parts = [$this->slug];
-        $parent_model = $this->parent;
-        while ($parent_model !== null) {
-            if ($parent_model->slug == ':mainpage:') {
-                break;
-            }
-            if($parent_model->slug_absolute == 1){
-                $url_parts[] = 'http://' . $parent_model->slug . '.' . Config::getValue('core.serverName', Yii::$app->request->serverName);
-                break;
-            }
-            $url_parts[] = $parent_model->slug;
-            $parent_model = $parent_model->parent;
-        }
-        $url_parts = array_reverse($url_parts);
 
-        return implode('/', $url_parts);
+        $parent_model = $this->parent;
+
+        $main_domain = Config::getValue('core.serverName', Yii::$app->request->serverName);
+        if (intval($this->slug_absolute) === 1) {
+            if (empty($this->subdomain) === false) {
+                if ($this->slug !== ':mainpage:') {
+                    return 'http://' . $this->subdomain . '.' . $main_domain . '/' . $this->slug;
+                } else {
+                    return 'http://' . $this->subdomain . '.' . $main_domain . '/';
+                }
+            } elseif ($parent_model !== null) {
+                if (empty($parent_model->subdomain) === false) {
+                    // subdomain in parent is set - here not
+                    if ($this->slug !== ':mainpage:') {
+                        return 'http://' . $parent_model->subdomain . '.' . $main_domain . '/' . $this->slug;
+                    } else {
+                        return 'http://' . $parent_model->subdomain . '.' . $main_domain . '/';
+                    }
+                }
+            }
+            // subdomain empty
+            // no root
+            return $this->slug;
+
+        } else {
+            // not-absolute slug
+
+            if ($parent_model !== null) {
+                // should prepend parent's slug
+                // can't be another domain then parent!
+                if ($parent_model->slug === ':mainpage:') {
+                    return $this->slug;
+                } else {
+                    return $parent_model->slug_compiled . '/' . $this->slug;
+                }
+            } else {
+                return ':mainpage:'; // it's main page
+            }
+        }
+
+
     }
 
     /**
@@ -255,7 +283,7 @@ class Page extends ActiveRecord
         }
         $cacheKey = "Page:$path";
         $page = Yii::$app->cache->get($cacheKey);
-        if ($page === false) {
+        if ($page === false || true) {
             $page = static::find()->where(['slug_compiled' => $path, 'published' => 1])->asArray()->one();
             $duration = 86400;
             if (!is_array($page)) {
