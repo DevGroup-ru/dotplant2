@@ -73,6 +73,8 @@ $this->endBlock();
 
                 <?= $form->field($model, 'sort_order') ?>
 
+                <?= $form->field($model, 'as_yml_field')->checkbox() ?>
+
             <?php BackendWidget::end(); ?>
 
         </article>
