@@ -55,7 +55,8 @@ class YmlController extends Controller
             [
                 'main_currency' => Config::getValue("yml.main_currency"),
                 'show_all_properties' => Config::getValue("yml.show_all_properties"),
-                'default_offer_type' => Config::getValue("yml.default_offer_type")
+                'default_offer_type' => Config::getValue("yml.default_offer_type"),
+                'local_delivery_cost' => Config::getValue("yml.local_delivery_cost")
             ]
         );
     }
@@ -112,6 +113,13 @@ class YmlController extends Controller
         }
         $url = $doc->createElement('url', $urlConf);
         $shop->appendChild($url);
+
+        // local delivery cost
+        $local_delivery_cost = Config::getValue('yml.local_delivery_cost');
+        if (!empty($local_delivery_cost)) {
+            $ldc = $doc->createElement('local_delivery_cost', $local_delivery_cost);
+            $shop->appendChild($ldc);
+        }
 
         $shop->appendChild($this->buildCurrencies($doc));
         $shop->appendChild($this->buildCategories($doc));

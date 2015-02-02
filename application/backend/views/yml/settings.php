@@ -61,6 +61,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         [ 'class' => 'form-control' ]
                     ) ?></td>
             </tr>
+            <tr>
+                <td><?= Html::label(Yii::t('app', 'Общая стоимость доставки для региона, в котором расположен магазин'), 'local_delivery_cost') ?></td>
+                <td><?= Html::input('text', 'yml[local_delivery_cost]', $local_delivery_cost, [ 'class' => 'form-control' ]) ?></td>
+            </tr>
         </table>
 
         <?= Html::submitButton(
