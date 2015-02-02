@@ -248,11 +248,15 @@ class YmlController extends Controller
                         'local_delivery_cost',
                         'typePrefix',
                         'vendor',
+                        'available',
+                        'sales_notes',
                         'vendorCode',
                         'model',
                         'description',
                         'manufacturer_warranty',
                         'country_of_origin',
+                        'downloadable',
+                        'adult',
                     ];
 
                     // TODO в vendor.model можно добавлять дополнительные параметры <param name="Вес" unit="кг">2.73</param> ...
@@ -269,10 +273,12 @@ class YmlController extends Controller
                         'year',
                         'ISBN',
                         'volume',
+                        'binding',
                         'part',
                         'language',
                         'page_extent',
                         'downloadable',
+                        'table_of_contents',
                     ];
                     break;
                 case 'audiobook':
@@ -291,10 +297,12 @@ class YmlController extends Controller
                         'storage',
                         'format',
                         'recording_length',
+                        'table_of_contents',
                     ];
                     break;
                 case 'artist.title':
                     $field = [
+                        'artist',
                         'delivery',
                         'description',
                         'year',
@@ -326,6 +334,7 @@ class YmlController extends Controller
                     break;
                 case 'event-ticket':
                     $fields = [
+                        'hall plan',
                         'delivery',
                         'local_delivery_cost',
                         'description',
@@ -347,6 +356,7 @@ class YmlController extends Controller
                         'description',
                         'country_of_origin',
                         'name',
+                        'adult',
                     ];
             }
 
