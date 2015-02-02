@@ -50,13 +50,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 <td><?= Html::label(Yii::t('app', 'Тип описания по умолчанию'), 'default_offer_type') ?></td>
                 <td><?= Html::dropDownList($formName . '[default_offer_type]', $default_offer_type,
                         [
-                            'simplified' => 'Упрощенное описание',
-                            'vendor.model' => 'Произвольный товар',
-                            'book' => 'Книги',
-                            'audiobook' => 'Аудиокниги',
-                            'artist.title' => 'Музыкальная и видео продукция',
-                            'tour' => 'Туры',
-                            'event-ticket' => 'Билеты на мероприятие',
+                            'simplified' => Yii::t('app', 'Упрощенное описание'),
+                            'vendor.model' => Yii::t('app', 'Произвольный товар'),
+                            'book' => Yii::t('app', 'Книги'),
+                            'audiobook' => Yii::t('app', 'Аудиокниги'),
+                            'artist.title' => Yii::t('app', 'Музыкальная и видео продукция'),
+                            'tour' => Yii::t('app', 'Туры'),
+                            'event-ticket' => Yii::t('app', 'Билеты на мероприятие'),
                         ],
                         [ 'class' => 'form-control' ]
                     ) ?></td>
