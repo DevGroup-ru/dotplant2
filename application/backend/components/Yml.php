@@ -103,7 +103,7 @@ class Yml
         // <name>
         $nameConf = Config::getValue('shop.name');
         if (null === $nameConf) {
-            throw new InvalidParamException(Yii::t('app', 'Не задано название магазина'));
+            throw new InvalidParamException(Yii::t('app', 'The name of shop isn\'t set'));
         }
         $name = $doc->createElement('name', $nameConf);
         $shop->appendChild($name);
@@ -111,7 +111,7 @@ class Yml
         // <company>
         $companyConf = Config::getValue('shop.company');
         if (null === $companyConf) {
-            throw new InvalidParamException(Yii::t('app', 'Не задано название компании'));
+            throw new InvalidParamException(Yii::t('app', 'The name of the company isn\'t set'));
         }
         $company = $doc->createElement('company', $companyConf);
         $shop->appendChild($company);
@@ -119,7 +119,7 @@ class Yml
         // <url>
         $urlConf = Config::getValue('core.serverName');
         if (null === $nameConf) {
-            throw new InvalidParamException(Yii::t('app', 'Не задан URL магазина'));
+            throw new InvalidParamException(Yii::t('app', 'It isn\'t set URL shop'));
         }
         $url = $doc->createElement('url', $urlConf);
         $shop->appendChild($url);

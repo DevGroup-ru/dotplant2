@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <table class="table">
             <tr>
-                <td><?= Html::label(Yii::t('app', 'Основная валюта'), 'main_currency') ?></td>
+                <td><?= Html::label(Yii::t('app', 'Main currency'), 'main_currency') ?></td>
                 <td><?= Html::dropDownList($formName .'[main_currency]', $main_currency,
                         [
                             'RUR' => 'RUR',
@@ -43,26 +43,26 @@ $this->params['breadcrumbs'][] = $this->title;
                     ) ?></td>
             </tr>
             <tr>
-                <td><?= Html::label(Yii::t('app', 'Выводить все свойства продукта'), 'show_all_properties') ?></td>
+                <td><?= Html::label(Yii::t('app', 'To show all properties of a product in YML'), 'show_all_properties') ?></td>
                 <td><?= \kartik\widgets\SwitchInput::widget(['name' => $formName . '[show_all_properties]', 'value' => $show_all_properties]) ?></td>
             </tr>
             <tr>
-                <td><?= Html::label(Yii::t('app', 'Тип описания по умолчанию'), 'default_offer_type') ?></td>
+                <td><?= Html::label(Yii::t('app', 'Description type by default'), 'default_offer_type') ?></td>
                 <td><?= Html::dropDownList($formName . '[default_offer_type]', $default_offer_type,
                         [
-                            'simplified' => Yii::t('app', 'Упрощенное описание'),
-                            'vendor.model' => Yii::t('app', 'Произвольный товар'),
-                            'book' => Yii::t('app', 'Книги'),
-                            'audiobook' => Yii::t('app', 'Аудиокниги'),
-                            'artist.title' => Yii::t('app', 'Музыкальная и видео продукция'),
-                            'tour' => Yii::t('app', 'Туры'),
-                            'event-ticket' => Yii::t('app', 'Билеты на мероприятие'),
+                            'simplified' => Yii::t('app', 'The simplified description'),
+                            'vendor.model' => Yii::t('app', 'Any goods'),
+                            'book' => Yii::t('app', 'Books'),
+                            'audiobook' => Yii::t('app', 'Audiobooks'),
+                            'artist.title' => Yii::t('app', 'Musical and video production'),
+                            'tour' => Yii::t('app', 'Tours'),
+                            'event-ticket' => Yii::t('app', 'Tickets for event'),
                         ],
                         [ 'class' => 'form-control' ]
                     ) ?></td>
             </tr>
             <tr>
-                <td><?= Html::label(Yii::t('app', 'Общая стоимость доставки для региона, в котором расположен магазин'), 'local_delivery_cost') ?></td>
+                <td><?= Html::label(Yii::t('app', 'Total cost of delivery for the region in which the shop is located'), 'local_delivery_cost') ?></td>
                 <td><?= Html::input('text', 'yml[local_delivery_cost]', $local_delivery_cost, [ 'class' => 'form-control' ]) ?></td>
             </tr>
         </table>
