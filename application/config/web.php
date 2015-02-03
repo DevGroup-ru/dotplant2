@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\ArrayHelper;
+use app\models\Config;
 
 $config = [
     'id' => 'basic',
@@ -157,6 +158,21 @@ $config = [
             'timeout' => 2592000, // 30 days
         ],
     ],
+
+    'on beforeRequest' => function($event) {
+    Yii::$container->set('yii\swiftmailer\Mailer',
+        [
+            'transport' => [
+                'class' => Config::getValue('core.emailConfig.transport', 'Swift_SmtpTransport'),
+                'host' => Config::getValue('core.emailConfig.host'),
+                'username' => Config::getValue('core.emailConfig.username'),
+                'password' => Config::getValue('core.emailConfig.password'),
+                'port' => Config::getValue('core.emailConfig.port'),
+                'encryption' => Config::getValue('core.emailConfig.encryption'),
+            ]
+        ]
+    );
+}
 ];
 
 $allConfig = ArrayHelper::merge(
