@@ -396,7 +396,7 @@ class Yml
 
             foreach ($fields as $field) {
                 if ($val = $product->getPropertyValuesByKey($field)) {
-                    $$field = $doc->createElement($field, $val);
+                    $$field = $doc->createElement($field, htmlentities($val));
                     $offer->appendChild($$field);
                 }
             }
