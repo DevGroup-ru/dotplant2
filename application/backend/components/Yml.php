@@ -9,6 +9,7 @@ use app\models\Property;
 use app\properties\PropertyValue;
 use Yii;
 use yii\base\InvalidParamException;
+use yii\helpers\Url;
 
 class Yml
 {
@@ -213,7 +214,10 @@ class Yml
             $offer->setAttribute('id', $product->id);
 
             // общие для всех типов поля
-            $url = $doc->createElement('url', '123'); // TODO запилить url
+            $url = $doc->createElement('url',  htmlentities("http://" . Config::getValue('core.serverName') . Url::to([
+                'product/show',
+                'model' => $product
+            ])));
             $price = $doc->createElement('price', $product->price);
             $currencyId = $doc->createElement('currencyId', 'RUR');
             $categoryId = $doc->createElement('categoryId', $product->main_category_id);
