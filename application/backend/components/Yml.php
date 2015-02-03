@@ -72,7 +72,12 @@ class Yml
      */
     private function buidDocument()
     {
-        $document = new \DOMDocument("1.0", "windows-1251");
+        $imp = new \DOMImplementation();
+        $dtd = $imp->createDocumentType('yml_catalog', '', 'shops.dtd');
+
+        //$document = new \DOMDocument("1.0", "windows-1251");
+        $document = $imp->createDocument('', '', $dtd);
+        
         $ymlCatalog = $this->buildYmlCatalog($document);
 
         $document->appendChild($ymlCatalog);
