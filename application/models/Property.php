@@ -28,6 +28,7 @@ use yii\helpers\Json;
  * @property string $handler_additional_params
  * @property integer $required
  * @property integer $interpret_as
+ * @property integer $as_yml_field
  * @property integer $captcha
  * @property PropertyGroup $group
  */
@@ -38,6 +39,7 @@ class Property extends ActiveRecord
     private $handlerAdditionalParams = [];
     public $required;
     public $interpret_as;
+    public $as_yml_field;
     public $captcha;
 
     public function behaviors()
@@ -85,7 +87,7 @@ class Property extends ActiveRecord
             [['key'], 'string', 'max' => 20],
             [['key'], 'match', 'pattern' => '#^[\w]+$#'],
             [['depends_on_property_id', 'depends_on_category_group_id'], 'default', 'value' => 0],
-            [['required', 'captcha'], 'integer', 'min' => 0, 'max' => 1],
+            [['required', 'captcha', 'as_yml_field'], 'integer', 'min' => 0, 'max' => 1],
             [['dont_filter'], 'safe'],
         ];
     }
@@ -118,6 +120,7 @@ class Property extends ActiveRecord
             'depends_on_property_id' => Yii::t('app', 'Depends On Property Id'),
             'depended_property_values' => Yii::t('app', 'Depended Property Values'),
             'depends_on_category_group_id' => Yii::t('app', 'Depends On Category Group Id'),
+            'as_yml_field' => Yii::t('app', 'Interpret Field As Field Of YML'),
         ];
     }
 
@@ -262,6 +265,7 @@ class Property extends ActiveRecord
         $this->interpret_as = isset($this->handlerAdditionalParams['interpret_as']) ?
             $this->handlerAdditionalParams['interpret_as'] :
             0;
+        $this->as_yml_field = isset($this->handlerAdditionalParams['as_yml_field']) && $this->handlerAdditionalParams['as_yml_field'];
         if (isset($this->handlerAdditionalParams['rules'])
             && is_array($this->handlerAdditionalParams['rules'])) {
             foreach ($this->handlerAdditionalParams['rules'] as $rule) {
@@ -312,7 +316,8 @@ class Property extends ActiveRecord
         $handlerAdditionalParams = ArrayHelper::merge(
             $handlerAdditionalParams,
             [
-                'interpret_as' => $this->interpret_as
+                'interpret_as' => $this->interpret_as,
+                'as_yml_field' => $this->as_yml_field,
             ]
         );
         if ($this->captcha == 1) {
