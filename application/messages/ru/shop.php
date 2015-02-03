@@ -145,7 +145,7 @@ return [
     'Update Time' => 'Время обновления',
     'User' => 'Пользователь',
     'User ID' => 'ID пользователя',
-    'View details' => 'Побробнее',
+    'View details' => 'Подробнее',
     'You are a new manager of <a href="{orderUrl}" target="_blank">order #{orderId}</a>' => '',
     'You are not a manager of <a href="{orderUrl}" target="_blank">order #{orderId}</a> already' => '',
     'You can see your order status' => 'Вы можете увидеть Ваши статусы заказов',
