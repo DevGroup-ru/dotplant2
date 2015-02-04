@@ -41,7 +41,8 @@ abstract class Import extends Component
             switch ($type) {
                 case 'csv':
                     return new ImportCsv($config);
-
+                case 'excelCsv':
+                    return new ImportExcelCsv($config);
                 default:
                     throw new \Exception('Unsupported type');
             }

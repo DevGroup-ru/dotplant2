@@ -150,14 +150,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if (!$importMode): ?>
         <div class="form-group row">
             <div class="col-md-12">
-                <?= \yii\helpers\Html::activeDropDownList(
-                    $model,
-                    'type',
-                    \app\data\models\ImportModel::knownTypes(),
-                    [
-                        'class' => 'form-control'
-                    ]
-                ) ?>
+                <?= $form->field($model, 'type')->dropDownList(\app\data\models\ImportModel::knownTypes()) ?>
             </div>
         </div>
     <?php endif; ?>

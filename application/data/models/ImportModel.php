@@ -45,7 +45,6 @@ class ImportModel extends Model implements \Serializable
     public $additionalFields = [];
 
 
-
     public function getFilename($prefix = '')
     {
         if (trim($prefix)) {
@@ -53,7 +52,7 @@ class ImportModel extends Model implements \Serializable
         } else {
             $prefix = '';
         }
-        return "{$prefix}{$this->object}_{$this->getUser()}.{$this->type}";
+        return "{$prefix}{$this->object}_{$this->getUser()}." . $this->getExtension($this->type);
     }
 
     public function getUser()
@@ -84,7 +83,20 @@ class ImportModel extends Model implements \Serializable
     {
         return [
             'csv' => 'CSV',
+            'excelCsv' => 'Excel CSV',
         ];
+    }
+
+    protected function getExtension($type)
+    {
+        $extensions = [
+            'excelCsv' => 'csv',
+            'csv' => 'csv',
+        ];
+        if (!isset($extensions[$type])) {
+            return 'unknown';
+        }
+        return $extensions[$type];
     }
 
     /**
