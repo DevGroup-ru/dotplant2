@@ -63,21 +63,7 @@ $config = [
             'class' => 'yii\test\DbFixtureManager',
             'basePath' => '@tests/unit/fixtures',
         ],
-    ],
-    'on beforeRequest' => function($event) {
-        Yii::$container->set('yii\swiftmailer\Mailer',
-            [
-                'transport' => [
-                    'class' => Config::getValue('core.emailConfig.transport', 'Swift_SmtpTransport'),
-                    'host' => Config::getValue('core.emailConfig.host'),
-                    'username' => Config::getValue('core.emailConfig.username'),
-                    'password' => Config::getValue('core.emailConfig.password'),
-                    'port' => Config::getValue('core.emailConfig.port'),
-                    'encryption' => Config::getValue('core.emailConfig.encryption'),
-                ]
-            ]
-        );
-    }
+    ]
 ];
 
 return ArrayHelper::merge(
