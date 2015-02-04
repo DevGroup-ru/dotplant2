@@ -22,7 +22,7 @@ class ProductPriceRangeFilter implements FilterQueryInterface
      */
     public function filter(ActiveQuery $query, &$cacheKeyAppend)
     {
-        $get = Yii::$app->request->get();
+        $get = ArrayHelper::merge(Yii::$app->request->get(), Yii::$app->request->post() );
         $min = floatval(
             ArrayHelper::getValue($get, $this->minAttribute, $this->minValue)
         );
