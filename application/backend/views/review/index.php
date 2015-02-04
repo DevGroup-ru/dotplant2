@@ -70,6 +70,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'raw',
                     ],
                     'rate',
+                    [
+                        'class' => 'app\backend\components\ActionColumn',
+                        'buttons' => function($model, $key, $index, $parent) {
+                            return [
+                                [
+                                    'url' => 'delete',
+                                    'icon' => 'trash-o',
+                                    'class' => 'btn-danger',
+                                    'label' => 'Delete',
+                                ],
+                            ];
+                        }
+                    ],
                 ],
             ]
         );
