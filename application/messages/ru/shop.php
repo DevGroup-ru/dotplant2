@@ -164,7 +164,7 @@ return [
     'retry payment' => 'повторить оплату',
     '{n} products are available' => 'Доступно товаров: {n}',
     'Shop' => 'Магазин',
-    'Products' => 'Протукты',
+    'Products' => 'Продукты',
     'Order statuses' => 'Статусы заказа',
     'Payment types' => 'Типы оплаты',
 ];
