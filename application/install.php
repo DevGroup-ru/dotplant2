@@ -141,7 +141,28 @@ $db_config = [
 file_put_contents("config/db-local.php", "<?php\n return " . \yii\helpers\VarDumper::export($db_config) . ";");
 
 // все ENV будут автоматом переданы туда
-passthru('./yii migrate --interactive=0');
+passthru('./yii migrate --interactive=0', $status);
+if (0 === $status) {
+    file_put_contents("config/from-db.php", "<?php
+
+return [
+    'on beforeRequest' => function(\$event) {
+        Yii::\$container->set('yii\\swiftmailer\\Mailer',
+            [
+                'transport' => [
+                    'class' => \\app\\models\\Config::getValue('core.emailConfig.transport', 'Swift_SmtpTransport'),
+                    'host' => \\app\\models\\Config::getValue('core.emailConfig.host'),
+                    'username' => \\app\\models\\Config::getValue('core.emailConfig.username'),
+                    'password' => \\app\\models\\Config::getValue('core.emailConfig.password'),
+                    'port' => \\app\\models\\Config::getValue('core.emailConfig.port'),
+                    'encryption' => \\app\\models\\Config::getValue('core.emailConfig.encryption'),
+                ]
+            ]
+        );
+    }
+];
+");
+}
 
 
 

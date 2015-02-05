@@ -76,5 +76,6 @@ return ArrayHelper::merge(
     require(__DIR__ . '/../web/theme/module/config/console.php') :
     [],
     file_exists(__DIR__ . '/common-local.php') ? require(__DIR__ . '/common-local.php') : [],
-    file_exists(__DIR__ . '/console-local.php') ? require(__DIR__ . '/console-local.php') : []
+    file_exists(__DIR__ . '/console-local.php') ? require(__DIR__ . '/console-local.php') : [],
+    file_exists(__DIR__ . '/from-db.php') ? require(__DIR__ . '/from-db.php') : []
 );
