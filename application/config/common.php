@@ -1,5 +1,7 @@
 <?php
 
+Yii::setAlias('config', __DIR__);
+
 $db = require(__DIR__ . '/db.php');
 $params = require(__DIR__ . '/params.php');
 

@@ -133,9 +133,7 @@ $config = [
             'class' => 'app\components\DotplantErrorHandler',
             'errorAction' => 'default/error',
         ],
-        'mail' => [
-            'class' => 'yii\swiftmailer\Mailer',
-        ],
+        'mail' => file_exists(__DIR__ . '/email-config.php') ? require(__DIR__ . '/email-config.php') : [ 'class' => 'yii\swiftmailer\Mailer' ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -169,8 +167,7 @@ $allConfig = ArrayHelper::merge(
     ? require(__DIR__ . '/../web/theme/module/config/web.php')
     : [],
     file_exists(__DIR__ . '/common-local.php') ? require(__DIR__ . '/common-local.php') : [],
-    file_exists(__DIR__ . '/web-local.php') ? require(__DIR__ . '/web-local.php') : [],
-    file_exists(__DIR__ . '/web-local.php') ? require(__DIR__ . '/from-db.php') : []
+    file_exists(__DIR__ . '/web-local.php') ? require(__DIR__ . '/web-local.php') : []
 );
 
 if (YII_ENV_DEV) {

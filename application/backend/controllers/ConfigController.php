@@ -7,6 +7,7 @@ use app\components\SearchModel;
 use app\models\Config;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -85,6 +86,20 @@ class ConfigController extends Controller
         }
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
+                // email config?
+                $emailParent = Config::find()->where(['key' => 'emailConfig'])->one();
+                if ($emailParent) {
+                    $emailConfAR = Config::find()->where(['parent_id' => $emailParent->id])->all();
+                    $emailConf = [
+                        'class' => 'yii\swiftmailer\Mailer'
+                    ];
+                    foreach($emailConfAR as $cf) {
+                        $emailConf[$cf->name] = $cf->value;
+                    }
+
+                    file_put_contents(Yii::getAlias('@config') . "/email-config.php", "<?php\nreturn " . VarDumper::export($emailConf) . ";\n");
+                }
+
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
                 return $this->redirect(['update', 'id' => $model->id]);
             } else {
