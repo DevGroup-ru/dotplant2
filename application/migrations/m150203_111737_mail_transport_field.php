@@ -14,7 +14,8 @@ class m150203_111737_mail_transport_field extends Migration
                 'parent_id' => $conf->id,
                 'name' => 'Transport',
                 'key' => 'transport',
-                'value' => 'Swift_SmtpTransport'
+                'value' => 'Swift_SmtpTransport',
+                'path' => 'emailConfig.transport',
             ]
         );
     }
