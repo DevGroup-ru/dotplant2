@@ -1,8 +1,5 @@
 web/.sass-cache
 web/css/.sass-cache
+web/theme
 web/theme/*
-!web/theme/resources
-web/theme/resources/*
-!web/theme/resources/product-images
-web/theme/resources/product-images/*
 seo/redirects/redirectsArray.php
