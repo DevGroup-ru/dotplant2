@@ -70,20 +70,16 @@ trait DynamicContentTrait
                     Yii::$app->response->dynamic_content_trait = true;
                     Yii::$app->response->matched_dynamic_content_trait_model = &$model;
 
-                    if (!empty($model->content_block_name)) {
-                        Yii::$app->response->blocks[$model->content_block_name] = $model->content;
-                    }
-                    if (!empty($model->title)) {
-                        Yii::$app->response->title = $model->title;
-                    }
-                    if (!empty($model->h1)) {
-                        Yii::$app->response->blocks['h1'] = $model->h1;
-                    }
 
-                    if (!empty($model->meta_description)) {
-                        Yii::$app->response->meta_description = $model->meta_description;
+                    Yii::$app->response->blocks[$model->content_block_name] = $model->content;
 
-                    }
+                    Yii::$app->response->title = $model->title;
+
+                    Yii::$app->response->blocks['h1'] = $model->h1;
+
+                    Yii::$app->response->meta_description = $model->meta_description;
+
+
 
                     break;
                 }
