@@ -231,7 +231,10 @@ class Page extends ActiveRecord
 
         $parent_model = $this->parent;
 
-        $main_domain = Config::getValue('core.serverName', Yii::$app->request->serverName);
+        $main_domain = Config::getValue(
+            'core.serverName',
+            Yii::$app->request instanceof \yii\console\Request ? 'localhost' : Yii::$app->request->serverName
+        );
         if (intval($this->slug_absolute) === 1) {
             if (empty($this->subdomain) === false) {
                 if ($this->slug !== ':mainpage:') {
