@@ -478,6 +478,10 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             isset($fields['categories']) ? $fields['categories'] :
                 (isset($fields['category']) ? $fields['category'] :
                     false);
+        if ($categories === false && $this->main_category_id > 0) {
+            $categories = $this->main_category_id;
+            
+        }
         if ($categories !== false) {
             if (strpos($categories, $multipleValuesDelimiter) > 0) {
                 $categories = explode($multipleValuesDelimiter, $categories);
@@ -526,6 +530,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             // find & add parent category
             // if we need to show products of child categories in products list
             if (is_array($categories) && Config::getValue('shop.showProductsOfChildCategories')) {
+
                 do {
                     $repeat = false;
                     foreach ($categories as $cat) {

@@ -38,10 +38,15 @@ abstract class AbstractImportCsv extends Import
                     $objData = [];
                     $propData = [];
                     foreach ($objAttributes as $attribute) {
-                        $objData[$attribute] = (isset($titleFields[$attribute])) ? $row[$titleFields[$attribute]] : '';
+                        if (isset($titleFields[$attribute])) {
+                            $objData[$attribute] = $row[$titleFields[$attribute]];
+                        }
                     }
                     foreach ($propAttributes as $attribute) {
-                        $propValue = (isset($titleFields[$attribute])) ? $row[$titleFields[$attribute]] : '';
+                        if (!(isset($titleFields[$attribute]))) {
+                            continue;
+                        }
+                        $propValue = $row[$titleFields[$attribute]];
                         if (!empty($this->multipleValuesDelimiter)) {
 
                             if (strpos($propValue, $this->multipleValuesDelimiter) > 0) {

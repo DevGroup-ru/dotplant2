@@ -171,7 +171,7 @@ class Order extends \yii\db\ActiveRecord
                         ->send();
                 } catch (\Exception $e) {
                     // do nothing
-                    
+
                 }
             }
         }

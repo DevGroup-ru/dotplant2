@@ -127,7 +127,6 @@ abstract class Import extends Component
             $objectData = $object;
         }
         if ($objectModel) {
-            $objectModel->load([$objectModel->formName() => $objectData]);
 
             if ($objectModel instanceof ImportableInterface) {
                 $objectModel->processImportBeforeSave($rowFields, $this->multipleValuesDelimiter, $this->additionalFields);
