@@ -61,4 +61,9 @@ class Response extends \yii\web\Response
      * @var bool If this response proccessed by DynamicContentTrait
      */
     public $dynamic_content_trait = false;
+
+    /**
+     * @var \app\models\DynamicContent matched DynamicContent model from DynamicContentTrait
+     */
+    public $matched_dynamic_content_trait_model = null;
 }

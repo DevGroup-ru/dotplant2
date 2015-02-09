@@ -68,6 +68,7 @@ trait DynamicContentTrait
                 }
                 if ($matches === true) {
                     Yii::$app->response->dynamic_content_trait = true;
+                    Yii::$app->response->matched_dynamic_content_trait_model = &$model;
 
                     if (!empty($model->content_block_name)) {
                         Yii::$app->response->blocks[$model->content_block_name] = $model->content;
