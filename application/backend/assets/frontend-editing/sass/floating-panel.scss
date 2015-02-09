@@ -1,0 +1,36 @@
+@import "compass";
+
+$panel-background-color: #222;
+$panel-height: 50px;
+
+#dotplant-floating-panel {
+  position: fixed;
+  top: 0;
+  height: $panel-height;
+  min-height: $panel-height;
+  margin-bottom: 0;
+  border-radius: 0;
+  width: 100%;
+  z-index: 999999;
+  background: $panel-background-color;
+
+  border-bottom: 1px solid contrast-color($panel-background-color, darken($panel-background-color, 50%), lighten($panel-background-color, 50%));
+
+  color: contrast-color($panel-background-color);
+  .navbar-nav {
+    a, a:visited {
+      color: contrast-color($panel-background-color);
+      &:hover {
+        color: #000;
+      }
+    }
+  }
+
+}
+
+body {
+  padding-top: $panel-height+1px;
+  &.fixed-header #dotplant-floating-panel{
+    display:none;
+  }
+}

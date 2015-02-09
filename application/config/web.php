@@ -9,6 +9,7 @@ $config = [
     'language' => 'ru',
     'bootstrap' => [
         'seo',
+        'backend',
         'app\components\UserPreferencesBootstrap',
     ],
     'defaultRoute' => 'default',
