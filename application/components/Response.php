@@ -53,7 +53,12 @@ class Response extends \yii\web\Response
     public $meta_description = null;
 
     /**
-     * @var bool If this reponse was for PrefilteredPage
+     * @var bool If this response was for PrefilteredPage
      */
     public $is_prefiltered_page = false;
+
+    /**
+     * @var bool If this response proccessed by DynamicContentTrait
+     */
+    public $dynamic_content_trait = false;
 }
