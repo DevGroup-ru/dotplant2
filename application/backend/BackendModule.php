@@ -3,6 +3,7 @@
 namespace app\backend;
 
 use app\backend\widgets\FloatingPanel;
+use app\seo\SeoModule;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Module;
@@ -26,7 +27,11 @@ class BackendModule extends Module implements BootstrapInterface
         $app->on(
             Application::EVENT_BEFORE_ACTION,
             function () use ($app) {
-                if ($app->requestedAction->controller->module->className() !== BackendModule::className() && Yii::$app->user->isGuest === false) {
+                $blacklisted_modules = [
+                    BackendModule::className(),
+                    SeoModule::className(),
+                ];
+                if (!in_array($app->requestedAction->controller->module->className(), $blacklisted_modules) && Yii::$app->user->isGuest === false) {
                     if (Yii::$app->user->can('administrate')) {
                         $app->getView()->on(View::EVENT_BEGIN_BODY, function () {
 
