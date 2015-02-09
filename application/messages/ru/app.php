@@ -164,7 +164,7 @@ return [
     'Form edit' => 'Редактирование формы',
     'Form was submitted' => 'Форма отправлена',
     'Forms' => 'Формы',
-    'From' => 'Форма',
+    'From' => 'С',
     'Frontend Edit View' => '',
     'Frontend Render View' => '',
     'Generate' => 'Генерировать',
