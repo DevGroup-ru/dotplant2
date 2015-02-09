@@ -13,14 +13,14 @@ use yii\web\JsExpression;
 $this->title = Yii::t('app', 'Dynamic content edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/dynamic-content/index'], 'label' => Yii::t('app', 'Dynamic content')];
 $this->params['breadcrumbs'][] = $this->title;
-
+$action = isset($model->id) ? 'edit?id='.$model->id : 'edit';
 ?>
 
 <?= app\widgets\Alert::widget([
     'id' => 'alert',
 ]); ?>
 
-<?php $form = ActiveForm::begin(['id' => 'dynamic-content-form', 'type'=>ActiveForm::TYPE_VERTICAL]); ?>
+<?php $form = ActiveForm::begin(['id' => 'dynamic-content-form', 'type'=>ActiveForm::TYPE_VERTICAL,'action'=>$action]); ?>
 
 <?php $this->beginBlock('submit'); ?>
 <div class="form-group no-margin">

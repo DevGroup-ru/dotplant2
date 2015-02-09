@@ -16,14 +16,15 @@ use kartik\icons\Icon;
             </a>
         </div>
 
-        <ul class="nav navbar-nav">
-            <li>
-                <a href="/backend/">
-                    <?= Icon::show('dashboard') ?>
-                    <?= Yii::t('app', 'Backend') ?>
-                </a>
-            </li>
-        </ul>
+        <?= \yii\widgets\Menu::widget([
+            'items' => $items,
+            'encodeLabels' => false,
+            'options' => [
+                'class' => 'nav navbar-nav',
+            ],
+            'linkTemplate' => '<a href="{url}" target="_blank">{label}</a>',
+        ]) ?>
+
 
     </div>
 

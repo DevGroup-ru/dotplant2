@@ -54,7 +54,11 @@ class DynamicContentController extends Controller
         }
         
         $static_values_properties = [];
-
+        if (isset($_GET['DynamicContent'])) {
+            if (isset($_GET['DynamicContent']['object_id'])) {
+                $model->object_id = intval($_GET['DynamicContent']['object_id']);
+            }
+        }
         $property_groups_ids_for_object = (new Query)
             ->select('id')
             ->from(PropertyGroup::tableName())
@@ -80,7 +84,11 @@ class DynamicContentController extends Controller
         }
 
         $post = \Yii::$app->request->post();
-        if ($model->load($post) && $model->validate()) {
+        if (isset($_GET['DynamicContent'])) {
+            $post = $_GET;
+        }
+        if ($model->load($post) && $model->validate() && !isset($_GET['DynamicContent'])) {
+
             $save_result = $model->save();
             if ($save_result) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
@@ -88,6 +96,8 @@ class DynamicContentController extends Controller
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }
+
+
         }
 
         return $this->render(
