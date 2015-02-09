@@ -91,10 +91,14 @@ class ConfigController extends Controller
                 if ($emailParent) {
                     $emailConfAR = Config::find()->where(['parent_id' => $emailParent->id])->all();
                     $emailConf = [
-                        'class' => 'yii\swiftmailer\Mailer'
+                        'class' => 'yii\swiftmailer\Mailer',
+                        'transport' => [],
                     ];
                     foreach($emailConfAR as $cf) {
-                        $emailConf[$cf->name] = $cf->value;
+                        if ($cf->name === 'transport') {
+                            $cf->name = 'class';
+                        }
+                        $emailConf['transport'][$cf->name] = $cf->value;
                     }
 
                     file_put_contents(Yii::getAlias('@config') . "/email-config.php", "<?php\nreturn " . VarDumper::export($emailConf) . ";\n");
