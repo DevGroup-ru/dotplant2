@@ -18,6 +18,7 @@ use app\models\Property;
 use kartik\form\ActiveForm;
 
 $use_links = isset($filterLinks);
+$onlyUncheckSlug = isset($uncheckSlugOnly);
 
 ?>
 <?php $form = ActiveForm::begin(['id' => 'view-form', 'type'=>ActiveForm::TYPE_HORIZONTAL]); ?>
@@ -102,9 +103,29 @@ $use_links = isset($filterLinks);
                                     $disabled_array = $disabled ? ['disabled'=>'disabled'] : [];
 
                                     $label = $value['name'];
+                                    $go_back = '';
                                     if ($use_links === true) {
-                                        $url = Url::toRoute($params);
-                                        $label = Html::a($value['name'], $url, ['class'=>'filter-link']);
+                                        $should_link = true;
+
+                                        if (isset($current_selections['properties'][$property_id])) {
+                                            if (isset($current_selections['properties'][$property_id][0])) {
+
+                                                $params_clone = $params;
+
+                                                if ($current_selections['properties'][$property_id][0] == $value['id'] || !$onlyUncheckSlug) {
+                                                    if ($current_selections['properties'][$property_id][0] == $value['id']) {
+                                                        unset($params_clone['properties'][$property_id]);
+                                                    }
+                                                    $go_back = Url::toRoute($params_clone);
+                                                    $should_link = false;
+                                                }
+
+                                            }
+                                        }
+                                        if ($should_link === true) {
+                                            $url = Url::toRoute($params);
+                                            $label = Html::a($value['name'], $url, ['class'=>'filter-link']);
+                                        }
                                     }
 
                                     $checkbox = Html::tag(
@@ -113,7 +134,12 @@ $use_links = isset($filterLinks);
                                             Html::checkBox(
                                                 "properties[$property_id][]",
                                                 $active,
-                                                ['class' => '', 'id' => "p_{$property_id}_{$value['id']}", 'value'=>$value['id']]
+                                                [
+                                                    'class' => 'filter-checkbox',
+                                                    'id' => "p_{$property_id}_{$value['id']}",
+                                                    'value'=>$value['id'],
+                                                    'data-goback' => $go_back
+                                                ]
                                             )." ".$label,
                                             "p_{$property_id}_{$value['id']}",
                                             [
@@ -156,3 +182,16 @@ $use_links = isset($filterLinks);
 
 </div>
 <?php ActiveForm::end(); ?>
+
+<script>
+    $(function(){
+        <?php if ($use_links): ?>
+        $("#<?=$id?> .filter-checkbox").change(function(){
+            if ($(this).data('goback') !== '') {
+                document.location = $(this).data('goback');
+            }
+            return true;
+        });
+        <?php endif; ?>
+    })
+</script>
