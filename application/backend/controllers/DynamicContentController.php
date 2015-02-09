@@ -64,7 +64,7 @@ class DynamicContentController extends Controller
             ->from(PropertyGroup::tableName())
             ->where(
                 [
-                'object_id' => $model->object_id,
+//                'object_id' => $model->object_id,
                 ]
             )->column();
 
