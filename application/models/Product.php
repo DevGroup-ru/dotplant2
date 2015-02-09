@@ -480,7 +480,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     false);
         if ($categories === false && $this->main_category_id > 0) {
             $categories = $this->main_category_id;
-            
+
         }
         if ($categories !== false) {
             if (strpos($categories, $multipleValuesDelimiter) > 0) {

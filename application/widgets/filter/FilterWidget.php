@@ -11,6 +11,7 @@ use Yii;
 use yii\base\Widget;
 use yii\caching\TagDependency;
 use yii\db\Query;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 class FilterWidget extends Widget
@@ -33,7 +34,14 @@ class FilterWidget extends Widget
      */
     public $onlyGroupsIds = null;
 
+    /**
+     * @var array Additional params passed to filter view
+     */
+    public $additionalViewParams = [];
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
         Yii::beginProfile("FilterWidget");
@@ -50,7 +58,7 @@ class FilterWidget extends Widget
 
         $result = $this->render(
             $this->viewFile,
-            [
+            ArrayHelper::merge([
                 'id' => $this->id,
                 'current_selections' => $this->currentSelections,
                 'possible_selections' => $this->possibleSelections,
@@ -61,7 +69,7 @@ class FilterWidget extends Widget
                 'category_group_id' => $this->categoryGroupId,
                 'disabled_ids' => $this->disabled_ids,
                 'render_dynamic' => $this->render_dynamic,
-            ]
+            ], $this->additionalViewParams)
         );
 
         Yii::endProfile("FilterWidget");

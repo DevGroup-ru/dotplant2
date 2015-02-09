@@ -16,6 +16,9 @@ use app\models\Property;
  * @var array $disabled_ids
  */
 use kartik\form\ActiveForm;
+
+$use_links = isset($filterLinks);
+
 ?>
 <?php $form = ActiveForm::begin(['id' => 'view-form', 'type'=>ActiveForm::TYPE_HORIZONTAL]); ?>
 <div id="<?= $id ?>" class="filter-container">
@@ -98,6 +101,12 @@ use kartik\form\ActiveForm;
                                     $disabled = in_array($value['id'], $disabled_ids);
                                     $disabled_array = $disabled ? ['disabled'=>'disabled'] : [];
 
+                                    $label = $value['name'];
+                                    if ($use_links === true) {
+                                        $url = Url::toRoute($params);
+                                        $label = Html::a($value['name'], $url, ['class'=>'filter-link']);
+                                    }
+
                                     $checkbox = Html::tag(
                                         'div',
                                         Html::label(
@@ -105,7 +114,7 @@ use kartik\form\ActiveForm;
                                                 "properties[$property_id][]",
                                                 $active,
                                                 ['class' => '', 'id' => "p_{$property_id}_{$value['id']}", 'value'=>$value['id']]
-                                            )." ".$value['name'],
+                                            )." ".$label,
                                             "p_{$property_id}_{$value['id']}",
                                             [
                                                 'class'=>($disabled?'muted':'')
