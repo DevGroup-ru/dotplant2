@@ -48,7 +48,7 @@
         "codeception/verify": "*"
     },
     "scripts": {
-        "pre-install-cmd": [
+        "post-install-cmd": [
             "yii\\composer\\Installer::postCreateProject"
         ]
     },
