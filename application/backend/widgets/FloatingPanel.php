@@ -58,6 +58,7 @@ class FloatingPanel extends Widget
                     }
                 } else {
                     // no properties selected - go to category edit page
+
                     if (isset($_GET['last_category_id'])) {
                         $cat = app\models\Category::findById($_GET['last_category_id']);
                         $items[] = [
@@ -71,6 +72,18 @@ class FloatingPanel extends Widget
                     }
                 }
 
+                break;
+            case 'product/show':
+                if (isset($_GET['model_id'])) {
+                    $items[] = [
+                        'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit product'),
+                        'url' => [
+                            '/backend/product/edit',
+                            'id' => intval($_GET['model_id'])
+
+                        ],
+                    ];
+                }
                 break;
         }
 
