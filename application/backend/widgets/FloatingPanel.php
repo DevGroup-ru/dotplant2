@@ -85,6 +85,22 @@ class FloatingPanel extends Widget
                     ];
                 }
                 break;
+            
+            case 'page/show':
+            case 'page/list':
+                if (isset($_GET['id'])) {
+                    $page = app\models\Page::findById($_GET['id']);
+                    $items[] = [
+                        'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit page'),
+                        'url' => [
+                            '/backend/page/edit',
+                            'id' => $page->id,
+                            'parent_id' =>$page->parent_id,
+
+                        ],
+                    ];
+                }
+                break;
         }
 
 
