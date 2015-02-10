@@ -128,7 +128,7 @@ jQuery(function() {
         if (isNaN(quantity) || quantity < 1) {
             quantity = 1;
         }
-        console.log(quantity);
+        
         Shop.addToCart($this.attr('data-id'), 1, function(data) {
             var $widget = jQuery('#cart-info-widget');
             $widget.find('.total-price').text(data['totalPrice']);
