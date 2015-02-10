@@ -128,8 +128,8 @@ jQuery(function() {
         if (isNaN(quantity) || quantity < 1) {
             quantity = 1;
         }
-        
-        Shop.addToCart($this.attr('data-id'), 1, function(data) {
+
+        Shop.addToCart($this.attr('data-id'), quantity, function(data) {
             var $widget = jQuery('#cart-info-widget');
             $widget.find('.total-price').text(data['totalPrice']);
             $widget.find('.items-count').text(data['itemsCount']);
