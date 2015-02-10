@@ -124,6 +124,11 @@ jQuery(function() {
     });
     jQuery('[data-action="add-to-cart"]').click(function() {
         var $this = jQuery(this);
+        var quantity = typeof($this.attr('data-quantity')) !== 'undefined' ? parseInt($this.attr('data-quantity')) : 1;
+        if (isNaN(quantity) || quantity < 1) {
+            quantity = 1;
+        }
+        console.log(quantity);
         Shop.addToCart($this.attr('data-id'), 1, function(data) {
             var $widget = jQuery('#cart-info-widget');
             $widget.find('.total-price').text(data['totalPrice']);
