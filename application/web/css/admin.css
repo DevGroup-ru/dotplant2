@@ -160,3 +160,8 @@ img.image-column {
 #ribbon li.active {
   max-width: 400px;
 }
+
+/* line 130, ../sass/admin.scss */
+.select2-container.form-control {
+  padding: 0px;
+}
