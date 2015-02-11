@@ -254,16 +254,26 @@ class AbstractModel extends Model
         Yii::$app->cache->delete("PSV:".$object_id.":".$object_model_id);
         if (count($column_type_updates) > 1) {
             $table_name = Object::findById($object_id)->column_properties_table_name;
-
-            Yii::$app->db->createCommand()
-                ->update(
-                    $table_name,
-                    $column_type_updates,
-                    'object_model_id = :object_model_id',
-                    [
-                        ':object_model_id' => $object_model_id
-                    ]
-                )->execute();
+            $exists = Yii::$app->db->createCommand('select id form '.$table_name . ' where object_model_id=:object_model_id')
+                ->bindValue(':object_model_id', $object_model_id)
+                ->queryScalar();
+            if ($exists) {
+                Yii::$app->db->createCommand()
+                    ->update(
+                        $table_name,
+                        $column_type_updates,
+                        'object_model_id = :object_model_id',
+                        [
+                            ':object_model_id' => $object_model_id
+                        ]
+                    )->execute();
+            } else {
+                Yii::$app->db->createCommand()
+                    ->insert(
+                        $table_name,
+                        $column_type_updates
+                    )->execute();
+            }
         }
         if (count($new_eav_values) > 0) {
             $table_name = Object::findById($object_id)->eav_table_name;
