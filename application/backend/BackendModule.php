@@ -30,6 +30,7 @@ class BackendModule extends Module implements BootstrapInterface
                 $blacklisted_modules = [
                     BackendModule::className(),
                     SeoModule::className(),
+                    'app\data\Module',
                 ];
                 if (!in_array($app->requestedAction->controller->module->className(), $blacklisted_modules) && Yii::$app->user->isGuest === false) {
                     if (Yii::$app->user->can('administrate')) {
