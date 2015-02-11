@@ -87,8 +87,8 @@ class ConfigController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 // email config?
-                $emailParent = Config::find()->where(['key' => 'emailConfig'])->one();
-                if ($emailParent) {
+                $emailParent = Config::find()->where(['path' => 'core.emailConfig'])->one();
+                if ($emailParent->id === $model->parent_id) {
                     $emailConfAR = Config::find()->where(['parent_id' => $emailParent->id])->all();
                     $emailConf = [
                         'class' => 'yii\swiftmailer\Mailer',
