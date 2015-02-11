@@ -127,6 +127,8 @@ class Cart extends ActiveRecord
         $totalPrice = 0;
         $itemsCount = 0;
         $products = Product::find()->where(['in', 'id', array_keys($this->items)])->all();
+        $cartCountsUniqueProducts = Config::getValue('shop.cartCountsUniqueProducts', '0') === '1';
+        
         $items = [];
         if ($saveProducts) {
             $this->products = [];
@@ -145,7 +147,11 @@ class Cart extends ActiveRecord
             }else{
                 $additionalParams =  json_decode('{"additionalPrice":0}');
             }
-            $itemsCount += $this->items[$product->id]['quantity'];
+            if ($cartCountsUniqueProducts === true) {
+                $itemsCount++;
+            } else {
+                $itemsCount += $this->items[$product->id]['quantity'];
+            }
             $totalPrice += $this->items[$product->id]['quantity'] * ($product->price + $additionalParams->additionalPrice);
             if ($saveProducts) {
                 $this->products[$product->id] = $product;

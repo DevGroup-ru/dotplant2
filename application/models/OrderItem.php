@@ -33,7 +33,7 @@ class OrderItem extends ActiveRecord
     {
         return [
             [['order_id', 'product_id', 'quantity'], 'required'],
-            [['quantity'], 'number', 'min' => 1, 'integerOnly' => true],
+            [['quantity'], 'number', 'min' => 1],
             [['order_id', 'product_id'], 'integer'],
             [['additional_options'], 'string']
         ];

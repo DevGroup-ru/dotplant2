@@ -71,9 +71,9 @@ class Order extends \yii\db\ActiveRecord
                 ],
                 'required'
             ],
-            [['user_id', 'order_status_id', 'shipping_option_id', 'payment_type_id', 'items_count'], 'integer'],
+            [['user_id', 'order_status_id', 'shipping_option_id', 'payment_type_id'], 'integer'],
             [['start_date', 'end_date'], 'safe'],
-            [['total_price'], 'number'],
+            [['total_price', 'items_count'], 'number'],
             [['external_id'], 'string', 'max' => 38]
         ];
     }
@@ -230,12 +230,18 @@ class Order extends \yii\db\ActiveRecord
     {
         $totalPrice = 0;
         $itemsCount = 0;
+        $cartCountsUniqueProducts = Config::getValue('shop.cartCountsUniqueProducts', '0') === '0';
+
         foreach ($this->items as $item) {
             if (is_null($item->product)) {
                 $item->delete();
             } else {
                 $totalPrice += $item->quantity * $item->product->price;
-                $itemsCount += $item->quantity;
+                if ($cartCountsUniqueProducts === true) {
+                    $itemsCount++;
+                } else {
+                    $itemsCount += $item->quantity;
+                }
             }
         }
         $this->total_price = $totalPrice;
