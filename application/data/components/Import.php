@@ -99,8 +99,16 @@ abstract class Import extends Component
 
     protected function save($objectId, $object, $objectFields = [], $properties = [], $propertiesFields = [], $row=[], $titleFields=[])
     {
-
-        $rowFields = array_combine(array_keys($titleFields), $row);
+        try {
+            $rowFields = array_combine(array_keys($titleFields), $row);
+        } catch(\Exception $e) {
+            echo "title fields: ";
+            var_dump(array_keys($titleFields));
+            echo "\n\nRow:";
+            var_dump($row);
+            echo "\n\n";
+            throw $e;
+        }
 
         $class = $this->object->object_class;
         if ($objectId > 0) {
@@ -150,6 +158,7 @@ abstract class Import extends Component
                 }
 
                 $propertiesData = [];
+                $objectModel->getPropertyGroups();
 
                 foreach ($propertiesFields as $propertyId => $field) {
                     if (isset($properties[$field['key']])) {
@@ -208,6 +217,7 @@ abstract class Import extends Component
                 }
 
                 if (!empty($propertiesData)) {
+
                     $objectModel->saveProperties(
                         [
                             "Properties_{$objectModel->formName()}_{$objectModel->id}" => $propertiesData

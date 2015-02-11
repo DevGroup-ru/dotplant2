@@ -218,7 +218,8 @@ class HasProperties extends Behavior
     private function getTableInheritanceRow()
     {
         if ($this->table_inheritance_row === null) {
-            $this->table_inheritance_row = Yii::$app->cache->get("TIR:" . $this->owner->id);
+            $cacheKey = "TIR:" . $this->getObject()->id . ':' . $this->owner->id;
+            $this->table_inheritance_row = Yii::$app->cache->get($cacheKey);
             if (!is_array($this->table_inheritance_row)) {
                 $this->table_inheritance_row = (new Query())
                     ->select('*')
@@ -229,7 +230,7 @@ class HasProperties extends Behavior
                     $this->table_inheritance_row = [];
                 }
                 Yii::$app->cache->set(
-                    "TIR:" . $this->owner->id,
+                    $cacheKey,
                     $this->table_inheritance_row,
                     86400,
                     new TagDependency(

@@ -187,6 +187,10 @@ class AbstractModel extends Model
         $osv_psv_ids_to_delete = [];
         foreach ($this->values_by_property_key as $key => $values) {
             $property = Property::findById($values->property_id);
+            if (in_array($key, array_keys($new_values)) === false) {
+                // if in incoming array there was no specification for this property - skip it
+                continue;
+            }
             if ($property->has_static_values) {
                 foreach ($values->values as $val) {
                     if (in_array($val['psv_id'], $osv_psv_ids) === false) {
@@ -250,14 +254,16 @@ class AbstractModel extends Model
         Yii::$app->cache->delete("PSV:".$object_id.":".$object_model_id);
         if (count($column_type_updates) > 1) {
             $table_name = Object::findById($object_id)->column_properties_table_name;
-            
-            Yii::$app->db->createCommand()
-                ->delete($table_name, ['object_model_id'=>$object_model_id])
-                ->execute();
 
             Yii::$app->db->createCommand()
-                ->insert($table_name, $column_type_updates)
-                ->execute();
+                ->update(
+                    $table_name,
+                    $column_type_updates,
+                    'object_model_id = :object_model_id',
+                    [
+                        ':object_model_id' => $object_model_id
+                    ]
+                )->execute();
         }
         if (count($new_eav_values) > 0) {
             $table_name = Object::findById($object_id)->eav_table_name;
@@ -273,7 +279,7 @@ class AbstractModel extends Model
                 ->delete($table_name, ['in', 'id', $eav_ids_to_delete])
                 ->execute();
         }
-        Yii::$app->cache->delete("TIR:".$object_model_id);
+        Yii::$app->cache->delete("TIR:".$object_id . ':' .$object_model_id);
         $this->values_by_property_key = $new_values;
     }
 }

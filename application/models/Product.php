@@ -478,8 +478,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             isset($fields['categories']) ? $fields['categories'] :
                 (isset($fields['category']) ? $fields['category'] :
                     false);
-        if ($categories === false && $this->main_category_id > 0) {
-            $categories = $this->main_category_id;
+        if ($categories === false) {
+            return $this->getCategoryIds();
 
         }
         if ($categories !== false) {
