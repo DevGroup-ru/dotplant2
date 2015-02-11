@@ -286,7 +286,7 @@ class Page extends ActiveRecord
         }
         $cacheKey = "Page:$path";
         $page = Yii::$app->cache->get($cacheKey);
-        if ($page === false || true) {
+        if ($page === false) {
             $page = static::find()->where(['slug_compiled' => $path, 'published' => 1])->asArray()->one();
             $duration = 86400;
             if (!is_array($page)) {
