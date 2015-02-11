@@ -31,6 +31,7 @@ use yii\db\ActiveRecord;
  * @property string $date_modified
  * @property integer $is_deleted
  * @property string $show_type
+ * @property string $name
  */
 class Page extends ActiveRecord
 {
@@ -54,7 +55,7 @@ class Page extends ActiveRecord
             [['robots', 'is_deleted', 'parent_id', 'sort_order'], 'integer'],
             [['slug_absolute', 'published', 'searchable'], 'boolean'],
             [
-                ['content', 'title', 'h1', 'meta_description', 'breadcrumbs_label', 'announce', 'slug_compiled'],
+                ['content', 'title', 'h1', 'meta_description', 'breadcrumbs_label', 'announce', 'slug_compiled', 'name'],
                 'string'
             ],
             [['date_added', 'date_modified'], 'safe'],
@@ -89,6 +90,7 @@ class Page extends ActiveRecord
             'date_modified' => Yii::t('app', 'Date Modified'),
             'is_deleted' => Yii::t('app', 'Is Deleted'),
             'subdomain' => Yii::t('app', 'Subdomain'),
+            'name' => Yii::t('app', 'Name'),
         ];
     }
 
@@ -286,7 +288,7 @@ class Page extends ActiveRecord
         }
         $cacheKey = "Page:$path";
         $page = Yii::$app->cache->get($cacheKey);
-        if ($page === false || true) {
+        if ($page === false) {
             $page = static::find()->where(['slug_compiled' => $path, 'published' => 1])->asArray()->one();
             $duration = 86400;
             if (!is_array($page)) {

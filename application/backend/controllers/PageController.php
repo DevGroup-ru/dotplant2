@@ -36,7 +36,7 @@ class PageController extends Controller
             'getTree' => [
                 'class' => 'app\backend\actions\JSTreeGetTrees',
                 'modelName' => 'app\models\Page',
-                'label_attribute' => 'breadcrumbs_label',
+                'label_attribute' => 'name',
             ],
         ];
     }
