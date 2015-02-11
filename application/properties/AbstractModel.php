@@ -254,7 +254,7 @@ class AbstractModel extends Model
         Yii::$app->cache->delete("PSV:".$object_id.":".$object_model_id);
         if (count($column_type_updates) > 1) {
             $table_name = Object::findById($object_id)->column_properties_table_name;
-            $exists = Yii::$app->db->createCommand('select id form '.$table_name . ' where object_model_id=:object_model_id')
+            $exists = Yii::$app->db->createCommand('select object_model_id from '.$table_name . ' where object_model_id=:object_model_id')
                 ->bindValue(':object_model_id', $object_model_id)
                 ->queryScalar();
             if ($exists) {
