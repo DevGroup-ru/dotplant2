@@ -48,6 +48,10 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Page'), 'icon'=>'pencil', 'footer'=>$this->blocks['submit']]); ?>
 
                 <?=
+                    $form->field($model, 'name')
+                ?>
+
+                <?=
                     $form->field($model, 'title')
                 ?>
 
