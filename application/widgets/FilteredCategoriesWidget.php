@@ -16,6 +16,7 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
     public $viewFile = 'categories-list';
     public $values_by_property_id = [];
     public $limit = null;
+    public $category_group_id = null;
 
     public function run()
     {
@@ -23,6 +24,9 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
         $query->andWhere([Category::tableName() . '.active' => 1]);
         if ($this->root_category_id !== null) {
             $query->andWhere([Category::tableName() . '.parent_id' => $this->root_category_id]);
+        }
+        if ($this->category_group_id !== null) {
+            $query->andWhere([Category::tableName() . '.category_group_id' => $this->category_group_id]);
         }
         $query->groupBy(Category::tableName().".id");
         $query->orderBy(Category::tableName().".sort_order");
