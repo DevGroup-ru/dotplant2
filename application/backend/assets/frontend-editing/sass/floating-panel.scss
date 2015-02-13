@@ -25,7 +25,10 @@ $panel-height: 50px;
       }
     }
   }
-
+  &.dotplant-floating-panel-bottom {
+    top: auto;
+    bottom: 0;
+  }
 }
 
 body {

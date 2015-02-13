@@ -10,6 +10,8 @@ use yii\helpers\Json;
 
 class FloatingPanel extends Widget
 {
+    public $bottom = false;
+
     public function run()
     {
         app\backend\assets\FrontendEditingAsset::register($this->view);
@@ -108,6 +110,7 @@ class FloatingPanel extends Widget
             'floating-panel',
             [
                 'items' => $items,
+                'bottom' => $this->bottom,
             ]
         );
 

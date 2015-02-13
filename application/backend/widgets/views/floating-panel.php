@@ -1,10 +1,11 @@
 <?php
+/** @var $bottom bool  */
 use yii\helpers\Html;
 use kartik\icons\Icon;
 
 ?>
 
-<nav id="dotplant-floating-panel" class="">
+<nav id="dotplant-floating-panel" class="<?= $bottom?'dotplant-floating-panel-bottom':''?>">
     <div class="container-fluid">
         <a href="/backend/" class="navbar-text">DotPlant2</a>
         <div class="navbar-text">

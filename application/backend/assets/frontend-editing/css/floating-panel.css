@@ -20,12 +20,17 @@
 #dotplant-floating-panel .navbar-nav a:hover, #dotplant-floating-panel .navbar-nav a:visited:hover {
   color: #000;
 }
+/* line 28, ../sass/floating-panel.scss */
+#dotplant-floating-panel.dotplant-floating-panel-bottom {
+  top: auto;
+  bottom: 0;
+}
 
-/* line 31, ../sass/floating-panel.scss */
+/* line 34, ../sass/floating-panel.scss */
 body {
   padding-top: 51px;
 }
-/* line 33, ../sass/floating-panel.scss */
+/* line 36, ../sass/floating-panel.scss */
 body.fixed-header #dotplant-floating-panel {
   display: none;
 }
