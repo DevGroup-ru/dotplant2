@@ -7,7 +7,7 @@
  */
 ?>
 
-<div id="properties-widget widget-<?= $widget_id ?>">
+<div id="properties-widget widget-<?= $widget_id ?>" itemprop="propertiesList" itemscope itemtype="http://schema.org/ItemList">
 
 <?php
     if (!empty($object_property_groups)) {

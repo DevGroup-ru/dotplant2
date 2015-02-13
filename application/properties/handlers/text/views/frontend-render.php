@@ -26,16 +26,29 @@ use kartik\helpers\Html;
     <?php
         $property = Property::findById($property_id);
         $result = "";
+        $valuesRendered = 0;
         foreach ($values->values as $val) {
             if (isset($val['value'])) {
                 if (!empty(trim($val['value']))) {
-                    $result .= Html::tag('dd', $val['value']);
+                    if ($valuesRendered === 0) {
+                        $result .= '<meta itemprop="main" content="True"/>';
+                    }
+                    $valuesRendered++;
+                    $result .= Html::tag(
+                        'dd',
+                        $val['value'],
+                        [
+                            'itemprop' => 'value',
+                        ]
+                    );
                 }
             }
         }
         $result = trim($result);
 
         if (!empty($result)) {
-            echo '<dl>' . Html::tag('dt', $property->name) . $result . "</dl>\n\n";
+            echo '<dl itemprop="itemListElement" itemscope itemtype="http://schema.org/NameValueStructure">' .
+                Html::tag('dt', $property->name, ['itemprop'=>'name']) .
+                $result . "</dl>\n\n";
         }
     ?>

@@ -22,17 +22,24 @@ use kartik\helpers\Html;
         return;
     }
     ?>
-<dl>
+<dl itemprop="itemListElement" itemscope itemtype="http://schema.org/NameValueStructure">
     <?php
     $property = Property::findById($property_id);
     $result = "";
+    $valuesRendered = 0;
     foreach ($values->values as $val) {
         if (isset($val['value'])) {
-            $result .= Html::tag('dd', $val['value']);
+            if ($valuesRendered === 0) {
+                $result .= '<meta itemprop="main" content="True"/>';
+            }
+            $valuesRendered++;
+            $result .= Html::tag('dd', $val['value'], [
+                'itemprop' => 'value',
+            ]);
         }
     }
     if (!empty($result)) {
-        echo Html::tag('dt', $property->name) . $result;
+        echo Html::tag('dt', $property->name, ['itemprop'=>'name']) . $result;
     }
     ?>
 </dl>
