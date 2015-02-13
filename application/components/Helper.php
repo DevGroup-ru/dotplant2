@@ -94,9 +94,9 @@ class Helper
      * @param bool $dots adding dots to end of part
      * @return string
      */
-    public static function trimPlain($text, $length = 150, $dots = true)
+    public static function trimPlain($text, $length = 150, $dots = '...')
     {
-        if (!is_string($text) && !empty($text)) {
+        if (!is_string($text) && empty($text)) {
             return "";
         }
         $length = intval($length);
@@ -104,9 +104,7 @@ class Helper
         $text = trim(strip_tags($text));
         $pos = mb_strrpos(mb_substr($text, 0, $length, $encoding), ' ', $encoding);
         $string = mb_substr($text, 0, $pos, $encoding);
-        if ($dots) {
-            $string .= '...';
-        }
+        $string .= $dots;
         if (!empty($string)) {
             return $string;
         } else {
