@@ -87,6 +87,33 @@ class Helper
         return trim(preg_replace('#-{2,}#is', '-', $source));
     }
 
+    /**
+     * TrimPlain returns cleaned from tags part of text with given length
+     * @param string $text input text
+     * @param int $length length of text part
+     * @param bool $dots adding dots to end of part
+     * @return string
+     */
+    public static function trimPlain($text, $length = 150, $dots = true)
+    {
+        if (!is_string($text) && !empty($text)) {
+            return "";
+        }
+        $length = intval($length);
+        $encoding = 'utf-8';
+        $text = trim(strip_tags($text));
+        $pos = mb_strrpos(mb_substr($text, 0, $length, $encoding), ' ', $encoding);
+        $string = mb_substr($text, 0, $pos, $encoding);
+        if ($dots) {
+            $string .= '...';
+        }
+        if (!empty($string)) {
+            return $string;
+        } else {
+            return "";
+        }
+    }
+
     public static function thumbnailOnDemand($filename, $width, $height, $relative_part = '.')
     {
         $dir = dirname($filename);
