@@ -30,10 +30,3 @@ $panel-height: 50px;
     bottom: 0;
   }
 }
-
-body {
-  padding-top: $panel-height+1px;
-  &.fixed-header #dotplant-floating-panel{
-    display:none;
-  }
-}

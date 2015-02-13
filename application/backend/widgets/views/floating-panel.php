@@ -30,3 +30,10 @@ use kartik\icons\Icon;
     </div>
 
 </nav>
+<?php if (!$bottom) :?>
+<script>
+    $(function(){
+        $('body').css('padding-top', parseInt($('body').css('padding-top'))+51);
+    })
+</script>
+<?php endif; ?>

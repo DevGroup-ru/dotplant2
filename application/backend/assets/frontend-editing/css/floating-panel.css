@@ -25,12 +25,3 @@
   top: auto;
   bottom: 0;
 }
-
-/* line 34, ../sass/floating-panel.scss */
-body {
-  padding-top: 51px;
-}
-/* line 36, ../sass/floating-panel.scss */
-body.fixed-header #dotplant-floating-panel {
-  display: none;
-}
