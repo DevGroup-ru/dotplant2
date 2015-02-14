@@ -36,7 +36,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <?=
     Html::a(
         Icon::show('eye') . Yii::t('app', 'Preview'),
-        Url::to(['/product/show', 'model' => $model]),
+        Url::to([
+            '/product/show',
+            'model' => $model,
+            'category_group_id' => $model->getMainCategory()->category_group_id
+        ]),
         ['class' => 'btn btn-success', 'target' => '_blank']
     ) ?>
     <?=
