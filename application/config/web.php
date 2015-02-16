@@ -95,7 +95,8 @@ $config = [
             'loginUrl' => ['/login'],
         ],
         'authManager' => [
-            'class'=>'\bethrezen\CachedDbManager',
+            'class'=>'yii\\rbac\\DbManager',
+            'cache' => 'cache',
         ],
         'authClientCollection' => [
             'class' => 'yii\authclient\Collection',
