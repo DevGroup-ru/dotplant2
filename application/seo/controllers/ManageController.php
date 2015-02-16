@@ -23,6 +23,11 @@ class ManageController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
+                        'actions' => ['get-robots'],
+                        'roles' => ['?']
+                    ],
+                    [
+                        'allow' => true,
                         'actions' => ['flush-meta-cache', 'flush-counter-cache', 'flush-robots-cache'],
                         'roles' => ['cache manage'],
                     ],
