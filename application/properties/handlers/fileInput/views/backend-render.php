@@ -29,7 +29,7 @@ use yii\helpers\Url;
             echo Html::tag('dd', Html::a($val['value'], Url::to([
                 'form/download',
                 'key' => $val['key'],
-                'id' => $values->object_model_id
+                'sumissionId' => $values->object_model_id
             ])));
         }
     }
