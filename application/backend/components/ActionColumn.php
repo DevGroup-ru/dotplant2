@@ -95,8 +95,8 @@ class ActionColumn extends Column
                 $this->buttons = $_btns;
             }
         }
-
-        $data = Html::beginTag('div', ['class' => 'btn-group']);
+        $min_width = count($this->buttons) * 34; //34 is button-width
+        $data = Html::beginTag('div', ['class' => 'btn-group', 'style'=>'min-width: '.$min_width.'px']);
         foreach ($this->buttons as $button) {
             Html::addCssClass($button, 'btn');
             Html::addCssClass($button, 'btn-sm');
