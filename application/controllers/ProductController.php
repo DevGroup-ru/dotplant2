@@ -255,7 +255,7 @@ class ProductController extends Controller
         }
         $pages = new Pagination(
             [
-                'defaultPageSize' => 6,
+                'defaultPageSize' => Config::getValue('shop.searchResultsLimit', 9),
                 'forcePageParam' => false,
                 'totalCount' => count($ids),
             ]
