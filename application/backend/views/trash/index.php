@@ -41,7 +41,7 @@ $this->endBlock();
         DynaGrid::widget([
             'options' => [
                 'id' => 'Product-grid',
-                'storage' => DynaGrid::TYPE_SESSION
+
             ],
             'columns' => [
                 [

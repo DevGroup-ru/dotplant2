@@ -37,7 +37,20 @@ $config = [
         'dynagrid' =>  [
             'class' => '\kartik\dynagrid\Module',
             'dbSettings' => [
-                'tableName' => 'Dynagrid',
+                'tableName' => '{{%dynagrid}}',
+            ],
+            'dbSettingsDtl' => [
+                'tableName' => '{{%dynagrid_dtl}}',
+            ],
+            'dynaGridOptions' => [
+                'storage' => 'db',
+                'gridOptions' => [
+                    'toolbar' => [
+                        '{dynagrid}',
+                        '{toggleData}',
+                        //'{export}',
+                    ]
+                ]
             ],
         ],
         'gridview' =>  [
