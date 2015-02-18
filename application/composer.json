@@ -37,7 +37,8 @@
         "devgroup/yii2-ace-widget": "~1.0",
         "devgroup/yii2-jsoneditor": "~1.0",
         "devgroup/yii2-dropzone": "~1.0",
-        "bower-asset/slick-carousel": "1.3.15"
+        "bower-asset/slick-carousel": "1.3.15",
+        "florianv/swap": "~2.0@dev"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
