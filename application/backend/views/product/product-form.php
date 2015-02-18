@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
         Url::to([
             '/product/show',
             'model' => $model,
-            'category_group_id' => $model->getMainCategory()->category_group_id
+            'category_group_id' => $model->isNewRecord ? null : $model->getMainCategory()->category_group_id
         ]),
         ['class' => 'btn btn-success', 'target' => '_blank']
     ) ?>
