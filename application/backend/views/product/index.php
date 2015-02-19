@@ -80,8 +80,20 @@ $this->endBlock();
                 'class' => 'app\backend\columns\BooleanStatus',
                 'attribute' => 'active',
             ],
-            'price',
-            'old_price',
+            [
+                'class' => 'kartik\grid\EditableColumn',
+                'attribute'=>'price',
+                'editableOptions' => [
+                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                ],
+            ],
+            [
+                'class' => 'kartik\grid\EditableColumn',
+                'attribute'=>'old_price',
+                'editableOptions' => [
+                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                ],
+            ],
             'sku',
             [
                 'class' => 'app\backend\components\ActionColumn',
