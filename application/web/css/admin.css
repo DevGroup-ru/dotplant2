@@ -165,3 +165,14 @@ img.image-column {
 .select2-container.form-control {
   padding: 0px;
 }
+
+/* line 134, ../sass/admin.scss */
+.jarviswidget header:first-child .nav-tabs li {
+  height: 32px;
+}
+
+/* line 138, ../sass/admin.scss */
+.widget-toolbar {
+  height: initial;
+  min-height: 32px;
+}

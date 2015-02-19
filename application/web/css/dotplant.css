@@ -63,8 +63,10 @@ a.logo {
   border: 0;
   z-index: 999;
   background: #1ab8e8;
-  -moz-border-radius: 0;
   -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
   border-radius: 0;
 }
 /* line 44, ../sass/dotplant.scss */

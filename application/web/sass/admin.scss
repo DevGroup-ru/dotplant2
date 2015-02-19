@@ -130,3 +130,12 @@ img.image-column {
 .select2-container.form-control {
     padding: 0px;
 }
+
+.jarviswidget header:first-child .nav-tabs li {
+    height: 32px;
+}
+
+.widget-toolbar {
+    height: initial;
+    min-height: 32px;
+}
