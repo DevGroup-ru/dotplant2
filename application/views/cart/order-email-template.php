@@ -47,6 +47,7 @@ use yii\helpers\Html;
 <table style="width: 800px;" border="1" bordercolor="#ddd" cellspacing="0">
     <thead>
         <tr>
+            <th><?= Yii::t('shop', 'SKU') ?></th>
             <th><?= Yii::t('shop', 'Name') ?></th>
             <th><?= Yii::t('shop', 'Price') ?></th>
             <th><?= Yii::t('shop', 'Quantity') ?></th>
@@ -56,6 +57,7 @@ use yii\helpers\Html;
     <tbody>
         <?php foreach($order->items as $i => $item): ?>
             <tr style="background: <?= $i % 2 == 0 ? '#f5f5f5' : '#fff' ?>;">
+                <td><?= $item->product->sku ?></td>
                 <td><?= $item->product->name ?></td>
                 <td><?= Yii::$app->formatter->asDecimal($item->product->price, 2) ?> <?= Yii::$app->params['currency'] ?></td>
                 <td><?= $item->quantity ?></td>
