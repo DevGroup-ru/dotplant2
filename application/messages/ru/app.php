@@ -102,6 +102,7 @@ return [
     'Custom Slide View File' => '',
     'Custom Slider View File' => '',
     'Custom View File' => '',
+    'Currency' => 'Валюта',
     'Dashboard' => 'Контрольная панель',
     'Data' => 'Данные',
     'Date' => 'Дата',

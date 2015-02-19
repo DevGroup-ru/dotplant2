@@ -120,6 +120,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'unlimited_count' => Yii::t('app', 'Unlimited items(don\'t count in warehouse)'),
             'reserved_count' => Yii::t('app', 'Items reserved'),
             'relatedProductsArray' => Yii::t('app', 'Related products'),
+            'currency_id' => Yii::t('app', 'Currency'),
         ];
     }
 
