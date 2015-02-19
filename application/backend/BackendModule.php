@@ -31,6 +31,7 @@ class BackendModule extends Module implements BootstrapInterface
                     BackendModule::className(),
                     SeoModule::className(),
                     'app\data\Module',
+                    'app\backgroundtasks\BackgroundTasksModule',
                 ];
                 if (!in_array($app->requestedAction->controller->module->className(), $blacklisted_modules) && Yii::$app->user->isGuest === false) {
                     if (Yii::$app->user->can('administrate')) {
