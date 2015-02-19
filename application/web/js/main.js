@@ -124,7 +124,7 @@ jQuery(function() {
     });
     jQuery('[data-action="add-to-cart"]').click(function() {
         var $this = jQuery(this);
-        var quantity = typeof($this.attr('data-quantity')) !== 'undefined' ? parseInt($this.attr('data-quantity')) : 1;
+        var quantity = typeof($this.attr('data-quantity')) !== 'undefined' ? parseFloat($this.attr('data-quantity')) : 1;
         if (isNaN(quantity) || quantity < 1) {
             quantity = 1;
         }
