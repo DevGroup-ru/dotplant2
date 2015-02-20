@@ -2,6 +2,7 @@
 
 namespace app\backend\controllers;
 
+use app\backend\actions\DeleteOne;
 use app\backend\actions\MultipleDelete;
 use app\models\DynamicContent;
 use app\models\Property;
@@ -36,6 +37,10 @@ class DynamicContentController extends Controller
         return [
             'remove-all' => [
                 'class' => MultipleDelete::className(),
+                'modelName' => DynamicContent::className(),
+            ],
+            'delete' => [
+                'class' => DeleteOne::className(),
                 'modelName' => DynamicContent::className(),
             ],
         ];
@@ -120,18 +125,4 @@ class DynamicContentController extends Controller
         );
     }
 
-    public function actionDelete($id)
-    {
-        $model = DynamicContent::findOne($id);
-        $model->delete();
-        Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
-        return $this->redirect(
-            Url::to(
-                [
-                '/backend/dynamic-content/index',
-                ]
-            )
-        );
-    }
-    
 }
