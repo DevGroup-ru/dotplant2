@@ -13,15 +13,43 @@ $panel-height: 50px;
   width: 100%;
   z-index: 999999;
   background: $panel-background-color;
-
   border-bottom: 1px solid contrast-color($panel-background-color, darken($panel-background-color, 50%), lighten($panel-background-color, 50%));
-
   color: contrast-color($panel-background-color);
+  .container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  a {
+    color: #337ab7;
+    text-decoration: none;
+    &:hover {
+      color: #23527c;
+      text-decoration: underline;
+    }
+  }
+  .navbar-text {
+    float: left;
+    margin: 15px;
+  }
   .navbar-nav {
+    float: left;
+    margin: 0;
+    li {
+      display: block;
+      float: left;
+      position: relative;
+    }
     a, a:visited {
       color: contrast-color($panel-background-color);
+      display: block;
+      line-height: 20px;
+      padding: 15px;
       &:hover {
+        background: #fff;
         color: #000;
+        text-decoration: none;
       }
     }
   }
