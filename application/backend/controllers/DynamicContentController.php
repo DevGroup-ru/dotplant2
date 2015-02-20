@@ -2,6 +2,7 @@
 
 namespace app\backend\controllers;
 
+use app\backend\actions\MultipleDelete;
 use app\models\DynamicContent;
 use app\models\Property;
 use app\models\PropertyGroup;
@@ -26,6 +27,16 @@ class DynamicContentController extends Controller
                         'roles' => ['content manage'],
                     ],
                 ],
+            ],
+        ];
+    }
+
+    public function actions()
+    {
+        return [
+            'remove-all' => [
+                'class' => MultipleDelete::className(),
+                'modelName' => DynamicContent::className(),
             ],
         ];
     }
@@ -122,17 +133,5 @@ class DynamicContentController extends Controller
             )
         );
     }
-
-    public function actionRemoveAll()
-    {
-        $items = Yii::$app->request->post('items', []);
-        if (!empty($items)) {
-            $items = DynamicContent::find()->where(['in', 'id', $items])->all();
-            foreach ($items as $item) {
-                $item->delete();
-            }
-        }
-
-        return $this->redirect(['index']);
-    }
+    
 }
