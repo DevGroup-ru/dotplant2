@@ -21,7 +21,7 @@ class Helper
     public static function getModelMap($className, $keyAttribute, $valueAttribute, $useCache = true)
     {
         /** @var ActiveRecord $className */
-        $cacheKey = $className::tableName() . ': Map';
+        $cacheKey = 'Map: ' . $className::tableName() . ':' . $keyAttribute . ':' . $valueAttribute;
         $result = $useCache ? Yii::$app->cache->get($cacheKey) : false;
         if ($result === false) {
             $result = ArrayHelper::map($className::find()->all(), $keyAttribute, $valueAttribute);
