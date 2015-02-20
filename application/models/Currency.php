@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\caching\TagDependency;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class Multi-currency
@@ -29,6 +30,7 @@ use yii\caching\TagDependency;
 class Currency extends \yii\db\ActiveRecord
 {
     private static $mainCurrency = null;
+    private static $selection = null;
     /**
      * @inheritdoc
      */
@@ -122,5 +124,40 @@ class Currency extends \yii\db\ActiveRecord
     public function getRateProvider()
     {
         return $this->hasOne(CurrencyRateProvider::className(), ['id' => 'currency_rate_provider_id']);
+    }
+
+    /**
+     * Returns array(id=>name) of currencies for dropdown list
+     * @return array
+     * @throws InvalidConfigException
+     */
+    public static function getSelection()
+    {
+        if (static::$selection === null) {
+            static::$selection = Yii::$app->cache->get('AllCurrenciesSelection');
+            if (static::$selection === false) {
+
+                $rows = Currency::find()
+                    ->select(['id', 'name'])
+                    ->orderBy(['is_main'=>SORT_DESC, 'sort_order' => SORT_ASC])
+                    ->asArray()
+                    ->all();
+                static::$selection = ArrayHelper::map($rows, 'id', 'name');
+
+                Yii::$app->cache->set(
+                    "AllCurrenciesSelection",
+                    static::$selection,
+                    604800,
+                    new TagDependency(
+                        [
+                            'tags' => [
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className()),
+                            ],
+                        ]
+                    )
+                );
+            }
+        }
+        return static::$selection;
     }
 }

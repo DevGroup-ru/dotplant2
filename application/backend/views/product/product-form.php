@@ -67,7 +67,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $form->field($model, 'active')->widget(\kartik\switchinput\SwitchInput::className()) ?>
     <?= $form->field($model, 'name')?>
-    <?= $form->field($model, 'price')?>
+    <?= $form->field($model, 'price',[
+        'addon' => [
+            'append' => [
+                'content' => Html::activeDropDownList($model, 'currency_id', app\models\Currency::getSelection()),
+            ],
+        ],
+    ])?>
     <?= $form->field($model, 'old_price')?>
 
     <?=

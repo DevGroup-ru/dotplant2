@@ -64,7 +64,21 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     {
         return [
             [['main_category_id', 'name', 'slug'], 'required'],
-            [['main_category_id', 'slug_absolute', 'sort_order', 'active', 'parent_id', 'is_deleted', 'in_warehouse', 'unlimited_count', 'reserved_count'], 'integer'],
+            [
+                [
+                    'main_category_id',
+                    'slug_absolute',
+                    'sort_order',
+                    'active',
+                    'parent_id',
+                    'is_deleted',
+                    'in_warehouse',
+                    'unlimited_count',
+                    'reserved_count',
+                    'currency_id',
+                ],
+                'integer'
+            ],
             [
                 [
                     'name',
