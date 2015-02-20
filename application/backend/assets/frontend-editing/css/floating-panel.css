@@ -32,33 +32,34 @@
 /* line 32, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-text {
   float: left;
+  line-height: 20px;
   margin: 15px;
 }
-/* line 36, ../sass/floating-panel.scss */
+/* line 37, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav {
   float: left;
   margin: 0;
 }
-/* line 39, ../sass/floating-panel.scss */
+/* line 40, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav li {
   display: block;
   float: left;
   position: relative;
 }
-/* line 44, ../sass/floating-panel.scss */
+/* line 45, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav a, #dotplant-floating-panel .navbar-nav a:visited {
   color: #fff;
   display: block;
   line-height: 20px;
   padding: 15px;
 }
-/* line 49, ../sass/floating-panel.scss */
+/* line 50, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav a:hover, #dotplant-floating-panel .navbar-nav a:visited:hover {
   background: #fff;
   color: #000;
   text-decoration: none;
 }
-/* line 56, ../sass/floating-panel.scss */
+/* line 57, ../sass/floating-panel.scss */
 #dotplant-floating-panel.dotplant-floating-panel-bottom {
   top: auto;
   bottom: 0;
