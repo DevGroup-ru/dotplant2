@@ -106,6 +106,8 @@ return [
     'Custom View File' => '',
     'Currency' => 'Валюта',
     'Currency rate provider' => 'Провайдер курса валют',
+    'Currency rate providers' => 'Провайдеры курса валют',
+    'Class Name' => 'Имя класса',
     'Convert nominal' => 'Номинал конверсии курса',
     'Convert rate' => 'Курс валют',
     'Convert rate is updated automatically if currency rate provider is set and includes additional rate and nominal.' => 'Курс валют обновляется автоматически если установлен провайдер курса валют и включает в себя надбавки в коэф. и номинале.',

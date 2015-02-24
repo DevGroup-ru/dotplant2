@@ -19,6 +19,9 @@ $this->params['breadcrumbs'][] = $this->title;
     'id' => 'alert',
 ]); ?>
 
+
+
+
 <div class="row">
     <div class="col-md-12">
         <?=
@@ -66,7 +69,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         'filterModel' => $searchModel,
                         'hover' => true,
                         'panel' => [
-                            'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
+                            'heading' => $this->render('@app/backend/views/currencies/_tabs', [
+                                'currencies' => true
+                            ]),
                             'after' => \app\backend\widgets\helpers\AddRemoveAllPanel::widget([
                                 'baseRoute' => '/backend/currencies/',
                             ]),

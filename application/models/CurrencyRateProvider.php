@@ -6,6 +6,7 @@ use Ivory\HttpAdapter\HttpAdapterInterface;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
+use yii\data\ActiveDataProvider;
 
 /**
  * Model for storing name and params of Currency Rate Providers
@@ -64,5 +65,34 @@ class CurrencyRateProvider extends \yii\db\ActiveRecord
         }
 
         return $reflection_class->newInstanceArgs($params);
+    }
+
+    /**
+     * Search tasks
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function search($params)
+    {
+        /* @var $query \yii\db\ActiveQuery */
+        $query = self::find();
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]
+        );
+        if (!($this->load($params))) {
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'class_name', $this->iso_code]);
+
+
+
+        return $dataProvider;
     }
 }
