@@ -104,7 +104,7 @@ class Currency extends \yii\db\ActiveRecord
                 static::$identity_map[$id] = Currency::findOne($id);
                 if (is_object(static::$identity_map[$id])) {
                     Yii::$app->cache->set(
-                        'Object: ' . $id,
+                        'Currency: ' . $id,
                         static::$identity_map[$id],
                         86400,
                         new TagDependency(
