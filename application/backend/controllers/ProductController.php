@@ -13,6 +13,7 @@ use app\properties\HasProperties;
 use app\widgets\image\RemoveAction;
 use app\widgets\image\SaveInfoAction;
 use app\widgets\image\UploadAction;
+use app\backend\actions\UpdateEditable;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
@@ -68,14 +69,25 @@ class ProductController extends Controller
             'save-info' => [
                 'class' => SaveInfoAction::className(),
             ],
+            'update-editable' => [
+                'class' => UpdateEditable::className(),
+                'modelName' => Product::className(),
+                'allowedAttributes' => [
+                    'currency_id' => function(Product $model, $attribute) {
+                        if ($model === null || $model->currency === null || $model->currency_id ===0) {
+                            return null;
+                        }
+                        return \yii\helpers\Html::tag('div', $model->currency->name, ['class' => $model->currency->name]);
+                    },
+                    'price',
+                    'old_price',
+                ],
+            ],
         ];
     }
 
     public function actionIndex()
     {
-        if ($this->processEditable() === true) {
-            return '';
-        }
 
         $searchModel = new Product();
         $params = Yii::$app->request->get();
@@ -112,64 +124,7 @@ class ProductController extends Controller
         );
     }
 
-    private function processEditable()
-    {
-        if (Yii::$app->request->post('hasEditable')) {
-            // instantiate your book model for saving
-            $productId = Yii::$app->request->post('editableKey');
-            $model = Product::findOne($productId);
-
-            if ($model === null) {
-                throw new NotFoundHttpException;
-            }
-
-            // store a default json response as desired by editable
-            $out = Json::encode(['output'=>'', 'message'=>'']);
-
-            // fetch the first entry in posted data (there should
-            // only be one entry anyway in this array for an
-            // editable submission)
-            // - $posted is the posted data for Product without any indexes
-            // - $post is the converted array for single model validation
-            $post = [];
-            $posted = current($_POST['Product']);
-            $post['Product'] = $posted;
-
-            // load model like any single model validation
-            if ($model->load($post)) {
-                // can save model or do something before saving model
-                $model->save();
-                $model->invalidateTags();
-
-                // custom output to return to be displayed as the editable grid cell
-                // data. Normally this is empty - whereby whatever value is edited by
-                // in the input by user is updated automatically.
-                $output = '';
-
-                // specific use case where you need to validate a specific
-                // editable column posted when you have more than one
-                // EditableColumn in the grid view. We evaluate here a
-                // check to see if buy_amount was posted for the Book model
-                $allowed_attributes = [
-                    'price',
-                    'old_price',
-                ];
-                foreach ($allowed_attributes as $key=>$value) {
-                    if (isset($post[$key])) {
-                        $output = $model->getAttribute($key);
-                        break;
-                    }
-                }
-
-                $out = Json::encode(['output'=>$output, 'message'=>'']);
-            }
-            // return ajax json encoded response and exit
-            echo $out;
-            return true;
-        } else {
-            return false;
-        }
-    }
+   
 
     public function actionEdit($id = null)
     {

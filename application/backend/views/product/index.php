@@ -85,6 +85,9 @@ $this->endBlock();
                 'attribute'=>'price',
                 'editableOptions' => [
                     'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                    'formOptions' => [
+                        'action' => 'update-editable',
+                    ],
                 ],
             ],
             [
@@ -92,7 +95,30 @@ $this->endBlock();
                 'attribute'=>'old_price',
                 'editableOptions' => [
                     'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                    'formOptions' => [
+                        'action' => 'update-editable',
+                    ],
                 ],
+            ],
+            [
+                'attribute' => 'currency_id',
+                'class' => \kartik\grid\EditableColumn::className(),
+                'editableOptions' => [
+                    'data' => [0=>'-']+\app\components\Helper::getModelMap(\app\models\Currency::className(), 'id', 'name'),
+                    'inputType' => 'dropDownList',
+                    'placement' => 'left',
+                    'formOptions' => [
+                        'action' => 'update-editable',
+                    ],
+                ],
+                'filter' => \app\components\Helper::getModelMap(\app\models\Currency::className(), 'id', 'name'),
+                'format' => 'raw',
+                'value' => function($model) {
+                    if ($model === null || $model->currency === null || $model->currency_id ===0) {
+                        return null;
+                    }
+                    return \yii\helpers\Html::tag('div', $model->currency->name, ['class' => $model->currency->name]);
+                },
             ],
             'sku',
             [

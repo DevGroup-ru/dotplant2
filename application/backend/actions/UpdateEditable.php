@@ -7,7 +7,6 @@ use yii;
 use yii\base\Action;
 use yii\base\InvalidConfigException;
 use yii\helpers\Json;
-
 /**
  * Universal action for editable updates
  *
@@ -16,6 +15,21 @@ use yii\helpers\Json;
  * Add to your controller's action:
  *
  * ```
+ *
+ * 'update-editable' => [
+ *      'class' => UpdateEditable::className(),
+ *      'modelName' => Product::className(),
+ *      'allowedAttributes' => [
+ *          'currency_id' => function(Product $model, $attribute) {
+ *              if ($model === null || $model->currency === null || $model->currency_id ===0) {
+ *                  return null;
+ *              }
+ *              return \yii\helpers\Html::tag('div', $model->currency->name, ['class' => $model->currency->name]);
+ *          },
+ *          'price',
+ *          'old_price',
+ *      ],
+ *  ],
  *
  *
  * ```

@@ -282,6 +282,11 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         return $this->hasMany(static::className(), ['parent_id' => 'id']);
     }
 
+    public function getCurrency()
+    {
+        return $this->hasOne(Currency::className(), ['id' => 'currency_id']);
+    }
+
     public function getRelatedProducts()
     {
         return $this->hasMany(Product::className(), ['id' => 'related_product_id'])
