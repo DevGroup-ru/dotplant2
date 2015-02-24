@@ -26,12 +26,12 @@ class Helper
     public static function getModelMap($className, $keyAttribute, $valueAttribute, $useCache = true)
     {
         /** @var ActiveRecord $className */
-        $cacheKey = 'Map: ' . $className::tableName() . ':' . $keyAttribute . ':' . $valueAttribute;
+        $cacheKey = '1Map: ' . $className::tableName() . ':' . $keyAttribute . ':' . $valueAttribute;
         if (isset(Helper::$modelMaps[$cacheKey]) === false) {
             Helper::$modelMaps[$cacheKey] = $useCache ? Yii::$app->cache->get($cacheKey) : false;
             if (Helper::$modelMaps[$cacheKey] === false) {
-                Helper::$modelMaps[$cacheKey] = ArrayHelper::map($className::find()->all(), $keyAttribute, $valueAttribute);
-                if ($useCache) {
+                Helper::$modelMaps[$cacheKey] = ArrayHelper::map($className::find()->asArray()->all(), $keyAttribute, $valueAttribute);
+                if ($useCache === true) {
                     Yii::$app->cache->set(
                         $cacheKey,
                         Helper::$modelMaps[$cacheKey],
