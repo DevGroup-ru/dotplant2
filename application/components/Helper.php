@@ -8,8 +8,13 @@ use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use Imagine\Image\ManipulatorInterface;
 
+/**
+ * Universal helper for common use cases
+ * @package app\components
+ */
 class Helper
 {
+    private static $modelMaps = [];
     /**
      * Get all model records as array key => value.
      * @param string $className
@@ -22,25 +27,27 @@ class Helper
     {
         /** @var ActiveRecord $className */
         $cacheKey = 'Map: ' . $className::tableName() . ':' . $keyAttribute . ':' . $valueAttribute;
-        $result = $useCache ? Yii::$app->cache->get($cacheKey) : false;
-        if ($result === false) {
-            $result = ArrayHelper::map($className::find()->all(), $keyAttribute, $valueAttribute);
-            if ($useCache) {
-                Yii::$app->cache->set(
-                    $cacheKey,
-                    $result,
-                    86400,
-                    new TagDependency(
-                        [
-                            'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($className),
-                            ],
-                        ]
-                    )
-                );
+        if (isset(Helper::$modelMaps[$cacheKey]) === false) {
+            Helper::$modelMaps[$cacheKey] = $useCache ? Yii::$app->cache->get($cacheKey) : false;
+            if (Helper::$modelMaps[$cacheKey] === false) {
+                Helper::$modelMaps[$cacheKey] = ArrayHelper::map($className::find()->all(), $keyAttribute, $valueAttribute);
+                if ($useCache) {
+                    Yii::$app->cache->set(
+                        $cacheKey,
+                        Helper::$modelMaps[$cacheKey],
+                        86400,
+                        new TagDependency(
+                            [
+                                'tags' => [
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($className),
+                                ],
+                            ]
+                        )
+                    );
+                }
             }
         }
-        return $result;
+        return Helper::$modelMaps[$cacheKey];
     }
 
     /**
