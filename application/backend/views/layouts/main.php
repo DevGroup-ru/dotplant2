@@ -184,6 +184,10 @@ Icon::map($this);
     <?php $this->endBody(); ?>
     <script type="text/javascript">
         $(function(){
+            $('[data-toggle="popover"]').popover({
+                container: 'body'
+            });
+            $('[data-toggle="tooltip"]').tooltip();
             jQuery('[data-action="delete"]').on('click', function(e){
                 if (confirm('<?= Yii::t('app', 'Are you sure you want to delete this object?') ?>')) {
                     jQuery.ajax({

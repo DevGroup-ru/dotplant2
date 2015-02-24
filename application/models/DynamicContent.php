@@ -102,6 +102,11 @@ class DynamicContent extends ActiveRecord
         return $dataProvider;
     }
 
+    /**
+     * Finds model by id using identity map
+     * @param $id
+     * @return mixed
+     */
     public static function findById($id)
     {
         if (!isset(static::$identity_map[$id])) {

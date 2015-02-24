@@ -6,6 +6,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
+use yii\data\ActiveDataProvider;
 
 /**
  * This is the model class Multi-currency
@@ -59,23 +60,26 @@ class Currency extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
-            'iso_code' => Yii::t('app', 'Iso Code'),
-            'is_main' => Yii::t('app', 'Is Main'),
-            'convert_nominal' => Yii::t('app', 'Convert Nominal'),
-            'convert_rate' => Yii::t('app', 'Convert Rate'),
+            'iso_code' => Yii::t('app', 'ISO-4217 code'),
+            'is_main' => Yii::t('app', 'Is main currency'),
+            'convert_nominal' => Yii::t('app', 'Convert nominal'),
+            'convert_rate' => Yii::t('app', 'Convert rate'),
             'sort_order' => Yii::t('app', 'Sort Order'),
-            'intl_formatting' => Yii::t('app', 'Intl Formatting'),
-            'min_fraction_digits' => Yii::t('app', 'Min Fraction Digits'),
-            'max_fraction_digits' => Yii::t('app', 'Max Fraction Digits'),
-            'dec_point' => Yii::t('app', 'Dec Point'),
-            'thousands_sep' => Yii::t('app', 'Thousands Sep'),
-            'format_string' => Yii::t('app', 'Format String'),
-            'additional_rate' => Yii::t('app', 'Additional Rate'),
-            'additional_nominal' => Yii::t('app', 'Additional Nominal'),
-            'currency_rate_provider_id' => Yii::t('app', 'Currency Rate Provider ID'),
+            'intl_formatting' => Yii::t('app', 'Intl formatting with ICU'),
+            'min_fraction_digits' => Yii::t('app', 'Min fraction digits'),
+            'max_fraction_digits' => Yii::t('app', 'Max fraction digits'),
+            'dec_point' => Yii::t('app', 'Decimal point'),
+            'thousands_sep' => Yii::t('app', 'Thousands separator'),
+            'format_string' => Yii::t('app', 'Format string'),
+            'additional_rate' => Yii::t('app', 'Additional rate'),
+            'additional_nominal' => Yii::t('app', 'Additional nominal'),
+            'currency_rate_provider_id' => Yii::t('app', 'Currency rate provider'),
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -159,5 +163,35 @@ class Currency extends \yii\db\ActiveRecord
             }
         }
         return static::$selection;
+    }
+
+    /**
+     * Search tasks
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function search($params)
+    {
+        /* @var $query \yii\db\ActiveQuery */
+        $query = self::find();
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]
+        );
+        if (!($this->load($params))) {
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'iso_code', $this->iso_code]);
+        $query->andFilterWhere(['is_main' => $this->is_main]);
+        $query->andFilterWhere(['currency_rate_provider_id' => $this->currency_rate_provider_id]);
+
+
+        return $dataProvider;
     }
 }

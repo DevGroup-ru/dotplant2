@@ -119,6 +119,10 @@ class ProductController extends Controller
             $productId = Yii::$app->request->post('editableKey');
             $model = Product::findOne($productId);
 
+            if ($model === null) {
+                throw new NotFoundHttpException;
+            }
+
             // store a default json response as desired by editable
             $out = Json::encode(['output'=>'', 'message'=>'']);
 
