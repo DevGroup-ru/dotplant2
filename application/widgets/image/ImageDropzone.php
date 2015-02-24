@@ -159,7 +159,7 @@ class ImageDropzone extends DropZone
                         </div>
                         <div>
                           <button data-dz-remove class="btn btn-danger delete">
-                            <i class="glyphicon glyphicon-trash"></i>
+                            <i class="fa fa-trash-o"></i>
                             <span>Delete</span>
                           </button>
                         </div>

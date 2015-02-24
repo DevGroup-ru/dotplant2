@@ -62,8 +62,8 @@ class ProductOption extends Widget
                 $optionsJson[] = [
                     'id' => $option->id,
                     'values' => $itemsJson,
-                    'price' => $option->price,
-                    'old_price' => $option->old_price,
+                    'price' => $option->convertedPrice(),
+                    'old_price' => $option->convertedPrice(null, true),
                 ];
             }
             return $this->render(

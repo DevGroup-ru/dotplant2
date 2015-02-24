@@ -4,18 +4,29 @@
  * @var \app\models\Cart $order
  */
 
+$mainCurrency = \app\models\Currency::getMainCurrency();
+
 if ($order === null) {
     $itemsCount = '0';
-    $totalPrice = Yii::$app->formatter->asDecimal(0, 2);
+    $totalPrice = $mainCurrency->format(0);
 } else {
     $itemsCount = $order->items_count;
-    $totalPrice = Yii::$app->formatter->asDecimal($order->total_price, 2);
+    $totalPrice = $mainCurrency->format($order->total_price);
 }
+
+
 
 ?>
 <div class="span3" id="cart-info-widget">
     <div class="pull-right">
-        <span class="btn btn-mini"><i class="fa fa-rub"></i><span class="total-price"><?= $totalPrice ?></span> <?= Yii::$app->params['currency'] ?></span>
-        <a href="/cart"><span class="btn btn-mini btn-primary"><i class="icon-shopping-cart icon-white"></i> <?= Yii::t('shop', '[ {count} ] Itemes in your cart', ['count' => \kartik\helpers\Html::tag('span', $itemsCount, ['class' => 'items-count'])]) ?> </span> </a>
+        <span class="btn btn-mini">
+            <span class="total-price"><?= $totalPrice ?></span>
+        </span>
+        <a href="/cart">
+            <span class="btn btn-mini btn-primary">
+                <i class="fa fa-shopping-cart"></i>
+                <?= Yii::t('shop', '[ {count} ] Itemes in your cart', ['count' => \kartik\helpers\Html::tag('span', $itemsCount, ['class' => 'items-count'])]) ?>
+            </span>
+        </a>
     </div>
 </div>
