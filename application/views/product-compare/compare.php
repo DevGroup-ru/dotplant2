@@ -66,8 +66,8 @@ $this->title = Yii::t('shop', 'Products comparison');
                     <dl>
                         <dt><?= Yii::t('app', 'Price') ?>:</dt>
                         <dd style="color:green;font-weight:bold; font-size:28px;">
-                            <?= Yii::$app->formatter->asDecimal($product->price, 2) ?>
-                            <?= Yii::$app->params['currency'] ?>
+                            <?= $product->nativeCurrencyPrice(false, false) ?>
+
                         </dd>
                     </dl>
                 </div>
@@ -102,7 +102,7 @@ $this->title = Yii::t('shop', 'Products comparison');
                     ?>
                     <br />
                     <br />
-                    <a class="btn" href="#" data-action="add-to-cart" data-id="<?= $product->id ?>"><?= Yii::t('shop', 'Add to') ?> <i class="icon-shopping-cart"></i></a>
+                    <a class="btn" href="#" data-action="add-to-cart" data-id="<?= $product->id ?>"><?= Yii::t('shop', 'Add to') ?> <i class="fa fa-shopping-cart"></i></a>
                 </div>
             </div>
         </div>

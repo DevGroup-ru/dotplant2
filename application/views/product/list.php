@@ -76,8 +76,8 @@ $this->endBlock();
 </form>
 
 <div class="pull-right">
-    <a href="#" data-dotplant-listViewType="listView"><span class="btn btn-large"><i class="icon-list"></i></span></a>
-    <a href="#" data-dotplant-listViewType="blockView"><span class="btn btn-large btn-primary"><i class="icon-th-large"></i></span></a>
+    <a href="#" data-dotplant-listViewType="listView"><span class="btn btn-large"><i class="fa fa-list"></i></span></a>
+    <a href="#" data-dotplant-listViewType="blockView"><span class="btn btn-large btn-primary"><i class="fa fa-th-large"></i></span></a>
 </div>
 <br class="clr" />
 

@@ -77,7 +77,11 @@ $images = Image::getForModel($model->object->id, $model->id);
                         <br>
                     <?php endif; ?>
                     <?= $model->formattedPrice() ?>
-
+                    <?php if ($model->currency_id !== \app\models\Currency::getMainCurrency()->id): ?>
+                    <small class="text-muted">
+                        <?= \app\models\Currency::findById($model->currency_id)->format($model->price) ?>
+                    </small>
+                    <?php endif; ?>
 
                 </label>
                 <div class="controls">
@@ -101,7 +105,7 @@ $images = Image::getForModel($model->object->id, $model->id);
                         <br />
                         <br />
                         <button type="submit" class="btn btn-large btn-primary" data-action="add-to-cart" data-id="<?= $model->id ?>">
-                            <?= Yii::t('shop', 'Add to') ?> <i class=" icon-shopping-cart"></i>
+                            <?= Yii::t('shop', 'Add to') ?> <i class="fa fa-shopping-cart"></i>
                         </button>
                     </div>
                 </div>
@@ -137,8 +141,8 @@ $images = Image::getForModel($model->object->id, $model->id);
     </div>
     <div class="tab-pane fade" id="profile">
     <div id="myTab" class="pull-right">
-        <a href="#listView" data-toggle="tab"><span class="btn btn-large"><i class="icon-list"></i></span></a>
-        <a href="#blockView" data-toggle="tab"><span class="btn btn-large btn-primary"><i class="icon-th-large"></i></span></a>
+        <a href="#listView" data-toggle="tab"><span class="btn btn-large"><i class="fa fa-list"></i></span></a>
+        <a href="#blockView" data-toggle="tab"><span class="btn btn-large btn-primary"><i class="fa fa-th-large"></i></span></a>
     </div>
     <br class="clr">
     <hr class="soft">

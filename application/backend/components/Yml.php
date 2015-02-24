@@ -223,7 +223,7 @@ class Yml
                 'product/show',
                 'model' => $product
             ])));
-            $price = $doc->createElement('price', $product->price);
+            $price = $doc->createElement('price', $product->convertedPrice());
             $currencyId = $doc->createElement('currencyId', 'RUR');
             $categoryId = $doc->createElement('categoryId', $product->main_category_id);
 

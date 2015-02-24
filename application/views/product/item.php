@@ -34,7 +34,7 @@ use kartik\helpers\Html;
                 <a class="btn" href="#" data-action="add-to-cart" data-id="<?=$product->id?>"><?=Yii::t(
                         'shop',
                         'Add to'
-                    )?> <i class="icon-shopping-cart"></i></a>
+                    )?> <i class="fa fa-shopping-cart"></i></a>
                 <button class="btn btn-primary">
                     <?= $product->formattedPrice(null, false, false) ?>
                 </button>

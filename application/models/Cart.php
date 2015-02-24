@@ -75,6 +75,9 @@ class Cart extends ActiveRecord
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function beforeSave($insert)
     {
         if (!parent::beforeSave($insert)) {
@@ -106,7 +109,7 @@ class Cart extends ActiveRecord
         if (is_null(self::$cart) && !Yii::$app->user->isGuest) {
             self::$cart = self::findOne(['user_id' => Yii::$app->user->id]);
         }
-        if (is_null(self::$cart) && $create) {
+        if (is_null(self::$cart) && $create === true) {
             $cart = new static;
             $cart->user_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : 0;
             if ($cart->save()) {
@@ -116,6 +119,19 @@ class Cart extends ActiveRecord
         }
         Yii::endProfile("GetCart");
         return self::$cart;
+    }
+
+    public function toOrderItems()
+    {
+        $items = [];
+        foreach ($this->items as $product_id => $item) {
+            $class = new OrderItem;
+            $class->product_id = $product_id;
+            $class->quantity = $item['quantity'];
+            $class->additional_options = $item['additionalParams'];
+            $items[] = $class;
+        }
+        return $items;
     }
 
     /**
@@ -130,7 +146,7 @@ class Cart extends ActiveRecord
         $cartCountsUniqueProducts = Config::getValue('shop.cartCountsUniqueProducts', '0') === '1';
         
         $items = [];
-        if ($saveProducts) {
+        if ($saveProducts === true) {
             $this->products = [];
         }
         foreach ($products as $product) {
@@ -152,7 +168,7 @@ class Cart extends ActiveRecord
             } else {
                 $itemsCount += $this->items[$product->id]['quantity'];
             }
-            $totalPrice += $this->items[$product->id]['quantity'] * ($product->price + $additionalParams->additionalPrice);
+            $totalPrice += $this->items[$product->id]['quantity'] * ($product->convertedPrice() + $additionalParams->additionalPrice);
             if ($saveProducts) {
                 $this->products[$product->id] = $product;
             }

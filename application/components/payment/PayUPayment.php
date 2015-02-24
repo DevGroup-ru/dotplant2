@@ -68,7 +68,7 @@ class PayUPayment extends AbstractPayment
             $data[] = [
                 'ORDER_PNAME[]' => $item->product->name,
                 'ORDER_PCODE[]' => $item->product_id,
-                'ORDER_PRICE[]' => $item->product->price,
+                'ORDER_PRICE[]' => $item->product->convertedPrice(),
                 'ORDER_QTY[]' => $item->quantity,
                 'ORDER_VAT[]' => 0,
             ];

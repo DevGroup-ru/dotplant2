@@ -879,7 +879,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
         if ($this->currency_id !== $currency->id) {
             // we need to convert!
-            return round($price / $currency->convert_nominal / $currency->convert_rate, 2);
+            $foreignCurrency = Currency::findById($this->currency_id);
+            return round($price / $foreignCurrency->convert_nominal * $foreignCurrency->convert_rate, 2);
         }
         return $price;
     }
@@ -919,6 +920,18 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             return $formatted_string;
         }
 
+    }
+
+    /**
+     * Formats price in product's currency
+     * @param bool $oldPrice
+     * @param bool $schemaOrg
+     * @return string
+     */
+    public function nativeCurrencyPrice($oldPrice = false, $schemaOrg = true)
+    {
+        $currency = Currency::findById($this->currency_id);
+        return $this->formattedPrice($currency, $oldPrice, $schemaOrg);
     }
 
 

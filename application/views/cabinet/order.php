@@ -60,4 +60,15 @@ $this->params['breadcrumbs'] = [
     </tbody>
 </table>
 <h2><?= Yii::t('shop', 'Order items') ?></h2>
-<?= $this->render('@app/views/cart/order-items', ['order' => $order]) ?>
+<?=
+    $this->render(
+        '@app/views/cart/_items',
+        [
+            'items' => $order->items,
+            'immutable' => true,
+            'totalQuantity' => $order->items_count,
+            'totalPrice' => $order->fullPrice,
+            'shippingOption' => $order->shippingOption,
+        ]
+    )
+?>

@@ -18,7 +18,17 @@ $this->title = Yii::t('shop', 'Select payment type');
 ?>
 
 <?= $form->field($order, 'payment_type_id')->radioList(\yii\helpers\ArrayHelper::map($paymentTypes, 'id', 'name')); ?>
-<?= $this->render('order-items', ['order' => $order]); ?>
+<?=
+$this->render(
+    '_items',
+    [
+        'items' => $order->items,
+        'immutable' => true,
+        'totalQuantity' => $order->items_count,
+        'totalPrice' => $order->fullPrice,
+    ]
+);
+?>
 <?= \kartik\helpers\Html::submitButton(Yii::t('shop', 'Pay'), ['class' => 'btn btn-primary pull-right']); ?>
 <?=
     \kartik\helpers\Html::a(

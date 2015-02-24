@@ -42,9 +42,30 @@ $this->title = Yii::t('shop', 'Shipping options');
         </div>
     </div>
     <?php if (!is_null($cart)): ?>
-        <?= $this->render('cart-items', ['cart' => $cart, 'hideControls' => true]); ?>
+        <?=
+        $this->render(
+            '_items',
+            [
+                'items' => $cart->toOrderItems(),
+                'immutable' => true,
+                'totalQuantity' => $cart->items_count,
+                'totalPrice' => $cart->total_price,
+            ]
+        );
+        ?>
     <?php else: ?>
-        <?= $this->render('order-items', ['order' => $order]); ?>
+        <?=
+        $this->render(
+            '_items',
+            [
+                'items' => $order->items,
+                'immutable' => false,
+                'totalQuantity' => $order->items_count,
+                'totalPrice' => $order->fullPrice,
+                'shippingOption' => $order->shippingOption,
+            ]
+        );
+        ?>
     <?php endif; ?>
     <?= \kartik\helpers\Html::submitButton(Yii::t('shop', 'Payment'), ['class' => 'btn btn-primary pull-right']); ?>
     <?=

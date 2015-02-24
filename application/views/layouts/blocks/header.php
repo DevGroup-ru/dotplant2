@@ -27,7 +27,7 @@ unset($this->assetBundles['yii\bootstrap\BootstrapAsset']);
     <link href="/demo/css/base.css" rel="stylesheet" media="screen"/>
     <!-- Bootstrap style responsive -->
     <link href="/demo/css/bootstrap-responsive.min.css" rel="stylesheet"/>
-    <link href="/demo/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>
     <!-- Google-code-prettify -->
     <link href="/demo/js/google-code-prettify/prettify.css" rel="stylesheet"/>
     <!-- fav and touch icons -->

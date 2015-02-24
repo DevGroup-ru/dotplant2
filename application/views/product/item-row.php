@@ -37,7 +37,7 @@ use kartik\helpers\Html;
                 <input type="checkbox">  Adds product to compair
             </label>--><br/>
 
-            <a href="#" class="btn btn-large btn-primary" data-action="add-to-cart" data-id="<?= $product->id ?>"><?= Yii::t('shop', 'Add to') ?> <i class=" icon-shopping-cart"></i></a>
+            <a href="#" class="btn btn-large btn-primary" data-action="add-to-cart" data-id="<?= $product->id ?>"><?= Yii::t('shop', 'Add to') ?> <i class="fa fa-shopping-cart"></i></a>
             <a href="<?= $url ?>" class="btn btn-large"><i class="icon-zoom-in"></i></a>
 
         </form>

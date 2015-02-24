@@ -10,7 +10,17 @@ $this->title = Yii::t('shop', 'Cart');
 ?>
 <h1><?= Yii::t('shop', 'Cart') ?></h1>
 <?php if (!is_null($cart) && $cart->items_count > 0): ?>
-    <?= $this->render('cart-items', ['cart' => $cart]); ?>
+    <?=
+        $this->render(
+            '_items',
+            [
+                'items' => $cart->toOrderItems(),
+                'immutable' => false,
+                'totalQuantity' => $cart->items_count,
+                'totalPrice' => $cart->total_price,
+            ]
+        );
+    ?>
     <?=
         Html::a(
             Yii::t('shop', 'Checkout'),

@@ -236,7 +236,7 @@ class Order extends \yii\db\ActiveRecord
             if (is_null($item->product)) {
                 $item->delete();
             } else {
-                $totalPrice += $item->quantity * $item->product->price;
+                $totalPrice += $item->quantity * $item->product->convertedPrice();
                 if ($cartCountsUniqueProducts === true) {
                     $itemsCount++;
                 } else {
