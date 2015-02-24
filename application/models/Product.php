@@ -865,8 +865,28 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     }
 
     /**
+     * Returns product price(old old_price) converted to $currency. If currency is not set(null) will be converted to main currency
+     * @param null|Currency $currency Currency to use in conversion, null for main shop currency
+     * @param bool $oldPrice True if you want to return Old Price instead of price
+     * @return float
+     */
+    public function convertedPrice($currency = null, $oldPrice = false)
+    {
+        if ($currency === null) {
+            $currency = Currency::getMainCurrency();
+        }
+        $price = $oldPrice === true ? $this->old_price : $this->price;
+
+        if ($this->currency_id !== $currency->id) {
+            // we need to convert!
+            return round($price / $currency->convert_nominal / $currency->convert_rate, 2);
+        }
+        return $price;
+    }
+
+    /**
      * Formats price to needed currency
-     * @param null|Currency $currency
+     * @param null|Currency $currency Currency to use in conversion, null for main shop currency
      * @param boolean $oldPrice True if you want to return Old Price instead of price
      * @param boolean $schemaOrg Return schema.org http://schema.org/Offer markup with span's
      * @return string
@@ -876,12 +896,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if ($currency === null) {
             $currency = Currency::getMainCurrency();
         }
-        $price = $oldPrice === true ? $this->old_price : $this->price;
 
-        if ($this->currency_id !== $currency->id) {
-            // we need to convert!
-            $price = round($price / $currency->convert_nominal / $currency->convert_rate, 2);
-        }
+        $price = $this->convertedPrice($currency, $oldPrice);
 
 
         $formatted_string = $currency->format($price);

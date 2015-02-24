@@ -32,7 +32,7 @@ use kartik\helpers\Html;
     </div>
     <div class="span3 alignR">
         <form class="form-horizontal qtyFrm">
-            <h3><?= Yii::$app->formatter->asDecimal($product->price, 2) ?> <?= Yii::$app->params['currency'] ?></h3>
+            <h3><?= $product->formattedPrice(null, false, false) ?></h3>
             <!--<label class="checkbox">
                 <input type="checkbox">  Adds product to compair
             </label>--><br/>

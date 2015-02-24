@@ -32,8 +32,8 @@ $hideControls = isset($hideControls) && $hideControls;
                 ?>
             </td>
             <td><?=$cart->products[$productId]->name?></td>
-            <td><?=Yii::$app->formatter->asDecimal($cart->products[$productId]->price,
-                    2)?> <?=Yii::$app->params['currency']?></td>
+            <td><?= $cart->products[$productId]->formattedPrice(null, false, false) ?></td>
+
             <td>
                 <?php if ($hideControls): ?>
                     <?=$cartOptions['quantity']?>

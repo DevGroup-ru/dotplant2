@@ -35,10 +35,9 @@ use kartik\helpers\Html;
                         'shop',
                         'Add to'
                     )?> <i class="icon-shopping-cart"></i></a>
-                <button class="btn btn-primary"><?=Yii::$app->formatter->asDecimal(
-                        $product->price,
-                        2
-                    )?> <?=Yii::$app->params['currency']?></button>
+                <button class="btn btn-primary">
+                    <?= $product->formattedPrice(null, false, false) ?>
+                </button>
             </h4>
         </div>
     </div>

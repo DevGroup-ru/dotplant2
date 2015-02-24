@@ -65,11 +65,22 @@ $images = Image::getForModel($model->object->id, $model->id);
     <div class="span6">
         <h1 itemprop="name"><?= Html::encode($model->h1) ?></h1>
         <hr class="soft">
-        <form class="form-horizontal qtyFrm" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <form class="form-horizontal qtyFrm">
             <div class="control-group">
-                <label class="control-label"><span itemprop="price"><?= Yii::$app->formatter->asDecimal($model->price, 2) ?> <?= Yii::$app->params['currency'] ?></span></label>
+                <label class="control-label">
+                    <?php if ($model->price < $model->old_price): ?>
+                        <small class="text-muted">
+                            <del>
+                                <?= $model->formattedPrice(null, true, false) ?>
+                            </del>
+                        </small>
+                        <br>
+                    <?php endif; ?>
+                    <?= $model->formattedPrice() ?>
+
+
+                </label>
                 <div class="controls">
-<!--                    <input type="number" class="span1" placeholder="Qty.">-->
                     <div class="pull-right" style="text-align: right;">
                         <?=
                         \kartik\helpers\Html::a(
@@ -89,20 +100,19 @@ $images = Image::getForModel($model->object->id, $model->id);
                         ?>
                         <br />
                         <br />
-                        <button type="submit" class="btn btn-large btn-primary" data-action="add-to-cart" data-id="<?= $model->id ?>"><?= Yii::t('shop', 'Add to') ?> <i class=" icon-shopping-cart"></i></button>
+                        <button type="submit" class="btn btn-large btn-primary" data-action="add-to-cart" data-id="<?= $model->id ?>">
+                            <?= Yii::t('shop', 'Add to') ?> <i class=" icon-shopping-cart"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         </form>
 
         <hr class="soft">
-<!--        <h4>100 items in stock</h4>-->
-<!--        <hr class="soft clr">-->
         <div itemprop="description">
             <?= $this->blocks['announce'] ?>
         </div>
-<!--        <a class="btn btn-small pull-right" href="#detail">More Details</a>-->
-<!--        <br class="clr">-->
+
         <hr class="soft">
     </div>
     <div class="span9">
