@@ -124,7 +124,7 @@ class ProductController extends Controller
         );
     }
 
-   
+
 
     public function actionEdit($id = null)
     {

@@ -32,6 +32,8 @@ class Currency extends \yii\db\ActiveRecord
 {
     private static $mainCurrency = null;
     private static $selection = null;
+    private static $identity_map = [];
+    private $formatter = null;
     /**
      * @inheritdoc
      */
@@ -89,6 +91,36 @@ class Currency extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * Returns model instance by ID using IdentityMap
+     * @param integer $id
+     * @return Currency
+     */
+    public static function findById($id)
+    {
+        if (!isset(static::$identity_map[$id])) {
+            static::$identity_map[$id] = Yii::$app->cache->get('Currency: ' . $id);
+            if (static::$identity_map[$id] === false) {
+                static::$identity_map[$id] = Currency::findOne($id);
+                if (is_object(static::$identity_map[$id])) {
+                    Yii::$app->cache->set(
+                        'Object: ' . $id,
+                        static::$identity_map[$id],
+                        86400,
+                        new TagDependency(
+                            [
+                                'tags' => [
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(Currency::className(), $id),
+                                ],
+                            ]
+                        )
+                    );
+                }
+            }
+        }
+        return static::$identity_map[$id];
+    }
+
 
     /**
      * Returns main currency object for this shop with static-cache
@@ -103,6 +135,9 @@ class Currency extends \yii\db\ActiveRecord
                 static::$mainCurrency = Currency::find()
                     ->where(['is_main' => 1])
                     ->one();
+                if (static::$mainCurrency !== null) {
+                    static::$identity_map[static::$mainCurrency->id] = static::$mainCurrency;
+                }
                 Yii::$app->cache->set(
                     "MainCurrency",
                     static::$mainCurrency,
@@ -193,5 +228,81 @@ class Currency extends \yii\db\ActiveRecord
 
 
         return $dataProvider;
+    }
+
+    /**
+     * Returns \yii\i18n\Formatter instance for current Currency instance
+     * @return \yii\i18n\Formatter
+     * @throws InvalidConfigException
+     */
+    private function getFormatter()
+    {
+        if ($this->formatter === null) {
+            $this->formatter = Yii::createObject([
+                'class' => '\yii\i18n\Formatter',
+                'currencyCode' => $this->iso_code,
+                'decimalSeparator' => $this->dec_point,
+                'thousandSeparator' => $this->thousands_sep,
+                'numberFormatterOptions' => [
+                    \NumberFormatter::MIN_FRACTION_DIGITS => 0,
+                    \NumberFormatter::MIN_FRACTION_DIGITS => 0,
+                ]
+            ]);
+        }
+        return $this->formatter;
+    }
+
+    /**
+     * Formats price with current currency settings
+     * @param $price
+     * @return string
+     */
+    public function format($price)
+    {
+        if ($this->intl_formatting === 1) {
+            return $this->getFormatter()->asCurrency($price);
+        } else {
+            $number_value = $this->getFormatter()->asDecimal($price);
+            return strtr($this->format_string, ['#'=>$number_value]);
+        }
+    }
+
+    /**
+     * Returns Currency instance by name
+     * @param $name
+     * @return array|mixed|null|\yii\db\ActiveRecord
+     */
+    public static function getByName($name)
+    {
+        // first search in identity map
+        foreach (static::$identity_map as $id => $currency) {
+            if ($currency->name === $name) {
+                return $currency;
+            }
+        }
+        // if not - find in db
+        $currency = Yii::$app->cache->get('Currency:name:'.$name);
+        if ($currency === false) {
+            $currency = Currency::find()
+                ->where(['name' => $name])
+                ->one();
+            Yii::$app->cache->set(
+                'Currency:name:'.$name,
+                $currency,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className()),
+                        ],
+                    ]
+                )
+            );
+        }
+        if ($currency !== null) {
+            // put to identity map
+            static::$identity_map[$currency->id] = $currency;
+        }
+        return $currency;
     }
 }

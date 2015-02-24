@@ -39,6 +39,7 @@ use yii\helpers\Json;
  * @property double $old_price
  * @property integer $is_deleted
  * @property integer $parent_id
+ * @property integer $currency_id
  * @property Product[] $relatedProducts
  */
 class Product extends ActiveRecord implements ImportableInterface, ExportableInterface
@@ -862,4 +863,47 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $relation->save();
         }
     }
+
+    /**
+     * Formats price to needed currency
+     * @param null|Currency $currency
+     * @param boolean $oldPrice True if you want to return Old Price instead of price
+     * @param boolean $schemaOrg Return schema.org http://schema.org/Offer markup with span's
+     * @return string
+     */
+    public function formattedPrice($currency = null, $oldPrice = false, $schemaOrg = true)
+    {
+        if ($currency === null) {
+            $currency = Currency::getMainCurrency();
+        }
+        $price = $oldPrice === true ? $this->old_price : $this->price;
+
+        if ($this->currency_id !== $currency->id) {
+            // we need to convert!
+            $price = round($price / $currency->convert_nominal / $currency->convert_rate, 2);
+        }
+
+
+        $formatted_string = $currency->format($price);
+        if ($schemaOrg == true) {
+            return strtr('
+                <span itemtype="http://schema.org/Offer" itemprop="offers" itemscope>
+                    <meta itemprop="priceCurrency" content="%iso_code%">
+                    <span itemprop="price" content="%price%">
+                        %formatted_string%
+                    </span>
+                </span>
+                ',
+                [
+                    '%iso_code%' => $currency->iso_code,
+                    '%price%' => $price,
+                    '%formatted_string%' => $formatted_string,
+                ]);
+        } else {
+            return $formatted_string;
+        }
+
+    }
+
+
 }

@@ -84,7 +84,7 @@ class Object extends ActiveRecord
     }
 
     /**
-     * Возвращает модель по ID с использованием IdentityMap
+     * Returns model instance by ID using IdentityMap
      * @param integer $id
      * @return Object
      */
