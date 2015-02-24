@@ -79,7 +79,7 @@ $images = Image::getForModel($model->object->id, $model->id);
                     <?= $model->formattedPrice() ?>
                     <?php if ($model->currency_id !== \app\models\Currency::getMainCurrency()->id): ?>
                     <small class="text-muted">
-                        <?= \app\models\Currency::findById($model->currency_id)->format($model->price) ?>
+                        <?= $model->nativeCurrencyPrice(false ,false) ?>
                     </small>
                     <?php endif; ?>
 
