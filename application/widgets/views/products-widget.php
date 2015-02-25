@@ -2,7 +2,7 @@
 use yii\helpers\Url;
 
 ?>
-<?php foreach ($products['products'] as $i=>$product): ?>
+<?php foreach ($products['products'] as $i => $product): ?>
 
     <?=
         $this->render(
@@ -13,6 +13,7 @@ use yii\helpers\Url;
                     [
                         'product/show',
                         'model' => $product,
+                        'category_group_id' => $category_group_id,
                     ]
                 )
             ]
