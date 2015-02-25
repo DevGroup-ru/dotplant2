@@ -7,6 +7,8 @@ class m150218_091236_currency extends Migration
 {
     public function up()
     {
+        $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB';
+
         $this->createTable(
             '{{%currency_rate_provider}}',
             [
@@ -14,7 +16,8 @@ class m150218_091236_currency extends Migration
                 'name' => Schema::TYPE_STRING,
                 'class_name' => Schema::TYPE_STRING,
                 'params' => Schema::TYPE_TEXT,
-            ]
+            ],
+            $tableOptions
         );
 
         $this->insert(
@@ -47,7 +50,8 @@ class m150218_091236_currency extends Migration
                 'additional_rate' => Schema::TYPE_FLOAT . ' NOT NULL DEFAULT 0',
                 'additional_nominal' => Schema::TYPE_FLOAT . ' NOT NULL DEFAULT 0',
                 'currency_rate_provider_id' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0',
-            ]
+            ],
+            $tableOptions
         );
 
         $this->insert('{{%currency}}', [
