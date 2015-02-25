@@ -25,7 +25,7 @@ use Yii;
  * @property OrderItem[] $items
  * @property ShippingOption $shippingOption
  * @property PaymentType $paymentType
- * @property OrderTransaction $transactions
+ * @property OrderTransaction[] $transactions
  * @property User $user
  * @property User $manager
  * @property float $fullPrice

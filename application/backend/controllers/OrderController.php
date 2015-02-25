@@ -9,6 +9,7 @@ use app\components\SearchModel;
 use app\models\Order;
 use app\models\OrderItem;
 use app\models\OrderStatus;
+use app\models\OrderTransaction;
 use app\models\PaymentType;
 use app\models\Product;
 use app\models\ShippingOption;
@@ -16,6 +17,7 @@ use app\models\User;
 use kartik\helpers\Html;
 use Yii;
 use yii\caching\TagDependency;
+use yii\data\ArrayDataProvider;
 use yii\db\Expression;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
@@ -59,6 +61,9 @@ class OrderController extends Controller
         return $managers;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -110,6 +115,13 @@ class OrderController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
+
+
+        $transactionsDataProvider = new ArrayDataProvider([
+            'allModels' => $model->transactions,
+        ]);
+
+
         $message = new OrderChat();
         if (Yii::$app->request->isPost) {
             $message->load(Yii::$app->request->post());
@@ -145,6 +157,8 @@ class OrderController extends Controller
                 'managers' => $this->getManagersList(),
                 'message' => $message,
                 'model' => $model,
+
+                'transactionsDataProvider' => $transactionsDataProvider,
             ]
         );
     }

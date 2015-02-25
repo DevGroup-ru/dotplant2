@@ -3,11 +3,13 @@
 use app\backend\widgets\BackendWidget;
 use kartik\editable\Editable;
 use yii\helpers\Html;
+use kartik\dynagrid\DynaGrid;
 
 /**
  * @var $this yii\web\View
  * @var $managers array
  * @var $model app\models\Order
+ * @var $transactionsDataProvider \yii\data\ArrayDataProvider
  */
 
 $this->title = Yii::t('shop', 'Order #{id}', ['id' => $model->id]);
@@ -18,6 +20,27 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= Html::encode($this->title) ?>
     <a href="#" class="btn btn-default pull-right" id="print-button"><?= \kartik\icons\Icon::show('print') ?>&nbsp;&nbsp;<?= Yii::t('shop', 'Print') ?></a>
 </h1>
+<?php
+$sum_transactions = 0;
+foreach ($model->transactions as $transaction) {
+    $sum_transactions += $transaction->total_sum;
+}
+if ($sum_transactions < $model->total_price):
+    ?>
+    <div class="alert alert-danger">
+        <b><?= Yii::t('app', 'Warning!') ?></b>
+        <?=
+        Yii::t(
+            'app',
+            'Total sum of transactions is {sum} which is lower then order\'s total price {order}',
+            [
+                'sum' => $sum_transactions,
+                'order' => $model->total_price,
+            ]
+        );
+        ?>
+    </div>
+<?php endif;?>
 <div class="row">
     <div class="col-xs-8">
         <div class="order-view">
@@ -176,7 +199,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php foreach($model->items  as $item): ?>
                             <tr>
                                 <td><?= $item->product->name ?></td>
-                                <td><?= Yii::$app->formatter->asDecimal($item->product->price, 2) ?></td>
+                                <td><?= $item->product->convertedPrice() ?></td>
                                 <td>
                                     <?=
                                     Editable::widget(
@@ -197,7 +220,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     )
                                     ?>
                                 </td>
-                                <td><?= Yii::$app->formatter->asDecimal($item->quantity * $item->product->price, 2) ?></td>
+                                <td><?= Yii::$app->formatter->asDecimal($item->quantity * $item->product->convertedPrice(), 2) ?></td>
                                 <td><?= Html::a(\kartik\icons\Icon::show('remove'), ['delete-order-item', 'id' => $item->id], ['class' => 'btn btn-primary btn-xs do-not-print']) ?></td>
                             </tr>
                         <?php endforeach; ?>
@@ -238,6 +261,51 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                 </div>
+            <?php BackendWidget::end(); ?>
+
+            <?php
+            BackendWidget::begin(
+                [
+                    'icon' => 'dollar',
+                    'title'=> Yii::t('shop', 'Order transactions'),
+                ]
+            );
+            ?>
+
+            <?=
+            DynaGrid::widget(
+                [
+                    'options' => [
+                        'id' => 'transactions-grid',
+                    ],
+                    'theme' => 'panel-default',
+                    'gridOptions' => [
+                        'dataProvider' => $transactionsDataProvider,
+                        'hover' => true,
+                        'panel' => false
+                    ],
+                    'columns' => [
+                        'id',
+                        'start_date',
+                        'end_date',
+                        'total_sum',
+                        [
+                            'attribute' => 'payment_type_id',
+                            'filter' => \app\components\Helper::getModelMap(\app\models\PaymentType::className(), 'id', 'name'),
+                            'value' => function ($model, $key, $index, $column) {
+                                if ($model === null || $model->paymentType === null) {
+                                    return null;
+                                }
+                                return $model->paymentType->name;
+                            },
+                        ],
+
+                    ],
+                ]
+            );
+            ?>
+
+
             <?php BackendWidget::end(); ?>
         </div>
     </div>
