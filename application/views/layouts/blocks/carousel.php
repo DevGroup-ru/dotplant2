@@ -1,3 +1,9 @@
+<?php
+
+/**
+ * @var $this \yii\web\View
+ */
+?>
 <div id="carouselBlk">
     <div id="myCarousel" class="carousel slide">
         <div class="carousel-inner">
