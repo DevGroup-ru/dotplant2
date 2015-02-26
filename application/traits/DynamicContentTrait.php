@@ -2,8 +2,11 @@
 
 namespace app\traits;
 
+use app\models\Object;
 use app\models\DynamicContent;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\caching\TagDependency;
 use yii\helpers\Json;
 
 trait DynamicContentTrait
@@ -17,13 +20,28 @@ trait DynamicContentTrait
         /**
          * @var $this \yii\web\Controller
          */
-        $models = DynamicContent::find()
-            ->where(
+        $models = DynamicContent::getDb()->cache(
+            function($db) use($object_id, $route) {
+                return DynamicContent::find()
+                    ->where(
+                        [
+                            'object_id' => $object_id,
+                            'route' => $route,
+                        ]
+                    )->all();
+            },
+            86400,
+            new TagDependency(
                 [
-                    'object_id' => $object_id,
-                    'route' => $route,
+                    'tags' => [
+                        ActiveRecordHelper::getCommonTag(DynamicContent::className()),
+                        ActiveRecordHelper::getObjectTag(Object::className(), $object_id),
+                        $route,
+                    ]
                 ]
-            )->all();
+            )
+        );
+
         if (!isset($selections['properties'])) {
             $selections['properties'] = [];
         }
