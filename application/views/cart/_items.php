@@ -13,10 +13,7 @@ use kartik\helpers\Html;
 $mainCurrency = \app\models\Currency::getMainCurrency();
 
 ?>
-<!--<pre>-->
-<!--    --><?php //var_dump($items) ?>
-<!--</pre>-->
-<?php //die(); ?>
+
 <table class="table table-bordered" id="cart-table">
     <thead>
     <tr>
