@@ -9,7 +9,7 @@
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
 
-$this->title = Yii::t('app', 'Product reviews');
+$this->title = Yii::t('app', 'Page reviews');
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -30,7 +30,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
             'columns' => [
-                'text',
+                [
+                    'attribute' => 'text',
+                    'width'=>'400px',
+                ],
                 [
                     'class' => yii\grid\DataColumn::className(),
                     'attribute' => 'username',
@@ -45,14 +48,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => yii\grid\DataColumn::className(),
                     'attribute' => 'name',
                     'value' => function ($data) {
-                        return isset($data->product) ? $data->product->name : null;
+                        return isset($data->page) ? $data->page->name : null;
                     },
                 ],
                 [
                     'class' => yii\grid\DataColumn::className(),
                     'attribute' => 'slug',
                     'value' => function ($data) {
-                        return isset($data->product) ? $data->product->slug : null;
+                        return isset($data->page) ? $data->page->slug : null;
+                    },
+                ],
+                [
+                    'class' => yii\grid\DataColumn::className(),
+                    'attribute' => 'slug_compiled',
+                    'value' => function ($data) {
+                        return isset($data->page) ? $data->page->slug_compiled : null;
                     },
                 ],
                 [
@@ -69,7 +79,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'filter' => \app\reviews\models\Review::getStatuses(),
                     'format' => 'raw',
                 ],
-                'rate',
+                [
+                    'attribute' => 'rate',
+                ],
                 [
                     'class' => 'app\backend\components\ActionColumn',
                     'buttons' => function($model, $key, $index, $parent) {

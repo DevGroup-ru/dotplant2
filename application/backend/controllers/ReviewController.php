@@ -24,13 +24,26 @@ class ReviewController extends Controller
         ];
     }
 
-    public function actionIndex()
+    public function actionProducts()
     {
         $searchModel = new Review(['scenario' => 'search']);
         $dataProvider = $searchModel->productSearch($_GET);
 
         return $this->render(
             'index',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+            ]
+        );
+    }
+    public function actionPages()
+    {
+        $searchModel = new Review(['scenario' => 'search']);
+        $dataProvider = $searchModel->pageSearch($_GET);
+
+        return $this->render(
+            'pages',
             [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
