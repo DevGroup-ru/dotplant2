@@ -5,6 +5,7 @@ namespace app\reviews\models;
 use app\backgroundtasks\traits\SearchModelTrait;
 use app\models\Object;
 use app\models\Product;
+use app\models\Page;
 use app\models\User;
 use Yii;
 use yii\base\Exception;
@@ -36,6 +37,7 @@ class Review extends \yii\db\ActiveRecord
 
     public $name;
     public $slug;
+    public $slug_compiled;
     public $username;
     public $captcha;
     public $useCaptcha = false;
@@ -104,6 +106,8 @@ class Review extends \yii\db\ActiveRecord
             'status' => Yii::t('app', 'Status'),
             'text' => Yii::t('app', 'Text'),
             'rate' => Yii::t('app', 'Rate'),
+            'slug' => Yii::t('app', 'Slug'),
+            'slug_compiled' => Yii::t('app', 'Slug Compiled'),
         ];
     }
 
@@ -117,6 +121,15 @@ class Review extends \yii\db\ActiveRecord
         $object = Object::getForClass(Product::className());
         if ($object !== null) {
             return $this->hasOne(Product::className(), ['id' => 'object_model_id']);
+        } else {
+            throw new Exception('Object not found in database');
+        }
+    }
+    public function getPage()
+    {
+        $object = Object::getForClass(Page::className());
+        if ($object !== null) {
+            return $this->hasOne(Page::className(), ['id' => 'object_model_id']);
         } else {
             throw new Exception('Object not found in database');
         }
@@ -179,6 +192,7 @@ class Review extends \yii\db\ActiveRecord
                 'object_id',
                 'name',
                 'slug',
+                'slug_compiled',
                 'username',
                 'author_name',
                 'author_email',
@@ -224,6 +238,55 @@ class Review extends \yii\db\ActiveRecord
         $this->addCondition($query, $this->tableName(), 'object_id');
         $this->addCondition($query, Product::tableName(), 'name', true);
         $this->addCondition($query, Product::tableName(), 'slug', true);
+        $this->addCondition($query, User::tableName(), 'username', true);
+        $this->addCondition($query, $this->tableName(), 'author_name', true);
+        $this->addCondition($query, $this->tableName(), 'author_email', true);
+        $this->addCondition($query, $this->tableName(), 'author_phone', true);
+        $this->addCondition($query, $this->tableName(), 'status');
+        $this->addCondition($query, $this->tableName(), 'text', true);
+        $this->addCondition($query, $this->tableName(), 'rate');
+        return $dataProvider;
+    }
+
+    public function pageSearch($params)
+    {
+        /* @var $query \yii\db\ActiveQuery */
+        $query = self::find();
+        $query->joinWith('user');
+        $object = Object::getForClass(Page::className());
+        $query->andWhere(['object_id' => $object->id]);
+        $query->joinWith('page');
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]
+        );
+        $dataProvider->sort->attributes['username'] = [
+            'asc' => [User::tableName() . '.username' => SORT_ASC],
+            'desc' => [User::tableName() . '.username' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['name'] = [
+            'asc' => [Page::tableName() . '.name' => SORT_ASC],
+            'desc' => [Page::tableName() . '.name' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['slug'] = [
+            'asc' => [Page::tableName() . '.slug' => SORT_ASC],
+            'desc' => [Page::tableName() . '.slug' => SORT_DESC],
+        ];
+        $dataProvider->sort->attributes['slug_compiled'] = [
+            'asc' => [Page::tableName() . '.slug_compiled' => SORT_ASC],
+            'desc' => [Page::tableName() . '.slug_compiled' => SORT_DESC],
+        ];
+        if (!($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+        $this->addCondition($query, $this->tableName(), 'object_id');
+        $this->addCondition($query, Page::tableName(), 'name', true);
+        $this->addCondition($query, Page::tableName(), 'slug', true);
+        $this->addCondition($query, Page::tableName(), 'slug_compiled', true);
         $this->addCondition($query, User::tableName(), 'username', true);
         $this->addCondition($query, $this->tableName(), 'author_name', true);
         $this->addCondition($query, $this->tableName(), 'author_email', true);
