@@ -2,14 +2,15 @@
 
 namespace app\backgroundtasks;
 
-use yii\base\Module;
+use app\backend\BackendModule;
+
 
 /**
  * Class BackgroundTasksModule
  * @package app\backgroundtasks
  * @author evgen-d <flynn068@gmail.com>
  */
-class BackgroundTasksModule extends Module
+class BackgroundTasksModule extends BackendModule
 {
     /**
      * @var array|string $notifyPermissions<br />

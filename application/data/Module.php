@@ -2,9 +2,10 @@
 
 namespace app\data;
 
+use app\backend\BackendModule;
 use Yii;
 
-class Module extends \yii\base\Module
+class Module extends BackendModule
 {
     public $dataBase = '/data';
 
