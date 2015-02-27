@@ -24,8 +24,6 @@ use yii\helpers\Url;
     'id' => 'alert',
 ]); ?>
 
-<?php $form = ActiveForm::begin(['id' => 'backend-menu-form', 'type'=>ActiveForm::TYPE_HORIZONTAL]); ?>
-
 <?php $this->beginBlock('submit'); ?>
 <div class="form-group no-margin">
     <?=
@@ -47,21 +45,31 @@ use yii\helpers\Url;
         )
         ?>
     <?php endif; ?>
+    <?= Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save & Go back'),
+        [
+            'class' => 'btn btn-warning',
+            'name' => 'action',
+            'value' => 'back',
+        ]
+    ); ?>
     <?=
     Html::submitButton(
         Icon::show('save') . Yii::t('app', 'Save'),
         [
             'class' => 'btn btn-primary',
             'name' => 'action',
-            'value' => 'back',
+            'value' => 'save',
         ]
     )
     ?>
-    
-    
+
+
 
 </div>
 <?php $this->endBlock('submit'); ?>
+
+<?php $form = ActiveForm::begin(['id' => 'backend-menu-form', 'type'=>ActiveForm::TYPE_HORIZONTAL]); ?>
 
 <section id="widget-grid">
     <div class="row">

@@ -10,6 +10,7 @@ use yii\filters\AccessControl;
 use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\helpers\Url;
 
 /**
  * ConfigController implements the CRUD actions for Config model.
@@ -103,17 +104,28 @@ class ConfigController extends Controller
 
                     file_put_contents(Yii::getAlias('@config') . "/email-config.php", "<?php\nreturn " . VarDumper::export($emailConf) . ";\n");
                 }
-
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
                 $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/config/index']);
-                if (Yii::$app->request->post('action', 'back') == 'next') {
-                    $route = ['/backend/config/update', 'returnUrl' => $returnUrl];
-                    if (!is_null(Yii::$app->request->get('parent_id', null))) {
-                        $route['parent_id'] = Yii::$app->request->get('parent_id');
-                    }
-                    return $this->redirect($route);
-                } else {
-                    return $this->redirect($returnUrl);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/config/update',
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/config/update',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
                 }
 
             } else {
