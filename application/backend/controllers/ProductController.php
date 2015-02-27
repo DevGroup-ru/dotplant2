@@ -203,10 +203,9 @@ class ProductController extends Controller
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
                 $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/product/index']);
                 if (Yii::$app->request->post('action', 'back') == 'next') {
-                    $route = ['/backend/product/edit'];
+                    $route = ['/backend/product/edit', 'returnUrl' => $returnUrl];
                     if (!is_null(Yii::$app->request->get('parent_id', null))) {
                         $route['parent_id'] = Yii::$app->request->get('parent_id');
-                        $route['returnUrl'] = $returnUrl;
                     }
                     return $this->redirect($route);
                 } else {

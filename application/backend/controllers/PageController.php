@@ -95,10 +95,9 @@ class PageController extends Controller
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
                 $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/page/index']);
                 if (Yii::$app->request->post('action', 'back') == 'next') {
-                    $route = ['/backend/page/edit'];
+                    $route = ['/backend/page/edit', 'returnUrl' => $returnUrl];
                     if (!is_null(Yii::$app->request->get('parent_id', null))) {
                         $route['parent_id'] = Yii::$app->request->get('parent_id');
-                        $route['returnUrl'] = $returnUrl;
                     }
                     return $this->redirect($route);
                 } else {
