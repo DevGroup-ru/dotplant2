@@ -16,6 +16,7 @@ use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
+use yii\helpers\Url;
 
 /**
  * SliderController implements the CRUD actions for Slider model.
@@ -102,16 +103,28 @@ class SliderController extends Controller
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
                     $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/slider/index']);
-                    if (Yii::$app->request->post('action', 'back') == 'next') {
-                        $route = ['/backend/slider/update', 'returnUrl' => $returnUrl];
-                        if (!is_null(Yii::$app->request->get('parent_id', null))) {
-                            $route['parent_id'] = Yii::$app->request->get('parent_id');
-                            $route['returnUrl'] = $returnUrl;
-                        }
-                        return $this->redirect($route);
-                    } else {
-                        return $this->redirect($returnUrl);
+                    switch (Yii::$app->request->post('action', 'save')) {
+                        case 'next':
+                            return $this->redirect(
+                                [
+                                    '/backend/slider/update',
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            );
+                        case 'back':
+                            return $this->redirect($returnUrl);
+                        default:
+                            return $this->redirect(
+                                Url::toRoute(
+                                    [
+                                        '/backend/slider/update',
+                                        'id' => $model->id,
+                                        'returnUrl' => $returnUrl
+                                    ]
+                                )
+                            );
                     }
+
                 } else {
                     Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
                 }

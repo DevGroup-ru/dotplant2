@@ -98,7 +98,7 @@ class BackendMenuController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/backend-menu/index', 'id' => $model->id]);
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/backend-menu/index']);
                 switch (Yii::$app->request->post('action', 'save')) {
                     case 'next':
                         return $this->redirect(
