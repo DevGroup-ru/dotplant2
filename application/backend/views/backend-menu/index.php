@@ -45,7 +45,13 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php
         $this->beginBlock('add-button');
         ?>
-                <a href="<?= Url::to(['/backend/backend-menu/edit', 'parent_id'=>(is_object($model)?$model->id:0)]) ?>" class="btn btn-success">
+                <a href="<?= Url::to(
+                    [
+                        '/backend/backend-menu/edit',
+                        'parent_id'=>(is_object($model)?$model->id:0),
+                        'returnUrl' => \app\backend\components\Helper::getReturnUrl()
+                    ]
+                ); ?>" class="btn btn-success">
                     <?= Icon::show('plus') ?>
                     <?= Yii::t('app', 'Add') ?>
                 </a>
@@ -103,9 +109,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         'url_append' => '&parent_id='.(is_object($model)?$model->id:0),
                     ],
                 ],
-                
+
                 'theme' => 'panel-default',
-                
+
                 'gridOptions'=>[
                     'dataProvider' => $dataProvider,
                     'filterModel' => $searchModel,
@@ -115,7 +121,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'heading'=>'<h3 class="panel-title">'.$this->title.'</h3>',
                         'after' => $this->blocks['add-button'],
                     ],
-                    
+
                 ]
             ]);
         ?>
