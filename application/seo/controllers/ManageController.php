@@ -241,7 +241,18 @@ class ManageController extends Controller
         $model = new Counter();
         AceHelper::setAceScript($this);
         if ($model->load($_POST) && $model->save()) {
-            return $this->redirect(['counter']);
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+            $returnUrl = Yii::$app->request->get('returnUrl', ['/seo/manage/counter']);
+            if (Yii::$app->request->post('action', 'back') == 'next') {
+                $route = ['/seo/manage/create-counter', 'returnUrl' => $returnUrl];
+                if (!is_null(Yii::$app->request->get('parent_id', null))) {
+                    $route['parent_id'] = Yii::$app->request->get('parent_id');
+                }
+                return $this->redirect($route);
+            } else {
+                return $this->redirect($returnUrl);
+            }
+
         } else {
             return $this->render(
                 'createCounter',
