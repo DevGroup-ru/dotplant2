@@ -21,11 +21,7 @@ $this->params['breadcrumbs'] = [
             BackendWidget::begin(
                 [
                     'icon' => 'gear',
-                    'title'=> Yii::t('shop', 'Config'),
-                    'footer' => Html::submitButton(
-                        Icon::show('save') . Yii::t('app', 'Save'),
-                        ['class' => 'btn btn-primary']
-                    ),
+                    'title'=> Yii::t('shop', 'Config')
                 ]
             );
         ?>
@@ -33,6 +29,40 @@ $this->params['breadcrumbs'] = [
             <?= $form->field($model, 'key')->textInput(['maxlength' => 50]) ?>
             <?= $form->field($model, 'value')->textInput(['maxlength' => 255]) ?>
             <?= $form->field($model, 'preload')->textInput()->widget(\kartik\widgets\SwitchInput::className()) ?>
+
+
+    <div class="form-group no-margin">
+        <?=
+        Html::a(
+            Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+            Yii::$app->request->get('returnUrl', ['/backend/config/index']),
+            ['class' => 'btn btn-danger']
+        )
+        ?>
+        <?php if ($model->isNewRecord): ?>
+            <?=
+            Html::submitButton(
+                Icon::show('save') . Yii::t('app', 'Save & Go next'),
+                [
+                    'class' => 'btn btn-success',
+                    'name' => 'action',
+                    'value' => 'next',
+                ]
+            )
+            ?>
+        <?php endif; ?>
+        <?=
+        Html::submitButton(
+            Icon::show('save') . Yii::t('app', 'Save'),
+            [
+                'class' => 'btn btn-primary',
+                'name' => 'action',
+                'value' => 'back',
+            ]
+        )
+        ?>
+    </div>
+
         <?php BackendWidget::end(); ?>
     <?php ActiveForm::end(); ?>
 </div>
