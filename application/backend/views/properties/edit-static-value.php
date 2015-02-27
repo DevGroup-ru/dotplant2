@@ -8,7 +8,7 @@ use kartik\widgets\ActiveForm;
 $this->title = Yii::t('app', 'Property static value edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/properties/index'], 'label' => Yii::t('app', 'Property groups')];
 $this->params['breadcrumbs'][] = ['url' => ['/backend/properties/group', 'id'=>$model->property->property_group_id], 'label' => $model->property->group->name];
-$this->params['breadcrumbs'][] = ['url' => ['/backend/properties/edit-property', 'id'=>$model->property_id], 'label' => $model->property->name];
+$this->params['breadcrumbs'][] = ['url' => ['/backend/properties/edit-property', 'id'=>$model->property_id, 'property_group_id' => $model->property->property_group_id], 'label' => $model->property->name];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -21,10 +21,48 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php $this->beginBlock('submit'); ?>
 <div class="form-group no-margin">
-    <?= Html::submitButton(
-        Icon::show('save') . Yii::t('app', 'Save'),
-        ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']
-    ) ?>
+<?=
+Html::a(
+    Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+    Yii::$app->request->get('returnUrl', ['/backend/properties/edit-property', 'id' => $model->property_id, 'property_group_id' => $model->property->property_group_id]),
+    ['class' => 'btn btn-danger']
+)
+?>
+
+<?php if ($model->isNewRecord): ?>
+    <?=
+    Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save & Go next'),
+        [
+            'class' => 'btn btn-success',
+            'name' => 'action',
+            'value' => 'next',
+        ]
+    )
+    ?>
+<?php endif; ?>
+
+<?=
+Html::submitButton(
+    Icon::show('save') . Yii::t('app', 'Save & Go back'),
+    [
+        'class' => 'btn btn-warning',
+        'name' => 'action',
+        'value' => 'back',
+    ]
+)
+?>
+
+<?=
+Html::submitButton(
+    Icon::show('save') . Yii::t('app', 'Save'),
+    [
+        'class' => 'btn btn-primary',
+        'name' => 'action',
+        'value' => 'save',
+    ]
+)
+?>
 </div>
 <?php $this->endBlock('submit'); ?>
 
@@ -84,10 +122,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
         
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            
-
-            
-
         </article>
 
     </div>
