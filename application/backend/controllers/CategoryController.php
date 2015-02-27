@@ -119,13 +119,16 @@ class CategoryController extends Controller
 
             if ($save_result) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                return $this->redirect(
-                    [
-                        '/backend/category/edit',
-                        'id' => $model->id,
-                        'parent_id' => $model->parent_id
-                    ]
-                );
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/category/index']);
+                if (Yii::$app->request->post('action', 'back') == 'next') {
+                    $route = ['/backend/category/edit', 'returnUrl' => $returnUrl];
+                    if (!is_null(Yii::$app->request->get('parent_id', null))) {
+                        $route['parent_id'] = Yii::$app->request->get('parent_id');
+                    }
+                    return $this->redirect($route);
+                } else {
+                    return $this->redirect($returnUrl);
+                }
             } else {
                 throw new ServerErrorHttpException;
             }
