@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="form-group">
         <div class="btn-toolbar grid-toolbar" role="toolbar">
             <div class="btn-group">
-                <?= Html::a(Yii::t('app', 'Create Task'), ['create'], ['class' => 'btn btn-success']) ?>
+                <?= Html::a(Yii::t('app', 'Create Task'), ['create', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()], ['class' => 'btn btn-success']) ?>
             </div>
             <div class="btn-group">
                 <?= Html::button(
