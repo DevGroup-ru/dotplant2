@@ -139,3 +139,15 @@ img.image-column {
     height: initial;
     min-height: 32px;
 }
+
+div#Product-grid .table td {
+  padding: 4px;
+}
+div#Product-grid {
+  font-size: 12px;
+}
+
+div#Product-grid .btn-sm{
+  padding: 3px 5px 3px;
+  font-size: 10px;
+}

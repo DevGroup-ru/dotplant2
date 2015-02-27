@@ -176,3 +176,19 @@ img.image-column {
   height: initial;
   min-height: 32px;
 }
+
+/* line 143, ../sass/admin.scss */
+div#Product-grid .table td {
+  padding: 4px;
+}
+
+/* line 146, ../sass/admin.scss */
+div#Product-grid {
+  font-size: 12px;
+}
+
+/* line 150, ../sass/admin.scss */
+div#Product-grid .btn-sm {
+  padding: 3px 5px 3px;
+  font-size: 10px;
+}
