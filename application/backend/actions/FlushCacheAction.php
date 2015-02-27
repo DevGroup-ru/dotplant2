@@ -92,5 +92,4 @@ class FlushCacheAction extends Action
         $message .= $this->flushAssets();
         return $this->controller->renderPartial($this->view, ['message' => $message]);
     }
-
 }

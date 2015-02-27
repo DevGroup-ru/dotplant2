@@ -35,7 +35,6 @@ class JSSelectableTreeGetTree extends Action
         }
 
         $modelName = $this->modelName;
-        // @todo something
         $selectedItems = Yii::$app->request->get('selectedItems', []);
         if (!empty($selectedItems)) {
             $selectedItems = explode(',', $selectedItems);
