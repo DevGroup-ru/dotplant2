@@ -12,6 +12,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use Yii;
 
 class ManageController extends Controller
 {
@@ -128,7 +129,17 @@ class ManageController extends Controller
     {
         $model = new Meta();
         if ($model->load($_POST) && $model->save()) {
-            return $this->redirect(['meta']);
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+            $returnUrl = Yii::$app->request->get('returnUrl', ['/seo/manage/meta']);
+            if (Yii::$app->request->post('action', 'back') == 'next') {
+                $route = ['/seo/manage/create-meta', 'returnUrl' => $returnUrl];
+                if (!is_null(Yii::$app->request->get('parent_id', null))) {
+                    $route['parent_id'] = Yii::$app->request->get('parent_id');
+                }
+                return $this->redirect($route);
+            } else {
+                return $this->redirect($returnUrl);
+            }
         } else {
             return $this->render(
                 'createMeta',
@@ -240,7 +251,18 @@ class ManageController extends Controller
         $model = new Counter();
         AceHelper::setAceScript($this);
         if ($model->load($_POST) && $model->save()) {
-            return $this->redirect(['counter']);
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+            $returnUrl = Yii::$app->request->get('returnUrl', ['/seo/manage/counter']);
+            if (Yii::$app->request->post('action', 'back') == 'next') {
+                $route = ['/seo/manage/create-counter', 'returnUrl' => $returnUrl];
+                if (!is_null(Yii::$app->request->get('parent_id', null))) {
+                    $route['parent_id'] = Yii::$app->request->get('parent_id');
+                }
+                return $this->redirect($route);
+            } else {
+                return $this->redirect($returnUrl);
+            }
+
         } else {
             return $this->render(
                 'createCounter',
@@ -400,7 +422,19 @@ class ManageController extends Controller
                     }
                 }
             }
-            return $this->redirect(['redirect']);
+
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Records has been saved'));
+            $returnUrl = Yii::$app->request->get('returnUrl', ['/seo/manage/redirect']);
+            if (Yii::$app->request->post('action', 'back') == 'next') {
+                $route = ['/seo/manage/create-redirects', 'returnUrl' => $returnUrl];
+                if (!is_null(Yii::$app->request->get('parent_id', null))) {
+                    $route['parent_id'] = Yii::$app->request->get('parent_id');
+                }
+                return $this->redirect($route);
+            } else {
+                return $this->redirect($returnUrl);
+            }
+
         } else {
             return $this->render('createRedirects');
         }
@@ -424,8 +458,20 @@ class ManageController extends Controller
         )->one();
         if ($model !== null) {
             if ($model->load($_POST) && $model->validate()) {
-                $model->save();
-                return $this->redirect(['redirect']);
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+                    $returnUrl = Yii::$app->request->get('returnUrl', ['/seo/manage/redirect']);
+                    if (Yii::$app->request->post('action', 'back') == 'next') {
+                        $route = ['/seo/manage/update-redirect', 'returnUrl' => $returnUrl];
+                        if (!is_null(Yii::$app->request->get('parent_id', null))) {
+                            $route['parent_id'] = Yii::$app->request->get('parent_id');
+                        }
+                        return $this->redirect($route);
+                    } else {
+                        return $this->redirect($returnUrl);
+                    }
+                }
             } else {
                 return $this->render(
                     'updateRedirect',

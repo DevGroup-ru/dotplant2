@@ -29,10 +29,37 @@ use yii\helpers\Url;
 <?php $this->beginBlock('submit'); ?>
 <div class="form-group no-margin">
     <?=
+    Html::a(
+        Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+        Yii::$app->request->get('returnUrl', ['/backend/backend-menu/index']),
+        ['class' => 'btn btn-danger']
+    )
+    ?>
+    <?php if ($model->isNewRecord): ?>
+        <?=
+        Html::submitButton(
+            Icon::show('save') . Yii::t('app', 'Save & Go next'),
+            [
+                'class' => 'btn btn-success',
+                'name' => 'action',
+                'value' => 'next',
+            ]
+        )
+        ?>
+    <?php endif; ?>
+    <?=
     Html::submitButton(
         Icon::show('save') . Yii::t('app', 'Save'),
-        ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']
-    ) ?>
+        [
+            'class' => 'btn btn-primary',
+            'name' => 'action',
+            'value' => 'back',
+        ]
+    )
+    ?>
+    
+    
+
 </div>
 <?php $this->endBlock('submit'); ?>
 

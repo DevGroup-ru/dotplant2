@@ -105,7 +105,17 @@ class ConfigController extends Controller
                 }
 
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                return $this->redirect(['update', 'id' => $model->id]);
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/config/index']);
+                if (Yii::$app->request->post('action', 'back') == 'next') {
+                    $route = ['/backend/config/update', 'returnUrl' => $returnUrl];
+                    if (!is_null(Yii::$app->request->get('parent_id', null))) {
+                        $route['parent_id'] = Yii::$app->request->get('parent_id');
+                    }
+                    return $this->redirect($route);
+                } else {
+                    return $this->redirect($returnUrl);
+                }
+
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
             }

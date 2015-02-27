@@ -22,14 +22,14 @@ $this->params['breadcrumbs'][] = $this->title;
         <?=
             Html::a(
                 Yii::t('app', 'Create Permission'),
-                ['create', 'type' => \yii\rbac\Item::TYPE_PERMISSION],
+                ['create', 'returnUrl' => \app\backend\components\Helper::getReturnUrl(), 'type' => \yii\rbac\Item::TYPE_PERMISSION],
                 ['class' => 'btn btn-success']
             )
         ?>
         <?=
             Html::a(
                 Yii::t('app', 'Create Role'),
-                ['create', 'type' => \yii\rbac\Item::TYPE_ROLE],
+                ['create', 'returnUrl' => \app\backend\components\Helper::getReturnUrl(), 'type' => \yii\rbac\Item::TYPE_ROLE],
                 ['class' => 'btn btn-success']
             )
         ?>

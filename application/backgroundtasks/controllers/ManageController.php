@@ -102,7 +102,18 @@ class ManageController extends Controller
         $model->type = Task::TYPE_REPEAT;
 
         if ($model->load($_POST) && $model->save()) {
-            return $this->redirect(['index']);
+
+            $returnUrl = Yii::$app->request->get('returnUrl', ['background/manage/index']);
+            if (Yii::$app->request->post('action', 'back') == 'next') {
+                $route = ['background/manage/create', 'returnUrl' => $returnUrl];
+                if (!is_null(Yii::$app->request->get('parent_id', null))) {
+                    $route['parent_id'] = Yii::$app->request->get('parent_id');
+                }
+                return $this->redirect($route);
+            } else {
+                return $this->redirect($returnUrl);
+            }
+
         } else {
             return $this->render(
                 'create',
