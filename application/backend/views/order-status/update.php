@@ -15,6 +15,52 @@ $this->params['breadcrumbs'] = [
 ];
 
 ?>
+
+<?php $this->beginBlock('submit'); ?>
+<?=
+Html::a(
+    Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+    Yii::$app->request->get('returnUrl', ['/backend/order-status/index']),
+    ['class' => 'btn btn-danger']
+)
+?>
+
+<?php if ($model->isNewRecord): ?>
+    <?=
+    Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save & Go next'),
+        [
+            'class' => 'btn btn-success',
+            'name' => 'action',
+            'value' => 'next',
+        ]
+    )
+    ?>
+<?php endif; ?>
+
+<?=
+Html::submitButton(
+    Icon::show('save') . Yii::t('app', 'Save & Go back'),
+    [
+        'class' => 'btn btn-warning',
+        'name' => 'action',
+        'value' => 'back',
+    ]
+)
+?>
+
+<?=
+Html::submitButton(
+    Icon::show('save') . Yii::t('app', 'Save'),
+    [
+        'class' => 'btn btn-primary',
+        'name' => 'action',
+        'value' => 'save',
+    ]
+)
+?>
+<?php $this->endBlock('submit'); ?>
+
 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
     <?php $form = ActiveForm::begin(); ?>
         <?php
@@ -22,10 +68,7 @@ $this->params['breadcrumbs'] = [
                 [
                     'icon' => 'info-circle',
                     'title'=> Yii::t('shop', 'Order Status'),
-                    'footer' => Html::submitButton(
-                        Icon::show('save') . Yii::t('app', 'Save'),
-                        ['class' => 'btn btn-primary']
-                    ),
+                    'footer' => $this->blocks['submit'],
                 ]
             );
         ?>
