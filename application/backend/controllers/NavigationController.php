@@ -71,13 +71,30 @@ class NavigationController extends Controller
         if ($model->load($post) && $model->validate()) {
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                return $this->redirect(
-                    [
-                        '/backend/navigation/edit',
-                        'id' => $model->id,
-                        'parent_id' => $model->parent_id,
-                    ]
-                );
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/navigation/index', 'id' => $model->id]);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/navigation/edit',
+                                'parent_id' => $model->parent_id,
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/navigation/edit',
+                                    'id' => $model->id,
+                                    'parent_id' => $model->parent_id,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
+                }
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }

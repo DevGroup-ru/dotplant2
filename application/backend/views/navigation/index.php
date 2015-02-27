@@ -45,10 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
                 <?= \yii\helpers\Html::a(
                     Icon::show('plus') . " " . Yii::t('app', 'Add'),
-                    [
-                        '/backend/navigation/edit',
-                        'parent_id' => $parent_id,
-                    ],
+                    ['/backend/navigation/edit', 'parent_id' => (is_object($model) ? $model->id : 0), 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
                     [
                         'class' => 'btn btn-success',
                     ]

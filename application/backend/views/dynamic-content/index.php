@@ -18,7 +18,22 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= app\widgets\Alert::widget([
     'id' => 'alert',
 ]); ?>
-
+<?php $this->beginBlock('bottom-buttons'); ?>
+<?= \yii\helpers\Html::a(
+    \kartik\icons\Icon::show('plus') . ' ' . Yii::t('app', 'Add'),
+    ['/backend/dynamic-content/edit', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
+    [
+        'class' => 'btn btn-success',
+    ]
+) ?>
+<?= \app\backend\widgets\RemoveAllButton::widget([
+    'url' => '/backend/dynamic-content/remove-all',
+    'gridSelector' => '.grid-view',
+    'htmlOptions' => [
+        'class' => 'btn btn-danger pull-right'
+    ],
+]); ?>
+<?php $this->endBlock(); ?>
 <div class="row">
     <div class="col-md-12">
         <?=
@@ -49,9 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'hover' => true,
                         'panel' => [
                             'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
-                            'after' => \app\backend\widgets\helpers\AddRemoveAllPanel::widget([
-                                'baseRoute' => '/backend/dynamic-content/',
-                            ]),
+                            'after' => $this->blocks['bottom-buttons'],
                         ],
                     ]
                 ]

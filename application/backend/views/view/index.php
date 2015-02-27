@@ -24,10 +24,13 @@ $this->params['breadcrumbs'][] = $this->title = Yii::t('app', 'Views');
         <?php
         $this->beginBlock('add-button');
         ?>
-        <a href="<?= Url::toRoute('add') ?>" class="btn btn-success">
-            <?= Icon::show('plus') ?>
-            <?= Yii::t('app', 'Add') ?>
-        </a>
+        <?=
+        \yii\helpers\Html::a(
+            Icon::show('plus') . Yii::t('app', 'Add'),
+            ['/backend/view/add', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
+            ['class' => 'btn btn-success']
+        )
+        ?>
         <?= \app\backend\widgets\RemoveAllButton::widget([
             'url' => '/backend/view/remove-all',
             'gridSelector' => '.grid-view',

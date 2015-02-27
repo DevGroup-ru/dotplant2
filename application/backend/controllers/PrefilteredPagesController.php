@@ -82,7 +82,31 @@ class PrefilteredPagesController extends Controller
             $save_result = $model->save();
             if ($save_result) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                return $this->redirect(['/backend/prefiltered-pages/edit', 'id' => $model->id]);
+
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/prefiltered-pages/index', 'id' => $model->id]);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/prefiltered-pages/edit',
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/prefiltered-pages/edit',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
+                }
+                //return $this->redirect(['/backend/prefiltered-pages/edit', 'id' => $model->id]);
+
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }
