@@ -9,6 +9,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\rbac\Item;
 use yii\web\Controller;
+use Yii;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -96,7 +97,17 @@ class RbacController extends Controller
                 \Yii::$app->getSession()->setFlash('error', $model->getErrorMessage());
                 return $this->redirect(['update', 'id' => $item->name, 'type' => $item->type]);
             } else {
-                return $this->redirect(['rbac/']);
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/rbac/index']);
+                if (\Yii::$app->request->post('action', 'back') == 'next') {
+                    $route = ['/backend/rbac/create', 'returnUrl' => $returnUrl,'type'=>$type];
+                    if (!is_null(Yii::$app->request->get('parent_id', null))) {
+                        $route['parent_id'] = Yii::$app->request->get('parent_id');
+                    }
+                    return $this->redirect($route);
+                } else {
+                    return $this->redirect($returnUrl);
+                }
             }
         } else {
             switch ($type) {

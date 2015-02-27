@@ -18,6 +18,43 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Rbac'), 'url' => ['i
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
+
+<?php $this->beginBlock('submit'); ?>
+<div class="form-group no-margin">
+    <?=
+    Html::a(
+        Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+        Yii::$app->request->get('returnUrl', ['/backend/rbac/index']),
+        ['class' => 'btn btn-danger']
+    )
+    ?>
+    <?php if ($model->isNewRecord): ?>
+        <?=
+        Html::submitButton(
+            Icon::show('save') . Yii::t('app', 'Save & Go next'),
+            [
+                'class' => 'btn btn-success',
+                'name' => 'action',
+                'value' => 'next',
+            ]
+        )
+        ?>
+    <?php endif; ?>
+    <?=
+    Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save'),
+        [
+            'class' => 'btn btn-primary',
+            'name' => 'action',
+            'value' => 'back',
+        ]
+    )
+    ?>
+
+
+</div>
+<?php $this->endBlock('submit'); ?>
+
 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
     <?php $form = ActiveForm::begin(); ?>
         <?php
@@ -25,10 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'icon' => 'lock',
                     'title'=> $this->title,
-                    'footer' => Html::submitButton(
-                        Icon::show('save') . Yii::t('app', 'Save'),
-                        ['class' => 'btn btn-primary']
-                    ),
+                    'footer' =>  $this->blocks['submit'] ,
                 ]
             );
         ?>
