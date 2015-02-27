@@ -23,6 +23,51 @@ $this->params['breadcrumbs'][] = $this->title;
     'id' => 'alert',
 ]); ?>
 
+<?php $this->beginBlock('submit'); ?>
+<?=
+Html::a(
+    Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+    Yii::$app->request->get('returnUrl', ['/backend/properties/index']),
+    ['class' => 'btn btn-danger']
+)
+?>
+
+<?php if ($model->isNewRecord): ?>
+    <?=
+    Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save & Go next'),
+        [
+            'class' => 'btn btn-success',
+            'name' => 'action',
+            'value' => 'next',
+        ]
+    )
+    ?>
+<?php endif; ?>
+
+<?=
+Html::submitButton(
+    Icon::show('save') . Yii::t('app', 'Save & Go back'),
+    [
+        'class' => 'btn btn-warning',
+        'name' => 'action',
+        'value' => 'back',
+    ]
+)
+?>
+
+<?=
+Html::submitButton(
+    Icon::show('save') . Yii::t('app', 'Save'),
+    [
+        'class' => 'btn btn-primary',
+        'name' => 'action',
+        'value' => 'save',
+    ]
+)
+?>
+<?php $this->endBlock('submit'); ?>
+
 <?php $form = ActiveForm::begin(['id' => 'property-group-form', 'type'=>ActiveForm::TYPE_HORIZONTAL]); ?>
     <section id="widget-grid">
         <div class="row">
@@ -32,10 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'title' => Yii::t('app', 'Property groups'),
                             'icon' => 'list',
-                            'footer' => Html::submitButton(
-                                Icon::show('save') . Yii::t('app', 'Save'),
-                                ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']
-                            ),
+                            'footer' => $this->blocks['submit'],
                         ]
                     );
                 ?>
@@ -125,7 +167,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'heading' => Html::tag('h3', Yii::t('app', 'Properties'), ['class' => 'panel-title']),
                         'after' => Html::a(
                             Icon::show('plus') . Yii::t('app', 'Add'),
-                            ['/backend/properties/edit-property', 'property_group_id' => $model->id],
+                            ['/backend/properties/edit-property', 'property_group_id' => $model->id, 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
                             ['class' => 'btn btn-success']
                         ) . \app\backend\widgets\RemoveAllButton::widget([
                             'url' => \yii\helpers\Url::to(['/backend/properties/remove-all-properties', 'group_id' => $model->id]),

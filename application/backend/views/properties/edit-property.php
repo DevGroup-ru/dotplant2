@@ -21,18 +21,53 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php $form = ActiveForm::begin(['id' => 'property-form', 'type'=>ActiveForm::TYPE_HORIZONTAL]); ?>
 
 <?php $this->beginBlock('submit'); ?>
-<div class="form-group no-margin">
-    <?= Html::submitButton(
-        Icon::show('save') . Yii::t('app', 'Save'),
-        ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']
-    ) ?>
-</div>
-<?php $this->endBlock('submit'); ?>
+<?=
+Html::a(
+    Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+    Yii::$app->request->get('returnUrl', ['/backend/properties/group', 'property_group_id' => $model->property_group_id]),
+    ['class' => 'btn btn-danger']
+)
+?>
 
+<?php if ($model->isNewRecord): ?>
+    <?=
+    Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save & Go next'),
+        [
+            'class' => 'btn btn-success',
+            'name' => 'action',
+            'value' => 'next',
+        ]
+    )
+    ?>
+<?php endif; ?>
+
+<?=
+Html::submitButton(
+    Icon::show('save') . Yii::t('app', 'Save & Go back'),
+    [
+        'class' => 'btn btn-warning',
+        'name' => 'action',
+        'value' => 'back',
+    ]
+)
+?>
+
+<?=
+Html::submitButton(
+    Icon::show('save') . Yii::t('app', 'Save'),
+    [
+        'class' => 'btn btn-primary',
+        'name' => 'action',
+        'value' => 'save',
+    ]
+)
+?>
+<?php $this->endBlock('submit'); ?>
 <?php
 $this->beginBlock('add-button');
 ?>
-        <a href="<?= Url::to(['/backend/properties/edit-static-value', 'property_id'=>$model->id]) ?>" class="btn btn-success">
+        <a href="<?= Url::to(['/backend/properties/edit-static-value', 'property_id'=>$model->id, 'returnUrl' => \app\backend\components\Helper::getReturnUrl()]) ?>" class="btn btn-success">
             <?= Icon::show('plus') ?>
             <?= Yii::t('app', 'Add value') ?>
         </a>
