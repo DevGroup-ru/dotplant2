@@ -37,7 +37,20 @@ $config = [
         'dynagrid' =>  [
             'class' => '\kartik\dynagrid\Module',
             'dbSettings' => [
-                'tableName' => 'Dynagrid',
+                'tableName' => '{{%dynagrid}}',
+            ],
+            'dbSettingsDtl' => [
+                'tableName' => '{{%dynagrid_dtl}}',
+            ],
+            'dynaGridOptions' => [
+                'storage' => 'db',
+                'gridOptions' => [
+                    'toolbar' => [
+                        '{dynagrid}',
+                        '{toggleData}',
+                        //'{export}',
+                    ]
+                ]
             ],
         ],
         'gridview' =>  [
@@ -95,7 +108,8 @@ $config = [
             'loginUrl' => ['/login'],
         ],
         'authManager' => [
-            'class'=>'\bethrezen\CachedDbManager',
+            'class'=>'yii\\rbac\\DbManager',
+            'cache' => 'cache',
         ],
         'authClientCollection' => [
             'class' => 'yii\authclient\Collection',

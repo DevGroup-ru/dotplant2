@@ -82,6 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'filterModel' => $searchModel,
             'hover' => true,
             'panel' => [
+
                 'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
                 'after' => Html::a(
                     Icon::show('plus') . Yii::t('app', 'Add'),

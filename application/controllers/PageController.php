@@ -148,7 +148,7 @@ class PageController extends Controller
         }
         $pages = new Pagination(
             [
-                'defaultPageSize' => 10,
+                'defaultPageSize' => Config::getValue('page.searchResultsLimit', 10),
                 'forcePageParam' => false,
                 'totalCount' => count($ids),
             ]

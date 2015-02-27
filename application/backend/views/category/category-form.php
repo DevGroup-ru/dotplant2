@@ -32,7 +32,11 @@ use yii\helpers\Url;
     <?=
     Html::a(
         Icon::show('eye') . Yii::t('app', 'Preview'),
-        Url::to(['/product/list', 'category_id' => $model->id]),
+        Url::to([
+            '/product/list',
+            'category_id' => $model->id,
+            'category_group_id' => $model->category_group_id
+        ]),
         ['class' => 'btn btn-success', 'target' => '_blank']
     ) ?>
     <?=

@@ -42,11 +42,8 @@ $action = isset($model->id) ? 'edit?id='.$model->id : 'edit';
                 <?= $form->field($model, 'route')?>
                 <?= $form->field($model, 'name')?>
                 <?= $form->field($model, 'title')?>
-                <?= $form->field($model, 'append_title')->checkbox() ?>
                 <?= $form->field($model, 'h1')?>
-                <?= $form->field($model, 'append_h1')->checkbox() ?>
                 <?= $form->field($model, 'meta_description')->textarea()?>
-                <?= $form->field($model, 'append_meta_description')->checkbox() ?>
 
             <?php BackendWidget::end(); ?>
 
@@ -73,8 +70,6 @@ $action = isset($model->id) ? 'edit?id='.$model->id : 'edit';
                         ],
                     ],
                 ]); ?>
-
-                <?= $form->field($model, 'append_content')->checkbox() ?>
             
             <?php BackendWidget::end(); ?>
         </article>

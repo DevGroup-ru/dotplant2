@@ -17,7 +17,6 @@
         "yiisoft/yii2-swiftmailer": "*",
         "yiisoft/yii2-authclient": "*",
         "yiisoft/yii2-imagine": "*",
-        "bethrezen/yii2-cached-rbac-dbmanager": "*",
         "kartik-v/yii2-widgets": "dev-master",
         "kartik-v/yii2-krajee-base": "dev-master",
         "kartik-v/yii2-dynagrid": "dev-master",

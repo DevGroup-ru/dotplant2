@@ -14,13 +14,9 @@ use yii\db\ActiveRecord;
  * @property string $name
  * @property string $content_block_name
  * @property string $content
- * @property integer $append_content
  * @property string $title
- * @property integer $append_title
  * @property string $h1
- * @property integer $append_h1
  * @property string $meta_description
- * @property integer $append_meta_description
  * @property integer $apply_if_last_category_id
  * @property string $apply_if_params
  * @property integer $object_id
@@ -45,10 +41,6 @@ class DynamicContent extends ActiveRecord
             [['route', 'name', 'content', 'title', 'h1', 'meta_description', 'apply_if_params'], 'string'],
             [
                 [
-                    'append_content',
-                    'append_title',
-                    'append_h1',
-                    'append_meta_description',
                     'apply_if_last_category_id',
                     'object_id'
                 ],
@@ -71,13 +63,9 @@ class DynamicContent extends ActiveRecord
             'name' => Yii::t('app', 'Name'),
             'content_block_name' => Yii::t('app', 'Content Block Name'),
             'content' => Yii::t('app', 'Content'),
-            'append_content' => Yii::t('app', 'Append Content'),
             'title' => Yii::t('app', 'Title'),
-            'append_title' => Yii::t('app', 'Append Title'),
             'h1' => Yii::t('app', 'H1'),
-            'append_h1' => Yii::t('app', 'Append H1'),
             'meta_description' => Yii::t('app', 'Meta Description'),
-            'append_meta_description' => Yii::t('app', 'Append Meta Description'),
             'apply_if_last_category_id' => Yii::t('app', 'Apply If Last Category ID'),
             'apply_if_params' => Yii::t('app', 'Apply If Params'),
             'object_id' => Yii::t('app', 'Object'),
