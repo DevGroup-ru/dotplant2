@@ -138,23 +138,44 @@ class PropertyGroup extends ActiveRecord
         return static::$identity_map[$id];
     }
 
-    public static function getForObjectId($object_id)
+    /**
+     * Relation to properties
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProperties()
+    {
+        return $this->hasMany(Property::className(), ['property_group_id' => 'id'])->orderBy('sort_order');
+    }
+
+    public static function getForObjectId($object_id, $withProperties = false)
     {
         if (!isset(static::$groups_by_object_id[$object_id])) {
 
             $cacheKey = 'PropertyGroup:objectId:'.$object_id;
             static::$groups_by_object_id[$object_id] = Yii::$app->cache->get($cacheKey);
             if (!is_array(static::$groups_by_object_id[$object_id])) {
-                static::$groups_by_object_id[$object_id] = static::find()
+                $query = static::find()
                     ->where(['object_id'=>$object_id])
-                    ->orderBy('sort_order')
-                    ->all();
+                    ->orderBy('sort_order');
+                if ($withProperties === true) {
+                    $query = $query->with('properties');
+                }
+                static::$groups_by_object_id[$object_id] = $query->all();
                 if (null !== $object = Object::findById($object_id)) {
                     $tags = [
                         \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object, $object_id)
                     ];
                     foreach (static::$groups_by_object_id[$object_id] as $propertyGroup){
                         $tags[] = \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($propertyGroup, $propertyGroup->id);
+                        if ($withProperties === true) {
+                            foreach ($propertyGroup->properties as $prop) {
+                                if (isset(Property::$group_id_to_property_ids[$propertyGroup->id]) === false) {
+                                    Property::$group_id_to_property_ids[$propertyGroup->id]=[];
+                                }
+                                Property::$group_id_to_property_ids[$propertyGroup->id][] = $prop->id;
+                                Property::$identity_map[$prop->id] = $prop;
+                            }
+                        }
                     }
 
 

@@ -84,6 +84,7 @@ class FilterWidget extends Widget
             'propertyStaticValueIds' => [],
         ];
         if ($this->onlyAvailableFilters) {
+            Yii::beginProfile("onlyAvailableFilters");
             $object = Object::findById($this->objectId);
             if (!is_null($object) && isset($this->currentSelections['last_category_id'])) {
 
@@ -91,6 +92,8 @@ class FilterWidget extends Widget
                     . Json::encode($this->currentSelections['properties']);
                 $data = Yii::$app->cache->get($cacheKey);
                 if ($data === false) {
+                    $data = [];
+                    Yii::beginProfile("ObjectIds for this category");
                     $query = new Query();
                     $query = $query->select($object->categories_table_name . '.object_model_id')
                         ->distinct()
@@ -98,6 +101,7 @@ class FilterWidget extends Widget
                         ->where(['category_id' => $this->currentSelections['last_category_id']]);
 
                     if (count($this->currentSelections['properties']) > 0) {
+                        Yii::beginProfile("Apply currency selections(properties)");
                         foreach ($this->currentSelections['properties'] as $property_id => $values) {
                             $joinTableName = 'OSVJoinTable'.$property_id;
                             $query->join(
@@ -113,22 +117,45 @@ class FilterWidget extends Widget
 
                             $query->andWhere(['in', '`'.$joinTableName.'`.`property_static_value_id`', $values]);
                         }
+                        Yii::endProfile("Apply currency selections(properties)");
                     }
+                    Yii::endProfile("ObjectIds for this category");
 
 
-                    $ids = $query->column();
+                    $ids = array_map('intval', $query->column());
                     $query = null;
-                    $data['propertyStaticValueIds'] = ObjectStaticValues::find()
+
+
+                    Yii::beginProfile("all PSV ids");
+                    $data['propertyStaticValueIds'] = [];
+
+                    $q4psv = (new Query())
                         ->select('property_static_value_id')
+                        ->from(ObjectStaticValues::tableName())
                         ->distinct()
-                        ->where(['object_id' => $object->id, 'object_model_id' => $ids])
-                        ->column();
+                        ->where(['object_id' => $object->id])
+                        ->andWhere('object_model_id in ('.implode(',', $ids).')');
+
+
+
+                    $data['propertyStaticValueIds'] = array_map('intval', $q4psv->column());
+                    Yii::endProfile("all PSV ids");
+
+
                     $ids = null;
+
+                    Yii::beginProfile("Property ids from PSV ids");
+
                     $data['propertyIds'] = PropertyStaticValues::find()
                         ->select('property_id')
                         ->distinct()
-                        ->where(['id' => $data['propertyStaticValueIds'], 'dont_filter' => 0])
+                        ->where(['dont_filter' => 0])
+                        ->andWhere('id IN ('.implode(',', $data['propertyStaticValueIds']) . ')')
+                        ->asArray()
                         ->column();
+
+                    Yii::endProfile("Property ids from PSV ids");
+
                     Yii::$app->cache->set(
                         $cacheKey,
                         $data,
@@ -144,6 +171,7 @@ class FilterWidget extends Widget
                     $object = null;
                 }
             }
+            Yii::endProfile("onlyAvailableFilters");
         }
 
         $this->possibleSelections = [];

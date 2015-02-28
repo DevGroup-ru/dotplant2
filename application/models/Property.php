@@ -34,8 +34,8 @@ use yii\helpers\Json;
  */
 class Property extends ActiveRecord
 {
-    private static $identity_map = [];
-    private static $group_id_to_property_ids = [];
+    public static $identity_map = [];
+    public static $group_id_to_property_ids = [];
     private $handlerAdditionalParams = [];
     public $required;
     public $interpret_as;
