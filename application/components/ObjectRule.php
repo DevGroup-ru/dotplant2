@@ -167,12 +167,25 @@ class ObjectRule implements UrlRuleInterface
                         if (isset($_POST['properties'][$key])) {
                             $parameters['properties'][$key]=ArrayHelper::merge($values, $_POST['properties'][$key]);
                         }
+
                     }
 
                 } elseif (isset($_POST['properties'])) {
                     $parameters['properties'] = $_POST['properties'];
                 }
                 Yii::endProfile("ObjectRule::parseRequest");
+
+                foreach ($parameters['properties'] as $key=>$values) {
+                    foreach ($parameters['properties'][$key] as $index=>$value) {
+                        if ($value === '') {
+                            unset($parameters['properties'][$key][$index]);
+                        }
+                    }
+                    if (count($parameters['properties'][$key])===0){
+                        unset($parameters['properties'][$key]);
+                    }
+                }
+
                 return [$model->route, $parameters];
             }
         }

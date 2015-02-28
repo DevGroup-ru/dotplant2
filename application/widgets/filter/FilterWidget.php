@@ -103,11 +103,7 @@ class FilterWidget extends Widget
                     if (count($this->currentSelections['properties']) > 0) {
                         Yii::beginProfile("Apply currency selections(properties)");
                         foreach ($this->currentSelections['properties'] as $property_id => $values) {
-                            if (count($values) === 1) {
-                                if (current($values)==='') {
-                                    continue;
-                                }
-                            }
+
                             $joinTableName = 'OSVJoinTable'.$property_id;
                             $query->join(
                                 'JOIN',
