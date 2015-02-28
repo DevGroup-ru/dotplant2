@@ -160,7 +160,7 @@ class ImageDropzone extends DropZone
                         <div>
                           <button data-dz-remove class="btn btn-danger delete">
                             <i class="fa fa-trash-o"></i>
-                            <span>Delete</span>
+                            <span>'.Yii::t('app', 'Delete') . '</span>
                           </button>
                         </div>
                       </div>',
