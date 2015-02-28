@@ -58,7 +58,6 @@ class PropertiesController extends Controller
             $save_result = $model->save();
             if ($save_result) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                //
                 $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/properties/index']);
                 switch (Yii::$app->request->post('action', 'save')) {
                     case 'next':
@@ -72,13 +71,11 @@ class PropertiesController extends Controller
                         return $this->redirect($returnUrl);
                     default:
                         return $this->redirect(
-                            Url::toRoute(
-                                [
-                                    '/backend/properties/group',
-                                    'id' => $model->id,
-                                    'returnUrl' => $returnUrl,
-                                ]
-                            )
+                            [
+                                '/backend/properties/group',
+                                'id' => $model->id,
+                                'returnUrl' => $returnUrl,
+                            ]
                         );
                 }
             } else {
