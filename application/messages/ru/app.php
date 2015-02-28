@@ -221,6 +221,8 @@ return [
     'Is active' => 'Активен',
     'Item <strong>{value}</strong> is not assigned:' => '',
     'Items in warehouse' => 'На складе',
+    'In warehouse' => 'На складе',
+    'Reserved count' => 'Зарезерировано',
     'Items inside item: ' => 'Элементы внутри элемента: ',
     'Items reserved' => 'Зарезервировано',
     'ISO-4217 code' => 'ISO-4217 код',
