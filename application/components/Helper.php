@@ -124,8 +124,14 @@ class Helper
         $dir = dirname($filename);
         $thumb_filename = $dir . '/thumb-'.$width.'x'.$height.'-' . basename($filename);
         if (file_exists($relative_part.$thumb_filename) === false) {
-            $image = \yii\imagine\Image::thumbnail($relative_part.$filename, $width, $height, ManipulatorInterface::THUMBNAIL_INSET);
-            $image->save($relative_part.$thumb_filename, ['quality'=>90]);
+            try {
+                $image = \yii\imagine\Image::thumbnail($relative_part . $filename, $width, $height,
+                    ManipulatorInterface::THUMBNAIL_INSET);
+                $image->save($relative_part . $thumb_filename, ['quality' => 90]);
+            } catch (\Imagine\Exception\InvalidArgumentException $e) {
+                // it seems that file not found in most cases - return original filename instead
+                return $filename;
+            }
         }
         return $thumb_filename;
     }
