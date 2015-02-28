@@ -101,7 +101,10 @@ class ConfigController extends Controller
                         $emailConf['transport'][$cf->name] = $cf->value;
                     }
 
-                    file_put_contents(Yii::getAlias('@config') . "/email-config.php", "<?php\nreturn " . VarDumper::export($emailConf) . ";\n");
+                    file_put_contents(
+                        Yii::getAlias('@config') . "/email-config.php",
+                        "<?php\nreturn " . VarDumper::export($emailConf) . ";\n"
+                    );
                 }
 
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));

@@ -15,7 +15,14 @@ use yii\helpers\Url;
 
     $this->params['breadcrumbs'][] = ['url' => ['/backend/category/index'], 'label' => Yii::t('app', 'Categories')];
     if (($model->parent_id > 0) && (null !== $parent = \app\models\Category::findById($model->parent_id, null, null))) {
-        $this->params['breadcrumbs'][] = ['url' => ['/backend/category/index', 'id' => $parent->id, 'parent_id' => $parent->parent_id], 'label' => $parent->name];
+        $this->params['breadcrumbs'][] = [
+            'url' => [
+                '/backend/category/index',
+                'id' => $parent->id,
+                'parent_id' => $parent->parent_id
+            ],
+            'label' => $parent->name
+        ];
     }
     $this->params['breadcrumbs'][] = $this->title;
 
@@ -51,7 +58,13 @@ use yii\helpers\Url;
     <div class="row">
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 
-            <?php BackendWidget::begin(['title'=> Yii::t('app', 'Category'), 'icon'=>'tree', 'footer'=>$this->blocks['submit']]); ?>
+            <?php BackendWidget::begin(
+                [
+                    'title' => Yii::t('app', 'Category'),
+                    'icon' =>'tree',
+                    'footer' => $this->blocks['submit']
+                ]
+            ); ?>
 
             <?= $form->field($model, 'active')->widget(\kartik\switchinput\SwitchInput::className()) ?>
 
@@ -169,7 +182,13 @@ use yii\helpers\Url;
         </article>
 
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <?php BackendWidget::begin(['title'=> Yii::t('app', 'SEO'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
+            <?php BackendWidget::begin(
+                [
+                    'title' => Yii::t('app', 'SEO'),
+                    'icon' => 'cogs',
+                    'footer' => $this->blocks['submit']
+                ]
+            ); ?>
 
                 <?=
                     $form->field($model, 'slug', [
@@ -177,7 +196,7 @@ use yii\helpers\Url;
                             'append' => [
                                 'content' => Html::button(
                                     Icon::show('code'),
-                                    ['class'=>'btn btn-primary', 'id'=>'translit-slug']
+                                    ['class' => 'btn btn-primary', 'id' => 'translit-slug']
                                 ),
                                 'asButton' => true,
                             ]
@@ -191,7 +210,7 @@ use yii\helpers\Url;
                             'append' => [
                                 'content' => Html::button(
                                     Icon::show('copy'),
-                                    ['class'=>'btn btn-primary', 'id'=>'copy-h1']
+                                    ['class' => 'btn btn-primary', 'id' => 'copy-h1']
                                 ),
                                 'asButton' => true,
                             ]
@@ -205,7 +224,7 @@ use yii\helpers\Url;
                             'append' => [
                                 'content' => Html::button(
                                     Icon::show('copy'),
-                                    ['class'=>'btn btn-primary', 'id'=>'copy-breadcrumbs_label']
+                                    ['class' => 'btn btn-primary', 'id' => 'copy-breadcrumbs_label']
                                 ),
                                 'asButton' => true,
                             ]

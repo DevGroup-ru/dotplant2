@@ -14,7 +14,14 @@ $this->params['breadcrumbs'][] = [
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
-<?php $form = \kartik\widgets\ActiveForm::begin(['id' => 'submission-form', 'type'=>\kartik\widgets\ActiveForm::TYPE_HORIZONTAL]); ?>
+<?php
+    $form = \kartik\widgets\ActiveForm::begin(
+        [
+            'id' => 'submission-form',
+            'type'=>\kartik\widgets\ActiveForm::TYPE_HORIZONTAL
+        ]
+    );
+?>
 <?= \app\properties\PropertiesWidget::widget([
         'model' => $submission,
         'form' => $form,

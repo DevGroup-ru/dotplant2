@@ -12,9 +12,22 @@ use yii\helpers\Url;
      */
     $this->title = Yii::t('app', 'Backend menu item edit');
 
-    $this->params['breadcrumbs'][] = ['url' => ['/backend/backend-menu/index'], 'label' => Yii::t('app', 'Backend menu items')];
-    if (($model->parent_id > 0) && (null !== $parent = \app\backend\models\BackendMenu::findById($model->parent_id))) {
-        $this->params['breadcrumbs'][] = ['url' => ['/backend/backend-menu/index', 'id' => $parent->id, 'parent_id' => $parent->parent_id], 'label' => $parent->name];
+    $this->params['breadcrumbs'][] = [
+        'url' => ['/backend/backend-menu/index'],
+        'label' => Yii::t('app', 'Backend menu items')
+    ];
+    if (
+        ($model->parent_id > 0)
+        && (null !== $parent = \app\backend\models\BackendMenu::findById($model->parent_id))
+    ) {
+        $this->params['breadcrumbs'][] = [
+            'url' => [
+                '/backend/backend-menu/index',
+                'id' => $parent->id,
+                'parent_id' => $parent->parent_id
+            ],
+            'label' => $parent->name
+        ];
     }
     $this->params['breadcrumbs'][] = $this->title;
 
@@ -38,11 +51,17 @@ use yii\helpers\Url;
 
 <section id="widget-grid">
     <div class="row">
-        
+
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 
-            <?php BackendWidget::begin(['title'=> Yii::t('app', 'Backend menu item'), 'icon'=>'tree', 'footer'=>$this->blocks['submit']]); ?>
-                
+            <?php BackendWidget::begin(
+                [
+                    'title' => Yii::t('app', 'Backend menu item'),
+                    'icon' =>'tree',
+                    'footer' => $this->blocks['submit']
+                ]
+            ); ?>
+
                 <?= $form->field($model, 'name') ?>
 
                 <?= $form->field($model, 'route') ?>                
@@ -62,7 +81,6 @@ use yii\helpers\Url;
             <?php BackendWidget::end(); ?>
 
         </article>
-
 
     </div>
 </section>

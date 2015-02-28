@@ -39,12 +39,22 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php
         $this->beginBlock('add-button');
         ?>
-                <a href="<?= Url::to(['/backend/category/edit', 'parent_id'=>(is_object($model)?$model->id:0)]) ?>" class="btn btn-success">
+                <a href="<?= Url::to(
+                    [
+                        '/backend/category/edit',
+                        'parent_id' => (is_object($model) ? $model->id : 0)
+                    ]
+                ) ?>" class="btn btn-success">
                     <?= Icon::show('plus') ?>
                     <?= Yii::t('app', 'Add') ?>
                 </a>
                 <?= \app\backend\widgets\RemoveAllButton::widget([
-                    'url' => Url::to(['/backend/category/remove-all', 'parent_id'=>(is_object($model) ? $model->id : 0)]),
+                    'url' => Url::to(
+                        [
+                            '/backend/category/remove-all',
+                            'parent_id' => (is_object($model) ? $model->id : 0)
+                        ]
+                    ),
                     'gridSelector' => '.grid-view',
                     'htmlOptions' => [
                         'class' => 'btn btn-danger pull-right'

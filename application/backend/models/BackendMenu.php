@@ -8,6 +8,7 @@ use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
 use app;
 use app\behaviors\Tree;
+
 /**
  * This is the model class for table "backend_menu".
  * BackendMenu stores tree of navigation in backend
@@ -69,8 +70,25 @@ class BackendMenu extends ActiveRecord
     public function scenarios()
     {
         return [
-            'default' => ['parent_id', 'name', 'route', 'icon', 'rbac_check', 'added_by_ext', 'css_class', 'sort_order', 'translation_category', ],
-            'search' => ['id', 'parent_id', 'name', 'route', 'icon', 'added_by_ext'],
+            'default' => [
+                'parent_id',
+                'name',
+                'route',
+                'icon',
+                'rbac_check',
+                'added_by_ext',
+                'css_class',
+                'sort_order',
+                'translation_category',
+            ],
+            'search' => [
+                'id',
+                'parent_id',
+                'name',
+                'route',
+                'icon',
+                'added_by_ext'
+            ],
         ];
     }
 

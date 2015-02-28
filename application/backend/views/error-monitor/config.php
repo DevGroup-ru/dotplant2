@@ -6,7 +6,10 @@ use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
 
 $this->title = Yii::t('app', 'Config');
-$this->params['breadcrumbs'][] = ['url' => ['/backend/error-monitor/index'], 'label' => Yii::t('app', 'Error Monitor')];
+$this->params['breadcrumbs'][] = [
+    'url' => ['/backend/error-monitor/index'],
+    'label' => Yii::t('app', 'Error Monitor')
+];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -38,7 +41,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ]
         );
         ?>
-            <?php BackendWidget::begin(['title'=> Yii::t('app', 'Common config'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
+            <?php BackendWidget::begin(
+                [
+                    'title'=> Yii::t('app', 'Common config'),
+                    'icon' => 'cogs',
+                    'footer' => $this->blocks['submit']
+                ]
+            ); ?>
                 <?= $form->field($model, 'errorMonitorEnabled')->textInput()->widget(\kartik\widgets\SwitchInput::className()); ?>
                 <?= $form->field($model, 'emailNotifyEnabled')->textInput()->widget(\kartik\widgets\SwitchInput::className()); ?>
                 <?= $form->field($model, 'devmail')->textInput() ?>
@@ -61,7 +70,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ]
         );
         ?>
-            <?php BackendWidget::begin(['title'=> Yii::t('app', 'immediate notify config'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
+            <?php BackendWidget::begin(
+                [
+                    'title'=> Yii::t('app', 'immediate notify config'),
+                    'icon' => 'cogs',
+                    'footer' => $this->blocks['submit']
+                ]
+            ); ?>
                 <?= $form->field($model, 'immediateNotice')->textInput()->widget(\kartik\widgets\SwitchInput::className()); ?>
                 <?= $form->field($model, 'immediateNoticeLimitPerUrl')->textInput() ?>
                 <?= $form->field($model, 'httpCodesForImmediateNotify')->textInput() ?>

@@ -123,7 +123,7 @@ class SubmitFormAction extends Action
         foreach($post[$form->abstractModel->formName()] as $key => &$value){
             if($file = yii\web\UploadedFile::getInstance($model, $key)){
                 $folder = Config::getValue('core.fileUploadPath', 'upload/user-uploads/');
-                $fullPath = '@webroot' . '/' . $folder;
+                $fullPath = "@webroot/{$folder}";
                 if(!file_exists(\Yii::getAlias($fullPath))){
                     mkdir(\Yii::getAlias($fullPath), 0755, true);
                 }
