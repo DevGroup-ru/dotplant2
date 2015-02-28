@@ -151,3 +151,14 @@ div#Product-grid .btn-sm{
   padding: 3px 5px 3px;
   font-size: 10px;
 }
+
+.jstree {
+  font-size: 12px;
+  max-height: 100%;
+  overflow: auto;
+}
+
+.jarviswidget .jstree {
+  max-height: 400px;
+  overflow: auto;
+}

@@ -192,3 +192,16 @@ div#Product-grid .btn-sm {
   padding: 3px 5px 3px;
   font-size: 10px;
 }
+
+/* line 155, ../sass/admin.scss */
+.jstree {
+  font-size: 12px;
+  max-height: 100%;
+  overflow: auto;
+}
+
+/* line 161, ../sass/admin.scss */
+.jarviswidget .jstree {
+  max-height: 400px;
+  overflow: auto;
+}
