@@ -103,6 +103,11 @@ class FilterWidget extends Widget
                     if (count($this->currentSelections['properties']) > 0) {
                         Yii::beginProfile("Apply currency selections(properties)");
                         foreach ($this->currentSelections['properties'] as $property_id => $values) {
+                            if (count($values) === 1) {
+                                if (current($values)==='') {
+                                    continue;
+                                }
+                            }
                             $joinTableName = 'OSVJoinTable'.$property_id;
                             $query->join(
                                 'JOIN',
@@ -123,37 +128,39 @@ class FilterWidget extends Widget
 
 
                     $ids = array_map('intval', $query->column());
+
                     $query = null;
 
 
                     Yii::beginProfile("all PSV ids");
                     $data['propertyStaticValueIds'] = [];
+                    if (count($ids) !== 0) {
+                        $q4psv = (new Query())
+                            ->select('property_static_value_id')
+                            ->from(ObjectStaticValues::tableName())
+                            ->distinct()
+                            ->where(['object_id' => $object->id])
+                            ->andWhere('object_model_id in (' . implode(',', $ids) . ')');
 
-                    $q4psv = (new Query())
-                        ->select('property_static_value_id')
-                        ->from(ObjectStaticValues::tableName())
-                        ->distinct()
-                        ->where(['object_id' => $object->id])
-                        ->andWhere('object_model_id in ('.implode(',', $ids).')');
 
-
-
-                    $data['propertyStaticValueIds'] = array_map('intval', $q4psv->column());
+                        $data['propertyStaticValueIds'] = array_map('intval', $q4psv->column());
+                    }
                     Yii::endProfile("all PSV ids");
 
 
                     $ids = null;
 
                     Yii::beginProfile("Property ids from PSV ids");
-
-                    $data['propertyIds'] = PropertyStaticValues::find()
-                        ->select('property_id')
-                        ->distinct()
-                        ->where(['dont_filter' => 0])
-                        ->andWhere('id IN ('.implode(',', $data['propertyStaticValueIds']) . ')')
-                        ->asArray()
-                        ->column();
-
+                    $data['propertyIds'] = [];
+                    if (count($ids) !== 0) {
+                        $data['propertyIds'] = PropertyStaticValues::find()
+                            ->select('property_id')
+                            ->distinct()
+                            ->where(['dont_filter' => 0])
+                            ->andWhere('id IN (' . implode(',', $data['propertyStaticValueIds']) . ')')
+                            ->asArray()
+                            ->column();
+                    }
                     Yii::endProfile("Property ids from PSV ids");
 
                     Yii::$app->cache->set(
