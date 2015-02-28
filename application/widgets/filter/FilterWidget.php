@@ -152,7 +152,7 @@ class FilterWidget extends Widget
 
                     Yii::beginProfile("Property ids from PSV ids");
                     $data['propertyIds'] = [];
-                    if (count($ids) !== 0) {
+                    if (count($data['propertyStaticValueIds']) !== 0) {
                         $data['propertyIds'] = PropertyStaticValues::find()
                             ->select('property_id')
                             ->distinct()
