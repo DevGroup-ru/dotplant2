@@ -492,4 +492,7 @@ return [
     'Total cost of delivery for the region in which the shop is located' => 'Общая стоимость доставки для региона, в котором расположен магазин',
     'Create YML' => 'Создать YML',
     'It will be available according to the link:' => 'Будет доступно по ссылке:',
+    'Back' => 'Назад',
+    'Save & Go next' => 'Сохранить и новый',
+    'Save & Go back' => 'Сохранить и вернуться',
 ];
