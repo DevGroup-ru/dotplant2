@@ -38,7 +38,7 @@ class Yml
 
     /**
      * @param string $ymlAs
-     * @param int|null $xmlOptions
+     * @param int|null $options [optional]
      * @param string|null $filePath
      * @return int|string
      */
@@ -54,10 +54,8 @@ class Yml
                 switch ($ymlAs) {
                     case "xml":
                         return $document->saveXML(null, $options);
-                        break;
                     case "file":
                         return $document->save($filePath, $options);
-                        break;
                     default: // xml
                         return $document->saveXML(null, $options);
                 }
@@ -75,7 +73,6 @@ class Yml
         $imp = new \DOMImplementation();
         $dtd = $imp->createDocumentType('yml_catalog', '', 'shops.dtd');
 
-        //$document = new \DOMDocument("1.0", "windows-1251");
         $document = $imp->createDocument('', '', $dtd);
         
         $ymlCatalog = $this->buildYmlCatalog($document);
@@ -94,12 +91,14 @@ class Yml
         $yml_catalog = $doc->createElement('yml_catalog');
         $yml_catalog->setAttribute('date', date("Y-m-d h:m", time()));
 
-        $yml_catalog->appendChild($this->buildShop($doc));;
+        $shop = $this->buildShop($doc);
+        $yml_catalog->appendChild($shop);
+
         return $yml_catalog;
     }
 
     /**
-     * @param \DOMDocument $doc
+     * @param \DOMElement $doc
      * @return mixed
      */
     private function buildShop($doc)
@@ -145,7 +144,7 @@ class Yml
     }
 
     /**
-     * @param \DOMDocument $doc
+     * @param \DOMElement $doc
      * @return mixed
      */
     private function buildCurrencies($doc)
@@ -277,7 +276,10 @@ class Yml
                         'adult',
                     ];
 
-                    // В vendor.model можно добавлять дополнительные параметры <param name="Вес" unit="кг">2.73</param> ...
+                    /**
+                     * В vendor.model можно добавлять дополнительные параметры
+                     * <param name="Вес" unit="кг">2.73</param> ...
+                     */
                     $aGroups = $product->getPropertyGroups();
 
                     foreach ($aGroups as $pGroup) {
