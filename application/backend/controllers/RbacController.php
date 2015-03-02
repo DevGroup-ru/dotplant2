@@ -9,6 +9,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\rbac\Item;
 use yii\web\Controller;
+use yii\helpers\Url;
 use Yii;
 
 /**
@@ -99,14 +100,28 @@ class RbacController extends Controller
             } else {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
                 $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/rbac/index']);
-                if (\Yii::$app->request->post('action', 'back') == 'next') {
-                    $route = ['/backend/rbac/create', 'returnUrl' => $returnUrl,'type'=>$type];
-                    if (!is_null(Yii::$app->request->get('parent_id', null))) {
-                        $route['parent_id'] = Yii::$app->request->get('parent_id');
-                    }
-                    return $this->redirect($route);
-                } else {
-                    return $this->redirect($returnUrl);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/rbac/create',
+                                'type' => $type,
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/rbac/update',
+                                    'id' => $item->name,
+                                    'type' => $type,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
                 }
             }
         } else {
@@ -171,7 +186,30 @@ class RbacController extends Controller
                 \Yii::$app->getSession()->setFlash('error', $model->getErrorMessage());
                 return $this->redirect(['update', 'id' => $item->name, 'type' => $item->type]);
             } else {
-                return $this->redirect(['rbac/']);
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/rbac/index']);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/rbac/create',
+                                'type' => $type,
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/rbac/update',
+                                    'id' => $item->name,
+                                    'type' => $type,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
+                }
             }
         } else {
             switch ($type) {

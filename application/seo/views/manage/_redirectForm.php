@@ -34,11 +34,20 @@ use kartik\icons\Icon;
     <?php endif; ?>
     <?=
     Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save & Go back'),
+        [
+            'class' => 'btn btn-warning',
+            'name' => 'action',
+            'value' => 'back',
+        ]
+    ); ?>
+    <?=
+    Html::submitButton(
         Icon::show('save') . Yii::t('app', 'Save'),
         [
             'class' => 'btn btn-primary',
             'name' => 'action',
-            'value' => 'back',
+            'value' => 'save',
         ]
     )
     ?>
