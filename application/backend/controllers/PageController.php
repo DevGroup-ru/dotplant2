@@ -94,14 +94,28 @@ class PageController extends Controller
             if ($save_result) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
                 $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/page/index']);
-                if (Yii::$app->request->post('action', 'back') == 'next') {
-                    $route = ['/backend/page/edit', 'returnUrl' => $returnUrl];
-                    if (!is_null(Yii::$app->request->get('parent_id', null))) {
-                        $route['parent_id'] = Yii::$app->request->get('parent_id');
-                    }
-                    return $this->redirect($route);
-                } else {
-                    return $this->redirect($returnUrl);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/page/edit',
+                                'returnUrl' => $returnUrl,
+                                'parent_id' =>Yii::$app->request->get('parent_id', null)
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/page/edit',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                    'parent_id' => $model->parent_id
+                                ]
+                            )
+                        );
                 }
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));

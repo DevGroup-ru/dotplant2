@@ -200,16 +200,29 @@ class ProductController extends Controller
                 $this->runAction('save-info');
                 $model->invalidateTags();
 
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
                 $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/product/index']);
-                if (Yii::$app->request->post('action', 'back') == 'next') {
-                    $route = ['/backend/product/edit', 'returnUrl' => $returnUrl];
-                    if (!is_null(Yii::$app->request->get('parent_id', null))) {
-                        $route['parent_id'] = Yii::$app->request->get('parent_id');
-                    }
-                    return $this->redirect($route);
-                } else {
-                    return $this->redirect($returnUrl);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/product/edit',
+                                'returnUrl' => $returnUrl,
+                                'parent_id' =>Yii::$app->request->get('parent_id', null)
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/product/edit',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                    'parent_id' => $model->main_category_id
+                                ]
+                            )
+                        );
                 }
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
