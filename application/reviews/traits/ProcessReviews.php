@@ -21,7 +21,7 @@ trait ProcessReviews
             }
             $review->status = Review::STATUS_NEW;
             $review->date_submitted = date("Y-m-d H:i:s");
-            if ($review->validate() && $review->save()) {
+            if ($review->save()) {
                 Yii::$app->session->setFlash(
                     'info',
                     Yii::t('shop', 'Your review will appear on the website immediately after moderation')
