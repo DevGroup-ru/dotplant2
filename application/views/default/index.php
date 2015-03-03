@@ -14,7 +14,7 @@ $featuredProducts = \app\models\Product::find()->orderBy('`sort_order` DESC')->l
 $latestProducts = \app\models\Product::find()->orderBy('`id` DESC')->limit(6)->all();
 
 ?>
-<?php if(count($featuredProducts) > 0): ?>
+<?php if (count($featuredProducts) > 0): ?>
     <div class="well well-small">
         <h4><?= Yii::t('shop', 'Featured products') ?> <small class="pull-right">200+ featured products</small></h4>
         <div class="row-fluid">
