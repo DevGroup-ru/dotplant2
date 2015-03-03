@@ -6,7 +6,8 @@ use yii\web\AssetBundle;
 
 class FilterWidgetAsset extends AssetBundle
 {
-    public $sourcePath = __DIR__;
+    public $sourcePath = '@app/widgets/filter/assets_sources';
+
     public $depends = [
         'yii\web\JqueryAsset',
     ];
