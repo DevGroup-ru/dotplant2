@@ -9,12 +9,12 @@ use app\widgets\Alert;
 use yii\widgets\Breadcrumbs;
 
 ?>
-<?php include('blocks/header.php') ?>
-<?php include('blocks/carousel.php') ?>
+<?= $this->render('blocks/header');?>
+<?= $this->render('blocks/carousel');?>
     <div id="mainBody">
         <div class="container">
             <div class="row">
-                <?php include('blocks/sidebar.php'); ?>
+                <?= $this->render('blocks/sidebar');?>
                 <div class="span9">
                     <?=
                         Breadcrumbs::widget(
@@ -25,12 +25,12 @@ use yii\widgets\Breadcrumbs;
                                     'class' => 'breadcrumb',
                                 ]
                             ]
-                        )
+                        );
                     ?>
-                    <?= Alert::widget() ?>
-                    <?= $content ?>
+                    <?= Alert::widget();?>
+                    <?= $content;?>
                 </div>
             </div>
         </div>
     </div>
-<?php include('blocks/footer.php') ?>
+<?= $this->render('blocks/footer');?>
