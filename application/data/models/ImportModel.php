@@ -64,40 +64,13 @@ class ImportModel extends Model implements \Serializable
         return $this->user;
     }
 
-    public function load($data, $formName = null)
-    {
-        if (isset($data['ImportModel']) &&
-            isset($data['ImportModel']['fields']) &&
-            isset($data['ImportModel']['fields']['property']) &&
-            $data['ImportModel']['fields']['property']
-        ) {
-            foreach ($data['ImportModel']['fields']['property'] as $key => $property) {
-                if (!isset($property['enabled']) || !$property['enabled']) {
-                    unset($data['ImportModel']['fields']['property'][$key]);
-                }
-            }
-        }
-        if (isset($data['ImportModel']) &&
-            isset($data['ImportModel']['fields']) &&
-            isset($data['ImportModel']['fields']['additionalFields']) &&
-            $data['ImportModel']['fields']['additionalFields']
-        ) {
-            foreach ($data['ImportModel']['fields']['additionalFields'] as $key => $additionalFields) {
-                if (!isset($additionalFields['enabled']) || !$additionalFields['enabled']) {
-                    unset($data['ImportModel']['fields']['additionalFields'][$key]);
-                }
-            }
-        }
-        return parent::load($data, $formName = null);
-    }
-
     /**
      * @return array the validation rules.
      */
     public function rules()
     {
         return [
-            [['file'], 'file', 'extensions' => 'csv'],
+            [['file'], 'file', 'extensions' => 'csv,xls,xlsx'],
             [['object'], 'integer'],
             [['object'], 'required'],
             [['fields', 'type'], 'safe'],
@@ -111,6 +84,7 @@ class ImportModel extends Model implements \Serializable
         return [
             'csv' => 'CSV',
             'excelCsv' => 'Excel CSV',
+			'xls' => 'XLS',
         ];
     }
 
@@ -119,6 +93,7 @@ class ImportModel extends Model implements \Serializable
         $extensions = [
             'excelCsv' => 'csv',
             'csv' => 'csv',
+			'xls' => 'xls',
         ];
         if (!isset($extensions[$type])) {
             return 'unknown';
