@@ -150,7 +150,7 @@ class ProductController extends Controller
         }
 
         if (null === $model) {
-            throw new ServerErrorHttpException;
+            throw new NotFoundHttpException;
         }
 
         $model->loadRelatedProductsArray();

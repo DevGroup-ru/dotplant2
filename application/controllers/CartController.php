@@ -43,6 +43,12 @@ class CartController extends Controller
         return $data;
     }
 
+    /**
+     * @param $id
+     * @param null $allowedStatuses
+     * @return Order|null|Response
+     * @throws NotFoundHttpException
+     */
     private function loadOrder($id, $allowedStatuses = null)
     {
         $model = Order::findOne($id);
@@ -323,6 +329,11 @@ class CartController extends Controller
     public function actionPaymentType($id)
     {
         $order = $this->loadOrder($id, 2);
+        $paymentTypes = $this->getCachedData('CartPaymentTypes', PaymentType::className());
+
+        if ($order->payment_type_id === 0 && count($paymentTypes) > 0) {
+            $order->payment_type_id = current($paymentTypes)->id;
+        }
         if (Yii::$app->request->isPost) {
             $order->scenario = 'paymentType';
             $order->load(Yii::$app->request->post());
@@ -332,7 +343,7 @@ class CartController extends Controller
                 $this->redirect(['/cart/payment', 'id' => $order->id]);
             }
         }
-        $paymentTypes = $this->getCachedData('CartPaymentTypes', PaymentType::className());
+
         return $this->render(
             'payment-type',
             [
