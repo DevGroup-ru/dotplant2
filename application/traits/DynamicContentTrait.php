@@ -21,10 +21,11 @@ trait DynamicContentTrait
          * @var $this \yii\web\Controller
          */
 
-        $dynamicCacheKey = 'dynamicCacheKey'.serialize([$object_id, $route, $selections]);
-        $dynamicResult = [];
+        $dynamicCacheKey = 'dynamicCacheKey'.json_encode([$object_id, $route, $selections]);
+
 
         if (!$dynamicResult = Yii::$app->cache->get($dynamicCacheKey)) {
+            $dynamicResult = [];
             $models = DynamicContent::find()
                 ->where(
                     [
@@ -34,14 +35,14 @@ trait DynamicContentTrait
                 )->all();
 
 
-            if (!isset($selections['properties'])) {
+            if (isset($selections['properties']) === false) {
                 $selections['properties'] = [];
             }
             /**
              * @var $model DynamicContent
              */
             foreach ($models as $model) {
-                if ($model->apply_if_last_category_id) {
+                if (is_integer($model->apply_if_last_category_id) === true && $model->apply_if_last_category_id !== 0) {
                     if (!isset($selections['last_category_id'])) {
                         continue;
                     } elseif ($selections['last_category_id'] != $model->apply_if_last_category_id) {
@@ -50,12 +51,12 @@ trait DynamicContentTrait
                 }
                 $model_selections = Json::decode($model->apply_if_params);
                 $matches = false;
-                if (is_array($model_selections)) {
+                if (is_array($model_selections) === true) {
                     $matches = true;
 
                     foreach ($model_selections as $property_id => $value) {
-                        if (isset($selections['properties'])) {
-                            if (isset($selections['properties'][$property_id])) {
+                        if (isset($selections['properties']) === true) {
+                            if (isset($selections['properties'][$property_id]) === true) {
                                 if ($selections['properties'][$property_id][0] == $value) {
                                     // all ok
                                 } else {
@@ -77,7 +78,7 @@ trait DynamicContentTrait
                         $matches = false;
                     }
                     if ($matches === true) {
-                        $dynamicResult['modal'] = $model;
+                        $dynamicResult['model'] = $model;
                         if ($model->title) {
                             $dynamicResult['title'] = $model->title;
                         }
@@ -111,9 +112,9 @@ trait DynamicContentTrait
                 )
             );
         }
-        if ($dynamicResult) {
+        if (is_array($dynamicResult) === true && $dynamicResult !== []) {
             Yii::$app->response->dynamic_content_trait = true;
-            Yii::$app->response->matched_dynamic_content_trait_model = $dynamicResult['modal'];
+            Yii::$app->response->matched_dynamic_content_trait_model = $dynamicResult['model'];
             if (isset($dynamicResult['title']) && $dynamicResult['title']) {
                 Yii::$app->response->title = $dynamicResult['title'];
             }
