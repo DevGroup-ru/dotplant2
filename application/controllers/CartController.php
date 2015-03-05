@@ -332,7 +332,7 @@ class CartController extends Controller
         $paymentTypes = $this->getCachedData('CartPaymentTypes', PaymentType::className());
 
         if ($order->payment_type_id === 0 && count($paymentTypes) > 0) {
-            $order->payment_type_id = current($paymentTypes)->id;
+            $order->payment_type_id = reset($paymentTypes)->id;
         }
         if (Yii::$app->request->isPost) {
             $order->scenario = 'paymentType';
