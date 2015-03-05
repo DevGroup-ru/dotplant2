@@ -6,6 +6,9 @@ use app\models\Object;
 use app\models\Page;
 use app\models\ViewObject;
 use app\properties\HasProperties;
+use app\widgets\image\RemoveAction;
+use app\widgets\image\SaveInfoAction;
+use app\widgets\image\UploadAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -37,6 +40,17 @@ class PageController extends Controller
                 'class' => 'app\backend\actions\JSTreeGetTrees',
                 'modelName' => 'app\models\Page',
                 'label_attribute' => 'name',
+            ],
+            'upload' => [
+                'class' => UploadAction::className(),
+                'upload' => 'theme/resources/product-images',
+            ],
+            'remove' => [
+                'class' => RemoveAction::className(),
+                'uploadDir' => 'theme/resources/product-images',
+            ],
+            'save-info' => [
+                'class' => SaveInfoAction::className(),
             ],
         ];
     }
@@ -92,8 +106,9 @@ class PageController extends Controller
             }
 
             if ($save_result) {
+                $this->runAction('save-info');
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                return $this->redirect(['/backend/page/edit', 'id'=>$model->id, 'parent_id'=>$model->parent_id]);
+                return $this->redirect(['/backend/page/edit', 'id' => $model->id, 'parent_id' => $model->parent_id]);
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }

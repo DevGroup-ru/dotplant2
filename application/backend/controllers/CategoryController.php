@@ -7,6 +7,9 @@ use app\models\Category;
 use app\models\Object;
 use app\models\ViewObject;
 use app\properties\HasProperties;
+use app\widgets\image\RemoveAction;
+use app\widgets\image\SaveInfoAction;
+use app\widgets\image\UploadAction;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
@@ -42,6 +45,17 @@ class CategoryController extends Controller
                 'modelName' => Category::className(),
                 'label_attribute' => 'name',
                 'vary_by_type_attribute' => null,
+            ],
+            'upload' => [
+                'class' => UploadAction::className(),
+                'upload' => 'theme/resources/product-images',
+            ],
+            'remove' => [
+                'class' => RemoveAction::className(),
+                'uploadDir' => 'theme/resources/product-images',
+            ],
+            'save-info' => [
+                'class' => SaveInfoAction::className(),
             ],
         ];
     }
@@ -118,6 +132,7 @@ class CategoryController extends Controller
             }
 
             if ($save_result) {
+                $this->runAction('save-info');
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
                 return $this->redirect(
                     [
