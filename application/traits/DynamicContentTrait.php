@@ -20,90 +20,112 @@ trait DynamicContentTrait
         /**
          * @var $this \yii\web\Controller
          */
-        $models = DynamicContent::getDb()->cache(
-            function($db) use($object_id, $route) {
-                return DynamicContent::find()
-                    ->where(
-                        [
-                            'object_id' => $object_id,
-                            'route' => $route,
-                        ]
-                    )->all();
-            },
-            86400,
-            new TagDependency(
-                [
-                    'tags' => [
-                        ActiveRecordHelper::getCommonTag(DynamicContent::className()),
-                        ActiveRecordHelper::getObjectTag(Object::className(), $object_id),
-                        $route,
-                    ]
-                ]
-            )
-        );
 
-        if (!isset($selections['properties'])) {
-            $selections['properties'] = [];
-        }
-        /**
-         * @var $model DynamicContent
-         */
-        foreach ($models as $model) {
-            if ($model->apply_if_last_category_id) {
-                if (!isset($selections['last_category_id'])) {
-                    continue;
-                } elseif ($selections['last_category_id'] != $model->apply_if_last_category_id) {
-                    continue;
-                }
+        $dynamicCacheKey = 'dynamicCacheKey'.serialize([$object_id, $route, $selections]);
+        $dynamicResult = [];
+
+        if (!$dynamicResult = Yii::$app->cache->get($dynamicCacheKey)) {
+            $models = DynamicContent::find()
+                ->where(
+                    [
+                        'object_id' => $object_id,
+                        'route' => $route,
+                    ]
+                )->all();
+
+
+            if (!isset($selections['properties'])) {
+                $selections['properties'] = [];
             }
-            $model_selections = Json::decode($model->apply_if_params);
-            $matches = false;
-            if (is_array($model_selections)) {
-                $matches=true;
-                
-                foreach ($model_selections as $property_id => $value) {
-                    if (isset($selections['properties'])) {
-                        if (isset($selections['properties'][$property_id])) {
-                            if ($selections['properties'][$property_id][0] == $value) {
-                                // all ok
+            /**
+             * @var $model DynamicContent
+             */
+            foreach ($models as $model) {
+                if ($model->apply_if_last_category_id) {
+                    if (!isset($selections['last_category_id'])) {
+                        continue;
+                    } elseif ($selections['last_category_id'] != $model->apply_if_last_category_id) {
+                        continue;
+                    }
+                }
+                $model_selections = Json::decode($model->apply_if_params);
+                $matches = false;
+                if (is_array($model_selections)) {
+                    $matches = true;
+
+                    foreach ($model_selections as $property_id => $value) {
+                        if (isset($selections['properties'])) {
+                            if (isset($selections['properties'][$property_id])) {
+                                if ($selections['properties'][$property_id][0] == $value) {
+                                    // all ok
+                                } else {
+                                    $matches = false;
+                                }
                             } else {
                                 $matches = false;
+                                break;
                             }
                         } else {
                             $matches = false;
                             break;
                         }
-                    } else {
-                        $matches = false;
-                        break;
                     }
+                    if ($matches === false) {
+                        continue;
+                    }
+                    if (count($selections['properties']) != count($model_selections)) {
+                        $matches = false;
+                    }
+                    if ($matches === true) {
+                        $dynamicResult['modal'] = $model;
+                        if ($model->title) {
+                            $dynamicResult['title'] = $model->title;
+                        }
+                        if ($model->meta_description) {
+                            $dynamicResult['meta_description'] = $model->meta_description;
+                        }
+                        if ($model->h1) {
+                            $dynamicResult['blocks']['h1'] = $model->h1;
+                        }
+                        if ($model->content) {
+                            $dynamicResult['blocks'][$model->content_block_name] = $model->content;
+                        }
+                    }
+                } else {
+                    $matches = true;
                 }
-                if ($matches === false) {
-                    continue;
-                }
-                if (count($selections['properties']) != count($model_selections)) {
-                    $matches = false;
-                }
-                if ($matches === true) {
-                    Yii::$app->response->dynamic_content_trait = true;
-                    Yii::$app->response->matched_dynamic_content_trait_model = &$model;
-
-
-                    Yii::$app->response->blocks[$model->content_block_name] = $model->content;
-
-                    Yii::$app->response->title = $model->title;
-
-                    Yii::$app->response->blocks['h1'] = $model->h1;
-
-                    Yii::$app->response->meta_description = $model->meta_description;
-
-
-
-                    break;
-                }
-            } else {
-                $matches = true;
             }
+
+            Yii::$app->cache->set(
+                $dynamicCacheKey,
+                $dynamicResult,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            ActiveRecordHelper::getCommonTag(DynamicContent::className()),
+                            ActiveRecordHelper::getObjectTag(Object::className(), $object_id),
+                            $route,
+                        ]
+                    ]
+                )
+            );
+        }
+        if ($dynamicResult) {
+            Yii::$app->response->dynamic_content_trait = true;
+            Yii::$app->response->matched_dynamic_content_trait_model = $dynamicResult['modal'];
+            if (isset($dynamicResult['title']) && $dynamicResult['title']) {
+                Yii::$app->response->title = $dynamicResult['title'];
+            }
+            if (isset($dynamicResult['meta_description']) && $dynamicResult['meta_description']) {
+                Yii::$app->response->meta_description = $dynamicResult['meta_description'];
+            }
+            if (isset($dynamicResult['blocks']) && is_array($dynamicResult['blocks'])) {
+                foreach ($dynamicResult['blocks'] as $nameBlock => $contentBlock) {
+                    Yii::$app->response->blocks[$nameBlock] = $contentBlock;
+                }
+            }
+
         }
 
     }
