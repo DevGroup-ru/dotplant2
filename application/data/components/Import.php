@@ -43,6 +43,8 @@ abstract class Import extends Component
                     return new ImportCsv($config);
                 case 'excelCsv':
                     return new ImportExcelCsv($config);
+                case 'xls':
+                    return new ImportXls($config);
                 default:
                     throw new \Exception('Unsupported type');
             }
@@ -132,7 +134,8 @@ abstract class Import extends Component
             /** @var ActiveRecord $objectModel */
             $objectModel = new $class;
             $objectModel->loadDefaultValues();
-            $objectData = $object;
+			$objectModel->setAttributes($rowFields);
+			$objectData = $object;
         }
         if ($objectModel) {
 

@@ -41,8 +41,6 @@ use yii\helpers\Json;
  * @property integer $parent_id
  * @property integer $currency_id
  * @property Product[] $relatedProducts
- * @property string $sku
- * @property boolean unlimited_count
  */
 class Product extends ActiveRecord implements ImportableInterface, ExportableInterface
 {
@@ -51,11 +49,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     private $category_ids = null;
 
     public $relatedProductsArray = [];
-
-    /**
-     * @var null|WarehouseProduct[] Stores warehouses state of product. Use Product::getWarehousesState() to retrieve
-     */
-    private $activeWarehousesState = null;
 
     /**
      * @inheritdoc
@@ -77,8 +70,12 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     'main_category_id',
                     'slug_absolute',
                     'sort_order',
+                    'active',
                     'parent_id',
                     'is_deleted',
+                    'in_warehouse',
+                    'unlimited_count',
+                    'reserved_count',
                     'currency_id',
                 ],
                 'integer'
@@ -97,20 +94,11 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 ],
                 'string'
             ],
-            [
-                [
-                    'unlimited_count',
-                    'active',
-                    'slug_absolute',
-                ],
-                'boolean',
-            ],
             [['price', 'old_price'], 'number'],
             [['slug'], 'string', 'max' => 80],
             [['slug_compiled'], 'string', 'max' => 180],
-            [['old_price', 'price',], 'default', 'value' => 0,],
-            [['active','unlimited_count'], 'default', 'value' => true],
-            [['slug_absolute'], 'default', 'value' => false],
+            [['old_price', 'price', 'in_warehouse', 'reserved_count'], 'default', 'value' => 0,],
+            [['active', 'unlimited_count'], 'default', 'value' => 1],
             [['parent_id', 'slug_absolute', 'sort_order', 'is_deleted'], 'default', 'value' => 0],
             [['relatedProductsArray'], 'safe'],
 
@@ -306,34 +294,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             ->viaTable(RelatedProduct::tableName(), ['product_id' => 'id']);
     }
 
-    /**
-     * Returns remains of this product in all active warehouses.
-     * Note that if warehouse was added after product edit - it will not be shown here.
-     * @return WarehouseProduct[]
-     */
-    public function getWarehousesState()
-    {
-        if ($this->activeWarehousesState === null) {
-            $this->activeWarehousesState = WarehouseProduct::getDb()->cache(
-                function($db) {
-                    return WarehouseProduct::find()
-                        ->where(['in', 'warehouse_id', Warehouse::activeWarehousesIds()])
-                        ->andWhere('product_id=:product_id', [':product_id'=>$this->id])
-                        ->with('warehouse')
-                        ->all();
-                },
-                86400,
-                new TagDependency([
-                    'tags' => [
-                        ActiveRecordHelper::getObjectTag($this->className(), $this->id),
-                    ]
-                ])
-            );
-        }
-
-        return $this->activeWarehousesState;
-    }
-
     public function beforeSave($insert)
     {
         if (1 === $this->is_deleted) {
@@ -467,15 +427,17 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $this->main_category_id = $categories[0];
         }
 
-
-        if (empty($this->slug)) {
-            $this->slug = Helper::createSlug($this->name);
-        } elseif (mb_strlen($this->slug) > 80) {
-            $this->slug = mb_substr($this->slug, 0, 80);
-        }
+		if (is_null($this->sku))
+			$this->sku = '';
 
         if (empty($this->name)) {
             $this->name = 'unnamed-product';
+        }
+
+        if (empty($this->slug)) {
+            $this->slug = Helper::createSlug($this->name.'-'.microtime());
+        } elseif (mb_strlen($this->slug) > 80) {
+            $this->slug = mb_substr($this->slug, 0, 80);
         }
 
         if (!is_numeric($this->price)) {
