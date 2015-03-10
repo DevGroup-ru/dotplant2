@@ -219,7 +219,7 @@ class CategoryController extends Controller
         } elseif ($id > 0) {
             $out['results'] = ['id' => $id, 'text' => Category::findOne($id)->name];
         } else {
-            $out['results'] = ['id' => 0, 'text' => 'No matching records found'];
+            $out['results'] = ['id' => 0, 'text' => Yii::t('app', 'No matching records found')];
         }
         echo Json::encode($out);
     }

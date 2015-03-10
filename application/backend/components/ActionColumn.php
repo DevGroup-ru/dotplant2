@@ -14,26 +14,7 @@ class ActionColumn extends Column
 {
     public $buttons;
 
-    private $defaultButtons = [
-        [
-            'url' => 'edit',
-            'icon' => 'pencil',
-            'class' => 'btn-primary',
-            'label' => 'Edit',
-        ],
-        [
-            'url' => 'clone',
-            'icon' => 'copy',
-            'class' => 'btn-success',
-            'label' => 'Clone',
-        ],
-        [
-            'url' => 'delete',
-            'icon' => 'trash-o',
-            'class' => 'btn-danger',
-            'label' => 'Delete',
-        ],
-    ];
+    private $defaultButtons = [];
 
     private $callbackButtons;
 
@@ -58,6 +39,29 @@ class ActionColumn extends Column
     public function init()
     {
         parent::init();
+
+        $this->defaultButtons = [
+            [
+                'url' => 'edit',
+                'icon' => 'pencil',
+                'class' => 'btn-primary',
+                'label' => Yii::t('app', 'Edit'),
+            ],
+            [
+                'url' => 'clone',
+                'icon' => 'copy',
+                'class' => 'btn-success',
+                'label' => Yii::t('app', 'Clone'),
+            ],
+            [
+                'url' => 'delete',
+                'icon' => 'trash-o',
+                'class' => 'btn-danger',
+                'label' => Yii::t('app', 'Delete'),
+            ]
+        ];
+
+
         if (null === $this->buttons) {
             $this->buttons = $this->defaultButtons;
         } elseif ($this->buttons instanceof Closure) {

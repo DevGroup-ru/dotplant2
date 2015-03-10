@@ -24,7 +24,7 @@ return [
     'Add to' => 'Добавить в',
     'Add to compare' => 'Добавить к сравнению',
     'Added a new comment to <a href="{orderUrl}" target="_blank">order #{orderId}</a>' => '',
-    'Additional parameters' => '',
+    'Additional parameters' => 'Дополнительные параметры',
     'Asc Desc' => '',
     'Canceled ({n})' => 'Отменено ({n})',
     'Cannot add product to cart' => 'Невозможно добавить товар в корзину',

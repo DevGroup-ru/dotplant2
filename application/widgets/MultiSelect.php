@@ -6,6 +6,7 @@ use yii\jui\JuiAsset;
 use yii\base\Widget;
 use yii\web\JsExpression;
 use yii\web\View;
+use Yii;
 
 class MultiSelect extends Widget
 {
@@ -52,6 +53,7 @@ class MultiSelect extends Widget
 
     public function run()
     {
+        $this->defaultLabel = Yii::t('app', $this->defaultLabel);
         self::$count++;
         if ($this->id === null) {
             $this->id = 'multi-select-'.self::$count;

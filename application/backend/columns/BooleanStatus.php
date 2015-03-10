@@ -15,13 +15,19 @@ class BooleanStatus extends DataColumn
     public $false_value = 'Inactive';
     public $false_label_class = 'label-default';
 
+
+    protected function renderHeaderCellContent()
+    {
+        return trim($this->header) !== '' ? Yii::t('app', $this->header) : $this->grid->emptyCell;
+    }
+
     protected function renderDataCellContent($model, $key, $index)
     {
         $content = parent::renderDataCellContent($model, $key, $index);
         if ($content == "1") {
-            return "<span class=\"label ".$this->true_label_class."\">". $this->true_value ."</span>";
+            return "<span class=\"label ".$this->true_label_class."\">". Yii::t('app', $this->true_value) ."</span>";
         } else {
-            return "<span class=\"label ".$this->false_label_class."\">". $this->false_value ."</span>";
+            return "<span class=\"label ".$this->false_label_class."\">".Yii::t('app', $this->false_value) ."</span>";
         }
     }
 }

@@ -130,19 +130,19 @@ $this->endBlock();
                                 'url' => 'edit',
                                 'icon' => 'pencil',
                                 'class' => 'btn-primary',
-                                'label' => 'Edit',
+                                'label' => Yii::t('app', 'Edit'),
                             ],
                             [
                                 'url' => 'restore',
                                 'icon' => 'refresh',
                                 'class' => 'btn-success',
-                                'label' => 'Restore',
+                                'label' => Yii::t('app','Restore'),
                             ],
                             [
                                 'url' => 'delete',
                                 'icon' => 'trash-o',
                                 'class' => 'btn-danger',
-                                'label' => 'Delete',
+                                'label' => Yii::t('app','Delete'),
                             ],
                         ];
                     }

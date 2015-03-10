@@ -56,19 +56,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     'url' => 'view',
                     'icon' => 'eye',
                     'class' => 'btn-info',
-                    'label' => 'View',
+                    'label' => Yii::t('app', 'View'),
                 ],
                 [
                     'url' => 'edit',
                     'icon' => 'pencil',
                     'class' => 'btn-primary',
-                    'label' => 'Edit',
+                    'label' => Yii::t('app','Edit'),
                 ],
                 [
                     'url' => 'delete',
                     'icon' => 'trash-o',
                     'class' => 'btn-danger',
-                    'label' => 'Delete',
+                    'label' => Yii::t('app','Delete'),
                 ],
             ],
             'options' => [
