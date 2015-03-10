@@ -129,11 +129,6 @@ class PropertiesHelper
                             ')'
                         )
                     );
-//                    $query = $query->andWhere([
-//                        'in',
-//                        '`' . $joinTableName . '`.`property_static_value_id`',
-//                        array_map('intval', $item['values'])
-//                    ]);
                 }
             }
         }
