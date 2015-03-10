@@ -65,7 +65,6 @@ class ProductController extends Controller
             $values_by_property_id = [$values_by_property_id];
         }
 
-
         $selected_category_ids = $request->get('categories', []);
         if (!is_array($selected_category_ids)) {
             $selected_category_ids = [$selected_category_ids];
