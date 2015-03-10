@@ -110,8 +110,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             [['slug_compiled'], 'string', 'max' => 180],
             [['old_price', 'price',], 'default', 'value' => 0,],
             [['active','unlimited_count'], 'default', 'value' => true],
-            [['slug_absolute'], 'default', 'value' => false],
             [['parent_id', 'slug_absolute', 'sort_order', 'is_deleted'], 'default', 'value' => 0],
+            [['sku','name'], 'default', 'value' => ''],
+            [['unlimited_count','currency_id'], 'default', 'value' => 1],
             [['relatedProductsArray'], 'safe'],
 
         ];
@@ -458,6 +459,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      */
     public function processImportBeforeSave(array $fields, $multipleValuesDelimiter, array $additionalFields)
     {
+        $_attributes = $this->attributes();
+        foreach ($fields as $key => $value)
+        {
+            if (in_array($key, $_attributes))
+            {
+                $this->$key = $value;
+            }
+        }
 
         $categories = $this->unpackCategories($fields, $multipleValuesDelimiter, $additionalFields);
         if ($categories !== false && $this->main_category_id < 1) {
@@ -466,7 +475,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             }
             $this->main_category_id = $categories[0];
         }
-
 
         if (empty($this->slug)) {
             $this->slug = Helper::createSlug($this->name);
