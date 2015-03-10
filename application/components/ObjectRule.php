@@ -162,13 +162,14 @@ class ObjectRule implements UrlRuleInterface
             if (empty($next_part)) {
                 if (isset($_POST['properties'], $parameters['properties'])) {
 
-
-                    foreach ($parameters['properties'] as $key=>$values) {
-                        if (isset($_POST['properties'][$key])) {
-                            $parameters['properties'][$key]=ArrayHelper::merge($values, $_POST['properties'][$key]);
+                    foreach ($_POST['properties'] as $key=>$value) {
+                        if (isset($parameters['properties'][$key])) {
+                            $parameters['properties'][$key] = array_unique(ArrayHelper::merge($parameters['properties'][$key], $value));
+                        } else {
+                            $parameters['properties'][$key] = array_unique($value);
                         }
-
                     }
+
 
                 } elseif (isset($_POST['properties'])) {
                     $parameters['properties'] = $_POST['properties'];

@@ -8,6 +8,7 @@ use app\models\Object;
 use app\models\Category;
 use Yii;
 use yii\base\Widget;
+use yii\db\Expression;
 use yii\db\Query;
 use yii\helpers\Json;
 use yii\helpers\Url;
@@ -72,8 +73,8 @@ class CategoriesWidget extends Widget
                                 ]
                             );
 
-
-                            $query->andWhere(['in', '`'.$joinTableName.'`.`property_static_value_id`', $values]);
+                            $imploded_values = implode(', ', array_map('intval', $values));
+                            $query->andWhere(new Expression('`'.$joinTableName.'`.`property_static_value_id`' . ' in (' . $imploded_values.')'));
                         }
                     }
                     $allowed_category_ids = $query->column();

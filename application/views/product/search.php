@@ -12,12 +12,22 @@
         <ul class="thumbnails">
             <?php
                 foreach ($products as $product) {
+                    $mainCat = $product->getMainCategory();
+                    if (!is_object($product)) {
+                        echo "<!-- product is not object -->";
+                        continue;
+                    }
+                    if (!is_object($mainCat)) {
+                        echo "<!-- main cat is not object for prodcut id : " . $product->id . ' -->';
+                        continue;
+                    }
+
                     $url = \yii\helpers\Url::to(
                         [
                             'product/show',
                             'model' => $product,
                             'last_category_id' => $product->main_category_id,
-                            'category_group_id' => $product->category->category_group_id,
+                            'category_group_id' => $mainCat->category_group_id,
                         ]
                     );
                     echo $this->render(
