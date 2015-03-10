@@ -3,3 +3,4 @@ db-local.php
 common-local.php
 console-local.php
 from-db.php
+email-config.php
