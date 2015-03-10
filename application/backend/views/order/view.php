@@ -18,7 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1 class="page-title txt-color-blueDark">
     <?= Html::encode($this->title) ?>
-    <a href="#" class="btn btn-default pull-right" id="print-button"><?= \kartik\icons\Icon::show('print') ?>&nbsp;&nbsp;<?= Yii::t('shop', 'Print') ?></a>
+    <a href="#" class="btn btn-default pull-right do-not-print" id="print-button"><?= \kartik\icons\Icon::show('print') ?>&nbsp;&nbsp;<?= Yii::t('shop', 'Print') ?></a>
+    <a href="<?= Yii::$app->request->get('returnUrl', ['/backend/order/index']) ?>" class="btn btn-danger pull-right do-not-print"><?= \kartik\icons\Icon::show('arrow-circle-left') ?>&nbsp;&nbsp;<?= Yii::t('app', 'Back') ?></a>
 </h1>
 <?php
 $sum_transactions = 0;

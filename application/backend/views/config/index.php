@@ -49,7 +49,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'after' => Html::a(
                                         Icon::show('plus') . Yii::t('app', 'Add'),
                                         ['/backend/config/update', 'parent_id'
-                                            => Yii::$app->request->get('parent_id', 0)],
+                                            => Yii::$app->request->get('parent_id', 0),
+                                            'returnUrl' => \app\backend\components\Helper::getReturnUrl()
+                                        ],
                                         ['class' => 'btn btn-success']
                                     ) . \app\backend\widgets\RemoveAllButton::widget([
                                         'url' => \yii\helpers\Url::to(['/backend/config/remove-all', 'parent_id'

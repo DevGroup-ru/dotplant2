@@ -67,10 +67,30 @@ class ViewController extends Controller
         $post = \Yii::$app->request->post();
         if ($model->load($post) && $model->validate()) {
             $model->save();
-
             $this->redirect(Url::toRoute(['edit', 'id' => $model->id]));
+            $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/view/index', 'id' => $model->id]);
+            switch (Yii::$app->request->post('action', 'save')) {
+                case 'next':
+                    return $this->redirect(
+                        [
+                            '/backend/view/edit',
+                            'returnUrl' => $returnUrl,
+                        ]
+                    );
+                case 'back':
+                    return $this->redirect($returnUrl);
+                default:
+                    return $this->redirect(
+                        Url::toRoute(
+                            [
+                                '/backend/view/edit',
+                                'id' => $model->id,
+                                'returnUrl' => $returnUrl,
+                            ]
+                        )
+                    );
+            }
         }
-
         return $this->render(
             'edit',
             [

@@ -3,6 +3,7 @@
 use app\backgroundtasks\models\Task;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\icons\Icon;
 
 /**
  * @var yii\web\View $this
@@ -10,7 +11,50 @@ use yii\widgets\ActiveForm;
  * @var yii\widgets\ActiveForm $form
  */
 ?>
+<?php $this->beginBlock('submit'); ?>
+<div class="form-group no-margin">
+    <?=
+    Html::a(
+        Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+        Yii::$app->request->get('returnUrl', ['/background/manage/index']),
+        ['class' => 'btn btn-danger']
+    )
+    ?>
+    <?php if ($model->isNewRecord): ?>
+        <?=
+        Html::submitButton(
+            Icon::show('save') . Yii::t('app', 'Save & Go next'),
+            [
+                'class' => 'btn btn-success',
+                'name' => 'action',
+                'value' => 'next',
+            ]
+        )
+        ?>
+    <?php endif; ?>
+    <?= Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save & Go back'),
+        [
+            'class' => 'btn btn-warning',
+            'name' => 'action',
+            'value' => 'back',
+        ]
+    ); ?>
+    <?=
+    Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save'),
+        [
+            'class' => 'btn btn-primary',
+            'name' => 'action',
+            'value' => 'save',
+        ]
+    )
+    ?>
 
+
+
+</div>
+<?php $this->endBlock('submit'); ?>
 <div class="tasks-form">
 
 	<?= \app\widgets\Alert::widget([
@@ -43,9 +87,9 @@ use yii\widgets\ActiveForm;
 
 		<?= $form->field($model, 'status')->dropDownList(Task::getStatuses(Task::TYPE_REPEAT)); ?>
 
-		<div class="form-group">
-			<?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-		</div>
+        <?= $this->blocks['submit'] ?>
+
+
 
 	<?php ActiveForm::end(); ?>
 

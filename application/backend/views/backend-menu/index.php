@@ -48,9 +48,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <a href="<?= Url::to(
                     [
                         '/backend/backend-menu/edit',
-                        'parent_id' => (is_object($model) ? $model->id : 0)
+                        'parent_id'=>(is_object($model)?$model->id:0),
+                        'returnUrl' => \app\backend\components\Helper::getReturnUrl()
                     ]
-                ) ?>" class="btn btn-success">
+                ); ?>" class="btn btn-success">
                     <?= Icon::show('plus') ?>
                     <?= Yii::t('app', 'Add') ?>
                 </a>
