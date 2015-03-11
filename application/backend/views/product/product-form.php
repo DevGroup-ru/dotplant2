@@ -322,6 +322,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'fontcolor',
                 'video',
             ],
+            'replaceStyles' => [],
+            'replaceTags' => [],
+            'deniedTags' => [],
+            'removeEmpty' => [],
         ],
     ]); ?>
 
@@ -339,6 +343,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'fontcolor',
                 'video',
             ],
+            'replaceStyles' => [],
+            'replaceTags' => [],
+            'deniedTags' => [],
+            'removeEmpty' => [],
         ],
     ]); ?>
     

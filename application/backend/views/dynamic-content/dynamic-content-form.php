@@ -106,6 +106,10 @@ $action = isset($model->id) ? 'edit?id='.$model->id : 'edit';
                             'fontcolor',
                             'video',
                         ],
+                        'replaceStyles' => [],
+                        'replaceTags' => [],
+                        'deniedTags' => [],
+                        'removeEmpty' => [],
                     ],
                 ]); ?>
             

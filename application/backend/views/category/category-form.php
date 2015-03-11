@@ -152,6 +152,10 @@ use yii\helpers\Url;
                         'fontcolor',
                         'video',
                     ],
+                    'replaceStyles' => [],
+                    'replaceTags' => [],
+                    'deniedTags' => [],
+                    'removeEmpty' => [],
                 ],
             ]); ?>
 
@@ -169,6 +173,10 @@ use yii\helpers\Url;
                         'fontcolor',
                         'video',
                     ],
+                    'replaceStyles' => [],
+                    'replaceTags' => [],
+                    'deniedTags' => [],
+                    'removeEmpty' => [],
                 ],
             ]); ?>
 
