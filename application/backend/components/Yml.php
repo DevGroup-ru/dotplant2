@@ -318,7 +318,7 @@ class Yml
                     ];
                     break;
                 case 'audiobook':
-                    $field = [
+                    $fields = [
                         'description',
                         'author',
                         'name',
@@ -337,7 +337,7 @@ class Yml
                     ];
                     break;
                 case 'artist.title':
-                    $field = [
+                    $fields = [
                         'artist',
                         'delivery',
                         'description',
