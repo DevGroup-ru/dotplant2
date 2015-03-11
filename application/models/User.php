@@ -60,8 +60,8 @@ class User extends ActiveRecord implements IdentityInterface
     public static function getStatuses()
     {
         return [
-            self::STATUS_ACTIVE => 'Active',
-            self::STATUS_DELETED => 'Deleted',
+            self::STATUS_ACTIVE => Yii::t('app', 'Active'),
+            self::STATUS_DELETED => Yii::t('app', 'Deleted'),
         ];
     }
 

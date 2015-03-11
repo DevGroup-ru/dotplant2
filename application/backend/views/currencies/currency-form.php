@@ -17,16 +17,36 @@ $this->params['breadcrumbs'] = [
 ?>
 <?php $form = ActiveForm::begin(['type'=>ActiveForm::TYPE_VERTICAL]); ?>
 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
-        <?php
+    <?php
             BackendWidget::begin(
                 [
                     'icon' => 'gear',
                     'title'=> Yii::t('app', 'Currency'),
-                    'footer' => Html::submitButton(
-                        Icon::show('save') . Yii::t('app', 'Save'),
-                        ['class' => 'btn btn-primary']
-                    ),
+                    'footer' => Html::a(
+                            Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+                            Yii::$app->request->get('returnUrl', ['/backend/currencies/index', 'id' => $model->id]),
+                            ['class' => 'btn btn-danger']
+                        ).' '.($model->isNewRecord ? (Html::submitButton(
+                            Icon::show('save') . Yii::t('app', 'Save & Go next'),
+                            [
+                                'class' => 'btn btn-success',
+                                'name' => 'action',
+                                'value' => 'next',
+                            ])):'').' '.(Html::submitButton(
+                            Icon::show('save') . Yii::t('app', 'Save & Go back'),
+                            [
+                                'class' => 'btn btn-warning',
+                                'name' => 'action',
+                                'value' => 'back',
+                            ]
+                        )).' '.(Html::submitButton(
+                            Icon::show('save') . Yii::t('app', 'Save'),
+                            [
+                                'class' => 'btn btn-primary',
+                                'name' => 'action',
+                                'value' => 'save',
+                            ]
+                        )),
                 ]
             );
         ?>
@@ -74,10 +94,31 @@ BackendWidget::begin(
     [
         'icon' => 'gear',
         'title'=> Yii::t('app', 'Currency formatting'),
-        'footer' => Html::submitButton(
-            Icon::show('save') . Yii::t('app', 'Save'),
-            ['class' => 'btn btn-primary']
-        ),
+        'footer' => Html::a(
+                Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+                Yii::$app->request->get('returnUrl', ['/backend/currencies/index', 'id' => $model->id]),
+                ['class' => 'btn btn-danger']
+            ).' '.($model->isNewRecord ? (Html::submitButton(
+                Icon::show('save') . Yii::t('app', 'Save & Go next'),
+                [
+                    'class' => 'btn btn-success',
+                    'name' => 'action',
+                    'value' => 'next',
+                ])):'').' '.(Html::submitButton(
+                Icon::show('save') . Yii::t('app', 'Save & Go back'),
+                [
+                    'class' => 'btn btn-warning',
+                    'name' => 'action',
+                    'value' => 'back',
+                ]
+            )).' '.(Html::submitButton(
+                Icon::show('save') . Yii::t('app', 'Save'),
+                [
+                    'class' => 'btn btn-primary',
+                    'name' => 'action',
+                    'value' => 'save',
+                ]
+            )),
     ]
 );
 ?>

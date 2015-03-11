@@ -137,6 +137,7 @@ class ImportModel extends Model implements \Serializable
             'fields' => \Yii::t('app', 'Fields'),
             'type' => \Yii::t('app', 'Type'),
             'createIfNotExists' => \Yii::t('app', 'Create record with supplied internal_id as ID if not exists.'),
+            'multipleValuesDelimiter' => \Yii::t('app', 'Multiple values delimiter'),
         ];
     }
 

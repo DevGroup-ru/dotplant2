@@ -5,6 +5,7 @@ namespace app\seo\models;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+use Yii;
 
 /**
  * This is the model class for table "seo_redirect".
@@ -28,8 +29,8 @@ class Redirect extends ActiveRecord
     public static function getTypes()
     {
         return [
-            self::TYPE_STATIC => 'static',
-            self::TYPE_PREG => 'regular',
+            self::TYPE_STATIC => Yii::t('app', 'static'),
+            self::TYPE_PREG => Yii::t('app', 'regular'),
         ];
     }
 

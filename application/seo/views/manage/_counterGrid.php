@@ -54,6 +54,7 @@ use yii\widgets\Pjax;
                 $params = is_array($key) ? $key : ['id' => (string)$key];
                 $action .= '-counter';
                 $params[0] = $this->context->id ? $this->context->id . '/' . $action : $action;
+                $params['returnUrl'] = \app\backend\components\Helper::getReturnUrl();
                 return Url::toRoute($params);
             },
             'options' => [

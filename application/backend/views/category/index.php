@@ -41,8 +41,9 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
                 <a href="<?= Url::to(
                     [
-                        '/backend/category/edit',
-                        'parent_id' => (is_object($model) ? $model->id : 0)
+                        '/backend/category/edit', 
+                        'parent_id'=>(is_object($model)?$model->id:0), 
+                        'returnUrl' => \app\backend\components\Helper::getReturnUrl()
                     ]
                 ) ?>" class="btn btn-success">
                     <?= Icon::show('plus') ?>
@@ -101,19 +102,19 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'url' => 'edit',
                                         'icon' => 'pencil',
                                         'class' => 'btn-primary',
-                                        'label' => 'Edit',
+                                        'label' => Yii::t('app', 'Edit'),
                                     ],
                                     [
                                         'url' => 'restore',
                                         'icon' => 'refresh',
                                         'class' => 'btn-success',
-                                        'label' => 'Restore',
+                                        'label' => Yii::t('app', 'Restore'),
                                     ],
                                     [
                                         'url' => 'delete',
                                         'icon' => 'trash-o',
                                         'class' => 'btn-danger',
-                                        'label' => 'Delete',
+                                        'label' => Yii::t('app', 'Delete'),
                                     ],
                                 ];
                             }
@@ -122,13 +123,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'url' => 'edit',
                                     'icon' => 'pencil',
                                     'class' => 'btn-primary',
-                                    'label' => 'Edit',
+                                    'label' => Yii::t('app', 'Edit'),
                                 ],
                                 [
                                     'url' => 'delete',
                                     'icon' => 'trash-o',
                                     'class' => 'btn-danger',
-                                    'label' => 'Delete',
+                                    'label' => Yii::t('app', 'Delete'),
                                 ],
                             ];
                         },

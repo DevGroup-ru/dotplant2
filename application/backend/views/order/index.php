@@ -105,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'url' => 'view',
                                 'icon' => 'eye',
                                 'class' => 'btn-info',
-                                'label' => 'View',
+                                'label' => Yii::t('app','View'),
                             ],
                         ],
                     ],

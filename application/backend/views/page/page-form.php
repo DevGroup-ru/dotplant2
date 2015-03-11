@@ -26,17 +26,58 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php $this->beginBlock('submit'); ?>
 <div class="form-group no-margin">
+    <?php if (!$model->isNewRecord): ?>
+        <?=
+        Html::a(
+            Icon::show('eye') . Yii::t('app', 'Preview'),
+            [
+                '/page/show',
+                'id' => $model->id,
+            ],
+            [
+                'class' => 'btn btn-info',
+                'target' => '_blank',
+            ]
+        )
+        ?>
+    <?php endif; ?>
     <?=
     Html::a(
-        Icon::show('eye') . Yii::t('app', 'Preview'),
-        Url::to(['/page/show', 'id' => $model->id]),
-        ['class' => 'btn btn-success', 'target' => '_blank']
-    ) ?>
+        Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+        Yii::$app->request->get('returnUrl', ['/backend/page/index']),
+        ['class' => 'btn btn-danger']
+    )
+    ?>
+    <?php if ($model->isNewRecord): ?>
+        <?=
+        Html::submitButton(
+            Icon::show('save') . Yii::t('app', 'Save & Go next'),
+            [
+                'class' => 'btn btn-success',
+                'name' => 'action',
+                'value' => 'next',
+            ]
+        )
+        ?>
+    <?php endif; ?>
+    <?= Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save & Go back'),
+        [
+            'class' => 'btn btn-warning',
+            'name' => 'action',
+            'value' => 'back',
+        ]
+    ); ?>
     <?=
     Html::submitButton(
         Icon::show('save') . Yii::t('app', 'Save'),
-        ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']
-    ) ?>
+        [
+            'class' => 'btn btn-primary',
+            'name' => 'action',
+            'value' => 'save',
+        ]
+    )
+    ?>
 </div>
 <?php $this->endBlock('submit'); ?>
 

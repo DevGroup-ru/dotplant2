@@ -13,6 +13,7 @@ use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\helpers\Url;
 
 class FormController extends Controller
 {
@@ -118,7 +119,28 @@ class FormController extends Controller
                 }
 
                 \Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                return $this->redirect(['/backend/form/edit', 'id' => $model->id]);
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/form/index', 'id' => $model->id]);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/form/edit',
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/form/edit',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
+                }
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }
@@ -183,5 +205,33 @@ class FormController extends Controller
         }
         $prop = $submission->getPropertyValuesByKey($key);
         return \Yii::$app->response->sendFile(Yii::getAlias("@webroot") . $prop->values[0]['value']);
+    }
+
+    public function actionDelete($id = null)
+    {
+        if ((null === $id) || (null === $model = Form::findOne($id))) {
+            throw new NotFoundHttpException;
+        }
+
+        if (!$model->delete()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Object not removed'));
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
+        }
+
+        return $this->redirect(Url::toRoute('index'));
+    }
+
+    public function actionRemoveAll()
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = Form::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['index']);
     }
 }

@@ -8,6 +8,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\helpers\Url;
 
 /**
  * Class ManageController
@@ -75,8 +76,32 @@ class ManageController extends Controller
             $model->scenario = 'repeat';
             if ($model->load($_POST) && $model->validate()) {
                 $model->fail_counter = 0;
-                $model->save();
-                return $this->redirect(['index']);
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+                    $returnUrl = Yii::$app->request->get('returnUrl', ['background/manage/index']);
+                    switch (Yii::$app->request->post('action', 'save')) {
+                        case 'next':
+                            return $this->redirect(
+                                [
+                                    '/background/manage/create',
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            );
+                        case 'back':
+                            return $this->redirect($returnUrl);
+                        default:
+                            return $this->redirect(
+                                Url::toRoute(
+                                    [
+                                        '/background/manage/update',
+                                        'id' => $model->id,
+                                        'returnUrl' => $returnUrl,
+                                    ]
+                                )
+                            );
+                    }
+                }
+
             } else {
                 return $this->render(
                     'update',
@@ -102,7 +127,30 @@ class ManageController extends Controller
         $model->type = Task::TYPE_REPEAT;
 
         if ($model->load($_POST) && $model->save()) {
-            return $this->redirect(['index']);
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+            $returnUrl = Yii::$app->request->get('returnUrl', ['background/manage/index']);
+            switch (Yii::$app->request->post('action', 'save')) {
+                case 'next':
+                    return $this->redirect(
+                        [
+                            '/background/manage/create',
+                            'returnUrl' => $returnUrl,
+                        ]
+                    );
+                case 'back':
+                    return $this->redirect($returnUrl);
+                default:
+                    return $this->redirect(
+                        Url::toRoute(
+                            [
+                                '/background/manage/update',
+                                'id' => $model->id,
+                                'returnUrl' => $returnUrl,
+                            ]
+                        )
+                    );
+            }
+
         } else {
             return $this->render(
                 'create',

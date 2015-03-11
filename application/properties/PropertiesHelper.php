@@ -5,6 +5,7 @@ namespace app\properties;
 use app\models\ObjectStaticValues;
 use app\models\Property;
 use Yii;
+use yii\db\Expression;
 
 class PropertiesHelper
 {
@@ -113,19 +114,22 @@ class PropertiesHelper
         if (count($by_storage['static_values'])) {
             foreach ($by_storage['static_values'] as $item) {
                 $joinTableName = 'OSVJoinTable'.$item['property']->id;
-                $query = $query->innerJoin(
-                    ObjectStaticValues::tableName() . " " . $joinTableName,
-                    "$joinTableName.object_id = " . intval($object->id) .
-                    " AND $joinTableName.object_model_id = " .
-                    Yii::$app->db->quoteTableName($object->object_table_name) . ".id "
-                );
+                if (count($item['values']) > 0) {
+                    $query = $query->innerJoin(
+                        ObjectStaticValues::tableName() . " " . $joinTableName,
+                        "$joinTableName.object_id = " . intval($object->id) .
+                        " AND $joinTableName.object_model_id = " .
+                        Yii::$app->db->quoteTableName($object->object_table_name) . ".id "
+                    );
 
-
-                $query = $query->andWhere([
-                        'in',
-                        '`' . $joinTableName . '`.`property_static_value_id`',
-                        $item['values']
-                    ]);
+                    $query = $query->andWhere(
+                        new Expression(
+                            '`' . $joinTableName . '`.`property_static_value_id` in (' .
+                            implode(', ', array_map('intval', $item['values'])) .
+                            ')'
+                        )
+                    );
+                }
             }
         }
 

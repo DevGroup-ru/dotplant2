@@ -29,7 +29,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
                     'after' => Html::a(
                         Icon::show('plus') . Yii::t('app', 'Add'),
-                        ['update'],
+                         [
+                            '/backend/slider/update',
+                            'returnUrl' => \app\backend\components\Helper::getReturnUrl()
+                        ],
                         ['class' => 'btn btn-success']
                     ),
                 ],

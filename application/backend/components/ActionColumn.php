@@ -8,33 +8,15 @@ use Yii;
 use yii\grid\Column;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use app\backend\components\Helper;
 
 class ActionColumn extends Column
 {
-    public $buttons = null;
+    public $buttons;
 
-    private $default_buttons = [
-        [
-            'url' => 'edit',
-            'icon' => 'pencil',
-            'class' => 'btn-primary',
-            'label' => 'Edit',
-        ],
-        [
-            'url' => 'clone',
-            'icon' => 'copy',
-            'class' => 'btn-success',
-            'label' => 'Clone',
-        ],
-        [
-            'url' => 'delete',
-            'icon' => 'trash-o',
-            'class' => 'btn-danger',
-            'label' => 'Delete',
-        ],
-    ];
+    private $defaultButtons = [];
 
-    private $callback_buttons = null;
+    private $callbackButtons;
 
     /**
      * @var string the ID of the controller that should handle the actions specified here.
@@ -52,14 +34,38 @@ class ActionColumn extends Column
 
     public $url_append = '';
 
+    public $appendReturnUrl = true;
+
     public function init()
     {
         parent::init();
 
+        $this->defaultButtons = [
+            [
+                'url' => 'edit',
+                'icon' => 'pencil',
+                'class' => 'btn-primary',
+                'label' => Yii::t('app', 'Edit'),
+            ],
+            [
+                'url' => 'clone',
+                'icon' => 'copy',
+                'class' => 'btn-success',
+                'label' => Yii::t('app', 'Clone'),
+            ],
+            [
+                'url' => 'delete',
+                'icon' => 'trash-o',
+                'class' => 'btn-danger',
+                'label' => Yii::t('app', 'Delete'),
+            ]
+        ];
+
+
         if (null === $this->buttons) {
-            $this->buttons = $this->default_buttons;
+            $this->buttons = $this->defaultButtons;
         } elseif ($this->buttons instanceof Closure) {
-            $this->callback_buttons = $this->buttons;
+            $this->callbackButtons = $this->buttons;
         }
     }
 
@@ -79,7 +85,9 @@ class ActionColumn extends Column
         } else {
             $params = is_array($key) ? $key : ['id' => (string) $key];
             $params[0] = $this->controller ? $this->controller . '/' . $action : $action;
-
+            if ($this->appendReturnUrl) {
+                $params['returnUrl'] = Helper::getReturnUrl();
+            }
             return Url::toRoute($params).$this->url_append;
         }
     }
@@ -87,12 +95,12 @@ class ActionColumn extends Column
 
     protected function renderDataCellContent($model, $key, $index)
     {
-        if ($this->callback_buttons instanceof Closure) {
-            $_btns = call_user_func($this->callback_buttons, $model, $key, $index, $this);
-            if (null === $_btns) {
-                $this->buttons = $this->default_buttons;
+        if ($this->callbackButtons instanceof Closure) {
+            $btns = call_user_func($this->callbackButtons, $model, $key, $index, $this);
+            if (null === $btns) {
+                $this->buttons = $this->defaultButtons;
             } else {
-                $this->buttons = $_btns;
+                $this->buttons = $btns;
             }
         }
         $min_width = count($this->buttons) * 34; //34 is button-width
@@ -113,7 +121,6 @@ class ActionColumn extends Column
             ) . ' ';
         }
         $data .= '</div>';
-
         return $data;
     }
 }

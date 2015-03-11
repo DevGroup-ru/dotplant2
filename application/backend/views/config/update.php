@@ -15,6 +15,49 @@ $this->params['breadcrumbs'] = [
 ];
 
 ?>
+<?php $this->beginBlock('submit'); ?>
+<div class="form-group no-margin">
+    <?=
+    Html::a(
+        Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+        Yii::$app->request->get('returnUrl', ['/backend/config/index']),
+        ['class' => 'btn btn-danger']
+    )
+    ?>
+    <?php if ($model->isNewRecord): ?>
+        <?=
+        Html::submitButton(
+            Icon::show('save') . Yii::t('app', 'Save & Go next'),
+            [
+                'class' => 'btn btn-success',
+                'name' => 'action',
+                'value' => 'next',
+            ]
+        )
+        ?>
+    <?php endif; ?>
+    <?= Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save & Go back'),
+        [
+            'class' => 'btn btn-warning',
+            'name' => 'action',
+            'value' => 'back',
+        ]
+    ); ?>
+    <?=
+    Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save'),
+        [
+            'class' => 'btn btn-primary',
+            'name' => 'action',
+            'value' => 'save',
+        ]
+    )
+    ?>
+</div>
+<?php $this->endBlock('submit'); ?>
+
+
 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
     <?php $form = ActiveForm::begin(); ?>
         <?php
@@ -22,10 +65,7 @@ $this->params['breadcrumbs'] = [
                 [
                     'icon' => 'gear',
                     'title'=> Yii::t('shop', 'Config'),
-                    'footer' => Html::submitButton(
-                        Icon::show('save') . Yii::t('app', 'Save'),
-                        ['class' => 'btn btn-primary']
-                    ),
+                     'footer'=>$this->blocks['submit']
                 ]
             );
         ?>
@@ -33,6 +73,7 @@ $this->params['breadcrumbs'] = [
             <?= $form->field($model, 'key')->textInput(['maxlength' => 50]) ?>
             <?= $form->field($model, 'value')->textInput(['maxlength' => 255]) ?>
             <?= $form->field($model, 'preload')->textInput()->widget(\kartik\widgets\SwitchInput::className()) ?>
+
         <?php BackendWidget::end(); ?>
     <?php ActiveForm::end(); ?>
 </div>

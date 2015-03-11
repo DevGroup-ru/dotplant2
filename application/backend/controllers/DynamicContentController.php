@@ -108,7 +108,28 @@ class DynamicContentController extends Controller
             $save_result = $model->save();
             if ($save_result) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                return $this->redirect(['/backend/dynamic-content/edit', 'id' => $model->id]);
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/dynamic-content/index', 'id' => $model->id]);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/dynamic-content/edit',
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/dynamic-content/edit',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
+                }
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }

@@ -5,6 +5,19 @@ use \yii\helpers\Html;
 /* @var $fields array */
 /* @var \app\data\models\ImportModel $model */
 
+$objectClass = \app\models\Object::findById($model->object)->object_class;
+
+$object = new $objectClass;
+
+foreach ($fields['object'] as $name => $value) {
+
+    $fields['object'][$name] = $object->getAttributeLabel($value);
+}
+
+
+
+
+
 ?>
 
 <?=
@@ -15,7 +28,7 @@ use \yii\helpers\Html;
                 $line = Html::beginTag('div', ['class' => 'checkbox']);
                 $line .= Html::checkbox($name, $checked, [
                     'value' => $value,
-                    'label' => Html::encode($label),
+                    'label' => Html::encode($label).' (<small>'.$value.'</small>)',
                 ]);
                 $line .= '</div>';
                 return $line;

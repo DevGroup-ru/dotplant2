@@ -17,4 +17,16 @@ class EditModel extends BaseSliderEditModel
             [['interval'], 'integer'],
         ];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'interval' => Yii::t('app', 'Interval')
+        ];
+    }
+
+
 } 

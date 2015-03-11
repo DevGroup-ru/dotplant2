@@ -8,6 +8,7 @@ use app\components\SearchModel;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\helpers\Url;
 
 /**
  * CategoryGroupController implements the CRUD actions for CategoryGroup model.
@@ -68,7 +69,28 @@ class CategoryGroupController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                return $this->redirect(['update', 'id' => $model->id]);
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/category-group/index', 'id' => $model->id]);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/category-group/update',
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/category-group/update',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
+                }
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
             }

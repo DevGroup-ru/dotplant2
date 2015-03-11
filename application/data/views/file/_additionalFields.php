@@ -13,7 +13,7 @@ use \yii\helpers\Html;
         foreach ($fields['additionalFields'] as $field_key => $options) {
             echo
                 '<div class="well well-sm well-light"><b>' .
-                $field_key .
+                $options['label']. ' (<small>'.$field_key.'</small>)'  .
                 '</b>';
 
             $prefix =

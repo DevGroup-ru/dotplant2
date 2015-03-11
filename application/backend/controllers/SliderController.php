@@ -16,6 +16,7 @@ use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
+use yii\helpers\Url;
 
 /**
  * SliderController implements the CRUD actions for Slider model.
@@ -101,7 +102,29 @@ class SliderController extends Controller
                 $model->params = $abstractModel->serialize();
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                    return $this->redirect(['update', 'id' => $model->id]);
+                    $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/slider/index']);
+                    switch (Yii::$app->request->post('action', 'save')) {
+                        case 'next':
+                            return $this->redirect(
+                                [
+                                    '/backend/slider/update',
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            );
+                        case 'back':
+                            return $this->redirect($returnUrl);
+                        default:
+                            return $this->redirect(
+                                Url::toRoute(
+                                    [
+                                        '/backend/slider/update',
+                                        'id' => $model->id,
+                                        'returnUrl' => $returnUrl
+                                    ]
+                                )
+                            );
+                    }
+
                 } else {
                     Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
                 }

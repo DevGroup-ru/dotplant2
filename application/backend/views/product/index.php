@@ -17,7 +17,7 @@ $parent_id = Yii::$app->request->get('parent_id', app\models\Category::findRootF
 <?php
 $this->beginBlock('add-button');
 ?>
-        <a href="<?= Url::toRoute(['/backend/product/edit', 'parent_id' => $parent_id]) ?>" class="btn btn-success">
+        <a href="<?= Url::toRoute(['/backend/product/edit', 'parent_id' => $parent_id, 'returnUrl' => \app\backend\components\Helper::getReturnUrl()]) ?>" class="btn btn-success">
             <?= Icon::show('plus') ?>
             <?= Yii::t('app', 'Add') ?>
         </a>
@@ -130,19 +130,19 @@ $this->endBlock();
                                 'url' => 'edit',
                                 'icon' => 'pencil',
                                 'class' => 'btn-primary',
-                                'label' => 'Edit',
+                                'label' => Yii::t('app', 'Edit'),
                             ],
                             [
                                 'url' => 'restore',
                                 'icon' => 'refresh',
                                 'class' => 'btn-success',
-                                'label' => 'Restore',
+                                'label' => Yii::t('app','Restore'),
                             ],
                             [
                                 'url' => 'delete',
                                 'icon' => 'trash-o',
                                 'class' => 'btn-danger',
-                                'label' => 'Delete',
+                                'label' => Yii::t('app','Delete'),
                             ],
                         ];
                     }

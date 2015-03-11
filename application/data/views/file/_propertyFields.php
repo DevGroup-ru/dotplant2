@@ -20,7 +20,7 @@ use \yii\helpers\Html;
                 foreach ($properties as $key => $propertyValue) {
                     echo
                         '<div class="well well-sm well-light"><b>' .
-                        $key .
+                        \app\models\Property::findById($propertyValue->property_id)->name .' (<small>'.$key.'</small>)' .
                         '</b>';
 
                     $prefix =

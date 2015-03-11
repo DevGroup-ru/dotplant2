@@ -150,7 +150,7 @@ class ProductController extends Controller
         }
 
         if (null === $model) {
-            throw new ServerErrorHttpException;
+            throw new NotFoundHttpException;
         }
 
         $model->loadRelatedProductsArray();
@@ -200,8 +200,30 @@ class ProductController extends Controller
                 $this->runAction('save-info');
                 $model->invalidateTags();
 
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                return $this->redirect(Url::toRoute(['edit', 'id' => $model->id]));
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/product/index']);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/product/edit',
+                                'returnUrl' => $returnUrl,
+                                'parent_id' =>Yii::$app->request->get('parent_id', null)
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/product/edit',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                    'parent_id' => $model->main_category_id
+                                ]
+                            )
+                        );
+                }
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
             }

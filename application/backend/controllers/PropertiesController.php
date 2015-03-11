@@ -58,7 +58,26 @@ class PropertiesController extends Controller
             $save_result = $model->save();
             if ($save_result) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                $this->redirect(Url::toRoute(['/backend/properties/group', 'id'=>$model->id]));
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/properties/index']);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/properties/group',
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            [
+                                '/backend/properties/group',
+                                'id' => $model->id,
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                }
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
             }
@@ -164,15 +183,36 @@ class PropertiesController extends Controller
             $save_result = $model->save();
             if ($save_result) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                return $this->redirect(
-                    Url::toRoute(
-                        [
-                            '/backend/properties/edit-property',
-                            'id' => $model->id,
-                            'property_group_id' => $model->property_group_id
-                        ]
-                    )
+                $returnUrl = Yii::$app->request->get(
+                    'returnUrl',
+                    [
+                        '/backend/properties/group',
+                        'id' => $property_group_id,
+                    ]
                 );
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/properties/edit-property',
+                                'property_group_id' => $property_group_id,
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/properties/edit-property',
+                                    'id' => $model->id,
+                                    'property_group_id' => $model->property_group_id,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
+                }
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
             }
@@ -209,20 +249,41 @@ class PropertiesController extends Controller
             $save_result = $model->save();
             if ($save_result) {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                return $this->redirect(
-                    Url::toRoute(
-                        [
-                            '/backend/properties/edit-property',
-                            'id' => $model->property_id,
-                            'property_group_id' => $model->property->property_group_id
-                        ]
-                    )
+                $returnUrl = Yii::$app->request->get(
+                    'returnUrl',
+                    [
+                        '/backend/properties/edit-property',
+                        'id' => $model->property_id,
+                        'property_group_id' => $model->property->property_group_id,
+                    ]
                 );
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/properties/edit-static-value',
+                                'property_id' => $model->property_id,
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/properties/edit-static-value',
+                                    'id' => $model->id,
+                                    'property_id' => $model->property_id,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
+                }
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
             }
         }
-
         return $this->render(
             'edit-static-value',
             [

@@ -17,8 +17,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Create Redirect'), ['create-redirect'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a(Yii::t('app', 'Create Redirects'), ['create-redirects'], ['class' => 'btn btn-warning']) ?>
+        <?= Html::a(Yii::t('app', 'Create Redirect'), ['create-redirect', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('app', 'Create Redirects'), ['create-redirects', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()], ['class' => 'btn btn-warning']) ?>
         <?= Html::button(Yii::t('app', 'Delete selected'), ['class'=> 'btn btn-danger', 'id' => 'deleteRedirects']); ?>
     </p>
 

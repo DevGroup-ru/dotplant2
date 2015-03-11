@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
                         'after' => Html::a(
                             Icon::show('plus') . Yii::t('app', 'Add'),
-                            ['/backend/order-status/update'],
+                            ['/backend/order-status/update', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
                             ['class' => 'btn btn-success']
                         ) . \app\backend\widgets\RemoveAllButton::widget([
                             'url' => '/backend/order-status/remove-all',

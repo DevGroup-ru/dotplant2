@@ -7,6 +7,9 @@ use app\models\Category;
 use app\models\Object;
 use app\models\ViewObject;
 use app\properties\HasProperties;
+use app\widgets\image\RemoveAction;
+use app\widgets\image\SaveInfoAction;
+use app\widgets\image\UploadAction;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
@@ -42,6 +45,17 @@ class CategoryController extends Controller
                 'modelName' => Category::className(),
                 'label_attribute' => 'name',
                 'vary_by_type_attribute' => null,
+            ],
+            'upload' => [
+                'class' => UploadAction::className(),
+                'upload' => 'theme/resources/product-images',
+            ],
+            'remove' => [
+                'class' => RemoveAction::className(),
+                'uploadDir' => 'theme/resources/product-images',
+            ],
+            'save-info' => [
+                'class' => SaveInfoAction::className(),
             ],
         ];
     }
@@ -118,14 +132,32 @@ class CategoryController extends Controller
             }
 
             if ($save_result) {
+                $this->runAction('save-info');
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                return $this->redirect(
-                    [
-                        '/backend/category/edit',
-                        'id' => $model->id,
-                        'parent_id' => $model->parent_id
-                    ]
-                );
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/category/index']);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/category/edit',
+                                'returnUrl' => $returnUrl,
+                                'parent_id' =>Yii::$app->request->get('parent_id', null)
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/category/edit',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                    'parent_id' => $model->parent_id
+                                ]
+                            )
+                        );
+                }
             } else {
                 throw new ServerErrorHttpException;
             }
@@ -187,7 +219,7 @@ class CategoryController extends Controller
         } elseif ($id > 0) {
             $out['results'] = ['id' => $id, 'text' => Category::findOne($id)->name];
         } else {
-            $out['results'] = ['id' => 0, 'text' => 'No matching records found'];
+            $out['results'] = ['id' => 0, 'text' => Yii::t('app', 'No matching records found')];
         }
         echo Json::encode($out);
     }

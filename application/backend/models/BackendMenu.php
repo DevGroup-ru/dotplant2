@@ -106,6 +106,7 @@ class BackendMenu extends ActiveRecord
             'added_by_ext' => Yii::t('app', 'Added by extension'),
             'sort_order' => Yii::t('app', 'Sort order'),
             'rbac_check' => Yii::t('app', 'Rbac role'),
+            'translation_category' => Yii::t('app', 'Translation Category'),
         ];
     }
 

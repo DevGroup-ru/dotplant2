@@ -181,7 +181,10 @@ class PropertyStaticValues extends ActiveRecord
         if (false === $values = Yii::$app->cache->get($cacheKey)) {
             $values = static::find()
                 ->where(['property_id'=>$property_id])
-                ->orderBy('sort_order')
+                ->orderBy([
+                    'sort_order' => SORT_ASC,
+                    'name' => SORT_ASC
+                ])
                 ->asArray()
                 ->all();
             if (null !== $values) {

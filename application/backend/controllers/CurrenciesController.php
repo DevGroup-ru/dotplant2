@@ -9,6 +9,7 @@ use app\models\Currency;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\helpers\Url;
 
 class CurrenciesController extends Controller
 {
@@ -91,7 +92,28 @@ class CurrenciesController extends Controller
             $save_result = $model->save();
             if ($save_result) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                return $this->redirect(['/backend/currencies/edit', 'id' => $model->id]);
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/currencies/index', 'id' => $model->id]);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/backend/currencies/edit',
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/backend/currencies/edit',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
+                }
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }

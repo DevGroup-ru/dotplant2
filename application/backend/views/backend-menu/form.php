@@ -37,17 +37,52 @@ use yii\helpers\Url;
     'id' => 'alert',
 ]); ?>
 
-<?php $form = ActiveForm::begin(['id' => 'backend-menu-form', 'type'=>ActiveForm::TYPE_HORIZONTAL]); ?>
-
 <?php $this->beginBlock('submit'); ?>
 <div class="form-group no-margin">
     <?=
+    Html::a(
+        Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+        Yii::$app->request->get('returnUrl', ['/backend/backend-menu/index']),
+        ['class' => 'btn btn-danger']
+    )
+    ?>
+    <?php if ($model->isNewRecord): ?>
+        <?=
+        Html::submitButton(
+            Icon::show('save') . Yii::t('app', 'Save & Go next'),
+            [
+                'class' => 'btn btn-success',
+                'name' => 'action',
+                'value' => 'next',
+            ]
+        )
+        ?>
+    <?php endif; ?>
+    <?= Html::submitButton(
+        Icon::show('save') . Yii::t('app', 'Save & Go back'),
+        [
+            'class' => 'btn btn-warning',
+            'name' => 'action',
+            'value' => 'back',
+        ]
+    ); ?>
+    <?=
     Html::submitButton(
         Icon::show('save') . Yii::t('app', 'Save'),
-        ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']
-    ) ?>
+        [
+            'class' => 'btn btn-primary',
+            'name' => 'action',
+            'value' => 'save',
+        ]
+    )
+    ?>
+
+
+
 </div>
 <?php $this->endBlock('submit'); ?>
+
+<?php $form = ActiveForm::begin(['id' => 'backend-menu-form', 'type'=>ActiveForm::TYPE_HORIZONTAL]); ?>
 
 <section id="widget-grid">
     <div class="row">

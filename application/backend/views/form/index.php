@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php $this->beginBlock('add-button'); ?>
 <?= \yii\helpers\Html::a(
     \kartik\icons\Icon::show('plus') . ' ' . Yii::t('app', 'Add'),
-    ['edit'],
+    ['/backend/form/edit', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
     [
         'class' => 'btn btn-success',
     ]
@@ -31,60 +31,60 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php $this->endBlock(); ?>
 
 <?= DynaGrid::widget([
-        'options' => [
-            'id' => 'form-grid',
-        ],
-        'columns' => [
-            [
-                'class' => \kartik\grid\CheckboxColumn::className(),
-                'options' => [
-                    'width' => '10px',
-                ],
-            ],
-            'id',
-            'name',
-            'form_view',
-            'form_success_view',
-            'email_notification_addresses:email',
-            'email_notification_view',
-            'form_open_analytics_action_id',
-            'form_submit_analytics_action_id',
-            [
-                'class' => 'app\backend\components\ActionColumn',
-                'buttons' => [
-                    [
-                        'url' => 'view',
-                        'icon' => 'eye',
-                        'class' => 'btn-info',
-                        'label' => 'View',
-                    ],
-                    [
-                        'url' => 'edit',
-                        'icon' => 'pencil',
-                        'class' => 'btn-primary',
-                        'label' => 'Edit',
-                    ],
-                    [
-                        'url' => 'delete',
-                        'icon' => 'trash-o',
-                        'class' => 'btn-danger',
-                        'label' => 'Delete',
-                    ],
-                ],
-                'options' => [
-                    'width' => '125px',
-                ]
+    'options' => [
+        'id' => 'form-grid',
+    ],
+    'columns' => [
+        [
+            'class' => \kartik\grid\CheckboxColumn::className(),
+            'options' => [
+                'width' => '10px',
             ],
         ],
-        'theme' => 'panel-default',
-        'gridOptions'=>[
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'hover'=>true,
-            'panel'=>[
-                'heading'=>'<h3 class="panel-title">'.$this->title.'</h3>',
-                'after' => $this->blocks['add-button'],
+        'id',
+        'name',
+        'form_view',
+        'form_success_view',
+        'email_notification_addresses:email',
+        'email_notification_view',
+        'form_open_analytics_action_id',
+        'form_submit_analytics_action_id',
+        [
+            'class' => 'app\backend\components\ActionColumn',
+            'buttons' => [
+                [
+                    'url' => 'view',
+                    'icon' => 'eye',
+                    'class' => 'btn-info',
+                    'label' => Yii::t('app', 'View'),
+                ],
+                [
+                    'url' => 'edit',
+                    'icon' => 'pencil',
+                    'class' => 'btn-primary',
+                    'label' => Yii::t('app','Edit'),
+                ],
+                [
+                    'url' => 'delete',
+                    'icon' => 'trash-o',
+                    'class' => 'btn-danger',
+                    'label' => Yii::t('app','Delete'),
+                ],
             ],
+            'options' => [
+                'width' => '125px',
+            ]
+        ],
+    ],
+    'theme' => 'panel-default',
+    'gridOptions'=>[
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'hover'=>true,
+        'panel'=>[
+            'heading'=>'<h3 class="panel-title">'.$this->title.'</h3>',
+            'after' => $this->blocks['add-button'],
+        ],
 
-        ]
-    ]); ?>
+    ]
+]); ?>
