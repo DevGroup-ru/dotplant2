@@ -13,7 +13,14 @@
  */
 
 ?>
-<?php if ($multiple): ?>
+
+<?php
+    // little style fix
+    if (!$multiple) {
+        echo '<style>.field-' . \kartik\helpers\Html::getInputId($model, $property_key) . ' .select2-container .select2-choice .select2-arrow b {background: none;}</style>';
+    }
+?>
+
     <div class="form-group field-<?= \kartik\helpers\Html::getInputId($model, $property_key) ?>">
         <?= \yii\helpers\Html::activeLabel($model, $property_key, ['class' => 'col-md-2 control-label']); ?>
         <div class="col-md-10">
@@ -23,7 +30,7 @@
                         'name' => \yii\helpers\Html::getInputName($model, $property_key),
                         'data' => app\models\PropertyStaticValues::getSelectForPropertyId($property_id),
                         'options' => [
-                            'multiple' => true,
+                            'multiple' => $multiple ? true : false,
                         ],
                         'value' => is_array($model->$property_key) ? $model->$property_key : explode(', ', $model->$property_key),
                     ]
@@ -31,12 +38,3 @@
             ?>
         </div>
     </div>
-<?php else: ?>
-    <?=
-        $form
-            ->field($model, $property_key.'[0]')
-            ->dropDownList(
-                [0 => Yii::t('app', 'Not selected')] + app\models\PropertyStaticValues::getSelectForPropertyId($property_id)
-            );
-    ?>
-<?php endif; ?>
