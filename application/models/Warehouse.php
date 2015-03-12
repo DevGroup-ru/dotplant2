@@ -95,7 +95,7 @@ class Warehouse extends \yii\db\ActiveRecord
                     return Warehouse::find()
                         ->where('is_active=1')
                         ->select('id')
-                        ->orderBy('sort_order ASC')
+                        ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])
                         ->asArray()
                         ->column($db);
                 },

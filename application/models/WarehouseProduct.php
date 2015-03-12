@@ -75,4 +75,35 @@ class WarehouseProduct extends \yii\db\ActiveRecord
             ],
         ];
     }
+
+    /**
+     * @param null $id
+     * @param bool $create
+     * @return null|\app\models\WarehouseProduct
+     */
+    public static function findByProductId($id = null, $create = true)
+    {
+        if (null === $id) {
+            return null;
+        }
+
+        if (null !== $model = static::findOne(['product_id' => $id])) {
+            return $model;
+        }
+
+        if (true === $create) {
+            $warehouses = Warehouse::activeWarehousesIds();
+            if (!empty($warehouses)) {
+                $model = new static();
+                    $model->warehouse_id = $warehouses[0];
+                    $model->product_id = $id;
+                    $model->in_warehouse = 0;
+                $model->save();
+
+                return $model;
+            }
+        }
+
+        return null;
+    }
 }
