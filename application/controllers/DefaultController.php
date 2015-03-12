@@ -192,6 +192,7 @@ class DefaultController extends Controller
         foreach (['name', 'content'] as $attribute) {
             $query->orWhere(['like', $attribute, $term]);
         }
+        $query->andWhere(['active'=>1]);
         $products = $query->limit(Config::getValue('core.autoCompleteResultsCount', 5))->all();
         $result = [];
         foreach ($products as $product) {
