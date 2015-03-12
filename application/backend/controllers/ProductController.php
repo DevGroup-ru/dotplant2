@@ -200,8 +200,13 @@ class ProductController extends Controller
                 $this->runAction('save-info');
                 $model->invalidateTags();
 
+
+                $action = Yii::$app->request->post('action', 'save');
+                if (Yii::$app->request->post('AddPropetryGroup')) {
+                    $action = 'save';
+                }
                 $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/product/index']);
-                switch (Yii::$app->request->post('action', 'save')) {
+                switch ($action) {
                     case 'next':
                         return $this->redirect(
                             [
