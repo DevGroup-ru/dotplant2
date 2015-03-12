@@ -28,9 +28,12 @@
                 kartik\widgets\Select2::widget(
                     [
                         'name' => \yii\helpers\Html::getInputName($model, $property_key),
-                        'data' => app\models\PropertyStaticValues::getSelectForPropertyId($property_id),
+                        'data' => ['' => ''] + app\models\PropertyStaticValues::getSelectForPropertyId($property_id),
                         'options' => [
                             'multiple' => $multiple ? true : false,
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true,
                         ],
                         'value' => is_array($model->$property_key) ? $model->$property_key : explode(', ', $model->$property_key),
                     ]
