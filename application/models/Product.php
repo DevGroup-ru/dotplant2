@@ -888,6 +888,10 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
     public function saveRelatedProducts()
     {
+        if (!is_array($this->relatedProductsArray)) {
+            $this->relatedProductsArray = explode(',', $this->relatedProductsArray);
+        }
+
         $addRelatedProductsArray = (array) $this->relatedProductsArray;
         foreach ($this->relatedProducts as $product) {
             $key = array_search($product->id, $addRelatedProductsArray);

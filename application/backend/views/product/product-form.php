@@ -121,18 +121,46 @@ $this->params['breadcrumbs'][] = $this->title;
         );
     ?>
 
+    <?php
+        $_relatedProductsArray = $model->relatedProductsArray;
+        $model->relatedProductsArray = implode(',', $_relatedProductsArray);
+
+        $initScript = <<< SCRIPT
+    function (element, callback) {
+        var id={$model->id};
+        if (id !== "") {
+            \$.ajax("/backend/product/ajax-related-product?id=" + id, {
+                dataType: "json"
+            }).done(function(data) { callback(data.results);});
+        }
+    }
+SCRIPT;
+    ?>
     <?=
     $form->field($model, 'relatedProductsArray')
         ->widget(
             Select2::className(),
             [
-                'data' => \app\components\Helper::getModelMap(Product::className(), 'id', 'name'),
                 'options' => [
+                    'placeholder' => 'Поиск продуктов ...',
                     'multiple' => true,
                 ],
+                'pluginOptions' => [
+                    'multiple' => true,
+                    'allowClear' => true,
+                    'minimumInputLength' => 3,
+                    'ajax' => [
+                        'url' => '/backend/product/ajax-related-product',
+                        'dataType' => 'json',
+                        'data' => new \yii\web\JsExpression('function(term,page) { return {search:term}; }'),
+                        'results' => new \yii\web\JsExpression('function(data,page) { return {results:data.results}; }'),
+                    ],
+                    'initSelection' => new \yii\web\JsExpression($initScript),
+                ],
             ]
-        )
+        );
     ?>
+    <?php $model->relatedProductsArray = $_relatedProductsArray; ?>
 
     <?php BackendWidget::end(); ?>
 

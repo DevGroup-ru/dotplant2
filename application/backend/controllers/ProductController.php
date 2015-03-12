@@ -574,4 +574,39 @@ class ProductController extends Controller
 
         return $this->redirect(Url::toRoute(['edit', 'id' => $id]));
     }
+
+    public function actionAjaxRelatedProduct($search = null, $id = null)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $result = [
+            'more' => false,
+            'results' => []
+        ];
+
+        if (!empty($search)) {
+            $query = new \yii\db\Query();
+            $query->select('id, name AS text')
+                ->from(Product::tableName())
+                ->andWhere(['like', 'name', $search])
+                ->andWhere(['is_deleted' => 0])
+                ->orderBy(['sort_order' => SORT_ASC, 'name' => SORT_ASC]);
+            $command = $query->createCommand();
+            $data = $command->queryAll();
+
+            $result['results'] = array_values($data);
+        } elseif ($id > 0) {
+            if (null !== $model = Product::findById($id)) {
+                foreach ($model->relatedProducts as $row) {
+                    $result['results'][] = ['id' => $row->id, 'text' => $row->name];
+                }
+            } else {
+                $result['results'] = ['id' => 0, 'text' => 'Ничего не найдено.'];
+            }
+        } else {
+            $result['results'] = ['id' => 0, 'text' => 'Ничего не найдено.'];
+        }
+
+        return $result;
+    }
 }
