@@ -114,6 +114,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             [['sku','name'], 'default', 'value' => ''],
             [['unlimited_count','currency_id'], 'default', 'value' => 1],
             [['relatedProductsArray'], 'safe'],
+            [['slug'], 'unique', 'targetAttribute' => ['main_category_id']],
 
         ];
     }

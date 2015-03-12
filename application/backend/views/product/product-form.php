@@ -122,7 +122,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 
     <?php
-    if (!$model->isNewRecord):
+    if (!$model->isNewRecord && is_array($model->relatedProductsArray)):
         $_relatedProductsArray = $model->relatedProductsArray;
         $model->relatedProductsArray = implode(',', $_relatedProductsArray);
 

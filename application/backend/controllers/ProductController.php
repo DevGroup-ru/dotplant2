@@ -158,76 +158,80 @@ class ProductController extends Controller
         $post = \Yii::$app->request->post();
 
 
-        if ($model->load($post) && $model->validate()) {
-            if (isset($post['GeneratePropertyValue'])) {
-                $generateValues = $post['GeneratePropertyValue'];
-            } else {
-                $generateValues = [];
-            }
-            if (isset($post['PropertyGroup'])) {
-                $model->option_generate = Json::encode(
-                    [
-                        'group' => $post['PropertyGroup']['id'],
-                        'values' => $generateValues
-                    ]
-                );
-            } else {
-                $model->option_generate = '';
-            }
+        if ($model->load($post)) {
+            if ($model->validate()) {
+                if (isset($post['GeneratePropertyValue'])) {
+                    $generateValues = $post['GeneratePropertyValue'];
+                } else {
+                    $generateValues = [];
+                }
+                if (isset($post['PropertyGroup'])) {
+                    $model->option_generate = Json::encode(
+                        [
+                            'group' => $post['PropertyGroup']['id'],
+                            'values' => $generateValues
+                        ]
+                    );
+                } else {
+                    $model->option_generate = '';
+                }
 
-            $save_result = $model->save();
-            $model->saveProperties($post);
-            $model->saveRelatedProducts();
+                $save_result = $model->save();
+                $model->saveProperties($post);
+                $model->saveRelatedProducts();
 
-            if (null !== $view_object = ViewObject::getByModel($model, true)) {
-                if ($view_object->load($post, 'ViewObject')) {
-                    if ($view_object->view_id <= 0) {
-                        $view_object->delete();
-                    } else {
-                        $view_object->save();
+                if (null !== $view_object = ViewObject::getByModel($model, true)) {
+                    if ($view_object->load($post, 'ViewObject')) {
+                        if ($view_object->view_id <= 0) {
+                            $view_object->delete();
+                        } else {
+                            $view_object->save();
+                        }
                     }
                 }
-            }
 
-            if ($save_result) {
-                $categories =
-                    isset($post['Product']['categories']) ?
-                        $post['Product']['categories'] :
-                        [];
+                if ($save_result) {
+                    $categories =
+                        isset($post['Product']['categories']) ?
+                            $post['Product']['categories'] :
+                            [];
 
-                $model->saveCategoriesBindings($categories);
+                    $model->saveCategoriesBindings($categories);
 
-                $this->runAction('save-info');
-                $model->invalidateTags();
+                    $this->runAction('save-info');
+                    $model->invalidateTags();
 
 
-                $action = Yii::$app->request->post('action', 'save');
-                if (Yii::$app->request->post('AddPropetryGroup')) {
-                    $action = 'save';
-                }
-                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/product/index']);
-                switch ($action) {
-                    case 'next':
-                        return $this->redirect(
-                            [
-                                '/backend/product/edit',
-                                'returnUrl' => $returnUrl,
-                                'parent_id' =>Yii::$app->request->get('parent_id', null)
-                            ]
-                        );
-                    case 'back':
-                        return $this->redirect($returnUrl);
-                    default:
-                        return $this->redirect(
-                            Url::toRoute(
+                    $action = Yii::$app->request->post('action', 'save');
+                    if (Yii::$app->request->post('AddPropetryGroup')) {
+                        $action = 'save';
+                    }
+                    $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/product/index']);
+                    switch ($action) {
+                        case 'next':
+                            return $this->redirect(
                                 [
                                     '/backend/product/edit',
-                                    'id' => $model->id,
                                     'returnUrl' => $returnUrl,
-                                    'parent_id' => $model->main_category_id
+                                    'parent_id' => Yii::$app->request->get('parent_id', null)
                                 ]
-                            )
-                        );
+                            );
+                        case 'back':
+                            return $this->redirect($returnUrl);
+                        default:
+                            return $this->redirect(
+                                Url::toRoute(
+                                    [
+                                        '/backend/product/edit',
+                                        'id' => $model->id,
+                                        'returnUrl' => $returnUrl,
+                                        'parent_id' => $model->main_category_id
+                                    ]
+                                )
+                            );
+                    }
+                } else {
+                    Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
                 }
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
