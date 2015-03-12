@@ -122,6 +122,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 
     <?php
+    if (!$model->isNewRecord):
         $_relatedProductsArray = $model->relatedProductsArray;
         $model->relatedProductsArray = implode(',', $_relatedProductsArray);
 
@@ -141,6 +142,7 @@ SCRIPT;
         ->widget(
             Select2::className(),
             [
+//                'data' => \app\components\Helper::getModelMap(Product::className(), 'id', 'name'),
                 'options' => [
                     'placeholder' => 'Поиск продуктов ...',
                     'multiple' => true,
@@ -160,7 +162,10 @@ SCRIPT;
             ]
         );
     ?>
-    <?php $model->relatedProductsArray = $_relatedProductsArray; ?>
+    <?php
+        $model->relatedProductsArray = $_relatedProductsArray;
+    endif;
+    ?>
 
     <?php BackendWidget::end(); ?>
 
