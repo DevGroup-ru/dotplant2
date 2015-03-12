@@ -26,7 +26,6 @@
                         [
                             'product/show',
                             'model' => $product,
-                            'last_category_id' => $product->main_category_id,
                             'category_group_id' => $mainCat->category_group_id,
                         ]
                     );
