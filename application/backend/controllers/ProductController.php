@@ -91,30 +91,15 @@ class ProductController extends Controller
 
         $searchModel = new Product();
         $params = Yii::$app->request->get();
-
+        $dataProvider = $searchModel->search($params);
         if (null !== $catId = Yii::$app->request->get('parent_id')) {
-            $query = $searchModel::find();
-            $query->select('p.*')
-                ->from(Product::tableName() . ' p')
+            $dataProvider->query
                 ->leftJoin(
                     Object::getForClass(Product::className())->categories_table_name . ' cp',
-                    'cp.object_model_id=p.id'
+                    'cp.object_model_id=product.id'
                 )
-                ->where('p.parent_id=0 AND cp.category_id=:cur', [':cur' => $catId])
-                ->orderBy('p.id');
-
-            $dataProvider = new ActiveDataProvider(
-                [
-                    'query' => $query,
-                    'pagination' => new Pagination([
-                        'defaultPageSize' => 10,
-                    ])
-                ]
-            );
-        } else {
-            $dataProvider = $searchModel->search($params);
+                ->andWhere('product.parent_id=0 AND cp.category_id=:cur', [':cur' => $catId]);
         }
-
         return $this->render(
             'index',
             [
