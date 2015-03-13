@@ -121,15 +121,7 @@ class HasProperties extends Behavior
                     $property_id = $this->property_key_to_id[$property_key];
                     $values = (array) $values;
                     foreach ($values as $val) {
-                        // if multiple
-                        $ar = explode(", ", $val);
-                        if(is_array($ar) && count($ar) > 0) {
-                            foreach ($ar as $a) {
-                                $vals[] = ['value'=>$a, 'property_id'=>$property_id];
-                            }
-                        } else {
-                            $vals[] = ['value'=>$val, 'property_id'=>$property_id];
-                        }
+                        $vals[] = ['value' => $val, 'property_id' => $property_id];
                     }
                     $val = new PropertyValue($vals, $property_id, $this->getObject()->id, $this->owner->id);
                     $new_values_for_abstract[$property_key] = $val;
