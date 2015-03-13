@@ -9,6 +9,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\rbac\Item;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -104,7 +105,28 @@ class UserController extends Controller
                 \Yii::$app->getSession()->setFlash('error', implode('<br />', $errors));
             }
             \Yii::$app->session->setFlash('success', \Yii::t('app', 'Record has been saved'));
-            return $this->redirect(['update', 'id' => $model->id]);
+            $returnUrl = \Yii::$app->request->get('returnUrl', ['/backend/user/index']);
+            switch (\Yii::$app->request->post('action', 'save')) {
+                case 'next':
+                    return $this->redirect(
+                        [
+                            '/backend/user/update',
+                            'returnUrl' => $returnUrl,
+                        ]
+                    );
+                case 'back':
+                    return $this->redirect($returnUrl);
+                default:
+                    return $this->redirect(
+                        Url::toRoute(
+                            [
+                                '/backend/user/update',
+                                'id' => $model->id,
+                                'returnUrl' => $returnUrl
+                            ]
+                        )
+                    );
+            }
         } else {
             return $this->render(
                 'update',
