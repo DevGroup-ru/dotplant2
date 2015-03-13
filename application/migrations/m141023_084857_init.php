@@ -1767,36 +1767,50 @@ class m141023_084857_init extends Migration
         $user->password = $password;
         $user->email = $email;
         $user->save(false);
+        $f = fopen( 'php://stdin', 'r' );
+        echo "Install Russian translations? [y/N] ";
+        while (true) {
+            $answer = trim(fgets($f));
+
+            if ($answer === 'y' || $answer === 'Y') {
+                Yii::$app->language = 'ru-RU';
+                break;
+            } elseif ($answer === 'n' || $answer === 'N') {
+                break;
+            }
+            echo "Install Russian translations? [y/N]";
+        }
+        fclose($f);
         $this->batchInsert(
             '{{%auth_item}}',
             ['name', 'type', 'description'],
             [
-                ['admin', '1', 'Administrator'],
-                ['manager', '1', 'Manager'],
-                ['administrate', '2', 'Administrate panel'],
-                ['api manage', '2', 'API management'],
-                ['seo manage', '2', 'SEO management'],
-                ['task manage', '2', 'Task management'],
-                ['user manage', '2', 'User management'],
-                ['cache manage', '2', 'Cache management'],
-                ['content manage', '2', 'Content management'],
-                ['shop manage', '2', 'Shop management'],
-                ['order manage', '2', 'Order management'],
-                ['category manage', '2', 'Category management'],
-                ['product manage', '2', 'Product management'],
-                ['property manage', '2', 'Property management'],
-                ['view manage', '2', 'View management'],
-                ['review manage', '2', 'Review management'],
-                ['navigation manage', '2', 'Navigation management'],
-                ['form manage', '2', 'Form management'],
-                ['media manage', '2', 'Media management'],
-                ['order status manage', '2', 'Order status management'],
-                ['payment manage', '2', 'Payment type management'],
-                ['shipping manage', '2', 'Shipping option management'],
-                ['newsletter manage', '2', 'Newsletter management'],
-                ['monitoring manage', '2', 'Monitoring management'],
-                ['data manage', '2', 'Data management'],
-                ['setting manage', '2', 'Setting management'],
+                ['admin', '1', Yii::t('app','Administrator')],
+                ['manager', '1', Yii::t('app','Manager')],
+                ['administrate', '2', Yii::t('app','Administrate panel')],
+                ['api manage', '2', Yii::t('app','API management')],
+                ['seo manage', '2', Yii::t('app','SEO management')],
+                ['task manage', '2', Yii::t('app','Task management')],
+                ['user manage', '2', Yii::t('app','User management')],
+                ['cache manage', '2', Yii::t('app','Cache management')],
+                ['content manage', '2', Yii::t('app','Content management')],
+                ['shop manage', '2', Yii::t('app','Shop management')],
+                ['order manage', '2', Yii::t('app','Order management')],
+                ['category manage', '2', Yii::t('app','Category management')],
+                ['product manage', '2', Yii::t('app','Product management')],
+                ['property manage', '2', Yii::t('app','Property management')],
+                ['view manage', '2', Yii::t('app','View management')],
+                ['review manage', '2', Yii::t('app','Review management')],
+                ['navigation manage', '2', Yii::t('app','Navigation management')],
+                ['form manage', '2', Yii::t('app','Form management')],
+                ['media manage', '2', Yii::t('app','Media management')],
+                ['order status manage', '2', Yii::t('app','Order status management')],
+                ['payment manage', '2', Yii::t('app','Payment type management')],
+                ['shipping manage', '2', Yii::t('app','Shipping option management')],
+                ['newsletter manage', '2', Yii::t('app','Newsletter management')],
+                ['monitoring manage', '2', Yii::t('app','Monitoring management')],
+                ['data manage', '2', Yii::t('app','Data management')],
+                ['setting manage', '2', Yii::t('app','Setting management')],
             ]
         );
         $this->batchInsert(
