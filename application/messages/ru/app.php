@@ -517,7 +517,7 @@ return [
     'Manager' => 'Менеджер',
     'Administrate panel' => 'Контрольная панель',
     'API management' => 'Управление API',
-    'SEO management' => 'Управление СЕО',
+    'SEO management' => 'Управление SEO',
     'Task management' => 'Управление задачами',
     'User management' => 'Управление пользователями',
     'Cache management' => 'Управление кешем',
