@@ -106,6 +106,7 @@ class PageController extends Controller
             }
 
             if ($save_result) {
+                $this->runAction('save-info');
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
                 $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/page/index']);
                 switch (Yii::$app->request->post('action', 'save')) {
