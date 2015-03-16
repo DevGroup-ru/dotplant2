@@ -67,8 +67,10 @@ class ManageController extends Controller
     public function actionGetRobots()
     {
         $robots = Robots::getRobots();
-        header('Content-Type: text/plain');
-        echo $robots;
+        $response = \Yii::$app->response;
+        $response->headers->set('Content-Type', 'text/plain');
+        $response->format = \yii\web\Response::FORMAT_RAW;
+        $response->data = $robots;
         \Yii::$app->end();
     }
 
