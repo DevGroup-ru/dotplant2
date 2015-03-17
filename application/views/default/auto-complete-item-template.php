@@ -3,11 +3,14 @@
  * @var \yii\web\View $this
  * @var \app\models\Product $product
  */
+if (!is_object($product->getMainCategory())) {
+    continue;
+}
 $url = \yii\helpers\Url::to(
     [
         'product/show',
         'model' => $product,
-        'category_group_id' => $product->category->category_group_id,
+        'category_group_id' => $product->getMainCategory()->category_group_id,
     ]
 );
 ?>
