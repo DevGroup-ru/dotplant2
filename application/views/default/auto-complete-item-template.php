@@ -4,7 +4,7 @@
  * @var \app\models\Product $product
  */
 if (!is_object($product->getMainCategory())) {
-    continue;
+    return;
 }
 $url = \yii\helpers\Url::to(
     [
