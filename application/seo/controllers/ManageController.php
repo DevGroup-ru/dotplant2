@@ -8,6 +8,7 @@ use app\seo\models\Meta;
 use app\seo\models\Redirect;
 use app\seo\models\Robots;
 use devgroup\ace\AceHelper;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -49,6 +50,12 @@ class ManageController extends Controller
                     //
                 ],
             ],
+            [
+              'class' => 'yii\filters\PageCache',
+              'only' => [ 'GetRobots' ],
+              'duration' => 24 * 60 * 60,
+              'dependency' => ActiveRecordHelper::getCommonTag(Config::className()),
+            ]
         ];
     }
 
@@ -67,8 +74,10 @@ class ManageController extends Controller
     public function actionGetRobots()
     {
         $robots = Robots::getRobots();
-        header('Content-Type: text/plain');
-        echo $robots;
+        $response = \Yii::$app->response;
+        $response->headers->set('Content-Type', 'text/plain');
+        $response->format = \yii\web\Response::FORMAT_RAW;
+        $response->data = $robots;
         \Yii::$app->end();
     }
 
