@@ -142,7 +142,10 @@ class Order extends \yii\db\ActiveRecord
                 try {
                     Yii::$app->mail
                         ->compose(
-                            '@app/views/cart/client-order-email-template',
+                            Config::getValue(
+                                'shop.clientOrderEmailTemplate',
+                                '@app/views/cart/client-order-email-template'
+                            ),
                             [
                                 'order' => $this,
                             ]
@@ -160,7 +163,10 @@ class Order extends \yii\db\ActiveRecord
                 try {
                     Yii::$app->mail
                         ->compose(
-                            '@app/views/cart/order-email-template',
+                            Config::getValue(
+                                'shop.orderEmailTemplate',
+                                '@app/views/cart/order-email-template'
+                            ),
                             [
                                 'order' => $this,
                             ]
