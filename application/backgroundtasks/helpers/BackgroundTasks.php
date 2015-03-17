@@ -62,12 +62,17 @@ class BackgroundTasks
      * @param $params
      * @return bool
      */
-    public static function addTask($params)
+    public static function addTask($params, $options = [])
     {
         $task = new Task(['scenario' => 'event']);
         $task->load(['Task' => $params]);
         $task->type = Task::TYPE_EVENT;
         $task->initiator = \Yii::$app->user->id;
+
+        if (!empty($options)) {
+            $task->setOptions($options);
+        }
+
         return $task->validate() && $task->save();
     }
 

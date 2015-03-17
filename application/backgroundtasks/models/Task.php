@@ -2,10 +2,12 @@
 
 namespace app\backgroundtasks\models;
 
+use app\backend\models\Notification;
 use app\backgroundtasks\traits\SearchModelTrait;
 use app\models\User;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "backgroundtasks_task".
@@ -23,10 +25,10 @@ use yii\db\ActiveRecord;
  * @property string $status
  * @property integer $fail_counter
  * @property string $ts
+ * @property string $options
  */
 class Task extends ActiveRecord
 {
-
     use SearchModelTrait;
 
     public $username;
@@ -44,6 +46,7 @@ class Task extends ActiveRecord
     const TYPE_REPEAT   = 'REPEAT';
 
     private $logname = '';
+    private $task_options = [];
 
     /**
      * @inheritdoc
@@ -109,10 +112,11 @@ class Task extends ActiveRecord
             [['action', 'initiator', 'name'], 'required', 'except' => 'search'],
             [['cron_expression'], 'required', 'on' => 'repeat'],
             [['init_event'], 'required', 'on' => 'event'],
-            [['type', 'description', 'params', 'data', 'status'], 'string'],
+            [['type', 'description', 'params', 'data', 'status', 'options'], 'string'],
             [['initiator'], 'integer'],
             [['ts', 'username', 'fail_counter'], 'safe'],
-            [['action', 'name', 'init_event', 'cron_expression'], 'string', 'max' => 255]
+            [['action', 'name', 'init_event', 'cron_expression'], 'string', 'max' => 255],
+            [['status'], 'default', 'value' => self::STATUS_ACTIVE],
         ];
     }
 
@@ -136,6 +140,7 @@ class Task extends ActiveRecord
             'status' => \Yii::t('app', 'Status'),
             'fail_counter' => \Yii::t('app', 'Fail Status Count'),
             'username' => \Yii::t('app', 'Initiator'),
+            'options' => \Yii::t('app', 'Options'),
         ];
     }
 
@@ -233,6 +238,24 @@ class Task extends ActiveRecord
     {
         $this->status = $status;
         return $this->update(false, ['status']);
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->task_options;
+    }
+
+    /**
+     * @param $options
+     */
+    public function setOptions($options)
+    {
+        if (is_array($options)) {
+            $this->task_options = $options;
+        }
     }
 
     /**
@@ -448,5 +471,82 @@ class Task extends ActiveRecord
         $this->addCondition($query, User::tableName(), 'username', true);
 
         return $dataProvider;
+    }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        $result = parent::beforeSave($insert);
+
+        $this->options = Json::encode($this->task_options);
+
+        return $result;
+    }
+
+
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if (empty($changedAttributes)) {
+            return ;
+        }
+
+        if (!isset($this->task_options['create_notification']) || (false == $this->task_options['create_notification'])) {
+            return ;
+        }
+
+        if (self::STATUS_ACTIVE === $this->status) {
+            Notification::addNotification(
+                $this->initiator,
+                'Задание "'.$this->description.'" добавлено в очередь.',
+                'Задание',
+                'info'
+            );
+        } else if (self::STATUS_RUNNING === $this->status) {
+            Notification::addNotification(
+                $this->initiator,
+                'Задание "'.$this->description.'" выполняется.',
+                'Задание',
+                'info'
+            );
+        } else if (self::STATUS_COMPLETED === $this->status) {
+            Notification::addNotification(
+                $this->initiator,
+                'Задание "'.$this->description.'" успешно выполнено.',
+                'Задание',
+                'success'
+            );
+        } else if (self::STATUS_FAILED === $this->status) {
+            Notification::addNotification(
+                $this->initiator,
+                'Задание "'.$this->description.'" завершилось с ошибкой.',
+                'Задание',
+                'danger'
+            );
+        }
+    }
+
+    /**
+     *
+     */
+    public function afterFind()
+    {
+        parent::afterFind();
+
+        $options = [];
+        try {
+            $options = Json::decode($this->options);
+        } catch(\Exception $e) {
+        }
+
+        $this->task_options = $options;
     }
 }

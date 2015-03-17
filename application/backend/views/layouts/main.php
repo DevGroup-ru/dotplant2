@@ -36,47 +36,8 @@ Icon::map($this);
         <div id="logo-group">
             <span id="logo" style="width: 115px;"> <!-- <img src="/img/logo.png">  -->DotPlant<sup>2</sup> </span>
             <?php
-                if (Yii::$app->user->can('administrate')):
-                    $notificationsCount = \app\backend\models\Notification::find()
-                        ->where(['user_id' => Yii::$app->user->id, 'viewed' => 0])
-                        ->count();
+                echo \app\backend\widgets\Notification::widget();
             ?>
-                <span id="activity" class="activity-dropdown"> <i class="fa fa-user"></i> <b class="badge"> <?= $notificationsCount ?> </b> </span>
-                <!-- AJAX-DROPDOWN : control this dropdown height, look and feel from the LESS variable file -->
-                <div class="ajax-dropdown">
-                    <!-- the ID links are fetched via AJAX to the ajax container "ajax-notifications" -->
-                    <div class="btn-group btn-group-justified" data-toggle="buttons">
-                        <!--<label class="btn btn-default">
-                            <input type="radio" name="activity" id="ajax/notify/mail.html">
-                            Msgs (0)
-                        </label>-->
-                        <label class="btn btn-default">
-                            <input type="radio" name="activity" id="/backend/dashboard/notifications">
-                            notify (<span class="notifications-count"><?= $notificationsCount ?></span>)
-                        </label>
-                        <!--<label class="btn btn-default">
-                            <input type="radio" name="activity" id="ajax/notify/tasks.html">
-                            Tasks (0)
-                        </label>-->
-                    </div>
-                    <!-- notification content -->
-                    <div class="ajax-notifications custom-scroll">
-                        <div class="alert alert-transparent">
-                            <h4>Click a button to show messages here</h4>
-                            <?php //= Notification::widget(['onSuccess' => "function(data, container) { $('.message-count').text(data); }"]) ?>
-                            ToDo: исправить отображение этого виджета
-                        </div>
-                        <i class="fa fa-lock fa-4x fa-border"></i>
-                    </div>
-                    <!-- end notification content -->
-                    <!-- footer: refresh area -->
-                    <span> Last updated on: 00/00/0000 00:00
-                        <button type="button" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Loading..." class="btn btn-xs btn-default pull-right">
-                            <i class="fa fa-refresh"></i>
-                        </button> </span>
-                    <!-- end footer -->
-                </div>
-            <?php endif; ?>
         </div>
         <div class="pull-right">
             <div id="hide-menu" class="btn-header pull-right">

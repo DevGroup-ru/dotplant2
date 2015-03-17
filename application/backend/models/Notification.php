@@ -20,6 +20,9 @@ class Notification extends ActiveRecord
 {
     protected $availableTypes = ['default', 'primary', 'success', 'info', 'warning', 'danger'];
 
+    const STATUS_NOT_VIEWED = 0;
+    const STATUS_VIEWED = 1;
+
     /**
      * @inheritdoc
      */
@@ -85,5 +88,56 @@ class Notification extends ActiveRecord
             'type' => $type,
         ];
         return $notification->save();
+    }
+
+    /**
+     * @param null $user_id
+     * @return int|string
+     */
+    public static function getCountByUserId($user_id = null)
+    {
+        if (null === $user_id) {
+            return 0;
+        }
+
+        return static::find()
+            ->where([
+                'user_id' => intval($user_id),
+                'viewed' => 0
+            ])
+            ->count();
+    }
+
+    /**
+     * @param null $user_id
+     * @param int $viewed
+     * @param null $limit
+     * @param null $offset
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function getAllByUserId($user_id = null, $viewed = self::STATUS_NOT_VIEWED, $limit = null, $offset = null)
+    {
+        if (null === $user_id) {
+            return [];
+        }
+
+        $query = static::find()
+            ->where(['user_id' => intval($user_id)])
+            ->orderBy(['date' => SORT_ASC])
+            ->asArray();
+
+        if (null !== $viewed) {
+            $query->andWhere(['viewed' => intval($viewed)]);
+        }
+
+        if (null !== $limit) {
+            $query->limit(intval($limit));
+
+            if (null !== $offset) {
+                $query->offset(intval($offset));
+            }
+        }
+
+        return $query->all();
     }
 }
