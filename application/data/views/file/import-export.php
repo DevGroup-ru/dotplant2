@@ -139,6 +139,15 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-md-12">
             <fieldset>
                 <legend><?= Yii::t('app', 'Settings') ?></legend>
+
+                <div class="form-group">
+                    <div class='col-md-offset-2 col-md-10'>
+                        <div class="checkbox">
+                            <?= Html::checkbox('Task[create_notification]', false, ['label' => 'Создать уведомление']); ?>
+                        </div>
+                    </div>
+                </div>
+
                 <?php if ($importMode === true): ?>
                     <?= $form->field($model, 'createIfNotExists')->checkbox() ?>
                 <?php endif; ?>

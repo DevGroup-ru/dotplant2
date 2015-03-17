@@ -115,6 +115,8 @@ class FileController extends Controller
 
                     $import->status = $className::STATUS_PROCESS;
 
+                    $task_options = Yii::$app->request->post('Task', []);
+
                     if ($import->save()) {
                         BackgroundTasks::addTask([
                             'name' =>
@@ -129,6 +131,9 @@ class FileController extends Controller
                                 $model->serialize(),
                             'init_event' =>
                                 ($importMode ? 'import' : 'export'),
+                        ],
+                        [
+                            'create_notification' => isset($task_options['create_notification']) && 1 == $task_options['create_notification'] ? true : false,
                         ]);
                         \Yii::$app->session->setFlash(
                             'info',
