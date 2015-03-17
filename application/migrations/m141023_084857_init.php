@@ -1767,20 +1767,29 @@ class m141023_084857_init extends Migration
         $user->password = $password;
         $user->email = $email;
         $user->save(false);
-        $f = fopen( 'php://stdin', 'r' );
-        echo "Install Russian translations? [y/N] ";
-        while (true) {
-            $answer = trim(fgets($f));
 
-            if ($answer === 'y' || $answer === 'Y') {
+        if (getenv("INSTALL_RUSSIAN_TRANSLATIONS")) {
+            echo "INFO: Using translations details provided by ENV variables...\n";
+            if (trim(strtolower(getenv("INSTALL_RUSSIAN_TRANSLATIONS"))) === 'y') {
                 Yii::$app->language = 'ru-RU';
-                break;
-            } elseif ($answer === 'n' || $answer === 'N') {
-                break;
             }
-            echo "Install Russian translations? [y/N]";
         }
-        fclose($f);
+        else {
+            $f = fopen( 'php://stdin', 'r' );
+            echo "Install Russian translations? [y/N] ";
+            while (true) {
+                $answer = trim(fgets($f));
+
+                if ($answer === 'y' || $answer === 'Y') {
+                    Yii::$app->language = 'ru-RU';
+                    break;
+                } elseif ($answer === 'n' || $answer === 'N') {
+                    break;
+                }
+                echo "Install Russian translations? [y/N]";
+            }
+            fclose($f);
+        }
         $this->batchInsert(
             '{{%auth_item}}',
             ['name', 'type', 'description'],
