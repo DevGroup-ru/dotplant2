@@ -15,6 +15,8 @@ use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
 use yii\db\Expression;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -170,18 +172,50 @@ class CartController extends Controller
             throw new NotFoundHttpException;
         }
         $cart->items[$id]['quantity'] = Yii::$app->request->post('quantity');
-        $additionalParams = json_decode($cart->items[$id]['additionalParams']);
+        $additionalParams = Json::decode($cart->items[$id]['additionalParams']);
         if ($cart->reCalc()) {
             return [
                 'success' => true,
                 'itemsCount' => $cart->items_count,
-                'itemPrice' => Yii::$app->formatter->asDecimal($cart->items[$id]['quantity'] * ($product->convertedPrice() + $additionalParams->additionalPrice), 2),
+                'itemPrice' => Yii::$app->formatter->asDecimal($cart->items[$id]['quantity'] * ($product->convertedPrice() + $additionalParams['additionalPrice']), 2),
                 'totalPrice' => Yii::$app->formatter->asDecimal($cart->total_price, 2),
             ];
         } else {
             return [
                 'success' => false,
                 'message' => Yii::t('shop', 'Cannot change quantity'),
+            ];
+        }
+    }
+
+    public function actionChangeAdditionalParams()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (Yii::$app->request->post('id') === null || Yii::$app->request->post('additionalParams') === null) {
+            throw new BadRequestHttpException;
+        }
+        $id = Yii::$app->request->post('id');
+        $product = Product::findOne($id);
+        $cart = Cart::getCart(false);
+        if ($cart === null || !isset($cart->items[$id]) || $product === null) {
+            throw new NotFoundHttpException;
+        }
+        $additionalParams = ArrayHelper::merge(
+            Json::decode($cart->items[$id]['additionalParams']),
+            Json::decode(Yii::$app->request->post('additionalParams'))
+        );
+        $cart->items[$id]['additionalParams'] = Json::encode($additionalParams);
+        if ($cart->reCalc()) {
+            return [
+                'success' => true,
+                'itemsCount' => $cart->items_count,
+                'itemPrice' => Yii::$app->formatter->asDecimal($cart->items[$id]['quantity'] * ($product->convertedPrice() + $additionalParams['additionalPrice']), 2),
+                'totalPrice' => Yii::$app->formatter->asDecimal($cart->total_price, 2),
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => Yii::t('shop', 'Cannot change additional params'),
             ];
         }
     }
