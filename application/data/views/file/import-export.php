@@ -135,6 +135,16 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <?php endif; ?>
 
+    <?php if (!$importMode): ?>
+        <?= $this->render('_searchForm', [
+                    'form' => $form,
+                    'model' => $model,
+                    'object' => $object,
+                    'fields' => $fields,
+                    'availablePropertyGroups' => $availablePropertyGroups,
+        ]) ?>
+    <?php endif; ?>
+
     <div class="form-group row">
         <div class="col-md-12">
             <fieldset>

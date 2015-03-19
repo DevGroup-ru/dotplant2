@@ -13,6 +13,8 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Controller;
+use yii\db\Query;
+use yii\helpers\Json;
 
 class PropertiesController extends Controller
 {
@@ -422,7 +424,46 @@ class PropertiesController extends Controller
 
         return $this->redirect(['index']);
     }
-    
+
+
+    public function actionAutocomplete($search = null, $id = null, $object_id = null)
+    {
+        /**
+         * @todo Добавить отображение вложенности
+         */
+        $out = ['more' => false];
+        if (!is_null($search)) {
+            $query = new Query;
+            $query->select(
+                Property::tableName().'.id, '.Property::tableName().'.name AS text'
+            )
+                ->from(Property::tableName())
+                ->andWhere(['like', Property::tableName().'.name', $search])
+                ->limit(100);
+            if (!is_null($object_id)) {
+                $query->leftJoin(
+                    PropertyGroup::tableName(),
+                    PropertyGroup::tableName().'.id = '.Property::tableName().'.property_group_id'
+                );
+
+                $query->andWhere([
+                    PropertyGroup::tableName().'.id' => $object_id
+                ]);
+
+            }
+
+            $command = $query->createCommand();
+            $data = $command->queryAll();
+            $out['results'] = array_values($data);
+        } elseif ($id > 0) {
+            $out['results'] = ['id' => $id, 'text' => Property::findOne($id)->name];
+        } else {
+            $out['results'] = ['id' => 0, 'text' => Yii::t('app', 'No matching records found')];
+        }
+        echo Json::encode($out);
+    }
+
+
 
     public function actionHandlers()
     {

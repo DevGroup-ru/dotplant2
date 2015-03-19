@@ -2,6 +2,12 @@
 
 namespace app\data\components;
 
+use app\models\Property;
+use app\models\Object;
+use app\models\Product;
+use yii\db\Expression;
+use app\models\PropertyStaticValues;
+use app\models\ObjectStaticValues;
 use Yii;
 
 abstract class AbstractImportCsv extends Import
@@ -82,7 +88,7 @@ abstract class AbstractImportCsv extends Import
         return true;
     }
 
-    public function getData($exportFields, $batchSize = 25)
+    public function getData($exportFields, $batchSize = 25, $conditions = [])
     {
         $objectFields = isset($exportFields['object']) ? $exportFields['object'] : [];
         $propertiesFields = isset($exportFields['property']) ? $exportFields['property'] : [];
@@ -110,6 +116,85 @@ abstract class AbstractImportCsv extends Import
         $propertyIds = array_keys($propertiesFields);
 
         $objects = $class::find();
+
+        if (
+            isset($conditions['category']) &&
+            is_array($conditions['category']) &&
+            $this->object->id == Object::getForClass(Product::className())->id
+        ) {
+            foreach ($conditions['category'] as $condition) {
+                $joinTableName = 'Category'.$condition['value'];
+
+                $objects->innerJoin(
+                    "{{%product_category}} " . $joinTableName,
+                    "$joinTableName.object_model_id = product.id"
+                );
+                $objects->andWhere(
+                    new Expression(
+                        '`' . $joinTableName . '`.`category_id` = "'.$condition['value'].'"'
+                    )
+                );
+            }
+        }
+
+        if (isset($conditions['field']) && is_array($conditions['field'])) {
+            foreach ($conditions['field'] as $condition) {
+                $conditionOptions = [$condition['operators'], $condition['value'], $condition['option']];
+                if ($condition['comparison'] == 'AND') {
+                    $objects->andWhere($conditionOptions);
+                } elseif ($condition['comparison'] == 'OR') {
+                    $objects->orWhere($conditionOptions);
+                }
+            }
+        }
+        if (isset($conditions['property']) && is_array($conditions['property'])) {
+            foreach ($conditions['property'] as $condition) {
+
+                $property = Property::findById($condition['value']);
+
+                if ($property && isset($condition['option']) &&  !empty($condition['option'])) {
+                    if ($property->is_eav) {
+                        $joinTableName = 'EAVJoinTable'.$property->id;
+
+                        $objects->innerJoin(
+                            $this->object->eav_table_name . " " . $joinTableName,
+                            "$joinTableName.object_model_id = " .
+                            Yii::$app->db->quoteTableName($this->object->object_table_name) . ".id "
+                        );
+                        $objects->andWhere(
+                            new Expression(
+                                '`' . $joinTableName . '`.`value` '.$condition['operators'].' "'.$condition['option'].'" AND `' .
+                                $joinTableName . '`.`key` = "'. $property->key.'"'
+                            )
+                        );
+
+                    } elseif ($property->has_static_values) {
+                        $joinTableName = 'OSVJoinTable'.$property->id;
+                        $propertyStaticValue = PropertyStaticValues::find()->where(['value'=>$condition['option']])->one();
+
+                        if ($propertyStaticValue) {
+                            $objects->innerJoin(
+                                ObjectStaticValues::tableName() . " " . $joinTableName,
+                                "$joinTableName.object_id = " . intval($this->object->id) .
+                                " AND $joinTableName.object_model_id = " .
+                                Yii::$app->db->quoteTableName($this->object->object_table_name) . ".id "
+                            );
+
+                            $objects->andWhere(
+                                new Expression(
+                                    '`' . $joinTableName . '`.`property_static_value_id` ="'.$propertyStaticValue->id.'"'
+                                )
+                            );
+                        }
+                    } else {
+                        throw new \Exception("Wrong property type for ".$property->id);
+                    }
+                }
+            }
+        }
+
+
+
         gc_disable();
         foreach ($objects->each($batchSize) as $object) {
             $row = [];
