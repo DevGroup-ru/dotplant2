@@ -2,7 +2,6 @@
 
 namespace app\backend\controllers;
 
-use app\components\Helper;
 use app\models\Category;
 use app\models\Image;
 use app\models\Object;
@@ -16,8 +15,6 @@ use app\widgets\image\SaveInfoAction;
 use app\widgets\image\UploadAction;
 use app\backend\actions\UpdateEditable;
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\data\Pagination;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
@@ -303,11 +300,8 @@ class ProductController extends Controller
                         $key = $propertyStaticValues->property->key;
                         $tempPost[$key] = $propertyValue;
                     }
-                    if (empty($propertyValue['slug']) === true) {
-                        $propertyValue['slug'] = substr(Helper::createSlug($propertyValue['name']), 0, 20);
-                    }
                     $nameAppend[] = $propertyValue['name'];
-                    $slugAppend[] = $propertyValue['slug'];
+                    $slugAppend[] = $propertyValue['id'];
                 }
             }
 
@@ -317,6 +311,21 @@ class ProductController extends Controller
             $postPropertyKey = 'Properties_Product_' . $model->id;
             $post[$postPropertyKey] = $tempPost;
             if ($save_model) {
+                foreach (array_keys($parent->propertyGroups) as $key) {
+                    $opg = new ObjectPropertyGroup();
+                    $opg->attributes = [
+                        'object_id' => $parent->object->id,
+                        'object_model_id' => $model->id,
+                        'property_group_id' => $key,
+                    ];
+                    $opg->save();
+                }
+                $model->saveProperties(
+                    [
+                        'Properties_Product_' . $model->id => $parent->abstractModel->attributes,
+                    ]
+                );
+
                 $model->saveProperties($post);
 
                 unset($post[$postPropertyKey]);
@@ -335,6 +344,42 @@ class ProductController extends Controller
                         $object->categories_table_name,
                         ['category_id', 'object_model_id'],
                         $add
+                    )->execute();
+                }
+                $query = new Query();
+                $params = $query->select(
+                    ['object_id', 'filename', 'image_src', 'thumbnail_src', 'image_description', 'sort_order']
+                )->from(Image::tableName())->where(
+                    [
+                        'object_id' => $model->object->id,
+                        'object_model_id' => $parent->id
+                    ]
+                )->all();
+                if (!empty($params)) {
+                    $rows = [];
+                    foreach ($params as $param) {
+                        $rows[] = [
+                            $param['object_id'],
+                            $model->id,
+                            $param['filename'],
+                            $param['image_src'],
+                            $param['thumbnail_src'],
+                            $param['image_description'],
+                            $param['sort_order'],
+                        ];
+                    }
+                    Yii::$app->db->createCommand()->batchInsert(
+                        Image::tableName(),
+                        [
+                            'object_id',
+                            'object_model_id',
+                            'filename',
+                            'image_src',
+                            'thumbnail_src',
+                            'image_description',
+                            'sort_order',
+                        ],
+                        $rows
                     )->execute();
                 }
             }
