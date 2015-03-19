@@ -290,7 +290,9 @@ class Task extends ActiveRecord
             $message->task_id = $this->id;
             \Yii::trace($this->name.' is running', $this->getLogname());
             $args = ' ' . escapeshellarg($this->action);
-            $params = explode(' ', $this->params);
+            /* isJson validate*/
+            $params = preg_match('/^{[^}]+}$/iu',$this->params) ? [$this->params]: [$this->params];
+
             if (!empty($params)) {
                 foreach ($params as $param) {
                     $args .= ' ' . escapeshellarg($param);

@@ -109,7 +109,7 @@ class FileController extends Controller
                         'type' => $model->type,
                     ]
                 );
-                $import->getData($model->fields);
+                $import->getData($model->fields, 25, $model->conditions );
 
                 $exportStatus->filename = $filename;
                 $exportStatus->status = Export::STATUS_COMPLETE;
