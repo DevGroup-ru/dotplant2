@@ -490,7 +490,7 @@ class Category extends ActiveRecord
         }
         $items = [];
         $categories = static::find()
-            ->select(['id', 'name'])
+            ->select(['id', 'name', 'category_group_id'])
             ->where(['parent_id' => $parentId, 'active' => 1])
             ->orderBy('sort_order')
             ->all();
