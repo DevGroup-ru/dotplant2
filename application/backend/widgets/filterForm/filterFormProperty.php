@@ -30,14 +30,13 @@ class filterFormProperty extends filterForm {
         $query->select(
             Property::tableName().'.id, '.Property::tableName().'.name'
         )
-            ->from(Property::tableName())
-            ->limit(100);
+            ->from(Property::tableName());
             $query->leftJoin(
                 PropertyGroup::tableName(),
                 PropertyGroup::tableName().'.id = '.Property::tableName().'.property_group_id'
             );
             $query->andWhere([
-                PropertyGroup::tableName().'.id' => $this->objectId
+                PropertyGroup::tableName().'.object_id' => $this->objectId
             ]);
         $command = $query->createCommand();
         $this->data = ArrayHelper::map($command->queryAll(), 'id', 'name');
