@@ -539,4 +539,9 @@ return [
     'Monitoring management' => 'Управление мониторингом',
     'Data management' => 'Управление данными',
     'Setting management' => 'Управление настройками',
+    'Filter' => 'Фильтр',
+    'Filter By Category' => 'Фильтровать по категории',
+    'Filter By Properties' => 'Фильтровать по опциям',
+    'Filter By Fields' => 'Фильтровать по полям',
+    'Select ...' => 'Выбрать ...'
 ];

@@ -20,7 +20,7 @@ use kartik\icons\Icon;
             'name' => $fieldName,
             'value' => '',
             'data' => $data,
-            'options' => ['placeholder' => 'Select  ...']
+            'options' => ['placeholder' => Yii::t('app','Select ...')]
         ]); ?>
     </div>
 
