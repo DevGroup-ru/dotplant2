@@ -18,6 +18,12 @@ class ImportModel extends Model implements \Serializable
     public $fields;
     public $type;
 
+    public $filterByCategory;
+    public $filterByProperties;
+    public $filterByFields;
+
+    public $conditions = [];
+
     /**
      * Array of PropertyGroup's ids to add to each record
      * @var array
@@ -100,7 +106,7 @@ class ImportModel extends Model implements \Serializable
             [['file'], 'file', 'extensions' => 'csv'],
             [['object'], 'integer'],
             [['object'], 'required'],
-            [['fields', 'type'], 'safe'],
+            [['fields', 'conditions' ,'type'], 'safe'],
             [['addPropertyGroups', 'multipleValuesDelimiter', 'additionalFields'], 'safe'],
             [['createIfNotExists'], 'boolean'],
         ];
@@ -146,6 +152,7 @@ class ImportModel extends Model implements \Serializable
         return Json::encode([
             'object' => $this->object,
             'fields' => $this->fields,
+            'conditions' => $this->conditions,
             'type' => $this->type,
             'user' => Yii::$app->user->id,
             'addPropertyGroups' => is_array($this->addPropertyGroups) ? $this->addPropertyGroups : [],
@@ -161,12 +168,13 @@ class ImportModel extends Model implements \Serializable
 
         $this->object = $fields['object'];
         $this->fields = $fields['fields'];
+        $this->conditions = isset($fields['conditions']) ? $fields['conditions'] : [];
         $this->type = $fields['type'];
         $this->user = $fields['user'];
         $this->addPropertyGroups = $fields['addPropertyGroups'];
         $this->createIfNotExists = $fields['createIfNotExists'];
         $this->multipleValuesDelimiter = $fields['multipleValuesDelimiter'];
-        $this->additionalFields = isset($fields['fields']['additionalFields'])?$fields['fields']['additionalFields']:[];
+        $this->additionalFields = isset($fields['fields']['additionalFields']) ? $fields['fields']['additionalFields'] : [];
 
     }
 }
