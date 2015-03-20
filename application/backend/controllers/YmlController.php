@@ -33,6 +33,23 @@ class YmlController extends Controller
                     $config->update();
                 }
             }
+
+            if (isset($_POST['data'])) {
+
+                $ymlDataFields = [];
+
+                foreach ($_POST['data'] as $key => $one) {
+                    if(isset($one['type']) && $one['type'] ) {
+                        $ymlDataFields[$key] = $one;
+                    }
+                }
+                $config =  Config::find()->where(['key'=>'fields_params'])->one();
+                $config->value = json_encode($ymlDataFields);
+                $config->save();
+            }
+
+
+
         }
 
         return $this->render('settings',
@@ -40,7 +57,8 @@ class YmlController extends Controller
                 'main_currency' => Config::getValue("yml.main_currency"),
                 'show_all_properties' => Config::getValue("yml.show_all_properties"),
                 'default_offer_type' => Config::getValue("yml.default_offer_type"),
-                'local_delivery_cost' => Config::getValue("yml.local_delivery_cost")
+                'local_delivery_cost' => Config::getValue("yml.local_delivery_cost"),
+                'fields_params' => Config::getValue('yml.fields_params')
             ]
         );
     }

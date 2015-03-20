@@ -67,6 +67,42 @@ $this->params['breadcrumbs'][] = $this->title;
             </tr>
         </table>
 
+
+        <?php
+        $ymlFilds = [
+            [
+                'key' => 'vendor',
+                'label' => 'Производитель',
+                'required' => true
+            ],
+            [
+                'key' => 'name',
+                'label' => 'Название товарного предложения',
+                'required' => true
+            ],
+        ];
+
+        $relationLinks = [
+            [
+                'class' => \app\models\Image::className(),
+                'relationName' => 'getImages'
+            ],
+            [
+                'class' => \app\models\Category::className(),
+                'relationName' => 'getCategory'
+            ],
+        ];
+
+
+        echo \app\backend\widgets\comparisonData::widget([
+            'fields' => $ymlFilds,
+            'object' => \app\models\Object::getForClass(\app\models\Product::className()),
+            'data' => json_decode($fields_params),
+            'relationLinks' => $relationLinks
+        ]);
+
+        ?>
+
         <?=
         Html::submitButton(
             Icon::show('save') . Yii::t('app', 'Save'),
@@ -80,6 +116,10 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'btn btn-primary', 'id' => 'create_yml']
         )
         ?>
+
+
+
+
 
         <?= Html::endForm() ?>
     </div>

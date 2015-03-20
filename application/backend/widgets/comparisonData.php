@@ -1,0 +1,129 @@
+<?php
+
+
+namespace app\backend\widgets;
+
+
+use app\models\Property;
+use yii\helpers\ArrayHelper;
+use yii\db\Query;
+use app\models\PropertyGroup;
+use yii\base\Widget;
+use yii\db\ActiveRecord;
+
+/**
+ * @property \app\models\Object  $object
+ * @property ActiveRecord  $model
+ */
+class comparisonData extends Widget
+{
+
+    public $object = null;
+    protected $model = null;
+
+    public $fields = [
+        [
+            'key' => 'key',
+            'label' => 'label',
+            'required' => true
+        ]
+    ];
+    public $types = [
+        'field' => 'Field type',
+        'property' => 'Property type',
+        'relation' => 'Relation type'
+    ];
+    public $data = [];
+    public $viewFile = 'comparisonData';
+
+    public $relationLinks = [];
+
+
+
+    public function init() {
+
+        $class = $this->object->object_class;
+
+        $this->model = new $class;
+
+
+        return parent::init();
+    }
+
+
+
+    public function run()
+    {
+
+        echo $this->render('comparisonData', [
+            'widgetId' => $this->id,
+            'object' => $this->object,
+            'fields' => $this->fields,
+            'types' => $this->types,
+            'data' => $this->data,
+            'options' => $this->getOptions()
+        ]);
+    }
+
+
+    protected function getOptions()
+    {
+        return [
+            'fields' => $this->getFields(),
+            'properties' => $this->getProperties(),
+            'relations' => $this->getRelations()
+        ];
+    }
+
+
+
+    protected function getRelations() {
+
+        $results = [];
+
+        foreach ($this->relationLinks as $link) {
+
+
+
+            $results[$link['relationName']] = ArrayHelper::merge(
+                $link,
+                [
+                    'values' => (new $link['class'] )->attributeLabels()
+                ]
+                );
+            ;
+        }
+
+
+        return $results;
+
+    }
+
+
+
+    protected function getFields()
+    {
+        return $this->model->attributeLabels();
+
+    }
+
+    protected function getProperties() {
+        $result = [];
+        $query = new Query;
+        $query->select(
+            Property::tableName().'.key, '.Property::tableName().'.name'
+        )
+            ->from(Property::tableName());
+        $query->innerJoin(
+            PropertyGroup::tableName(),
+            PropertyGroup::tableName().'.id = '.Property::tableName().'.property_group_id'
+        );
+        $query->andWhere([
+            PropertyGroup::tableName().'.object_id' => $this->object->id
+        ]);
+        $command = $query->createCommand();
+
+        return  ArrayHelper::map($command->queryAll(), 'key', 'name');
+    }
+
+}
