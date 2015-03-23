@@ -86,7 +86,8 @@ class RatingValues extends \yii\db\ActiveRecord
     public static function getValuesByObjectModel($object_model)
     {
         if (!is_object($object_model) || (!$object_model instanceof ActiveRecord)) {
-            if (null === $object_id = \app\models\Object::getForClass($object_model->className())) {
+            $object_id = \app\models\Object::getForClass($object_model->className());
+            if (null === $object_id) {
                 return [];
             }
         } else {
@@ -94,7 +95,8 @@ class RatingValues extends \yii\db\ActiveRecord
         }
 
         $cache_key = "RatingValues:{$object_id->id}:{$object_model->id}";
-        if (false === $result = Yii::$app->cache->get($cache_key)) {
+        $result = Yii::$app->cache->get($cache_key);
+        if (false === $result) {
             $query = static::find();
             $query->select('value')
                 ->where(['object_id' => $object_id->id, 'object_model_id' => $object_model->id])

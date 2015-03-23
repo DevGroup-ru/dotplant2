@@ -81,7 +81,9 @@ class RatingItem extends \yii\db\ActiveRecord
     {
         $cache_key = 'RatingItem:Groups';
         $cache = Yii::$app->cache->get($cache_key);
-        if ((true === $fetch) && (true === $as_array) && (false !== $cache)) {
+        if (true === $fetch
+            && true === $as_array
+            && false !== $cache) {
             return $cache;
         }
 
@@ -124,7 +126,7 @@ class RatingItem extends \yii\db\ActiveRecord
     {
         $query = static::find()
             ->distinct()
-            ->where(['like', 'rating_group', $name])
+            ->where(['rating_group' => $name])
             ->groupBy('rating_group')
             ->orderBy(['rating_group' => SORT_ASC])
             ->asArray();
@@ -140,7 +142,7 @@ class RatingItem extends \yii\db\ActiveRecord
      */
     public static function getItemsByAttributes($attributes = [], $fetch = true, $as_array = false)
     {
-        if (empty($attributes) && !is_array($attributes)) {
+        if (!is_array($attributes)) {
             return [];
         }
 
@@ -151,7 +153,9 @@ class RatingItem extends \yii\db\ActiveRecord
 
         $cache_key = 'RatingItem:'.Json::encode($attributes);
         $cache = Yii::$app->cache->get($cache_key);
-        if ((true === $fetch) && (true === $as_array) && (false !== $cache)) {
+        if (true === $fetch
+            && true === $as_array
+            && false !== $cache) {
             return $cache;
         }
 
