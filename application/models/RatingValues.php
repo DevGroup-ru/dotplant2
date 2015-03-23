@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\caching\TagDependency;
 
 /**
  * This is the model class for table "{{%rating_values}}".
@@ -24,6 +25,18 @@ class RatingValues extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return '{{%rating_values}}';
+    }
+
+    /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+        ];
     }
 
     /**
@@ -64,5 +77,44 @@ class RatingValues extends \yii\db\ActiveRecord
             'user_id' => Yii::t('app', 'User ID'),
             'date' => Yii::t('app', 'Date'),
         ];
+    }
+
+    /**
+     * @param $object_model
+     * @return array|mixed|\yii\db\ActiveRecord[]
+     */
+    public static function getValuesByObjectModel($object_model)
+    {
+        if (!is_object($object_model) || (!$object_model instanceof ActiveRecord)) {
+            if (null === $object_id = \app\models\Object::getForClass($object_model->className())) {
+                return [];
+            }
+        } else {
+            return [];
+        }
+
+        $cache_key = "RatingValues:{$object_id->id}:{$object_model->id}";
+        if (false === $result = Yii::$app->cache->get($cache_key)) {
+            $query = static::find();
+            $query->select('value')
+                ->where(['object_id' => $object_id->id, 'object_model_id' => $object_model->id])
+                ->asArray();
+            $result = $query->all();
+
+            Yii::$app->cache->set(
+                $cache_key,
+                $result,
+                0,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), "{$object_id->id}:{$object_model->id}")
+                        ],
+                    ]
+                )
+            );
+        }
+
+        return $result;
     }
 }
