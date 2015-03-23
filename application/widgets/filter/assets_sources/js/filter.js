@@ -1,6 +1,3 @@
-/**
- * Created by evgen-d on 20.08.14.
- */
 
 function getUrl(url) {
     var match = url.match(/([^\?]*)/i);
@@ -22,8 +19,11 @@ function getUrl(url) {
     });
     var query = "";
     if (Object.keys(params).length > 0) {
-        query += $.param(params);
+        query += '?' + $.param(params);
+    } else if (query_params.length > 0) {
+        query_params = '?' + query_params;
     }
+
     return url + query + query_params;
 }
 
