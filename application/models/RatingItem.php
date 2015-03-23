@@ -80,7 +80,8 @@ class RatingItem extends \yii\db\ActiveRecord
     public static function getGroupsAll($fetch = true, $as_array = false)
     {
         $cache_key = 'RatingItem:Groups';
-        if ((true === $fetch) && (true === $as_array) && (false !== $cache = Yii::$app->cache->get($cache_key))) {
+        $cache = Yii::$app->cache->get($cache_key);
+        if ((true === $fetch) && (true === $as_array) && (false !== $cache)) {
             return $cache;
         }
 
@@ -149,7 +150,8 @@ class RatingItem extends \yii\db\ActiveRecord
         }
 
         $cache_key = 'RatingItem:'.Json::encode($attributes);
-        if ((true === $fetch) && (true === $as_array) && (false !== $cache = Yii::$app->cache->get($cache_key))) {
+        $cache = Yii::$app->cache->get($cache_key);
+        if ((true === $fetch) && (true === $as_array) && (false !== $cache)) {
             return $cache;
         }
 
