@@ -26,6 +26,7 @@ use yii\data\ActiveDataProvider;
  * @property integer $status
  * @property string $text
  * @property integer $rate
+ * @property string $rating_id
  */
 class Review extends \yii\db\ActiveRecord
 {
@@ -59,7 +60,7 @@ class Review extends \yii\db\ActiveRecord
             [['author_name', 'text'], 'required', 'on' => 'default'],
             [['object_id', 'object_model_id', 'author_user_id', 'rate'], 'integer'],
             [['date_submitted', 'username', 'name', 'slug'], 'safe'],
-            [['author_name', 'author_email', 'author_phone', 'text', 'status'], 'string'],
+            [['author_name', 'author_email', 'author_phone', 'text', 'status', 'rating_id'], 'string'],
             [['author_email'], 'email'],
         ];
         if ($this->useCaptcha) {
@@ -108,6 +109,7 @@ class Review extends \yii\db\ActiveRecord
             'rate' => Yii::t('app', 'Rate'),
             'slug' => Yii::t('app', 'Slug'),
             'slug_compiled' => Yii::t('app', 'Slug Compiled'),
+            'rating_id' => 'Rating id',
         ];
     }
 
