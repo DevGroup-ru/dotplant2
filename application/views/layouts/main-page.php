@@ -9,7 +9,7 @@ use app\widgets\Alert;
 use yii\widgets\Breadcrumbs;
 
 ?>
-<?= $this->render('blocks/header');?>
+<?php include('blocks/header.php') ?>
 <?= $this->render('blocks/carousel');?>
     <div id="mainBody">
         <div class="container">
@@ -33,4 +33,4 @@ use yii\widgets\Breadcrumbs;
             </div>
         </div>
     </div>
-<?= $this->render('blocks/footer');?>
+<?php include('blocks/footer.php') ?>
