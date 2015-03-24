@@ -82,6 +82,10 @@ class Image extends \yii\db\ActiveRecord
                             'object_model_id' => $objectModelId,
                         ]
                     )
+                    ->orderBy([
+                        'sort_order' => SORT_ASC,
+                        'id' => SORT_ASC
+                    ])
                     ->all();
                 $object = Object::findById($objectId);
                 if (is_null($object)) {
