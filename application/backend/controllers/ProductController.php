@@ -7,6 +7,7 @@ use app\models\Image;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\Product;
+use app\models\Property;
 use app\models\PropertyStaticValues;
 use app\models\ViewObject;
 use app\properties\HasProperties;
@@ -476,6 +477,7 @@ class ProductController extends Controller
                     $rows
                 )->execute();
             }
+            $newModelProps = [];
             foreach (array_keys($model->propertyGroups) as $key) {
                 $opg = new ObjectPropertyGroup();
                 $opg->attributes = [
@@ -484,10 +486,20 @@ class ProductController extends Controller
                     'property_group_id' => $key,
                 ];
                 $opg->save();
+                $props = Property::getForGroupId($key);
+                foreach ($props as $prop) {
+                    $propValues = $model->getPropertyValuesByPropertyId($prop->id);
+                    if ($propValues !== null) {
+                        foreach ($propValues->values as $val) {
+                            $valueToSave = ArrayHelper::getValue($val, 'psv_id', $val['value']);
+                            $newModelProps[$prop->key][] = $valueToSave;
+                        }
+                    }
+                }
             }
             $newModel->saveProperties(
                 [
-                    'Properties_Product_' . $newModel->id => $model->abstractModel->attributes,
+                    'Properties_Product_' . $newModel->id => $newModelProps,
                 ]
             );
             Yii::$app->session->setFlash('success', Yii::t('shop', 'Product has been cloned successfully.'));
