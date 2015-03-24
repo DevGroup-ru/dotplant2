@@ -285,8 +285,7 @@ class CartController extends Controller
         if ($id === null) {
             $cart = Cart::getCart();
             if ($cart === null || $cart->items_count == 0 || !$cart->reCalc(true)) {
-                $this->redirect(['/cart']);
-                Yii::$app->end();
+                return $this->redirect(['/cart']);
             }
             /** @var Order|HasProperties $order */
             $order = new Order;
@@ -312,7 +311,9 @@ class CartController extends Controller
         if (Yii::$app->request->isPost) {
             $order->load(Yii::$app->request->post());
             $order->abstractModel->setAttrubutesValues(Yii::$app->request->post());
-            if ($order->validate() && $order->abstractModel->validate()) {
+            $modelValidate = $order->validate();
+            $propertyValidate = $order->abstractModel->validate();
+            if ($modelValidate && $propertyValidate) {
                 $order->order_status_id = 2;
                 $formNameWithoutId = $order->abstractModel->formName();
                 $order->save();
@@ -344,7 +345,7 @@ class CartController extends Controller
                     $formNameWithoutId . $order->id => Yii::$app->request->post($formNameWithoutId),
                 ];
                 $order->saveProperties($data);
-                $this->redirect(['/cart/payment-type', 'id' => $order->id]);
+                return $this->redirect(['/cart/payment-type', 'id' => $order->id]);
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('shop', 'Please fill required form fields'));
             }
@@ -374,7 +375,7 @@ class CartController extends Controller
             $paymentType = PaymentType::find($order->payment_type_id);
             if ($order->validate() && $paymentType !== null) {
                 $order->save();
-                $this->redirect(['/cart/payment', 'id' => $order->id]);
+                return $this->redirect(['/cart/payment', 'id' => $order->id]);
             }
         }
 
