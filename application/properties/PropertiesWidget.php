@@ -4,7 +4,9 @@ namespace app\properties;
 
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
+use app\models\Property;
 use app\models\PropertyGroup;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Widget;
 use yii\caching\TagDependency;
@@ -67,7 +69,9 @@ class PropertiesWidget extends Widget
                 new TagDependency(
                     [
                         'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(get_class($this->model), $this->model->id),
+                            ActiveRecordHelper::getCommonTag(get_class($this->model)),
+                            ActiveRecordHelper::getCommonTag(PropertyGroup::className()),
+                            ActiveRecordHelper::getCommonTag(Property::className()),
                         ],
                     ]
                 )
