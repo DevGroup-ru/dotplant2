@@ -53,7 +53,7 @@ class FileController extends Controller
                             'additionalFields' => $model->additionalFields,
                         ]
                     );
-                    if ($import->setData($model->fields)) {
+                    if ($import->processImport($model->fields)) {
                         $importStatus->status = Import::STATUS_COMPLETE;
                     } else {
                         $importStatus->status = Import::STATUS_FAILED;
@@ -109,7 +109,7 @@ class FileController extends Controller
                         'type' => $model->type,
                     ]
                 );
-                $import->getData($model->fields, 25, $model->conditions );
+                $import->processExport($model->fields, $model->conditions);
 
                 $exportStatus->filename = $filename;
                 $exportStatus->status = Export::STATUS_COMPLETE;

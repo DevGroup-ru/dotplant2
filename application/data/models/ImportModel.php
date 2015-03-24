@@ -103,7 +103,7 @@ class ImportModel extends Model implements \Serializable
     public function rules()
     {
         return [
-            [['file'], 'file', 'extensions' => 'csv'],
+            [['file'], 'file', 'extensions' => 'csv, xls, xlsx'],
             [['object'], 'integer'],
             [['object'], 'required'],
             [['fields', 'conditions' ,'type'], 'safe'],
@@ -117,6 +117,8 @@ class ImportModel extends Model implements \Serializable
         return [
             'csv' => 'CSV',
             'excelCsv' => 'Excel CSV',
+            'xls' => 'Excel XLS',
+            'xlsx' => 'Excel XLSX',
         ];
     }
 
@@ -125,6 +127,8 @@ class ImportModel extends Model implements \Serializable
         $extensions = [
             'excelCsv' => 'csv',
             'csv' => 'csv',
+            'xls' => 'xls',
+            'xlsx' => 'xlsx',
         ];
         if (!isset($extensions[$type])) {
             return 'unknown';
