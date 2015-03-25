@@ -36,7 +36,7 @@ class AdminController extends Controller
                 continue;
             }
             $img = \yii\imagine\Image::thumbnail(
-                \Yii::getAlias($dir . $image->filename),
+                $filename,
                 80,
                 80,
                 ManipulatorInterface::THUMBNAIL_INSET
