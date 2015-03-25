@@ -16,14 +16,25 @@ class AdminController extends Controller
 {
     /**
      * Generate thumbnails for Image model
+     * @param bool $updateThumbnailSrc
+     * @param bool $deleteIfNotExists
+     * @throws \Exception
      */
-    public function actionThumbnails()
+    public function actionThumbnails($updateThumbnailSrc = false, $deleteIfNotExists = false)
     {
         mb_internal_encoding('UTF-8');
         $images = Image::find()->all();
         /** @var $images Image[] */
         foreach ($images as $image) {
             $dir = '@webroot' . mb_substr($image->image_src, 0, mb_strrpos($image->image_src, '/')) . '/';
+            $filename = \Yii::getAlias($dir . $image->filename);
+            if (!file_exists($filename)) {
+                echo "File not found: " . $filename . "\n";
+                if ($deleteIfNotExists) {
+                    $image->delete();
+                }
+                continue;
+            }
             $img = \yii\imagine\Image::thumbnail(
                 \Yii::getAlias($dir . $image->filename),
                 80,
@@ -31,6 +42,10 @@ class AdminController extends Controller
                 ManipulatorInterface::THUMBNAIL_INSET
             );
             $img->save(\Yii::getAlias($dir . 'small-' . $image->filename));
+            if ($updateThumbnailSrc) {
+                $image->thumbnail_src = mb_substr($image->image_src, 0, mb_strrpos($image->image_src, '/')) . '/small-' . $image->filename;
+                $image->save(true, ['thumbnail_src']);
+            }
         }
     }
 
