@@ -125,6 +125,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'fontcolor',
                             'video',
                         ],
+                        'deniedTags' => [],
                     ],
                 ]); ?>
 
@@ -142,6 +143,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'fontcolor',
                             'video',
                         ],
+                        'deniedTags' => [],
                     ],
                 ]); ?>
 
