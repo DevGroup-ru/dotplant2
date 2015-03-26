@@ -4,10 +4,10 @@ namespace app\models;
 
 use app\properties\HasProperties;
 use Yii;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "order".
- *
  * @property integer $id
  * @property integer $user_id
  * @property integer $manager_id
@@ -133,15 +133,14 @@ class Order extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if (isset($changedAttributes['order_status_id']) && !is_null($changedAttributes['order_status_id'])
-            && $this->order_status_id == 3
+        if (isset($changedAttributes['order_status_id']) && !is_null(
+                $changedAttributes['order_status_id']
+            ) && $this->order_status_id == 3
         ) {
-            if (isset($this->abstractModel->attributes['email'])
-                && !empty($this->abstractModel->attributes['email'])
+            if (isset($this->abstractModel->attributes['email']) && !empty($this->abstractModel->attributes['email'])
             ) {
                 try {
-                    Yii::$app->mail
-                        ->compose(
+                    Yii::$app->mail->compose(
                             Config::getValue(
                                 'shop.clientOrderEmailTemplate',
                                 '@app/views/cart/client-order-email-template'
@@ -149,11 +148,9 @@ class Order extends \yii\db\ActiveRecord
                             [
                                 'order' => $this,
                             ]
-                        )
-                        ->setTo(trim($this->abstractModel->email))
-                        ->setFrom(Yii::$app->mail->transport->getUsername())
-                        ->setSubject(Yii::t('shop', 'Order #{orderId}', ['orderId' => $this->id]))
-                        ->send();
+                        )->setTo(trim($this->abstractModel->email))->setFrom(
+                            Yii::$app->mail->transport->getUsername()
+                        )->setSubject(Yii::t('shop', 'Order #{orderId}', ['orderId' => $this->id]))->send();
                 } catch (\Exception $e) {
                     // do nothing
                 }
@@ -161,8 +158,7 @@ class Order extends \yii\db\ActiveRecord
             $orderEmail = Config::getValue('shop.orderEmail', null);
             if (!empty($orderEmail)) {
                 try {
-                    Yii::$app->mail
-                        ->compose(
+                    Yii::$app->mail->compose(
                             Config::getValue(
                                 'shop.orderEmailTemplate',
                                 '@app/views/cart/order-email-template'
@@ -170,11 +166,9 @@ class Order extends \yii\db\ActiveRecord
                             [
                                 'order' => $this,
                             ]
-                        )
-                        ->setTo(explode(',', $orderEmail))
-                        ->setFrom(Yii::$app->mail->transport->getUsername())
-                        ->setSubject(Yii::t('shop', 'Order #{orderId}', ['orderId' => $this->id]))
-                        ->send();
+                        )->setTo(explode(',', $orderEmail))->setFrom(
+                            Yii::$app->mail->transport->getUsername()
+                        )->setSubject(Yii::t('shop', 'Order #{orderId}', ['orderId' => $this->id]))->send();
                 } catch (\Exception $e) {
                     // do nothing
 
@@ -242,9 +236,10 @@ class Order extends \yii\db\ActiveRecord
             if (is_null($item->product)) {
                 $item->delete();
             } else {
-                $totalPrice += $item->quantity * $item->product->convertedPrice();
+                $options = Json::decode($item['additional_options']);
+                $totalPrice += $item->quantity * ($item->product->convertedPrice() + $options['additionalPrice']);
                 if ($cartCountsUniqueProducts === true) {
-                    $itemsCount++;
+                    $itemsCount ++;
                 } else {
                     $itemsCount += $item->quantity;
                 }

@@ -168,4 +168,5 @@ return [
     'Products' => 'Продукты',
     'Order statuses' => 'Статусы заказа',
     'Payment types' => 'Типы оплаты',
+    'Additional price' => 'Добавочная цена',
 ];
