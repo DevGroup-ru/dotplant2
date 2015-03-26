@@ -34,6 +34,9 @@ class PropertyPart extends UrlPart
         &$previous_parts
     ) {
         $property = Property::findById($this->property_id);
+        if (is_null($property)) {
+            return false;
+        }
         if ($property->has_static_values && $property->has_slugs_in_values) {
             $static_values = PropertyStaticValues::getValuesForPropertyId($this->property_id);
             $slugs = explode('/', $next_part);
