@@ -29,7 +29,12 @@ class HasProperties extends Behavior
     private $static_values = null;
     private $table_inheritance_row = null;
     public $props;
-
+    
+    /**
+     * Get property group id by property id 
+     * @param $id property id
+     * @return int|string property group id
+     */
     private function getGroupIdBypropertyId($id)
     {
         foreach ($this->property_id_to_group_id as $groupId => $propertyIds) {
