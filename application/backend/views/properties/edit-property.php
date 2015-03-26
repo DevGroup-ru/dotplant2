@@ -128,6 +128,48 @@ $this->endBlock();
 
             <?php BackendWidget::end(); ?>
 
+            <?php
+            BackendWidget::begin(
+                [
+                    'title'=> Yii::t('app', 'Images'),
+                    'icon'=>'image',
+                    'footer'=>$this->blocks['submit']
+                ]
+            ); ?>
+
+            <div id="actions">
+                <?=
+                \yii\helpers\Html::tag(
+                    'span',
+                    Icon::show('plus') . Yii::t('app', 'Add files..'),
+                    [
+                        'class' => 'btn btn-success fileinput-button'
+                    ]
+                ) ?>
+            </div>
+
+            <?= \app\widgets\image\ImageDropzone::widget([
+                'name' => 'file',
+                'url' => ['/backend/product/upload'],
+                'removeUrl' => ['/backend/product/remove'],
+                'uploadDir' => '/theme/resources/product-images',
+                'sortable' => true,
+                'sortableOptions' => [
+                    'items' => '.dz-image-preview',
+                ],
+                'objectId' => $object->id,
+                'modelId' => $model->id,
+                'htmlOptions' => [
+                    'class' => 'table table-striped files',
+                    'id' => 'previews',
+                ],
+                'options' => [
+                    'clickable' => ".fileinput-button",
+                ],
+            ]); ?>
+
+            <?php BackendWidget::end(); ?>
+
         </article>
 
     </div>

@@ -9,6 +9,7 @@ use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
 use app\models\Submission;
+use app\widgets\image\SaveInfoAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -28,6 +29,15 @@ class PropertiesController extends Controller
                         'roles' => ['property manage'],
                     ],
                 ],
+            ],
+        ];
+    }
+
+    public function actions()
+    {
+        return [
+            'save-info' => [
+                'class' => SaveInfoAction::className(),
             ],
         ];
     }
@@ -123,6 +133,7 @@ class PropertiesController extends Controller
         } else {
             $model = Property::findById($id);
         }
+        $object = Object::getForClass(Property::className());
         $model->property_group_id = $property_group_id;
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
@@ -182,6 +193,7 @@ class PropertiesController extends Controller
 
             $save_result = $model->save();
             if ($save_result) {
+                $this->runAction('save-info');
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
                 $returnUrl = Yii::$app->request->get(
                     'returnUrl',
@@ -231,7 +243,8 @@ class PropertiesController extends Controller
                 'model' => $model,
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
-                'fieldinterpretParentId' => null == $spamCheckerConfig ? 0 : $spamCheckerConfig
+                'fieldinterpretParentId' => null == $spamCheckerConfig ? 0 : $spamCheckerConfig,
+                'object' => $object,
             ]
         );
     }
@@ -243,11 +256,13 @@ class PropertiesController extends Controller
         } else {
             $model = PropertyStaticValues::findOne($id);
         }
+        $object = Object::getForClass(PropertyStaticValues::className());
         $model->property_id = $property_id;
         $post = \Yii::$app->request->post();
         if ($model->load($post) && $model->validate()) {
             $save_result = $model->save();
             if ($save_result) {
+                $this->runAction('save-info');
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
                 $returnUrl = Yii::$app->request->get(
                     'returnUrl',
@@ -288,6 +303,7 @@ class PropertiesController extends Controller
             'edit-static-value',
             [
                 'model' => $model,
+                'object' => $object,
             ]
         );
     }
