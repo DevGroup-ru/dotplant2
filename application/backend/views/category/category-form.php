@@ -145,7 +145,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'paragraphize' => true,
                         'pastePlainText' => true,
                         'buttonSource' => true,
-                        'imageManagerJson' => Url::to(['/backend/category/imperavi-images-get']),
+                        'imageManagerJson' => Url::to(['/backend/dashboard/imperavi-images-get']),
                         'plugins' => [
                             'table',
                             'fontsize',
@@ -158,7 +158,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'replaceTags' => [],
                         'deniedTags' => [],
                         'removeEmpty' => [],
-                        'imageUpload' => Url::to(['/backend/category/imperavi-image-upload']),
+                        'imageUpload' => Url::to(['/backend/dashboard/imperavi-image-upload']),
                     ],
                 ]
             );?>
@@ -172,7 +172,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'paragraphize' => true,
                         'pastePlainText' => true,
                         'buttonSource' => true,
-                        'imageManagerJson' => Url::to(['/backend/category/imperavi-images-get']),
+                        'imageManagerJson' => Url::to(['/backend/dashboard/imperavi-images-get']),
                         'plugins' => [
                             'table',
                             'fontsize',
@@ -185,7 +185,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'replaceTags' => [],
                         'deniedTags' => [],
                         'removeEmpty' => [],
-                        'imageUpload' => Url::to(['/backend/category/imperavi-image-upload']),
+                        'imageUpload' => Url::to(['/backend/dashboard/imperavi-image-upload']),
                     ],
                 ]
             );?>

@@ -348,7 +348,7 @@ SCRIPT;
             'paragraphize' => true,
             'pastePlainText' => true,
             'buttonSource' => true,
-            'imageManagerJson' => Url::to(['/backend/product/imperavi-images-get']),
+            'imageManagerJson' => Url::to(['/backend/dashboard/imperavi-images-get']),
             'plugins' => [
                 'table',
                 'fontsize',
@@ -361,7 +361,7 @@ SCRIPT;
             'replaceTags' => [],
             'deniedTags' => [],
             'removeEmpty' => [],
-            'imageUpload' => Url::to(['/backend/product/imperavi-image-upload']),
+            'imageUpload' => Url::to(['/backend/dashboard/imperavi-image-upload']),
         ],
     ]); ?>
 
@@ -372,7 +372,7 @@ SCRIPT;
             'paragraphize' => true,
             'pastePlainText' => true,
             'buttonSource' => true,
-            'imageManagerJson' => Url::to(['/backend/product/imperavi-images-get']),
+            'imageManagerJson' => Url::to(['/backend/dashboard/imperavi-images-get']),
             'plugins' => [
                 'table',
                 'fontsize',
@@ -385,7 +385,7 @@ SCRIPT;
             'replaceTags' => [],
             'deniedTags' => [],
             'removeEmpty' => [],
-            'imageUpload' => Url::to(['/backend/product/imperavi-image-upload']),
+            'imageUpload' => Url::to(['/backend/dashboard/imperavi-image-upload']),
         ],
     ]); ?>
 

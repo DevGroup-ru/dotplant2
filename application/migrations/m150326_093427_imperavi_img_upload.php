@@ -26,7 +26,7 @@ class m150326_093427_imperavi_img_upload extends Migration
                 'parent_id' => $imperavi->id,
                 'name' => 'Img upload dir',
                 'key' => 'uploadDir',
-                'value' => '@webroot/upload',
+                'value' => '/upload/images',
                 'preload' => 1,
                 'path' => $imperavi->path . '.uploadDir',
             ]

@@ -34,23 +34,6 @@ class PrefilteredPagesController extends Controller
         ];
     }
 
-    public function actions()
-    {
-        return [
-            'imperavi-image-upload' => [
-                'class' => 'vova07\imperavi\actions\UploadAction',
-                'url' => str_replace('@webroot', '', Config::getValue('core.imperavi.uploadDir')),
-                'path' => Config::getValue('core.imperavi.uploadDir'),
-            ],
-            'imperavi-images-get' => [
-                'class' => 'vova07\imperavi\actions\GetAction',
-                'url' => str_replace('@webroot', '', Config::getValue('core.imperavi.uploadDir')),
-                'path' => Config::getValue('core.imperavi.uploadDir'),
-                'type' => GetAction::TYPE_IMAGES,
-            ],
-        ];
-    }
-
     public function actionIndex()
     {
         $searchModel = new PrefilteredPages();

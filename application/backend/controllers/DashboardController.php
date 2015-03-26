@@ -5,6 +5,8 @@ namespace app\backend\controllers;
 use app\backend\actions\FlushCacheAction;
 use app\backend\models\Notification;
 use app\components\Helper;
+use app\models\Config;
+use vova07\imperavi\actions\GetAction;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -43,6 +45,17 @@ class DashboardController extends Controller
             'flush-cache' => [
                 'class' => FlushCacheAction::className(),
             ],
+            'imperavi-image-upload' => [
+                'class' => 'vova07\imperavi\actions\UploadAction',
+                'url' => Config::getValue('core.imperavi.uploadDir', '/upload/images/'),
+                'path' => '@webroot' . Config::getValue('core.imperavi.uploadDir', '/upload/images'),
+            ],
+            'imperavi-images-get' => [
+                'class' => 'vova07\imperavi\actions\GetAction',
+                'url' => Config::getValue('core.imperavi.uploadDir', '/upload/images/'),
+                'path' => '@webroot' . Config::getValue('core.imperavi.uploadDir', '/upload/images'),
+                'type' => GetAction::TYPE_IMAGES,
+            ],
         ];
     }
 
@@ -54,19 +67,17 @@ class DashboardController extends Controller
     public function actionNotifications($id = null)
     {
         $pageSize = 10;
-        $query = Notification::find()
-            ->where(
-                [
-                    'user_id' => \Yii::$app->user->id,
-                ]
-            )
-            ->orderBy('`id` DESC');
+        $query = Notification::find()->where(
+            [
+                'user_id' => \Yii::$app->user->id,
+            ]
+        )->orderBy('`id` DESC');
         $showMoreLink = true;
         if (is_null($id)) {
             $query->andWhere(['viewed' => 0]);
         } else {
             $query->andWhere(['viewed' => 1]);
-            if ($id != -1) {
+            if ($id != - 1) {
                 $query->andWhere(['<', 'id', $id]);
             }
             $query->limit($pageSize);
@@ -81,7 +92,7 @@ class DashboardController extends Controller
                 $id = $notifications[$count - 1]->id;
             }
         } else {
-            $id = -1;
+            $id = - 1;
         }
         return $this->renderPartial(
             'notifications',

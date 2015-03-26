@@ -110,7 +110,7 @@ $action = isset($model->id) ? 'edit?id=' . $model->id : 'edit';
                         'paragraphize' => true,
                         'pastePlainText' => true,
                         'buttonSource' => true,
-                        'imageManagerJson' => Url::to(['/backend/page/imperavi-images-get']),
+                        'imageManagerJson' => Url::to(['/backend/dashboard/imperavi-images-get']),
                         'plugins' => [
                             'table',
                             'fontsize',
@@ -123,7 +123,7 @@ $action = isset($model->id) ? 'edit?id=' . $model->id : 'edit';
                         'replaceTags' => [],
                         'deniedTags' => [],
                         'removeEmpty' => [],
-                        'imageUpload' => Url::to(['/backend/page/imperavi-image-upload']),
+                        'imageUpload' => Url::to(['/backend/dashboard/imperavi-image-upload']),
                     ],
                 ]
             );?>
