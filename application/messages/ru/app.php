@@ -338,7 +338,7 @@ return [
     'Property static value' => 'Статичное значение свойства',
     'Property static value edit' => 'Редактирование статичного свойства',
     'Published' => 'Опубликовано',
-    'Rate' => '',
+    'Rate' => 'Оценка',
     'Rbac' => 'Роли',
     'Rbac role' => 'Роль RBAC',
     'Received' => 'Получено',

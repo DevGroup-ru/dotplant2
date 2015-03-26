@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
             'columns' => [
-                'text',
+                'text:truncated',
                 [
                     'class' => yii\grid\DataColumn::className(),
                     'attribute' => 'username',

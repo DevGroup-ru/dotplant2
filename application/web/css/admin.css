@@ -178,29 +178,28 @@ img.image-column {
 }
 
 /* line 143, ../sass/admin.scss */
-div#Product-grid .table td {
-  padding: 4px;
-}
-
-/* line 146, ../sass/admin.scss */
-div#Product-grid {
+div#Product-grid, div#reviews-grid {
   font-size: 12px;
 }
-
-/* line 150, ../sass/admin.scss */
-div#Product-grid .btn-sm {
+/* line 145, ../sass/admin.scss */
+div#Product-grid .table td, div#reviews-grid .table td {
+  padding: 4px;
+}
+/* line 148, ../sass/admin.scss */
+div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
   padding: 3px 5px 3px;
   font-size: 10px;
 }
 
-/* line 155, ../sass/admin.scss */
+/* line 157, ../sass/admin.scss */
+div#Product-grid
 .jstree {
   font-size: 12px;
   max-height: 100%;
   overflow: auto;
 }
 
-/* line 161, ../sass/admin.scss */
+/* line 165, ../sass/admin.scss */
 .jarviswidget .jstree {
   max-height: 400px;
   overflow: auto;

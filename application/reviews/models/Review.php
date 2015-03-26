@@ -110,6 +110,8 @@ class Review extends \yii\db\ActiveRecord
             'slug' => Yii::t('app', 'Slug'),
             'slug_compiled' => Yii::t('app', 'Slug Compiled'),
             'rating_id' => 'Rating id',
+            'name' => Yii::t('app', 'Name'),
+            'username' => 'Login',
         ];
     }
 

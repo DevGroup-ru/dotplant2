@@ -140,17 +140,17 @@ img.image-column {
     min-height: 32px;
 }
 
-div#Product-grid .table td {
-  padding: 4px;
-}
-div#Product-grid {
+div#Product-grid, div#reviews-grid {
   font-size: 12px;
+  .table td {
+    padding: 4px;
+  }
+  .btn-sm{
+    padding: 3px 5px 3px;
+    font-size: 10px;
+  }
 }
 
-div#Product-grid .btn-sm{
-  padding: 3px 5px 3px;
-  font-size: 10px;
-}
 
 .jstree {
   font-size: 12px;

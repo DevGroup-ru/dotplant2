@@ -15,6 +15,9 @@ return [
     ],
     'components' => [
         'db' => $db,
+        'formatter' => [
+            'class' => 'app\components\Formatter',
+        ],
         'i18n' => [
             'translations' => [
                 'shop' => [
