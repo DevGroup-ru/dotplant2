@@ -13,8 +13,6 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Controller;
-use yii\db\Query;
-use yii\helpers\Json;
 
 class PropertiesController extends Controller
 {
@@ -313,24 +311,6 @@ class PropertiesController extends Controller
     public function actionDeleteProperty($id, $property_group_id)
     {
         $model = Property::findOne($id);
-        $static_values = PropertyStaticValues::find()
-            ->where(['property_id'=>$model->id])
-            ->all();
-        foreach ($static_values as $psv) {
-            $psv->delete();
-        }
-        if ($model->is_column_type_stored) {
-            $object = Object::findById($model->group->object_id);
-            Yii::$app->db->createCommand()
-                ->dropColumn($object->column_properties_table_name, $model->key)
-                ->execute();
-            if ($object->object_class == Form::className()) {
-                $submissionObject = Object::getForClass(Submission::className());
-                Yii::$app->db->createCommand()
-                    ->dropColumn($submissionObject->column_properties_table_name, $model->key)
-                    ->execute();
-            }
-        }
         $model->delete();
         Yii::$app->session->setFlash('danger', Yii::t('app', 'Object removed'));
         return $this->redirect(
@@ -349,24 +329,6 @@ class PropertiesController extends Controller
         if (!empty($items)) {
             $items = Property::find()->where(['in', 'id', $items])->all();
             foreach ($items as $item) {
-                $static_values = PropertyStaticValues::find()
-                    ->where(['property_id' => $item->id])
-                    ->all();
-                foreach ($static_values as $psv) {
-                    $psv->delete();
-                }
-                if ($item->is_column_type_stored) {
-                    $object = Object::findById($item->group->object_id);
-                    Yii::$app->db->createCommand()
-                        ->dropColumn($object->column_properties_table_name, $item->key)
-                        ->execute();
-                    if ($object->object_class == Form::className()) {
-                        $submissionObject = Object::getForClass(Submission::className());
-                        Yii::$app->db->createCommand()
-                            ->dropColumn($submissionObject->column_properties_table_name, $item->key)
-                            ->execute();
-                    }
-                }
                 $item->delete();
             }
         }
@@ -377,18 +339,6 @@ class PropertiesController extends Controller
     public function actionDeleteGroup($id)
     {
         $model = PropertyGroup::findOne($id);
-        $properties = Property::find()
-            ->where(['property_group_id'=>$model->id])
-            ->all();
-        foreach ($properties as $prop) {
-            $static_values = PropertyStaticValues::find()
-                ->where(['property_id'=>$prop->id])
-                ->all();
-            foreach ($static_values as $psv) {
-                $psv->delete();
-            }
-            $prop->delete();
-        }
         $model->delete();
         Yii::$app->session->setFlash('danger', Yii::t('app', 'Object removed'));
         return $this->redirect(
@@ -410,12 +360,6 @@ class PropertiesController extends Controller
                     ->where(['property_group_id' => $item->id])
                     ->all();
                 foreach ($properties as $prop) {
-                    $static_values = PropertyStaticValues::find()
-                        ->where(['property_id' => $prop->id])
-                        ->all();
-                    foreach ($static_values as $psv) {
-                        $psv->delete();
-                    }
                     $prop->delete();
                 }
                 $item->delete();

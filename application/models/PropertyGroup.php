@@ -236,4 +236,21 @@ class PropertyGroup extends ActiveRecord
         }
         return $groups;
     }
+
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+        $properties = Property::findAll(['property_group_id' => $this->id]);
+        foreach ($properties as $prop) {
+            $prop->delete();
+        }
+        return true;
+    }
+    public function afterDelete()
+    {
+        ObjectPropertyGroup::deleteAll(['property_group_id' => $this->id]);
+        parent::afterDelete();
+    }
 }

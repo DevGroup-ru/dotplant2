@@ -25,9 +25,31 @@ class HasProperties extends Behavior
     private $object = null;
     private $properties = null;
     private $property_key_to_id = [];
+    private $property_id_to_group_id = [];
     private $static_values = null;
     private $table_inheritance_row = null;
     public $props;
+    
+    /**
+     * Get property group id by property id 
+     * @param $id property id
+     * @return int|string property group id
+     */
+    private function getGroupIdBypropertyId($id)
+    {
+        foreach ($this->property_id_to_group_id as $groupId => $propertyIds) {
+            if (in_array($id, $propertyIds)) {
+                return $groupId;
+            }
+        }
+        $property = Property::findById($id);
+        if (!array_key_exists($property->property_group_id, $this->property_id_to_group_id)) {
+            $this->property_id_to_group_id[$property->property_group_id] = [$id];
+        } else {
+            $this->property_id_to_group_id[$property->property_group_id][] = $id;
+        }
+        return $property->property_group_id;
+    }
 
     public function getObject()
     {
@@ -52,6 +74,7 @@ class HasProperties extends Behavior
             $values_for_abstract = [];
             $properties_models = [];
             $rules = [];
+            /** @var PropertyGroup $group */
             foreach ($groups as $group) {
                 $this->properties[$group->id] = [];
                 $props = Property::getForGroupId($group->id);
@@ -61,6 +84,11 @@ class HasProperties extends Behavior
                     $values_for_abstract[$p->key] = $values;
                     $properties_models[] = $p;
                     $this->property_key_to_id[$p->key] = $p->id;
+                    if (!isset($this->property_id_to_group_id[$group->id])) {
+                        $this->property_id_to_group_id[$group->id] = [$p->key];
+                    } else {
+                        $this->property_id_to_group_id[$group->id][] = $p->key;
+                    }
                     $handlerAdditionalParams = Json::decode($p->handler_additional_params);
                     if (isset($handlerAdditionalParams['rules']) && is_array($handlerAdditionalParams['rules'])) {
                         foreach ($handlerAdditionalParams['rules'] as $rule) {
@@ -113,7 +141,6 @@ class HasProperties extends Behavior
                 $my_data[$data['AddProperty']][] = '';
 
             }
-
             $new_values_for_abstract = [];
             foreach ($my_data as $property_key => $values) {
                 if (isset($this->property_key_to_id[$property_key])) {
@@ -123,11 +150,16 @@ class HasProperties extends Behavior
                     foreach ($values as $val) {
                         $vals[] = ['value' => $val, 'property_id' => $property_id];
                     }
-                    $val = new PropertyValue($vals, $property_id, $this->getObject()->id, $this->owner->id);
+                    $val = new PropertyValue(
+                        $vals,
+                        $property_id,
+                        $this->getObject()->id,
+                        $this->owner->id,
+                        $this->getGroupIdBypropertyId($property_id)
+                    );
                     $new_values_for_abstract[$property_key] = $val;
                 }
             }
-
             $this->abstract_model->updateValues($new_values_for_abstract, $this->getObject()->id, $this->owner->id);
         }
     }
