@@ -77,7 +77,7 @@ class DashboardController extends Controller
             $query->andWhere(['viewed' => 0]);
         } else {
             $query->andWhere(['viewed' => 1]);
-            if ($id != - 1) {
+            if ($id != -1) {
                 $query->andWhere(['<', 'id', $id]);
             }
             $query->limit($pageSize);
@@ -92,7 +92,7 @@ class DashboardController extends Controller
                 $id = $notifications[$count - 1]->id;
             }
         } else {
-            $id = - 1;
+            $id = -1;
         }
         return $this->renderPartial(
             'notifications',
