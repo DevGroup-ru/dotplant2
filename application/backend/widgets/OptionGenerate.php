@@ -57,12 +57,15 @@ class OptionGenerate extends Widget
 
         $optionGenerate = Json::decode($this->model->option_generate);
 
-        $groupModel = new PropertyGroup();
+        $groupModel = null;
         if (isset($optionGenerate['group'])) {
             $groupModel = PropertyGroup::findOne($optionGenerate['group']);
             $properties = Property::getForGroupId($optionGenerate['group']);
         } else {
             $properties = [];
+        }
+        if (is_null($groupModel)) {
+            $groupModel = new PropertyGroup();
         }
 
         return $this->render(
