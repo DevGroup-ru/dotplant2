@@ -34,7 +34,8 @@ trait ProcessReviews
             }
         }
 
-        if (Yii::$app->request->isPost && (null !== $_post = Yii::$app->request->post('ObjectRating', null))) {
+        $_post = Yii::$app->request->post('ObjectRating');
+        if (Yii::$app->request->isPost && (null !== $_post)) {
             $group = isset($_post['group']) ? trim($_post['group']) : null;
             $group = RatingItem::getGroupByName($group);
             $items = [];
@@ -44,7 +45,8 @@ trait ProcessReviews
                 $rating_id = md5(Json::encode(array_merge($_post['values'], [microtime(), $user_id])));
                 $date = date('Y-m-d H:m:s');
 
-                if ( (0 == $group['require_review']) || ((0 != $group['require_review']) && $review_saved) ) {
+                if (0 == $group['require_review']
+                    || (0 != $group['require_review'] && $review_saved)) {
                     $items = RatingItem::getItemsByAttributes(['rating_group' => $group['rating_group']], true, true);
                 }
 
