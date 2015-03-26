@@ -3,6 +3,7 @@
 namespace app\backend\controllers;
 
 use app\models\Category;
+use app\models\Config;
 use app\models\Image;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
@@ -15,6 +16,7 @@ use app\widgets\image\RemoveAction;
 use app\widgets\image\SaveInfoAction;
 use app\widgets\image\UploadAction;
 use app\backend\actions\UpdateEditable;
+use vova07\imperavi\actions\GetAction;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
@@ -85,6 +87,17 @@ class ProductController extends Controller
                     'price',
                     'old_price',
                 ],
+            ],
+            'imperavi-image-upload' => [
+                'class' => 'vova07\imperavi\actions\UploadAction',
+                'url' => str_replace('@webroot', '', Config::getValue('core.imperavi.uploadDir')),
+                'path' => Config::getValue('core.imperavi.uploadDir'),
+            ],
+            'imperavi-images-get' => [
+                'class' => 'vova07\imperavi\actions\GetAction',
+                'url' => str_replace('@webroot', '', Config::getValue('core.imperavi.uploadDir')),
+                'path' => Config::getValue('core.imperavi.uploadDir'),
+                'type' => GetAction::TYPE_IMAGES,
             ],
         ];
     }

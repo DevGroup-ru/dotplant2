@@ -2,6 +2,7 @@
 
 namespace app\backend\controllers;
 
+use app\models\Config;
 use app\models\Object;
 use app\models\Page;
 use app\models\ViewObject;
@@ -9,6 +10,7 @@ use app\properties\HasProperties;
 use app\widgets\image\RemoveAction;
 use app\widgets\image\SaveInfoAction;
 use app\widgets\image\UploadAction;
+use vova07\imperavi\actions\GetAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -51,6 +53,17 @@ class PageController extends Controller
             ],
             'save-info' => [
                 'class' => SaveInfoAction::className(),
+            ],
+            'imperavi-image-upload' => [
+                'class' => 'vova07\imperavi\actions\UploadAction',
+                'url' => str_replace('@webroot', '', Config::getValue('core.imperavi.uploadDir')),
+                'path' => Config::getValue('core.imperavi.uploadDir'),
+            ],
+            'imperavi-images-get' => [
+                'class' => 'vova07\imperavi\actions\GetAction',
+                'url' => str_replace('@webroot', '', Config::getValue('core.imperavi.uploadDir')),
+                'path' => Config::getValue('core.imperavi.uploadDir'),
+                'type' => GetAction::TYPE_IMAGES,
             ],
         ];
     }
@@ -115,7 +128,7 @@ class PageController extends Controller
                             [
                                 '/backend/page/edit',
                                 'returnUrl' => $returnUrl,
-                                'parent_id' =>Yii::$app->request->get('parent_id', null)
+                                'parent_id' => Yii::$app->request->get('parent_id', null)
                             ]
                         );
                     case 'back':

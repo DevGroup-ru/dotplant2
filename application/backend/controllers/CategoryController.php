@@ -4,12 +4,14 @@ namespace app\backend\controllers;
 
 use app\backend\actions\JSTreeGetTrees;
 use app\models\Category;
+use app\models\Config;
 use app\models\Object;
 use app\models\ViewObject;
 use app\properties\HasProperties;
 use app\widgets\image\RemoveAction;
 use app\widgets\image\SaveInfoAction;
 use app\widgets\image\UploadAction;
+use vova07\imperavi\actions\GetAction;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
@@ -56,6 +58,17 @@ class CategoryController extends Controller
             ],
             'save-info' => [
                 'class' => SaveInfoAction::className(),
+            ],
+            'imperavi-image-upload' => [
+                'class' => 'vova07\imperavi\actions\UploadAction',
+                'url' => str_replace('@webroot', '', Config::getValue('core.imperavi.uploadDir')),
+                'path' => Config::getValue('core.imperavi.uploadDir'),
+            ],
+            'imperavi-images-get' => [
+                'class' => 'vova07\imperavi\actions\GetAction',
+                'url' => str_replace('@webroot', '', Config::getValue('core.imperavi.uploadDir')),
+                'path' => Config::getValue('core.imperavi.uploadDir'),
+                'type' => GetAction::TYPE_IMAGES,
             ],
         ];
     }
@@ -141,7 +154,7 @@ class CategoryController extends Controller
                             [
                                 '/backend/category/edit',
                                 'returnUrl' => $returnUrl,
-                                'parent_id' =>Yii::$app->request->get('parent_id', null)
+                                'parent_id' => Yii::$app->request->get('parent_id', null)
                             ]
                         );
                     case 'back':
@@ -209,10 +222,9 @@ class CategoryController extends Controller
         $out = ['more' => false];
         if (!is_null($search)) {
             $query = new Query;
-            $query->select('id, name AS text')
-                ->from(Category::tableName())
-                ->andWhere(['like', 'name', $search])
-                ->limit(100);
+            $query->select('id, name AS text')->from(Category::tableName())->andWhere(['like', 'name', $search])->limit(
+                100
+            );
             $command = $query->createCommand();
             $data = $command->queryAll();
             $out['results'] = array_values($data);

@@ -348,17 +348,20 @@ SCRIPT;
             'paragraphize' => true,
             'pastePlainText' => true,
             'buttonSource' => true,
+            'imageManagerJson' => Url::to(['/backend/product/imperavi-images-get']),
             'plugins' => [
                 'table',
                 'fontsize',
                 'fontfamily',
                 'fontcolor',
                 'video',
+                'imagemanager',
             ],
             'replaceStyles' => [],
             'replaceTags' => [],
             'deniedTags' => [],
             'removeEmpty' => [],
+            'imageUpload' => Url::to(['/backend/product/imperavi-image-upload']),
         ],
     ]); ?>
 
@@ -369,20 +372,23 @@ SCRIPT;
             'paragraphize' => true,
             'pastePlainText' => true,
             'buttonSource' => true,
+            'imageManagerJson' => Url::to(['/backend/product/imperavi-images-get']),
             'plugins' => [
                 'table',
                 'fontsize',
                 'fontfamily',
                 'fontcolor',
                 'video',
+                'imagemanager',
             ],
             'replaceStyles' => [],
             'replaceTags' => [],
             'deniedTags' => [],
             'removeEmpty' => [],
+            'imageUpload' => Url::to(['/backend/product/imperavi-image-upload']),
         ],
     ]); ?>
-    
+
     <?= $form->field($model, 'sort_order'); ?>
 
     <?php BackendWidget::end(); ?>

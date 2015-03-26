@@ -71,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <section id="widget-grid">
     <div class="row">
-        
+
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Prefiltered page'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         </article>
 
-        
+
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Content'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
 
@@ -100,13 +100,20 @@ $this->params['breadcrumbs'][] = $this->title;
                         'paragraphize' => true,
                         'pastePlainText' => true,
                         'buttonSource' => true,
+                        'imageManagerJson' => Url::to(['/backend/prefiltered-pages/imperavi-images-get']),
                         'plugins' => [
                             'table',
                             'fontsize',
                             'fontfamily',
                             'fontcolor',
                             'video',
+                            'imagemanager',
                         ],
+                        'replaceStyles' => [],
+                        'replaceTags' => [],
+                        'deniedTags' => [],
+                        'removeEmpty' => [],
+                        'imageUpload' => Url::to(['/backend/prefiltered-pages/imperavi-image-upload']),
                     ],
                 ]); ?>
 
@@ -117,7 +124,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     app\models\View::getAllAsArray()
                 );
             ?>
-            
+
             <?php BackendWidget::end(); ?>
         </article>
 
@@ -211,7 +218,7 @@ $(function(){
                 }
             )
         );
-        
+
         $property.find('.property_id').change(function(){
             var $select = $(this).parent().parent().find('.select');
             $select.empty();
@@ -240,7 +247,7 @@ $(function(){
             $property.find('.select').val(selected);
         }
 
-        
+
         $("#properties").append($property);
     }
 
