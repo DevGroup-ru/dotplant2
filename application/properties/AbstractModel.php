@@ -124,7 +124,7 @@ class AbstractModel extends Model
 
         $new_eav_values = [];
         $eav_ids_to_delete = [];
-        
+
         foreach ($new_values as $key => $values) {
             $property = Property::findById($values->property_id);
             if ($property->captcha == 1) {
@@ -162,6 +162,7 @@ class AbstractModel extends Model
                         if ($exist_in_old == false) {
                             $new_eav_values[] = [
                                 $object_model_id,
+                                $values->property_group_id,
                                 $key,
                                 $val['value'],
                                 0,
@@ -277,14 +278,12 @@ class AbstractModel extends Model
         }
         if (count($new_eav_values) > 0) {
             $table_name = Object::findById($object_id)->eav_table_name;
-
             Yii::$app->db->createCommand()
-                ->batchInsert($table_name, ['object_model_id', 'key', 'value', 'sort_order'], $new_eav_values)
+                ->batchInsert($table_name, ['object_model_id', 'property_group_id', 'key', 'value', 'sort_order'], $new_eav_values)
                 ->execute();
         }
         if (count($eav_ids_to_delete) > 0) {
             $table_name = Object::findById($object_id)->eav_table_name;
-            
             Yii::$app->db->createCommand()
                 ->delete($table_name, ['in', 'id', $eav_ids_to_delete])
                 ->execute();

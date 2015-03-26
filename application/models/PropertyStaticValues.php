@@ -218,4 +218,10 @@ class PropertyStaticValues extends ActiveRecord
         }
         return parent::beforeDelete();
     }
+
+    public function afterDelete()
+    {
+        ObjectStaticValues::deleteAll(['property_static_value_id' => $this->id]);
+        parent::afterDelete();
+    }
 }

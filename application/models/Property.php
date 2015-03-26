@@ -9,6 +9,7 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
+use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "property".
@@ -89,6 +90,7 @@ class Property extends ActiveRecord
             [['depends_on_property_id', 'depends_on_category_group_id'], 'default', 'value' => 0],
             [['required', 'captcha', 'as_yml_field'], 'integer', 'min' => 0, 'max' => 1],
             [['dont_filter'], 'safe'],
+            [['key'], 'unique', 'targetAttribute' => ['key','property_group_id']],
         ];
     }
 
@@ -359,5 +361,36 @@ class Property extends ActiveRecord
     {
         $this->invalidateModelCache();
         return parent::beforeDelete();
+    }
+
+    public function afterDelete()
+    {
+        $object = Object::findById($this->group->object_id);
+        $staticValues = PropertyStaticValues::find()
+            ->where(['property_id' => $this->id])
+            ->all();
+        foreach ($staticValues as $psv) {
+            $psv->delete();
+        }
+        if ($this->is_eav) {
+            $eavTable = $object->eav_table_name;
+            Yii::$app->db->createCommand()->delete(
+                $eavTable,
+                ['key' => $this->key, 'property_group_id' => $this->group->id]
+            )->execute();
+
+        }
+        if ($this->is_column_type_stored) {
+            Yii::$app->db->createCommand()
+                ->dropColumn($object->column_properties_table_name, $this->key)
+                ->execute();
+//                if ($object->object_class == Form::className()) {
+//                    $submissionObject = Object::getForClass(Submission::className());
+//                    Yii::$app->db->createCommand()
+//                        ->dropColumn($submissionObject->column_properties_table_name, $this->key)
+//                        ->execute();
+//                }
+        }
+        parent::afterDelete();
     }
 }
