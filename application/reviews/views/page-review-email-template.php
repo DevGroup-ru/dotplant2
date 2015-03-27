@@ -59,7 +59,7 @@ use yii\helpers\Url;
                 'tr',
                 Html::tag('th', 'Страница', ['style' => 'text-align: left;']) . Html::tag(
                     'td',
-                    Html::a($obj->name, Url::to(['/page/show', 'model' => $obj], true))
+                    Html::a($obj->name, Url::to(['/page/show', 'id' => $obj->id], true))
                 ),
                 ['style' => 'background: #f5f5f5;']
             );
