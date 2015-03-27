@@ -2,11 +2,13 @@
 
 namespace app\reviews\traits;
 
+use app\models\Config;
 use app\models\RatingItem;
 use app\models\RatingValues;
 use app\reviews\models\Review;
 use Yii;
 use yii\helpers\Json;
+use yii\helpers\VarDumper;
 
 trait ProcessReviews
 {
@@ -31,6 +33,24 @@ trait ProcessReviews
                     Yii::t('shop', 'Your review will appear on the website immediately after moderation')
                 );
                 $review_saved = true;
+                $reviewEmail = Config::getValue('core.reviews.reviewEmail', null);
+                if ($reviewEmail !== null) {
+                    try {
+                        Yii::$app->mail->compose(
+                            Config::getValue(
+                                'core.reviews.reviewEmailTemplate',
+                                '@app/reviews/views/review-email-template'
+                            ),
+                            [
+                                'review' => $review,
+                            ]
+                        )->setTo(explode(',', $reviewEmail))->setFrom(
+                            Yii::$app->mail->transport->getUsername()
+                        )->setSubject(Yii::t('shop', 'Review #{reviewId}', ['reviewId' => $review->id]))->send();
+                    } catch (\Exception $e) {
+                        VarDumper::dump($e);
+                    }
+                }
             }
         }
 
@@ -44,7 +64,7 @@ trait ProcessReviews
                 $rating_id = md5(Json::encode(array_merge($_post['values'], [microtime(), $user_id])));
                 $date = date('Y-m-d H:m:s');
 
-                if ( (0 == $group['require_review']) || ((0 != $group['require_review']) && $review_saved) ) {
+                if ((0 == $group['require_review']) || ((0 != $group['require_review']) && $review_saved)) {
                     $items = RatingItem::getItemsByAttributes(['rating_group' => $group['rating_group']], true, true);
                 }
 
@@ -55,7 +75,9 @@ trait ProcessReviews
                         $model->object_id = $object_id;
                         $model->object_model_id = $object_model_id;
                         $model->rating_item_id = $item['id'];
-                        $model->value = isset($_post['values'][$item['id']]) ? intval($_post['values'][$item['id']]) : 0;
+                        $model->value = isset($_post['values'][$item['id']]) ? intval(
+                            $_post['values'][$item['id']]
+                        ) : 0;
                         $model->rating_id = $rating_id;
                         $model->date = $date;
                         $model->save();
