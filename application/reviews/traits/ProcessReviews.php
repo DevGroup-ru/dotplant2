@@ -3,6 +3,7 @@
 namespace app\reviews\traits;
 
 use app\models\Config;
+use app\models\Object;
 use app\models\RatingItem;
 use app\models\RatingValues;
 use app\reviews\models\Review;
@@ -34,20 +35,25 @@ trait ProcessReviews
                 $review_saved = true;
                 $reviewEmail = Config::getValue('core.reviews.reviewEmail', null);
                 if ($reviewEmail !== null) {
-                    try {
-                        Yii::$app->mail->compose(
-                            Config::getValue(
-                                'core.reviews.reviewEmailTemplate',
-                                '@app/reviews/views/review-email-template'
-                            ),
-                            [
-                                'review' => $review,
-                            ]
-                        )->setTo(explode(',', $reviewEmail))->setFrom(
-                            Yii::$app->mail->transport->getUsername()
-                        )->setSubject(Yii::t('shop', 'Review #{reviewId}', ['reviewId' => $review->id]))->send();
-                    } catch (\Exception $e) {
-                        // do nothing
+                    $object = Object::findById($review->object_id);
+                    $objName = strtolower($object->name);
+                    $sendEmail = Config::getValue("core.reviews.{$objName}Reviews.{$objName}ReviewSend", 0);
+                    if ($sendEmail == 1) {
+                        try {
+                            Yii::$app->mail->compose(
+                                Config::getValue(
+                                    "core.reviews.{$objName}Reviews.{$objName}ReviewEmailTemplate",
+                                    '@app/reviews/views/page-review-email-template'
+                                ),
+                                [
+                                    'review' => $review,
+                                ]
+                            )->setTo(explode(',', $reviewEmail))->setFrom(
+                                Yii::$app->mail->transport->getUsername()
+                            )->setSubject(Yii::t('shop', 'Review #{reviewId}', ['reviewId' => $review->id]))->send();
+                        } catch (\Exception $e) {
+                            // do nothing
+                        }
                     }
                 }
             }

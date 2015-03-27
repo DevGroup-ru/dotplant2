@@ -16,7 +16,6 @@ class m150327_082730_reviews_email extends Migration
                 'key' => 'reviews',
                 'value' => '',
                 'preload' => 1,
-                'path' => $core->path . '.reviews',
             ]
         );
         $reviews->save();
@@ -29,27 +28,85 @@ class m150327_082730_reviews_email extends Migration
                 'key' => 'reviewEmail',
                 'value' => $adminEmail->value,
                 'preload' => 1,
-                'path' => $reviews->path . '.reviewEmail',
             ]
         );
         $email->save();
-        $emailView = new Config;
-        $emailView->setAttributes(
+        $page = new Config;
+        $page->setAttributes(
             [
                 'parent_id' => $reviews->id,
-                'name' => 'Review e-mail template',
-                'key' => 'reviewEmailTemplate',
-                'value' => '@app/reviews/views/review-email-template',
+                'name' => 'Page reviews',
+                'key' => 'pageReviews',
+                'value' => '',
                 'preload' => 1,
-                'path' => $reviews->path . 'reviewEmailTemplate',
             ]
         );
-        $emailView->save();
+        $page->save();
+        $pageEmailView = new Config;
+        $pageEmailView->setAttributes(
+            [
+                'parent_id' => $page->id,
+                'name' => 'Page review e-mail template',
+                'key' => 'pageReviewEmailTemplate',
+                'value' => '@app/reviews/views/page-review-email-template',
+                'preload' => 1,
+            ]
+        );
+        $pageEmailView->save();
+        $pageSend = new Config;
+        $pageSend->setAttributes(
+            [
+                'parent_id' => $page->id,
+                'name' => 'Send page review email',
+                'key' => 'pageReviewSend',
+                'value' => '1',
+                'preload' => 1,
+            ]
+        );
+        $pageSend->save();
+        $product = new Config;
+        $product->setAttributes(
+            [
+                'parent_id' => $reviews->id,
+                'name' => 'Product reviews',
+                'key' => 'productReviews',
+                'value' => '',
+                'preload' => 1,
+            ]
+        );
+        $product->save();
+        $productEmailView = new Config;
+        $productEmailView->setAttributes(
+            [
+                'parent_id' => $product->id,
+                'name' => 'Product review e-mail template',
+                'key' => 'productReviewEmailTemplate',
+                'value' => '@app/reviews/views/product-review-email-template',
+                'preload' => 1,
+            ]
+        );
+        $productEmailView->save();
+        $productSend = new Config;
+        $productSend->setAttributes(
+            [
+                'parent_id' => $product->id,
+                'name' => 'Send product review email',
+                'key' => 'productReviewSend',
+                'value' => '1',
+                'preload' => 1,
+            ]
+        );
+        $productSend->save();
     }
 
     public function down()
     {
-        $this->delete(Config::tableName(), ['key' => 'reviewEmailTemplate']);
+        $this->delete(Config::tableName(), ['key' => 'productReviewSend']);
+        $this->delete(Config::tableName(), ['key' => 'productReviewEmailTemplate']);
+        $this->delete(Config::tableName(), ['key' => 'productReviews']);
+        $this->delete(Config::tableName(), ['key' => 'pageReviewSend']);
+        $this->delete(Config::tableName(), ['key' => 'pageReviewEmailTemplate']);
+        $this->delete(Config::tableName(), ['key' => 'pageReviews']);
         $this->delete(Config::tableName(), ['key' => 'reviewEmail']);
         $this->delete(Config::tableName(), ['key' => 'reviews']);
     }
