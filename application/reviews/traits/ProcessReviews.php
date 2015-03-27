@@ -8,7 +8,6 @@ use app\models\RatingValues;
 use app\reviews\models\Review;
 use Yii;
 use yii\helpers\Json;
-use yii\helpers\VarDumper;
 
 trait ProcessReviews
 {
@@ -48,7 +47,7 @@ trait ProcessReviews
                             Yii::$app->mail->transport->getUsername()
                         )->setSubject(Yii::t('shop', 'Review #{reviewId}', ['reviewId' => $review->id]))->send();
                     } catch (\Exception $e) {
-                        VarDumper::dump($e);
+                        // do nothing
                     }
                 }
             }
