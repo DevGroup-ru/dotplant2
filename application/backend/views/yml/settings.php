@@ -69,6 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
         <?php
+        /*
         $ymlFilds = [
             [
                 'key' => 'vendor',
@@ -94,13 +95,13 @@ $this->params['breadcrumbs'][] = $this->title;
         ];
 
 
-        echo \app\backend\widgets\comparisonData::widget([
+        echo \app\backend\widgets\DataRelationsWidget::widget([
             'fields' => $ymlFilds,
             'object' => \app\models\Object::getForClass(\app\models\Product::className()),
             'data' => json_decode($fields_params),
-            'relationLinks' => $relationLinks
+            'relations' => $relationLinks
         ]);
-
+*/
         ?>
 
         <?=
