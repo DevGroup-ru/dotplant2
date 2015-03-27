@@ -11,24 +11,27 @@ class ReviewsWidget extends Widget
 {
     public $object_id = null;
     public $object_model_id = null;
-    public $additionalParams  = [];
+    public $additionalParams = [];
     public $maxPerPage = 50;
     public $model = null;
     public $viewFile = 'reviews';
     public $allow_rate = false;
     public $sort = SORT_ASC;
+    public $registerCanonical = false;
 
     public $useCaptcha = false;
 
     public function run()
     {
-        $this->getView()->registerLinkTag(
-            [
-                'rel' => 'canonical',
-                'href' => ObjectRule::canonical($this->additionalParams),
-            ],
-            'canonical'
-        );
+        if ($this->registerCanonical === true) {
+            $this->getView()->registerLinkTag(
+                [
+                    'rel' => 'canonical',
+                    'href' => ObjectRule::canonical($this->additionalParams),
+                ],
+                'canonical'
+            );
+        }
         $reviews = Review::getForObjectModel($this->object_id, $this->object_model_id, $this->sort);
         $model = new Review();
         $model->useCaptcha = $this->useCaptcha;
@@ -42,22 +45,24 @@ class ReviewsWidget extends Widget
         return $this->render(
             $this->viewFile,
             [
-                'reviews' => new ArrayDataProvider([
-                    'id' => 'review',
-                    'allModels' => $reviews,
-                    'pagination' => [
-                        'pageSize' => $pageSize,
-                        'params' => array_merge($_GET, $this->additionalParams),
-                    ],
-                    'sort' => [
-                        'attributes' => [
-                            'date_submitted',
+                'reviews' => new ArrayDataProvider(
+                    [
+                        'id' => 'review',
+                        'allModels' => $reviews,
+                        'pagination' => [
+                            'pageSize' => $pageSize,
+                            'params' => array_merge($_GET, $this->additionalParams),
                         ],
-                        'defaultOrder' => [
-                            'date_submitted' => $this->sort,
+                        'sort' => [
+                            'attributes' => [
+                                'date_submitted',
+                            ],
+                            'defaultOrder' => [
+                                'date_submitted' => $this->sort,
+                            ],
                         ],
-                    ],
-                ]),
+                    ]
+                ),
                 'model' => $model,
                 'allow_rate' => $this->allow_rate,
                 'useCaptcha' => $this->useCaptcha,
