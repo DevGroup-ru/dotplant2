@@ -49,7 +49,9 @@ abstract class Import extends Component
             unset($config['type']);
 
             switch ($type) {
-                case 'csv':
+            	case 'csv':
+            		return new ImportCml($config);
+            	case 'csv':
                     return new ImportCsv($config);
                 case 'excelCsv':
                     return new ImportExcelCsv($config);
