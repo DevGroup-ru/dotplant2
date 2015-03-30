@@ -2,6 +2,7 @@
 
 namespace app\backend\controllers;
 
+use app\backend\actions\PropertyHandler;
 use app\models\Category;
 use app\models\Config;
 use app\models\Image;
@@ -88,6 +89,10 @@ class ProductController extends Controller
                     'old_price',
                 ],
             ],
+            'property-handler' => [
+                'class' => PropertyHandler::className(),
+                'modelName' => Product::className()
+            ]
         ];
     }
 

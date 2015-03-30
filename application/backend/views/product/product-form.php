@@ -29,7 +29,16 @@ $this->params['breadcrumbs'][] = $this->title;
     'id' => 'alert',
 ]); ?>
 
-<?php $form = ActiveForm::begin(['id' => 'product-form', 'type'=>ActiveForm::TYPE_HORIZONTAL]); ?>
+<?php
+    $form = ActiveForm::begin(
+    [
+        'id' => 'product-form',
+        'type' => ActiveForm::TYPE_HORIZONTAL,
+        'options' => [
+            'enctype' => 'multipart/form-data'
+        ]
+    ]);
+?>
 
 <?php $this->beginBlock('submit'); ?>
 <div class="form-group no-margin">
@@ -474,7 +483,6 @@ SCRIPT;
         ?>
         <?php BackendWidget::end(); ?>
     <?php endif; ?>
-
 </article>
 </div>
 </section>

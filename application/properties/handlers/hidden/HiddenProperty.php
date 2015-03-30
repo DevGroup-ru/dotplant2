@@ -3,9 +3,8 @@
 namespace app\properties\handlers\hidden;
 
 use app;
-use app\properties\handlers\Handler;
-use yii;
 
-class HiddenProperty extends Handler
+class HiddenProperty extends app\properties\handlers\AbstractHandler
 {
 }
+?>

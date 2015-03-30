@@ -7,6 +7,7 @@ use app\models\ObjectStaticValues;
 use app\models\Property;
 use Yii;
 use yii\base\Model;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 class AbstractModel extends Model
@@ -20,6 +21,7 @@ class AbstractModel extends Model
     private $form_name;
     private $properties_models = [];
     private $rules = [];
+    private $ownerModel = null;
 
     /**
      * Changes to behavior of getter and PropertyValue->toVal() to array mode.
@@ -28,37 +30,62 @@ class AbstractModel extends Model
      */
     private $arrayMode = false;
 
-    public function setArrayMode($value) {
-        $this->arrayMode = $value;
+    public function __construct($config = [], $ownerModel = null)
+    {
+        parent::__construct($config);
+
+        $this->ownerModel = $ownerModel;
     }
 
+    /**
+     * @param null $value
+     * @return bool
+     */
+    public function setArrayMode($value = null) {
+        $lastValue = $this->arrayMode;
+
+        if (is_bool($value)) {
+            $this->arrayMode = $value;
+        }
+
+        return $lastValue;
+    }
+
+    /**
+     * @param $name
+     */
     public function setFormName($name)
     {
         $this->form_name = $name;
     }
 
+    /**
+     * @return mixed
+     */
     public function formName()
     {
         return $this->form_name;
     }
 
+    /**
+     * @param $properties_models \app\models\Property[]
+     */
     public function setPropertiesModels($properties_models)
     {
         $this->properties_models = $properties_models;
-        foreach ($this->properties_models as $property) {
-            $this->values_by_property_key[$property->key] = [];
-        }
+        $this->values_by_property_key = array_fill_keys(array_keys($properties_models), []);
+    }
+
+    public function getPropertiesModels()
+    {
+        return $this->properties_models;
     }
 
     public function rules()
     {
-        $rules = [];
-        foreach ($this->properties_models as $property) {
-            $rules[] = $property->key;
-        }
         return ArrayHelper::merge(
             [
-                [$rules, 'safe'],
+                [array_keys($this->properties_models), 'safe'],
             ],
             $this->rules
         );
@@ -290,5 +317,13 @@ class AbstractModel extends Model
         }
         Yii::$app->cache->delete("TIR:".$object_id . ':' .$object_model_id);
         $this->values_by_property_key = $new_values;
+    }
+
+    /**
+     * @return ActiveRecord|null
+     */
+    public function getOwnerModel()
+    {
+        return $this->ownerModel;
     }
 }
