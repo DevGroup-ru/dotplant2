@@ -36,8 +36,7 @@ class m150330_083706_clear_old_notify extends Migration
 
     public function down()
     {
-        echo "m150330_083706_clear_old_notify cannot be reverted.\n";
-
-        return false;
+        $this->delete(Config::tableName(), ['key' => 'daysToStoreNotify']);
+        $this->delete(Task::tableName(), ['action' => 'background/notification/clear-old-notifications']);
     }
 }
