@@ -33,9 +33,7 @@ class SubmitFormAction extends Action
         /** @var \app\models\Object $object */
         // @todo rewrite code below
         $object = Object::getForClass(Form::className());
-        $propIds = (new yii\db\Query())->select('property_group_id')
-            ->from([ObjectPropertyGroup::tableName()])
-            ->where(
+        $propIds = (new yii\db\Query())->select('property_group_id')->from([ObjectPropertyGroup::tableName()])->where(
                 [
                     'and',
                     'object_id = :object',
@@ -49,7 +47,7 @@ class SubmitFormAction extends Action
         /** Проверка на спам */
         /** Получение API ключей */
         $data = [
-            'yandex' => [ 'key' => Config::getValue('spamCheckerConfig.apikeys.yandexAPIKey') ],
+            'yandex' => ['key' => Config::getValue('spamCheckerConfig.apikeys.yandexAPIKey')],
             'akismet' => ['key' => Config::getValue('spamCheckerConfig.apikeys.akismetAPIKey')]
         ];
         /** Интерпретации полей фомы */
@@ -64,7 +62,7 @@ class SubmitFormAction extends Action
             }
             $value = $post[$form->abstractModel->formName()][$prop->key];
             /** Названия свойств фиксированные, хранятся в модели Config */
-            switch($interpreted->key) {
+            switch ($interpreted->key) {
                 case "name":
                     $data['yandex']['realname'] = $value;
                     $data['akismet']['comment_author'] = $value;
@@ -107,24 +105,26 @@ class SubmitFormAction extends Action
                 }
             }
         }
+        $date = new \DateTime();
         // @todo rewrite code above
         /** @var Submission|HasProperties $submission */
         $submission = new Submission(
             [
                 'form_id' => $form->id,
+                'date_received' => $date->format('Y-m-d H:i:s'),
                 'ip' => Yii::$app->request->userIP,
                 'user_agent' => Yii::$app->request->userAgent,
                 'spam' => $haveSpam,
             ]
         );
-        if (!($form->abstractModel->validate()  && $submission->save())) {
+        if (!($form->abstractModel->validate() && $submission->save())) {
             return "0";
         }
-        foreach($post[$form->abstractModel->formName()] as $key => &$value){
-            if($file = yii\web\UploadedFile::getInstance($model, $key)){
+        foreach ($post[$form->abstractModel->formName()] as $key => &$value) {
+            if ($file = yii\web\UploadedFile::getInstance($model, $key)) {
                 $folder = Config::getValue('core.fileUploadPath', 'upload/user-uploads/');
                 $fullPath = "@webroot/{$folder}";
-                if(!file_exists(\Yii::getAlias($fullPath))){
+                if (!file_exists(\Yii::getAlias($fullPath))) {
                     mkdir(\Yii::getAlias($fullPath), 0755, true);
                 }
                 $value = '/' . $folder . $file->baseName . '.' . $file->extension;
@@ -141,21 +141,16 @@ class SubmitFormAction extends Action
         if ($haveSpam == 'no' || $haveSpam == "not defined") {
             if (!empty($form->email_notification_addresses)) {
                 try {
-                    $emailView = !empty($form->email_notification_view)
-                        ? $form->email_notification_view
-                        : '@app/widgets/form/views/email-template.php';
-                    Yii::$app->mail
-                        ->compose(
+                    $emailView = !empty($form->email_notification_view) ? $form->email_notification_view : '@app/widgets/form/views/email-template.php';
+                    Yii::$app->mail->compose(
                             $emailView,
                             [
                                 'form' => $form,
                                 'submission' => $submission,
                             ]
-                        )
-                        ->setTo(explode(',', $form->email_notification_addresses))
-                        ->setFrom(Yii::$app->mail->transport->getUsername())
-                        ->setSubject($form->name . ' #' . $submission->id)
-                        ->send();
+                        )->setTo(explode(',', $form->email_notification_addresses))->setFrom(
+                            Yii::$app->mail->transport->getUsername()
+                        )->setSubject($form->name . ' #' . $submission->id)->send();
                 } catch (\Exception $e) {
                     // do nothing
                 }

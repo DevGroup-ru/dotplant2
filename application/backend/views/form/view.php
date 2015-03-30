@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ],
     'columns' => [
         'id',
+        'date_received',
         'ip',
         'user_agent',
         [
