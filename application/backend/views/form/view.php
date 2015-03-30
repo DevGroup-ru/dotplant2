@@ -30,6 +30,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'btn-info',
                     'label' => 'View',
                 ],
+                [
+                    'url' => 'delete-submission',
+                    'icon' => 'trash-o',
+                    'class' => 'btn-danger',
+                    'label' => 'Delete',
+                ],
             ],
             'options' => [
                 'width' => '50px',

@@ -9,7 +9,6 @@ use yii\data\ActiveDataProvider;
 
 /**
  * This is the model class for table "submission".
- *
  * @property integer $id
  * @property integer $form_id
  * @property string $date_received
@@ -27,6 +26,7 @@ use yii\data\ActiveDataProvider;
  * @property string $visitor_landing
  * @property string $visit_start_date
  * @property integer $form_fill_time
+ * @property integer $is_deleted
  * @property bool $spam
  * @property AbstractModel $abstractModel
  */
@@ -47,12 +47,18 @@ class Submission extends \yii\db\ActiveRecord
     {
         return [
             [['form_id'], 'required'],
-            [['form_id', 'processed_by_user_id', 'processed', 'form_fill_time'], 'integer'],
+            [['form_id', 'processed_by_user_id', 'processed', 'form_fill_time', 'is_deleted'], 'integer'],
             [['date_received', 'date_viewed', 'date_processed', 'visit_start_date'], 'safe'],
             [
                 [
-                    'ip', 'user_agent', 'piwik_visitor_id', 'additional_information',
-                    'internal_comment', 'submission_referrer', 'visitor_referrer', 'visitor_landing'
+                    'ip',
+                    'user_agent',
+                    'piwik_visitor_id',
+                    'additional_information',
+                    'internal_comment',
+                    'submission_referrer',
+                    'visitor_referrer',
+                    'visitor_landing'
                 ],
                 'string'
             ],
@@ -96,15 +102,19 @@ class Submission extends \yii\db\ActiveRecord
             'visit_start_date' => Yii::t('app', 'Visit Start Date'),
             'form_fill_time' => Yii::t('app', 'Form Fill Time'),
             'spam' => Yii::t('app', 'Spam Info'),
+            'is_deleted' => Yii::t('app', 'Is deleted'),
         ];
     }
 
-    public function search($params, $form_id = null)
+    public function search($params, $form_id = null, $show_deleted = 0)
     {
         /* @var $query \yii\db\ActiveQuery */
         $query = self::find();
         if ($form_id != null) {
             $query->andWhere('form_id = :form_id', [':form_id' => $form_id]);
+        }
+        if ($show_deleted == 0) {
+            $query->andFilterWhere(['is_deleted' => 0]);
         }
         $dataProvider = new ActiveDataProvider(
             [

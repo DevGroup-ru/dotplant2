@@ -57,19 +57,17 @@ class FormController extends Controller
         /** @var \app\models\Object $object */
         $object = Object::getForClass(Form::className());
 
-        $propIds = (new Query())->select('property_group_id')
-            ->from([ObjectPropertyGroup::tableName()])
-            ->where(
-                [
-                    'and',
-                    'object_id = :object',
-                    'object_model_id = :id'
-                ],
-                [
-                    ':object' => $object->id,
-                    ':id' => $id
-                ]
-            )->column();
+        $propIds = (new Query())->select('property_group_id')->from([ObjectPropertyGroup::tableName()])->where(
+            [
+                'and',
+                'object_id = :object',
+                'object_model_id = :id'
+            ],
+            [
+                ':object' => $object->id,
+                ':id' => $id
+            ]
+        )->column();
 
         $post = \Yii::$app->request->post();
         $properties = isset($post['Form']['properties']) ? $post['Form']['properties'] : [];
@@ -147,13 +145,12 @@ class FormController extends Controller
         }
 
         $items = ArrayHelper::map(
-            PropertyGroup::find()
-                ->where(
-                    'object_id = :object',
-                    [
-                        ':object' => $object->id,
-                    ]
-                )->all(),
+            PropertyGroup::find()->where(
+                'object_id = :object',
+                [
+                    ':object' => $object->id,
+                ]
+            )->all(),
             'id',
             'name'
         );
@@ -195,6 +192,21 @@ class FormController extends Controller
                 'submission' => $submission,
             ]
         );
+    }
+
+    public function actionDeleteSubmission($id)
+    {
+        $submission = Submission::findOne($id);
+        if ($submission === null) {
+            throw new NotFoundHttpException('Submission not found');
+        }
+        $submission->setAttribute('is_deleted', 1);
+        if (!$submission->save()) {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Object not removed'));
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
+        }
+        return $this->redirect(Url::toRoute(['view', 'id' => $submission->form_id]));
     }
 
     public function actionDownload($key, $sumissionId)
