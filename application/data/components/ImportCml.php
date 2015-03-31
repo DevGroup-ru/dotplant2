@@ -17,7 +17,7 @@ class ImportCml extends Import
         if (file_exists($path)) {
             $xml = new XMLReader ();
             $xml->open($path);
-            switch ($this->$this->object->object_class)
+            switch ($this->object->object_class)
             {
                 case 'Category':
                     $parser = new CmlGroup2Catalog();
