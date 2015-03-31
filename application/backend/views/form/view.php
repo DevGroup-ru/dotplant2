@@ -16,13 +16,13 @@ $this->beginBlock('buttons');
 echo Html::beginTag('div', ['class' => 'form-group no-margin']);
 if (Yii::$app->request->get('show_deleted') == 1) {
     echo Html::a(
-        'Показать неудаленные',
+        Yii::t('app', 'Show undeleted'),
         ['/backend/form/view', 'id' => Yii::$app->request->get('id')],
         ['class' => 'btn btn-info']
     );
 } else {
     echo Html::a(
-        'Показать удаленные',
+        Yii::t('app', 'Show deleted'),
         ['/backend/form/view', 'id' => Yii::$app->request->get('id'), 'show_deleted' => 1],
         ['class' => 'btn btn-danger']
     );
