@@ -50,33 +50,6 @@ class Helper
         return Helper::$modelMaps[$cacheKey];
     }
 
-    /**
-     * Get time difference like "2 hours ago".
-     * @param string $newDate
-     * @param string $oldDate
-     * @return string
-     */
-    public static function getTimeDifference($newDate, $oldDate)
-    {
-        $newDT = new \DateTime($newDate);
-        $oldDT = new \DateTime($oldDate);
-        $interval = $newDT->diff($oldDT);
-        $ranges = [
-            'y' => 'years',
-            'm' => 'months',
-            'd' => 'days',
-            'h' => 'hours',
-            'i' => 'minutes',
-            's' => 'seconds',
-        ];
-        foreach ($ranges as $key => $range) {
-            if ($interval->$key > 0) {
-                return Yii::t('app', '{key} ' . $range . ' ago', ['key' => $interval->$key]);
-            }
-        }
-        return Yii::t('app', 'Right now');
-    }
-
     public static function createSlug($source)
     {
         $source = mb_strtolower($source, 'UTF-8');
