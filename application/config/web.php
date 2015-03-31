@@ -89,17 +89,7 @@ $config = [
         ],
         'assetManager' => [
             'class' => 'yii\web\AssetManager',
-            'bundles' => [
-                'yii\web\JqueryAsset' => [
-                    'sourcePath' => null,
-                    'jsOptions' => [
-                        'position' => \yii\web\View::POS_HEAD,
-                    ],
-                    'js' => [
-                        '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js',
-                    ]
-                ],
-            ],
+            'bundles' => require(__DIR__ . '/' . (YII_ENV_PROD ? 'assets-prod.php' : 'assets-dev.php')),
         ],
         'user' => [
             'class' => '\yii\web\User',

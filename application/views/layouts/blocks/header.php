@@ -9,7 +9,6 @@ use app\models\Config;
 use kartik\helpers\Html;
 
 AppAsset::register($this);
-unset($this->assetBundles['yii\bootstrap\BootstrapAsset']);
 
 ?>
 <?php $this->beginPage(); ?>
@@ -22,22 +21,8 @@ unset($this->assetBundles['yii\bootstrap\BootstrapAsset']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?= Html::csrfMetaTags() ?>
     <?php $this->head(); ?>
-    <!-- Bootstrap style -->
-    <link id="callCss" rel="stylesheet" href="/demo/bootshop/bootstrap.min.css" media="screen"/>
-    <link href="/demo/css/base.css" rel="stylesheet" media="screen"/>
-    <!-- Bootstrap style responsive -->
-    <link href="/demo/css/bootstrap-responsive.min.css" rel="stylesheet"/>
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>
-    <!-- Google-code-prettify -->
-    <link href="/demo/js/google-code-prettify/prettify.css" rel="stylesheet"/>
-    <!-- fav and touch icons -->
-    <link rel="shortcut icon" href="/demo/images/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/demo/images/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/demo/images/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/demo/images/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="/demo/images/ico/apple-touch-icon-57-precomposed.png">
-    <style type="text/css" id="enject"></style>
-    <link href='/css/demo.css' rel='stylesheet' type='text/css'>
+
+
 </head>
 <body itemscope itemtype="http://schema.org/WebPage">
 <?php $this->beginBody(); ?>
