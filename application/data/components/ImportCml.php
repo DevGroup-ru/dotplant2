@@ -17,9 +17,15 @@ class ImportCml extends Import
         if (file_exists($path)) {
             $xml = new XMLReader ();
             $xml->open($path);
-            $parser = new CmlGroup2Catalog();
-            $parser->getGroups($xml, 'root');
-            $data = $parser->getData();
+            switch ($this->$this->object->object_class)
+            {
+                case 'Category':
+                    $parser = new CmlGroup2Catalog();
+                    $parser->getGroups($xml, 'root');
+                    $data = $parser->getData();
+                 break;
+               
+            }
             $xml->close ();
             unlink($path);
         }
