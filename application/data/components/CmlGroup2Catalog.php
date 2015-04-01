@@ -20,7 +20,7 @@ class CmlGroup2Catalog extends Component {
     }
     public function getGroups($xml, $name) {
         if (static::NODE_GROUPS === $name) {
-            $this->tree = $this->getCatalog ( $xml, $name );
+            $this->getCatalog ( $xml, $name );
             $this->canParse = false;
             return;
         }
@@ -42,6 +42,10 @@ class CmlGroup2Catalog extends Component {
         while ( $xml->read () ) {
             switch ($xml->nodeType) {
                 case XMLReader::END_ELEMENT :
+                    if (static::NODE_GROUP === $xml->name) {
+                        $this->data [] = $node;
+                    }
+                     
                     return;
                     break;
                 case XMLReader::ELEMENT :
@@ -61,13 +65,10 @@ class CmlGroup2Catalog extends Component {
                     } else {
                         $p_node [$this->getKey ( $node ['tag'] )] = isset ( $node ['text'] ) ? $node ['text'] : '';
                     }
-                    if (static::NODE_GROUP === $node ['tag']) {
-                        $this->data [] = $node;
-                    }
                     break;
                 case XMLReader::TEXT :
                 case XMLReader::CDATA :
-                    $p_node ['text'] = $xml->value;
+                    $p_node ['text'] .= $xml->value;
                     break;
             }
         }
