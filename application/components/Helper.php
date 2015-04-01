@@ -94,8 +94,10 @@ class Helper
 
     public static function thumbnailOnDemand($filename, $width, $height, $relative_part = '.')
     {
+        mb_internal_encoding('UTF-8');
         $dir = dirname($filename);
-        $thumb_filename = $dir . '/thumb-'.$width.'x'.$height.'-' . basename($filename);
+        $basename = mb_substr($filename, mb_strrpos($filename, '/') + 1);
+        $thumb_filename = $dir . '/thumb-'.$width.'x'.$height.'-' . $basename;
         if (file_exists($relative_part.$thumb_filename) === false) {
             try {
                 $image = \yii\imagine\Image::thumbnail($relative_part . $filename, $width, $height,
