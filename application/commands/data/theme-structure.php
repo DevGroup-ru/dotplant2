@@ -4,18 +4,38 @@ return [
     [
         'name' => 'css',
         'type' => 'dir',
+        'children' => [
+            [
+                'name' => 'index.html',
+            ],
+        ],
     ],
     [
         'name' => 'fonts',
         'type' => 'dir',
+        'children' => [
+            [
+                'name' => 'index.html',
+            ],
+        ],
     ],
     [
         'name' => 'images',
         'type' => 'dir',
+        'children' => [
+            [
+                'name' => 'index.html',
+            ],
+        ],
     ],
     [
         'name' => 'js',
         'type' => 'dir',
+        'children' => [
+            [
+                'name' => 'index.html',
+            ],
+        ],
     ],
     [
         'name' => 'module',
@@ -65,6 +85,10 @@ return [
                 'name' => 'widgets',
                 'type' => 'dir',
             ],
+            [
+                'name' => '.htaccess',
+                'content' => 'Deny from All',
+            ],
         ],
     ],
     [
@@ -75,6 +99,18 @@ return [
                 'name' => 'product-images',
                 'type' => 'dir',
                 'writable' => true,
+                'children' => [
+                    [
+                        'name' => '.gitignore',
+                        'content' => "*\n!.gitignore\n!index.html",
+                    ],
+                    [
+                        'name' => 'index.html',
+                    ],
+                ],
+            ],
+            [
+                'name' => 'index.html',
             ],
         ],
     ],
@@ -136,6 +172,13 @@ return [
                     ],
                 ],
             ],
+            [
+                'name' => '.htaccess',
+                'content' => 'Deny from All',
+            ],
         ],
+    ],
+    [
+        'name' => 'index.html',
     ],
 ];
