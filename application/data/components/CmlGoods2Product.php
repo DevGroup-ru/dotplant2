@@ -21,7 +21,10 @@ class CmlGoods2Product extends Component
     private $groups = array();
     private $information = array();
     private $props = array();
-
+    private $keys = array (
+            'Ид' => 'id',
+            'Наименование'=>'name'
+    );
     
     
     /**
@@ -36,9 +39,61 @@ class CmlGoods2Product extends Component
 
     public function getData ()
     {
+        if (0===count($this->data))
+        {
+            $this->parseData();
+        }
         return $this->data;
     }
 
+    private function parseData()
+    {
+        foreach ($this->goods as $values)
+        {
+            $tmp=array();
+            $tmp= array_merge($tmp,$values['good']);
+        
+            foreach ($values['information'] as $v)
+        
+            {
+                if (isset($v['name']))
+                    $tmp= array_merge($tmp,array($v['name']=>$v['value']));
+            }
+        
+            foreach($values['props'] as $v)
+            {
+                if (count($v['values']) > 0)
+                {
+                    if (isset($this->specification[$v['id']]))
+                    {
+                        $tmp= array_merge($tmp,array($this->specification[$v['id']]['Наименование']=>implode('|',$v['values'])));
+                    }
+                }
+            }
+            $main_category_id=0;
+            $cat = array();
+            foreach($values['groups'] as $v)
+            {
+                if (0===$main_category_id)
+                    $main_category_id = OnecId::createByGUID($v)->id;
+                else
+                    $cat[] = OnecId::createByGUID($v)->id;
+            }
+            $tmp= array_merge($tmp,array('main_category_id'=>$main_category_id),array('categories'=>implode('|',$cat)));
+        
+            $k = array_keys($tmp);
+            $v = array_values($tmp);
+        
+            foreach ($k as $key=>$value)
+            {
+        
+                $k[$key] = $this->getKey($value);
+            }
+        
+            $this->data[] = array_combine($k,$v);
+        }
+        
+    }
     public function getProducts ($xml, $name)
     {
         $xpath = implode($this->xpath, '/');
@@ -96,8 +151,9 @@ class CmlGoods2Product extends Component
 
     private function getGoods ($xml, $name)
     {
-        $xpath = implode($this->xpath, '/');
+       
         while ($xml->read() && true === $this->canParse) {
+            $xpath = implode($this->xpath, '/');
             switch ($xml->nodeType) {
                 case XMLReader::END_ELEMENT:
                     
@@ -128,7 +184,7 @@ class CmlGoods2Product extends Component
                             $this->currentformation['value'] = isset($node['text']) ? $node['text'] : '';
                             break;
                         case 'Товары/Товар/ЗначенияСвойств/ЗначенияСвойства':
-                            $this->props = $this->currentprop;
+                            $this->props[] = $this->currentprop;
                             break;
                         case 'Товары/Товар/ЗначенияСвойств/ЗначенияСвойства/Ид':
                             $this->currentprop['id'] = isset($node['text']) ? $node['text'] : '';
@@ -190,5 +246,9 @@ class CmlGoods2Product extends Component
         }
         return;
     }
+    private function getKey($key) {
+        return isset ( $this->keys [$key] ) ? $this->keys [$key] : $key;
+    }
+    
 }
 
