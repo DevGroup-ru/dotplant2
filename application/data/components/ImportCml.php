@@ -24,6 +24,7 @@ class ImportCml extends Import
                 case 'Product':
                     $parser = new CmlGoods2Product();
                     $parser->getProducts($xml, 'root');
+                    $parser->set($this->multipleValuesDelimiter);
                     $data = $parser->getData();
                     break;
             }

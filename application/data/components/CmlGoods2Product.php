@@ -1,13 +1,13 @@
 <?php
 namespace app\data\components;
-
-
 use app\data\components\ParserGroupSpecification;
 use app\data\models\OnecId;
 use Yii;
 
 class CmlGoods2Product extends Component
 {
+
+    private $multipleValuesDelimiter = '|';
 
     private $data = array();
 
@@ -18,18 +18,21 @@ class CmlGoods2Product extends Component
     private $parserGroupSpecification;
 
     private $current = array();
+
     private $groups = array();
+
     private $information = array();
+
     private $props = array();
-    private $keys = array (
+
+    private $keys = array(
             'Ид' => 'id',
-            'Наименование'=>'name'
+            'Наименование' => 'name'
     );
-    
-    
+
     /**
      *
-     * @param array $config
+     * @param array $config            
      */
     public function __construct ($config = [])
     {
@@ -37,63 +40,75 @@ class CmlGoods2Product extends Component
         parent::__construct($config);
     }
 
+    public function setMultipleValuesDelimiter ($delimiter)
+    {
+        $this->multipleValuesDelimiter = $delimiter;
+    }
+
     public function getData ()
     {
-        if (0===count($this->data))
-        {
+        if (0 === count($this->data)) {
             $this->parseData();
         }
         return $this->data;
     }
 
-    private function parseData()
+    private function parseData ()
     {
-        foreach ($this->goods as $values)
-        {
-            $tmp=array();
-            $tmp= array_merge($tmp,$values['good']);
-        
-            foreach ($values['information'] as $v)
-        
+        foreach ($this->goods as $values) {
+            $tmp = array();
+            $tmp = array_merge($tmp, $values['good']);
+            
+            foreach ($values['information'] as $v) 
+
             {
                 if (isset($v['name']))
-                    $tmp= array_merge($tmp,array($v['name']=>$v['value']));
+                    $tmp = array_merge($tmp, array(
+                            $v['name'] => $v['value']
+                    ));
             }
-        
-            foreach($values['props'] as $v)
-            {
-                if (count($v['values']) > 0)
-                {
-                    if (isset($this->specification[$v['id']]))
-                    {
-                        $tmp= array_merge($tmp,array($this->specification[$v['id']]['Наименование']=>implode('|',$v['values'])));
+            
+            foreach ($values['props'] as $v) {
+                if (count($v['values']) > 0) {
+                    if (isset($this->specification[$v['id']])) {
+                        $tmp = array_merge($tmp, 
+                                array(
+                                        $this->specification[$v['id']]['Наименование'] => implode(
+                                                $this->multipleValuesDelimiter, 
+                                                $v['values'])
+                                ));
                     }
                 }
             }
-            $main_category_id=0;
+            $main_category_id = 0;
             $cat = array();
-            foreach($values['groups'] as $v)
-            {
-                if (0===$main_category_id)
+            foreach ($values['groups'] as $v) {
+                if (0 === $main_category_id)
                     $main_category_id = OnecId::createByGUID($v)->id;
                 else
                     $cat[] = OnecId::createByGUID($v)->id;
             }
-            $tmp= array_merge($tmp,array('main_category_id'=>$main_category_id),array('categories'=>implode('|',$cat)));
-        
+            $tmp = array_merge($tmp, 
+                    array(
+                            'main_category_id' => $main_category_id
+                    ), 
+                    array(
+                            'categories' => implode(
+                                    $this->multipleValuesDelimiter, $cat)
+                    ));
+            
             $k = array_keys($tmp);
             $v = array_values($tmp);
-        
-            foreach ($k as $key=>$value)
-            {
-        
+            
+            foreach ($k as $key => $value) {
+                
                 $k[$key] = $this->getKey($value);
             }
-        
-            $this->data[] = array_combine($k,$v);
+            
+            $this->data[] = array_combine($k, $v);
         }
-        
     }
+
     public function getProducts ($xml, $name)
     {
         $xpath = implode($this->xpath, '/');
@@ -151,7 +166,6 @@ class CmlGoods2Product extends Component
 
     private function getGoods ($xml, $name)
     {
-       
         while ($xml->read() && true === $this->canParse) {
             $xpath = implode($this->xpath, '/');
             switch ($xml->nodeType) {
@@ -177,11 +191,13 @@ class CmlGoods2Product extends Component
                             $this->information[] = $this->currentformation;
                             break;
                         case 'Товары/Товар/ЗначенияРеквизитов/ЗначениеРеквизита/Наименование':
-                            $this->currentformation['name'] = isset($node['text']) ? $node['text'] : '';
+                            $this->currentformation['name'] = isset(
+                                    $node['text']) ? $node['text'] : '';
                             break;
                         
                         case 'Товары/Товар/ЗначенияРеквизитов/ЗначениеРеквизита/Значение':
-                            $this->currentformation['value'] = isset($node['text']) ? $node['text'] : '';
+                            $this->currentformation['value'] = isset(
+                                    $node['text']) ? $node['text'] : '';
                             break;
                         case 'Товары/Товар/ЗначенияСвойств/ЗначенияСвойства':
                             $this->props[] = $this->currentprop;
@@ -190,7 +206,8 @@ class CmlGoods2Product extends Component
                             $this->currentprop['id'] = isset($node['text']) ? $node['text'] : '';
                             break;
                         case 'Товары/Товар/ЗначенияСвойств/ЗначенияСвойства/Значение':
-                            $this->currentprop['values'][] = isset($node['text']) ? $node['text'] : '';
+                            $this->currentprop['values'][] = isset(
+                                    $node['text']) ? $node['text'] : '';
                             break;
                         
                         default:
@@ -246,9 +263,10 @@ class CmlGoods2Product extends Component
         }
         return;
     }
-    private function getKey($key) {
-        return isset ( $this->keys [$key] ) ? $this->keys [$key] : $key;
+
+    private function getKey ($key)
+    {
+        return isset($this->keys[$key]) ? $this->keys[$key] : $key;
     }
-    
 }
 
