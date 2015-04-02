@@ -1,0 +1,15 @@
+<?php
+
+return [
+    'components' => [
+    'view' => [
+            'theme' => [
+                'pathMap' => [
+                    '@app/views' => '@webroot/{%theme-name%}/views/controllers',
+                    '@app/widgets' => '@webroot/{%theme-name%}/views/widgets',
+                ],
+                'baseUrl' => '@webroot/{%theme-name%}/controllers/views',
+            ],
+        ],
+    ],
+];

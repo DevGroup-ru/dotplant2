@@ -1,0 +1,19 @@
+<?php
+
+namespace app\web\{%theme-name%}\module\assets;
+use yii\web\AssetBundle;
+
+class ThemeAsset extends AssetBundle
+{
+    public $basePath = '@webroot/{%theme-name%}';
+    public $baseUrl = '@web/{%theme-name%}';
+    public $css = [
+        // your css files will be here
+    ];
+    public $js = [
+        // your js files will be here
+    ];
+    public $depends = [
+        'app\assets\AppAsset',
+    ];
+}

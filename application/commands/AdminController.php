@@ -78,4 +78,45 @@ class AdminController extends Controller
             . ' WHERE `object_id` IN (SELECT `id` FROM ' . app\models\Object::tableName()
             . ' WHERE `object_class` IN (\'app\\models\\Submission\', \'app\\models\\Order\'))')->execute();
     }
+
+    protected function createStructure($path, $children, $themeName)
+    {
+        foreach ($children as $child) {
+            $newPath = $path . DIRECTORY_SEPARATOR . $child['name'];
+            if (isset($child['type']) && $child['type'] == 'dir') {
+                mkdir($newPath);
+                chmod($newPath,  isset($child['writable']) && $child['writable'] ? 0777 : 0775);
+                if (isset($child['children']) && !empty($child['children'])) {
+                    $this->createStructure($newPath, $child['children'], $themeName);
+                } else {
+                    file_put_contents($newPath . DIRECTORY_SEPARATOR . '.keep', '');
+                }
+            } else {
+                file_put_contents($newPath, isset($child['content']) ? str_replace('{%theme-name%}', $themeName, $child['content']) : '');
+            }
+        }
+    }
+
+    /**
+     * Create theme structure
+     * @param string $name
+     * @throws \yii\base\ExitException
+     */
+    public function actionCreateTheme($name = 'theme')
+    {
+        $name = trim($name);
+        if (preg_match('#^[a-z]+$#i', $name) == 0) {
+            echo "Bad theme name" . PHP_EOL;
+            Yii::$app->end();
+        }
+        $themeRoot = Yii::getAlias('@webroot/' . $name);
+        if (file_exists($themeRoot)) {
+            echo "Directory \"{$themeRoot}\" already exists: " . PHP_EOL;
+            Yii::$app->end();
+        }
+        $structure = include __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'theme-structure.php';
+        mkdir($themeRoot);
+        $this->createStructure($themeRoot, $structure, $name);
+        echo "Theme \"{$name}\" has been created" . PHP_EOL;
+    }
 }
