@@ -141,12 +141,12 @@ jQuery(function() {
     });
     jQuery('[data-action="add-to-cart"]').click(function() {
         var $this = jQuery(this);
-        var quantity = typeof($this.attr('data-quantity')) !== 'undefined' ? parseFloat($this.attr('data-quantity')) : 1;
+        var quantity = typeof($this.data('quantity')) !== 'undefined' ? parseFloat($this.data('quantity')) : 1;
         if (isNaN(quantity) || quantity < 1) {
             quantity = 1;
         }
 
-        Shop.addToCart($this.attr('data-id'), quantity, function(data) {
+        Shop.addToCart($this.data('id'), quantity, function(data) {
             var $widget = jQuery('#cart-info-widget');
             $widget.find('.total-price').text(data['totalPrice']);
             $widget.find('.items-count').text(data['itemsCount']);
