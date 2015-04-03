@@ -7,7 +7,7 @@ use Yii;
 class CmlGoods2Product extends Component
 {
 
-    private $multipleValuesDelimiter = '|';
+    private $multipleValuesDelimiter = '☻';
 
     private $data = array();
 
