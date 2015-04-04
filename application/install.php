@@ -142,7 +142,24 @@ file_put_contents("config/db-local.php", "<?php\n return " . \yii\helpers\VarDum
 
 // все ENV будут автоматом переданы туда
 passthru('./yii migrate --interactive=0');
-passthru('./yii admin/create-theme');
+
+echo "\nInstall stub theme? [y/n]";
+$answer = getenv("INSTALL_STUB_THEME");
+if ($answer === false) {
+	while (true) {
+		$answer = strtolower(trim(fgets($f)));
+		if ($answer == "y" || $answer == "yes" || $answer == "n" || $answer == "no") {
+			break;
+		}
+	}
+}
+
+if ($answer == "y" || $answer == "yes") {
+	passthru("./yii admin/create-theme");
+}
+else {
+	passthru("mkdir -p ./web/theme/resources/product-images");
+}
 
 function randomPassword($num=14) {
     $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789_";
