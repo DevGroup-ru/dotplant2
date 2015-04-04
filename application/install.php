@@ -159,6 +159,7 @@ if ($answer == "y" || $answer == "yes") {
 }
 else {
 	passthru("mkdir -p ./web/theme/resources/product-images");
+	passthru("chmod 755 ./web/theme/resources/product-images");
 }
 
 function randomPassword($num=14) {
