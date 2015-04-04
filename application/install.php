@@ -49,7 +49,7 @@ if ($memcached_exists === true) {
 
 
 $composer_status = null;
-system('/usr/bin/env php ../composer.phar global require "fxp/composer-asset-plugin:1.0.0-beta3"');
+system('/usr/bin/env php ../composer.phar global require "fxp/composer-asset-plugin:1.0.0"');
 
 system('/usr/bin/env php ../composer.phar install', $composer_status);
 if ($composer_status != 0) {
