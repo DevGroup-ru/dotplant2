@@ -142,6 +142,7 @@ file_put_contents("config/db-local.php", "<?php\n return " . \yii\helpers\VarDum
 
 // все ENV будут автоматом переданы туда
 passthru('./yii migrate --interactive=0');
+passthru('./yii admin/create-theme');
 
 function randomPassword($num=14) {
     $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789_";
