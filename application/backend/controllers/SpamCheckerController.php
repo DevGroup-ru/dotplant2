@@ -7,7 +7,6 @@ use app\models\SpamChecker;
 use app\models\SpamCheckerBehavior;
 use Yii;
 use yii\filters\AccessControl;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -102,13 +101,11 @@ class SpamCheckerController extends Controller
                         return $this->redirect($returnUrl);
                     default:
                         return $this->redirect(
-                            Url::toRoute(
-                                [
-                                    'edit',
-                                    'id' => $model->id,
-                                    'returnUrl' => $returnUrl,
-                                ]
-                            )
+                            [
+                                'edit',
+                                'id' => $model->id,
+                                'returnUrl' => $returnUrl,
+                            ]
                         );
                 }
             } else {
@@ -116,6 +113,29 @@ class SpamCheckerController extends Controller
             }
         }
         return $this->render('spam-checker-form', ['model' => $model]);
+    }
+
+    public function actionDelete($id)
+    {
+        $model = SpamCheckerBehavior::findOne($id);
+        if ($model === null) {
+            throw new NotFoundHttpException;
+        }
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
+        } else {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Object not removed'));
+        }
+        return $this->redirect(['index']);
+    }
+
+    public function actionDeleteAll()
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (empty($items) === false) {
+            SpamCheckerBehavior::deleteAll(['in', 'id', $items]);
+        }
+        $this->render(['index']);
     }
 
     private function saveConfig($model, $parentID = 0, $newRecord = false)

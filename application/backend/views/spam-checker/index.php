@@ -5,7 +5,9 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel app\models\SpamCheckerBehavior
  */
+use app\backend\components\Helper;
 use app\backend\widgets\BackendWidget;
+use app\backend\widgets\RemoveAllButton;
 use app\models\SpamChecker;
 use kartik\dynagrid\DynaGrid;
 use kartik\grid\CheckboxColumn;
@@ -16,34 +18,21 @@ use yii\helpers\Html;
 $this->title = Yii::t('app', 'Spam Checker Settings');
 $this->params['breadcrumbs'][] = $this->title;
 
-
+$this->beginBlock('buttonGroup');
+echo Html::a(
+    Icon::show('plus') . ' ' . Yii::t('app', 'Add'),
+    ['edit', 'returnUrl' => Helper::getReturnUrl()],
+    ['class' => 'btn btn-success',]
+);
+echo RemoveAllButton::widget(
+    ['url' => 'remove-all', 'gridSelector' => '.grid-view', 'htmlOptions' => ['class' => 'btn btn-danger pull-right'],]
+);
+$this->endBlock();
 
 ?>
 <div class="config-index">
     <div class="row">
-        <div class="col-md-4">
-            <?php $form = ActiveForm::begin(['id' => 'spamchecker-form', 'type' => ActiveForm::TYPE_VERTICAL]); ?>
-            <?php BackendWidget::begin(['title' => Yii::t('app', 'Spam Checker Settings'), 'icon' => 'list']); ?>
-
-            <?=$form->field($model, 'yandexApiKey')?>
-
-            <?=$form->field($model, 'akismetApiKey')?>
-
-            <?=$form->field($model, 'enabledApiKey')->dropDownList(SpamChecker::getAvailableApis());?>
-
-            <?=$form->field($model, 'configFieldsParentId')->dropDownList(
-                SpamChecker::getFieldTypesForForm()
-            )?>
-
-            <?=Html::submitButton(
-                Icon::show('save') . Yii::t('app', 'Save'),
-                ['class' => 'btn btn-primary']
-            )?>
-
-            <?php BackendWidget::end(); ?>
-            <?php ActiveForm::end(); ?>
-        </div>
-        <div class="col-md-8">
+        <div class="col-md-12">
             <?=DynaGrid::widget(
                 [
                     'options' => [
@@ -60,6 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'class' => 'yii\grid\DataColumn',
                             'attribute' => 'id',
                         ],
+                        'name',
                         'behavior',
                         [
                             'class' => 'app\backend\components\ActionColumn',
@@ -95,6 +85,22 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ]
             );?>
+            <?php BackendWidget::begin(['title' => Yii::t('app', 'Spam Checker Settings'), 'icon' => 'list']); ?>
+            <?php $form = ActiveForm::begin(['id' => 'spamchecker-form', 'type' => ActiveForm::TYPE_VERTICAL]); ?>
+
+            <?=$form->field($model, 'enabledApiKey')->dropDownList(SpamChecker::getAvailableApis());?>
+            <!--Эта хрень переносится просто в конфиг и там навсегда живет или в модель надо посмотреть на реализацию и где эта штука используется-->
+            <?=$form->field($model, 'configFieldsParentId')->dropDownList(
+                SpamChecker::getFieldTypesForForm()
+            )?>
+
+            <?=Html::submitButton(
+                Icon::show('save') . Yii::t('app', 'Save'),
+                ['class' => 'btn btn-primary']
+            )?>
+            <?php ActiveForm::end(); ?>
+            <?php BackendWidget::end(); ?>
+
         </div>
     </div>
 </div>
