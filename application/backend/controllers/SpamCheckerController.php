@@ -4,8 +4,12 @@ namespace app\backend\controllers;
 
 use app\models\Config;
 use app\models\SpamChecker;
+use app\models\SpamCheckerBehavior;
+use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 class SpamCheckerController extends Controller
 {
@@ -26,7 +30,12 @@ class SpamCheckerController extends Controller
 
     public function actionIndex()
     {
+        // @TODO REWRITE !!!!!
         $model = new SpamChecker();
+
+        $searchModel = new SpamCheckerBehavior;
+        $params = \Yii::$app->request->get();
+        $dataProvider = $searchModel->search($params);
 
         $post = \Yii::$app->request->post();
         $config = new Config();
@@ -59,9 +68,54 @@ class SpamCheckerController extends Controller
         return $this->render(
             'index',
             [
-                'model' => $model
+                'model' => $model,
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
             ]
         );
+    }
+
+    public function actionEdit($id = null)
+    {
+        if ($id === null) {
+            $model = new SpamCheckerBehavior;
+        } else {
+            $model = SpamCheckerBehavior::findOne($id);
+        }
+        if ($model === null) {
+            throw new NotFoundHttpException;
+        }
+        $post = Yii::$app->request->post();
+        if ($model->load($post) && $model->validate()) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+                $returnUrl = Yii::$app->request->get('returnUrl', ['index']);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                'edit',
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    'edit',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
+                }
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
+            }
+        }
+        return $this->render('spam-checker-form', ['model' => $model]);
     }
 
     private function saveConfig($model, $parentID = 0, $newRecord = false)

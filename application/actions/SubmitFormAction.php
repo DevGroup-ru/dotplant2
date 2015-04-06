@@ -2,6 +2,7 @@
 
 namespace app\actions;
 
+
 use app\behaviors\spamchecker\SpamCheckerBehavior;
 use app\models\Config;
 use app\models\Form;
@@ -13,8 +14,12 @@ use app\models\Submission;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use kartik\widgets\ActiveForm;
-use yii;
+use Yii;
 use yii\base\Action;
+use yii\helpers\ArrayHelper;
+use yii\helpers\VarDumper;
+use yii\web\Response;
+use yii\web\UploadedFile;
 
 class SubmitFormAction extends Action
 {
@@ -26,30 +31,37 @@ class SubmitFormAction extends Action
         $form->abstractModel->setAttrubutesValues($post);
         /** @var AbstractModel|SpamCheckerBehavior $model */
         $model = $form->getAbstractModel();
+
+        // Тут явный трешак, это надо перенести в конец
         if (\Yii::$app->request->isAjax && isset($post['ajax'])) {
-            \Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+            \Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
+
         /** @var \app\models\Object $object */
-        // @todo rewrite code below
         $object = Object::getForClass(Form::className());
-        $propIds = (new yii\db\Query())->select('property_group_id')->from([ObjectPropertyGroup::tableName()])->where(
-                [
-                    'and',
-                    'object_id = :object',
-                    'object_model_id = :id'
-                ],
-                [
-                    ':object' => $object->id,
-                    ':id' => $id
-                ]
-            )->column();
+        $propGroups = ObjectPropertyGroup::find()->where(
+            [
+                'and',
+                'object_id = :object',
+                'object_model_id = :id'
+            ],
+            [
+                ':object' => $object->id,
+                ':id' => $id
+            ]
+        )->asArray()->all();
+        $propIds = ArrayHelper::getColumn($propGroups, 'property_group_id');
+
         /** Проверка на спам */
         /** Получение API ключей */
+
+        //Вот эту фигню тоже надо на ООП пересадить, как то поабстрактнее что ли сделать, подумать над тем как будет добавляться новый тип проверки на спам !!!! это важно !!!!
         $data = [
             'yandex' => ['key' => Config::getValue('spamCheckerConfig.apikeys.yandexAPIKey')],
             'akismet' => ['key' => Config::getValue('spamCheckerConfig.apikeys.akismetAPIKey')]
         ];
+
         /** Интерпретации полей фомы */
         $properties = Property::getForGroupId($propIds[0]);
         foreach ($properties as $prop) {
@@ -62,6 +74,7 @@ class SubmitFormAction extends Action
             }
             $value = $post[$form->abstractModel->formName()][$prop->key];
             /** Названия свойств фиксированные, хранятся в модели Config */
+            // Тут надо вынести в модели и на уровне моделей разруливать
             switch ($interpreted->key) {
                 case "name":
                     $data['yandex']['realname'] = $value;
@@ -121,7 +134,7 @@ class SubmitFormAction extends Action
             return "0";
         }
         foreach ($post[$form->abstractModel->formName()] as $key => &$value) {
-            if ($file = yii\web\UploadedFile::getInstance($model, $key)) {
+            if ($file = UploadedFile::getInstance($model, $key)) {
                 $folder = Config::getValue('core.fileUploadPath', 'upload/user-uploads/');
                 $fullPath = "@webroot/{$folder}";
                 if (!file_exists(\Yii::getAlias($fullPath))) {
@@ -143,14 +156,14 @@ class SubmitFormAction extends Action
                 try {
                     $emailView = !empty($form->email_notification_view) ? $form->email_notification_view : '@app/widgets/form/views/email-template.php';
                     Yii::$app->mail->compose(
-                            $emailView,
-                            [
-                                'form' => $form,
-                                'submission' => $submission,
-                            ]
-                        )->setTo(explode(',', $form->email_notification_addresses))->setFrom(
-                            Yii::$app->mail->transport->getUsername()
-                        )->setSubject($form->name . ' #' . $submission->id)->send();
+                        $emailView,
+                        [
+                            'form' => $form,
+                            'submission' => $submission,
+                        ]
+                    )->setTo(explode(',', $form->email_notification_addresses))->setFrom(
+                        Yii::$app->mail->transport->getUsername()
+                    )->setSubject($form->name . ' #' . $submission->id)->send();
                 } catch (\Exception $e) {
                     // do nothing
                 }
