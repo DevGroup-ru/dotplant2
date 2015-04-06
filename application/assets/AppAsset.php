@@ -28,5 +28,6 @@ class AppAsset extends AssetBundle
         'yii\validators\ValidationAsset',
         'yii\widgets\ActiveFormAsset',
         'yii\jui\JuiAsset',
+        '\kartik\icons\FontAwesomeAsset',
     ];
 }

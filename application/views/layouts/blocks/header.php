@@ -15,27 +15,42 @@ AppAsset::register($this);
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
-    <base href="http://<?=Config::getValue('core.serverName', Yii::$app->request->serverName)?>">
     <meta charset="<?= Yii::$app->charset ?>">
-    <title><?= Html::encode($this->title) ?></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="http://<?=Config::getValue('core.serverName', Yii::$app->request->serverName)?>">
+    <title><?= Html::encode($this->title) ?></title>
+
     <?= Html::csrfMetaTags() ?>
     <?php $this->head(); ?>
 
-
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body itemscope itemtype="http://schema.org/WebPage">
 <?php $this->beginBody(); ?>
-<div id="header">
+
     <div class="container">
-        <div id="welcomeLine" class="row">
-            <div class="span6">
+        <div class="row">
+            <div class="col-md-2">
+                <a href="/" class="logo">DotPlant<sup>2</sup></a>
+            </div>
+            <div class="col-md-4">
+                &nbsp;
+            </div>
+            <div class="col-md-4">
+
+            </div>
+        </div>
+    </div>
+
                 <?php if (!Yii::$app->user->isGuest): ?>
                     <?= Yii::t('app', 'Hello') ?>
                     <strong><?= Html::a(Yii::$app->user->identity->username, ['/cabinet']) ?>!</strong>
                 <?php endif; ?>
-            </div>
-            <div class="span3">
+
                 <?php if (is_array(Yii::$app->session->get('comparisonProductList')) && count(Yii::$app->session->get('comparisonProductList')) > 0): ?>
                     <?=
                     \kartik\helpers\Html::a(
@@ -55,20 +70,11 @@ AppAsset::register($this);
                     )
                     ?>
                 <?php endif; ?>
-            </div>
+
             <?php
                 echo \app\widgets\CartInfo::widget()
             ?>
-        </div>
-        <div id="logoArea" class="navbar navbar-inverse">
-            <a id="smallScreen" data-target="#topMenu" data-toggle="collapse" class="btn btn-navbar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
-            <div class="navbar-inner">
-                <a class="brand" href="/"><img src="/demo/images/logo.png" alt="DotPlant" /></a>
-                <!--                -->
+
                 <?php
                     $form = \yii\widgets\ActiveForm::begin(
                         [
@@ -125,7 +131,3 @@ AppAsset::register($this);
                         ]
                     )
                 ?>
-            </div>
-        </div>
-    </div>
-</div>

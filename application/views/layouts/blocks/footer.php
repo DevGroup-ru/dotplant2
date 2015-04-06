@@ -34,12 +34,6 @@
     </div><!-- Container End -->
 </div>
 
-<script src="/demo/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="/demo/js/google-code-prettify/prettify.js"></script>
-
-<script src="/demo/js/bootshop.js"></script>
-<script src="/demo/js/jquery.lightbox-0.5.js"></script>
-
 
 <?php $this->endBody(); ?>
 </body>

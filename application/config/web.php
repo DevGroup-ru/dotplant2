@@ -90,6 +90,7 @@ $config = [
         'assetManager' => [
             'class' => 'yii\web\AssetManager',
             'bundles' => require(__DIR__ . '/' . (YII_ENV_PROD ? 'assets-prod.php' : 'assets-dev.php')),
+            'linkAssets' => YII_ENV_DEV,
         ],
         'user' => [
             'class' => '\yii\web\User',
