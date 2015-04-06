@@ -77,4 +77,8 @@ class CmlGroup2Catalog extends Component {
     private function getKey($key) {
         return isset ( $this->keys [$key] ) ? $this->keys [$key] : $key;
     }
+    public function setKeys($keys=array())
+    {
+        $this->keys = $keys;
+    }
 }

@@ -268,5 +268,9 @@ class CmlGoods2Product extends Component
     {
         return isset($this->keys[$key]) ? $this->keys[$key] : $key;
     }
+    public function setKeys($keys=array())
+    {
+        $this->keys = $keys;
+    }
 }
 
