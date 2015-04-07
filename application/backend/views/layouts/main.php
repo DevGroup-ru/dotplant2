@@ -76,7 +76,7 @@ BackendAsset::register($this);
             <div class="dropdown btn-header transparent pull-right">
                 <span><a data-toggle="dropdown" href="#"><i class="fa fa-trash-o"></i></a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <li><a href="<?= Url::toRoute('/backend/trash/clean'); ?>"><?= Yii::t('shop', 'Clear the cart') ?></a></li>
+                        <li><a href="<?= Url::toRoute('/backend/trash/clean'); ?>"><?= Yii::t('shop', 'Clear the trash') ?></a></li>
                     </ul>
                 </span>
             </div>
