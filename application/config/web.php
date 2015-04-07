@@ -182,9 +182,6 @@ if (YII_ENV_DEV) {
     $allConfig['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         'panels' => [
-            'holmes' => [
-                'class' => 'app\panels\holmes\HolmesPanel',
-            ],
         ],
     ];
     $allConfig['modules']['gii'] = 'yii\gii\Module';

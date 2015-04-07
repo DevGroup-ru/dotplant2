@@ -183,7 +183,6 @@ div#Product-grid, div#reviews-grid {
 }
 /* line 145, ../sass/admin.scss */
 div#Product-grid .table td, div#reviews-grid .table td {
-  word-break: break-all;
   padding: 4px;
 }
 /* line 148, ../sass/admin.scss */

@@ -26,7 +26,7 @@ class BackendAsset extends AssetBundle
     public $css = [
         'http://st-1.dotplant.ru/css/smartadmin-production.min.css',
         'http://st-2.dotplant.ru/css/smartadmin-production-plugins.min.css',
-
+        'css/admin.css',
     ];
     public $js = [
         'js/admin.js',

@@ -24,9 +24,6 @@ BackendAsset::register($this);
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
-    <?php if(YII_DEBUG): ?>
-        <link rel="stylesheet" href="/css/holmes.min.css" media="screen,projection,print,handheld" type="text/css">
-    <?php endif; ?>
     <?php $this->head(); ?>
     <link href="/css/admin.css" media="screen, projection, print" rel="stylesheet" type="text/css" />
 </head>
@@ -143,24 +140,6 @@ BackendAsset::register($this);
         </div>
     </div>
     <?php $this->endBody(); ?>
-    <script type="text/javascript">
-        $(function(){
-            $('[data-toggle="popover"]').popover({
-                container: 'body'
-            });
-            $('[data-toggle="tooltip"]').tooltip();
-            jQuery('[data-action="delete"]').on('click', function(e){
-                if (confirm('<?= Yii::t('app', 'Are you sure you want to delete this object?') ?>')) {
-                    jQuery.ajax({
-                        'type' : 'post',
-                        'url' : jQuery(this).attr('href')
-                    });
-                }
-                window.location.reload();
-                return false;
-            });
-        });
-    </script>
 </body>
 </html>
 <?php $this->endPage(); ?>
