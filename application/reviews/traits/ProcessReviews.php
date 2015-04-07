@@ -59,7 +59,8 @@ trait ProcessReviews
             }
         }
 
-        if (Yii::$app->request->isPost && (null !== $_post = Yii::$app->request->post('ObjectRating', null))) {
+        $_post = Yii::$app->request->post('ObjectRating');
+        if (Yii::$app->request->isPost && (null !== $_post)) {
             $group = isset($_post['group']) ? trim($_post['group']) : null;
             $group = RatingItem::getGroupByName($group);
             $items = [];

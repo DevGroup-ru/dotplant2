@@ -3,7 +3,8 @@
 namespace app\models;
 
 use Yii;
-use yii\data\ActiveDataProvider;
+use yii\caching\TagDependency;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "{{%rating_item}}".
@@ -24,6 +25,18 @@ class RatingItem extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return '{{%rating_item}}';
+    }
+
+    /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+        ];
     }
 
     /**
@@ -66,7 +79,15 @@ class RatingItem extends \yii\db\ActiveRecord
      */
     public static function getGroupsAll($fetch = true, $as_array = false)
     {
-        $query = static::find('rating_group')
+        $cache_key = 'RatingItem:Groups';
+        $cache = Yii::$app->cache->get($cache_key);
+        if (true === $fetch
+            && true === $as_array
+            && false !== $cache) {
+            return $cache;
+        }
+
+        $query = static::find()
             ->distinct()
             ->groupBy('rating_group')
             ->orderBy(['rating_group' => SORT_ASC]);
@@ -79,7 +100,22 @@ class RatingItem extends \yii\db\ActiveRecord
             return $query;
         }
 
-        return $query->all();
+        $result = $query->all();
+        if (true === $as_array) {
+            Yii::$app->cache->set(
+                $cache_key,
+                $result,
+                0,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                        ],
+                    ]
+                )
+            );
+        }
+        return $result;
     }
 
     /**
@@ -88,9 +124,9 @@ class RatingItem extends \yii\db\ActiveRecord
      */
     public static function getGroupByName($name = null)
     {
-        $query = static::find('rating_group')
+        $query = static::find()
             ->distinct()
-            ->where(['like', 'rating_group', $name])
+            ->where(['rating_group' => $name])
             ->groupBy('rating_group')
             ->orderBy(['rating_group' => SORT_ASC])
             ->asArray();
@@ -106,13 +142,21 @@ class RatingItem extends \yii\db\ActiveRecord
      */
     public static function getItemsByAttributes($attributes = [], $fetch = true, $as_array = false)
     {
-        if (empty($attributes) && !is_array($attributes)) {
+        if (!is_array($attributes)) {
             return [];
         }
 
         $attributes_exists = array_intersect(static::attributes(), array_keys($attributes));
         if (empty($attributes_exists)) {
             return [];
+        }
+
+        $cache_key = 'RatingItem:'.Json::encode($attributes);
+        $cache = Yii::$app->cache->get($cache_key);
+        if (true === $fetch
+            && true === $as_array
+            && false !== $cache) {
+            return $cache;
         }
 
         $query = static::find();
@@ -129,7 +173,22 @@ class RatingItem extends \yii\db\ActiveRecord
             return $query;
         }
 
-        return $query->all();
+        $result = $query->all();
+        if (true === $as_array) {
+            Yii::$app->cache->set(
+                $cache_key,
+                $result,
+                0,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                        ],
+                    ]
+                )
+            );
+        }
+        return $result;
     }
 
     /**
