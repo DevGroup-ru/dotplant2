@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 20.03.15
- * Time: 17:09
- */
 
 namespace app\widgets\rating;
 

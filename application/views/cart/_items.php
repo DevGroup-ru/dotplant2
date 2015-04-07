@@ -71,7 +71,7 @@ $mainCurrency = \app\models\Currency::getMainCurrency();
     <?php if (isset($shippingOption)): ?>
     <tr class="shipping-data">
         <td colspan="4"><?= Html::encode($shippingOption->name) ?></td>
-        <td><?= Yii::$app->formatter->asDecimal($shippingOption->cost, 2) ?> <?= Yii::$app->params['currency'] ?></td>
+        <td><?= $mainCurrency->format($shippingOption->cost) ?></td>
     </tr>
     <?php endif; ?>
 

@@ -26,6 +26,9 @@ class RatingController extends Controller
         ];
     }
 
+    /**
+     *
+     */
     public function actionIndex()
     {
         $data_provider = new ActiveDataProvider([
@@ -172,7 +175,8 @@ class RatingController extends Controller
      */
     public function actionItemDelete($id = null)
     {
-        if ((null === $id) || (null === $item = RatingItem::getOneItemByAttributes(['id' => $id]))) {
+        $item = RatingItem::getOneItemByAttributes(['id' => $id]);
+        if (empty($item)) {
             throw new NotFoundHttpException();
         }
 

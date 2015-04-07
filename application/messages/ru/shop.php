@@ -169,4 +169,6 @@ return [
     'Order statuses' => 'Статусы заказа',
     'Payment types' => 'Типы оплаты',
     'Additional price' => 'Добавочная цена',
+    'See your order status <a href="{url}">here</a>.' => 'Вы можете посмотреть статус заказа <a href="{url}">здесь</a>.',
+    'See order details <a href="{url}">here</a>.' => 'Посмотреть детали заказа можно <a href="{url}">здесь</a>.',
 ];
