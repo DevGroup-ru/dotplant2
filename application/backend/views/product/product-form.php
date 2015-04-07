@@ -5,7 +5,7 @@ use app\models\Product;
 use kartik\grid\GridView;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use app\backend\components\ActiveForm;
 use kartik\select2\Select2;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\data\ActiveDataProvider;
@@ -218,56 +218,43 @@ SCRIPT;
 
     <?=
     $form->field($model, 'slug', [
-        'addon' => [
-            'append' => [
-                'content' => Html::button(
-                    Icon::show('code'),
-                    ['class'=>'btn btn-primary', 'id'=>'translit-slug']
-                ),
-                'asButton' => true,
-            ]
+
+        'makeSlug' => [
+            "#product-name",
+            "#product-title",
+            "#product-h1",
+            "#product-breadcrumbs_label",
         ]
+
     ])
     ?>
 
     <?=
     $form->field($model, 'title', [
-        'addon' => [
-            'append' => [
-                'content' => Html::button(
-                    Icon::show('copy'),
-                    ['class'=>'btn btn-primary', 'id'=>'copy-title']
-                ),
-                'asButton' => true,
-            ]
+        'copyFrom' => [
+            "#product-name",
+            "#product-h1",
+            "#product-breadcrumbs_label",
         ]
     ])
     ?>
 
     <?=
     $form->field($model, 'h1', [
-        'addon' => [
-            'append' => [
-                'content' => Html::button(
-                    Icon::show('copy'),
-                    ['class'=>'btn btn-primary', 'id'=>'copy-h1']
-                ),
-                'asButton' => true,
-            ]
+        'copyFrom' => [
+            "#product-name",
+            "#product-title",
+            "#product-breadcrumbs_label",
         ]
     ])
     ?>
 
     <?=
     $form->field($model, 'breadcrumbs_label', [
-        'addon' => [
-            'append' => [
-                'content' => Html::button(
-                    Icon::show('copy'),
-                    ['class'=>'btn btn-primary', 'id'=>'copy-breadcrumbs_label']
-                ),
-                'asButton' => true,
-            ]
+        'copyFrom' => [
+            "#product-name",
+            "#product-title",
+            "#product-h1",
         ]
     ])
     ?>
@@ -480,56 +467,3 @@ SCRIPT;
 </section>
 
 <?php ActiveForm::end(); ?>
-<script>
-    $(function(){
-        $("#translit-slug").click(function () {
-            Admin.makeSlug(
-                [
-                    "#product-name",
-                    "#product-title",
-                    "#product-h1",
-                    "#product-breadcrumbs_label"
-                ],
-                "#product-slug"
-            );
-            return false;
-        });
-
-        $("#copy-title").click(function () {
-            Admin.copyFrom(
-                [
-                    "#product-name",
-                    "#product-h1",
-                    "#product-breadcrumbs_label"
-                ],
-                "#product-title"
-            );
-            return false;
-        });
-
-        $("#copy-h1").click(function () {
-            Admin.copyFrom(
-                [
-                    "#product-name",
-                    "#product-title",
-                    "#product-breadcrumbs_label"
-                ],
-                "#product-h1"
-            );
-            return false;
-        });
-
-
-        $("#copy-breadcrumbs_label").click(function () {
-            Admin.copyFrom(
-                [
-                    "#product-name",
-                    "#product-title",
-                    "#product-h1"
-                ],
-                "#product-breadcrumbs_label"
-            );
-            return false;
-        });
-    });
-</script>

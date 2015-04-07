@@ -18,7 +18,7 @@ Admin.makeSlug = function (selectorsFrom, selectorTo){
 	}
 	var valueFrom = '';
 	for (var i=0,ii=selectorsFrom.length; i<ii; i++){
-		var val=$(selectorsFrom[i]).val();
+		var val=$(selectorsFrom[i]).val().trim();
 		if (val.length){
 			valueFrom = val;
 			break;
@@ -58,7 +58,7 @@ Admin.copyFrom = function(selectorsFrom, selectorTo) {
 	}
 	var valueFrom = '';
 	for (var i=0,ii=selectorsFrom.length; i<ii; i++){
-		var val=$(selectorsFrom[i]).val();
+		var val=$(selectorsFrom[i]).val().trim();
 		if (val.length){
 			valueFrom = val;
 			break;
