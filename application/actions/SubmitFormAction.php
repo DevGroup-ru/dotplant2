@@ -17,7 +17,6 @@ use kartik\widgets\ActiveForm;
 use Yii;
 use yii\base\Action;
 use yii\helpers\ArrayHelper;
-use yii\helpers\VarDumper;
 use yii\web\Response;
 use yii\web\UploadedFile;
 
@@ -108,7 +107,7 @@ class SubmitFormAction extends Action
             ]
         );
         if (!($form->abstractModel->validate() && $submission->save())) {
-            return VarDumper::dump($form->abstractModel->errors) . VarDumper::dump($submission->errors);
+            return "0";
         }
         foreach ($post[$form->abstractModel->formName()] as $key => &$value) {
             if ($file = UploadedFile::getInstance($model, $key)) {
