@@ -29,7 +29,7 @@ class SpamChecker extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'spam_checker_behavior';
+        return 'spam_checker';
     }
 
     /**
@@ -40,7 +40,8 @@ class SpamChecker extends \yii\db\ActiveRecord
         return [
             [['behavior'], 'required'],
             [['behavior'], 'string', 'max' => 255],
-            [['api_key', 'name', 'author_field', 'content_field'], 'string', 'max' => 50]
+            [['name', 'author_field', 'content_field'], 'string', 'max' => 50],
+            [['api_key'], 'string', 'max' => 90]
         ];
     }
 
@@ -111,11 +112,10 @@ class SpamChecker extends \yii\db\ActiveRecord
         $config = Config::findOne(['key' => 'enabledApiKey']);
         $model = static::findOne($id);
         if ($model === null) {
-            $config->value = 0;
+            $config->value = '';
         } else {
             $config->value = $model->behavior;
         }
-
         $config->save();
         static::$enabledApiId = $id;
     }
@@ -140,5 +140,10 @@ class SpamChecker extends \yii\db\ActiveRecord
     {
         $config = Config::findOne(['key' => 'interpretFields']);
         return ArrayHelper::map($config->children, 'id', 'name');
+    }
+
+    public static function getActive()
+    {
+        return static::findOne(static::getEnabledApiId());
     }
 }

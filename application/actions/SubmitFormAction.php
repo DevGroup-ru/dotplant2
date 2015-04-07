@@ -17,6 +17,7 @@ use kartik\widgets\ActiveForm;
 use Yii;
 use yii\base\Action;
 use yii\helpers\ArrayHelper;
+use yii\helpers\VarDumper;
 use yii\web\Response;
 use yii\web\UploadedFile;
 
@@ -31,7 +32,6 @@ class SubmitFormAction extends Action
         /** @var AbstractModel|SpamCheckerBehavior $model */
         $model = $form->getAbstractModel();
 
-        // Тут явный трешак, это надо перенести в конец
         if (\Yii::$app->request->isAjax && isset($post['ajax'])) {
             \Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
@@ -53,72 +53,50 @@ class SubmitFormAction extends Action
         $propIds = ArrayHelper::getColumn($propGroups, 'property_group_id');
 
         /** Проверка на спам */
-        /** Получение API ключей */
+        $activeSpamChecker = SpamChecker::getActive();
+        $data = [];
+        $spamResult = [];
+        if ($activeSpamChecker !== null) {
+            $apiKey = ArrayHelper::getValue($activeSpamChecker, 'api_key', '');
+            if ($apiKey !== '') {
+                $data[$activeSpamChecker->name]['class'] = $activeSpamChecker->behavior;
+                $data[$activeSpamChecker->name]['value']['key'] = $activeSpamChecker->api_key;
+                /** Интерпретации полей фомы */
+                $properties = Property::getForGroupId($propIds[0]);
+                foreach ($properties as $prop) {
+                    if ($prop->interpret_as == 0) {
+                        continue;
+                    }
+                    $interpreted = Config::findOne($prop->interpret_as);
+                    if ($interpreted->key == 'notinterpret') {
+                        continue;
+                    }
+                    $value = $post[$form->abstractModel->formName()][$prop->key];
+                    $interpretedKey = ArrayHelper::getValue($activeSpamChecker, $interpreted->key, '');
+                    if ($interpretedKey !== '') {
+                        $data[$activeSpamChecker->name]['value'][$interpretedKey] = $value;
+                    }
+                }
+                $model->attachBehavior(
+                    'spamChecker',
+                    [
+                        'class' => SpamCheckerBehavior::className(),
+                        'data' => $data
+                    ]
+                );
+                $spamResult = $model->check();
+            }
+        }
 
-        //Вот эту фигню тоже надо на ООП пересадить, как то поабстрактнее что ли сделать, подумать над тем как будет добавляться новый тип проверки на спам !!!! это важно !!!!
-        $data = [
-            'yandex' => ['key' => Config::getValue('spamCheckerConfig.apikeys.yandexAPIKey')],
-            'akismet' => ['key' => Config::getValue('spamCheckerConfig.apikeys.akismetAPIKey')]
-        ];
-
-        /** Интерпретации полей фомы */
-        $properties = Property::getForGroupId($propIds[0]);
-        foreach ($properties as $prop) {
-            if ($prop->interpret_as == 0) {
-                continue;
-            }
-            $interpreted = Config::findOne($prop->interpret_as);
-            if ($interpreted->key == 'notinterpret') {
-                continue;
-            }
-            $value = $post[$form->abstractModel->formName()][$prop->key];
-            /** Названия свойств фиксированные, хранятся в модели Config */
-            // Тут надо вынести в модели и на уровне моделей разруливать
-            switch ($interpreted->key) {
-                case "name":
-                    $data['yandex']['realname'] = $value;
-                    $data['akismet']['comment_author'] = $value;
-                    break;
-                case "content":
-                    $data['yandex']['body-plain'] = $value;
-                    $data['akismet']['comment_content'] = $value;
-                    break;
-            }
-        }
-        $enabledApiKey = (new SpamChecker())->getEnabledApiKeyPath();
-        if ($enabledApiKey == 'spamCheckerConfig.apikeys.yandexAPIKey') {
-            unset($data['akismet']);
-        } else {
-            unset($data['yandex']);
-        }
-        /** Если не указан api key, то нет смысла  запусать чекер */
-        if (empty($data['yandex']['key'])) {
-            unset($data['yandex']);
-        }
-        if (empty($data['akismet']['key'])) {
-            unset($data['akismet']);
-        }
-        $model->attachBehavior(
-            'spamChecker',
-            [
-                'class' => SpamCheckerBehavior::className(),
-                'data' => $data
-            ]
-        );
-        $spamResult = $model->check();
-        $haveSpam = "not defined";
-        if (is_array($spamResult)) {
-            if (isset($spamResult['yandex']) && $spamResult['yandex']['ok'] == 1) {
-                $haveSpam = $spamResult['yandex']['is_spam'];
-            }
-            if (isset($spamResult['akismet']) && $spamResult['akismet']['ok'] == 1) {
-                if ($haveSpam != 'yes') {
-                    $haveSpam = $spamResult['akismet']['is_spam'];
+        $haveSpam = false;
+        if (is_array($spamResult) === true) {
+            foreach ($spamResult as $result) {
+                if (ArrayHelper::getValue($result, 'ok', false) === true) {
+                    $haveSpam = $haveSpam || ArrayHelper::getValue($result, 'is_spam', false);
                 }
             }
         }
         $date = new \DateTime();
-        // @todo rewrite code above
         /** @var Submission|HasProperties $submission */
         $submission = new Submission(
             [
@@ -126,11 +104,11 @@ class SubmitFormAction extends Action
                 'date_received' => $date->format('Y-m-d H:i:s'),
                 'ip' => Yii::$app->request->userIP,
                 'user_agent' => Yii::$app->request->userAgent,
-                'spam' => $haveSpam,
+                'spam' => Yii::$app->formatter->asBoolean($haveSpam),
             ]
         );
         if (!($form->abstractModel->validate() && $submission->save())) {
-            return "0";
+            return VarDumper::dump($form->abstractModel->errors) . VarDumper::dump($submission->errors);
         }
         foreach ($post[$form->abstractModel->formName()] as $key => &$value) {
             if ($file = UploadedFile::getInstance($model, $key)) {
@@ -150,7 +128,7 @@ class SubmitFormAction extends Action
             $submission->abstractModel->formName() => $post[$form->abstractModel->formName()],
         ];
         $submission->saveProperties($data);
-        if ($haveSpam == 'no' || $haveSpam == "not defined") {
+        if ($haveSpam === false) {
             if (!empty($form->email_notification_addresses)) {
                 try {
                     $emailView = !empty($form->email_notification_view) ? $form->email_notification_view : '@app/widgets/form/views/email-template.php';

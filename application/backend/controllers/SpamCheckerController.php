@@ -28,11 +28,9 @@ class SpamCheckerController extends Controller
 
     public function actionIndex()
     {
-
         $searchModel = new SpamChecker;
         $params = Yii::$app->request->get();
         $dataProvider = $searchModel->search($params);
-
         $post = Yii::$app->request->post();
         if (ArrayHelper::keyExists($searchModel->formName(), $post)) {
             SpamChecker::setEnabledApiId(
