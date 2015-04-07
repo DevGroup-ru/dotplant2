@@ -3,7 +3,7 @@
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use app\backend\components\ActiveForm;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\helpers\Url;
 
@@ -117,14 +117,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 $model,
                 'title',
                 [
-                    'addon' => [
-                        'append' => [
-                            'content' => Html::button(
-                                Icon::show('copy'),
-                                ['class' => 'btn btn-primary', 'id' => 'copy-title']
-                            ),
-                            'asButton' => true,
-                        ]
+                    'copyFrom'=>[
+                        "#category-name",
+                        "#category-h1",
+                        "#category-breadcrumbs_label",
                     ]
                 ]
             )
@@ -253,14 +249,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 $model,
                 'slug',
                 [
-                    'addon' => [
-                        'append' => [
-                            'content' => Html::button(
-                                Icon::show('code'),
-                                ['class' => 'btn btn-primary', 'id' => 'translit-slug']
-                            ),
-                            'asButton' => true,
-                        ]
+                    'makeSlug' => [
+                        "#category-name",
+                        "#category-title",
+                        "#category-h1",
+                        "#category-breadcrumbs_label",
                     ]
                 ]
             )
@@ -271,14 +264,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 $model,
                 'h1',
                 [
-                    'addon' => [
-                        'append' => [
-                            'content' => Html::button(
-                                Icon::show('copy'),
-                                ['class' => 'btn btn-primary', 'id' => 'copy-h1']
-                            ),
-                            'asButton' => true,
-                        ]
+                    'copyFrom' => [
+                        "#category-name",
+                        "#category-title",
+                        "#category-breadcrumbs_label",
                     ]
                 ]
             )
@@ -289,14 +278,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 $model,
                 'breadcrumbs_label',
                 [
-                    'addon' => [
-                        'append' => [
-                            'content' => Html::button(
-                                Icon::show('copy'),
-                                ['class' => 'btn btn-primary', 'id' => 'copy-breadcrumbs_label']
-                            ),
-                            'asButton' => true,
-                        ]
+                    'copyFrom' => [
+                        "#category-name",
+                        "#category-title",
+                        "#category-h1",
                     ]
                 ]
             )
@@ -322,56 +307,3 @@ $this->params['breadcrumbs'][] = $this->title;
 </section>
 
 <?php ActiveForm::end(); ?>
-<script>
-    $(function () {
-        $("#translit-slug").click(function () {
-            Admin.makeSlug(
-                [
-                    "#category-name",
-                    "#category-title",
-                    "#category-h1",
-                    "#category-breadcrumbs_label"
-                ],
-                "#category-slug"
-            );
-            return false;
-        });
-
-        $("#copy-title").click(function () {
-            Admin.copyFrom(
-                [
-                    "#category-name",
-                    "#category-h1",
-                    "#category-breadcrumbs_label"
-                ],
-                "#category-title"
-            );
-            return false;
-        });
-
-        $("#copy-h1").click(function () {
-            Admin.copyFrom(
-                [
-                    "#category-name",
-                    "#category-title",
-                    "#category-breadcrumbs_label"
-                ],
-                "#category-h1"
-            );
-            return false;
-        });
-
-
-        $("#copy-breadcrumbs_label").click(function () {
-            Admin.copyFrom(
-                [
-                    "#category-name",
-                    "#category-title",
-                    "#category-h1"
-                ],
-                "#category-breadcrumbs_label"
-            );
-            return false;
-        });
-    });
-</script>

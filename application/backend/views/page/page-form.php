@@ -256,7 +256,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 $model,
                 'slug',
                 [
-                    'copyFrom'=>[
+                    'makeSlug'=>[
                         "#page-title",
                         "#page-h1",
                         "#page-breadcrumbs_label"
