@@ -9,6 +9,8 @@
 
 use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
+use devgroup\JsTreeWidget\TreeWidget;
+use devgroup\JsTreeWidget\ContextMenuHelper;
 
 $this->title = Yii::t('app', 'Pages');
 if (is_object($model)) {
@@ -28,16 +30,47 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="row">
     <div class="col-md-4">
         <?=
-            app\backend\widgets\JSTree::widget([
-                'model' => new app\models\Page,
-                'routes' => [
-                    'getTree' => ['/backend/page/getTree', 'selected_id' => $parent_id],
-                    'open' => ['/backend/page/index'],
-                    'edit' => ['/backend/page/edit'],
-                    'delete' => ['/backend/page/delete'],
-                    'create' => ['/backend/page/edit'],
+        TreeWidget::widget([
+            'treeDataRoute' => ['/backend/page/getTree', 'selected_id' => $parent_id],
+            'contextMenuItems' => [
+                'edit' => [
+                    'label' => 'Edit',
+                    'icon' => 'fa fa-pencil',
+                    'action' => ContextMenuHelper::actionUrl(
+                        ['/backend/page/edit']
+                    ),
                 ],
-            ]);
+                'show' => [
+                    'label' => 'Show pages inside this page',
+                    'icon' => 'fa fa-folder-o',
+                    'action' => ContextMenuHelper::actionUrl(
+                        ['/backend/page/index'],
+                        [
+                            'parent_id' => 'id',
+                        ]
+                    ),
+                ],
+                'create' => [
+                    'label' => 'Create',
+                    'icon' => 'fa fa-plus-circle',
+                    'action' => ContextMenuHelper::actionUrl(
+                        ['/backend/page/edit'],
+                        [
+                            'parent_id' => 'id',
+                        ]
+                    ),
+                ],
+                'delete' => [
+                    'label' => 'Delete',
+                    'icon' => 'fa fa-trash-o',
+                    'action' => ContextMenuHelper::actionUrl(
+                        ['/backend/page/delete']
+                    ),
+                ],
+
+
+            ],
+        ]);
         ?>
     </div>
     <div class="col-md-8" id="jstree-more">

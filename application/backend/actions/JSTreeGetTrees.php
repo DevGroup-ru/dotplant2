@@ -58,7 +58,7 @@ class JSTreeGetTrees extends Action
                     'id' => $row[$this->id_attribute],
                     'parent' => ($row[$this->parent_attribute] > 0) ? $row[$this->parent_attribute] : '#',
                     'text' => $row[$this->label_attribute],
-                    'a_attr' => ['data-id'=>$row[$this->id_attribute], 'data-parent-id'=>$row[$this->parent_attribute]],
+                    'a_attr' => ['data-id'=>$row[$this->id_attribute], 'data-parent_id'=>$row[$this->parent_attribute]],
                 ];
 
                 if (null !== $this->vary_by_type_attribute) {

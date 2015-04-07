@@ -20,7 +20,9 @@ class BackendModule extends Module implements BootstrapInterface
      */
     public $floatingPanel = [];
 
-
+    /**
+     * @inheritdoc
+     */
     public function bootstrap($app)
     {
         $app->on(

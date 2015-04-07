@@ -2,7 +2,6 @@
 
 namespace app\backend\controllers;
 
-use app\backend\actions\JSTreeGetTrees;
 use app\models\Category;
 use app\models\Config;
 use app\models\Object;
@@ -11,7 +10,7 @@ use app\properties\HasProperties;
 use app\widgets\image\RemoveAction;
 use app\widgets\image\SaveInfoAction;
 use app\widgets\image\UploadAction;
-use vova07\imperavi\actions\GetAction;
+use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
@@ -43,10 +42,9 @@ class CategoryController extends Controller
     {
         return [
             'getTree' => [
-                'class' => JSTreeGetTrees::className(),
-                'modelName' => Category::className(),
-                'label_attribute' => 'name',
-                'vary_by_type_attribute' => null,
+                'class' => AdjacencyFullTreeDataAction::className(),
+                'class_name' => Category::className(),
+                'model_label_attribute' => 'name',
             ],
             'upload' => [
                 'class' => UploadAction::className(),

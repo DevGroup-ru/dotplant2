@@ -1,9 +1,10 @@
 <?php
 
-use kartik\helpers\Html;
 use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
 use yii\helpers\Url;
+use devgroup\JsTreeWidget\TreeWidget;
+use devgroup\JsTreeWidget\ContextMenuHelper;
 
 $this->title = Yii::t('app', 'Categories');
 if (is_object($model)) {
@@ -23,14 +24,45 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="row">
     <div class="col-md-4">
         <?=
-            app\backend\widgets\JSTree::widget([
-                'model' => new app\models\Category,
-                'routes' => [
-                    'getTree' => ['/backend/category/getTree', 'selected_id' => $parent_id],
-                    'open' => ['/backend/category/index'],
-                    'edit' => ['/backend/category/edit'],
-                    'delete' => ['/backend/category/delete'],
-                    'create' => ['/backend/category/edit'],
+            TreeWidget::widget([
+                'treeDataRoute' => ['/backend/category/getTree', 'selected_id' => $parent_id],
+                'contextMenuItems' => [
+                    'edit' => [
+                        'label' => 'Edit',
+                        'icon' => 'fa fa-pencil',
+                        'action' => ContextMenuHelper::actionUrl(
+                            ['/backend/category/edit']
+                        ),
+                    ],
+                    'open' => [
+                        'label' => 'Open',
+                        'icon' => 'fa fa-folder-open',
+                        'action' => ContextMenuHelper::actionUrl(
+                            ['/backend/category/index'],
+                            [
+                                'parent_id',
+                            ]
+                        ),
+                    ],
+                    'create' => [
+                        'label' => 'Create',
+                        'icon' => 'fa fa-plus-circle',
+                        'action' => ContextMenuHelper::actionUrl(
+                            ['/backend/category/edit'],
+                            [
+                                'parent_id',
+                            ]
+                        ),
+                    ],
+                    'delete' => [
+                        'label' => 'Delete',
+                        'icon' => 'fa fa-trash-o',
+                        'action' => ContextMenuHelper::actionUrl(
+                            ['/backend/category/delete']
+                        ),
+                    ],
+
+
                 ],
             ]);
         ?>

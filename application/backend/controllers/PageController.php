@@ -10,7 +10,7 @@ use app\properties\HasProperties;
 use app\widgets\image\RemoveAction;
 use app\widgets\image\SaveInfoAction;
 use app\widgets\image\UploadAction;
-use vova07\imperavi\actions\GetAction;
+use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -39,9 +39,9 @@ class PageController extends Controller
     {
         return [
             'getTree' => [
-                'class' => 'app\backend\actions\JSTreeGetTrees',
-                'modelName' => 'app\models\Page',
-                'label_attribute' => 'name',
+                'class' => AdjacencyFullTreeDataAction::className(),
+                'class_name' => Page::className(),
+                'model_label_attribute' => 'name',
             ],
             'upload' => [
                 'class' => UploadAction::className(),

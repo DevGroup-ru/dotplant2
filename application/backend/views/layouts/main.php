@@ -13,7 +13,7 @@ use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 
 BackendAsset::register($this);
-Icon::map($this);
+//Icon::map($this);
 
 ?>
 <?php $this->beginPage(); ?>

@@ -3,6 +3,8 @@
 use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
 use yii\helpers\Url;
+use devgroup\JsTreeWidget\TreeWidget;
+use devgroup\JsTreeWidget\ContextMenuHelper;
 
 $this->title = Yii::t('app', 'Products');
 $this->params['breadcrumbs'][] = $this->title;
@@ -35,17 +37,59 @@ $this->endBlock();
 <div class="row">
     <div class="col-md-4">
     <?=
-        app\backend\widgets\JSTree::widget([
-            'model' => new app\models\Category,
-            'routes' => [
-                'getTree' => [Url::toRoute('getTree')],
-                'open' => [Url::toRoute('index')],
-                'edit' => ['/backend/category/edit'],
-                'delete' => ['/backend/category/delete'],
-                'create' => ['/backend/category/edit'],
+    TreeWidget::widget([
+        'treeDataRoute' => ['/backend/product/getTree'],
+        'contextMenuItems' => [
+            'show' => [
+                'label' => 'Show products in category',
+                'icon' => 'fa fa-folder-open',
+                'action' => ContextMenuHelper::actionUrl(
+                    ['/backend/product/index'],
+                    [
+                        'parent_id' => 'id',
+                    ]
+                ),
             ],
-        ]);
-?>
+            'createProduct' => [
+                'label' => 'Create product in this category',
+                'icon' => 'fa fa-plus-circle',
+                'action' => ContextMenuHelper::actionUrl(
+                    ['/backend/product/edit'],
+                    [
+                        'parent_id' => 'id',
+                        //@todo add returnUrl here
+                    ]
+                ),
+            ],
+            'edit' => [
+                'label' => 'Edit category',
+                'icon' => 'fa fa-pencil',
+                'action' => ContextMenuHelper::actionUrl(
+                    ['/backend/category/edit']
+                ),
+            ],
+            'create' => [
+                'label' => 'Create category',
+                'icon' => 'fa fa-plus-circle',
+                'action' => ContextMenuHelper::actionUrl(
+                    ['/backend/category/edit'],
+                    [
+                        'parent_id' => 'id',
+                    ]
+                ),
+            ],
+            'delete' => [
+                'label' => 'Delete category',
+                'icon' => 'fa fa-trash-o',
+                'action' => ContextMenuHelper::actionUrl(
+                    ['/backend/category/delete']
+                ),
+            ],
+
+
+        ],
+    ]);
+    ?>
     </div>
     <div class="col-md-8" id="jstree-more">
 <?=
