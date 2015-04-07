@@ -11,7 +11,6 @@ class SpamChecker extends Model
 {
     /**
      * This is the model class without table
-     *
      * @property string $yandexApiKey
      * @property string $akismetApiKey
      * @property integer $configFieldsParentId
@@ -23,8 +22,8 @@ class SpamChecker extends Model
     public $enabledApiKey;
     public $configFieldsParentId;
 
-    private static $field_array_cache = null;
-    private static $field_type_array_cache = null;
+
+
 
     /**
      * @return array the validation rules.
@@ -50,51 +49,9 @@ class SpamChecker extends Model
         ];
     }
 
-    public static function getAvailableApis()
-    {
-        $config = Config::findOne(
-            [
-                'path' => 'spamCheckerConfig.apikeys',
-            ]
-        );
-        if ($config === null) {
-            return [];
-        }
-        return ArrayHelper::map($config->children, 'id', 'name');
-    }
 
-    public static function getFieldTypesForForm()
-    {
-        if (static::$field_array_cache === null) {
-            $rows = (new Query())
-                ->select('id, name')
-                ->from(Config::tableName())
-                ->all();
-            static::$field_array_cache = [];
-            foreach ($rows as $row) {
-                static::$field_array_cache[$row['id']] = $row['name'];
-            }
-        }
 
-        return static::$field_array_cache;
-    }
 
-    public static function getFieldTypesForFormByParentId($parentId = 0)
-    {
-        if (static::$field_type_array_cache === null) {
-            $rows = (new Query())
-                ->select('id, value')
-                ->from(Config::tableName())
-                ->where("parent_id=:parent_id", [":parent_id" => $parentId])
-                ->all();
-            static::$field_type_array_cache = [];
-            foreach ($rows as $row) {
-                static::$field_type_array_cache[$row['id']] = $row['value'];
-            }
-        }
-
-        return static::$field_type_array_cache;
-    }
 
     public function getEnabledApiKeyPath()
     {
