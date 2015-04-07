@@ -407,17 +407,23 @@ if ($sum_transactions < $model->total_price):
 <?php \kartik\widgets\ActiveForm::end() ?>
 <?php \yii\bootstrap\Modal::end() ?>
 
-<script>
-    jQuery('#orderchat-message').keypress(function (event) {
+<?php
+
+$js = <<<JS
+    "use strict";
+    $('#orderchat-message').keypress(function (event) {
         if (event.keyCode == 10) {
-            jQuery(this).parents('form').eq(0).submit();
+            $(this).parents('form').eq(0).submit();
         }
     });
-    jQuery('body').on('editableSuccess', function () {
+    $('body').on('editableSuccess', function () {
         location.reload();
     });
-    jQuery('#print-button').click(function () {
+    $('#print-button').click(function () {
         window.print();
         return false;
     });
-</script>
+JS;
+$this->registerJs($js);
+
+?>

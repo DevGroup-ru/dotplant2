@@ -3,7 +3,7 @@
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use app\backend\components\ActiveForm;
 
 $this->title = Yii::t('app', 'Property static value edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/properties/index'], 'label' => Yii::t('app', 'Property groups')];
@@ -77,40 +77,25 @@ Html::submitButton(
                 <?= $form->field($model, 'name')?>
 
                 <?= $form->field($model, 'value', [
-                        'addon' => [
-                            'append' => [
-                                'content' => Html::button(
-                                    Icon::show('copy'),
-                                    ['class'=>'btn btn-primary', 'id'=>'copy-value']
-                                ),
-                                'asButton' => true,
-                            ]
+                        'copyFrom' => [
+                            "#propertystaticvalues-name",
                         ]
                     ])?>
 
                 <?= $form->field($model, 'slug', [
-                        'addon' => [
-                            'append' => [
-                                'content' => Html::button(
-                                    Icon::show('code'),
-                                    ['class'=>'btn btn-primary', 'id'=>'translit-slug']
-                                ),
-                                'asButton' => true,
-                            ]
+                        'makeSlug' => [
+                            "#propertystaticvalues-name",
+                            "#propertystaticvalues-value",
                         ]
                     ])?>
 
                 <?= $form->field($model, 'sort_order')?>
 
                 <?= $form->field($model, 'title_append', [
-                        'addon' => [
-                            'append' => [
-                                'content' => Html::button(
-                                    Icon::show('copy'),
-                                    ['class'=>'btn btn-primary', 'id'=>'copy-title-append']
-                                ),
-                                'asButton' => true,
-                            ]
+                        'copyFrom' => [
+                            "#propertystaticvalues-name",
+                            "#propertystaticvalues-value",
+                            "#product-breadcrumbs_label",
                         ]
                     ])?>
                 <?= $form->field($model, 'dont_filter')->checkbox() ?>
@@ -169,40 +154,4 @@ Html::submitButton(
 </section>
 
 <?php ActiveForm::end();  ?>
-<script>
-    $(function(){
-        $("#translit-slug").click(function () {
-            Admin.makeSlug(
-                [
-                    "#propertystaticvalues-name", 
-                    "#propertystaticvalues-value", 
-                ], 
-                "#propertystaticvalues-slug"
-            );
-            return false;
-        });
 
-        $("#copy-title-append").click(function () {
-            Admin.copyFrom(
-                [
-                    "#propertystaticvalues-name", 
-                    "#propertystaticvalues-value", 
-                    "#product-breadcrumbs_label"
-                ], 
-                "#propertystaticvalues-title_append"
-            );
-            return false;
-        });
-
-        $("#copy-value").click(function () {
-            Admin.copyFrom(
-                [
-                    "#propertystaticvalues-name"
-                ], 
-                "#propertystaticvalues-value"
-            );
-            return false;
-        });
-
-    });
-</script>

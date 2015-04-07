@@ -63,19 +63,26 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php BackendWidget::end(); ?>
 </div>
 
-<script type="text/javascript">
-    $(function() {
-        $('#deleteItems').on('click', function() {
-            $.ajax({
-                'url' : '/backend/rbac/remove-items',
-                'type': 'post',
-                'data': {
-                    'items' : $('.grid-view').yiiGridView('getSelectedRows')
-                },
-                success: function(data) {
-                    location.reload();
-                }
-            });
+
+<?php
+
+$js = <<<JS
+    "use strict";
+
+    $('#deleteItems').on('click', function() {
+        $.ajax({
+            'url' : '/backend/rbac/remove-items',
+            'type': 'post',
+            'data': {
+                'items' : $('.grid-view').yiiGridView('getSelectedRows')
+            },
+            success: function(data) {
+                location.reload();
+            }
         });
     });
-</script>
+JS;
+
+$this->registerJs($js);
+
+?>

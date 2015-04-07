@@ -131,22 +131,28 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
-<script language="JavaScript">
-    $(document).ready(function(){
-        $('#create_yml').click(function(){
-            $.ajax({
-                url: "/yml/get?regenerate=yes",
-                success: function(data, textStatus, jqXHR){
-                    console.log("Received: " + textStatus);
-                    if (data !== "busy" && data !== "file not exist") {
-                        $('#yml_link').css({"color": "green"});
-                        $('#yml_link').html(textStatus);
-                    } else {
-                        $('#yml_link').css({"color": "green"});
-                        $('#yml_link').html(data);
-                    }
+<?php
+$js = <<<JS
+    "use strict";
+
+    $('#create_yml').click(function(){
+        $.ajax({
+            url: "/yml/get?regenerate=yes",
+            success: function(data, textStatus, jqXHR){
+                var yml_link = $('#yml_link');
+
+                if (data !== "busy" && data !== "file not exist") {
+                    yml_link.css({"color": "green"});
+                    yml_link.html(textStatus);
+                } else {
+                    yml_link.css({"color": "green"});
+                    yml_link.html(data);
                 }
-            });
+            }
         });
     });
-</script>
+JS;
+
+$this->registerJs($js);
+
+?>
