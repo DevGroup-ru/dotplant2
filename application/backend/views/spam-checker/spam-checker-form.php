@@ -1,7 +1,7 @@
 <?php
 /**
  * @var yii\web\View $this
- * @var app\models\SpamCheckerBehavior $model
+ * @var app\models\SpamChecker $model
  */
 
 use app\backend\widgets\BackendWidget;

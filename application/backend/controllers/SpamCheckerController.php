@@ -2,7 +2,7 @@
 
 namespace app\backend\controllers;
 
-use app\models\SpamCheckerBehavior;
+use app\models\SpamChecker;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
@@ -29,13 +29,13 @@ class SpamCheckerController extends Controller
     public function actionIndex()
     {
 
-        $searchModel = new SpamCheckerBehavior;
+        $searchModel = new SpamChecker;
         $params = Yii::$app->request->get();
         $dataProvider = $searchModel->search($params);
 
         $post = Yii::$app->request->post();
         if (ArrayHelper::keyExists($searchModel->formName(), $post)) {
-            SpamCheckerBehavior::setEnabledApiId(
+            SpamChecker::setEnabledApiId(
                 ArrayHelper::getValue($post, $searchModel->formName() . '.enabledApiId')
             );
         }
@@ -43,7 +43,6 @@ class SpamCheckerController extends Controller
         return $this->render(
             'index',
             [
-                //'model' => $model,
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
             ]
@@ -53,9 +52,9 @@ class SpamCheckerController extends Controller
     public function actionEdit($id = null)
     {
         if ($id === null) {
-            $model = new SpamCheckerBehavior;
+            $model = new SpamChecker;
         } else {
-            $model = SpamCheckerBehavior::findOne($id);
+            $model = SpamChecker::findOne($id);
         }
         if ($model === null) {
             throw new NotFoundHttpException;
@@ -93,7 +92,7 @@ class SpamCheckerController extends Controller
 
     public function actionDelete($id)
     {
-        $model = SpamCheckerBehavior::findOne($id);
+        $model = SpamChecker::findOne($id);
         if ($model === null) {
             throw new NotFoundHttpException;
         }
@@ -109,7 +108,7 @@ class SpamCheckerController extends Controller
     {
         $items = Yii::$app->request->post('items', []);
         if (empty($items) === false) {
-            SpamCheckerBehavior::deleteAll(['in', 'id', $items]);
+            SpamChecker::deleteAll(['in', 'id', $items]);
         }
         $this->render(['index']);
     }

@@ -9,7 +9,7 @@ class m150403_123614_spamchecker_model extends Migration
     {
         $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB';
         $this->createTable(
-            '{{%spam_checker_behavior}}',
+            '{{%spam_checker}}',
             [
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
                 'behavior' => 'VARCHAR(255) NOT NULL',
@@ -21,7 +21,7 @@ class m150403_123614_spamchecker_model extends Migration
             $tableOptions
         );
         $this->batchInsert(
-            '{{%spam_checker_behavior}}',
+            '{{%spam_checker}}',
             ['behavior', 'name', 'author_field', 'content_field'],
             [
                 ['app\\behaviors\\spamchecker\\AkismetSpamChecker', 'Akismet', 'comment_author', 'comment_content'],
@@ -33,6 +33,6 @@ class m150403_123614_spamchecker_model extends Migration
 
     public function down()
     {
-        $this->dropTable('{{%spam_checker_behavior}}');
+        $this->dropTable('{{%spam_checker}}');
     }
 }

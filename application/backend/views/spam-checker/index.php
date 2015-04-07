@@ -3,12 +3,12 @@
 /**
  * @var $this yii\web\View
  * @var $dataProvider yii\data\ActiveDataProvider
- * @var $searchModel app\models\SpamCheckerBehavior
+ * @var $searchModel app\models\SpamChecker
  */
 use app\backend\components\Helper;
 use app\backend\widgets\BackendWidget;
 use app\backend\widgets\RemoveAllButton;
-use app\models\SpamCheckerBehavior;
+use app\models\SpamChecker;
 use kartik\dynagrid\DynaGrid;
 use kartik\grid\CheckboxColumn;
 use kartik\icons\Icon;
@@ -88,14 +88,7 @@ $this->endBlock();
             <?php BackendWidget::begin(['title' => Yii::t('app', 'Spam Checker Settings'), 'icon' => 'list']); ?>
             <?php $form = ActiveForm::begin(['id' => 'spamchecker-form', 'type' => ActiveForm::TYPE_VERTICAL]); ?>
 
-            <?=$form->field($searchModel, 'enabledApiId')->dropDownList(SpamCheckerBehavior::getAvailableApis());?>
-            <!--Эта хрень переносится просто в конфиг и там навсегда живет или в модель надо посмотреть на реализацию и где эта штука используется-->
-            <?php
-            //            $form->field($model, 'configFieldsParentId')->dropDownList(
-            //                //SpamChecker::getFieldTypesForForm()
-            //                []
-            //            )
-            ?>
+            <?=$form->field($searchModel, 'enabledApiId')->dropDownList(SpamChecker::getAvailableApis());?>
 
             <?=Html::submitButton(
                 Icon::show('save') . Yii::t('app', 'Save'),

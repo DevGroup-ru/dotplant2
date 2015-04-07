@@ -2,37 +2,45 @@
 
 namespace app\models;
 
+
 use Yii;
-use yii\base\Model;
-use yii\db\Query;
+use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 
-class SpamChecker extends Model
+
+/**
+ * This is the model class for table "spam_checker".
+ * @property integer $id
+ * @property string $behavior
+ * @property string $api_key
+ * @property string $name
+ * @property string $author_field
+ * @property string $content_field
+ */
+class SpamChecker extends \yii\db\ActiveRecord
 {
     /**
-     * This is the model class without table
-     * @property string $yandexApiKey
-     * @property string $akismetApiKey
-     * @property integer $configFieldsParentId
-     * @property integer $enabledApiKey;
+     * @var int
      */
-
-    public $yandexApiKey;
-    public $akismetApiKey;
-    public $enabledApiKey;
-    public $configFieldsParentId;
-
-
-
+    public static $enabledApiId = 0;
 
     /**
-     * @return array the validation rules.
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'spam_checker_behavior';
+    }
+
+    /**
+     * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['yandexApiKey', 'akismetApiKey'], 'string'],
-            [['configFieldsParentId', 'enabledApiKey'], 'integer']
+            [['behavior'], 'required'],
+            [['behavior'], 'string', 'max' => 255],
+            [['api_key', 'name', 'author_field', 'content_field'], 'string', 'max' => 50]
         ];
     }
 
@@ -42,33 +50,95 @@ class SpamChecker extends Model
     public function attributeLabels()
     {
         return [
-            'yandexApiKey' => Yii::t('app', 'Yandex API Key'),
-            'akismetApiKey' => Yii::t('app', 'Akismet API Key'),
-            'enabledApiKey' => Yii::t('app', 'Enabled Api Key'),
-            'configFieldsParentId' => Yii::t('app', 'Config Fields Parent Id'),
+            'id' => Yii::t('app', 'ID'),
+            'behavior' => Yii::t('app', 'Behavior'),
+            'api_key' => Yii::t('app', 'Api Key'),
+            'name' => Yii::t('app', 'Name'),
+            'author_field' => Yii::t('app', 'Author Field'),
+            'content_field' => Yii::t('app', 'Content Field'),
+            'enabledApiId' => Yii::t('app', 'Enabled Api Key'),
         ];
     }
 
-
-
-
-
-    public function getEnabledApiKeyPath()
+    /**
+     * Search tasks
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function search($params)
     {
-        $config = new Config();
-        $path = $config->findOne(
+        /* @var $query \yii\db\ActiveQuery */
+        $query = self::find();
+        $dataProvider = new ActiveDataProvider(
             [
-                'path' => 'spamCheckerConfig.enabledApiKey'
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
             ]
         );
-        if ($path === null) {
-            return [];
+        if (!($this->load($params))) {
+            return $dataProvider;
         }
-        $enabledApi = $config->findOne(
-            [
-                'id' => $path['value']
-            ]
-        );
-        return $enabledApi['path'];
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['like', 'behavior', $this->behavior]);
+        $query->andFilterWhere(['like', 'api_key', $this->api_key]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
+        return $dataProvider;
+    }
+
+    /**
+     * Function return array map for drop down list
+     * @return array
+     */
+    public static function getAvailableApis()
+    {
+        static::getEnabledApiId();
+        $all = static::find()->all();
+        $map = ArrayHelper::map($all, 'id', 'name');
+        return ArrayHelper::merge([0 => Yii::t('app', 'Not selected')], $map);
+    }
+
+    public static function getEnabledApiId()
+    {
+        $enabled = Config::getValue('spamCheckerConfig.enabledApiKey', null);
+        static::$enabledApiId = static::getApiIdByClassName($enabled);
+        return static::$enabledApiId;
+    }
+
+    public static function setEnabledApiId($id)
+    {
+        $config = Config::findOne(['key' => 'enabledApiKey']);
+        $model = static::findOne($id);
+        if ($model === null) {
+            $config->value = 0;
+        } else {
+            $config->value = $model->behavior;
+        }
+
+        $config->save();
+        static::$enabledApiId = $id;
+    }
+
+    /**
+     * Function return id of SpanChecker by behavior class name
+     * @param $className string
+     * @return int
+     */
+    public static function getApiIdByClassName($className)
+    {
+        $model = static::findOne(['behavior' => $className]);
+        if ($model === null) {
+            $id = 0;
+        } else {
+            $id = $model->id;
+        }
+        return $id;
+    }
+
+    public static function getFieldTypesForForm($parentId = 0)
+    {
+        $config = Config::findOne(['key' => 'interpretFields']);
+        return ArrayHelper::map($config->children, 'id', 'name');
     }
 }
