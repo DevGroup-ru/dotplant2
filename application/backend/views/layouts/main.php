@@ -25,7 +25,6 @@ BackendAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head(); ?>
-    <link href="/css/admin.css" media="screen, projection, print" rel="stylesheet" type="text/css" />
 </head>
 <body class="fixed-header fixed-ribbon">
     <?php $this->beginBody(); ?>
