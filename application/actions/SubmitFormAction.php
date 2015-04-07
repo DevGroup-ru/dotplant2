@@ -2,6 +2,7 @@
 
 namespace app\actions;
 
+
 use app\behaviors\spamchecker\SpamCheckerBehavior;
 use app\models\Config;
 use app\models\Form;
@@ -13,8 +14,11 @@ use app\models\Submission;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use kartik\widgets\ActiveForm;
-use yii;
+use Yii;
 use yii\base\Action;
+use yii\helpers\ArrayHelper;
+use yii\web\Response;
+use yii\web\UploadedFile;
 
 class SubmitFormAction extends Action
 {
@@ -26,87 +30,72 @@ class SubmitFormAction extends Action
         $form->abstractModel->setAttrubutesValues($post);
         /** @var AbstractModel|SpamCheckerBehavior $model */
         $model = $form->getAbstractModel();
+
         if (\Yii::$app->request->isAjax && isset($post['ajax'])) {
-            \Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+            \Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
+
         /** @var \app\models\Object $object */
-        // @todo rewrite code below
         $object = Object::getForClass(Form::className());
-        $propIds = (new yii\db\Query())->select('property_group_id')->from([ObjectPropertyGroup::tableName()])->where(
-                [
-                    'and',
-                    'object_id = :object',
-                    'object_model_id = :id'
-                ],
-                [
-                    ':object' => $object->id,
-                    ':id' => $id
-                ]
-            )->column();
-        /** Проверка на спам */
-        /** Получение API ключей */
-        $data = [
-            'yandex' => ['key' => Config::getValue('spamCheckerConfig.apikeys.yandexAPIKey')],
-            'akismet' => ['key' => Config::getValue('spamCheckerConfig.apikeys.akismetAPIKey')]
-        ];
-        /** Интерпретации полей фомы */
-        $properties = Property::getForGroupId($propIds[0]);
-        foreach ($properties as $prop) {
-            if ($prop->interpret_as == 0) {
-                continue;
-            }
-            $interpreted = Config::findOne($prop->interpret_as);
-            if ($interpreted->key == 'notinterpret') {
-                continue;
-            }
-            $value = $post[$form->abstractModel->formName()][$prop->key];
-            /** Названия свойств фиксированные, хранятся в модели Config */
-            switch ($interpreted->key) {
-                case "name":
-                    $data['yandex']['realname'] = $value;
-                    $data['akismet']['comment_author'] = $value;
-                    break;
-                case "content":
-                    $data['yandex']['body-plain'] = $value;
-                    $data['akismet']['comment_content'] = $value;
-                    break;
-            }
-        }
-        $enabledApiKey = (new SpamChecker())->getEnabledApiKeyPath();
-        if ($enabledApiKey == 'spamCheckerConfig.apikeys.yandexAPIKey') {
-            unset($data['akismet']);
-        } else {
-            unset($data['yandex']);
-        }
-        /** Если не указан api key, то нет смысла  запусать чекер */
-        if (empty($data['yandex']['key'])) {
-            unset($data['yandex']);
-        }
-        if (empty($data['akismet']['key'])) {
-            unset($data['akismet']);
-        }
-        $model->attachBehavior(
-            'spamChecker',
+        $propGroups = ObjectPropertyGroup::find()->where(
             [
-                'class' => SpamCheckerBehavior::className(),
-                'data' => $data
+                'and',
+                'object_id = :object',
+                'object_model_id = :id'
+            ],
+            [
+                ':object' => $object->id,
+                ':id' => $id
             ]
-        );
-        $spamResult = $model->check();
-        $haveSpam = "not defined";
-        if (is_array($spamResult)) {
-            if (isset($spamResult['yandex']) && $spamResult['yandex']['ok'] == 1) {
-                $haveSpam = $spamResult['yandex']['is_spam'];
+        )->asArray()->all();
+        $propIds = ArrayHelper::getColumn($propGroups, 'property_group_id');
+
+        /** Проверка на спам */
+        $activeSpamChecker = SpamChecker::getActive();
+        $data = [];
+        $spamResult = [];
+        if ($activeSpamChecker !== null) {
+            $apiKey = ArrayHelper::getValue($activeSpamChecker, 'api_key', '');
+            if ($apiKey !== '') {
+                $data[$activeSpamChecker->name]['class'] = $activeSpamChecker->behavior;
+                $data[$activeSpamChecker->name]['value']['key'] = $activeSpamChecker->api_key;
+                /** Интерпретации полей фомы */
+                $properties = Property::getForGroupId($propIds[0]);
+                foreach ($properties as $prop) {
+                    if ($prop->interpret_as == 0) {
+                        continue;
+                    }
+                    $interpreted = Config::findOne($prop->interpret_as);
+                    if ($interpreted->key == 'notinterpret') {
+                        continue;
+                    }
+                    $value = $post[$form->abstractModel->formName()][$prop->key];
+                    $interpretedKey = ArrayHelper::getValue($activeSpamChecker, $interpreted->key, '');
+                    if ($interpretedKey !== '') {
+                        $data[$activeSpamChecker->name]['value'][$interpretedKey] = $value;
+                    }
+                }
+                $model->attachBehavior(
+                    'spamChecker',
+                    [
+                        'class' => SpamCheckerBehavior::className(),
+                        'data' => $data
+                    ]
+                );
+                $spamResult = $model->check();
             }
-            if (isset($spamResult['akismet']) && $spamResult['akismet']['ok'] == 1) {
-                if ($haveSpam != 'yes') {
-                    $haveSpam = $spamResult['akismet']['is_spam'];
+        }
+
+        $haveSpam = false;
+        if (is_array($spamResult) === true) {
+            foreach ($spamResult as $result) {
+                if (ArrayHelper::getValue($result, 'ok', false) === true) {
+                    $haveSpam = $haveSpam || ArrayHelper::getValue($result, 'is_spam', false);
                 }
             }
         }
         $date = new \DateTime();
-        // @todo rewrite code above
         /** @var Submission|HasProperties $submission */
         $submission = new Submission(
             [
@@ -114,14 +103,14 @@ class SubmitFormAction extends Action
                 'date_received' => $date->format('Y-m-d H:i:s'),
                 'ip' => Yii::$app->request->userIP,
                 'user_agent' => Yii::$app->request->userAgent,
-                'spam' => $haveSpam,
+                'spam' => Yii::$app->formatter->asBoolean($haveSpam),
             ]
         );
         if (!($form->abstractModel->validate() && $submission->save())) {
             return "0";
         }
         foreach ($post[$form->abstractModel->formName()] as $key => &$value) {
-            if ($file = yii\web\UploadedFile::getInstance($model, $key)) {
+            if ($file = UploadedFile::getInstance($model, $key)) {
                 $folder = Config::getValue('core.fileUploadPath', 'upload/user-uploads/');
                 $fullPath = "@webroot/{$folder}";
                 if (!file_exists(\Yii::getAlias($fullPath))) {
@@ -138,19 +127,19 @@ class SubmitFormAction extends Action
             $submission->abstractModel->formName() => $post[$form->abstractModel->formName()],
         ];
         $submission->saveProperties($data);
-        if ($haveSpam == 'no' || $haveSpam == "not defined") {
+        if ($haveSpam === false) {
             if (!empty($form->email_notification_addresses)) {
                 try {
                     $emailView = !empty($form->email_notification_view) ? $form->email_notification_view : '@app/widgets/form/views/email-template.php';
                     Yii::$app->mail->compose(
-                            $emailView,
-                            [
-                                'form' => $form,
-                                'submission' => $submission,
-                            ]
-                        )->setTo(explode(',', $form->email_notification_addresses))->setFrom(
-                            Yii::$app->mail->transport->getUsername()
-                        )->setSubject($form->name . ' #' . $submission->id)->send();
+                        $emailView,
+                        [
+                            'form' => $form,
+                            'submission' => $submission,
+                        ]
+                    )->setTo(explode(',', $form->email_notification_addresses))->setFrom(
+                        Yii::$app->mail->transport->getUsername()
+                    )->setSubject($form->name . ' #' . $submission->id)->send();
                 } catch (\Exception $e) {
                     // do nothing
                 }

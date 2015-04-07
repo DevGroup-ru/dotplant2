@@ -52,14 +52,14 @@ class AkismetSpamChecker implements SpamCheckable
 
         if ($response === false) {
             return [
-                'ok' => "0",
+                'ok' => false,
                 'message' => curl_error($curl)
             ];
         }
 
         return [
-            'ok' => '1',
-            'is_spam' => $response == "Thanks for making the web a better place." ? "yes" : "no"
+            'ok' => true,
+            'is_spam' => $response == "Thanks for making the web a better place." ? true : false
         ];
     }
 }

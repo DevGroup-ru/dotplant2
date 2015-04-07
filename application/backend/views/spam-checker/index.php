@@ -1,6 +1,16 @@
 <?php
 
+/**
+ * @var $this yii\web\View
+ * @var $dataProvider yii\data\ActiveDataProvider
+ * @var $searchModel app\models\SpamChecker
+ */
+use app\backend\components\Helper;
 use app\backend\widgets\BackendWidget;
+use app\backend\widgets\RemoveAllButton;
+use app\models\SpamChecker;
+use kartik\dynagrid\DynaGrid;
+use kartik\grid\CheckboxColumn;
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
 use yii\helpers\Html;
@@ -8,33 +18,85 @@ use yii\helpers\Html;
 $this->title = Yii::t('app', 'Spam Checker Settings');
 $this->params['breadcrumbs'][] = $this->title;
 
-$form = ActiveForm::begin(['id' => 'spamchecker-form', 'type' => ActiveForm::TYPE_VERTICAL]);
+$this->beginBlock('buttonGroup');
+echo Html::a(
+    Icon::show('plus') . ' ' . Yii::t('app', 'Add'),
+    ['edit', 'returnUrl' => Helper::getReturnUrl()],
+    ['class' => 'btn btn-success',]
+);
+echo RemoveAllButton::widget(
+    ['url' => 'remove-all', 'gridSelector' => '.grid-view', 'htmlOptions' => ['class' => 'btn btn-danger pull-right'],]
+);
+$this->endBlock();
 
 ?>
 <div class="config-index">
     <div class="row">
-        <div class="col-md-4">
-            <?php BackendWidget::begin(['title'=> Yii::t('app', 'Spam Checker Settings'), 'icon'=>'list']); ?>
+        <div class="col-md-12">
+            <?=DynaGrid::widget(
+                [
+                    'options' => [
+                        'id' => 'spam-grid',
+                    ],
+                    'columns' => [
+                        [
+                            'class' => CheckboxColumn::className(),
+                            'options' => [
+                                'width' => '10px',
+                            ],
+                        ],
+                        [
+                            'class' => 'yii\grid\DataColumn',
+                            'attribute' => 'id',
+                        ],
+                        'name',
+                        'behavior',
+                        [
+                            'class' => 'app\backend\components\ActionColumn',
+                            'buttons' => [
+                                [
+                                    'url' => 'edit',
+                                    'icon' => 'pencil',
+                                    'class' => 'btn-primary',
+                                    'label' => Yii::t('app', 'Edit'),
 
-            <?= $form->field($model, 'yandexApiKey') ?>
+                                ],
+                                [
+                                    'url' => 'delete',
+                                    'icon' => 'trash-o',
+                                    'class' => 'btn-danger',
+                                    'label' => Yii::t('app', 'Delete'),
+                                ],
+                            ]
 
-            <?= $form->field($model, 'akismetApiKey') ?>
+                        ],
+                    ],
+                    'theme' => 'panel-default',
+                    'gridOptions' => [
+                        'dataProvider' => $dataProvider,
+                        'filterModel' => $searchModel,
+                        'hover' => true,
+                        'panel' => [
+                            'heading' => '<h3 class="panel-title">' . $this->title . '</h3>',
+                            'after' => $this->blocks['buttonGroup'],
 
-            <?= $form->field($model, 'enabledApiKey')->dropDownList(\app\models\SpamChecker::getAvailableApis()); ?>
+                        ],
 
-            <?= $form->field($model, 'configFieldsParentId')->dropDownList(\app\models\SpamChecker::getFieldTypesForForm()) ?>
+                    ]
+                ]
+            );?>
+            <?php BackendWidget::begin(['title' => Yii::t('app', 'Spam Checker Settings'), 'icon' => 'list']); ?>
+            <?php $form = ActiveForm::begin(['id' => 'spamchecker-form', 'type' => ActiveForm::TYPE_VERTICAL]); ?>
 
-            <?= Html::submitButton(
+            <?=$form->field($searchModel, 'enabledApiId')->dropDownList(SpamChecker::getAvailableApis());?>
+
+            <?=Html::submitButton(
                 Icon::show('save') . Yii::t('app', 'Save'),
                 ['class' => 'btn btn-primary']
-            ) ?>
-
+            )?>
+            <?php ActiveForm::end(); ?>
             <?php BackendWidget::end(); ?>
-        </div>
-        <div class="col-md-8">
 
         </div>
     </div>
 </div>
-
-<?php ActiveForm::end(); ?>

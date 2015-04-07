@@ -3,6 +3,7 @@
 namespace app\behaviors\spamchecker;
 
 use yii\base\Behavior;
+use yii\helpers\ArrayHelper;
 
 class SpamCheckerBehavior extends Behavior
 {
@@ -29,15 +30,10 @@ class SpamCheckerBehavior extends Behavior
     {
         $this->checkers = [];
 
-        foreach ($this->data as $key => $value) {
-            switch ($key) {
-                case "yandex":
-                    $this->checkers[] = new YandexSpamChecker($value);
-                    break;
-                case "akismet":
-                    $this->checkers[] = new AkismetSpamChecker($value);
-                    break;
-            }
+        foreach ($this->data as $data) {
+            $class = ArrayHelper::getValue($data, 'class', '');
+            $value = ArrayHelper::getValue($data, 'value', []);
+            $this->checkers[] = new $class($value);
         }
 
         $results = [];
