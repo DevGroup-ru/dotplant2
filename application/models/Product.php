@@ -722,9 +722,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             throw new \yii\web\ServerErrorHttpException('Object not found.');
         }
 
+        $onlyParents = intval(Config::getValue('shop.filterOnlyByParentProduct', 1));
         $query = static::find();
-        $query->andWhere([static::tableName() . '.parent_id' => 0, static::tableName() . '.active' => 1]);
-
+        if (1 === $onlyParents) {
+            $query->andWhere([static::tableName() . '.parent_id' => 0, static::tableName() . '.active' => 1]);
+        } else {
+            $query->andWhere(['!=', static::tableName() . '.parent_id', 0]);
+            $query->andWhere([static::tableName() . '.active' => 1]);
+        }
 
         if (null !== $selected_category_id) {
             $query->innerJoin(

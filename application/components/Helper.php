@@ -50,33 +50,6 @@ class Helper
         return Helper::$modelMaps[$cacheKey];
     }
 
-    /**
-     * Get time difference like "2 hours ago".
-     * @param string $newDate
-     * @param string $oldDate
-     * @return string
-     */
-    public static function getTimeDifference($newDate, $oldDate)
-    {
-        $newDT = new \DateTime($newDate);
-        $oldDT = new \DateTime($oldDate);
-        $interval = $newDT->diff($oldDT);
-        $ranges = [
-            'y' => 'years',
-            'm' => 'months',
-            'd' => 'days',
-            'h' => 'hours',
-            'i' => 'minutes',
-            's' => 'seconds',
-        ];
-        foreach ($ranges as $key => $range) {
-            if ($interval->$key > 0) {
-                return Yii::t('app', '{key} ' . $range . ' ago', ['key' => $interval->$key]);
-            }
-        }
-        return Yii::t('app', 'Right now');
-    }
-
     public static function createSlug($source)
     {
         $source = mb_strtolower($source, 'UTF-8');
@@ -119,20 +92,31 @@ class Helper
         }
     }
 
-    public static function thumbnailOnDemand($filename, $width, $height, $relative_part = '.')
+    public static function thumbnailOnDemand($filename, $width, $height, $relativePart = '.', $inset = true)
     {
-        $dir = dirname($filename);
-        $thumb_filename = $dir . '/thumb-'.$width.'x'.$height.'-' . basename($filename);
-        if (file_exists($relative_part.$thumb_filename) === false) {
+        $pos = mb_strrpos($filename, '/', null, 'UTF-8');
+        if ($pos > 0) {
+            $dir = mb_substr($filename, 0, $pos, 'UTF-8');
+            $file = mb_substr($filename, $pos + 1, null, 'UTF-8');
+        } else {
+            $dir = '';
+            $file = $filename;
+        }
+        $thumbFilename = $dir . '/thumb-' . $width . 'x' . $height . '-' . $file;
+        if (file_exists($relativePart . $thumbFilename) === false) {
             try {
-                $image = \yii\imagine\Image::thumbnail($relative_part . $filename, $width, $height,
-                    ManipulatorInterface::THUMBNAIL_INSET);
-                $image->save($relative_part . $thumb_filename, ['quality' => 90]);
+                $image = \yii\imagine\Image::thumbnail(
+                    $relativePart . $filename,
+                    $width,
+                    $height,
+                    $inset ? ManipulatorInterface::THUMBNAIL_INSET : ManipulatorInterface::THUMBNAIL_OUTBOUND
+                );
+                $image->save($relativePart . $thumbFilename, ['quality' => 90]);
             } catch (\Imagine\Exception\InvalidArgumentException $e) {
                 // it seems that file not found in most cases - return original filename instead
                 return $filename;
             }
         }
-        return $thumb_filename;
+        return $thumbFilename;
     }
 }

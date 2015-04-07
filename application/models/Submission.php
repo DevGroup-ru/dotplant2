@@ -113,9 +113,9 @@ class Submission extends \yii\db\ActiveRecord
         if ($form_id != null) {
             $query->andWhere('form_id = :form_id', [':form_id' => $form_id]);
         }
-        if ($show_deleted == 0) {
-            $query->andFilterWhere(['is_deleted' => 0]);
-        }
+
+        $query->andFilterWhere(['is_deleted' => $show_deleted]);
+
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,

@@ -20,7 +20,7 @@ use yii\helpers\Html;
                     <?= Html::tag('span', $notification->label, ['class' => 'label label-' . $notification->type]) ?>
                     <span><?= $notification->message ?></span>
                     <div class="pull-right font-xs text-muted">
-                        <em><?= \app\components\Helper::getTimeDifference($now, $notification->date) ?></em>
+                        <em><?= Yii::$app->formatter->asRelativeTime($notification->date); ?></em>
                         <?php if ($notification->viewed == 0): ?>
                             <a href="#" data-type="new-notification" data-id="<?= $notification->id ?>"><i class="fa fa-eye"></i></a>
                         <?php endif; ?>

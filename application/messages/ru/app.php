@@ -374,6 +374,8 @@ return [
     'Settings' => 'Настройки',
     'Shipping Options' => 'Способы доставки',
     'Show' => 'Показать',
+    'Show deleted' => 'Показать удаленные',
+    'Show undeleted' => 'Показать неудаленные',
     'Show Type' => 'Тип отображения',
     'Show more' => 'Показать больше',
     'Show page' => 'Показать страницу',

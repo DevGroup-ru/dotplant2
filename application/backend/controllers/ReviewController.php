@@ -65,11 +65,11 @@ class ReviewController extends Controller
         }
     }
 
-    public function actionDelete($id)
+    public function actionDelete($id, $returnUrl)
     {
         $model = $this->loadModel($id);
         $model->delete();
-        return $this->redirect(['index']);
+        return $this->redirect($returnUrl);
     }
 
     protected function loadModel($id)

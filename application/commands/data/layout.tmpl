@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @var $content string
+ * @var $this \yii\web\View
+ */
+use app\web\{%theme-name%}\module\assets\ThemeAsset;
+use kartik\helpers\Html;
+ThemeAsset::register($this);
+
+?>
+<?php $this->beginPage(); ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="<?= Yii::$app->charset ?>">
+	<title><?= Html::encode($this->title) ?></title>
+	<?= Html::csrfMetaTags() ?>
+    <?php $this->head(); ?>
+</head>
+<body>
+<?php $this->beginBody(); ?>
+<?= $content ?>
+<?php $this->endBody(); ?>
+</body>
+</html>
+<?php $this->endPage(); ?>

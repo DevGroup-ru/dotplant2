@@ -49,7 +49,7 @@ if ($memcached_exists === true) {
 
 
 $composer_status = null;
-system('/usr/bin/env php ../composer.phar global require "fxp/composer-asset-plugin:1.0.0-beta3"');
+system('/usr/bin/env php ../composer.phar global require "fxp/composer-asset-plugin:1.0.0"');
 
 system('/usr/bin/env php ../composer.phar install', $composer_status);
 if ($composer_status != 0) {
@@ -142,6 +142,25 @@ file_put_contents("config/db-local.php", "<?php\n return " . \yii\helpers\VarDum
 
 // все ENV будут автоматом переданы туда
 passthru('./yii migrate --interactive=0');
+
+echo "\nInstall stub theme? [y/n]";
+$answer = getenv("INSTALL_STUB_THEME");
+if ($answer === false) {
+	while (true) {
+		$answer = strtolower(trim(fgets($f)));
+		if ($answer == "y" || $answer == "yes" || $answer == "n" || $answer == "no") {
+			break;
+		}
+	}
+}
+
+if ($answer == "y" || $answer == "yes") {
+	passthru("./yii admin/create-theme");
+}
+else {
+	passthru("mkdir -p ./web/theme/resources/product-images");
+	passthru("chmod 755 ./web/theme/resources/product-images");
+}
 
 function randomPassword($num=14) {
     $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789_";

@@ -165,10 +165,10 @@ class FormController extends Controller
         );
     }
 
-    public function actionView($id)
+    public function actionView($id, $show_deleted = 0)
     {
         $submission = new Submission();
-        $data = $submission->search($_GET, $id);
+        $data = $submission->search(Yii::$app->request->get(), $id, $show_deleted);
 
         return $this->render(
             'view',
@@ -197,15 +197,49 @@ class FormController extends Controller
     public function actionDeleteSubmission($id)
     {
         $submission = Submission::findOne($id);
+        $form_id = $submission->form_id;
         if ($submission === null) {
             throw new NotFoundHttpException('Submission not found');
         }
-        $submission->setAttribute('is_deleted', 1);
-        if (!$submission->save()) {
+        $res = false;
+        if ($submission->is_deleted == 1) {
+            if ($submission->delete()) {
+                $res = true;
+            }
+        } else {
+            $submission->setAttribute('is_deleted', 1);
+            if ($submission->save()) {
+                $res = true;
+            }
+        }
+        if ($res === false) {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Object not removed'));
         } else {
             Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
         }
+        return $this->redirect(Url::toRoute(['view', 'id' => $form_id]));
+    }
+
+    public function actionMarkSpam()
+    {
+        Submission::updateAll(['is_deleted' => 1], "spam != 'not defined'");
+    }
+
+    public function actionClearDeleted()
+    {
+        Submission::deleteAll(['is_deleted' => 1]);
+    }
+
+    public function actionRestoreSubmission($id)
+    {
+        $submission = Submission::findOne($id);
+        if ($submission === null) {
+            throw new NotFoundHttpException('Submission not found');
+        }
+        $submission->setAttribute('is_deleted', 0);
+        $submission->save();
+        Yii::$app->session->setFlash('success', Yii::t('app', 'Object successfully restored'));
+
         return $this->redirect(Url::toRoute(['view', 'id' => $submission->form_id]));
     }
 

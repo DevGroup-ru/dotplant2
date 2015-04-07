@@ -31,7 +31,7 @@
                 <?= \kartik\helpers\Html::tag('span', $item['label'], ['class' => 'label label-' . $item['type']]) ?>
                 <span><?= $item['message'] ?></span>
                 <div class="pull-right font-xs text-muted">
-                    <em><?= \app\components\Helper::getTimeDifference($now, $item['date']) ?></em>
+                    <em><?= Yii::$app->formatter->asRelativeTime($item['date']); ?></em>
                     <?php if (intval($item['viewed']) === 0): ?>
                         <a href="#" data-type="new-notification" data-id="<?= $item['id'] ?>"><i class="fa fa-eye"></i></a>
                     <?php endif; ?>
