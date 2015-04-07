@@ -26,6 +26,7 @@ $this->render(
         'immutable' => true,
         'totalQuantity' => $order->items_count,
         'totalPrice' => $order->fullPrice,
+        'shippingOption' => $order->shippingOption
     ]
 );
 ?>
