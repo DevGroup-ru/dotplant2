@@ -16,6 +16,7 @@ use yii\helpers\Json;
  * @property integer $max_value
  * @property integer $step_value
  * @property integer $require_review
+ * @property integer $allow_guest
  */
 class RatingItem extends \yii\db\ActiveRecord
 {
@@ -46,12 +47,13 @@ class RatingItem extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'rating_group'], 'required'],
-            [['min_value', 'max_value', 'step_value', 'require_review'], 'integer'],
+            [['min_value', 'max_value', 'step_value', 'require_review', 'allow_guest'], 'integer'],
             [['name', 'rating_group'], 'string', 'max' => 255],
             [['min_value'], 'default', 'value' => 0],
             [['max_value'], 'default', 'value' => 5],
             [['step_value'], 'default', 'value' => 1],
             [['require_review'], 'default', 'value' => 0],
+            [['allow_guest'], 'default', 'value' => 0],
             [['max_value'], 'compare', 'compareAttribute' => 'min_value', 'operator' => '>'],
             [['step_value', 'min_value'], 'compare', 'compareAttribute' => 'max_value', 'operator' => '<'],
         ];
@@ -70,6 +72,7 @@ class RatingItem extends \yii\db\ActiveRecord
             'max_value' => Yii::t('app', 'Max Value'),
             'step_value' => Yii::t('app', 'Step Value'),
             'require_review' => Yii::t('app', 'Require Review'),
+            'allow_guest' => Yii::t('app', 'Allow guest user to rate'),
         ];
     }
 
