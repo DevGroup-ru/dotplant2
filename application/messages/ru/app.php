@@ -545,5 +545,12 @@ return [
     'Filter By Category' => 'Фильтровать по категории',
     'Filter By Properties' => 'Фильтровать по опциям',
     'Filter By Fields' => 'Фильтровать по полям',
-    'Select ...' => 'Выбрать ...'
+    'Select ...' => 'Выбрать ...',
+    'Allow guest user to rate' => 'Разрешить голосовать неавторизованным',
+    'Require review' => 'Отзыв обязателен',
+    'Group name' => 'Имя группы',
+    'Creating new rating group' => 'Создание группы рейтингов',
+    'Editing rating group {groupname}' => 'Редактируем группу {groupname}',
+    'Rating groups' => 'Группы рейтингов',
+    'Only authorized users can rate it' => 'Только авторизованные пользователи могут оставлять оценку',
 ];

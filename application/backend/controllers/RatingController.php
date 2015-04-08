@@ -66,10 +66,12 @@ class RatingController extends Controller
             $_group = urldecode(\Yii::$app->request->post('group-name', ''));
             $_require_review = intval(\Yii::$app->request->post('group-require-review', 0));
             $items = RatingItem::getItemsByAttributes(['rating_group' => $group['rating_group']]);
+            $_allow_guest = intval(\Yii::$app->request->post('group-allow-guest', 0));
 
             foreach ($items as $item) {
                 $item->rating_group = $_group;
                 $item->require_review = $_require_review;
+                $item->allow_guest = $_allow_guest;
                 $item->save();
             }
 
@@ -102,13 +104,15 @@ class RatingController extends Controller
         if (\Yii::$app->request->isPost) {
             $group = urldecode(\Yii::$app->request->post('group-name', ''));
             $_require_review = intval(\Yii::$app->request->post('group-require-review', 0));
+            $_allow_guest = intval(\Yii::$app->request->post('group-allow-guest', 0));
             if (!empty($group)) {
                 if (null === RatingItem::getOneItemByAttributes(['rating_group' => $group])) {
                     $item = new RatingItem();
                     $item->setAttributes([
                         'name' => $group,
                         'rating_group' => $group,
-                        'require_review' => $_require_review
+                        'require_review' => $_require_review,
+                        'allow_guest' => $_allow_guest,
                     ]);
                     $item->save();
 
