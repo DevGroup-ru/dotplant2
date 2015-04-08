@@ -8,8 +8,9 @@ use app\backend\widgets\BackendWidget;
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-
-$this->title = Yii::t('app', 'Editing rating group').' '.$group['rating_group'];
+$this->title = Yii::t('app', 'Editing rating group {groupname}', [
+    'groupname' => $group['rating_group'],
+]);
 $this->params['breadcrumbs'][] = ['url' => [\yii\helpers\Url::toRoute('index')], 'label' => Yii::t('app', 'Rating groups')];
 $this->params['breadcrumbs'][] = $this->title;
 

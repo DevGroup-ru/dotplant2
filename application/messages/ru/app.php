@@ -550,7 +550,7 @@ return [
     'Require review' => 'Отзыв обязателен',
     'Group name' => 'Имя группы',
     'Creating new rating group' => 'Создание группы рейтингов',
-    'Editing rating group' => 'Редактируем группу ',
+    'Editing rating group {groupname}' => 'Редактируем группу {groupname}',
     'Rating groups' => 'Группы рейтингов',
     'Only authorized users can rate it' => 'Только авторизованные пользователи могут оставлять оценку',
 ];
