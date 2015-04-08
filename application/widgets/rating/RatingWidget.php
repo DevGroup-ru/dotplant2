@@ -27,11 +27,11 @@ class RatingWidget extends Widget
     public function run()
     {
         parent::run();
-        $rating = RatingItem::getGroupByName($this->groupName);
-        if (!is_array($rating) || empty($rating)) {
+        $rating = RatingItem::findOne(['rating_group' => $this->groupName]);
+        if (is_null($rating)) {
             return '';
         }
-        if (!!$rating['allow_guest'] === false ) {
+        if (0 == $rating->allow_guest) {
             return \Yii::t('app', 'Only authorized users can rate it');
         }
         $items = RatingItem::getItemsByAttributes(['rating_group' => $this->groupName], true, true);
