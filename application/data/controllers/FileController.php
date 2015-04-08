@@ -14,6 +14,7 @@ use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\HttpException;
 use yii\web\UploadedFile;
 
 /**
@@ -207,5 +208,28 @@ class FileController extends Controller
     public function actionExport($id)
     {
         return $this->unifiedAction($id, false);
+    }
+
+    /**
+     * @param $dir
+     * @param $file
+     * @throws HttpException
+     */
+    public function actionDownloadFile($dir, $file)
+    {
+        $errors = [];
+        $filePath = Yii::getAlias('@app/data/files').'/'.$dir.'/'.$file;
+
+        if (in_array($dir, ['import', 'export']) === false) {
+            $errors[] = 'path not found';
+        }
+        if (!is_file($filePath)) {
+            $errors[] = 'file not found';
+        }
+        if ($errors !== []) {
+            throw new HttpException(403, implode(', ', $errors));
+        }
+
+        Yii::$app->response->sendFile($filePath, $file);
     }
 }
