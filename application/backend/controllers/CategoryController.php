@@ -187,7 +187,13 @@ class CategoryController extends Controller
             Yii::$app->session->setFlash('success', Yii::t('app', 'Object has been removed'));
         }
 
-        return $this->redirect(Url::to(['index', 'parent_id' => $model->parent_id]));
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                Url::to(['index', 'parent_id' => $model->parent_id])
+            )
+        );
+
     }
 
     public function actionRemoveAll($parent_id)
@@ -238,7 +244,11 @@ class CategoryController extends Controller
         $model->restoreFromTrash();
 
         Yii::$app->session->setFlash('success', Yii::t('app', 'Object successfully restored'));
-
-        return $this->redirect(Url::toRoute(['edit', 'id' => $id, 'parent_id' => $model->parent_id]));
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                Url::toRoute(['edit', 'id' => $id, 'parent_id' => $model->parent_id])
+            )
+        );
     }
 }

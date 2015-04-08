@@ -1,91 +1,189 @@
 <?php
 
-use kartik\dynagrid\DynaGrid;
-use kartik\icons\Icon;
-use yii\helpers\Url;
+/**
+ * @var yii\web\View $this
+ * @var yii\data\ActiveproductProvider $productProvider
+ * @var \app\models\Form $productModel
+ */
+
+
 
 $this->title = Yii::t('app', 'Trash');
-    $this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 
-    <?= app\widgets\Alert::widget([
-        'id' => 'alert',
-    ]); ?>
 
-<?php
-$this->beginBlock('add-button');
-?>
-<a href="<?= Url::toRoute('/backend/product/edit') ?>" class="btn btn-success">
-    <?= Icon::show('plus') ?>
-    <?= Yii::t('app', 'Add') ?>
-</a>
-<?php
-$this->endBlock();
-?>
 
-<div class="row">
-    <div class="col-md-4">
-        <?=
-        app\backend\widgets\JSTreeTrash::widget([
-            'model' => new app\models\Category,
-            'routes' => [
-                'getTree' => [Url::toRoute('getTree')],
-                'restore' => ['/backend/category/restore'],
-                'delete' => ['/backend/category/delete'],
-            ]
-        ]);
-        ?>
-    </div>
-    <div class="col-md-8" id="jstree-more">
-        <?=
-        DynaGrid::widget([
-            'options' => [
-                'id' => 'Product-grid',
 
+<?= app\widgets\Alert::widget([
+    'id' => 'alert',
+]); ?>
+
+
+
+
+
+
+
+<?= $this->render(
+    '_table',
+    [
+        'name' => Yii::t('shop', 'Categories Trash'),
+        'objectModel' => $categoryModel,
+        'objectProvider' => $categoryProvider,
+        'colums' => [
+            [
+                'class' => \app\backend\columns\CheckboxColumn::className(),
             ],
-            'columns' => [
-                [
-                    'class' => 'yii\grid\DataColumn',
-                    'attribute' => 'id',
-                ],
-                'name',
-                'slug',
-                [
-                    'class' => 'app\backend\columns\BooleanStatus',
-                    'attribute' => 'active',
-                ],
-                'price',
-                'old_price',
-                [
-                    'class' => 'app\backend\components\ActionColumn',
-                    'controller' => 'product',
-                    'buttons' => [
-                        [
-                            'url' => 'restore',
-                            'icon' => 'refresh',
-                            'class' => 'btn-success',
-                            'label' => 'Restore',
-                        ],
-                        [
-                            'url' => 'delete',
-                            'icon' => 'trash-o',
-                            'class' => 'btn-danger',
-                            'label' => 'Delete',
-                        ],
-                    ]
-                ],
+            [
+                'class' => 'yii\grid\DataColumn',
+                'attribute' => 'id',
             ],
-            'theme' => 'panel-default',
-            'gridOptions'=>[
-                'dataProvider' => $dataProvider,
-                'filterModel' => $searchModel,
-                'hover'=>true,
-                'panel'=>[
-                    'heading'=>'<h3 class="panel-title">'.$this->title.'</h3>',
-                    'after' => $this->blocks['add-button'],
-                ],
-            ]
-        ]);
-        ?>
-    </div>
-</div>
+            [
+                'class' => 'app\backend\columns\TextWrapper',
+                'attribute' => 'name',
+                'callback_wrapper' => function($content, $model, $key, $index, $parent) {
+                    if (1 === $model->is_deleted) {
+                        $content = '<div class="is_deleted"><span class="fa fa-trash-o"></span>'.$content.'</div>';
+                    }
+
+                    return $content;
+                }
+            ],
+            'title',
+            'slug',
+            [
+                'class' => 'app\backend\components\ActionColumn',
+                'controller' => 'category',
+                'buttons' => [
+                    [
+                        'url' => 'restore',
+                        'icon' => 'refresh',
+                        'class' => 'btn-success',
+                        'label' => 'Restore',
+                    ],
+                    [
+                        'url' => 'delete',
+                        'icon' => 'trash-o',
+                        'class' => 'btn-danger',
+                        'label' => 'Delete',
+                    ],
+                ]
+            ],
+
+        ]
+
+    ]
+); ?>
+
+
+<?= $this->render(
+    '_table',
+    [
+        'name' => Yii::t('shop', 'Products Trash'),
+        'objectModel' => $productModel,
+        'objectProvider' => $productProvider,
+       'colums' => [
+           [
+               'class' => \app\backend\columns\CheckboxColumn::className(),
+           ],
+           [
+               'class' => 'yii\grid\DataColumn',
+               'attribute' => 'id',
+           ],
+           [
+               'class' => 'app\backend\columns\TextWrapper',
+               'attribute' => 'name',
+               'callback_wrapper' => function ($content, $model, $key, $index, $parent) {
+                   if (1 === $model->is_deleted) {
+                       $content = '<div class="is_deleted"><span class="fa fa-trash-o"></span>' . $content . '</div>';
+                   }
+
+                   return $content;
+               }
+           ],
+           'slug',
+           [
+               'class' => 'app\backend\columns\BooleanStatus',
+               'attribute' => 'active',
+           ],
+           'price',
+           'old_price',
+           [
+               'class' => 'app\backend\components\ActionColumn',
+               'controller' => 'product',
+               'buttons' => [
+                   [
+                       'url' => 'restore',
+                       'icon' => 'refresh',
+                       'class' => 'btn-success',
+                       'label' => 'Restore',
+                   ],
+                   [
+                       'url' => 'delete',
+                       'icon' => 'trash-o',
+                       'class' => 'btn-danger',
+                       'label' => 'Delete',
+                   ],
+               ]
+           ],
+
+       ]
+    ]
+); ?>
+
+
+<?= $this->render(
+    '_table',
+    [
+        'name' => Yii::t('shop', 'Pages Trash'),
+        'objectModel' => $pageModel,
+        'objectProvider' => $pageProvider,
+        'colums' => [
+            [
+                'class' => \app\backend\columns\CheckboxColumn::className(),
+            ],
+            [
+                'class' => 'yii\grid\DataColumn',
+                'attribute' => 'id',
+            ],
+            [
+                'class' => 'app\backend\columns\TextWrapper',
+                'attribute' => 'title',
+                'callback_wrapper' => function($content, $model, $key, $index, $parent) {
+                    if (1 === $model->is_deleted) {
+                        $content = '<div class="is_deleted"><span class="fa fa-trash-o"></span>'.$content.'</div>';
+                    }
+
+                    return $content;
+                }
+            ],
+
+            'slug',
+            [
+                'class' => 'app\backend\columns\BooleanStatus',
+                'attribute' => 'published',
+            ],
+            [
+                'class' => 'app\backend\components\ActionColumn',
+                'controller' => 'page',
+                'buttons' => [
+                    [
+                        'url' => 'restore',
+                        'icon' => 'refresh',
+                        'class' => 'btn-success',
+                        'label' => 'Restore',
+                    ],
+                    [
+                        'url' => 'delete',
+                        'icon' => 'trash-o',
+                        'class' => 'btn-danger',
+                        'label' => 'Delete',
+                    ],
+                ]
+            ],
+
+        ]
+    ]
+); ?>

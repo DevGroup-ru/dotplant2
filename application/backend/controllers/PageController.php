@@ -163,7 +163,12 @@ class PageController extends Controller
             Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
         }
 
-        return $this->redirect(Url::toRoute(['index', 'parent_id' => $model->parent_id]));
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                Url::toRoute(['index', 'parent_id' => $model->parent_id])
+            )
+        );
     }
 
     public function actionRemoveAll($parent_id)
@@ -196,6 +201,11 @@ class PageController extends Controller
 
         Yii::$app->session->setFlash('success', Yii::t('app', 'Object successfully restored'));
 
-        return $this->redirect(Url::toRoute(['edit', 'id' => $id, 'parent_id' => $parent_id]));
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                Url::toRoute(['edit', 'id' => $id, 'parent_id' => $parent_id])
+            )
+        );
     }
 }

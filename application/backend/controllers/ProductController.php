@@ -515,7 +515,9 @@ class ProductController extends Controller
             throw new NotFoundHttpException;
         }
 
-        if ($model->parent_id == 0) {
+        if (Yii::$app->request->get('returnUrl') !== null) {
+            $redirect = Yii::$app->request->get('returnUrl');
+        } elseif ($model->parent_id == 0) {
             $redirect = Url::toRoute(['index']);
         } else {
             $redirect = Url::toRoute(['edit', 'id' => $model->parent_id]);
@@ -620,7 +622,12 @@ class ProductController extends Controller
 
         Yii::$app->session->setFlash('success', Yii::t('app', 'Object successfully restored'));
 
-        return $this->redirect(Url::toRoute(['edit', 'id' => $id]));
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                Url::toRoute(['edit', 'id' => $id])
+            )
+        );
     }
 
     public function actionAjaxRelatedProduct($search = null, $id = null)
