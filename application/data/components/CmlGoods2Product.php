@@ -3,6 +3,8 @@ namespace app\data\components;
 use app\data\components\ParserGroupSpecification;
 use app\data\models\OnecId;
 use Yii;
+use yii\base\Component;
+use \XMLReader;
 
 class CmlGoods2Product extends Component
 {
@@ -18,12 +20,17 @@ class CmlGoods2Product extends Component
     private $parserGroupSpecification;
 
     private $current = array();
-
+    
+    private $currentprop = array();
+    
+    private $currentformation = array();
+    
     private $groups = array();
 
     private $information = array();
 
     private $props = array();
+    private $goods = array();
 
     private $keys = array(
             'Ид' => 'id',
@@ -213,7 +220,14 @@ class CmlGoods2Product extends Component
                         default:
                             if (3 === count($this->xpath)) {
                                 if (isset($node['text']))
+                                {
+                                    if ('Ид'===$xml->name)
+                                    {
+                                        $this->current[$xml->name] = OnecId::createByGUID($node['text'])->id;
+                                    }
+                                        else
                                     $this->current[$xml->name] = $node['text'];
+                                }
                             }
                             break;
                     }
@@ -248,8 +262,7 @@ class CmlGoods2Product extends Component
                     
                     $node['tag'] = $xml->name;
                     if (! $xml->isEmptyElement) {
-                        $childs = $this->getGoods($xml, $node['tag']);
-                        $node['childs'] = $childs;
+                        $node['childs'] = $this->getGoods($xml, $node['tag']);
                     }
                     
                     break;

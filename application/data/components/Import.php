@@ -139,6 +139,7 @@ abstract class Import extends Component
      */
     protected function save($objectId, $object, $objectFields = [], $properties = [], $propertiesFields = [], $row=[], $titleFields=[])
     {
+/*
         try {
             $rowFields = array_combine(array_keys($titleFields), $row);
         } catch(\Exception $e) {
@@ -149,7 +150,15 @@ abstract class Import extends Component
             echo "\n\n";
             throw $e;
         }
-
+*/
+        
+        $rowFields = [];
+        foreach ($objectFields as $field) {
+            if (isset($object[$field])) {
+                $rowFields[$field] = $object[$field];
+            }
+        }
+        
         $class = $this->object->object_class;
         if ($objectId > 0) {
             /** @var ActiveRecord $objectModel */
@@ -162,26 +171,40 @@ abstract class Import extends Component
                     return;
                 }
             }
+            /*
             $objectData = [];
             foreach ($objectFields as $field) {
                 if (isset($object[$field])) {
                     $objectData[$field] = $object[$field];
                 }
-            }
+                
+            }*/
         } else {
             /** @var ActiveRecord $objectModel */
             $objectModel = new $class;
             $objectModel->loadDefaultValues();
-            $objectData = $object;
+            $rowFields = $object;
         }
         if ($objectModel) {
 
             if ($objectModel instanceof ImportableInterface) {
                 $objectModel->processImportBeforeSave($rowFields, $this->multipleValuesDelimiter, $this->additionalFields);
             }
+            else
+            {
+                //$objectModel->load($rowFields);
+                $_attributes = $objectModel->attributes();
+                foreach ($rowFields as $key => $value)
+                    {
+                        if (in_array($key, $_attributes))
+                            {
+                                $objectModel->$key = $value;
+                            }
+                        }
+            }
 
             if ($objectModel->save()) {
-
+                
                 // add PropertyGroup to object
                 if (!is_array($this->addPropertyGroups)) {
                     $this->addPropertyGroups = [];
@@ -273,7 +296,7 @@ abstract class Import extends Component
                     $objectModel->invalidateTags();
                 }
             } else {
-                throw new \Exception('Cannot save object: ' . var_export($objectModel->errors, true) . var_export($objectData, true) . var_export($objectModel->getAttributes(), true));
+                throw new \Exception('Cannot save object: ' . var_export($objectModel->errors, true) . var_export($rowFields, true) . var_export($objectModel->getAttributes(), true));
             }
         }
     }
@@ -480,8 +503,11 @@ abstract class Import extends Component
         $objectFields = static::getFields($this->object->id);
         $objAttributes = $objectFields['object'];
         $propAttributes = isset($objectFields['property']) ? $objectFields['property'] : [];
-
         $titleFields = array_shift($data);
+        
+        var_dump($data);
+        var_dump($titleFields);
+        var_dump($fields['fields_header']);
         $titleFields = array_intersect_key(array_flip($titleFields), array_flip($fields['fields_header']));
 
         $transaction = \Yii::$app->db->beginTransaction();

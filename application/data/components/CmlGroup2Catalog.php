@@ -4,6 +4,8 @@ namespace app\data\components;
 
 use app\data\models\OnecId;
 use Yii;
+use yii\base\Component;
+use \XMLReader;
 
 class CmlGroup2Catalog extends Component {
     const NODE_ID = 'Ид';
@@ -13,14 +15,14 @@ class CmlGroup2Catalog extends Component {
     private $data = array ();
     private $canParse = true;
     private $keys = array (
-            static::NODE_GROUP_NAME => 'name' 
+            CmlGroup2Catalog::NODE_GROUP_NAME => 'name' 
     );
     public function getData() {
         return $this->data;
     }
     public function getGroups($xml, $name) {
-        if (static::NODE_GROUPS === $name) {
-            $this->getCatalog ( $xml, $name );
+        if (CmlGroup2Catalog::NODE_GROUPS === $name) {
+            $this->getCatalog ( $xml, $xml->name );
             $this->canParse = false;
             return;
         }
@@ -42,28 +44,29 @@ class CmlGroup2Catalog extends Component {
         while ( $xml->read () ) {
             switch ($xml->nodeType) {
                 case XMLReader::END_ELEMENT :
-                    if (static::NODE_GROUP === $xml->name) {
-                        $this->data [] = $node;
-                    }
-                     
                     return;
                     break;
                 case XMLReader::ELEMENT :
                     $node = array ();
-                    if (static::NODE_GROUPS === $xml->name) {
+                    if (CmlGroup2Catalog::NODE_GROUPS === $xml->name) {
                         $node ['parent_id'] = isset ( $p_node ['internal_id'] ) ? intval ( $p_node ['internal_id'] ) : 0;
                     }
-                    if (static::NODE_GROUP === $xml->name) {
+                    if (CmlGroup2Catalog::NODE_GROUP === $xml->name) {
                         $node ['parent_id'] = isset ( $p_node ['parent_id'] ) ? intval ( $p_node ['parent_id'] ) : 0;
                     }
                     $node ['tag'] = $xml->name;
+                    $node ['text'] = '';
                     if (! $xml->isEmptyElement) {
                         $this->getCatalog ( $xml, $node ['tag'], $node );
                     }
-                    if (static::NODE_GROUP === $name && static::NODE_ID === $node ['tag']) {
+                    if (CmlGroup2Catalog::NODE_GROUP === $name && CmlGroup2Catalog::NODE_ID === $node ['tag']) {
                         $p_node ['internal_id'] = OnecId::createByGUID ( $node ['text'] )->id;
                     } else {
                         $p_node [$this->getKey ( $node ['tag'] )] = isset ( $node ['text'] ) ? $node ['text'] : '';
+                    }
+                    if (CmlGroup2Catalog::NODE_GROUP === $node['tag']) {
+                        unset($node['childs']);
+                        $this->data[] = $node;
                     }
                     break;
                 case XMLReader::TEXT :

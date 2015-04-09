@@ -103,7 +103,7 @@ class ImportModel extends Model implements \Serializable
     public function rules()
     {
         return [
-            [['file'], 'file', 'extensions' => 'csv, xls, xlsx'],
+            [['file'], 'file', 'extensions' => 'csv, xls, xlsx,cml'],
             [['object'], 'integer'],
             [['object'], 'required'],
             [['fields', 'conditions' ,'type'], 'safe'],
@@ -119,7 +119,8 @@ class ImportModel extends Model implements \Serializable
             'excelCsv' => 'Excel CSV',
             'xls' => 'Excel XLS',
             'xlsx' => 'Excel XLSX',
-        ];
+            'cml' => 'CommerceML',
+                    ];
     }
 
     protected function getExtension($type)
@@ -129,6 +130,7 @@ class ImportModel extends Model implements \Serializable
             'csv' => 'csv',
             'xls' => 'xls',
             'xlsx' => 'xlsx',
+            'cml' => 'cml',
         ];
         if (!isset($extensions[$type])) {
             return 'unknown';

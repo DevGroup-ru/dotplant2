@@ -16,15 +16,15 @@ class ImportCml extends Import
             $xml = new XMLReader();
             $xml->open($path);
             switch ($this->object->object_class) {
-                case 'Category':
+                case 'app\models\Category':
                     $parser = new CmlGroup2Catalog();
                     $parser->getGroups($xml, 'root');
                     $data = $parser->getData();
                     break;
-                case 'Product':
+                case 'app\models\Product':
                     $parser = new CmlGoods2Product();
                     $parser->getProducts($xml, 'root');
-                    $parser->set($this->multipleValuesDelimiter);
+                    $parser->setMultipleValuesDelimiter($this->multipleValuesDelimiter);
                     $data = $parser->getData();
                     break;
             }
@@ -35,7 +35,7 @@ class ImportCml extends Import
         return $data;
     }
 
-    public function setData ()
+    public function getData ($header, $data)
     {
         return array();
     }

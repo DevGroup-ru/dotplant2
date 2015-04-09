@@ -1,6 +1,8 @@
 <?php
 namespace app\data\components;
 use Yii;
+use yii\base\Component;
+use \XMLReader;
 
 class ParserGroupSpecification extends Component
 {
@@ -16,14 +18,14 @@ class ParserGroupSpecification extends Component
         return $this->specification;
     }
 
-    public function parser ($xml, $name)
+    public function parse ($xml, $name)
     {
         while ($xml->read()) {
             switch ($xml->nodeType) {
                 case XMLReader::END_ELEMENT:
                     switch ($xml->name) {
-                        case static::NODE_PROP:
-                            $this->specification[$this->current[static::NODE_ID]] = $this->current;
+                        case ParserGroupSpecification::NODE_PROP:
+                            $this->specification[$this->current[ParserGroupSpecification::NODE_ID]] = $this->current;
                             break;
                         default:
                             if (isset($node['text']))
