@@ -9,20 +9,6 @@ use yii\helpers\Url;
 
 class YmlController extends \yii\console\Controller
 {
-    private function getYmlTpl($header = true)
-    {
-        $tpl = <<< 'TPL'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
-<yml_catalog date="%s">
-TPL;
-
-        if ($header) {
-            return sprintf($tpl, date('Y-m-d H:i'));
-        }
-        return '</yml_catalog>';
-    }
-
     private function getByYmlParam($yml, $name, $model, $default = '')
     {
         $param = $yml->$name;
@@ -50,10 +36,15 @@ TPL;
     {
         $result = $this->getByYmlParam($yml, $name, $model);
 
-        $result = htmlspecialchars(trim(strip_tags($result)));
+        if ($tpl instanceof \Closure) {
+            $result = call_user_func($tpl, $result);
+        } else {
+            $result = htmlspecialchars(trim(strip_tags($result)));
+            $result = sprintf($tpl, $result);
+        }
 
         if (!empty($result)) {
-            return sprintf($tpl, $result);
+            return $result;
         }
 
         return '';
@@ -68,27 +59,45 @@ TPL;
 
         \Yii::$app->urlManager->setHostInfo($ymlConfig->shop_url);
 
-        $section_shop = '<name>'.$ymlConfig->shop_name.'</name>' . PHP_EOL
-            . '<company>'.$ymlConfig->shop_company.'</company>' . PHP_EOL
-            . '<url>'.$ymlConfig->shop_url.'</url>' . PHP_EOL
-            . '<currencies><currency id="'.$ymlConfig->currency_id.'" rate="1" plus="0" /></currencies>' . PHP_EOL;
+        $tpl = <<< 'TPL'
+        <name>%s</name>
+        <company>%s</company>
+        <url>%s</url>
+        <currencies>
+            <currency id="%s" rate="1" plus="0"/>
+        </currencies>
+        <categories>
+            %s
+        </categories>
+        <store>%s</store>
+        <pickup>%s</pickup>
+        <delivery>%s</delivery>
+        <local_delivery_cost>%s</local_delivery_cost>
+        <adult>%s</adult>
+TPL;
 
-        $section_shop .= '<categories>' . PHP_EOL;
+        $section_categories = '';
         $categories = Category::find()->where(['active' => 1, 'is_deleted' => 0])->asArray();
         /** @var Category $row */
         foreach ($categories->each(500) as $row) {
-            $section_shop .= '<category id="'.$row['id'].'" '.(0 != $row['parent_id'] ? 'parentId="'.$row['parent_id'].'"' : '').'>'.$row['name'].'</category>' . PHP_EOL;
+            $section_categories = '<category id="'.$row['id'].'" '.(0 != $row['parent_id'] ? 'parentId="'.$row['parent_id'].'"' : '').'>'.$row['name'].'</category>' . PHP_EOL;
         }
         unset($row, $categories);
-        $section_shop .= '</categories>' . PHP_EOL
-            . '<store>'.(1 == $ymlConfig->shop_store ? 'true' : 'false').'</store>' . PHP_EOL
-            . '<pickup>'.(1 == $ymlConfig->shop_pickup ? 'true' : 'false').'</pickup>' . PHP_EOL
-            . '<delivery>'.(1 == $ymlConfig->shop_delivery ? 'true' : 'false').'</delivery>' . PHP_EOL
-            . '<local_delivery_cost>'.$ymlConfig->shop_local_delivery_cost.'</local_delivery_cost>' . PHP_EOL
-            . '<adult>'.(1 == $ymlConfig->shop_adult ? 'true' : 'false').'</adult>' . PHP_EOL;
+
+        $section_shop = sprintf($tpl,
+            $ymlConfig->shop_name,
+            $ymlConfig->shop_company,
+            $ymlConfig->shop_url,
+            $ymlConfig->currency_id,
+            $section_categories,
+            1 == $ymlConfig->shop_store ? 'true' : 'false',
+            1 == $ymlConfig->shop_pickup ? 'true' : 'false',
+            1 == $ymlConfig->shop_delivery ? 'true' : 'false',
+            $ymlConfig->shop_local_delivery_cost,
+            1 == $ymlConfig->shop_adult ? 'true' : 'false'
+        );
 
         $section_offers = '';
-
 
 //        $offer_type = ('simplified' === $ymlConfig->general_yml_type) ? '' : 'type="'.$ymlConfig->general_yml_type.'"';
         $offer_type = ''; // временно, пока не будет окончательно дописан механизм для разных типов
@@ -102,9 +111,23 @@ TPL;
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_price', $row, '<price>%s</price>'. PHP_EOL);
             $offer .= '<currencyId>'.$ymlConfig->currency_id.'</currencyId>' . PHP_EOL;
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_category', $row, '<categoryId>%s</categoryId>' . PHP_EOL);
-            $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_picture', $row, '<picture>'.rtrim($ymlConfig->shop_url, '/').'%s</picture>' . PHP_EOL);
+            $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_picture', $row,
+                function($value) use ($ymlConfig) {
+                    $value = urlencode($value);
+                    $value = '<picture>'.rtrim($ymlConfig->shop_url, '/').$value.'</picture>' . PHP_EOL;
+                    return $value;
+                }
+            );
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_name', $row, '<name>%s</name>'. PHP_EOL);
-            $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_description', $row, '<description>%s</description>' . PHP_EOL);
+            $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_description', $row,
+                function($value) {
+                    if (strlen($value) > 512) {
+                        $value = substr($value, 0, 511);
+                    }
+                    $value = '<description>'.$value.'</description>' . PHP_EOL;
+                    return $value;
+                }
+            );
 
             $offer .= '</offer>';
 
@@ -112,14 +135,25 @@ TPL;
         }
         unset($row, $products);
 
-
-        file_put_contents(\Yii::getAlias('@webroot').'/'.$ymlConfig->general_yml_filename,
-            $this->getYmlTpl() .
-            '<shop>' . PHP_EOL .
-            $section_shop . PHP_EOL .
-            '<offers>'.$section_offers.'</offers>' . PHP_EOL .
-            '</shop>' . PHP_EOL .
-            $this->getYmlTpl(false)
+        $ymlFileTpl = <<< 'TPL'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="%s">
+    <shop>
+        %s
+        <offers>
+            %s
+        </offers>
+    </shop>
+</yml_catalog>
+TPL;
+        file_put_contents(
+            \Yii::getAlias('@webroot').'/'.$ymlConfig->general_yml_filename,
+            sprintf($ymlFileTpl,
+                date('Y-m-d H:i'),
+                $section_shop,
+                $section_offers
+            )
         );
     }
 }
