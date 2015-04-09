@@ -6,14 +6,14 @@
  * @var $url string
  */
 
-use app\widgets\ImgSearch;
+use app\widgets\ObjectImageWidget;
 use kartik\helpers\Html;
 
 ?>
 <div class="row">
     <div class="span2">
         <?=
-            ImgSearch::widget(
+            ObjectImageWidget::widget(
                 [
                     'limit' => 1,
                     'objectId' => $product->object->id,

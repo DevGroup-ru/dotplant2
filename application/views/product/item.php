@@ -6,7 +6,7 @@
  * @var $url string
  */
 
-use app\widgets\ImgSearch;
+use app\widgets\ObjectImageWidget;
 use kartik\helpers\Html;
 
 ?>
@@ -14,7 +14,7 @@ use kartik\helpers\Html;
     <div class="thumbnail">
         <a href="<?=$url?>">
             <?=
-            ImgSearch::widget(
+            ObjectImageWidget::widget(
                 [
                     'limit' => 1,
                     'objectId' => $product->object->id,

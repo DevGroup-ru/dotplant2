@@ -14,7 +14,7 @@
 
 use app\models\Image;
 use app\models\Product;
-use app\widgets\ImgSearch;
+use app\widgets\ObjectImageWidget;
 use kartik\helpers\Html;
 use yii\helpers\Url;
 
@@ -36,7 +36,7 @@ $images = Image::getForModel($model->object->id, $model->id);
             <div class="carousel-inner">
                 <div class="item active">
                     <?=
-                        ImgSearch::widget(
+                        ObjectImageWidget::widget(
                             [
                                 'limit' => 3,
                                 'offset' => 1,
@@ -49,7 +49,7 @@ $images = Image::getForModel($model->object->id, $model->id);
                 </div>
                 <div class="item">
                     <?=
-                        ImgSearch::widget(
+                        ObjectImageWidget::widget(
                             [
                                 'offset' => 4,
                                 'objectId' => $model->object->id,

@@ -29,7 +29,7 @@ use yii\helpers\Url;
                     );
                     ?>
                     <a href="<?= $url ?>" class="thumbnail">
-                        <?= app\widgets\ImgSearch::widget(['object_id'=>1, 'object_model_id'=>$product->id, 'displayCountPictures'=>1]) ?>
+                        <?= app\widgets\ObjectImageWidget::widget(['object_id'=>1, 'object_model_id'=>$product->id, 'displayCountPictures'=>1]) ?>
                         <div class='name'><?= $product->name ?></div>
                     </a>
                 </div>

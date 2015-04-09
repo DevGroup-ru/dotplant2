@@ -21,7 +21,7 @@ if (is_array($prods)) {
             ]
         );
 
-        $img = app\widgets\ImgSearch::widget(
+        $img = app\widgets\ObjectImageWidget::widget(
             [
                 'object_id'=>1,
                 'object_model_id'=>$prod->id,

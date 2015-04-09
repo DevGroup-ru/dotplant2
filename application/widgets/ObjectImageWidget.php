@@ -6,7 +6,7 @@ use app\models\Image;
 use Yii;
 use yii\base\Widget;
 
-class ImgSearch extends Widget
+class ObjectImageWidget extends Widget
 {
     public $objectId = null;
     public $objectModelId = null;
@@ -20,7 +20,7 @@ class ImgSearch extends Widget
 
     public function run()
     {
-        $cacheKey = "ImgSearch:" . implode("_", [
+        $cacheKey = "ObjectImageWidget:" . implode("_", [
             $this->objectId,
             $this->objectModelId,
             $this->viewFile,

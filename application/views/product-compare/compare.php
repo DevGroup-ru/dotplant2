@@ -40,7 +40,7 @@ $this->title = Yii::t('app', 'Products comparison');
                 'category_group_id' => $product->category->category_group_id,
             ]
         );
-        $img = app\widgets\ImgSearch::widget(
+        $img = app\widgets\ObjectImageWidget::widget(
             [
                 'objectId' => $object->id,
                 'objectModelId' => $product->id,

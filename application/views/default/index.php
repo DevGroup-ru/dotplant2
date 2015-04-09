@@ -4,7 +4,7 @@
  * @var yii\web\View $this
  */
 
-use app\widgets\ImgSearch;
+use app\widgets\ObjectImageWidget;
 use kartik\helpers\Html;
 use yii\helpers\Url;
 
@@ -38,7 +38,7 @@ $latestProducts = \app\models\Product::find()->orderBy('`id` DESC')->limit(6)->a
                                             <i class="tag"></i>
                                             <a href="<?= $url ?>">
                                                 <?=
-                                                    ImgSearch::widget(
+                                                    ObjectImageWidget::widget(
                                                         [
                                                             'limit' => 1,
                                                             'objectId' => $product->object->id,

@@ -29,7 +29,7 @@ $mainCurrency = \app\models\Currency::getMainCurrency();
         <tr>
             <td>
                 <?=
-                \app\widgets\ImgSearch::widget([
+                \app\widgets\ObjectImageWidget::widget([
                     'limit' => 1,
                     'objectId' => \app\models\Object::getForClass(Product::className())->id,
                     'objectModelId' => $item->product_id,

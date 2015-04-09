@@ -32,7 +32,7 @@
         <div class="thumbnail">
             <a href="<?= $url ?>">
                 <?=
-                    \app\widgets\ImgSearch::widget(
+                    \app\widgets\ObjectImageWidget::widget(
                         [
                             'limit' => 1,
                             'objectId' => $product->object->id,
