@@ -18,16 +18,6 @@ return [
         'formatter' => [
             'class' => 'app\components\Formatter',
         ],
-        'i18n' => [
-            'translations' => [
-                'shop' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    'fileMap' => [
-                        'shop' => 'shop.php',
-                    ],
-                ],
-            ],
-        ],
     ],
     'params' => $params,
 ];
