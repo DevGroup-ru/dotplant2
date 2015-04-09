@@ -183,6 +183,7 @@ $this->endBlock();
                             'formOptions' => [
                                 'action' => 'update-editable',
                             ],
+                            'placement' => 'left',
                         ],
                     ],
                     [
