@@ -4,7 +4,6 @@ use app\models\Product;
 use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
 use yii\helpers\Url;
-use yii\helpers\VarDumper;
 
 $this->title = Yii::t('app', 'Products');
 $this->params['breadcrumbs'][] = $this->title;
