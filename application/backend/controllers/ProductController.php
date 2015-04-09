@@ -86,6 +86,23 @@ class ProductController extends Controller
                     },
                     'price',
                     'old_price',
+                    'active' => function (Product $model) {
+                        if ($model === null || $model->active === null) {
+                            return null;
+                        }
+                        if ($model->active === 1) {
+                            $label_class = 'label-success';
+                            $value = 'Active';
+                        } else {
+                            $value = 'Inactive';
+                            $label_class = 'label-default';
+                        }
+                        return \yii\helpers\Html::tag(
+                            'span',
+                            Yii::t('app', $value),
+                            ['class' => "label $label_class"]
+                        );
+                    },
                 ],
             ],
         ];

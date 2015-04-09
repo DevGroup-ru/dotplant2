@@ -198,6 +198,7 @@ return [
     'I18n' => 'I18n',
     'ID' => '',
     'Icon' => 'Иконка',
+    'Inactive' => 'Неактивный',
     'Image' => 'Картинка',
     'Image Description' => 'Описание картинки',
     'Image Height' => 'Высота картинки',
