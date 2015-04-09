@@ -12,8 +12,6 @@ use yii\base\Widget;
 use yii\db\Query;
 use yii\helpers\Json;
 use yii\helpers\Url;
-use app\models\Category;
-use yii\helpers\VarDumper;
 
 class OptionGenerate extends Widget
 {
