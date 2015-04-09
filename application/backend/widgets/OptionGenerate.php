@@ -11,11 +11,15 @@ use Yii;
 use yii\base\Widget;
 use yii\db\Query;
 use yii\helpers\Json;
+use yii\helpers\Url;
+use app\models\Category;
+use yii\helpers\VarDumper;
 
 class OptionGenerate extends Widget
 {
     public $viewFile = 'OptionGenerate';
     public $genButton;
+    public $addButton;
 
     public $model;
     public $form;
@@ -30,11 +34,22 @@ class OptionGenerate extends Widget
             '#',
             ['class' => 'btn btn-success', 'id' => 'btn-generate']
         );
+        $parent_id = $this->model->main_category_id;
+        $owner_id = $this->model->id;
+        $this->addButton = Html::a(
+            Icon::show('plus') . Yii::t('app', 'Add'),
+            Url::toRoute(['/backend/product/edit',
+                'parent_id' => $parent_id,
+                'owner_id' => $owner_id,
+                'returnUrl' => \app\backend\components\Helper::getReturnUrl(),
+            ]),
+            ['class' => 'btn btn-success', 'id' => 'btn-add']
+        );
 
         if (!empty($this->footer)) {
             $this->footer = Html::tag(
                 'div',
-                $this->genButton,
+                $this->addButton.' '.$this->genButton,
                 ['class'=>'widget-footer']
             );
         }

@@ -23,6 +23,7 @@ use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\helpers\Url;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
@@ -129,6 +130,10 @@ class ProductController extends Controller
         if (null === $id) {
             $model = new Product();
             $model->loadDefaultValues();
+            $parent_id = Yii::$app->request->get('owner_id');
+            if (null !== Product::findById($parent_id)) {
+                $model->parent_id = $parent_id;
+            }
         } else {
             $model = Product::findById($id, null, null);
             if ((null !== $model) && ($model->parent_id > 0)) {
