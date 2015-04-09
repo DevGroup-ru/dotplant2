@@ -2,64 +2,74 @@
 
 namespace app\backend\controllers;
 
+use app\backend\models\Yml;
+use app\backgroundtasks\helpers\BackgroundTasks;
 use app\models\Config;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 
 class YmlController extends Controller
 {
+    /**
+     * @return string
+     */
+    public function actionIndex()
+    {
+        return $this->render(
+            'index',
+            []
+        );
+    }
+
     public function actionSettings()
     {
-        if (!empty($_POST['yml'])) {
-            $yml = $_POST['yml'];
-
-
-            $config = Config::find()->where(['key' => 'show_all_properties'])->one();
-            if ($config) {
-                if (isset($yml['show_all_properties'])) {
-                    $config->value = "1";
-                    unset($yml['show_all_properties']);
-                } else {
-                    $config->value = "0";
-                }
-
-                $config->update();
+        if (Yii::$app->request->isPost) {
+            $model = new Yml();
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                $model->saveConfig();
+            } else {
+                $error = implode('<br />',
+                    array_map(
+                        function($i) {
+                            if (is_array($i)) {
+                                return array_pop($i);
+                            }
+                            return $i;
+                        },
+                        $model->errors)
+                );
+                Yii::$app->session->setFlash('error', $error);
             }
-
-            foreach ($yml as $key => $value) {
-                $config = Config::find()->where(['key' => $key])->one();
-                if ($config) {
-                    $config->value = $value;
-                    $config->update();
-                }
-            }
-
-            if (isset($_POST['data'])) {
-
-                $ymlDataFields = [];
-
-                foreach ($_POST['data'] as $key => $one) {
-                    if(isset($one['type']) && $one['type'] ) {
-                        $ymlDataFields[$key] = $one;
-                    }
-                }
-                $config =  Config::find()->where(['key'=>'fields_params'])->one();
-                $config->value = json_encode($ymlDataFields);
-                $config->save();
-            }
-
-
-
         }
 
-        return $this->render('settings',
+        $model = new Yml();
+        $model->loadConfig();
+
+        return $this->render(
+            'settings',
             [
-                'main_currency' => Config::getValue("yml.main_currency"),
-                'show_all_properties' => Config::getValue("yml.show_all_properties"),
-                'default_offer_type' => Config::getValue("yml.default_offer_type"),
-                'local_delivery_cost' => Config::getValue("yml.local_delivery_cost"),
-                'fields_params' => Config::getValue('yml.fields_params')
+                'model' => $model
             ]
         );
+    }
+
+    public function actionCreate()
+    {
+        BackgroundTasks::addTask(
+            [
+                'name' => 'yml_generate',
+                'description' => 'Creating YML file',
+                'action' => 'yml/generate',
+                'params' => '',
+                'init_event' => 'yml',
+            ],
+            [
+                'create_notification' => true,
+            ]
+        );
+
+        Yii::$app->session->setFlash('success', 'Task has been created.');
+        return $this->redirect(['settings']);
     }
 }

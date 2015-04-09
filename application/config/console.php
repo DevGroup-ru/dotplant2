@@ -61,6 +61,26 @@ $config = [
             'class' => 'yii\test\DbFixtureManager',
             'basePath' => '@tests/unit/fixtures',
         ],
+        'urlManager' => [
+            'baseUrl' => '/',
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                'login/<service:google_oauth|facebook|etc>' => 'default/login',
+                'login' => 'default/login',
+                'logout' => 'default/logout',
+                'signup' => 'default/signup',
+                'cart/payment-result/<id:.+>' => 'cart/payment-result',
+                'search' => 'default/search',
+                'robots.txt' => 'seo/manage/get-robots',
+                [
+                    'class' => 'app\components\PageRule',
+                ],
+                [
+                    'class' => 'app\components\ObjectRule',
+                ],
+            ],
+        ],
     ]
 ];
 

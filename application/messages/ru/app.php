@@ -683,5 +683,10 @@ return  [
     '{currentModuleName} {componentName} is flushed' => '',
     '{key} ' => '',
     '{n} products are available' => 'Доступно товаров: {n}',
+    'Field' => 'Поле продукта',
+    'Relation' => 'Связь',
+    'Settings for shop section' => 'Настройки для секции Магазин',
+    'YML type by default' => 'Тип YML описания по умолчанию',
+    'Offer name' => 'Наименование товара',
 ];
 
