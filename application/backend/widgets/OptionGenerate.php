@@ -71,13 +71,17 @@ class OptionGenerate extends Widget
         }
 
         $optionGenerate = Json::decode($this->model->option_generate);
-
+        if (null === PropertyGroup::findOne($optionGenerate['group'])) {
+            $this->model->option_generate = $optionGenerate = null;
+        }
         $groupModel = null;
         if (isset($optionGenerate['group'])) {
             $groupModel = PropertyGroup::findOne($optionGenerate['group']);
             $properties = Property::getForGroupId($optionGenerate['group']);
         } else {
-            $properties = [];
+            $group_id = array_shift(array_keys($this->property_groups_to_add));
+            $groupModel = PropertyGroup::findOne($group_id);
+            $properties = Property::getForGroupId($group_id);
         }
         if (is_null($groupModel)) {
             $groupModel = new PropertyGroup();
