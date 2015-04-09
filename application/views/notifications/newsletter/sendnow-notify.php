@@ -1,6 +1,6 @@
 <div class="container">
-    <div class="username"><?= Yii::t('shop', 'Hello') ?>, <?= $user ?>!</div>
-    <h2><?= Yii::t('shop', 'New on the site') ?>:</h2>
+    <div class="username"><?= Yii::t('app', 'Hello') ?>, <?= $user ?>!</div>
+    <h2><?= Yii::t('app', 'New on the site') ?>:</h2>
     <h3><?= $page->h1 ?></h3>
     <div class="content"><?= $page->content ?></div>
     <div class="date"><?= $page->date_added ?></div>

@@ -3,8 +3,8 @@
 use yii\helpers\Html;
 $mainCurrency = \app\models\Currency::getMainCurrency();
 ?>
-<h1><?= Yii::t('shop', 'Order #{orderId}', ['orderId' => $order->id]) ?></h1>
-<h2><?= Yii::t('shop', 'Order information') ?></h2>
+<h1><?= Yii::t('app', 'Order #{orderId}', ['orderId' => $order->id]) ?></h1>
+<h2><?= Yii::t('app', 'Order information') ?></h2>
 <table style="width: 800px;" border="1" bordercolor="#ddd" cellspacing="0">
     <tr>
         <th style="text-align: left;"><?= $order->getAttributeLabel('start_date') ?></th>
@@ -43,15 +43,15 @@ $mainCurrency = \app\models\Currency::getMainCurrency();
         <?php $i++; ?>
     <?php endforeach; ?>
 </table>
-<h2><?= Yii::t('shop', 'Order items') ?></h2>
+<h2><?= Yii::t('app', 'Order items') ?></h2>
 <table style="width: 800px;" border="1" bordercolor="#ddd" cellspacing="0">
     <thead>
         <tr>
-            <th><?= Yii::t('shop', 'SKU') ?></th>
-            <th><?= Yii::t('shop', 'Name') ?></th>
-            <th><?= Yii::t('shop', 'Price') ?></th>
-            <th><?= Yii::t('shop', 'Quantity') ?></th>
-            <th><?= Yii::t('shop', 'Price sum') ?></th>
+            <th><?= Yii::t('app', 'SKU') ?></th>
+            <th><?= Yii::t('app', 'Name') ?></th>
+            <th><?= Yii::t('app', 'Price') ?></th>
+            <th><?= Yii::t('app', 'Quantity') ?></th>
+            <th><?= Yii::t('app', 'Price sum') ?></th>
         </tr>
     </thead>
     <tbody>
@@ -87,7 +87,7 @@ $mainCurrency = \app\models\Currency::getMainCurrency();
 <p>
     <?=
     \Yii::t(
-        'shop',
+        'app',
         'See order details <a href="{url}">here</a>.',
         [
             'url' => \yii\helpers\Url::toRoute(

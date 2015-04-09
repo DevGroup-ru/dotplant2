@@ -4,7 +4,7 @@
  * @var $order \app\models\Order
  * @var $paymentTypes \app\models\PaymentType[]
  */
-$this->title = Yii::t('shop', 'Select payment type');
+$this->title = Yii::t('app', 'Select payment type');
 ?>
 <h1><?= $this->title ?></h1>
 <?php
@@ -30,10 +30,10 @@ $this->render(
     ]
 );
 ?>
-<?= \kartik\helpers\Html::submitButton(Yii::t('shop', 'Pay'), ['class' => 'btn btn-primary pull-right']); ?>
+<?= \kartik\helpers\Html::submitButton(Yii::t('app', 'Pay'), ['class' => 'btn btn-primary pull-right']); ?>
 <?=
     \kartik\helpers\Html::a(
-        Yii::t('shop', 'Print'),
+        Yii::t('app', 'Print'),
         '#',
         [
             'class' => 'btn btn-default',

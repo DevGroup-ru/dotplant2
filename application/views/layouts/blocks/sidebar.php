@@ -47,7 +47,7 @@
                     <?= $product->announce ?>
                 </p>
                 <h4 style="text-align:center">
-                    <a class="btn" href="#" data-action="add-to-cart" data-id="<?= $product->id ?>"><?= Yii::t('shop', 'Add to') ?> <i class="icon-shopping-cart"></i></a>
+                    <a class="btn" href="#" data-action="add-to-cart" data-id="<?= $product->id ?>"><?= Yii::t('app', 'Add to') ?> <i class="icon-shopping-cart"></i></a>
                     <button class="btn btn-primary"><?= Yii::$app->formatter->asDecimal($product->price, 2) ?> <?= Yii::$app->params['currency'] ?></button>
                 </h4>
             </div>

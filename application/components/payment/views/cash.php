@@ -5,5 +5,5 @@
  * @var \app\models\OrderTransaction $transaction
  */
 ?>
-<a href='<?= $url ?>'><?= Yii::t('shop', 'Continue') ?></a>
+<a href='<?= $url ?>'><?= Yii::t('app', 'Continue') ?></a>
 <script>window.location='<?= $url ?>';</script>

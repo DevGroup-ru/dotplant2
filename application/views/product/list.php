@@ -37,7 +37,7 @@ echo app\widgets\filter\FilterWidget::widget(
 $this->endBlock();
 
 ?>
-<small class="pull-right"> <?=Yii::t('shop', '{n} products are available', ['n' => $pages->totalCount])?> </small>
+<small class="pull-right"> <?=Yii::t('app', '{n} products are available', ['n' => $pages->totalCount])?> </small>
 <h1> <?=$this->blocks['h1']?></h1>
 <hr class="soft" />
 <?=$this->blocks['announce']?>

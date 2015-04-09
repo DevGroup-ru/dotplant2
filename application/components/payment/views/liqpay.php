@@ -9,7 +9,7 @@
     <?php foreach ($formData as $key => $value): ?>
         <?= \yii\helpers\Html::hiddenInput($key, $value) ?>
     <?php endforeach; ?>
-    <input type="submit" value="<?= Yii::t('shop', 'Pay') ?>" class="btn btn-primary" />
+    <input type="submit" value="<?= Yii::t('app', 'Pay') ?>" class="btn btn-primary" />
 </form>
 <script>
 jQuery('#liqpay-form').submit();

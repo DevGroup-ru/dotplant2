@@ -30,7 +30,7 @@ trait NewsletterSenderTrait
             ]
         )->setTo($sEmail->email)
             ->setFrom(Yii::$app->mail->transport->getUsername())
-            ->setSubject(Yii::t('shop', 'New info'))
+            ->setSubject(Yii::t('app', 'New info'))
             ->send();
     }
 
@@ -50,7 +50,7 @@ trait NewsletterSenderTrait
                     ]
                 )->setTo($subscribeEmail->email)
                     ->setFrom(Yii::$app->mail->transport->getUserName())
-                    ->setSubject(Yii::t('shop', 'Last news'))
+                    ->setSubject(Yii::t('app', 'Last news'))
                     ->send();
             }
 

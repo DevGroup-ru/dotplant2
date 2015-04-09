@@ -158,7 +158,7 @@ class PageController extends Controller
         }
 
         if (!$model->delete()) {
-            Yii::$app->session->setFlash('info', Yii::t('shop', 'The object is placed in the cart'));
+            Yii::$app->session->setFlash('info', Yii::t('app', 'The object is placed in the cart'));
         } else {
             Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
         }

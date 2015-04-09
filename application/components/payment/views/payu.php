@@ -16,5 +16,5 @@
             <input type="hidden" name="<?= $key; ?>" value="<?= $value; ?>" />
         <?php endif; ?>
     <?php endforeach; ?>
-    <input type="submit" class="btn btn-primary" value="<?= Yii::t('shop', 'Pay') ?>">
+    <input type="submit" class="btn btn-primary" value="<?= Yii::t('app', 'Pay') ?>">
 </form>

@@ -504,7 +504,7 @@ class ProductController extends Controller
                     'Properties_Product_' . $newModel->id => $newModelProps,
                 ]
             );
-            Yii::$app->session->setFlash('success', Yii::t('shop', 'Product has been cloned successfully.'));
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Product has been cloned successfully.'));
             $this->redirect(['/backend/product/edit', 'id' => $newModel->id]);
         }
     }
@@ -524,7 +524,7 @@ class ProductController extends Controller
         }
 
         if (!$model->delete()) {
-            Yii::$app->session->setFlash('info', Yii::t('shop', 'The object is placed in the cart'));
+            Yii::$app->session->setFlash('info', Yii::t('app', 'The object is placed in the cart'));
         } else {
             Yii::$app->session->setFlash('info', Yii::t('app', 'Object has been removed'));
         }

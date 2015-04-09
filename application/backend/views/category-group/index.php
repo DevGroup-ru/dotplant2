@@ -9,7 +9,7 @@ use kartik\icons\Icon;
 /* @var $searchModel app\components\SearchModel */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('shop', 'Categories groups');
+$this->title = Yii::t('app', 'Categories groups');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="category-group-index">

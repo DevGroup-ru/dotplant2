@@ -55,7 +55,7 @@ unset($this->assetBundles['yii\bootstrap\BootstrapAsset']);
                     <?=
                     \kartik\helpers\Html::a(
                         Yii::t(
-                            'shop',
+                            'app',
                             'Compare products [{count}]',
                             [
                                 'count' => count(Yii::$app->session->get('comparisonProductList')),

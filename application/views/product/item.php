@@ -32,7 +32,7 @@ use kartik\helpers\Html;
             </p>
             <h4 style="text-align:center">
                 <a class="btn" href="#" data-action="add-to-cart" data-id="<?=$product->id?>"><?=Yii::t(
-                        'shop',
+                        'app',
                         'Add to'
                     )?> <i class="fa fa-shopping-cart"></i></a>
                 <button class="btn btn-primary">

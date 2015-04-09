@@ -74,7 +74,7 @@ class OrderStatusController extends Controller
             $model = $this->findModel($id);
         }
         if ($model->edit_allowed == 0) {
-            Yii::$app->session->setFlash('error', Yii::t('shop', 'Cannot edit this item.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot edit this item.'));
             return $this->redirect(['index']);
         }
         if ($model->load(Yii::$app->request->post())) {
@@ -122,7 +122,7 @@ class OrderStatusController extends Controller
     {
         $model = $this->findModel($id);
         if ($model->not_deletable == 1) {
-            Yii::$app->session->setFlash('error', Yii::t('shop', 'Cannot delete this item.'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot delete this item.'));
         } else {
             $model->delete();
         }

@@ -9,7 +9,7 @@
 use app\models\Property;
 use app\models\PropertyGroup;
 
-$this->title = Yii::t('shop', 'Shipping options');
+$this->title = Yii::t('app', 'Shipping options');
 
 ?>
 <h1><?= $this->title ?></h1>
@@ -67,10 +67,10 @@ $this->title = Yii::t('shop', 'Shipping options');
         );
         ?>
     <?php endif; ?>
-    <?= \kartik\helpers\Html::submitButton(Yii::t('shop', 'Payment'), ['class' => 'btn btn-primary pull-right']); ?>
+    <?= \kartik\helpers\Html::submitButton(Yii::t('app', 'Payment'), ['class' => 'btn btn-primary pull-right']); ?>
     <?=
         \kartik\helpers\Html::a(
-            Yii::t('shop', 'Print'),
+            Yii::t('app', 'Print'),
             '#',
             [
                 'class' => 'btn btn-default',

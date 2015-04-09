@@ -7,7 +7,7 @@
 
 use kartik\helpers\Html;
 
-$this->title = Yii::t('shop', 'Order #{order}', ['order' => $order->id]);
+$this->title = Yii::t('app', 'Order #{order}', ['order' => $order->id]);
 $this->params['breadcrumbs'] = [
     [
         'label' => Yii::t('app', 'Personal cabinet'),
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'] = [
 
 ?>
 <h1><?= $this->title ?></h1>
-<h2><?= Yii::t('shop', 'Order information') ?></h2>
+<h2><?= Yii::t('app', 'Order information') ?></h2>
 <table class="table table-bordered table-striped">
     <tbody>
         <tr>
@@ -59,7 +59,7 @@ $this->params['breadcrumbs'] = [
         <?php endforeach; ?>
     </tbody>
 </table>
-<h2><?= Yii::t('shop', 'Order items') ?></h2>
+<h2><?= Yii::t('app', 'Order items') ?></h2>
 <?=
     $this->render(
         '@app/views/cart/_items',

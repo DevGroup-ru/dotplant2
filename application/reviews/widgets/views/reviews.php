@@ -42,7 +42,7 @@ use yii\helpers\Html;
     <div class="row">
         <div class="col-md-12">
             <h2>
-                <?= Yii::t('shop', 'You review') ?>
+                <?= Yii::t('app', 'You review') ?>
                 <?php if (Yii::$app->getUser()->isGuest) : ?>
                     <small>[<?= Html::a(Yii::t('app', 'Login'),
                             ['/default/login', 'returnUrl' => Yii::$app->request->absoluteUrl]) ?>]</small>
@@ -101,7 +101,7 @@ use yii\helpers\Html;
             <div class = "form-group no-margin">
                 <?=
                 Html::submitButton(
-                    Yii::t('shop', 'You review'),
+                    Yii::t('app', 'You review'),
                     ['class' => 'btn btn-success']
                 ) ?>
             </div>

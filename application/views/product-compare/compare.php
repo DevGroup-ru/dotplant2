@@ -8,7 +8,7 @@
  * @var $this \yii\web\View
  */
 
-$this->title = Yii::t('shop', 'Products comparison');
+$this->title = Yii::t('app', 'Products comparison');
 
 ?>
 <?php if (isset($error) && $error): ?>
@@ -18,7 +18,7 @@ $this->title = Yii::t('shop', 'Products comparison');
         <div class="span9">
             <?=
             \yii\helpers\Html::a(
-                Yii::t('shop', 'Print version'),
+                Yii::t('app', 'Print version'),
                 [
                     '/product-compare/print',
                 ],
@@ -89,7 +89,7 @@ $this->title = Yii::t('shop', 'Products comparison');
                 <div class="span3">
                     <?=
                     \kartik\helpers\Html::a(
-                        Yii::t('shop', 'Delete'),
+                        Yii::t('app', 'Delete'),
                         [
                             '/product-compare/remove',
                             'id' => $product->id,
@@ -102,7 +102,7 @@ $this->title = Yii::t('shop', 'Products comparison');
                     ?>
                     <br />
                     <br />
-                    <a class="btn" href="#" data-action="add-to-cart" data-id="<?= $product->id ?>"><?= Yii::t('shop', 'Add to') ?> <i class="fa fa-shopping-cart"></i></a>
+                    <a class="btn" href="#" data-action="add-to-cart" data-id="<?= $product->id ?>"><?= Yii::t('app', 'Add to') ?> <i class="fa fa-shopping-cart"></i></a>
                 </div>
             </div>
         </div>
@@ -113,7 +113,7 @@ $this->title = Yii::t('shop', 'Products comparison');
         <div class="span9">
             <?=
             \kartik\helpers\Html::a(
-                Yii::t('shop', 'Remove all'),
+                Yii::t('app', 'Remove all'),
                 [
                     '/product-compare/remove-all',
                     'backUrl' => Yii::$app->request->url,

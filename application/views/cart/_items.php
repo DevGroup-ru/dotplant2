@@ -18,10 +18,10 @@ $mainCurrency = \app\models\Currency::getMainCurrency();
     <thead>
     <tr>
         <th></th>
-        <th><?=Yii::t('shop', 'Name')?></th>
-        <th><?=Yii::t('shop', 'Price')?></th>
-        <th><?=Yii::t('shop', 'Quantity')?></th>
-        <th><?=Yii::t('shop', 'Sum')?></th>
+        <th><?=Yii::t('app', 'Name')?></th>
+        <th><?=Yii::t('app', 'Price')?></th>
+        <th><?=Yii::t('app', 'Quantity')?></th>
+        <th><?=Yii::t('app', 'Sum')?></th>
     </tr>
     </thead>
     <tbody>

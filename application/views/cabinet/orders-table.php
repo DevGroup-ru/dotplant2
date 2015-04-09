@@ -51,5 +51,5 @@ $showEndDate = isset($showEndDate) && $showEndDate;
         </tbody>
     </table>
 <?php else: ?>
-    <p><?= Yii::t('shop', 'Empty') ?></p>
+    <p><?= Yii::t('app', 'Empty') ?></p>
 <?php endif; ?>

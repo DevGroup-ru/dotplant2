@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render(
     '_table',
     [
-        'name' => Yii::t('shop', 'Categories Trash'),
+        'name' => Yii::t('app', 'Categories Trash'),
         'objectModel' => $categoryModel,
         'objectProvider' => $categoryProvider,
         'colums' => [
@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render(
     '_table',
     [
-        'name' => Yii::t('shop', 'Products Trash'),
+        'name' => Yii::t('app', 'Products Trash'),
         'objectModel' => $productModel,
         'objectProvider' => $productProvider,
        'colums' => [
@@ -137,7 +137,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= $this->render(
     '_table',
     [
-        'name' => Yii::t('shop', 'Pages Trash'),
+        'name' => Yii::t('app', 'Pages Trash'),
         'objectModel' => $pageModel,
         'objectProvider' => $pageProvider,
         'colums' => [

@@ -63,14 +63,14 @@ class ShippingOption extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('shop', 'ID'),
-            'name' => Yii::t('shop', 'Name'),
-            'description' => Yii::t('shop', 'Description'),
-            'price_from' => Yii::t('shop', 'Price From'),
-            'price_to' => Yii::t('shop', 'Price To'),
-            'cost' => Yii::t('shop', 'Cost'),
-            'sort' => Yii::t('shop', 'Sort'),
-            'active' => Yii::t('shop', 'Active'),
+            'id' => Yii::t('app', 'ID'),
+            'name' => Yii::t('app', 'Name'),
+            'description' => Yii::t('app', 'Description'),
+            'price_from' => Yii::t('app', 'Price From'),
+            'price_to' => Yii::t('app', 'Price To'),
+            'cost' => Yii::t('app', 'Cost'),
+            'sort' => Yii::t('app', 'Sort'),
+            'active' => Yii::t('app', 'Active'),
         ];
     }
 }

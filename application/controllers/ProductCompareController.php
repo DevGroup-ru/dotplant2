@@ -69,7 +69,7 @@ class ProductCompareController extends Controller
             'compare',
             [
                 'error' => count($products) == 0 || is_null($object),
-                'message' => Yii::t('shop', 'No products for comparing'),
+                'message' => Yii::t('app', 'No products for comparing'),
                 'object' => $object,
                 'products' => $products,
             ]
@@ -88,7 +88,7 @@ class ProductCompareController extends Controller
             'print',
             [
                 'error' => count($products) == 0 || is_null($object),
-                'message' => Yii::t('shop', 'No products for comparing'),
+                'message' => Yii::t('app', 'No products for comparing'),
                 'object' => $object,
                 'products' => $products,
             ]

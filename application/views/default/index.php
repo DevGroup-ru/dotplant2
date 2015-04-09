@@ -16,7 +16,7 @@ $latestProducts = \app\models\Product::find()->orderBy('`id` DESC')->limit(6)->a
 ?>
 <?php if (count($featuredProducts) > 0): ?>
     <div class="well well-small">
-        <h4><?= Yii::t('shop', 'Featured products') ?> <small class="pull-right">200+ featured products</small></h4>
+        <h4><?= Yii::t('app', 'Featured products') ?> <small class="pull-right">200+ featured products</small></h4>
         <div class="row-fluid">
             <div id="featured" class="carousel slide">
                 <div class="carousel-inner">
@@ -49,7 +49,7 @@ $latestProducts = \app\models\Product::find()->orderBy('`id` DESC')->limit(6)->a
                                             </a>
                                             <div class="caption">
                                                 <h5><a href="<?= $url ?>"><?= Html::encode($product->name) ?></a></h5>
-                                                <h4><a class="btn btn-mini" href="#" data-action="add-to-cart" data-id="<?= $product->id ?>"><?= Yii::t('shop', 'Add to') ?> <i class="icon-shopping-cart"></i></a> <span class="pull-right"><?= Yii::$app->formatter->asDecimal($product->price, 2) ?> <?= Yii::$app->params['currency'] ?></span></h4>
+                                                <h4><a class="btn btn-mini" href="#" data-action="add-to-cart" data-id="<?= $product->id ?>"><?= Yii::t('app', 'Add to') ?> <i class="icon-shopping-cart"></i></a> <span class="pull-right"><?= Yii::$app->formatter->asDecimal($product->price, 2) ?> <?= Yii::$app->params['currency'] ?></span></h4>
                                             </div>
                                         </div>
                                     </li>
@@ -65,7 +65,7 @@ $latestProducts = \app\models\Product::find()->orderBy('`id` DESC')->limit(6)->a
     </div>
 <?php endif; ?>
 <?php if (count($latestProducts) > 0): ?>
-    <h4><?= Yii::t('shop', 'New products') ?></h4>
+    <h4><?= Yii::t('app', 'New products') ?></h4>
     <div id="blockView">
         <ul class="thumbnails">
             <?php

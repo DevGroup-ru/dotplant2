@@ -182,7 +182,7 @@ class CategoryController extends Controller
         }
 
         if (!$model->delete()) {
-            Yii::$app->session->setFlash('success', Yii::t('shop', 'The object is placed in the cart'));
+            Yii::$app->session->setFlash('success', Yii::t('app', 'The object is placed in the cart'));
         } else {
             Yii::$app->session->setFlash('success', Yii::t('app', 'Object has been removed'));
         }

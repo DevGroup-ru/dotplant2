@@ -22,7 +22,7 @@ $this->params['breadcrumbs'] = [
             BackendWidget::begin(
                 [
                     'icon' => 'car',
-                    'title'=> Yii::t('shop', 'Shipping Option'),
+                    'title'=> Yii::t('app', 'Shipping Option'),
                     'footer' => Html::a(
                             Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
                             Yii::$app->request->get('returnUrl', ['/backend/shipping-option/index', 'id' => $model->id]),

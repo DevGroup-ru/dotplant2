@@ -67,7 +67,7 @@ Html::submitButton(
             BackendWidget::begin(
                 [
                     'icon' => 'info-circle',
-                    'title'=> Yii::t('shop', 'Order Status'),
+                    'title'=> Yii::t('app', 'Order Status'),
                     'footer' => $this->blocks['submit'],
                 ]
             );

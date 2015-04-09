@@ -13,7 +13,7 @@ use yii\helpers\Json;
  * @var $transactionsDataProvider \yii\data\ArrayDataProvider
  */
 
-$this->title = Yii::t('shop', 'Order #{id}', ['id' => $model->id]);
+$this->title = Yii::t('app', 'Order #{id}', ['id' => $model->id]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Orders'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?=Html::encode($this->title)?>
     <a href="#" class="btn btn-default pull-right do-not-print" id="print-button"><?=\kartik\icons\Icon::show(
             'print'
-        )?>&nbsp;&nbsp;<?=Yii::t('shop', 'Print')?></a>
+        )?>&nbsp;&nbsp;<?=Yii::t('app', 'Print')?></a>
     <a href="<?=Yii::$app->request->get(
         'returnUrl',
         ['/backend/order/index']
@@ -57,7 +57,7 @@ if ($sum_transactions < $model->total_price):
             BackendWidget::begin(
                 [
                     'icon' => 'info-circle',
-                    'title' => Yii::t('shop', 'Order information'),
+                    'title' => Yii::t('app', 'Order information'),
                 ]
             );
             ?>
@@ -186,18 +186,18 @@ if ($sum_transactions < $model->total_price):
             BackendWidget::begin(
                 [
                     'icon' => 'list-alt',
-                    'title' => Yii::t('shop', 'Order items'),
+                    'title' => Yii::t('app', 'Order items'),
                 ]
             );
             ?>
             <table class="table table-striped table-bordered">
                 <thead>
                 <tr>
-                    <th><?=Yii::t('shop', 'Name')?></th>
-                    <th><?=Yii::t('shop', 'Price')?></th>
-                    <th><?=Yii::t('shop', 'Additional price')?></th>
-                    <th><?=Yii::t('shop', 'Quantity')?></th>
-                    <th><?=Yii::t('shop', 'Price sum')?></th>
+                    <th><?=Yii::t('app', 'Name')?></th>
+                    <th><?=Yii::t('app', 'Price')?></th>
+                    <th><?=Yii::t('app', 'Additional price')?></th>
+                    <th><?=Yii::t('app', 'Quantity')?></th>
+                    <th><?=Yii::t('app', 'Price sum')?></th>
                     <th style="width: 43px;"></th>
                 </tr>
                 </thead>
@@ -248,7 +248,7 @@ if ($sum_transactions < $model->total_price):
                     </tr>
                 <?php endif; ?>
                 <tr>
-                    <th colspan="3"><?=Yii::t('shop', 'Summary')?></th>
+                    <th colspan="3"><?=Yii::t('app', 'Summary')?></th>
                     <th><?=$model->items_count?></th>
                     <th colspan="2"><?=Yii::$app->formatter->asDecimal($model->total_price, 2)?></th>
                 </tr>
@@ -259,7 +259,7 @@ if ($sum_transactions < $model->total_price):
 
                 <div class="row">
                     <div class="col-xs-3">
-                        <label for="add-product"><?=Yii::t('shop', 'Add a new product to order')?></label>
+                        <label for="add-product"><?=Yii::t('app', 'Add a new product to order')?></label>
                     </div>
                 </div>
                 <div class="row">
@@ -285,7 +285,7 @@ if ($sum_transactions < $model->total_price):
             BackendWidget::begin(
                 [
                     'icon' => 'dollar',
-                    'title' => Yii::t('shop', 'Order transactions'),
+                    'title' => Yii::t('app', 'Order transactions'),
                 ]
             );
             ?>
@@ -336,7 +336,7 @@ if ($sum_transactions < $model->total_price):
         BackendWidget::begin(
             [
                 'icon' => 'comments',
-                'title' => Yii::t('shop', 'Managers chat'),
+                'title' => Yii::t('app', 'Managers chat'),
             ]
         );
         ?>
@@ -353,7 +353,7 @@ if ($sum_transactions < $model->total_price):
                                     <?=$msg->date?>
                                 </time>
                                 <a href="javascript:void(0);" class="username"><?=
-                                    !is_null($msg->user) ? $msg->user->username : Yii::t('shop', 'Unknown')
+                                    !is_null($msg->user) ? $msg->user->username : Yii::t('app', 'Unknown')
                                     ?></a>
                                 <?=nl2br(Html::encode($msg->message))?>
                             </div>
@@ -378,7 +378,7 @@ if ($sum_transactions < $model->total_price):
                         <span class="textarea-controls">
                             <?=
                             Html::submitButton(
-                                Yii::t('shop', 'Submit'),
+                                Yii::t('app', 'Submit'),
                                 ['class' => 'btn btn-sm btn-primary pull-right']
                             )
                             ?>
@@ -391,7 +391,7 @@ if ($sum_transactions < $model->total_price):
 </div>
 
 <?php \yii\bootstrap\Modal::begin(
-    ['id' => 'custom-fields-modal', 'header' => Yii::t('shop', 'Edit order properties')]
+    ['id' => 'custom-fields-modal', 'header' => Yii::t('app', 'Edit order properties')]
 ) ?>
 <?php $form = \kartik\widgets\ActiveForm::begin(['action' => ['update-order-properties', 'id' => $model->id]]) ?>
 <?php foreach (\app\models\PropertyGroup::getForModel($model->object->id, $model->id) as $group): ?>

@@ -26,7 +26,7 @@
     ?>" />
     <input type="hidden" name="spFailMethod" value="1" />
     <input type="hidden" name="lang" value="<?= $language ?>" />
-    <input type="submit" value="<?= Yii::t('shop', 'Pay') ?>" class="btn btn-primary" />
+    <input type="submit" value="<?= Yii::t('app', 'Pay') ?>" class="btn btn-primary" />
 </form>
 <script>
 jQuery('#spry-pay-payment').submit();

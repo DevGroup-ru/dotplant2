@@ -5,7 +5,7 @@ use yii\helpers\Url;
 ?>
 
 <div class="last-viewed-products">
-    <?= isset($title) ? "<h3>" . Yii::t('shop', $title) . "</h3>" : "" ?>
+    <?= isset($title) ? "<h3>" . Yii::t('app', $title) . "</h3>" : "" ?>
     <div class="container">
         <div class="row">
             <?php $counter = 0; ?>

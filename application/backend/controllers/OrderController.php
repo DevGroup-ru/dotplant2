@@ -132,7 +132,7 @@ class OrderController extends Controller
                     Notification::addNotification(
                         $model->manager_id,
                         Yii::t(
-                            'shop',
+                            'app',
                             'Added a new comment to <a href="{orderUrl}" target="_blank">order #{orderId}</a>',
                             [
                                 'orderUrl' => Url::toRoute(['/backend/order/view', 'id' => $model->id]),
@@ -194,7 +194,7 @@ class OrderController extends Controller
         $orderStatus = OrderStatus::findOne($value);
         if ($orderStatus === null || !$order->save(true, ['order_status_id', 'end_date'])) {
             return [
-                'message' => Yii::t('shop', 'Cannot change order status'),
+                'message' => Yii::t('app', 'Cannot change order status'),
             ];
         }
         return [
@@ -221,7 +221,7 @@ class OrderController extends Controller
         $shippingOption = ShippingOption::findOne($value);
         if (is_null($shippingOption) || !$order->save(true, ['shipping_option_id'])) {
             return [
-                'message' => Yii::t('shop', 'Cannot change shipping option'),
+                'message' => Yii::t('app', 'Cannot change shipping option'),
             ];
         }
         return [
@@ -250,7 +250,7 @@ class OrderController extends Controller
         $order->load($_POST);
         if (!$order->save()) {
             return [
-                'message' => Yii::t('shop', 'Cannot change manager'),
+                'message' => Yii::t('app', 'Cannot change manager'),
             ];
         }
         if (is_null($oldManager) || $oldManager->id != $order->manager_id) {
@@ -260,7 +260,7 @@ class OrderController extends Controller
                 if (!is_null($oldManager)) {
                     $to[] = $oldManager->email;
                     $subject =  Yii::t(
-                        'shop',
+                        'app',
                         'Manager has been changed from {oldManagerName} to {newManagerName}. Order #{orderId}',
                         [
                             'oldManagerName' => $oldManager->getAwesomeUsername(),
@@ -271,7 +271,7 @@ class OrderController extends Controller
                     Notification::addNotification(
                         $oldManager->id,
                         Yii::t(
-                            'shop',
+                            'app',
                             'You are not a manager of <a href="{orderUrl}" target="_blank">order #{orderId}</a> already',
                             [
                                 'orderId' =>$order->id,
@@ -283,7 +283,7 @@ class OrderController extends Controller
                     );
                 } else {
                     $subject =  Yii::t(
-                        'shop',
+                        'app',
                         'Manager has been changed to {newManagerName}. Order #{orderId}',
                         [
                             'newManagerName' => $user->getAwesomeUsername(),
@@ -294,7 +294,7 @@ class OrderController extends Controller
                 Notification::addNotification(
                     $user->id,
                     Yii::t(
-                        'shop',
+                        'app',
                         'You are a new manager of <a href="{orderUrl}" target="_blank">order #{orderId}</a>',
                         [
                             'orderId' =>$order->id,
@@ -346,7 +346,7 @@ class OrderController extends Controller
             || !$orderItem->order->reCalc()
         ) {
             return [
-                'message' => Yii::t('shop', 'Cannot change quantity'),
+                'message' => Yii::t('app', 'Cannot change quantity'),
             ];
         }
         return [

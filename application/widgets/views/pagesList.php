@@ -26,7 +26,7 @@ use yii\helpers\Url;
     </ul>
     <?php if (!empty($more_pages_label)) : ?>
     <a href="<?= Url::to(['/page/list', 'id'=>$model->id]); ?>" class="btn btn-xs btn-default btn-read-more">
-        <?= Yii::t('shop', $more_pages_label) ?> <?= Icon::show('arrow-right') ?>
+        <?= Yii::t('app', $more_pages_label) ?> <?= Icon::show('arrow-right') ?>
     </a>
     <?php endif; ?>
 </div>

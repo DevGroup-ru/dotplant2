@@ -4,24 +4,24 @@
  * @var \app\models\Order $order
  */
 
-$this->title = Yii::t('shop', 'Your order has been formed');
+$this->title = Yii::t('app', 'Your order has been formed');
 ?>
 
-    <p><?= Yii::t('shop', 'Your order has been formed') ?>.</p>
+    <p><?= Yii::t('app', 'Your order has been formed') ?>.</p>
 <?php if (is_null($order)): ?>
     <p>
-        <?= Yii::t('shop', 'You can see your orders') ?>
+        <?= Yii::t('app', 'You can see your orders') ?>
         <?= \yii\helpers\Html::a(
-            Yii::t('shop', 'here'),
+            Yii::t('app', 'here'),
             ['/cabinet/orders'],
             ['class' => 'btn btn-info'])
         ?>
     </p>
 <?php else: ?>
     <p>
-        <?= Yii::t('shop', 'You can see your order status') ?>
+        <?= Yii::t('app', 'You can see your order status') ?>
         <?= \yii\helpers\Html::a(
-            Yii::t('shop', 'here'),
+            Yii::t('app', 'here'),
             [
                 '/cabinet/order',
                 'id' => $order->hash

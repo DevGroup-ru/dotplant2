@@ -115,19 +115,19 @@ class Order extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('shop', 'ID'),
-            'user_id' => Yii::t('shop', 'User'),
-            'manager_id' => Yii::t('shop', 'Manager'),
-            'start_date' => Yii::t('shop', 'Start Date'),
-            'end_date' => Yii::t('shop', 'End Date'),
-            'cart_forming_time' => Yii::t('shop', 'Cart Forming Time'),
-            'order_status_id' => Yii::t('shop', 'Order Status'),
-            'shipping_option_id' => Yii::t('shop', 'Shipping Option'),
-            'payment_type_id' => Yii::t('shop', 'Payment Type'),
-            'external_id' => Yii::t('shop', 'External ID'),
-            'items_count' => Yii::t('shop', 'Items Count'),
-            'total_price' => Yii::t('shop', 'Total Price'),
-            'hash' => Yii::t('shop', 'Hash'),
+            'id' => Yii::t('app', 'ID'),
+            'user_id' => Yii::t('app', 'User'),
+            'manager_id' => Yii::t('app', 'Manager'),
+            'start_date' => Yii::t('app', 'Start Date'),
+            'end_date' => Yii::t('app', 'End Date'),
+            'cart_forming_time' => Yii::t('app', 'Cart Forming Time'),
+            'order_status_id' => Yii::t('app', 'Order Status'),
+            'shipping_option_id' => Yii::t('app', 'Shipping Option'),
+            'payment_type_id' => Yii::t('app', 'Payment Type'),
+            'external_id' => Yii::t('app', 'External ID'),
+            'items_count' => Yii::t('app', 'Items Count'),
+            'total_price' => Yii::t('app', 'Total Price'),
+            'hash' => Yii::t('app', 'Hash'),
         ];
     }
 
@@ -150,7 +150,7 @@ class Order extends \yii\db\ActiveRecord
                             ]
                         )->setTo(trim($this->abstractModel->email))->setFrom(
                             Yii::$app->mail->transport->getUsername()
-                        )->setSubject(Yii::t('shop', 'Order #{orderId}', ['orderId' => $this->id]))->send();
+                        )->setSubject(Yii::t('app', 'Order #{orderId}', ['orderId' => $this->id]))->send();
                 } catch (\Exception $e) {
                     // do nothing
                 }
@@ -168,7 +168,7 @@ class Order extends \yii\db\ActiveRecord
                             ]
                         )->setTo(explode(',', $orderEmail))->setFrom(
                             Yii::$app->mail->transport->getUsername()
-                        )->setSubject(Yii::t('shop', 'Order #{orderId}', ['orderId' => $this->id]))->send();
+                        )->setSubject(Yii::t('app', 'Order #{orderId}', ['orderId' => $this->id]))->send();
                 } catch (\Exception $e) {
                     // do nothing
 

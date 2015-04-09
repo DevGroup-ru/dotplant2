@@ -25,7 +25,7 @@ if ($order === null) {
         <a href="/cart">
             <span class="btn btn-mini btn-primary">
                 <i class="fa fa-shopping-cart"></i>
-                <?= Yii::t('shop', '[ {count} ] Itemes in your cart', ['count' => \kartik\helpers\Html::tag('span', $itemsCount, ['class' => 'items-count'])]) ?>
+                <?= Yii::t('app', '[ {count} ] Itemes in your cart', ['count' => \kartik\helpers\Html::tag('span', $itemsCount, ['class' => 'items-count'])]) ?>
             </span>
         </a>
     </div>

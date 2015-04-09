@@ -7,7 +7,7 @@
  * @var $this yii\web\View
  */
 
-$this->title = Yii::t('shop', 'Your orders');
+$this->title = Yii::t('app', 'Your orders');
 $this->params['breadcrumbs'] = [
     [
         'label' => Yii::t('app', 'Personal cabinet'),
@@ -26,15 +26,15 @@ $this->params['breadcrumbs'] = [
                 [
                     'active' => true,
                     'content' => $this->render('orders-table', ['orders' => $currentOrders]),
-                    'label' => Yii::t('shop', 'Current ({n})', ['n' => count($currentOrders)]),
+                    'label' => Yii::t('app', 'Current ({n})', ['n' => count($currentOrders)]),
                 ],
                 [
                     'content' => $this->render('orders-table', ['orders' => $doneOrders, 'showEndDate' => true]),
-                    'label' => Yii::t('shop', 'Done ({n})', ['n' => count($doneOrders)]),
+                    'label' => Yii::t('app', 'Done ({n})', ['n' => count($doneOrders)]),
                 ],
                 [
                     'content' => $this->render('orders-table', ['orders' => $canceledOrders, 'showEndDate' => true]),
-                    'label' => Yii::t('shop', 'Canceled ({n})', ['n' => count($canceledOrders)]),
+                    'label' => Yii::t('app', 'Canceled ({n})', ['n' => count($canceledOrders)]),
                 ],
             ],
         ]

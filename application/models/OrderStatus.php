@@ -64,14 +64,14 @@ class OrderStatus extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('shop', 'ID'),
-            'title' => Yii::t('shop', 'Title'),
-            'short_title' => Yii::t('shop', 'Short Title'),
-            'label' => Yii::t('shop', 'Label'),
-            'external_id' => Yii::t('shop', 'External ID'),
-            'edit_allowed' => Yii::t('shop', 'Edit Allowed'),
-            'not_deletable' => Yii::t('shop', 'Not Deletable'),
-            'internal_comment' => Yii::t('shop', 'Internal Comment'),
+            'id' => Yii::t('app', 'ID'),
+            'title' => Yii::t('app', 'Title'),
+            'short_title' => Yii::t('app', 'Short Title'),
+            'label' => Yii::t('app', 'Label'),
+            'external_id' => Yii::t('app', 'External ID'),
+            'edit_allowed' => Yii::t('app', 'Edit Allowed'),
+            'not_deletable' => Yii::t('app', 'Not Deletable'),
+            'internal_comment' => Yii::t('app', 'Internal Comment'),
         ];
     }
 }

@@ -45,7 +45,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <?= Yii::t('shop', 'Price') ?>:
+                            <?= Yii::t('app', 'Price') ?>:
                             <span style="color:green;font-weight:bold; font-size:20px;"><?= Yii::$app->formatter->asDecimal($product->price, 2) ?>
                                 <?= Yii::$app->params['currency'] ?>
                             </span>

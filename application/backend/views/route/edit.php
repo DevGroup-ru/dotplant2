@@ -101,7 +101,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="fields">
             <a href="#" class="btn btn-xs btn-info btn-add-param" data-part-id="<%- part_id %>">
                 <?= Icon::show('plus') ?>
-                <?= Yii::t('shop', 'Add param {0}') ?>
+                <?= Yii::t('app', 'Add param {0}') ?>
             </a>
         </div>
     </fieldset>
