@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\traits\GetImages;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
@@ -9,11 +10,9 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
-use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "property".
- *
  * @property integer $id
  * @property integer $property_group_id
  * @property string $name
@@ -35,6 +34,7 @@ use yii\helpers\VarDumper;
  */
 class Property extends ActiveRecord
 {
+    use GetImages;
     public static $identity_map = [];
     public static $group_id_to_property_ids = [];
     private $handlerAdditionalParams = [];
@@ -58,6 +58,7 @@ class Property extends ActiveRecord
             ],
         ];
     }
+
     /**
      * @inheritdoc
      */
@@ -74,13 +75,25 @@ class Property extends ActiveRecord
         return [
             [['property_group_id', 'name', 'property_handler_id', 'handler_additional_params'], 'required'],
             [
-                ['property_group_id', 'property_handler_id', 'has_static_values', 'has_slugs_in_values',
-                    'is_eav', 'is_column_type_stored', 'multiple', 'sort_order'],
+                [
+                    'property_group_id',
+                    'property_handler_id',
+                    'has_static_values',
+                    'has_slugs_in_values',
+                    'is_eav',
+                    'is_column_type_stored',
+                    'multiple',
+                    'sort_order'
+                ],
                 'integer'
             ],
             [
-                ['display_only_on_depended_property_selected', 'depends_on_property_id',
-                    'depends_on_category_group_id', 'hide_other_values_if_selected'],
+                [
+                    'display_only_on_depended_property_selected',
+                    'depends_on_property_id',
+                    'depends_on_category_group_id',
+                    'hide_other_values_if_selected'
+                ],
                 'integer'
             ],
             [['interpret_as'], 'integer'],
@@ -90,7 +103,7 @@ class Property extends ActiveRecord
             [['depends_on_property_id', 'depends_on_category_group_id'], 'default', 'value' => 0],
             [['required', 'captcha', 'as_yml_field'], 'integer', 'min' => 0, 'max' => 1],
             [['dont_filter'], 'safe'],
-            [['key'], 'unique', 'targetAttribute' => ['key','property_group_id']],
+            [['key'], 'unique', 'targetAttribute' => ['key', 'property_group_id']],
         ];
     }
 
@@ -134,8 +147,7 @@ class Property extends ActiveRecord
     public function search($params)
     {
         /* @var $query \yii\db\ActiveQuery */
-        $query = static::find()
-            ->where(['property_group_id'=>$this->property_group_id]);
+        $query = static::find()->where(['property_group_id' => $this->property_group_id]);
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
@@ -167,7 +179,6 @@ class Property extends ActiveRecord
 
     /**
      * Возвращает модель по ID с использованием IdentityMap
-     *
      * @param int $id
      * @return null|Property
      */
@@ -206,7 +217,10 @@ class Property extends ActiveRecord
         if (!isset(static::$group_id_to_property_ids[$group_id])) {
             $cacheKey = "PropsForGroup:$group_id";
             if (false === $props = Yii::$app->cache->get($cacheKey)) {
-                if (null !== $props = static::find()->where(['property_group_id' => $group_id])->orderBy('sort_order')->all()) {
+                if (null !== $props = static::find()->where(['property_group_id' => $group_id])->orderBy(
+                        'sort_order'
+                    )->all()
+                ) {
                     Yii::$app->cache->set(
                         $cacheKey,
                         $props,
@@ -214,7 +228,10 @@ class Property extends ActiveRecord
                         new TagDependency(
                             [
                                 'tags' => [
-                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(PropertyGroup::className(), $group_id)
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(
+                                        PropertyGroup::className(),
+                                        $group_id
+                                    )
                                 ],
                             ]
                         )
@@ -261,15 +278,12 @@ class Property extends ActiveRecord
     {
         parent::afterFind();
         $this->handlerAdditionalParams = Json::decode($this->handler_additional_params);
-        $this->required = isset($this->handlerAdditionalParams['rules'])
-            && is_array($this->handlerAdditionalParams['rules'])
-            && in_array('required', $this->handlerAdditionalParams['rules']);
-        $this->interpret_as = isset($this->handlerAdditionalParams['interpret_as']) ?
-            $this->handlerAdditionalParams['interpret_as'] :
-            0;
+        $this->required = isset($this->handlerAdditionalParams['rules']) && is_array(
+                $this->handlerAdditionalParams['rules']
+            ) && in_array('required', $this->handlerAdditionalParams['rules']);
+        $this->interpret_as = isset($this->handlerAdditionalParams['interpret_as']) ? $this->handlerAdditionalParams['interpret_as'] : 0;
         $this->as_yml_field = isset($this->handlerAdditionalParams['as_yml_field']) && $this->handlerAdditionalParams['as_yml_field'];
-        if (isset($this->handlerAdditionalParams['rules'])
-            && is_array($this->handlerAdditionalParams['rules'])) {
+        if (isset($this->handlerAdditionalParams['rules']) && is_array($this->handlerAdditionalParams['rules'])) {
             foreach ($this->handlerAdditionalParams['rules'] as $rule) {
                 if (is_array($rule)) {
                     if (in_array('captcha', $rule)) {
@@ -303,8 +317,8 @@ class Property extends ActiveRecord
             );
         }
         $fileHandler = PropertyHandler::find()->where(['name' => 'File'])->one();
-        if(is_object($fileHandler)){
-            if($this->property_handler_id == $fileHandler->id){
+        if (is_object($fileHandler)) {
+            if ($this->property_handler_id == $fileHandler->id) {
                 $handlerAdditionalParams = ArrayHelper::merge(
                     $handlerAdditionalParams,
                     [
@@ -345,7 +359,10 @@ class Property extends ActiveRecord
         TagDependency::invalidate(
             Yii::$app->cache,
             [
-                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(PropertyGroup::className(), $this->property_group_id),
+                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(
+                    PropertyGroup::className(),
+                    $this->property_group_id
+                ),
                 \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(Property::className(), $this->id)
             ]
         );
@@ -366,9 +383,7 @@ class Property extends ActiveRecord
     public function afterDelete()
     {
         $object = Object::findById($this->group->object_id);
-        $staticValues = PropertyStaticValues::find()
-            ->where(['property_id' => $this->id])
-            ->all();
+        $staticValues = PropertyStaticValues::find()->where(['property_id' => $this->id])->all();
         foreach ($staticValues as $psv) {
             $psv->delete();
         }
@@ -381,15 +396,13 @@ class Property extends ActiveRecord
 
         }
         if ($this->is_column_type_stored) {
-            Yii::$app->db->createCommand()
-                ->dropColumn($object->column_properties_table_name, $this->key)
-                ->execute();
-//                if ($object->object_class == Form::className()) {
-//                    $submissionObject = Object::getForClass(Submission::className());
-//                    Yii::$app->db->createCommand()
-//                        ->dropColumn($submissionObject->column_properties_table_name, $this->key)
-//                        ->execute();
-//                }
+            Yii::$app->db->createCommand()->dropColumn($object->column_properties_table_name, $this->key)->execute();
+            //                if ($object->object_class == Form::className()) {
+            //                    $submissionObject = Object::getForClass(Submission::className());
+            //                    Yii::$app->db->createCommand()
+            //                        ->dropColumn($submissionObject->column_properties_table_name, $this->key)
+            //                        ->execute();
+            //                }
         }
         parent::afterDelete();
     }
