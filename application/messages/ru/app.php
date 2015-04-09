@@ -277,6 +277,7 @@ return  [
     'ID' => '',
     'ISO-4217 code' => 'ISO-4217 код',
     'Icon' => 'Иконка',
+    'Inactive' => 'Неактивный',
     'Image' => 'Картинка',
     'Image Description' => 'Описание картинки',
     'Image Height' => 'Высота картинки',

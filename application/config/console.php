@@ -1,7 +1,6 @@
 <?php
 
 use yii\helpers\ArrayHelper;
-use app\models\Config;
 
 Yii::setAlias('@tests', dirname(__DIR__) . '/tests');
 Yii::setAlias('@webroot', dirname(__DIR__) . '/web');
@@ -9,6 +8,7 @@ Yii::setAlias('@webroot', dirname(__DIR__) . '/web');
 $config = [
     'id' => 'basic-console',
     'basePath' => dirname(__DIR__),
+    'language' => 'ru',
     'bootstrap' => [],
     'controllerNamespace' => 'app\commands',
     'extensions' => require(__DIR__ . '/../vendor/yiisoft/extensions.php'),

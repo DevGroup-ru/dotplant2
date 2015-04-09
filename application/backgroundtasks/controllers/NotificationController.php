@@ -4,7 +4,6 @@ namespace app\backgroundtasks\controllers;
 
 use app\backgroundtasks\models\NotifyMessage;
 use app\backgroundtasks\models\Task;
-use app\models\Config;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -128,14 +127,4 @@ class NotificationController extends Controller
         }
     }
 
-    /**
-     * Clear notification messages older then set in config
-     */
-    public function actionClearOldNotifications()
-    {
-        $time = new \DateTime();
-        $days = Config::getValue('errorMonitor.daysToStoreNotify', 28);
-        $time->sub(new \DateInterval("P{$days}D"));
-        NotifyMessage::deleteAll('UNIX_TIMESTAMP(`ts`) < ' . $time->getTimestamp());
-    }
 }
