@@ -50,6 +50,8 @@ TPL;
     {
         $result = $this->getByYmlParam($yml, $name, $model);
 
+        $result = htmlspecialchars(trim(strip_tags($result)));
+
         if (!empty($result)) {
             return sprintf($tpl, $result);
         }
