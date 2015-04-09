@@ -182,7 +182,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     public function search($params)
     {
         /* @var $query \yii\db\ActiveQuery */
-        $query = self::find()->where(['parent_id' => 0]);
+        $query = self::find()->where(['parent_id' => 0])->with('images');
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
@@ -217,7 +217,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (!isset(static::$identity_map[$id])) {
             $cacheKey = static::tableName() . ":$id";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
-                $model = static::find()->where(['id' => $id]);
+                $model = static::find()->where(['id' => $id])->with('images');
                 if (null !== $is_active) {
                     $model->andWhere(['active' => $is_active]);
                 }
@@ -255,7 +255,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                         static::tableName() . '.slug' => $slug,
                         static::tableName() . '.active' => $is_active
                     ]
-                );
+                )->with('images');
                 if ($in_category_id !== null) {
                     $model = $model->innerJoin(
                         Object::getForClass(static::className())->categories_table_name . ' ocats',
@@ -715,7 +715,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         }
 
         $onlyParents = intval(Config::getValue('shop.filterOnlyByParentProduct', 1));
-        $query = static::find();
+        $query = static::find()->with('images');
         if (1 === $onlyParents) {
             $query->andWhere([static::tableName() . '.parent_id' => 0, static::tableName() . '.active' => 1]);
         } else {

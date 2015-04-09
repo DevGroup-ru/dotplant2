@@ -3,16 +3,12 @@
 namespace app\controllers;
 
 use app\components\Controller;
-use app\components\filters\FilterQueryInterface;
 use app\components\LastViewedProducts;
 use app\models\Category;
 use app\models\Config;
 use app\models\Object;
 use app\models\Product;
-use app\models\ProductListingSort;
 use app\models\Search;
-use app\models\UserPreferences;
-use app\properties\PropertiesHelper;
 use app\reviews\traits\ProcessReviews;
 use app\traits\DynamicContentTrait;
 use \devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -20,7 +16,6 @@ use Yii;
 use yii\caching\TagDependency;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -272,7 +267,7 @@ class ProductController extends Controller
                         $pages->limit
                     )
                 ]
-            )->addOrderBy('sort_order')->all();
+            )->addOrderBy('sort_order')->with('images')->all();
             Yii::$app->cache->set(
                 $cacheKey,
                 $products,

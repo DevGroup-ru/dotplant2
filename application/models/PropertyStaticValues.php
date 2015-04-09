@@ -83,7 +83,7 @@ class PropertyStaticValues extends ActiveRecord
      */
     public function search($params)
     {
-        $query = static::find()->where(['property_id' => $this->property_id]);
+        $query = static::find()->where(['property_id' => $this->property_id])->with('images');
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
@@ -184,7 +184,7 @@ class PropertyStaticValues extends ActiveRecord
                     'sort_order' => SORT_ASC,
                     'name' => SORT_ASC
                 ]
-            )->asArray()->all();
+            )->asArray()->with('images')->all();
             if (null !== $values) {
                 Yii::$app->cache->set(
                     $cacheKey,

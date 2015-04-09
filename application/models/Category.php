@@ -131,7 +131,7 @@ class Category extends ActiveRecord
     public function search($params)
     {
         /* @var $query \yii\db\ActiveQuery */
-        $query = self::find()->where(['parent_id' => $this->parent_id]);
+        $query = self::find()->where(['parent_id' => $this->parent_id])->with('images');
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
@@ -168,7 +168,7 @@ class Category extends ActiveRecord
         if (!isset(static::$identity_map[$id])) {
             $cacheKey = static::tableName() . ":$id";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
-                $model = static::find()->where(['id' => $id]);
+                $model = static::find()->where(['id' => $id])->with('images');
                 if (null !== $is_active) {
                     $model->andWhere(['active' => $is_active]);
                 }
@@ -354,7 +354,7 @@ class Category extends ActiveRecord
         if (false === $models = Yii::$app->cache->get($cacheKey)) {
             $models = Category::find()->where(
                 ['category_group_id' => $category_group_id, 'parent_id' => $level, 'active' => $is_active]
-            )->orderBy('sort_order')->all();
+            )->orderBy('sort_order')->with('images')->all();
 
             if (null !== $models) {
 
@@ -389,7 +389,7 @@ class Category extends ActiveRecord
         if (false === $models = Yii::$app->cache->get($cacheKey)) {
             $models = static::find()->where(['parent_id' => $parent_id, 'active' => $is_active])->orderBy(
                 'sort_order'
-            )->all();
+            )->with('images')->all();
             if (null !== $models) {
                 $cache_tags = [];
                 foreach ($models as $model) {
@@ -500,7 +500,7 @@ class Category extends ActiveRecord
         $items = [];
         $categories = static::find()->select(['id', 'name', 'category_group_id'])->where(
             ['parent_id' => $parentId, 'active' => 1]
-        )->orderBy('sort_order')->all();
+        )->orderBy('sort_order')->with('images')->all();
         $cache_tags = [];
 
         foreach ($categories as $category) {

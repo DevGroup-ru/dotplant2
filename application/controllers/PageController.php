@@ -86,7 +86,8 @@ class PageController extends Controller
         /** @var ActiveQuery $children */
         $children = Page::find()
             ->where(['parent_id' => $model->id])
-            ->orderBy('date_added DESC, sort_order');
+            ->orderBy('date_added DESC, sort_order')
+            ->with('images');
 
         $countQuery = clone $children;
 
@@ -166,7 +167,7 @@ class PageController extends Controller
                         $pages->limit
                     )
                 ]
-            )->addOrderBy('sort_order')->all();
+            )->addOrderBy('sort_order')->with('images')->all();
             Yii::$app->cache->set(
                 $cacheKey,
                 $pagelist,

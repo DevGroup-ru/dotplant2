@@ -147,7 +147,7 @@ class Property extends ActiveRecord
     public function search($params)
     {
         /* @var $query \yii\db\ActiveQuery */
-        $query = static::find()->where(['property_group_id' => $this->property_group_id]);
+        $query = static::find()->where(['property_group_id' => $this->property_group_id])->with('images');
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
@@ -219,7 +219,7 @@ class Property extends ActiveRecord
             if (false === $props = Yii::$app->cache->get($cacheKey)) {
                 if (null !== $props = static::find()->where(['property_group_id' => $group_id])->orderBy(
                         'sort_order'
-                    )->all()
+                    )->with('images')->all()
                 ) {
                     Yii::$app->cache->set(
                         $cacheKey,

@@ -131,7 +131,7 @@ class Page extends ActiveRecord
     public function search($params)
     {
         /** @var $query \yii\db\ActiveQuery */
-        $query = self::find();
+        $query = self::find()->with('images');
         if (null != $this->parent_id) {
             $query->andWhere(['parent_id' => $this->parent_id]);
         }
