@@ -80,7 +80,7 @@ TPL;
         $categories = Category::find()->where(['active' => 1, 'is_deleted' => 0])->asArray();
         /** @var Category $row */
         foreach ($categories->each(500) as $row) {
-            $section_categories = '<category id="'.$row['id'].'" '.(0 != $row['parent_id'] ? 'parentId="'.$row['parent_id'].'"' : '').'>'.$row['name'].'</category>' . PHP_EOL;
+            $section_categories .= '<category id="'.$row['id'].'" '.(0 != $row['parent_id'] ? 'parentId="'.$row['parent_id'].'"' : '').'>'.$row['name'].'</category>' . PHP_EOL;
         }
         unset($row, $categories);
 
@@ -105,6 +105,11 @@ TPL;
         $products = Product::find()->where(['active' => 1, 'is_deleted' => 0]);
         /** @var Product $row */
         foreach ($products->each(100) as $row) {
+            $price = $this->getByYmlParam($ymlConfig, 'offer_price', $row, 0);
+            if (intval($price) <= 0) {
+                continue;
+            }
+
             $offer = '<offer id="'.$row->id.'" '.$offer_type.' available="true">' . PHP_EOL;
 
             $offer .= '<url>'.Url::to(['product/show', 'model' => $row, 'category_group_id' => 1], true).'</url>' . PHP_EOL;
@@ -119,15 +124,7 @@ TPL;
                 }
             );
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_name', $row, '<name>%s</name>'. PHP_EOL);
-            $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_description', $row,
-                function($value) {
-                    if (strlen($value) > 512) {
-                        $value = substr($value, 0, 511);
-                    }
-                    $value = '<description>'.$value.'</description>' . PHP_EOL;
-                    return $value;
-                }
-            );
+            $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_description', $row, '<description>%s</description>'. PHP_EOL);
 
             $offer .= '</offer>';
 
