@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
         )?>&nbsp;&nbsp;<?=Yii::t('app', 'Print')?></a>
     <a href="<?=Yii::$app->request->get(
         'returnUrl',
-        ['/backend/order/index']
+        '/backend/order/index'
     )?>" class="btn btn-danger pull-right do-not-print"><?=\kartik\icons\Icon::show(
             'arrow-circle-left'
         )?>&nbsp;&nbsp;<?=Yii::t('app', 'Back')?></a>
