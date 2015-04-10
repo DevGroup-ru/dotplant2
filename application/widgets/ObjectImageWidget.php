@@ -2,40 +2,70 @@
 
 namespace app\widgets;
 
-use app\models\Image;
 use Yii;
 use yii\base\Widget;
+use yii\helpers\VarDumper;
 
+/**
+ * Class ObjectImageWidget
+ * @package app\widgets
+ */
 class ObjectImageWidget extends Widget
 {
-    public $objectId = null;
-    public $objectModelId = null;
+    /**
+     * @var \app\properties\HasProperties|\yii\db\ActiveRecord|null
+     */
+    public $model = null;
+    /**
+     * @var string
+     */
     public $viewFile = 'img';
+    /**
+     * @var null|int
+     */
     public $limit = null;
+    /**
+     * @var int
+     */
     public $offset = 0;
-
+    /**
+     * @var bool
+     */
     public $thumbnailOnDemand = false;
+    /**
+     * @var int
+     */
     public $thumbnailWidth = 400;
+    /**
+     * @var int
+     */
     public $thumbnailHeight = 200;
 
     public function run()
     {
-        $cacheKey = "ObjectImageWidget:" . implode("_", [
-            $this->objectId,
-            $this->objectModelId,
-            $this->viewFile,
-            $this->limit,
-            $this->offset,
-            $this->thumbnailOnDemand?'1':'0',
-            $this->thumbnailWidth,
-            $this->thumbnailHeight
-        ]);
-        $result = Yii::$app->cache->get($cacheKey);
 
+        $cacheKey = "ObjectImageWidget:" . implode(
+                "_",
+                [
+                    $this->model->object->id,
+                    $this->model->id,
+                    $this->viewFile,
+                    $this->limit,
+                    $this->offset,
+                    $this->thumbnailOnDemand ? '1' : '0',
+                    $this->thumbnailWidth,
+                    $this->thumbnailHeight
+                ]
+            );
+        $result = Yii::$app->cache->get($cacheKey);
+        VarDumper::dump($this->model->getImages()->limit(0));
         if ($result === false) {
-            $images = Image::getForModel($this->objectId, $this->objectModelId);
+
+
             if ($this->offset > 0 || !is_null($this->limit)) {
-                $images = array_slice($images, $this->offset, $this->limit);
+                $images = $this->model->getImages()->limit($this->limit)->offset($this->offset);
+            } else {
+                $images = $this->model->images;
             }
             $result = $this->render(
                 $this->viewFile,
@@ -46,9 +76,16 @@ class ObjectImageWidget extends Widget
                     'thumbnailHeight' => $this->thumbnailHeight,
                 ]
             );
-            Yii::$app->cache->set($cacheKey, $result, 86400, new \yii\caching\TagDependency([
-                'tags' => 'Images:'.$this->objectId.':'.$this->objectModelId
-            ]));
+            Yii::$app->cache->set(
+                $cacheKey,
+                $result,
+                86400,
+                new \yii\caching\TagDependency(
+                    [
+                        'tags' => 'Images:' . $this->model->object->id . ':' . $this->model->id
+                    ]
+                )
+            );
         }
 
 

@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\traits\GetImages;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
@@ -34,7 +33,6 @@ use yii\helpers\Json;
  */
 class Property extends ActiveRecord
 {
-    use GetImages;
     public static $identity_map = [];
     public static $group_id_to_property_ids = [];
     private $handlerAdditionalParams = [];
@@ -147,7 +145,7 @@ class Property extends ActiveRecord
     public function search($params)
     {
         /* @var $query \yii\db\ActiveQuery */
-        $query = static::find()->where(['property_group_id' => $this->property_group_id])->with('images');
+        $query = static::find()->where(['property_group_id' => $this->property_group_id]);
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
@@ -219,7 +217,7 @@ class Property extends ActiveRecord
             if (false === $props = Yii::$app->cache->get($cacheKey)) {
                 if (null !== $props = static::find()->where(['property_group_id' => $group_id])->orderBy(
                         'sort_order'
-                    )->with('images')->all()
+                    )->all()
                 ) {
                     Yii::$app->cache->set(
                         $cacheKey,

@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\traits\GetImages;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
@@ -21,7 +20,6 @@ use yii\db\ActiveRecord;
  */
 class PropertyStaticValues extends ActiveRecord
 {
-    use GetImages;
     public static $identity_map_by_property_id = [];
     private static $identity_map = [];
 
@@ -83,7 +81,7 @@ class PropertyStaticValues extends ActiveRecord
      */
     public function search($params)
     {
-        $query = static::find()->where(['property_id' => $this->property_id])->with('images');
+        $query = static::find()->where(['property_id' => $this->property_id]);
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
@@ -184,7 +182,7 @@ class PropertyStaticValues extends ActiveRecord
                     'sort_order' => SORT_ASC,
                     'name' => SORT_ASC
                 ]
-            )->asArray()->with('images')->all();
+            )->asArray()->all();
             if (null !== $values) {
                 Yii::$app->cache->set(
                     $cacheKey,

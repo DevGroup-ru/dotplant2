@@ -17,8 +17,7 @@ use kartik\helpers\Html;
             ObjectImageWidget::widget(
                 [
                     'limit' => 1,
-                    'objectId' => $product->object->id,
-                    'objectModelId' => $product->id,
+                    'model' => $product,
                 ]
             )
             ?>
@@ -36,7 +35,7 @@ use kartik\helpers\Html;
                         'Add to'
                     )?> <i class="fa fa-shopping-cart"></i></a>
                 <button class="btn btn-primary">
-                    <?= $product->formattedPrice(null, false, false) ?>
+                    <?=$product->formattedPrice(null, false, false)?>
                 </button>
             </h4>
         </div>

@@ -41,8 +41,7 @@ $latestProducts = \app\models\Product::find()->orderBy('`id` DESC')->limit(6)->a
                                                     ObjectImageWidget::widget(
                                                         [
                                                             'limit' => 1,
-                                                            'objectId' => $product->object->id,
-                                                            'objectModelId' => $product->id,
+                                                            'model' => $product
                                                         ]
                                                     )
                                                 ?>
