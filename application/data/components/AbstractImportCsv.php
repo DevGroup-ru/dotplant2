@@ -39,7 +39,6 @@ abstract class AbstractImportCsv extends Import
         if (file_exists($path)) {
             unlink($path);
         }
-
         return $data;
     }
 

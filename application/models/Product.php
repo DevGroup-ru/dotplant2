@@ -468,7 +468,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 $this->$key = $value;
             }
         }
-
+        
         $categories = $this->unpackCategories($fields, $multipleValuesDelimiter, $additionalFields);
         if ($categories !== false && $this->main_category_id < 1) {
             if (count($categories) == 0) {

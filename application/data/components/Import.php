@@ -158,7 +158,6 @@ abstract class Import extends Component
                 $rowFields[$field] = $object[$field];
             }
         }
-        
         $class = $this->object->object_class;
         if ($objectId > 0) {
             /** @var ActiveRecord $objectModel */
@@ -505,9 +504,6 @@ abstract class Import extends Component
         $propAttributes = isset($objectFields['property']) ? $objectFields['property'] : [];
         $titleFields = array_shift($data);
         
-        var_dump($data);
-        var_dump($titleFields);
-        var_dump($fields['fields_header']);
         $titleFields = array_intersect_key(array_flip($titleFields), array_flip($fields['fields_header']));
 
         $transaction = \Yii::$app->db->beginTransaction();

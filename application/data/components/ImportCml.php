@@ -6,6 +6,7 @@ use Yii;
 
 class ImportCml extends Import
 {
+    private $categoryGroupId=1;
 
     public function setData ()
     {
@@ -31,8 +32,38 @@ class ImportCml extends Import
             $xml->close();
             unlink($path);
         }
+        $keys=array();
+        $header = array();
+        $header[0] = 'category_group_id';
+        $i=1;
+        foreach ($data as $value)
+        {
+            foreach ($value as $k=>$v)
+            {
+            if (!isset($keys[$k])) 
+            {
+                $header[$i] = $k;
+                $keys[$k]=$i;
+                $i++;
+            }
+            }
+        }
         
-        return $data;
+        $result= array();
+        $num = count($header);
+        $result[0] = $header;
+        $i=1;
+        foreach ($data as $value)
+        {
+            $result[$i] = array_fill ( 0 , $num , '' );
+            $result[$i][0] = $this->categoryGroupId;
+            foreach ($value as $k=>$v)
+            {
+                $result[$i][$keys[$k]]=$v;
+            }
+            $i++;
+        }
+        return $result;
     }
 
     public function getData ($header, $data)
