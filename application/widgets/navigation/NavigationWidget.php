@@ -20,7 +20,7 @@ class NavigationWidget extends Widget
     public $useCache = true;
     public $viewFile = 'navigation';
     public $widget = '';
-    public $linkTemplate = '<a href="{url}" title="{label}" temprop="url"><span itemprop="name">{label}</span></a>';
+    public $linkTemplate = '<a href="{url}" title="{label}" itemprop="url"><span itemprop="name">{label}</span></a>';
     public $submenuTemplate = "\n<ul>\n{items}\n</ul>\n";
 
     public function init()
