@@ -20,14 +20,24 @@ class NavigationWidget extends Widget
     public $useCache = true;
     public $viewFile = 'navigation';
     public $widget = '';
+    public $linkTemplate = '<a href="{url}" title="{label}" temprop="url"><span itemprop="name">{label}</span></a>';
+    public $submenuTemplate = "\n<ul>\n{items}\n</ul>\n";
 
     public function init()
     {
+        $schema = [
+            'role'=> "navigation",
+            'itemscope' => '',
+            'itemtype' => "http://schema.org/SiteNavigationElement",
+
+        ];
         if (!trim($this->widget)) {
             $this->widget = Menu::className();
         }
         if (!is_array($this->options)) {
-            $this->options = [];
+            $this->options = $schema;
+        } else {
+            $this->options = ArrayHelper::merge($schema, $this->options);
         }
         Html::addCssClass($this->options, 'navigation-widget');
     }
@@ -74,6 +84,8 @@ class NavigationWidget extends Widget
                 'widget' => $this->widget,
                 'items' => ArrayHelper::merge((array) $this->prependItems, $items, (array) $this->appendItems),
                 'options' => $this->options,
+                'linkTemplate' => $this->linkTemplate,
+                'submenuTemplate' => $this->submenuTemplate,
             ]
         );
     }
