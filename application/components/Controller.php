@@ -4,9 +4,18 @@ namespace app\components;
 
 use Yii;
 use app\models\ViewObject;
+use yii\base\ViewEvent;
+use yii\web\ServerErrorHttpException;
 
+/**
+ * Class Controller extends default \yii\web\Controller adding some additional functions
+ * @package app\components
+ */
 class Controller extends \yii\web\Controller
 {
+    const EVENT_PRE_DECORATOR = 'pre-decorator';
+    const EVENT_POST_DECORATOR = 'post-decorator';
+
     /**
      * @param \yii\db\ActiveRecord $model
      * @param string $defaultView
@@ -58,7 +67,28 @@ class Controller extends \yii\web\Controller
                 'meta_description'
             );
         }
+        $preDecoratorEvent = new ViewEvent();
+        $preDecoratorEvent->viewFile = $view;
+        $preDecoratorEvent->params = $params;
 
-        return parent::render($view, $params);
+        $this->trigger(self::EVENT_PRE_DECORATOR, $preDecoratorEvent);
+
+        if ($preDecoratorEvent->isValid === true) {
+
+            $content = $this->getView()->render($view, $preDecoratorEvent->params, $this);
+
+            $postDecoratorEvent = new ViewEvent();
+            $postDecoratorEvent->viewFile = $view;
+            $postDecoratorEvent->params = $preDecoratorEvent->params;
+            $postDecoratorEvent->output = $content;
+
+            $this->trigger(self::EVENT_POST_DECORATOR, $postDecoratorEvent);
+            if ($postDecoratorEvent->isValid === true) {
+                return $this->renderContent($postDecoratorEvent->output);
+            }
+        }
+
+        throw new ServerErrorHttpException("Error rendering output");
+
     }
 }
