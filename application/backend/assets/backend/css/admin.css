@@ -1,207 +1,195 @@
 @media print {
-  /* line 2, ../sass/admin.scss */
-  #left-panel, #header, #ribbon, .order-chat, .page-footer, .do-not-print {
-    display: none;
-  }
+    #left-panel, #header, #ribbon, .order-chat, .page-footer, .do-not-print {
+        display: none;
+    }
 }
-/* line 11, ../sass/admin.scss */
+
+@media only screen and (min-width: 600px) and (max-width: 1200px) {
+    .table td, .table th {
+        word-break: break-all;
+        padding: 2px;
+    }
+
+    .table th {
+        min-width: 20px;
+    }
+
+    .table td .form-control {
+        padding: 2px;
+        height: 20px;
+        font-size: 14px;
+    }
+}
+
 .footer {
-  border-top: 1px solid #ddd;
-  margin-top: 30px;
-  padding-top: 15px;
-  padding-bottom: 30px;
+    border-top: 1px solid #ddd;
+    margin-top: 30px;
+    padding-top: 15px;
+    padding-bottom: 30px;
 }
 
-/* line 18, ../sass/admin.scss */
 .jumbotron {
-  text-align: center;
-  background-color: transparent;
+    text-align: center;
+    background-color: transparent;
 }
 
-/* line 22, ../sass/admin.scss */
 .jumbotron .btn {
-  font-size: 21px;
-  padding: 14px 24px;
+    font-size: 21px;
+    padding: 14px 24px;
 }
 
 /* add sorting icons to gridview sort links */
-/* line 28, ../sass/admin.scss */
 a.asc:after, a.desc:after {
-  position: relative;
-  top: 1px;
-  display: inline-block;
-  font-family: 'Glyphicons Halflings';
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  padding-left: 5px;
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-left: 5px;
 }
 
-/* line 39, ../sass/admin.scss */
 a.asc:after {
-  content: "\e151";
+    content: "\e151";
 }
 
-/* line 40, ../sass/admin.scss */
 a.desc:after {
-  content: "\e152";
+    content: "\e152";
 }
 
-/* line 42, ../sass/admin.scss */
 .sort-numerical a.asc:after {
-  content: "\e153";
+    content: "\e153";
 }
 
-/* line 43, ../sass/admin.scss */
 .sort-numerical a.desc:after {
-  content: "\e154";
+    content: "\e154";
 }
 
-/* line 45, ../sass/admin.scss */
 .sort-ordinal a.asc:after {
-  content: "\e155";
+    content: "\e155";
 }
 
-/* line 46, ../sass/admin.scss */
 .sort-ordinal a.desc:after {
-  content: "\e156";
+    content: "\e156";
 }
 
-/* line 48, ../sass/admin.scss */
 #logo {
-  width: auto;
-  margin-right: 60px;
+    width: auto;
+    margin-right: 60px;
 }
 
-/* line 53, ../sass/admin.scss */
 .is_deleted .fa {
-  background-color: #d9534f;
-  color: #fff;
-  padding: 5px;
-  margin-right: 10px;
-  margin-bottom: 5px;
-  border-radius: 3px;
+    background-color: #d9534f;
+    color: #fff;
+    padding: 5px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    border-radius: 3px;
 }
 
-/* line 62, ../sass/admin.scss */
 .order-messages-list {
-  height: 250px;
-  overflow-y: scroll;
+    height: 250px;
+    overflow-y: scroll;
 }
-/* line 65, ../sass/admin.scss */
+
 .order-messages-list .message {
-  margin-bottom: 15px;
+    margin-bottom: 15px;
 }
-/* line 68, ../sass/admin.scss */
+
 .order-messages-list .message-user {
-  color: darkgreen;
-  font-weight: bold;
+    color: darkgreen;
+    font-weight: bold;
 }
-/* line 72, ../sass/admin.scss */
+
 .order-messages-list .message-date {
-  color: #666;
-  font-size: 10px;
+    color: #666;
+    font-size: 10px;
 }
-/* line 76, ../sass/admin.scss */
+
 .order-messages-list .message-text {
-  border-left: 3px solid darkseagreen;
-  padding-left: 5px;
+    border-left: 3px solid darkseagreen;
+    padding-left: 5px;
 }
 
-/* line 81, ../sass/admin.scss */
 .ajax-notifications .show-more {
-  padding: 8px 0;
-  text-align: center;
+    padding: 8px 0;
+    text-align: center;
 }
-/* line 84, ../sass/admin.scss */
+
 .ajax-notifications .show-more a {
-  border-bottom: 1px dashed #428bca;
+    border-bottom: 1px dashed #428bca;
 }
 
-/* line 89, ../sass/admin.scss */
 .notification-body > li a, .notification-body > li a span {
-  display: inline;
+    display: inline;
 }
 
-/* line 93, ../sass/admin.scss */
 .redactor-toolbar, .redactor-dropdown {
-  z-index: 53 !important;
+    z-index: 53 !important;
 }
 
-/* line 104, ../sass/admin.scss */
 .select2-container-multi .select2-choices .select2-search-choice {
-  padding: 1px 28px 1px 28px;
+    padding: 1px 28px 1px 28px;
 }
 
-/* line 107, ../sass/admin.scss */
 .select2-container-multi .select2-search-choice-close {
-  background-image: none !important;
+    background-image: none !important;
 }
 
-/* line 111, ../sass/admin.scss */
 span.file-input > div.file-preview {
-  display: none;
+    display: none;
 }
 
-/* line 115, ../sass/admin.scss */
 img.image-column {
-  max-height: 80px;
-  max-width: 80px;
-  margin-right: 8px;
+    max-height: 80px;
+    max-width: 80px;
+    margin-right: 8px;
 }
 
-/* line 121, ../sass/admin.scss */
 #ribbon li {
-  max-width: 200px;
-  overflow: hidden;
-  height: 18px;
+    max-width: 200px;
+    overflow: hidden;
+    height: 18px;
 }
-/* line 125, ../sass/admin.scss */
+
 #ribbon li.active {
-  max-width: 400px;
+    max-width: 400px;
 }
 
-/* line 130, ../sass/admin.scss */
 .select2-container.form-control {
-  padding: 0px;
+    padding: 0px;
 }
 
-/* line 134, ../sass/admin.scss */
 .jarviswidget header:first-child .nav-tabs li {
-  height: 32px;
+    height: 32px;
 }
 
-/* line 138, ../sass/admin.scss */
 .widget-toolbar {
-  height: initial;
-  min-height: 32px;
+    height: initial;
+    min-height: 32px;
 }
 
-/* line 143, ../sass/admin.scss */
 div#Product-grid, div#reviews-grid {
-  font-size: 12px;
+    font-size: 12px;
 }
-/* line 145, ../sass/admin.scss */
+
 div#Product-grid .table td, div#reviews-grid .table td {
-  padding: 4px;
+    padding: 4px;
 }
-/* line 148, ../sass/admin.scss */
+
 div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
-  padding: 3px 5px 3px;
-  font-size: 10px;
+    padding: 3px 5px 3px;
+    font-size: 10px;
 }
 
-/* line 155, ../sass/admin.scss */
 .jstree {
-  font-size: 12px;
-  max-height: 100%;
-  overflow: auto;
+    font-size: 12px;
+    max-height: 100%;
+    overflow: auto;
 }
 
-/* line 161, ../sass/admin.scss */
 .jarviswidget .jstree {
-  max-height: 400px;
-  overflow: auto;
+    max-height: 400px;
+    overflow: auto;
 }
-
-/*# sourceMappingURL=admin.css.map */

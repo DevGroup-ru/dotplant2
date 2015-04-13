@@ -89,7 +89,7 @@ $images = Image::getForModel($model->object->id, $model->id);
                         <?=
                         \kartik\helpers\Html::a(
                             Yii::t(
-                                'shop',
+                                'app',
                                 'Add to compare'
                             ),
                             [
@@ -105,7 +105,7 @@ $images = Image::getForModel($model->object->id, $model->id);
                         <br />
                         <br />
                         <button type="submit" class="btn btn-large btn-primary" data-action="add-to-cart" data-id="<?= $model->id ?>">
-                            <?= Yii::t('shop', 'Add to') ?> <i class="fa fa-shopping-cart"></i>
+                            <?= Yii::t('app', 'Add to') ?> <i class="fa fa-shopping-cart"></i>
                         </button>
                     </div>
                 </div>
@@ -121,9 +121,9 @@ $images = Image::getForModel($model->object->id, $model->id);
     </div>
     <div class="span9">
     <ul id="productDetail" class="nav nav-tabs">
-        <li class="active"><a href="#home" data-toggle="tab"><?= Yii::t('shop', 'Product details') ?></a></li>
-        <li class=""><a href="#profile" data-toggle="tab"><?= Yii::t('shop', 'Related products') ?></a></li>
-        <li class=""><a href="#properties" data-toggle="tab"><?= Yii::t('shop', 'Properties') ?></a></li>
+        <li class="active"><a href="#home" data-toggle="tab"><?= Yii::t('app', 'Product details') ?></a></li>
+        <li class=""><a href="#profile" data-toggle="tab"><?= Yii::t('app', 'Related products') ?></a></li>
+        <li class=""><a href="#properties" data-toggle="tab"><?= Yii::t('app', 'Properties') ?></a></li>
     </ul>
     <div id="myTabContent" class="tab-content">
     <div class="tab-pane fade" id="properties">

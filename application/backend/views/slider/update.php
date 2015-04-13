@@ -13,7 +13,7 @@ use kartik\popover\PopoverX;
 
 $this->title = $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update');
 $this->params['breadcrumbs'] = [
-    ['label' => Yii::t('shop', 'Sliders'), 'url' => ['index']],
+    ['label' => Yii::t('app', 'Sliders'), 'url' => ['index']],
     $this->params['breadcrumbs'][] = $this->title,
 ];
 
@@ -73,7 +73,7 @@ $editable_formOptions = [
         BackendWidget::begin(
             [
                 'icon' => 'tag',
-                'title'=> Yii::t('shop', 'Slider'),
+                'title'=> Yii::t('app', 'Slider'),
                 'footer' => $this->blocks['submit'],
             ]
         );
@@ -106,7 +106,7 @@ $editable_formOptions = [
         BackendWidget::begin(
             [
                 'icon' => 'tag',
-                'title'=> Yii::t('shop', 'Additional parameters'),
+                'title'=> Yii::t('app', 'Additional parameters'),
                 'footer' => $this->blocks['submit'],
             ]
         );

@@ -24,7 +24,7 @@
         \yii\helpers\Url::toRoute(['/cart/payment-error', 'id' => $order->id], true)
     ?>" />
     <input type="hidden" name="ik_fal_m" value="get" />
-    <input type="submit" value="<?= Yii::t('shop', 'Pay') ?>" class="btn btn-primary" />
+    <input type="submit" value="<?= Yii::t('app', 'Pay') ?>" class="btn btn-primary" />
 </form>
 <script>
     jQuery('#interkassa-form').submit();

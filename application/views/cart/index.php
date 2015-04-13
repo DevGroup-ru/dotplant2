@@ -5,10 +5,10 @@
 
 use kartik\helpers\Html;
 
-$this->title = Yii::t('shop', 'Cart');
+$this->title = Yii::t('app', 'Cart');
 
 ?>
-<h1><?= Yii::t('shop', 'Cart') ?></h1>
+<h1><?= Yii::t('app', 'Cart') ?></h1>
 <?php if (!is_null($cart) && $cart->items_count > 0): ?>
     <?=
         $this->render(
@@ -23,7 +23,7 @@ $this->title = Yii::t('shop', 'Cart');
     ?>
     <?=
         Html::a(
-            Yii::t('shop', 'Checkout'),
+            Yii::t('app', 'Checkout'),
             [
                 '/cart/shipping-option',
             ],
@@ -34,7 +34,7 @@ $this->title = Yii::t('shop', 'Cart');
     ?>
     <?=
         Html::a(
-            Yii::t('shop', 'Print'),
+            Yii::t('app', 'Print'),
             '#',
             [
                 'class' => 'btn btn-default',
@@ -43,7 +43,7 @@ $this->title = Yii::t('shop', 'Cart');
         )
     ?>
 <?php else: ?>
-    <p><?= Yii::t('shop', 'Your cart is empty'); ?></p>
+    <p><?= Yii::t('app', 'Your cart is empty'); ?></p>
 <?php endif; ?>
 <script>
 

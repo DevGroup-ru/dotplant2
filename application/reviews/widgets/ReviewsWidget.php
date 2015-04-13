@@ -69,6 +69,7 @@ class ReviewsWidget extends Widget
                 'model' => $model,
                 'allow_rate' => $this->allow_rate,
                 'useCaptcha' => $this->useCaptcha,
+                'additionalParams' => $this->additionalParams,
             ]
         );
     }

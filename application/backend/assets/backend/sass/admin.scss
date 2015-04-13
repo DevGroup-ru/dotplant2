@@ -8,6 +8,30 @@ body {
   
 }
 
+@media only screen and (min-width: 600px) and (max-width: 1200px) {
+
+  .table {
+    td, th{
+      word-break: break-all;
+      padding: 2px;
+    }
+
+    th {
+      min-width: 20px;
+    }
+
+    td {
+      .form-control{
+        padding: 2px;
+        height: 20px;
+        font-size: 14px;
+      }
+    }
+  }
+
+
+}
+
 .footer {
     border-top: 1px solid #ddd;
     margin-top: 30px;

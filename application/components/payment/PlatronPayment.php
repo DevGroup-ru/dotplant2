@@ -27,7 +27,7 @@ class PlatronPayment extends AbstractPayment
             'pg_currency' => $this->strCurrency,
             'pg_amount' => $transaction->total_sum,
             'pg_lifetime' => 3600 * 24,
-            'pg_description' => \Yii::t('shop', 'Payment of order #{orderId}', ['orderId' => $order->id]),
+            'pg_description' => \Yii::t('app', 'Payment of order #{orderId}', ['orderId' => $order->id]),
             'pg_language' => Yii::$app->language == 'ru' ? 'ru' : 'en',
             'pg_result_url' => Url::toRoute(['/cart/payment-result', 'id' => $transaction->payment_type_id], true),
             'pg_success_url' => Url::toRoute(['/cart/payment-success', 'id' => $order->id], true),

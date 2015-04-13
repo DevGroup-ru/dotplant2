@@ -176,7 +176,7 @@ SCRIPT;
         <div class="col-md-10 col-md-offset-2">
             <a href="#" class="btn btn-md btn-primary add-property">
                 <?=Icon::show('plus')?>
-                <?=Yii::t('shop', 'Add property')?>
+                <?=Yii::t('app', 'Add property')?>
             </a>
             <br>
             <br>

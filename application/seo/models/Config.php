@@ -2,6 +2,10 @@
 
 namespace app\seo\models;
 
+use yii\caching\TagDependency;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
+use Yii;
+
 /**
  * This is the model class for table "seo_config".
  *
@@ -39,5 +43,26 @@ class Config extends \yii\db\ActiveRecord
             'key' => 'Key',
             'value' => 'Value',
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+
+        TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                ActiveRecordHelper::getCommonTag($this->className())
+            ]
+        );
+
+        TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                ActiveRecordHelper::getCommonTag($this->className()),
+                'Config:'.$this->key
+            ]
+        );
+
+        return parent::beforeSave($insert);
     }
 }

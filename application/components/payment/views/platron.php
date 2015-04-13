@@ -8,5 +8,5 @@
 use yii\helpers\Html;
 
 ?>
-<?= Html::a(Yii::t('shop', 'Go To Payment'), $url) ?>
+<?= Html::a(Yii::t('app', 'Go To Payment'), $url) ?>
 <script>window.location = '<?= $url ?>';</script>

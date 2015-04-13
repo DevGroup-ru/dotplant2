@@ -65,13 +65,13 @@ class Cart extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('shop', 'ID'),
-            'user_id' => Yii::t('shop', 'User ID'),
-            'create_time' => Yii::t('shop', 'Create Time'),
-            'update_time' => Yii::t('shop', 'Update Time'),
-            'items' => Yii::t('shop', 'Items'),
-            'items_count' => Yii::t('shop', 'Items Count'),
-            'total_price' => Yii::t('shop', 'Total Price'),
+            'id' => Yii::t('app', 'ID'),
+            'user_id' => Yii::t('app', 'User ID'),
+            'create_time' => Yii::t('app', 'Create Time'),
+            'update_time' => Yii::t('app', 'Update Time'),
+            'items' => Yii::t('app', 'Items'),
+            'items_count' => Yii::t('app', 'Items Count'),
+            'total_price' => Yii::t('app', 'Total Price'),
         ];
     }
 

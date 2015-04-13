@@ -8,8 +8,9 @@ use app\backend\widgets\BackendWidget;
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-
-$this->title = Yii::t('app', 'Editing rating group '.$group['rating_group']);
+$this->title = Yii::t('app', 'Editing rating group {groupname}', [
+    'groupname' => $group['rating_group'],
+]);
 $this->params['breadcrumbs'][] = ['url' => [\yii\helpers\Url::toRoute('index')], 'label' => Yii::t('app', 'Rating groups')];
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -51,12 +52,16 @@ $this->params['breadcrumbs'][] = $this->title;
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <?php BackendWidget::begin(['title' => Yii::t('app', 'Common'), 'icon' => 'pencil', 'footer' => $this->blocks['submit']]); ?>
             <div class="form-group">
-                <?= Html::label('Group name', 'group-name', ['class' => 'col-md-2 control-label']); ?>
+                <?= Html::label(Yii::t('app', 'Group name'), 'group-name', ['class' => 'col-md-2 control-label']); ?>
                 <div class="col-md-10"><?= Html::input('text', 'group-name', $group['rating_group'], ['class' => 'form-control']); ?></div>
             </div>
             <div class="form-group">
-                <?= Html::label('Require review', 'group-require-review', ['class' => 'col-md-2 control-label']); ?>
+                <?= Html::label(Yii::t('app', 'Require review'), 'group-require-review', ['class' => 'col-md-2 control-label']); ?>
                 <div class="col-md-10"><?= Html::checkbox('group-require-review', $group['require_review'], ['class' => '']); ?></div>
+            </div>
+            <div class="form-group">
+                <?= Html::label(Yii::t('app', 'Allow guest user to rate'), 'group-allow-guest', ['class' => 'col-md-2 control-label']); ?>
+                <div class="col-md-10"><?= Html::checkbox('group-allow-guest', $group['allow_guest'], ['class' => '']); ?></div>
             </div>
             <?php BackendWidget::end(); ?>
         </article>
@@ -74,7 +79,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'theme' => 'panel-default',
             'gridOptions' => [
                 'dataProvider' => $data_provider,
-//                'filterModel' => $searchModel,
                 'hover' => true,
                 'panel' => [
                     'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),

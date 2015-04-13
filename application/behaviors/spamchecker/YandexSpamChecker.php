@@ -44,7 +44,7 @@ class YandexSpamChecker implements SpamCheckable
 
         if ($response === false) {
             return [
-                'ok' => "0",
+                'ok' => false,
                 'message' => curl_error($curl)
             ];
         }
@@ -58,27 +58,29 @@ class YandexSpamChecker implements SpamCheckable
                 $spamFlag = $xmlObj->text->attributes()['spam-flag'];
             } elseif ($ro->hasProperty('message')) {
                 return [
-                    'ok' => 0,
+                    'ok' => false,
                     'message' => (string) $xmlObj->message
                 ];
             } else {
                 return [
-                    'ok' => 0,
+                    'ok' => false,
                     'message' => 'invalid response'
                 ];
             }
         } catch (\Exception $e) {
             return [
-                'ok' => "0",
+                'ok' => false,
                 'message' => 'Exception: ' . $e->getMessage() . ' with code: ' . $e->getCode()
             ];
         }
-
+        $is_spam = false;
+        if ($spamFlag === 'yes') {
+            $is_spam = true;
+        }
         return [
-            'ok' => "1",
-            // @todo response
+            'ok' => true,
             'responce_id' => $id,
-            'is_spam' => (string) $spamFlag
+            'is_spam' => $is_spam
         ];
 
     }

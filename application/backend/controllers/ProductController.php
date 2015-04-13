@@ -86,6 +86,23 @@ class ProductController extends Controller
                     },
                     'price',
                     'old_price',
+                    'active' => function (Product $model) {
+                        if ($model === null || $model->active === null) {
+                            return null;
+                        }
+                        if ($model->active === 1) {
+                            $label_class = 'label-success';
+                            $value = 'Active';
+                        } else {
+                            $value = 'Inactive';
+                            $label_class = 'label-default';
+                        }
+                        return \yii\helpers\Html::tag(
+                            'span',
+                            Yii::t('app', $value),
+                            ['class' => "label $label_class"]
+                        );
+                    },
                 ],
             ],
         ];
@@ -129,6 +146,10 @@ class ProductController extends Controller
         if (null === $id) {
             $model = new Product();
             $model->loadDefaultValues();
+            $parent_id = Yii::$app->request->get('owner_id');
+            if (null !== Product::findById($parent_id)) {
+                $model->parent_id = $parent_id;
+            }
         } else {
             $model = Product::findById($id, null, null);
             if ((null !== $model) && ($model->parent_id > 0)) {
@@ -504,7 +525,7 @@ class ProductController extends Controller
                     'Properties_Product_' . $newModel->id => $newModelProps,
                 ]
             );
-            Yii::$app->session->setFlash('success', Yii::t('shop', 'Product has been cloned successfully.'));
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Product has been cloned successfully.'));
             $this->redirect(['/backend/product/edit', 'id' => $newModel->id]);
         }
     }
@@ -515,14 +536,16 @@ class ProductController extends Controller
             throw new NotFoundHttpException;
         }
 
-        if ($model->parent_id == 0) {
+        if (Yii::$app->request->get('returnUrl') !== null) {
+            $redirect = Yii::$app->request->get('returnUrl');
+        } elseif ($model->parent_id == 0) {
             $redirect = Url::toRoute(['index']);
         } else {
             $redirect = Url::toRoute(['edit', 'id' => $model->parent_id]);
         }
 
         if (!$model->delete()) {
-            Yii::$app->session->setFlash('info', Yii::t('shop', 'The object is placed in the cart'));
+            Yii::$app->session->setFlash('info', Yii::t('app', 'The object is placed in the cart'));
         } else {
             Yii::$app->session->setFlash('info', Yii::t('app', 'Object has been removed'));
         }
@@ -620,7 +643,12 @@ class ProductController extends Controller
 
         Yii::$app->session->setFlash('success', Yii::t('app', 'Object successfully restored'));
 
-        return $this->redirect(Url::toRoute(['edit', 'id' => $id]));
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                Url::toRoute(['edit', 'id' => $id])
+            )
+        );
     }
 
     public function actionAjaxRelatedProduct($search = null, $id = null)

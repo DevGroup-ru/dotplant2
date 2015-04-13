@@ -1,7 +1,6 @@
 <?php
 
 use yii\helpers\ArrayHelper;
-use app\models\Config;
 
 Yii::setAlias('@tests', dirname(__DIR__) . '/tests');
 Yii::setAlias('@webroot', dirname(__DIR__) . '/web');
@@ -9,6 +8,7 @@ Yii::setAlias('@webroot', dirname(__DIR__) . '/web');
 $config = [
     'id' => 'basic-console',
     'basePath' => dirname(__DIR__),
+    'language' => 'ru',
     'bootstrap' => [],
     'controllerNamespace' => 'app\commands',
     'extensions' => require(__DIR__ . '/../vendor/yiisoft/extensions.php'),
@@ -60,6 +60,26 @@ $config = [
         'fixture' => [
             'class' => 'yii\test\DbFixtureManager',
             'basePath' => '@tests/unit/fixtures',
+        ],
+        'urlManager' => [
+            'baseUrl' => '/',
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                'login/<service:google_oauth|facebook|etc>' => 'default/login',
+                'login' => 'default/login',
+                'logout' => 'default/logout',
+                'signup' => 'default/signup',
+                'cart/payment-result/<id:.+>' => 'cart/payment-result',
+                'search' => 'default/search',
+                'robots.txt' => 'seo/manage/get-robots',
+                [
+                    'class' => 'app\components\PageRule',
+                ],
+                [
+                    'class' => 'app\components\ObjectRule',
+                ],
+            ],
         ],
     ]
 ];

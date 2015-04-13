@@ -3,7 +3,9 @@
 namespace app\backgroundtasks\commands;
 
 use app\backgroundtasks\helpers\BackgroundTasks;
+use app\backgroundtasks\models\NotifyMessage;
 use app\backgroundtasks\models\Task;
+use app\models\Config;
 use yii\console\Controller;
 
 /**
@@ -55,5 +57,16 @@ class TasksController extends Controller
         foreach ($process as $task) {
             $task->run();
         }
+    }
+
+    /**
+     * Clear notification messages older then set in config
+     */
+    public function actionClearOldNotifications()
+    {
+        $time = new \DateTime();
+        $days = Config::getValue('errorMonitor.daysToStoreNotify', 28);
+        $time->sub(new \DateInterval("P{$days}D"));
+        NotifyMessage::deleteAll('UNIX_TIMESTAMP(`ts`) < ' . $time->getTimestamp());
     }
 }

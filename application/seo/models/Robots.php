@@ -2,6 +2,9 @@
 
 namespace app\seo\models;
 
+use yii\caching\TagDependency;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
+use Yii;
 /**
  * Class Robots
  * @package app\seo\models
@@ -21,13 +24,21 @@ class Robots extends Config
     public static function getRobots()
     {
         /* @var $robots \app\seo\models\Config|null */
-        $robots = \Yii::$app->getCache()->get(\Yii::$app->getModule('seo')->cacheConfig['robotsCache']['name']);
+
+        $cacheKey = Yii::$app->getModule('seo')->cacheConfig['robotsCache']['name'];
+
+        $robots = Yii::$app->getCache()->get($cacheKey);
         if (!$robots) {
             $robots = self::findOne(self::KEY_ROBOTS);
-            \Yii::$app->getCache()->set(
-                \Yii::$app->getModule('seo')->cacheConfig['robotsCache']['name'],
+            Yii::$app->getCache()->set(
+                $cacheKey,
                 $robots,
-                \Yii::$app->getModule('seo')->cacheConfig['robotsCache']['expire']
+                Yii::$app->getModule('seo')->cacheConfig['robotsCache']['expire'],
+                new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getCommonTag(Config::className()),
+                    ]
+                ])
             );
         }
         if ($robots === null) {
@@ -48,6 +59,13 @@ class Robots extends Config
             );
         }
         $robots->value = $text;
+        TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                ActiveRecordHelper::getCommonTag(static::className())
+            ]
+        );
         return $robots->save();
     }
+
 }

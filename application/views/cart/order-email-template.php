@@ -1,10 +1,10 @@
 <?php
 /** @var \app\models\Order $order */
 use yii\helpers\Html;
-
+$mainCurrency = \app\models\Currency::getMainCurrency();
 ?>
-<h1><?= Yii::t('shop', 'Order #{orderId}', ['orderId' => $order->id]) ?></h1>
-<h2><?= Yii::t('shop', 'Order information') ?></h2>
+<h1><?= Yii::t('app', 'Order #{orderId}', ['orderId' => $order->id]) ?></h1>
+<h2><?= Yii::t('app', 'Order information') ?></h2>
 <table style="width: 800px;" border="1" bordercolor="#ddd" cellspacing="0">
     <tr>
         <th style="text-align: left;"><?= $order->getAttributeLabel('start_date') ?></th>
@@ -43,15 +43,15 @@ use yii\helpers\Html;
         <?php $i++; ?>
     <?php endforeach; ?>
 </table>
-<h2><?= Yii::t('shop', 'Order items') ?></h2>
+<h2><?= Yii::t('app', 'Order items') ?></h2>
 <table style="width: 800px;" border="1" bordercolor="#ddd" cellspacing="0">
     <thead>
         <tr>
-            <th><?= Yii::t('shop', 'SKU') ?></th>
-            <th><?= Yii::t('shop', 'Name') ?></th>
-            <th><?= Yii::t('shop', 'Price') ?></th>
-            <th><?= Yii::t('shop', 'Quantity') ?></th>
-            <th><?= Yii::t('shop', 'Price sum') ?></th>
+            <th><?= Yii::t('app', 'SKU') ?></th>
+            <th><?= Yii::t('app', 'Name') ?></th>
+            <th><?= Yii::t('app', 'Price') ?></th>
+            <th><?= Yii::t('app', 'Quantity') ?></th>
+            <th><?= Yii::t('app', 'Price sum') ?></th>
         </tr>
     </thead>
     <tbody>
@@ -59,23 +59,46 @@ use yii\helpers\Html;
             <tr style="background: <?= $i % 2 == 0 ? '#f5f5f5' : '#fff' ?>;">
                 <td><?= $item->product->sku ?></td>
                 <td><?= $item->product->name ?></td>
-                <td><?= Yii::$app->formatter->asDecimal($item->product->price, 2) ?> <?= Yii::$app->params['currency'] ?></td>
+                <td><?= $item->product->formattedPrice(null, false, false) ?></td>
                 <td><?= $item->quantity ?></td>
-                <td><?= Yii::$app->formatter->asDecimal($item->quantity * $item->product->price, 2) ?> <?= Yii::$app->params['currency'] ?></td>
+                <td>
+                    <?=
+                    $mainCurrency->format(
+                        $item->product->convertedPrice() * $item->quantity
+                    );
+                    ?>
+                </td>
             </tr>
         <?php endforeach; ?>
         <?php if (isset($order->shippingOption)): ?>
             <tr style="background: <?= count($order->items) % 2 == 0 ? '#f5f5f5' : '#fff' ?>;">
-                <td colspan="3"><?= Html::encode($order->shippingOption->name) ?></td>
-                <td><?= Yii::$app->formatter->asDecimal($order->shippingOption->cost, 2) ?> <?= Yii::$app->params['currency'] ?></td>
+                <td colspan="4"><?= Html::encode($order->shippingOption->name) ?></td>
+                <td><?= $mainCurrency->format($order->shippingOption->cost); ?></td>
             </tr>
         <?php endif; ?>
         <tr style="background: #f0f0f0;">
-            <th colspan="2">&nbsp;</th>
+            <th colspan="3">&nbsp;</th>
             <th><?= $order->items_count ?></th>
-            <th><?= Yii::$app->formatter->asDecimal($order->total_price, 2) ?> <?= Yii::$app->params['currency'] ?></th>
+            <th><?= $mainCurrency->format($order->total_price) ?></th>
         </tr>
     </tbody>
 </table>
 
-<p>See order details <a href="<?= \yii\helpers\Url::toRoute(['/backend/order/view', 'id' => $order->id], true) ?>">here</a>.</p>
+<p>
+    <?=
+    \Yii::t(
+        'app',
+        'See order details <a href="{url}">here</a>.',
+        [
+            'url' => \yii\helpers\Url::toRoute(
+                [
+                    '/backend/order/view',
+                    'id' => $order->id,
+                    'returnUrl'=>'/backend/order/'
+                ],
+                true
+            ),
+        ]
+    );
+    ?>
+</p>

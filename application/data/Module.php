@@ -9,8 +9,8 @@ class Module extends BackendModule
 {
     public $dataBase = '/data';
 
-    public $exportDir = '@webroot/data/export';
-    public $importDir = '@webroot/data/import';
+    public $exportDir = '@app/data/files/export';
+    public $importDir = '@app/data/files/import';
 
     public function init()
     {

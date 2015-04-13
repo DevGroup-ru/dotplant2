@@ -1,6 +1,7 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
+use app\models\SpamChecker;
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
@@ -91,18 +92,18 @@ $this->endBlock();
                 <?= $form->field($model, 'property_handler_id')->dropDownList(app\models\PropertyHandler::getSelectArray())?>
 
                 <?= $form->field($model, 'has_static_values')->radio(['data-group' => 'property-type']) ?>
-                
+
                 <?= $form->field($model, 'has_slugs_in_values')->checkbox() ?>
-                
+
                 <?= $form->field($model, 'is_eav')->radio(['data-group' => 'property-type']) ?>
-                
+
                 <?= $form->field($model, 'is_column_type_stored')->radio(['data-group' => 'property-type']) ?>
 
                 <?= $form->field($model, 'multiple')->checkbox() ?>
 
                 <?= $form->field($model, 'required')->checkbox() ?>
 
-                <?= $form->field($model, 'interpret_as')->dropDownList(app\models\SpamChecker::getFieldTypesForFormByParentId($fieldinterpretParentId)) ?>
+                <?= $form->field($model, 'interpret_as')->dropDownList(SpamChecker::getFieldTypesForForm()) ?>
 
                 <?= $form->field($model, 'captcha')->checkbox() ?>
 
@@ -114,9 +115,9 @@ $this->endBlock();
 
         </article>
 
-        
+
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            
+
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Logic settings'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
                 <?= $form->field($model, 'hide_other_values_if_selected')->checkbox() ?>
 
@@ -223,9 +224,9 @@ $this->registerJs($js);
                 'url_append' => '&property_id='.$model->id.'&property_group_id='.$model->property_group_id,
             ],
         ],
-        
+
         'theme' => 'panel-default',
-        
+
         'gridOptions'=>[
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
@@ -236,7 +237,7 @@ $this->registerJs($js);
                 'after' => $this->blocks['add-button'],
 
             ],
-            
+
         ]
     ]);
     ?>

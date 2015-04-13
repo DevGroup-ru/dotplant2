@@ -49,7 +49,7 @@ class Config extends ActiveRecord
             [['parent_id', 'preload'], 'integer'],
             [['name', 'key'], 'required'],
             [['key'], 'string', 'max' => 50],
-            [['name', 'value'], 'string', 'max' => 255],
+            [['name'], 'string', 'max' => 255],
             [['parent_id', 'key'], 'unique', 'targetAttribute' => ['parent_id', 'key']],
         ];
     }
@@ -206,5 +206,67 @@ class Config extends ActiveRecord
         foreach ($this->children as $child) {
             $child->delete();
         }
+    }
+
+    /**
+     * @param string $path
+     * @param string $value
+     * @param bool $createIfNotExists
+     * @return bool
+     */
+    static public function updateValue($path = '', $value = '', $createIfNotExists = true)
+    {
+        if (empty($path)) {
+            return false;
+        }
+
+        $key = static::findOne(['path' => $path]);
+
+        if (!empty($key)) {
+            $key->value = $value;
+            return $key->save();
+        }
+
+        if ($createIfNotExists) {
+            $keyPath = explode('.', $path);
+            $key = array_pop($keyPath);
+            if (empty($keyPath)) {
+                return false;
+            } else {
+                $is_parent = true;
+                $parentPath = '';
+                $parentId = 0;
+                foreach ($keyPath as $k) {
+                    $parentPath = ltrim($parentPath.'.'.$k, '.');
+                    $parent = static::findOne(['path' => $parentPath]);
+
+                    if (!empty($parent)) {
+                        $parentId = $parent->id;
+                        $is_parent = false;
+                        continue;
+                    }
+
+                    $model = new static;
+                        $model->parent_id = $is_parent ? 0 : $parentId;
+                        $model->name = $k;
+                        $model->key = $k;
+                        $model->path = $parentPath;
+                    $model->save();
+
+                    $model->refresh();
+                    $parentId = $model->id;
+                    $is_parent = false;
+                }
+
+                $model = new static;
+                    $model->parent_id = $parentId;
+                    $model->name = $key;
+                    $model->key = $key;
+                    $model->value = $value;
+                return $model->save();
+            }
+        }
+
+        return false;
     }
 }

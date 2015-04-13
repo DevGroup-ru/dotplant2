@@ -40,7 +40,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             case \app\data\models\Export::STATUS_COMPLETE :
                                 return \yii\helpers\Html::a(
                                     Yii::t('app', 'Download') . $date,
-                                    [Yii::$app->getModule('data')->dataBase . '/export/' . $model->lastExport->filename],
+                                    [
+                                        '/data/file/download-file',
+                                        'dir' => 'export',
+                                        'file' => $model->lastExport->filename
+                                    ],
                                     [
                                         'class' => 'btn btn-primary btn-sm'
                                     ]

@@ -2,6 +2,7 @@
 
 use \yii\helpers\Html;
 use \kartik\icons\Icon;
+use \app\backend\widgets\BackendWidget;
 
 $this->title = Yii::t('app', 'Settings');
 $this->params['breadcrumbs'][] = [
@@ -10,149 +11,226 @@ $this->params['breadcrumbs'][] = [
 ];
 $this->params['breadcrumbs'][] = $this->title;
 
+$formName = 'YmlSettings'
 ?>
 
 <?= app\widgets\Alert::widget([
     'id' => 'alert',
 ]); ?>
 
+<?php
+    $yml_relations = [
+        'getImage' => \app\models\Image::className(),
+        'getCategory' => \app\models\Category::className(),
+    ];
 
+    $yml_settings = [];
+    $yml_settings['product_fields'] = (new \app\models\Product())->attributeLabels();
+    $yml_settings['relations_keys'] = array_combine(array_keys($yml_relations), array_keys($yml_relations));
+    $yml_settings['relations_map'] = [];
+    foreach ($yml_relations as $key => $value) {
+        $_fields = (new $value)->attributeLabels();
+        $yml_settings['relations_map'][$key] = [
+            'fields' => $_fields,
+            'html' => array_reduce($_fields, function($result, $i) {
+                $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
+                return $result;
+            }, ''),
+        ];
+    }
+?>
+
+<?php $form = \kartik\widgets\ActiveForm::begin(['id' => 'yml-form', 'type' => \kartik\widgets\ActiveForm::TYPE_HORIZONTAL]); ?>
 <div class="row">
     <div class="col-md-6">
-        <?php $formName = "yml"; ?>
+        <?php BackendWidget::begin(['title'=> Yii::t('app', 'Settings for shop section'), 'icon' => 'cogs']); ?>
+        <?= $form->field($model, 'shop_name'); ?>
+        <?= $form->field($model, 'shop_company'); ?>
+        <?= $form->field($model, 'shop_url'); ?>
+        <?= $form->field($model, 'shop_local_delivery_cost'); ?>
+        <?= $form->field($model, 'shop_store')->checkbox(); ?>
+        <?= $form->field($model, 'shop_pickup')->checkbox(); ?>
+        <?= $form->field($model, 'shop_delivery')->checkbox(); ?>
+        <?= $form->field($model, 'shop_adult')->checkbox(); ?>
+        <?php BackendWidget::end(); ?>
+    </div>
 
-        <?= Html::beginForm('', 'post',
-            [
-                'id' => 'form-yml',
-                'name' => $formName
-            ]
-        ); ?>
+    <div class="col-md-6">
+        <?php BackendWidget::begin(['title'=> Yii::t('app', 'Settings for currencies section'), 'icon' => 'cogs']); ?>
+        <?= $form->field($model, 'currency_id')->dropDownList([
+            'RUR' => 'RUR',
+            'USD' => 'USD',
+            'EUR' => 'EUR',
+            'UAH' => 'UAH',
+            'KZT' => 'KZT',
+        ]); ?>
+        <?php BackendWidget::end(); ?>
 
-        <table class="table">
-            <tr>
-                <td><?= Html::label(Yii::t('app', 'Main currency'), 'main_currency') ?></td>
-                <td><?= Html::dropDownList($formName .'[main_currency]', $main_currency,
-                        [
-                            'RUR' => 'RUR',
-                            'USD' => 'USD',
-                            'EUR' => 'EUR',
-                            'UAH' => 'UAH',
-                            'KZT' => 'KZT',
-                        ],
-                        [ 'class' => 'form-control' ]
-                    ) ?></td>
-            </tr>
-            <tr>
-                <td><?= Html::label(Yii::t('app', 'To show all properties of a product in YML'), 'show_all_properties') ?></td>
-                <td><?= \kartik\widgets\SwitchInput::widget(['name' => $formName . '[show_all_properties]', 'value' => $show_all_properties]) ?></td>
-            </tr>
-            <tr>
-                <td><?= Html::label(Yii::t('app', 'Description type by default'), 'default_offer_type') ?></td>
-                <td><?= Html::dropDownList($formName . '[default_offer_type]', $default_offer_type,
-                        [
-                            'simplified' => Yii::t('app', 'The simplified description'),
-                            'vendor.model' => Yii::t('app', 'Any goods'),
-                            'book' => Yii::t('app', 'Books'),
-                            'audiobook' => Yii::t('app', 'Audiobooks'),
-                            'artist.title' => Yii::t('app', 'Musical and video production'),
-                            'tour' => Yii::t('app', 'Tours'),
-                            'event-ticket' => Yii::t('app', 'Tickets for event'),
-                        ],
-                        [ 'class' => 'form-control' ]
-                    ) ?></td>
-            </tr>
-            <tr>
-                <td><?= Html::label(Yii::t('app', 'Total cost of delivery for the region in which the shop is located'), 'local_delivery_cost') ?></td>
-                <td><?= Html::input('text', 'yml[local_delivery_cost]', $local_delivery_cost, [ 'class' => 'form-control' ]) ?></td>
-            </tr>
-        </table>
+        <?php BackendWidget::begin(['title'=> Yii::t('app', 'General settings'), 'icon' => 'cogs']); ?>
+        <?= $form->field($model, 'general_yml_filename'); ?>
+        <?= $form->field($model, 'offer_param')->checkbox(); ?>
+        <?= $form->field($model, 'general_yml_type')->dropDownList([
+            'simplified' => Yii::t('app', 'The simplified description'),
+            'vendor.model' => Yii::t('app', 'Any goods'),
+            'book' => Yii::t('app', 'Books'),
+            'audiobook' => Yii::t('app', 'Audiobooks'),
+            'artist.title' => Yii::t('app', 'Musical and video production'),
+            'tour' => Yii::t('app', 'Tours'),
+            'event-ticket' => Yii::t('app', 'Tickets for event'),
+        ]); ?>
+        <?php BackendWidget::end(); ?>
+    </div>
+</div>
 
+<div class="row">
+    <div id="offers_section" class="col-md-12">
+        <?php BackendWidget::begin(['title'=> Yii::t('app', 'Settings for offers section'), 'icon' => 'cogs']); ?>
 
         <?php
-        /*
-        $ymlFilds = [
-            [
-                'key' => 'vendor',
-                'label' => 'Производитель',
-                'required' => true
-            ],
-            [
-                'key' => 'name',
-                'label' => 'Название товарного предложения',
-                'required' => true
-            ],
-        ];
+            foreach ($model->getOfferElements() as $el) {
+                echo $form->field($model, $el)->render(
+                    function(\yii\widgets\ActiveField $field) use ($yml_settings)
+                    {
+                        $value = $field->model->{$field->attribute};
 
-        $relationLinks = [
-            [
-                'class' => \app\models\Image::className(),
-                'relationName' => 'getImages'
-            ],
-            [
-                'class' => \app\models\Category::className(),
-                'relationName' => 'getCategory'
-            ],
-        ];
+                        $label = Html::activeLabel($field->model, $field->attribute, $field->labelOptions);
 
+                        $input = '<div class="col-md-2">'.
+                            Html::activeDropDownList(
+                                $field->model,
+                                $field->attribute . '[type]',
+                                [
+                                    'field' => Yii::t('app', 'Field'),
+                                    'property' => Yii::t('app', 'Property'),
+                                    'relation' => Yii::t('app', 'Relation'),
+                                ],
+                                array_merge(['data-ymlselect' => 'type'], $field->inputOptions)
+                            ).'</div>';
 
-        echo \app\backend\widgets\DataRelationsWidget::widget([
-            'fields' => $ymlFilds,
-            'object' => \app\models\Object::getForClass(\app\models\Product::className()),
-            'data' => json_decode($fields_params),
-            'relations' => $relationLinks
-        ]);
-*/
+                        $_key_list = [];
+                        if (!empty($value['key'])) {
+                            if ('field' === $value['type']) {
+                                $_key_list = $yml_settings['product_fields'];
+                            } elseif ('property' === $value['type']) {
+                                $_key_list = [];
+                            } elseif ('relation' === $value['type']) {
+                                $_key_list = $yml_settings['relations_keys'];
+                            }
+                        }
+
+                        $input .= '<div class="col-md-3">' .
+                            Html::activeDropDownList(
+                                $field->model,
+                                $field->attribute . '[key]',
+                                $_key_list,
+                                array_merge(['data-ymlselect' => 'key'], $field->inputOptions)
+                            ) . '</div>';
+
+                        $_value_list = [];
+                        if (!empty($value['value']) && 'relation' === $value['type']) {
+                            $_value_list = $yml_settings['relations_map'][$value['key']]['fields'];
+                        }
+                        $input .= '<div class="col-md-3">' .
+                            Html::activeDropDownList(
+                                $field->model,
+                                $field->attribute . '[value]',
+                                $_value_list,
+                                array_merge(['data-ymlselect' => 'value', 'style' => empty($_value_list)?'display:none;':''], $field->inputOptions)
+                            ) . '</div>';
+
+                        $error = Html::error($field->model, $field->attribute, $field->errorOptions);
+                        return sprintf("%s\n<div class=\"col-md-10 offer-group\">%s</div>\n<div class=\"col-md-offset-2 col-md-10\">%s</div>", $label, $input, $error);
+                    }
+                );
+            }
         ?>
 
-        <?=
-        Html::submitButton(
+        <?= Html::submitButton(
             Icon::show('save') . Yii::t('app', 'Save'),
             ['class' => 'btn btn-primary']
-        )
-        ?>
+        ); ?>
 
-        <?=
-        Html::button(
+        <?= Html::a(
             Icon::show('code') . Yii::t('app', 'Create YML'),
-            ['class' => 'btn btn-primary', 'id' => 'create_yml']
-        )
-        ?>
-
-
-
-
-
-        <?= Html::endForm() ?>
+            ['create'],
+            ['class' => 'btn btn-primary']
+        ); ?>
+        <?php BackendWidget::end(); ?>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-6">
-        <div id="yml_link" style="font-weight: bold; font-size: 16px; padding: 15px; margin: 3px;"><label><?= Yii::t('app', 'It will be available according to the link:')?> <b>/yml/get</b></label></div>
-    </div>
-</div>
+<?php \kartik\widgets\ActiveForm::end(); ?>
 
-<?php
-$js = <<<JS
-    "use strict";
+<script>
+    $(function() {
+        ymlSelectFields = '<?= array_reduce(
+            $yml_settings['product_fields'],
+             function($result, $i) {
+                $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
+                return $result;
+             }, ''); ?>';
 
-    $('#create_yml').click(function(){
-        $.ajax({
-            url: "/yml/get?regenerate=yes",
-            success: function(data, textStatus, jqXHR){
-                var yml_link = $('#yml_link');
+        ymlSelectRelKeys = '<?= array_reduce(
+            $yml_settings['relations_keys'],
+             function($result, $i) {
+                $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
+                return $result;
+             }, ''); ?>';
 
-                if (data !== "busy" && data !== "file not exist") {
-                    yml_link.css({"color": "green"});
-                    yml_link.html(textStatus);
-                } else {
-                    yml_link.css({"color": "green"});
-                    yml_link.html(data);
+        ymlSelectRelations = {
+            <?php
+                foreach ($yml_settings['relations_map'] as $k => $v) {
+                    echo $k.': \''.$v['html'].'\','.PHP_EOL;
+                }
+            ?>
+        }
+
+        ymlSelectProperties = '';
+
+        $('#offers_section').on('change', 'select[data-ymlselect]', function(event, flag) {
+            var selType = $(this).data('ymlselect');
+            var group = $(this).parents('.offer-group');
+
+            if ('type' == selType) {
+                $(group).find('select[data-ymlselect="key"]').trigger('change', ['change']);
+            }
+            else if ('key' == selType) {
+                var keyType = $(group).find('select[data-ymlselect="type"]').val();
+
+                if ('change' == flag) {
+                    if ('field' == keyType) {
+                        $(this).html(ymlSelectFields);
+                    }
+                    else if ('property' == keyType) {
+                        $(this).html(ymlSelectProperties);
+                    }
+                    else if ('relation' == keyType) {
+                        $(this).html(ymlSelectRelKeys);
+                    }
+
+                    $(group).find('select[data-ymlselect="value"]').trigger('change', ['change']);
+                }
+                else {
+                    if ('relation' == keyType) {
+                        $(group).find('select[data-ymlselect="value"]').trigger('change', ['change']);
+                    }
                 }
             }
+            else if ('value' == selType) {
+                var type = $(group).find('select[data-ymlselect="type"]').val();
+                var key = $(group).find('select[data-ymlselect="key"]').val();
+                if ('change' == flag) {
+                    if ('relation' == type) {
+                        $(this).html(ymlSelectRelations[key]);
+                        $(this).show();
+                    }
+                    else {
+                        $(this).val('');
+                        $(this).hide();
+                    }
+                }
+            }
+
+            return true;
         });
     });
-JS;
-
-$this->registerJs($js);
-
-?>
+</script>

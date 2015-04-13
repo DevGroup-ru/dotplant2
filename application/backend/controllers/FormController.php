@@ -220,16 +220,6 @@ class FormController extends Controller
         return $this->redirect(Url::toRoute(['view', 'id' => $form_id]));
     }
 
-    public function actionMarkSpam()
-    {
-        Submission::updateAll(['is_deleted' => 1], "spam != 'not defined'");
-    }
-
-    public function actionClearDeleted()
-    {
-        Submission::deleteAll(['is_deleted' => 1]);
-    }
-
     public function actionRestoreSubmission($id)
     {
         $submission = Submission::findOne($id);

@@ -30,7 +30,7 @@ trait ProcessReviews
             if ($review->save()) {
                 Yii::$app->session->setFlash(
                     'info',
-                    Yii::t('shop', 'Your review will appear on the website immediately after moderation')
+                    Yii::t('app', 'Your review will appear on the website immediately after moderation')
                 );
                 $review_saved = true;
                 $reviewEmail = Config::getValue('core.reviews.reviewEmail', null);
@@ -50,7 +50,7 @@ trait ProcessReviews
                                 ]
                             )->setTo(explode(',', $reviewEmail))->setFrom(
                                 Yii::$app->mail->transport->getUsername()
-                            )->setSubject(Yii::t('shop', 'Review #{reviewId}', ['reviewId' => $review->id]))->send();
+                            )->setSubject(Yii::t('app', 'Review #{reviewId}', ['reviewId' => $review->id]))->send();
                         } catch (\Exception $e) {
                             // do nothing
                         }
@@ -59,7 +59,8 @@ trait ProcessReviews
             }
         }
 
-        if (Yii::$app->request->isPost && (null !== $_post = Yii::$app->request->post('ObjectRating', null))) {
+        $_post = Yii::$app->request->post('ObjectRating');
+        if (Yii::$app->request->isPost && (null !== $_post)) {
             $group = isset($_post['group']) ? trim($_post['group']) : null;
             $group = RatingItem::getGroupByName($group);
             $items = [];

@@ -3,7 +3,8 @@
 namespace app\models;
 
 use Yii;
-use yii\data\ActiveDataProvider;
+use yii\caching\TagDependency;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "{{%rating_item}}".
@@ -15,6 +16,7 @@ use yii\data\ActiveDataProvider;
  * @property integer $max_value
  * @property integer $step_value
  * @property integer $require_review
+ * @property integer $allow_guest
  */
 class RatingItem extends \yii\db\ActiveRecord
 {
@@ -27,18 +29,31 @@ class RatingItem extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+        ];
+    }
+
+    /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
             [['name', 'rating_group'], 'required'],
-            [['min_value', 'max_value', 'step_value', 'require_review'], 'integer'],
+            [['min_value', 'max_value', 'step_value', 'require_review', 'allow_guest'], 'integer'],
             [['name', 'rating_group'], 'string', 'max' => 255],
             [['min_value'], 'default', 'value' => 0],
             [['max_value'], 'default', 'value' => 5],
             [['step_value'], 'default', 'value' => 1],
             [['require_review'], 'default', 'value' => 0],
+            [['allow_guest'], 'default', 'value' => 0],
             [['max_value'], 'compare', 'compareAttribute' => 'min_value', 'operator' => '>'],
             [['step_value', 'min_value'], 'compare', 'compareAttribute' => 'max_value', 'operator' => '<'],
         ];
@@ -57,6 +72,7 @@ class RatingItem extends \yii\db\ActiveRecord
             'max_value' => Yii::t('app', 'Max Value'),
             'step_value' => Yii::t('app', 'Step Value'),
             'require_review' => Yii::t('app', 'Require Review'),
+            'allow_guest' => Yii::t('app', 'Allow guest user to rate'),
         ];
     }
 
@@ -66,7 +82,15 @@ class RatingItem extends \yii\db\ActiveRecord
      */
     public static function getGroupsAll($fetch = true, $as_array = false)
     {
-        $query = static::find('rating_group')
+        $cache_key = 'RatingItem:Groups';
+        $cache = Yii::$app->cache->get($cache_key);
+        if (true === $fetch
+            && true === $as_array
+            && false !== $cache) {
+            return $cache;
+        }
+
+        $query = static::find()
             ->distinct()
             ->groupBy('rating_group')
             ->orderBy(['rating_group' => SORT_ASC]);
@@ -79,7 +103,22 @@ class RatingItem extends \yii\db\ActiveRecord
             return $query;
         }
 
-        return $query->all();
+        $result = $query->all();
+        if (true === $as_array) {
+            Yii::$app->cache->set(
+                $cache_key,
+                $result,
+                0,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                        ],
+                    ]
+                )
+            );
+        }
+        return $result;
     }
 
     /**
@@ -88,9 +127,9 @@ class RatingItem extends \yii\db\ActiveRecord
      */
     public static function getGroupByName($name = null)
     {
-        $query = static::find('rating_group')
+        $query = static::find()
             ->distinct()
-            ->where(['like', 'rating_group', $name])
+            ->where(['rating_group' => $name])
             ->groupBy('rating_group')
             ->orderBy(['rating_group' => SORT_ASC])
             ->asArray();
@@ -106,13 +145,21 @@ class RatingItem extends \yii\db\ActiveRecord
      */
     public static function getItemsByAttributes($attributes = [], $fetch = true, $as_array = false)
     {
-        if (empty($attributes) && !is_array($attributes)) {
+        if (!is_array($attributes)) {
             return [];
         }
 
         $attributes_exists = array_intersect(static::attributes(), array_keys($attributes));
         if (empty($attributes_exists)) {
             return [];
+        }
+
+        $cache_key = 'RatingItem:'.Json::encode($attributes);
+        $cache = Yii::$app->cache->get($cache_key);
+        if (true === $fetch
+            && true === $as_array
+            && false !== $cache) {
+            return $cache;
         }
 
         $query = static::find();
@@ -129,7 +176,22 @@ class RatingItem extends \yii\db\ActiveRecord
             return $query;
         }
 
-        return $query->all();
+        $result = $query->all();
+        if (true === $as_array) {
+            Yii::$app->cache->set(
+                $cache_key,
+                $result,
+                0,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                        ],
+                    ]
+                )
+            );
+        }
+        return $result;
     }
 
     /**

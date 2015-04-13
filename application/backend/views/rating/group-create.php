@@ -44,12 +44,16 @@ $this->params['breadcrumbs'][] = $this->title;
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <?php BackendWidget::begin(['title' => Yii::t('app', 'Common'), 'icon' => 'pencil', 'footer' => $this->blocks['submit']]); ?>
             <div class="form-group required">
-                <?= Html::label('Group name', 'group-name', ['class' => 'col-md-2 control-label']); ?>
+                <?= Html::label(Yii::t('app', 'Group name'), 'group-name', ['class' => 'col-md-2 control-label']); ?>
                 <div class="col-md-10"><?= Html::input('text', 'group-name', '', ['class' => 'form-control']); ?></div>
             </div>
             <div class="form-group">
-                <?= Html::label('Require review', 'group-require-review', ['class' => 'col-md-2 control-label']); ?>
+                <?= Html::label(Yii::t('app', 'Require review'), 'group-require-review', ['class' => 'col-md-2 control-label']); ?>
                 <div class="col-md-10"><?= Html::checkbox('group-require-review', false, ['class' => '']); ?></div>
+            </div>
+            <div class="form-group">
+                <?= Html::label(Yii::t('app', 'Allow guest user to rate'), 'group-allow-guest', ['class' => 'col-md-2 control-label']); ?>
+                <div class="col-md-10"><?= Html::checkbox('group-allow-guest', false, ['class' => '']); ?></div>
             </div>
             <?php BackendWidget::end(); ?>
         </article>

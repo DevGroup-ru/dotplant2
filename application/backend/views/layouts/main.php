@@ -13,7 +13,7 @@ use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 
 BackendAsset::register($this);
-//Icon::map($this);
+Icon::map($this);
 
 ?>
 <?php $this->beginPage(); ?>
@@ -24,7 +24,11 @@ BackendAsset::register($this);
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
+    <?php if(YII_DEBUG): ?>
+        <link rel="stylesheet" href="/css/holmes.min.css" media="screen,projection,print,handheld" type="text/css">
+    <?php endif; ?>
     <?php $this->head(); ?>
+    <link href="/css/admin.css" media="screen, projection, print" rel="stylesheet" type="text/css" />
 </head>
 <body class="fixed-header fixed-ribbon">
     <?php $this->beginBody(); ?>
@@ -76,7 +80,10 @@ BackendAsset::register($this);
             <div class="dropdown btn-header transparent pull-right">
                 <span><a data-toggle="dropdown" href="#"><i class="fa fa-trash-o"></i></a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <li><a href="<?= Url::toRoute('/backend/trash/clean'); ?>"><?= Yii::t('shop', 'Clear the trash') ?></a></li>
+                        <li><a href="<?= Url::toRoute(['/backend/trash/index', 'returnUrl'=>\app\backend\components\Helper::getReturnUrl()]); ?>"><?= Yii::t('app', 'View trash') ?>
+                            </a>
+                        </li>
+                        <li><a href="<?= Url::toRoute(['/backend/trash/clean', 'returnUrl'=>\app\backend\components\Helper::getReturnUrl()]); ?>"><?= Yii::t('app', 'Clear the cart') ?></a></li>
                     </ul>
                 </span>
             </div>
@@ -139,6 +146,24 @@ BackendAsset::register($this);
         </div>
     </div>
     <?php $this->endBody(); ?>
+    <script type="text/javascript">
+        $(function(){
+            $('[data-toggle="popover"]').popover({
+                container: 'body'
+            });
+            $('[data-toggle="tooltip"]').tooltip();
+            jQuery('[data-action="delete"]').on('click', function(e){
+                if (confirm('<?= Yii::t('app', 'Are you sure you want to delete this object?') ?>')) {
+                    jQuery.ajax({
+                        'type' : 'post',
+                        'url' : jQuery(this).attr('href')
+                    });
+                }
+                window.location.reload();
+                return false;
+            });
+        });
+    </script>
 </body>
 </html>
 <?php $this->endPage(); ?>

@@ -22,7 +22,7 @@
     <input type="hidden" name="failUrl" value="<?=
         \yii\helpers\Url::toRoute(['/cart/payment-error', 'id' => $order->id], true)
     ?>" />
-    <input type="submit" name="button" value="<?= Yii::t('shop', 'Pay') ?>" />
+    <input type="submit" name="button" value="<?= Yii::t('app', 'Pay') ?>" />
 </form>
 <script>
 jQuery('#intellect-money-form').submit();

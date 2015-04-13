@@ -14,7 +14,7 @@ class RobokassaPayment extends AbstractPayment
 
     public function content($order, $transaction)
     {
-        $invoiceDescription = urlencode(\Yii::t('shop', 'Payment of order #{orderId}', ['orderId' => $order->id]));
+        $invoiceDescription = urlencode(\Yii::t('app', 'Payment of order #{orderId}', ['orderId' => $order->id]));
         $inCurrency  = '';
         $culture = 'ru';
         $signatureValue  = md5(

@@ -45,10 +45,10 @@ class OrderItem extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('shop', 'ID'),
-            'order_id' => Yii::t('shop', 'Order ID'),
-            'product_id' => Yii::t('shop', 'Product ID'),
-            'quantity' => Yii::t('shop', 'Quantity'),
+            'id' => Yii::t('app', 'ID'),
+            'order_id' => Yii::t('app', 'Order ID'),
+            'product_id' => Yii::t('app', 'Product ID'),
+            'quantity' => Yii::t('app', 'Quantity'),
         ];
     }
 

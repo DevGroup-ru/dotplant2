@@ -13,7 +13,7 @@ use yii\helpers\Html;
  * @var $this yii\web\View
  */
 
-$this->title = Yii::t('shop', 'Orders');
+$this->title = Yii::t('app', 'Orders');
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute' => 'user_username',
-                        'label' => Yii::t('shop', 'User'),
+                        'label' => Yii::t('app', 'User'),
                         'value' => function ($model, $key, $index, $column) {
                             if ($model === null || $model->user === null) {
                                 return null;

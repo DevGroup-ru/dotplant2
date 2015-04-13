@@ -44,11 +44,11 @@ class OrderChat extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('shop', 'ID'),
-            'order_id' => Yii::t('shop', 'Order ID'),
-            'user_id' => Yii::t('shop', 'User ID'),
-            'date' => Yii::t('shop', 'Date'),
-            'message' => Yii::t('shop', 'Message'),
+            'id' => Yii::t('app', 'ID'),
+            'order_id' => Yii::t('app', 'Order ID'),
+            'user_id' => Yii::t('app', 'User ID'),
+            'date' => Yii::t('app', 'Date'),
+            'message' => Yii::t('app', 'Message'),
         ];
     }
 

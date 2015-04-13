@@ -10,7 +10,7 @@ use kartik\widgets\ActiveForm;
 
 $this->title = $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update');
 $this->params['breadcrumbs'] = [
-    ['label' => Yii::t('shop', 'Categories groups'), 'url' => ['index']],
+    ['label' => Yii::t('app', 'Categories groups'), 'url' => ['index']],
     $this->params['breadcrumbs'][] = $this->title,
 ];
 
@@ -21,7 +21,7 @@ $this->params['breadcrumbs'] = [
     BackendWidget::begin(
         [
             'icon' => 'tag',
-            'title'=> Yii::t('shop', 'Categories groups'),
+            'title'=> Yii::t('app', 'Categories groups'),
             'footer' => Html::a(
                     Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
                     Yii::$app->request->get('returnUrl', ['/backend/category-group/index', 'id' => $model->id]),

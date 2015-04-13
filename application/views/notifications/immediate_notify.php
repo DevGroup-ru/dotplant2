@@ -1,4 +1,4 @@
-<h1><?= Yii::t('shop', 'Immediate error report (sent {0})', date(DateTime::RFC1123, time())) ?> </h1>
+<h1><?= Yii::t('app', 'Immediate error report (sent {0})', date(DateTime::RFC1123, time())) ?> </h1>
 
 <table>
     <tr>

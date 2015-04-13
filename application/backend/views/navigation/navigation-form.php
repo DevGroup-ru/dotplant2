@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="col-md-10 col-md-offset-2">
                         <a href="#" class="btn btn-md btn-primary add-property">
                             <?= Icon::show('plus') ?>
-                            <?= Yii::t('shop', 'Add property') ?>
+                            <?= Yii::t('app', 'Add property') ?>
                         </a>
                         <br>
                         <br>
@@ -113,7 +113,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-md-1">
             <a class="btn btn-danger btn-remove">
                 <?= Icon::show('thrash-o') ?>
-                <?= Yii::t('shop', 'Remove') ?>
+                <?= Yii::t('app', 'Remove') ?>
             </a>
         </div>
     </div>

@@ -1,4 +1,4 @@
-<h1><?= Yii::t('shop', 'Error report') ?> <?= date(DateTime::RFC1123, time()) ?></h1>
+<h1><?= Yii::t('app', 'Error report') ?> <?= date(DateTime::RFC1123, time()) ?></h1>
 
 <ul>
 <?php foreach ($info as $url => $details) { ?>

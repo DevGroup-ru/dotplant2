@@ -20,7 +20,7 @@ use yii\helpers\Html;
 
             $itemView .= Html::beginTag('div', ['class' => 'review-author']);
             if ($model->user) {
-                $itemView .= Icon::show('user') . Html::encode($model->user->getDisplayName());
+                $itemView .= Icon::show('user') . Html::encode($model->user->getAwesomeUsername());
             } else {
                 $itemView .= Icon::show('user') . Html::encode($model->author_name);
             }
@@ -42,17 +42,17 @@ use yii\helpers\Html;
     <div class="row">
         <div class="col-md-12">
             <h2>
-                <?= Yii::t('app', 'Your review') ?>
-                <?php if (Yii::$app->user->isGuest) : ?>
+                <?= Yii::t('app', 'You review') ?>
+                <?php if (Yii::$app->getUser()->isGuest) : ?>
                     <small>[<?= Html::a(Yii::t('app', 'Login'),
                             ['/default/login', 'returnUrl' => Yii::$app->request->absoluteUrl]) ?>]</small>
                 <?php else : ?>
-                    <small>[<?= Yii::$app->user->getIdentity()->getDisplayName() ?>]</small>
+                    <small>[<?= Yii::$app->getUser()->getIdentity()->getAwesomeUserName() ?>]</small>
                 <?php endif; ?>
             </h2>
         </div>
     </div>
-    <?php if (Yii::$app->user->isGuest) : ?>
+    <?php if (Yii::$app->getUser()->isGuest) : ?>
         <div class = "row">
         <div class = "col-md-6">
             <?=
@@ -101,7 +101,7 @@ use yii\helpers\Html;
             <div class = "form-group no-margin">
                 <?=
                 Html::submitButton(
-                    Yii::t('shop', 'You review'),
+                    Yii::t('app', 'You review'),
                     ['class' => 'btn btn-success']
                 ) ?>
             </div>

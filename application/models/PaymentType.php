@@ -73,15 +73,15 @@ class PaymentType extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('shop', 'ID'),
-            'name' => Yii::t('shop', 'Name'),
-            'class' => Yii::t('shop', 'Class'),
-            'params' => Yii::t('shop', 'Params'),
-            'logo' => Yii::t('shop', 'Logo'),
-            'commission' => Yii::t('shop', 'Commission'),
-            'active' => Yii::t('shop', 'Active'),
-            'payment_available' => Yii::t('shop', 'Payment Available'),
-            'sort' => Yii::t('shop', 'Sort'),
+            'id' => Yii::t('app', 'ID'),
+            'name' => Yii::t('app', 'Name'),
+            'class' => Yii::t('app', 'Class'),
+            'params' => Yii::t('app', 'Params'),
+            'logo' => Yii::t('app', 'Logo'),
+            'commission' => Yii::t('app', 'Commission'),
+            'active' => Yii::t('app', 'Active'),
+            'payment_available' => Yii::t('app', 'Payment Available'),
+            'sort' => Yii::t('app', 'Sort'),
         ];
     }
 

@@ -67,7 +67,7 @@ class CartController extends Controller
             }
         }
         if ($allowedStatuses !==null && !in_array($model->order_status_id, (array) $allowedStatuses)) {
-            Yii::$app->session->setFlash('error', Yii::t('shop', 'Cannot change this order'));
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change this order'));
             return $this->redirect(['/cart']);
         }
         return $model;
@@ -153,7 +153,7 @@ class CartController extends Controller
         } else {
             return [
                 'success' => false,
-                'message' => Yii::t('shop', 'Cannot add product to cart'),
+                'message' => Yii::t('app', 'Cannot add product to cart'),
             ];
         }
     }
@@ -183,7 +183,7 @@ class CartController extends Controller
         } else {
             return [
                 'success' => false,
-                'message' => Yii::t('shop', 'Cannot change quantity'),
+                'message' => Yii::t('app', 'Cannot change quantity'),
             ];
         }
     }
@@ -215,7 +215,7 @@ class CartController extends Controller
         } else {
             return [
                 'success' => false,
-                'message' => Yii::t('shop', 'Cannot change additional params'),
+                'message' => Yii::t('app', 'Cannot change additional params'),
             ];
         }
     }
@@ -251,7 +251,7 @@ class CartController extends Controller
 
         return [
             'success' => false,
-            'message' => Yii::t('shop', 'Error data'),
+            'message' => Yii::t('app', 'Error data'),
         ];
 
 
@@ -275,7 +275,7 @@ class CartController extends Controller
         } else {
             return [
                 'success' => false,
-                'message' => Yii::t('shop', 'Cannot delete'),
+                'message' => Yii::t('app', 'Cannot delete'),
             ];
         }
     }
@@ -347,7 +347,7 @@ class CartController extends Controller
                 $order->saveProperties($data);
                 return $this->redirect(['/cart/payment-type', 'id' => $order->id]);
             } else {
-                Yii::$app->session->setFlash('error', Yii::t('shop', 'Please fill required form fields'));
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Please fill required form fields'));
             }
         }
         $shippingOptions = $this->getCachedData('CartShippingOptions', ShippingOption::className());

@@ -46,12 +46,12 @@ class ProductListingSort extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('shop', 'ID'),
-            'name' => Yii::t('shop', 'Name'),
-            'sort_field' => Yii::t('shop', 'Sort Field'),
-            'asc_desc' => Yii::t('shop', 'Asc Desc'),
-            'enabled' => Yii::t('shop', 'Enabled'),
-            'sort_order' => Yii::t('shop', 'Sort Order'),
+            'id' => Yii::t('app', 'ID'),
+            'name' => Yii::t('app', 'Name'),
+            'sort_field' => Yii::t('app', 'Sort Field'),
+            'asc_desc' => Yii::t('app', 'Asc Desc'),
+            'enabled' => Yii::t('app', 'Enabled'),
+            'sort_order' => Yii::t('app', 'Sort Order'),
         ];
     }
 

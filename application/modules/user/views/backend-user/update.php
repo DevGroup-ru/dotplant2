@@ -68,7 +68,7 @@ $this->params['breadcrumbs'] = [
             BackendWidget::begin(
                 [
                     'icon' => 'user',
-                    'title'=> Yii::t('shop', 'User'),
+                    'title'=> Yii::t('app', 'User'),
                     'footer' => $this->blocks['submit']
                 ]
             );

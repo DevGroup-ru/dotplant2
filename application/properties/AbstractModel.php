@@ -291,4 +291,17 @@ class AbstractModel extends Model
         Yii::$app->cache->delete("TIR:".$object_id . ':' .$object_model_id);
         $this->values_by_property_key = $new_values;
     }
+
+    /**
+     * @param $attribute
+     * @return PropertyValue|null
+     */
+    public function getPropertyValueByAttribute($attribute)
+    {
+        if (isset($this->values_by_property_key[$attribute])) {
+            return $this->values_by_property_key[$attribute];
+        }
+
+        return null;
+    }
 }

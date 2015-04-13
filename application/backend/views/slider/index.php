@@ -9,7 +9,7 @@ use kartik\icons\Icon;
 /* @var $searchModel app\components\SearchModel */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('shop', 'Sliders');
+$this->title = Yii::t('app', 'Sliders');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="slider-index">

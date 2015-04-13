@@ -54,5 +54,5 @@
         </div>
     <?php endif; ?>
 <?php else: ?>
-    <p class="no-results"><?= Yii::t('shop', 'No results found') ?></p>
+    <p class="no-results"><?= Yii::t('app', 'No results found') ?></p>
 <?php endif; ?>

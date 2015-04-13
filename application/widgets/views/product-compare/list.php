@@ -54,7 +54,7 @@ if (is_array($prods)) {
         <?= Html::beginForm('/product-compare/add', 'get') ?>
         <?= Html::hiddenInput('id', $id) ?>
         <?= Html::hiddenInput('backUrl', Yii::$app->request->url) ?>
-        <?= Html::button(Yii::t('shop', 'Add to compare'),
+        <?= Html::button(Yii::t('app', 'Add to compare'),
             [
                 'id' => 'addToCompare',
                 'class' => 'btn btn-primary',
@@ -66,7 +66,7 @@ if (is_array($prods)) {
     <?php if (is_array($prods) && count($prods) > 0) { ?>
     <div class="col-md-8">
         <?= Html::beginForm($comparePage, 'get')?>
-        <?= Html::button(Yii::t('shop', 'Compare'),
+        <?= Html::button(Yii::t('app', 'Compare'),
             [
                 'id' => 'do-compare',
                 'class' => 'btn btn-primary',

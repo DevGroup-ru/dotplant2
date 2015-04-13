@@ -58,15 +58,15 @@ class OrderTransaction extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('shop', 'ID'),
-            'order_id' => Yii::t('shop', 'Order ID'),
-            'payment_type_id' => Yii::t('shop', 'Payment Type ID'),
-            'start_date' => Yii::t('shop', 'Start Date'),
-            'end_date' => Yii::t('shop', 'End Date'),
-            'status' => Yii::t('shop', 'Status'),
-            'total_sum' => Yii::t('shop', 'Total Sum'),
-            'params' => Yii::t('shop', 'Params'),
-            'result_data' => Yii::t('shop', 'Result Data'),
+            'id' => Yii::t('app', 'ID'),
+            'order_id' => Yii::t('app', 'Order ID'),
+            'payment_type_id' => Yii::t('app', 'Payment Type ID'),
+            'start_date' => Yii::t('app', 'Start Date'),
+            'end_date' => Yii::t('app', 'End Date'),
+            'status' => Yii::t('app', 'Status'),
+            'total_sum' => Yii::t('app', 'Total Sum'),
+            'params' => Yii::t('app', 'Params'),
+            'result_data' => Yii::t('app', 'Result Data'),
         ];
     }
 
