@@ -41,7 +41,7 @@ abstract class BaseConfigurableModel extends Model
      * Fills model attributes with default values
      * @return void
      */
-    public abstract function defaultValues();
+    abstract public function defaultValues();
 
     /**
      * Returns array of module configuration that should be stored in application config.
@@ -50,7 +50,7 @@ abstract class BaseConfigurableModel extends Model
      *
      * @return array
      */
-    public abstract function webApplicationAttributes();
+    abstract public function webApplicationAttributes();
 
     /**
      * Returns array of module configuration that should be stored in application config.
@@ -59,7 +59,7 @@ abstract class BaseConfigurableModel extends Model
      *
      * @return array
      */
-    public abstract function consoleApplicationAttributes();
+    abstract public function consoleApplicationAttributes();
 
     /**
      * Returns array of module configuration that should be stored in application config.
@@ -68,14 +68,14 @@ abstract class BaseConfigurableModel extends Model
      *
      * @return array
      */
-    public abstract function commonApplicationAttributes();
+    abstract public function commonApplicationAttributes();
 
     /**
      * Returns array of key=>values for configuration.
      *
      * @return mixed
      */
-    public abstract function keyValueAttributes();
+    abstract public function keyValueAttributes();
 
     /**
      * The name of event that is triggered when this configuration is being saved.
