@@ -54,6 +54,6 @@ abstract class BaseConfigurableModel extends Model
      */
     public function configurationSaveEvent()
     {
-        return StringHelper::basename($this) . 'ConfigurationSaveEvent';
+        return StringHelper::basename(get_class($this)) . 'ConfigurationSaveEvent';
     }
 }

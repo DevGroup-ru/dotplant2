@@ -30,7 +30,8 @@ class ConfigurableModel extends BaseConfigurableModel
     public function rules()
     {
         return [
-            [['passwordResetTokenExpire', 'loginSessionDuration',], 'number', 'integerOnly' => true, 'min' => 60],
+            [['passwordResetTokenExpire', 'loginSessionDuration',], 'integer', 'min' => 60],
+            [['passwordResetTokenExpire', 'loginSessionDuration',], 'filter', 'filter'=>'intval'],
         ];
     }
 

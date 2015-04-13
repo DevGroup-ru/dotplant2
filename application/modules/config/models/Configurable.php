@@ -18,7 +18,10 @@ use yii\helpers\Html;
  */
 class Configurable extends \yii\db\ActiveRecord
 {
-
+    /**
+     * @var BaseConfigurableModel Configurable model instance for this Configurable record
+     */
+    private $configurableModel = null;
     /**
      * @inheritdoc
      */
@@ -105,7 +108,10 @@ class Configurable extends \yii\db\ActiveRecord
      */
     public function getConfigurableModel()
     {
-        $class_name = $this->getModule()->configurableModel;
-        return new $class_name;
+        if ($this->configurableModel === null) {
+            $class_name = $this->getModule()->configurableModel;
+            $this->configurableModel = new $class_name;
+        }
+        return $this->configurableModel;
     }
 }
