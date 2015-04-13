@@ -111,6 +111,7 @@ class Configurable extends \yii\db\ActiveRecord
         if ($this->configurableModel === null) {
             $class_name = $this->getModule()->configurableModel;
             $this->configurableModel = new $class_name;
+            $this->configurableModel->setModule($this->module);
         }
         return $this->configurableModel;
     }

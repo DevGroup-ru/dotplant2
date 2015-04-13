@@ -11,7 +11,7 @@ return[
     'modules' => [
         'user' => [
             'loginSessionDuration' => 2592000,
-            'passwordResetTokenExpire' => 3600,
+            'passwordResetTokenExpire' => 3603,
         ],
     ],
 ];

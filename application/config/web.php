@@ -175,11 +175,22 @@ $allConfig = ArrayHelper::merge(
     file_exists(__DIR__ . '/common.php') ? require(__DIR__ . '/common.php') : [],
     $config,
     file_exists(__DIR__ . '/../web/theme/module/config/common.php')
-    ? require(__DIR__ . '/../web/theme/module/config/common.php')
-    : [],
+        ? require(__DIR__ . '/../web/theme/module/config/common.php')
+        : [],
+
+    file_exists(__DIR__ . '/common-configurables.php')
+        ? require(__DIR__ . '/common-configurables.php')
+        : [],
+
     file_exists(__DIR__ . '/../web/theme/module/config/web.php')
-    ? require(__DIR__ . '/../web/theme/module/config/web.php')
-    : [],
+        ? require(__DIR__ . '/../web/theme/module/config/web.php')
+        : [],
+
+    file_exists(__DIR__ . '/web-configurables.php')
+        ? require(__DIR__ . '/web-configurables.php')
+        : [],
+
+
     file_exists(__DIR__ . '/common-local.php') ? require(__DIR__ . '/common-local.php') : [],
     file_exists(__DIR__ . '/web-local.php') ? require(__DIR__ . '/web-local.php') : []
 );

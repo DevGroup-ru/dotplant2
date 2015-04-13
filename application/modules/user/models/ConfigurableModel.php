@@ -4,6 +4,7 @@ namespace app\modules\user\models;
 
 use app;
 use app\modules\config\models\BaseConfigurableModel;
+use Yii;
 
 /**
  * Class ConfigurableModel represents configuration model for retrieving user input in backend configuration subsystem.
@@ -32,7 +33,17 @@ class ConfigurableModel extends BaseConfigurableModel
         return [
             [['passwordResetTokenExpire', 'loginSessionDuration',], 'integer', 'min' => 60],
             [['passwordResetTokenExpire', 'loginSessionDuration',], 'filter', 'filter'=>'intval'],
+
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function defaultValues()
+    {
+        $this->loginSessionDuration = Yii::$app->modules['user']->loginSessionDuration;
+        $this->passwordResetTokenExpire = Yii::$app->modules['user']->passwordResetTokenExpire;
     }
 
     /**

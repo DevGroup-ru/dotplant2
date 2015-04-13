@@ -88,11 +88,20 @@ return ArrayHelper::merge(
     file_exists(__DIR__ . '/common.php') ? require(__DIR__ . '/common.php') : [],
     $config,
     file_exists(__DIR__ . '/../web/theme/module/config/common.php') ?
-    require(__DIR__ . '/../web/theme/module/config/common.php') :
-    [],
+        require(__DIR__ . '/../web/theme/module/config/common.php') :
+        [],
+
+    file_exists(__DIR__ . '/common-configurables.php')
+        ? require(__DIR__ . '/common-configurables.php')
+        : [],
+
     file_exists(__DIR__ . '/../web/theme/module/config/console.php') ?
-    require(__DIR__ . '/../web/theme/module/config/console.php') :
-    [],
+        require(__DIR__ . '/../web/theme/module/config/console.php') :
+        [],
+
+    file_exists(__DIR__ . '/console-configurables.php')
+        ? require(__DIR__ . '/console-configurables.php')
+        : [],
     file_exists(__DIR__ . '/common-local.php') ? require(__DIR__ . '/common-local.php') : [],
     file_exists(__DIR__ . '/console-local.php') ? require(__DIR__ . '/console-local.php') : []
 );

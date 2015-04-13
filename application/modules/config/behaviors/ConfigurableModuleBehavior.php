@@ -45,10 +45,9 @@ class ConfigurableModuleBehavior extends Behavior
     {
         if ($this->configValues === null) {
             $ownerName = StringHelper::basename(get_class($this->owner));
-            $path = "@app/config/configurables-kv/$ownerName.php";
-            $filename = Yii::getAlias($path);
-            if (file_exists($filename) === true) {
-                $this->configValues = include($filename);
+
+            if (isset(Yii::$app->params['kv-'.$ownerName]) === true) {
+                $this->configValues = Yii::$app->params['kv-'.$ownerName];
             } else {
                 // config is empty for now
                 $this->configValues = [];

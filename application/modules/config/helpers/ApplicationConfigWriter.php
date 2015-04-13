@@ -9,7 +9,10 @@ use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
 
-
+/**
+ * Writer for application configs
+ * @package app\modules\config\helpers
+ */
 class ApplicationConfigWriter extends Component
 {
     /**
@@ -38,18 +41,21 @@ class ApplicationConfigWriter extends Component
             );
         }
         $filename = Yii::getAlias($this->filename);
-        if (is_writable($filename) === true) {
+        if (is_readable($filename) === true) {
             $this->configuration = include($filename);
             if (is_array($this->configuration) === false) {
                 Yii::trace('Application configuration file is not an array - ' . $filename);
 
                 $this->configuration = [];
             }
+        } elseif (file_exists($filename) === false) {
+            Yii::trace('Application configuration file does not exist - ' . $filename);
+            $this->configuration = [];
         } else {
             throw new InvalidConfigException(
                 Yii::t(
                     'app',
-                    'Application config file {file} is not writable.',
+                    'Application config file {file} is not readable.',
                     [
                         'file' => $filename,
                     ]

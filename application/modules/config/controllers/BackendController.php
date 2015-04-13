@@ -53,6 +53,12 @@ class BackendController extends app\backend\components\BackendController
             ])
         );
 
+        foreach ($models as $model) {
+            $configurableModel = $model->getConfigurableModel();
+            $configurableModel->loadState();
+        }
+
+
         $commonConfigWriter = new ApplicationConfigWriter([
             'filename' => '@app/config/common-configurables.php',
         ]);
@@ -65,6 +71,7 @@ class BackendController extends app\backend\components\BackendController
 
         if (Yii::$app->request->isPost === true) {
             $isValid = true;
+            $errorModule = '';
 
             foreach ($models as $model) {
                 $configurableModel = $model->getConfigurableModel();
@@ -88,6 +95,7 @@ class BackendController extends app\backend\components\BackendController
                             $consoleConfigWriter->addValues(
                                 $configurableModel->consoleApplicationAttributes()
                             );
+                            $configurableModel->saveState();
 
 
                             //! @todo do save data
@@ -100,6 +108,7 @@ class BackendController extends app\backend\components\BackendController
                         $isValid = false;
                     }
                     if ($isValid === false) {
+                        $errorModule = $model->module;
                         // event is valid, stop saving data
                         break;
                     }
@@ -132,7 +141,7 @@ class BackendController extends app\backend\components\BackendController
                         'app',
                         'Error saving configuration for module {module}',
                         [
-                            'module' => $model->module,
+                            'module' => $errorModule,
                         ]
                     )
                 );
