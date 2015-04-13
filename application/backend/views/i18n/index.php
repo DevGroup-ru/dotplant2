@@ -7,7 +7,7 @@
 
 use app\backend\components\ActionColumn;
 use app\backend\widgets\BackendWidget;
-use kartik\grid\GridView;
+use app\backend\widgets\GridView;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use yii\widgets\Pjax;

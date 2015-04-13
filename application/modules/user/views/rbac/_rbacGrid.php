@@ -1,7 +1,7 @@
 <?php
 
 use app\backend\components\ActionColumn;
-use kartik\grid\GridView;
+use app\backend\widgets\GridView;
 use yii\widgets\Pjax;
 
 /**

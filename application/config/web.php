@@ -14,6 +14,10 @@ $config = [
     ],
     'defaultRoute' => 'default',
     'modules' => [
+        'user' => [
+            'class' => 'app\modules\user\UserModule',
+            'loginSessionDuration' => 2592000,
+        ],
         'backend' => [
             'class' => 'app\backend\BackendModule',
             'layout' => '@app/backend/views/layouts/main',
@@ -49,12 +53,16 @@ $config = [
                         '{dynagrid}',
                         '{toggleData}',
                         //'{export}',
-                    ]
-                ]
+                    ],
+                    'export' => false,
+
+                ],
             ],
+
         ],
         'gridview' =>  [
-            'class' => '\kartik\grid\Module'
+            'class' => '\kartik\grid\Module',
+
         ],
     ],
     'components' => [
@@ -72,10 +80,10 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'login/<service:google_oauth|facebook|etc>' => 'default/login',
-                'login' => 'default/login',
-                'logout' => 'default/logout',
-                'signup' => 'default/signup',
+                'login/<service:google_oauth|facebook|etc>' => 'user/user/login',
+                'login' => 'user/user/login',
+                'logout' => 'user/user/logout',
+                'signup' => 'user/user/signup',
                 'cart/payment-result/<id:.+>' => 'cart/payment-result',
                 'search' => 'default/search',
                 'robots.txt' => 'seo/manage/get-robots',
@@ -94,7 +102,7 @@ $config = [
         ],
         'user' => [
             'class' => '\yii\web\User',
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\modules\user\models\User',
             'enableAutoLogin' => true,
             'loginUrl' => ['/login'],
         ],

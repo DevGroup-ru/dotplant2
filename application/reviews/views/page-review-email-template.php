@@ -17,7 +17,7 @@ use yii\helpers\Url;
             <td>
                 <?php
                 if ($review->user) {
-                    echo Html::encode($review->user->getAwesomeUsername());
+                    echo Html::encode($review->user->getDisplayName());
                 } else {
                     echo Html::encode($review->author_name);
                 }

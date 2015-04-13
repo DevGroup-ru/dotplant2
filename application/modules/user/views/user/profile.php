@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @var $model app\models\User
+ * @var $model \app\modules\user\models\User
  * @var $propertyGroups \app\models\PropertyGroup[]
  * @var $services array
  * @var $this yii\web\View
@@ -15,7 +15,7 @@ $this->title = Yii::t('app', 'Your profile');
 $this->params['breadcrumbs'] = [
     [
         'label' => Yii::t('app', 'Personal cabinet'),
-        'url' => '/cabinet'
+        'url' => ['/user/user/profile']
     ],
     $this->title,
 ];
@@ -40,11 +40,15 @@ $this->params['breadcrumbs'] = [
                 <?php endif; ?>
                 <?php
                     /** @var \app\models\Property[] $properties */
-                    $properties = $group['properties'];
+//                    $properties = $group['properties'];
+                    if (false):
                 ?>
                 <?php foreach ($properties as $property): ?>
                     <?= $property->handler($form, $model->abstractModel, [], 'frontend_edit_view'); ?>
-                <?php endforeach; ?>
+                <?php endforeach;
+                endif;
+                ?>
+
             <?php endforeach; ?>
             <div class="form-group">
                 <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-primary']) ?>
@@ -54,7 +58,7 @@ $this->params['breadcrumbs'] = [
     <div class="span4 well">
         <?php
             $authChoice = AuthChoice::begin([
-                'baseAuthUrl' => ['default/auth']
+                'baseAuthUrl' => ['/user/user/auth']
             ]);
         ?>
             <?php if (count($authChoice->clients) > count($services)): ?>
@@ -72,7 +76,7 @@ $this->params['breadcrumbs'] = [
             <h3><?= Yii::t('app', 'Detach service') ?></h3>
             <?php
                 $authChoice = AuthChoice::begin([
-                    'baseAuthUrl' => ['default/auth']
+                    'baseAuthUrl' => ['/user/user/auth']
                 ]);
             ?>
                 <ul class="auth-clients clear">

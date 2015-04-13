@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'email:email',
                 [
                     'attribute' => 'status',
-                    'filter' => app\models\User::getStatuses(),
+                    'filter' => \app\modules\user\models\User::getStatuses(),
                 ],
                 'create_time:datetime',
                 [
@@ -67,10 +67,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
                     'after' => Html::a(
                         Icon::show('plus') . Yii::t('app', 'Add'),
-                        ['/backend/user/update'],
+                        ['/user/backend-user/update'],
                         ['class' => 'btn btn-success']
                     ) . \app\backend\widgets\RemoveAllButton::widget([
-                        'url' => '/backend/user/remove-all',
+                        'url' => '/user/backend-user/remove-all',
                         'gridSelector' => '.grid-view',
                         'htmlOptions' => [
                             'class' => 'btn btn-danger pull-right'

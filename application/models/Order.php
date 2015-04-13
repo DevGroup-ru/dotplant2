@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\modules\user\models\User;
 use app\properties\HasProperties;
 use Yii;
 use yii\helpers\Json;

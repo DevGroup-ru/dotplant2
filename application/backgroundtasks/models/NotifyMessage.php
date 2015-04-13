@@ -3,7 +3,7 @@
 namespace app\backgroundtasks\models;
 
 use app\backgroundtasks\traits\SearchModelTrait;
-use app\models\User;
+use app\modules\user\models\User;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 
@@ -118,7 +118,7 @@ class NotifyMessage extends ActiveRecord
         ];
 
         $dataProvider->sort->attributes['username'] = [
-            'asc' => [User::tableName().'.username' => SORT_ASC],
+            'asc' => [\app\modules\user\models\User::tableName().'.username' => SORT_ASC],
             'desc' => [User::tableName().'.username' => SORT_DESC],
         ];
 

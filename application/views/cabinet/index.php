@@ -14,7 +14,7 @@ $links = [
     '/cabinet/profile' => 'Edit profile',
     '/cabinet/change-password' => 'Change a password',
 ];
-
+//! @todo Rewrite to menu
 ?>
 
 <h1><?= $this->title ?></h1>

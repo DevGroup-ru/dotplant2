@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\modules\user\models;
 
 use Yii;
 use yii\base\Model;
@@ -15,6 +15,9 @@ class LoginForm extends Model
     public $password;
     public $rememberMe = true;
 
+    /**
+     * @inheritdoc
+     */
     public function attributeLabels()
     {
         return [
@@ -45,9 +48,11 @@ class LoginForm extends Model
      */
     public function validatePassword()
     {
-        $user = $this->getUser();
-        if (!$user || !$user->validatePassword($this->password)) {
-            $this->addError('password', 'Incorrect username or password.');
+        if ($this->hasErrors() === false) {
+            $user = $this->getUser();
+            if (!$user || !$user->validatePassword($this->password)) {
+                $this->addError('password', 'Incorrect username or password.');
+            }
         }
     }
 
@@ -60,7 +65,7 @@ class LoginForm extends Model
         if ($this->validate()) {
             return Yii::$app->user->login(
                 $this->getUser(),
-                $this->rememberMe ? Config::getValue('core.loginSessionDuration', 3600 * 24 * 30) : 0
+                $this->rememberMe ? Yii::$app->modules['user']->loginSessionDuration : 0
             );
         } else {
             return false;

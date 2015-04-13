@@ -1,6 +1,7 @@
 <?php
 
-namespace app\models;
+namespace app\modules\user\models;
+use app\modules\user\models\User;
 use yii\db\ActiveRecord;
 
 /**
@@ -10,6 +11,7 @@ use yii\db\ActiveRecord;
  * @property integer $user_id
  * @property string $service_type
  * @property string $service_id
+ * @property \app\modules\user\models\User $user
  */
 class UserService extends ActiveRecord
 {
@@ -39,6 +41,9 @@ class UserService extends ActiveRecord
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function scenarios()
     {
         return [
@@ -59,6 +64,10 @@ class UserService extends ActiveRecord
         ];
     }
 
+    /**
+     * Relation to User model
+     * @return \yii\db\ActiveQuery
+     */
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);

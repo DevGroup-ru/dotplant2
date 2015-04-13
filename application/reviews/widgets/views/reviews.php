@@ -20,7 +20,7 @@ use yii\helpers\Html;
 
             $itemView .= Html::beginTag('div', ['class' => 'review-author']);
             if ($model->user) {
-                $itemView .= Icon::show('user') . Html::encode($model->user->getAwesomeUsername());
+                $itemView .= Icon::show('user') . Html::encode($model->user->getDisplayName());
             } else {
                 $itemView .= Icon::show('user') . Html::encode($model->author_name);
             }
@@ -42,17 +42,17 @@ use yii\helpers\Html;
     <div class="row">
         <div class="col-md-12">
             <h2>
-                <?= Yii::t('shop', 'You review') ?>
-                <?php if (Yii::$app->getUser()->isGuest) : ?>
+                <?= Yii::t('app', 'Your review') ?>
+                <?php if (Yii::$app->user->isGuest) : ?>
                     <small>[<?= Html::a(Yii::t('app', 'Login'),
                             ['/default/login', 'returnUrl' => Yii::$app->request->absoluteUrl]) ?>]</small>
                 <?php else : ?>
-                    <small>[<?= Yii::$app->getUser()->getIdentity()->getAwesomeUserName() ?>]</small>
+                    <small>[<?= Yii::$app->user->getIdentity()->getDisplayName() ?>]</small>
                 <?php endif; ?>
             </h2>
         </div>
     </div>
-    <?php if (Yii::$app->getUser()->isGuest) : ?>
+    <?php if (Yii::$app->user->isGuest) : ?>
         <div class = "row">
         <div class = "col-md-6">
             <?=

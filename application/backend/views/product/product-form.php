@@ -2,7 +2,7 @@
 
 use app\backend\widgets\BackendWidget;
 use app\models\Product;
-use kartik\grid\GridView;
+use app\backend\widgets\GridView;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use app\backend\components\ActiveForm;

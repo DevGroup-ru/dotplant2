@@ -1,23 +1,27 @@
 <?php
 
-namespace app\backend\controllers;
+namespace app\modules\user\controllers;
 
+use app\backend\components\BackendController;
 use app\components\SearchModel;
-use app\models\User;
+use app\modules\user\models\User;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\rbac\Item;
 use yii\helpers\Url;
-use yii\web\Controller;
+
 use yii\web\NotFoundHttpException;
 
 /**
- * UserController implements the CRUD actions for User model.
+ * BackendUserController implements the CRUD actions for User model.
  */
-class UserController extends Controller
+class BackendUserController extends BackendController
 {
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -47,7 +51,7 @@ class UserController extends Controller
     {
         $searchModel = new SearchModel(
             [
-                'model' => '\app\models\User',
+                'model' => '\app\modules\user\models\User',
                 'partialMatchAttributes' => [
                     'username',
                     'email',

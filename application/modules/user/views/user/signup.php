@@ -1,15 +1,14 @@
 <?php
 
 /**
- * @var $model
+ * @var $model \app\modules\user\models\RegistrationForm
  * @var $this \yii\web\View
  */
 
 use kartik\widgets\ActiveForm;
-use yii\authclient\widgets\AuthChoice;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Login');
+$this->title = Yii::t('app', 'Signup');
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -18,19 +17,17 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="span4 well">
         <?php
             $form = ActiveForm::begin([
-                'id' => 'login-form',
+                'id' => 'signun-form',
                 'type' => ActiveForm::TYPE_VERTICAL,
             ]);
         ?>
-        <?= $form->field($model, 'username') ?>
+        <?= $form->field($model, 'username')->textInput(['autocomplete' => 'off']) ?>
+        <?= $form->field($model, 'email')->textInput(['autocomplete' => 'off']) ?>
         <?= $form->field($model, 'password')->passwordInput() ?>
-        <?= $form->field($model, 'rememberMe')->checkbox() ?>
+        <?= $form->field($model, 'confirmPassword')->passwordInput() ?>
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Login'), ['class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton(Yii::t('app', 'Signup'), ['class' => 'btn btn-primary']) ?>
         </div>
         <?php ActiveForm::end(); ?>
-        <?= AuthChoice::widget([
-            'baseAuthUrl' => ['default/auth']
-        ]) ?>
     </div>
 </div>

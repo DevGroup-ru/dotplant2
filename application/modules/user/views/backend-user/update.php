@@ -2,7 +2,7 @@
 
 /**
  * @var $assignments array
- * @var $model \app\models\User
+ * @var $model \app\modules\user\models\User
  * @var $this \yii\web\View
  */
 
@@ -23,7 +23,7 @@ $this->params['breadcrumbs'] = [
     <?=
     Html::a(
         Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
-        Yii::$app->request->get('returnUrl', ['/backend/user/index']),
+        Yii::$app->request->get('returnUrl', ['/user/backend-user/index']),
         ['class' => 'btn btn-danger']
     )
     ?>
@@ -61,7 +61,7 @@ $this->params['breadcrumbs'] = [
 
 
 </div>
-<?php $this->endBlock('submit'); ?>
+<?php $this->endBlock(); ?>
 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
     <?php $form = ActiveForm::begin(); ?>
         <?php

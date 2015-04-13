@@ -6,7 +6,7 @@ use app\backgroundtasks\traits\SearchModelTrait;
 use app\models\Object;
 use app\models\Product;
 use app\models\Page;
-use app\models\User;
+use app\modules\user\models\User;
 use Yii;
 use yii\base\Exception;
 use yii\caching\TagDependency;
@@ -27,6 +27,8 @@ use yii\data\ActiveDataProvider;
  * @property string $text
  * @property integer $rate
  * @property string $rating_id
+ * @property \app\modules\user\models\User $user
+ * @property Product $product
  */
 class Review extends \yii\db\ActiveRecord
 {
@@ -115,11 +117,18 @@ class Review extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'author_user_id']);
+        return $this->hasOne(\app\modules\user\models\User::className(), ['id' => 'author_user_id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     * @throws Exception
+     */
     public function getProduct()
     {
         $object = Object::getForClass(Product::className());
@@ -226,7 +235,7 @@ class Review extends \yii\db\ActiveRecord
         );
         $dataProvider->sort->attributes['username'] = [
             'asc' => [User::tableName() . '.username' => SORT_ASC],
-            'desc' => [User::tableName() . '.username' => SORT_DESC],
+            'desc' => [\app\modules\user\models\User::tableName() . '.username' => SORT_DESC],
         ];
         $dataProvider->sort->attributes['name'] = [
             'asc' => [Product::tableName() . '.name' => SORT_ASC],
@@ -242,7 +251,7 @@ class Review extends \yii\db\ActiveRecord
         $this->addCondition($query, $this->tableName(), 'object_id');
         $this->addCondition($query, Product::tableName(), 'name', true);
         $this->addCondition($query, Product::tableName(), 'slug', true);
-        $this->addCondition($query, User::tableName(), 'username', true);
+        $this->addCondition($query, \app\modules\user\models\User::tableName(), 'username', true);
         $this->addCondition($query, $this->tableName(), 'author_name', true);
         $this->addCondition($query, $this->tableName(), 'author_email', true);
         $this->addCondition($query, $this->tableName(), 'author_phone', true);
@@ -270,7 +279,7 @@ class Review extends \yii\db\ActiveRecord
         );
         $dataProvider->sort->attributes['username'] = [
             'asc' => [User::tableName() . '.username' => SORT_ASC],
-            'desc' => [User::tableName() . '.username' => SORT_DESC],
+            'desc' => [\app\modules\user\models\User::tableName() . '.username' => SORT_DESC],
         ];
         $dataProvider->sort->attributes['name'] = [
             'asc' => [Page::tableName() . '.name' => SORT_ASC],
@@ -291,7 +300,7 @@ class Review extends \yii\db\ActiveRecord
         $this->addCondition($query, Page::tableName(), 'name', true);
         $this->addCondition($query, Page::tableName(), 'slug', true);
         $this->addCondition($query, Page::tableName(), 'slug_compiled', true);
-        $this->addCondition($query, User::tableName(), 'username', true);
+        $this->addCondition($query, \app\modules\user\models\User::tableName(), 'username', true);
         $this->addCondition($query, $this->tableName(), 'author_name', true);
         $this->addCondition($query, $this->tableName(), 'author_email', true);
         $this->addCondition($query, $this->tableName(), 'author_phone', true);

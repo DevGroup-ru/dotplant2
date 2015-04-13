@@ -1,23 +1,25 @@
 <?php
 
-namespace app\backend\controllers;
+namespace app\modules\user\controllers;
 
+use app\backend\components\BackendController;
 use app\backend\models\AuthItemForm;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\rbac\Item;
-use yii\web\Controller;
 use yii\helpers\Url;
 use Yii;
 
 /**
- * UserController implements the CRUD actions for User model.
+ * BackendUserController implements the CRUD actions for User model.
  */
-class RbacController extends Controller
+class RbacController extends BackendController
 {
-
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
