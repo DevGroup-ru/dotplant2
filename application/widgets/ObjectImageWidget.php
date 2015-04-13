@@ -4,7 +4,6 @@ namespace app\widgets;
 
 use Yii;
 use yii\base\Widget;
-use yii\helpers\VarDumper;
 
 /**
  * Class ObjectImageWidget
