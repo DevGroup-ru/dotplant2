@@ -1,195 +1,229 @@
 @media print {
-    #left-panel, #header, #ribbon, .order-chat, .page-footer, .do-not-print {
-        display: none;
-    }
+  /* line 2, ../sass/admin.scss */
+  #left-panel, #header, #ribbon, .order-chat, .page-footer, .do-not-print {
+    display: none;
+  }
 }
-
 @media only screen and (min-width: 600px) and (max-width: 1200px) {
-    .table td, .table th {
-        word-break: break-all;
-        padding: 2px;
-    }
-
-    .table th {
-        min-width: 20px;
-    }
-
-    .table td .form-control {
-        padding: 2px;
-        height: 20px;
-        font-size: 14px;
-    }
+  /* line 14, ../sass/admin.scss */
+  .table td, .table th {
+    word-break: break-all;
+    padding: 2px;
+  }
+  /* line 19, ../sass/admin.scss */
+  .table th {
+    min-width: 20px;
+  }
+  /* line 24, ../sass/admin.scss */
+  .table td .form-control {
+    padding: 2px;
+    height: 20px;
+    font-size: 14px;
+  }
 }
-
+/* line 35, ../sass/admin.scss */
 .footer {
-    border-top: 1px solid #ddd;
-    margin-top: 30px;
-    padding-top: 15px;
-    padding-bottom: 30px;
+  border-top: 1px solid #ddd;
+  margin-top: 30px;
+  padding-top: 15px;
+  padding-bottom: 30px;
 }
 
+/* line 42, ../sass/admin.scss */
 .jumbotron {
-    text-align: center;
-    background-color: transparent;
+  text-align: center;
+  background-color: transparent;
 }
 
+/* line 46, ../sass/admin.scss */
 .jumbotron .btn {
-    font-size: 21px;
-    padding: 14px 24px;
+  font-size: 21px;
+  padding: 14px 24px;
 }
 
 /* add sorting icons to gridview sort links */
+/* line 52, ../sass/admin.scss */
 a.asc:after, a.desc:after {
-    position: relative;
-    top: 1px;
-    display: inline-block;
-    font-family: 'Glyphicons Halflings';
-    font-style: normal;
-    font-weight: normal;
-    line-height: 1;
-    padding-left: 5px;
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  padding-left: 5px;
 }
 
+/* line 63, ../sass/admin.scss */
 a.asc:after {
-    content: "\e151";
+  content: "\e151";
 }
 
+/* line 64, ../sass/admin.scss */
 a.desc:after {
-    content: "\e152";
+  content: "\e152";
 }
 
+/* line 66, ../sass/admin.scss */
 .sort-numerical a.asc:after {
-    content: "\e153";
+  content: "\e153";
 }
 
+/* line 67, ../sass/admin.scss */
 .sort-numerical a.desc:after {
-    content: "\e154";
+  content: "\e154";
 }
 
+/* line 69, ../sass/admin.scss */
 .sort-ordinal a.asc:after {
-    content: "\e155";
+  content: "\e155";
 }
 
+/* line 70, ../sass/admin.scss */
 .sort-ordinal a.desc:after {
-    content: "\e156";
+  content: "\e156";
 }
 
+/* line 72, ../sass/admin.scss */
 #logo {
-    width: auto;
-    margin-right: 60px;
+  width: auto;
+  margin-right: 60px;
 }
 
+/* line 77, ../sass/admin.scss */
 .is_deleted .fa {
-    background-color: #d9534f;
-    color: #fff;
-    padding: 5px;
-    margin-right: 10px;
-    margin-bottom: 5px;
-    border-radius: 3px;
+  background-color: #d9534f;
+  color: #fff;
+  padding: 5px;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  border-radius: 3px;
 }
 
+/* line 86, ../sass/admin.scss */
 .order-messages-list {
-    height: 250px;
-    overflow-y: scroll;
+  height: 250px;
+  overflow-y: scroll;
 }
-
+/* line 89, ../sass/admin.scss */
 .order-messages-list .message {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
-
+/* line 92, ../sass/admin.scss */
 .order-messages-list .message-user {
-    color: darkgreen;
-    font-weight: bold;
+  color: darkgreen;
+  font-weight: bold;
 }
-
+/* line 96, ../sass/admin.scss */
 .order-messages-list .message-date {
-    color: #666;
-    font-size: 10px;
+  color: #666;
+  font-size: 10px;
 }
-
+/* line 100, ../sass/admin.scss */
 .order-messages-list .message-text {
-    border-left: 3px solid darkseagreen;
-    padding-left: 5px;
+  border-left: 3px solid darkseagreen;
+  padding-left: 5px;
 }
 
+/* line 105, ../sass/admin.scss */
 .ajax-notifications .show-more {
-    padding: 8px 0;
-    text-align: center;
+  padding: 8px 0;
+  text-align: center;
 }
-
+/* line 108, ../sass/admin.scss */
 .ajax-notifications .show-more a {
-    border-bottom: 1px dashed #428bca;
+  border-bottom: 1px dashed #428bca;
 }
 
+/* line 113, ../sass/admin.scss */
 .notification-body > li a, .notification-body > li a span {
-    display: inline;
+  display: inline;
 }
 
+/* line 117, ../sass/admin.scss */
 .redactor-toolbar, .redactor-dropdown {
-    z-index: 53 !important;
+  z-index: 53 !important;
 }
 
+/* line 128, ../sass/admin.scss */
 .select2-container-multi .select2-choices .select2-search-choice {
-    padding: 1px 28px 1px 28px;
+  padding: 1px 28px 1px 28px;
 }
 
+/* line 131, ../sass/admin.scss */
 .select2-container-multi .select2-search-choice-close {
-    background-image: none !important;
+  background-image: none !important;
 }
 
+/* line 135, ../sass/admin.scss */
 span.file-input > div.file-preview {
-    display: none;
+  display: none;
 }
 
+/* line 139, ../sass/admin.scss */
 img.image-column {
-    max-height: 80px;
-    max-width: 80px;
-    margin-right: 8px;
+  max-height: 80px;
+  max-width: 80px;
+  margin-right: 8px;
 }
 
+/* line 145, ../sass/admin.scss */
 #ribbon li {
-    max-width: 200px;
-    overflow: hidden;
-    height: 18px;
+  max-width: 200px;
+  overflow: hidden;
+  height: 18px;
 }
-
+/* line 149, ../sass/admin.scss */
 #ribbon li.active {
-    max-width: 400px;
+  max-width: 400px;
 }
 
+/* line 154, ../sass/admin.scss */
 .select2-container.form-control {
-    padding: 0px;
+  padding: 0px;
 }
 
+/* line 158, ../sass/admin.scss */
 .jarviswidget header:first-child .nav-tabs li {
-    height: 32px;
+  height: 32px;
 }
 
+/* line 162, ../sass/admin.scss */
 .widget-toolbar {
-    height: initial;
-    min-height: 32px;
+  height: initial;
+  min-height: 32px;
 }
 
+/* line 167, ../sass/admin.scss */
 div#Product-grid, div#reviews-grid {
-    font-size: 12px;
+  font-size: 12px;
 }
-
+/* line 169, ../sass/admin.scss */
 div#Product-grid .table td, div#reviews-grid .table td {
-    padding: 4px;
+  padding: 4px;
 }
-
+/* line 172, ../sass/admin.scss */
 div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
-    padding: 3px 5px 3px;
-    font-size: 10px;
+  padding: 3px 5px 3px;
+  font-size: 10px;
 }
 
+/* line 179, ../sass/admin.scss */
 .jstree {
-    font-size: 12px;
-    max-height: 100%;
-    overflow: auto;
+  font-size: 12px;
+  max-height: 100%;
+  overflow: auto;
 }
 
+/* line 185, ../sass/admin.scss */
 .jarviswidget .jstree {
-    max-height: 400px;
-    overflow: auto;
+  max-height: 400px;
+  overflow: auto;
 }
+
+/* line 190, ../sass/admin.scss */
+.tabs-left > .tab-content {
+  margin-left: 140px;
+}
+
+/*# sourceMappingURL=admin.css.map */

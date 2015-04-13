@@ -29,6 +29,9 @@ class Object extends ActiveRecord
     private static $ids_for_class_name = [];
     private static $select_array_cache = null;
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [

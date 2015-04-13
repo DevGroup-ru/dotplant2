@@ -13,7 +13,7 @@ return [
             'layout' => '@app/backend/views/layouts/main',
         ],
         'config' => [
-            'class' => 'app\modules\config',
+            'class' => 'app\modules\config\ConfigModule',
         ],
     ],
     'components' => [

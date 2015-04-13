@@ -41,7 +41,7 @@ class ConfigurableModuleBehavior extends Behavior
     /**
      * Preloads configuration values from php files that stores php array
      */
-    private function preloadConfigValues()
+    public function preloadConfigValues()
     {
         if ($this->configValues === null) {
             $ownerName = StringHelper::basename(get_class($this->owner));
