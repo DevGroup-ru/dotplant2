@@ -15,5 +15,7 @@ foreach ($images as $image) {
     if ($thumbnailOnDemand === true) {
         $image_src = Helper::thumbnailOnDemand($image_src, $thumbnailWidth, $thumbnailHeight);
     }
-    echo Html::img($image_src, ['alt' => $image->image_description, 'itemprop' => "image"]);
+    echo Html::beginTag('div', ['itemscope' => '', 'itemtype' => 'http://schema.org/ImageObject']);
+    echo Html::img($image_src, ['alt' => $image->image_description, 'itemprop' => "contentUrl"]);
+    echo Html::endTag('div');
 }

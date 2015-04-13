@@ -58,12 +58,9 @@ class ObjectImageWidget extends Widget
                 ]
             );
         $result = Yii::$app->cache->get($cacheKey);
-        VarDumper::dump($this->model->getImages()->limit(0));
         if ($result === false) {
-
-
             if ($this->offset > 0 || !is_null($this->limit)) {
-                $images = $this->model->getImages()->limit($this->limit)->offset($this->offset);
+                $images = $this->model->getImages()->limit($this->limit)->offset($this->offset)->all();
             } else {
                 $images = $this->model->images;
             }
