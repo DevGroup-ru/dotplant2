@@ -3,9 +3,7 @@
 namespace app\models;
 
 use Yii;
-use yii\helpers\VarDumper;
 use yii\imagine\Image as Imagine;
-use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "thumbnail".
@@ -84,9 +82,8 @@ class Thumbnail extends \yii\db\ActiveRecord
     public static function createThumbnail($image, $size)
     {
         $thumb = Imagine::thumbnail('@webroot' . $image->image_src, $size->width, $size->height);
-        $path = Config::getValue('thumbnailPath', '/theme/resources/product-images/thumbnail');
+        $path = Config::getValue('image.thumbDir', '/theme/resources/product-images/thumbnail');
         $file_info = pathinfo($image->image_src);
-
         $src = "$path/{$file_info['filename']}-{$size->width}x{$size->height}.{$file_info['extension']}";
         $thumb->save(Yii::getAlias('@webroot') . $src);
         return $src;

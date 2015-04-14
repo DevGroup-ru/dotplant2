@@ -178,6 +178,7 @@ class Image extends \yii\db\ActiveRecord
                             $image_model->image_src = $new['image_src'];
                         }
                         try {
+                            //@todo rewrite
                             $image_model->thumbnail_src = $dir . ImageDropzone::saveThumbnail('@webroot' . $dir,
                                     $image_model->filename);
                         } catch (\Exception $e) {

@@ -41,6 +41,7 @@ class AdminController extends Controller
                 80,
                 ManipulatorInterface::THUMBNAIL_INSET
             );
+            //@todo rewrite
             $img->save(\Yii::getAlias($dir . 'small-' . $image->filename));
             if ($updateThumbnailSrc) {
                 $image->thumbnail_src = mb_substr($image->image_src, 0, mb_strrpos($image->image_src, '/')) . '/small-' . $image->filename;

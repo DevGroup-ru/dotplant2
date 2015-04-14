@@ -107,6 +107,7 @@ class ImageDropzone extends DropZone
         $path = Yii::getAlias('@webroot' . $this->uploadDir);
 
         /** Image $file */
+        //@todo rewrite
         foreach ($files as $file) {
             if (!isset($file->thumbnail_src) || !trim($file->thumbnail_src)) {
                 $file->thumbnail_src = Yii::getAlias(

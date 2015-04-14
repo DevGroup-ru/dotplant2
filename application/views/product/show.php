@@ -27,6 +27,9 @@ $images = Image::getForModel($model->object->id, $model->id);
 ?>
 <div class="row" itemscope itemtype="http://schema.org/Product">
     <div id="gallery" class="span3">
+        <?php
+        //@todo rewrite to img widget
+        ?>
         <?php if (count($images) > 0): ?>
             <a href="<?=$images[0]->image_src?>">
                 <img src="<?=$images[0]->thumbnail_src?>" alt="<?=$images[0]->image_description?>" />

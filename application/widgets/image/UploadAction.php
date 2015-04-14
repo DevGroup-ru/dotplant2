@@ -23,7 +23,7 @@ class UploadAction extends \devgroup\dropzone\UploadAction
     {
         ImageDropzone::saveThumbnail($this->uploadDir . '/', $data['filename'], $this->thumbnail_width, $this->thumbnail_height);
 
-
+        //@todo rewrite
         $image = new Image([
             'object_id' => $data['params']['objectId'],
             'object_model_id' => $data['params']['modelId'],

@@ -370,6 +370,7 @@ class ProductController extends Controller
                         $add
                     )->execute();
                 }
+                //@todo rewrite width('images')
                 $query = new Query();
                 $params = $query->select(
                     ['object_id', 'filename', 'image_src', 'thumbnail_src', 'image_description', 'sort_order']

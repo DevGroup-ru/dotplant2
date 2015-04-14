@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\data\ActiveDataProvider;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "thumbnail_size".
@@ -11,7 +13,7 @@ use Yii;
  * @property integer $width
  * @property integer $height
  */
-class ThumbnailSize extends \yii\db\ActiveRecord
+class ThumbnailSize extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -42,5 +44,31 @@ class ThumbnailSize extends \yii\db\ActiveRecord
             'width' => Yii::t('app', 'Width'),
             'height' => Yii::t('app', 'Height'),
         ];
+    }
+
+    /**
+     * Search tasks
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function search($params)
+    {
+        /** @var $query \yii\db\ActiveQuery */
+        $query = self::find();
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]
+        );
+        if (!($this->load($params))) {
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['width' => $this->id]);
+        $query->andFilterWhere(['height' => $this->id]);
+        return $dataProvider;
     }
 }
