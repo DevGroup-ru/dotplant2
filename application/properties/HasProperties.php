@@ -7,6 +7,7 @@ use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;
 use app\models\Property;
 use app\models\PropertyGroup;
+use app\models\PropertyHandler;
 use app\models\PropertyStaticValues;
 use Yii;
 use yii\base\Behavior;
@@ -82,7 +83,7 @@ class HasProperties extends Behavior
                     $values = $this->getPropertyValues($p);
                     $this->properties[$group->id][$p->key] = $values;
                     $values_for_abstract[$p->key] = $values;
-                    $properties_models[] = $p;
+                    $properties_models[$p->key] = $p;
                     $this->property_key_to_id[$p->key] = $p->id;
                     if (!isset($this->property_id_to_group_id[$group->id])) {
                         $this->property_id_to_group_id[$group->id] = [$p->key];
@@ -101,7 +102,7 @@ class HasProperties extends Behavior
                     }
                 }
             }
-            $this->abstract_model = new AbstractModel();
+            $this->abstract_model = new AbstractModel([], $this->owner);
             $this->abstract_model->setPropertiesModels($properties_models);
             $this->abstract_model->setAttributes($values_for_abstract);
             $this->abstract_model->setFormName('Properties_' . $this->owner->formName()  .'_' . $this->owner->id);
@@ -112,26 +113,23 @@ class HasProperties extends Behavior
 
     public function saveProperties($data)
     {
+        $form = $this->owner->formName();
+        $formProperties = 'Properties_'.$form.'_'.$this->owner->id;
+
         $this->getPropertyGroups();
-        $should_update = false;
-        if (isset($data['AddPropetryGroup'])) {
-            if (isset($data['AddPropetryGroup'][$this->owner->formName()])) {
-                $groups_to_add = (array) $data['AddPropetryGroup'][$this->owner->formName()];
-                foreach ($groups_to_add as $group_id) {
-                    $model = new ObjectPropertyGroup();
-                    $model->object_id = $this->getObject()->id;
-                    $model->object_model_id = $this->owner->id;
-                    $model->property_group_id = $group_id;
-                    $model->save();
-                }
-                $should_update = true;
+        if (isset($data['AddPropetryGroup']) && isset($data['AddPropetryGroup'][$form])) {
+            $groups_to_add = is_array($data['AddPropetryGroup'][$form]) ? $data['AddPropetryGroup'][$form] : [$data['AddPropetryGroup'][$form]];
+            foreach ($groups_to_add as $group_id) {
+                $model = new ObjectPropertyGroup();
+                $model->object_id = $this->getObject()->id;
+                $model->object_model_id = $this->owner->id;
+                $model->property_group_id = $group_id;
+                $model->save();
             }
-        }
-        if ($should_update) {
             $this->updatePropertyGroupsInformation();
         }
-        if (isset($data['Properties_'.$this->owner->formName().'_'.$this->owner->id])) {
-            $my_data = $data['Properties_'.$this->owner->formName().'_'.$this->owner->id];
+        if (isset($data[$formProperties])) {
+            $my_data = $data[$formProperties];
 
             if (isset($data['AddProperty'])) {
                 // admin clicked add property button for multiple properties
@@ -139,14 +137,27 @@ class HasProperties extends Behavior
                     $my_data[$data['AddProperty']] = [];
                 }
                 $my_data[$data['AddProperty']][] = '';
-
             }
+
+            $propertiesModels = $this->abstract_model->getPropertiesModels();
+
             $new_values_for_abstract = [];
             foreach ($my_data as $property_key => $values) {
                 if (isset($this->property_key_to_id[$property_key])) {
                     $vals = [];
                     $property_id = $this->property_key_to_id[$property_key];
-                    $values = (array) $values;
+                    $values = is_array($values) ? $values : [$values];
+
+                    if (isset($propertiesModels[$property_key])) {
+                        $_property = $propertiesModels[$property_key];
+                        $propertyHandler = PropertyHandlers::getHandlerById($_property->property_handler_id);
+                        if (null === $propertyHandler) {
+                            $propertyHandler = PropertyHandlers::createHandler($_property->handler);
+                        }
+
+                        $values = $propertyHandler->processValues($_property, $formProperties, $values);
+                    }
+
                     foreach ($values as $val) {
                         $vals[] = ['value' => $val, 'property_id' => $property_id];
                     }
@@ -160,6 +171,7 @@ class HasProperties extends Behavior
                     $new_values_for_abstract[$property_key] = $val;
                 }
             }
+
             $this->abstract_model->updateValues($new_values_for_abstract, $this->getObject()->id, $this->owner->id);
         }
     }

@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\properties\PropertyHandlers;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
@@ -160,9 +161,20 @@ class Property extends ActiveRecord
         return $dataProvider;
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getGroup()
     {
         return $this->hasOne(PropertyGroup::className(), ['id' => 'property_group_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getHandler()
+    {
+        return $this->hasOne(PropertyHandler::className(), ['id' => 'property_handler_id']);
     }
 
     /**
@@ -235,28 +247,31 @@ class Property extends ActiveRecord
         return $properties;
     }
 
-    public function handler($form, $model, $values, $render_type = 'frontend_render_view')
+    /**
+     * @param $form
+     * @param $model
+     * @param $values
+     * @param string $renderType
+     * @return string
+     */
+    public function handler($form, $model, $values, $renderType = 'frontend_render_view')
     {
-        $propertyHandler = PropertyHandler::findById($this->property_handler_id);
-        $className = $propertyHandler->handler_class_name;
-        return $className::widget(
-            [
-                'values' => $values,
-                'form' => $form,
-                'render_type' => $render_type,
-                'label' => $this->name,
-                'model' => $model,
-                'property_key' => $this->key,
-                'property_id' => $this->id,
-                'frontend_render_view' => $propertyHandler->frontend_render_view,
-                'frontend_edit_view' => $propertyHandler->frontend_edit_view,
-                'backend_render_view' => $propertyHandler->backend_render_view,
-                'backend_edit_view' => $propertyHandler->backend_edit_view,
-                'multiple' => $this->multiple,
-            ]
-        );
+        $handler = $this->handler;
+        if (null === $handler) {
+            return '';
+        }
+
+        $handler = PropertyHandlers::createHandler($handler);
+        if (null === $handler) {
+            return '';
+        }
+
+        return $handler->render($this, $model, $values, $form, $renderType);
     }
 
+    /**
+     *
+     */
     public function afterFind()
     {
         parent::afterFind();
@@ -272,7 +287,7 @@ class Property extends ActiveRecord
             && is_array($this->handlerAdditionalParams['rules'])) {
             foreach ($this->handlerAdditionalParams['rules'] as $rule) {
                 if (is_array($rule)) {
-                    if (in_array('captcha', $rule)) {
+                    if (in_array('captcha', $rule, true)) {
                         $this->captcha = true;
                     }
                 } else {
@@ -286,60 +301,48 @@ class Property extends ActiveRecord
         }
     }
 
+    /**
+     * @param bool $insert
+     * @return bool
+     */
     public function beforeSave($insert)
     {
         if (!parent::beforeSave($insert)) {
             return false;
         }
+
         $handlerAdditionalParams = [];
-        if ($this->required == 1) {
-            $handlerAdditionalParams = ArrayHelper::merge(
-                $handlerAdditionalParams,
-                [
-                    'rules' => [
-                        'required',
-                    ],
-                ]
-            );
+        $handlerRules = [];
+
+        if (1 === intval($this->required)) {
+            $handlerRules[] = 'required';
         }
-        $fileHandler = PropertyHandler::find()->where(['name' => 'File'])->one();
-        if(is_object($fileHandler)){
-            if($this->property_handler_id == $fileHandler->id){
-                $handlerAdditionalParams = ArrayHelper::merge(
-                    $handlerAdditionalParams,
-                    [
-                        'rules' => [
-                            'file',
-                        ],
-                    ]
-                );
+
+        if (PropertyHandler::findByName('File') === intval($this->property_handler_id)) {
+            if (1 === intval($this->multiple)) {
+                $handlerRules[] = ['file', 'maxFiles' => 0];
+            } else {
+                $handlerRules[] = ['file', 'maxFiles' => 1];
             }
         }
-        $handlerAdditionalParams = ArrayHelper::merge(
-            $handlerAdditionalParams,
-            [
-                'interpret_as' => $this->interpret_as,
-                'as_yml_field' => $this->as_yml_field,
-            ]
-        );
-        if ($this->captcha == 1) {
-            $handlerAdditionalParams = ArrayHelper::merge(
-                $handlerAdditionalParams,
-                [
-                    'rules' => [
-                        [
-                            'captcha',
-                            'captchaAction' => '/default/captcha',
-                        ],
-                    ],
-                ]
-            );
+
+        if (1 === intval($this->captcha)) {
+            $handlerRules[] = ['captcha', 'captchaAction' => '/default/captcha'];
         }
+
+        $handlerAdditionalParams['interpret_as'] = $this->interpret_as;
+        $handlerAdditionalParams['as_yml_field'] = $this->as_yml_field;
+
+        $handlerAdditionalParams['rules'] = $handlerRules;
+
         $this->handlerAdditionalParams = $handlerAdditionalParams;
         $this->handler_additional_params = Json::encode($handlerAdditionalParams);
         return true;
     }
 
+    /**
+     *
+     */
     public function invalidateModelCache()
     {
         TagDependency::invalidate(
@@ -351,12 +354,19 @@ class Property extends ActiveRecord
         );
     }
 
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     */
     public function afterSave($insert, $changedAttributes)
     {
         $this->invalidateModelCache();
         parent::afterSave($insert, $changedAttributes);
     }
 
+    /**
+     * @return bool
+     */
     public function beforeDelete()
     {
         $this->invalidateModelCache();
@@ -393,4 +403,19 @@ class Property extends ActiveRecord
         }
         parent::afterDelete();
     }
+
+    /**
+     * @param $name
+     * @return null|mixed
+     */
+    public function getAdditionalParam($name)
+    {
+        if (isset($this->handlerAdditionalParams[$name])) {
+            return $this->handlerAdditionalParams[$name];
+        }
+
+        return null;
+    }
 }
+
+?>
