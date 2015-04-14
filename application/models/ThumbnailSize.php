@@ -27,8 +27,8 @@ class ThumbnailSize extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'width', 'height'], 'required'],
-            [['id', 'width', 'height'], 'integer']
+            [['width', 'height'], 'required'],
+            [['width', 'height'], 'integer']
         ];
     }
 

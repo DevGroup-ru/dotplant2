@@ -28,8 +28,8 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'thumb_id', 'water_id', 'src'], 'required'],
-            [['id', 'thumb_id', 'water_id'], 'integer'],
+            [['thumb_id', 'water_id', 'src'], 'required'],
+            [['thumb_id', 'water_id'], 'integer'],
             [['src'], 'string', 'max' => 255]
         ];
     }

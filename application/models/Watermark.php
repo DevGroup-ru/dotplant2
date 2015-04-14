@@ -26,8 +26,7 @@ class Watermark extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'watermark_src'], 'required'],
-            [['id'], 'integer'],
+            [['watermark_src'], 'required'],
             [['watermark_src'], 'string', 'max' => 255]
         ];
     }
