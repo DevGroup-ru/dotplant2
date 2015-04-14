@@ -21,6 +21,9 @@ class ReviewsWidget extends Widget
 
     public $useCaptcha = false;
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
         if ($this->registerCanonical === true) {

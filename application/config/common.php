@@ -12,21 +12,14 @@ return [
             'class' => 'app\data\Module',
             'layout' => '@app/backend/views/layouts/main',
         ],
+        'config' => [
+            'class' => 'app\modules\config\ConfigModule',
+        ],
     ],
     'components' => [
         'db' => $db,
         'formatter' => [
             'class' => 'app\components\Formatter',
-        ],
-        'i18n' => [
-            'translations' => [
-                'shop' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    'fileMap' => [
-                        'shop' => 'shop.php',
-                    ],
-                ],
-            ],
         ],
     ],
     'params' => $params,

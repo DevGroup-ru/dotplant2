@@ -61,6 +61,26 @@ $config = [
             'class' => 'yii\test\DbFixtureManager',
             'basePath' => '@tests/unit/fixtures',
         ],
+        'urlManager' => [
+            'baseUrl' => '/',
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                'login/<service:google_oauth|facebook|etc>' => 'default/login',
+                'login' => 'default/login',
+                'logout' => 'default/logout',
+                'signup' => 'default/signup',
+                'cart/payment-result/<id:.+>' => 'cart/payment-result',
+                'search' => 'default/search',
+                'robots.txt' => 'seo/manage/get-robots',
+                [
+                    'class' => 'app\components\PageRule',
+                ],
+                [
+                    'class' => 'app\components\ObjectRule',
+                ],
+            ],
+        ],
     ]
 ];
 
@@ -68,11 +88,20 @@ return ArrayHelper::merge(
     file_exists(__DIR__ . '/common.php') ? require(__DIR__ . '/common.php') : [],
     $config,
     file_exists(__DIR__ . '/../web/theme/module/config/common.php') ?
-    require(__DIR__ . '/../web/theme/module/config/common.php') :
-    [],
+        require(__DIR__ . '/../web/theme/module/config/common.php') :
+        [],
+
+    file_exists(__DIR__ . '/common-configurables.php')
+        ? require(__DIR__ . '/common-configurables.php')
+        : [],
+
     file_exists(__DIR__ . '/../web/theme/module/config/console.php') ?
-    require(__DIR__ . '/../web/theme/module/config/console.php') :
-    [],
+        require(__DIR__ . '/../web/theme/module/config/console.php') :
+        [],
+
+    file_exists(__DIR__ . '/console-configurables.php')
+        ? require(__DIR__ . '/console-configurables.php')
+        : [],
     file_exists(__DIR__ . '/common-local.php') ? require(__DIR__ . '/common-local.php') : [],
     file_exists(__DIR__ . '/console-local.php') ? require(__DIR__ . '/console-local.php') : []
 );

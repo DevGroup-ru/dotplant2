@@ -13,7 +13,7 @@ use app\models\OrderTransaction;
 use app\models\PaymentType;
 use app\models\Product;
 use app\models\ShippingOption;
-use app\models\User;
+use app\modules\user\models\User;
 use kartik\helpers\Html;
 use Yii;
 use yii\caching\TagDependency;
@@ -241,6 +241,7 @@ class OrderController extends Controller
         if (!isset($_POST['Order']['manager_id'])) {
             throw new BadRequestHttpException;
         }
+        /** @var \app\modules\user\models\User|null $user */
         $user = User::findOne($_POST['Order']['manager_id']);
         if (is_null($user) || !Yii::$app->authManager->checkAccess($user->id, 'order manage')) {
             throw new BadRequestHttpException;
@@ -263,8 +264,8 @@ class OrderController extends Controller
                         'app',
                         'Manager has been changed from {oldManagerName} to {newManagerName}. Order #{orderId}',
                         [
-                            'oldManagerName' => $oldManager->getAwesomeUsername(),
-                            'newManagerName' => $user->getAwesomeUsername(),
+                            'oldManagerName' => $oldManager->getDisplayName(),
+                            'newManagerName' => $user->getDisplayName(),
                             'orderId' => $order->id,
                         ]
                     );
@@ -286,7 +287,7 @@ class OrderController extends Controller
                         'app',
                         'Manager has been changed to {newManagerName}. Order #{orderId}',
                         [
-                            'newManagerName' => $user->getAwesomeUsername(),
+                            'newManagerName' => $user->getDisplayName(),
                             'orderId' => $order->id,
                         ]
                     );

@@ -14,6 +14,10 @@ $config = [
     ],
     'defaultRoute' => 'default',
     'modules' => [
+        'user' => [
+            'class' => 'app\modules\user\UserModule',
+            'loginSessionDuration' => 2592000,
+        ],
         'backend' => [
             'class' => 'app\backend\BackendModule',
             'layout' => '@app/backend/views/layouts/main',
@@ -49,12 +53,16 @@ $config = [
                         '{dynagrid}',
                         '{toggleData}',
                         //'{export}',
-                    ]
-                ]
+                    ],
+                    'export' => false,
+
+                ],
             ],
+
         ],
         'gridview' =>  [
-            'class' => '\kartik\grid\Module'
+            'class' => '\kartik\grid\Module',
+
         ],
     ],
     'components' => [
@@ -72,10 +80,10 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'login/<service:google_oauth|facebook|etc>' => 'default/login',
-                'login' => 'default/login',
-                'logout' => 'default/logout',
-                'signup' => 'default/signup',
+                'login/<service:google_oauth|facebook|etc>' => 'user/user/login',
+                'login' => 'user/user/login',
+                'logout' => 'user/user/logout',
+                'signup' => 'user/user/signup',
                 'cart/payment-result/<id:.+>' => 'cart/payment-result',
                 'search' => 'default/search',
                 'robots.txt' => 'seo/manage/get-robots',
@@ -89,21 +97,12 @@ $config = [
         ],
         'assetManager' => [
             'class' => 'yii\web\AssetManager',
-            'bundles' => [
-                'yii\web\JqueryAsset' => [
-                    'sourcePath' => null,
-                    'jsOptions' => [
-                        'position' => \yii\web\View::POS_HEAD,
-                    ],
-                    'js' => [
-                        '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js',
-                    ]
-                ],
-            ],
+            'bundles' => require(__DIR__ . '/' . (YII_ENV_PROD ? 'assets-prod.php' : 'assets-dev.php')),
+            'linkAssets' => YII_ENV_DEV,
         ],
         'user' => [
             'class' => '\yii\web\User',
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\modules\user\models\User',
             'enableAutoLogin' => true,
             'loginUrl' => ['/login'],
         ],
@@ -176,11 +175,22 @@ $allConfig = ArrayHelper::merge(
     file_exists(__DIR__ . '/common.php') ? require(__DIR__ . '/common.php') : [],
     $config,
     file_exists(__DIR__ . '/../web/theme/module/config/common.php')
-    ? require(__DIR__ . '/../web/theme/module/config/common.php')
-    : [],
+        ? require(__DIR__ . '/../web/theme/module/config/common.php')
+        : [],
+
+    file_exists(__DIR__ . '/common-configurables.php')
+        ? require(__DIR__ . '/common-configurables.php')
+        : [],
+
     file_exists(__DIR__ . '/../web/theme/module/config/web.php')
-    ? require(__DIR__ . '/../web/theme/module/config/web.php')
-    : [],
+        ? require(__DIR__ . '/../web/theme/module/config/web.php')
+        : [],
+
+    file_exists(__DIR__ . '/web-configurables.php')
+        ? require(__DIR__ . '/web-configurables.php')
+        : [],
+
+
     file_exists(__DIR__ . '/common-local.php') ? require(__DIR__ . '/common-local.php') : [],
     file_exists(__DIR__ . '/web-local.php') ? require(__DIR__ . '/web-local.php') : []
 );
@@ -191,9 +201,6 @@ if (YII_ENV_DEV) {
     $allConfig['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         'panels' => [
-            'holmes' => [
-                'class' => 'app\panels\holmes\HolmesPanel',
-            ],
         ],
     ];
     $allConfig['modules']['gii'] = 'yii\gii\Module';

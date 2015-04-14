@@ -316,6 +316,13 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         );
     }
 
+    public function getImage()
+    {
+        $result = $this->hasOne(Image::className(), ['object_model_id' => 'id']);
+        $object = Object::getForClass($this->className());
+        return $result->andWhere(['object_id' => $object->id]);
+    }
+
     /**
      * Returns remains of this product in all active warehouses.
      * Note that if warehouse was added after product edit - it will not be shown here.
@@ -984,6 +991,4 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $currency = Currency::findById($this->currency_id);
         return $this->formattedPrice($currency, $oldPrice, $schemaOrg);
     }
-
-
 }

@@ -116,36 +116,40 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
-<script type="text/javascript">
-    $(function(){
-        $('#show-tree').on('click', function(){
-                $('#jstree').jstree({
-                    'plugins': ['wholerow', 'types'],
-                    'core': {
-                        'check_callback': true,
-                        'data': {
-                            'url': function (node) {
-                                return '<?= Url::toRoute('get-views');?>';
-                            },
-                            'data': function (node) {
-                                return {'id': node.id};
-                            }
-                        }
-                    },
-                    'types': {
-                        'dir': {'icon': 'fa fa-folder-open-o'},
-                        'file': {'icon': 'fa fa-folder-file-o'}
-                    }
-                });
-            $('#modal-jstree').modal('show');
-        });
+<?php
+$getViewsRoute = \yii\helpers\Json::encode(Url::toRoute('get-views'));
+$js = <<<JS
+    "use strict";
 
-        $('#modal-apply').on('click', function(){
-            var sel = $('#jstree').jstree(true).get_selected(true);
-            if (typeof sel[0].a_attr['data-file'] !== 'undefined') {
-                $('#view-view').val(sel[0].a_attr['data-file']);
-                $('#modal-jstree').modal('hide');
-            }
-        });
+    $('#show-tree').on('click', function(){
+            $('#jstree').jstree({
+                'plugins': ['wholerow', 'types'],
+                'core': {
+                    'check_callback': true,
+                    'data': {
+                        'url': function (node) {
+                            return $getViewsRoute;
+                        },
+                        'data': function (node) {
+                            return {'id': node.id};
+                        }
+                    }
+                },
+                'types': {
+                    'dir': {'icon': 'fa fa-folder-open-o'},
+                    'file': {'icon': 'fa fa-folder-file-o'}
+                }
+            });
+        $('#modal-jstree').modal('show');
     });
-</script>
+
+    $('#modal-apply').on('click', function(){
+        var sel = $('#jstree').jstree(true).get_selected(true);
+        if (typeof sel[0].a_attr['data-file'] !== 'undefined') {
+            $('#view-view').val(sel[0].a_attr['data-file']);
+            $('#modal-jstree').modal('hide');
+        }
+    });
+JS;
+
+$this->registerJs($js);

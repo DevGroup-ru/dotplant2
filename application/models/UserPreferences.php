@@ -75,7 +75,7 @@ class UserPreferences extends Model {
             $model->validate();
 
             $attributes = Yii::$app->session->get('UserPreferencesModel');
-            if (isset($attributes)) {
+            if (isset($attributes) === true) {
                 $model->setAttributes($attributes);
             }
             static::$_cachedPreferences = $model;
@@ -83,6 +83,9 @@ class UserPreferences extends Model {
         return static::$_cachedPreferences;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function attributeLabels()
     {
         return [

@@ -5,7 +5,7 @@ namespace app\controllers;
 use app\models\Order;
 use app\models\Property;
 use app\models\PropertyGroup;
-use app\models\User;
+use app\modules\user\models\User;
 use app\properties\HasProperties;
 use Yii;
 use yii\base\Security;
@@ -98,66 +98,5 @@ class CabinetController extends Controller
         );
     }
 
-    public function actionProfile()
-    {
-        /** @var User|HasProperties $model */
-        $model = User::findOne(Yii::$app->user->id);
-        $model->scenario = 'updateProfile';
-        $model->abstractModel->setAttrubutesValues(Yii::$app->request->post());
-        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->abstractModel->validate()) {
-            if ($model->save()) {
-                $model->getPropertyGroups(true);
-                $model->saveProperties(Yii::$app->request->post());
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Your profile has been updated'));
-                $this->refresh();
-            } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Internal error'));
-            }
-        }
-        $propertyGroups = PropertyGroup::getForModel($model->getObject()->id, $model->id);
-        $properties = [];
-        foreach ($propertyGroups as $propertyGroup) {
-            $properties[$propertyGroup->id] = [
-                'group' => $propertyGroup,
-                'properties' => Property::getForGroupId($propertyGroup->id),
-            ];
-        }
-        unset($propertyGroups);
-        return $this->render(
-            'profile',
-            [
-                'model' => $model,
-                'propertyGroups' => $properties,
-                'services' => ArrayHelper::map($model->services, 'id', 'service_type'),
-            ]
-        );
-    }
 
-    public function actionChangePassword()
-    {
-        $model = User::findOne(Yii::$app->user->id);
-        if (is_null($model)) {
-            throw new NotFoundHttpException;
-        }
-        $model->scenario = 'changePassword';
-        if (Yii::$app->request->isPost) {
-            $model->load(Yii::$app->request->post());
-            $formIsValid = $model->validate();
-            $passwordIsValid = $model->validatePassword($model->password);
-            if (!$passwordIsValid) {
-                $model->addError('password', Yii::t('app', 'Wrong password'));
-            }
-            if ($formIsValid && $passwordIsValid) {
-                $security = new Security;
-                $model->password_hash = $security->generatePasswordHash($model->newPassword);
-                if ($model->save(true, ['password_hash'])) {
-                    Yii::$app->session->setFlash('success', Yii::t('app', 'Password has been changed'));
-                    $this->refresh();
-                } else {
-                    Yii::$app->session->setFlash('error', Yii::t('app', 'Internal error'));
-                }
-            }
-        }
-        return $this->render('change-password', ['model' => $model]);
-    }
 }

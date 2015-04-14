@@ -16,6 +16,7 @@ use app\widgets\image\RemoveAction;
 use app\widgets\image\SaveInfoAction;
 use app\widgets\image\UploadAction;
 use app\backend\actions\UpdateEditable;
+use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use vova07\imperavi\actions\GetAction;
 use Yii;
 use yii\db\Query;
@@ -48,10 +49,9 @@ class ProductController extends Controller
     {
         return [
             'getTree' => [
-                'class' => 'app\backend\actions\JSTreeGetTrees',
-                'modelName' => 'app\models\Category',
-                'label_attribute' => 'name',
-                'vary_by_type_attribute' => null,
+                'class' => AdjacencyFullTreeDataAction::className(),
+                'class_name' => Category::className(),
+                'model_label_attribute' => 'name',
             ],
             'getCatTree' => [
                 'class' => 'app\backend\actions\JSSelectableTreeGetTree',
@@ -146,6 +146,10 @@ class ProductController extends Controller
         if (null === $id) {
             $model = new Product();
             $model->loadDefaultValues();
+            $parent_id = Yii::$app->request->get('owner_id');
+            if (null !== Product::findById($parent_id)) {
+                $model->parent_id = $parent_id;
+            }
         } else {
             $model = Product::findById($id, null, null);
             if ((null !== $model) && ($model->parent_id > 0)) {

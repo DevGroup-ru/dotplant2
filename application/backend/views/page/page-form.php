@@ -1,9 +1,9 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
+use app\backend\components\ActiveForm;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
 use kartik\widgets\DateTimePicker;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\helpers\Url;
@@ -100,7 +100,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ?>
 
             <?=
-            $form->field($model, 'title')
+            $form->field($model, 'title',
+                [
+                    'copyFrom'=>[
+                        "#page-name",
+                        "#page-h1",
+                        '#page-breadcrumbs_label',
+                    ]
+                ]
+            )
             ?>
 
             <?=
@@ -248,14 +256,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 $model,
                 'slug',
                 [
-                    'addon' => [
-                        'append' => [
-                            'content' => Html::button(
-                                Icon::show('code'),
-                                ['class' => 'btn btn-primary', 'id' => 'translit-slug']
-                            ),
-                            'asButton' => true,
-                        ]
+                    'makeSlug'=>[
+                        "#page-title",
+                        "#page-h1",
+                        "#page-breadcrumbs_label"
                     ]
                 ]
             )
@@ -270,14 +274,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 $model,
                 'h1',
                 [
-                    'addon' => [
-                        'append' => [
-                            'content' => Html::button(
-                                Icon::show('copy'),
-                                ['class' => 'btn btn-primary', 'id' => 'copy-h1']
-                            ),
-                            'asButton' => true,
-                        ]
+                    'copyFrom'=>[
+                        "#page-title",
+                        "#page-breadcrumbs_label",
                     ]
                 ]
             )
@@ -288,14 +287,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 $model,
                 'breadcrumbs_label',
                 [
-                    'addon' => [
-                        'append' => [
-                            'content' => Html::button(
-                                Icon::show('copy'),
-                                ['class' => 'btn btn-primary', 'id' => 'copy-breadcrumbs_label']
-                            ),
-                            'asButton' => true,
-                        ]
+                    'copyFrom'=>[
+                        "#page-title",
+                        "#page-h1",
                     ]
                 ]
             )
@@ -320,45 +314,3 @@ $this->params['breadcrumbs'][] = $this->title;
 </section>
 
 <?php ActiveForm::end(); ?>
-<script>
-    $(function () {
-        $("#translit-slug").click(function () {
-            Admin.makeSlug(
-                [
-
-                    "#page-title",
-                    "#page-h1",
-                    "#page-breadcrumbs_label"
-                ],
-                "#page-slug"
-            );
-            return false;
-        });
-
-
-        $("#copy-h1").click(function () {
-            Admin.copyFrom(
-                [
-
-                    "#page-title",
-                    "#page-breadcrumbs_label"
-                ],
-                "#page-h1"
-            );
-            return false;
-        });
-
-
-        $("#copy-breadcrumbs_label").click(function () {
-            Admin.copyFrom(
-                [
-
-                    "#page-title",
-                    "#page-h1"
-                ],
-                "#page-breadcrumbs_label"
-            );
-            return false;
-        });
-    });
-</script>
