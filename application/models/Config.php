@@ -22,6 +22,7 @@ use yii\db\ActiveRecord;
 class Config extends ActiveRecord
 {
     private static $config;
+    private static $sessionConfig = [];
 
     public function behaviors()
     {
@@ -118,6 +119,10 @@ class Config extends ActiveRecord
      */
     public static function getValue($path, $defaultValue = null)
     {
+        if (isset(static::$sessionConfig[$path])) {
+            return static::$sessionConfig[$path];
+        }
+
         $config = self::getConfig();
         if (isset($config[$path])) {
             return $config[$path];
@@ -146,6 +151,15 @@ class Config extends ActiveRecord
         }
         self::$config[$path] = $value;
         return $value;
+    }
+
+    /**
+     * @param $path
+     * @param $value
+     */
+    static public function setSessionValue($path, $value)
+    {
+        static::$sessionConfig[$path] = $value;
     }
 
     /**
