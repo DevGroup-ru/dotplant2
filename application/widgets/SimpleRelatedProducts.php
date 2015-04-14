@@ -43,10 +43,24 @@ class SimpleRelatedProducts extends Widget
      * @var null|integer Category ID related products should match(ie. parent category of current product)
      */
     public $selected_category_id = null;
+    public $category_group_id = null;
 
     public $viewFile = null;
 
     public $itemView = null;
+
+    public function init()
+    {
+        parent::init();
+
+        if (null === $this->model) {
+            throw new InvalidConfigException("SimpleRelatedProducts widget requires model instance to be passed.");
+        }
+
+        if (null === $this->category_group_id) {
+            $this->category_group_id = $this->model->getMainCategory()->category_group_id;
+        }
+    }
 
     /**
      * @inheritdoc
@@ -56,9 +70,6 @@ class SimpleRelatedProducts extends Widget
     {
         parent::run();
 
-        if (null === $this->model) {
-            throw new InvalidConfigException("SimpleRelatedProducts widget requires model instance to be passed.");
-        }
 
         $additional_filters = [
             function(&$query, &$cacheKeyAppend)
@@ -68,7 +79,7 @@ class SimpleRelatedProducts extends Widget
         ];
 
         $params = [
-            'category_group_id' => $this->model->getMainCategory()->category_group_id,
+            'category_group_id' => $this->category_group_id,
             'selected_category_id' => $this->selected_category_id,
             'limit' => $this->limit,
             'force_limit' => true,
