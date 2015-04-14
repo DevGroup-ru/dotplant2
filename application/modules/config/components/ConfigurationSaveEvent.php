@@ -15,4 +15,8 @@ class ConfigurationSaveEvent extends Event
      * @var bool Whether to continue handling saving configuration
      */
     public $isValid = true;
+
+    public $configurable = null;
+
+    public $configurableModel = null;
 }

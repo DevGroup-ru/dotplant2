@@ -7,10 +7,10 @@ use app\modules\config\models\BaseConfigurableModel;
 use Yii;
 
 /**
- * Class ConfigurableModel represents configuration model for retrieving user input in backend configuration subsystem.
+ * Class ConfigConfigurableModel represents configuration model for retrieving user input in backend configuration subsystem.
  * @package app\modules\user\models
  */
-class ConfigurableModel extends BaseConfigurableModel
+class ConfigConfigurableModel extends BaseConfigurableModel
 {
     /**
      * Duration of login session for users in seconds.
@@ -97,5 +97,13 @@ class ConfigurableModel extends BaseConfigurableModel
     public function keyValueAttributes()
     {
         return [];
+    }
+
+    public function init()
+    {
+        parent::init();
+        Yii::$app->on(self::configurationSaveEvent(), function($event) {
+
+        });
     }
 }
