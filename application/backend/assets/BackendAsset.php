@@ -34,8 +34,8 @@ class BackendAsset extends AssetBundle
         'http://st-2.dotplant.ru/js/plugin/msie-fix/jquery.mb.browser.min.js',
         'http://st-3.dotplant.ru/js/app.min.js',
         'http://st-4.dotplant.ru/js/plugin/fullcalendar/jquery.fullcalendar.min.js',
-        'http://st-1.dotplant.ru/js/lib/underscore-min.js',
-        'http://st-2.dotplant.ru/js/lib/bootbox.min.js',
+        'http://cdn.jsdelivr.net/lodash/3.6.0/lodash.min.js',
+        'http://cdn.jsdelivr.net/bootbox/4.3.0/bootbox.min.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',

@@ -36,6 +36,12 @@ class BackendController extends app\backend\components\BackendController
         ];
     }
 
+    /**
+     * Lists configurables by tabs and saves configuration
+     * @return string
+     * @throws \Exception
+     * @throws \yii\web\ServerErrorHttpException
+     */
     public function actionIndex()
     {
         /** @var Configurable[] $models */
@@ -68,6 +74,10 @@ class BackendController extends app\backend\components\BackendController
         $consoleConfigWriter = new ApplicationConfigWriter([
             'filename' => '@app/config/console-configurables.php',
         ]);
+        $kvConfigWriter = new ApplicationConfigWriter([
+            'filename' => '@app/config/kv-configurables.php',
+        ]);
+
 
         if (Yii::$app->request->isPost === true) {
             $isValid = true;
@@ -75,6 +85,7 @@ class BackendController extends app\backend\components\BackendController
 
             foreach ($models as $model) {
                 $configurableModel = $model->getConfigurableModel();
+
                 if ($configurableModel->load(Yii::$app->request->post()) === true) {
                     $event = new ConfigurationSaveEvent();
                     $event->configurable = &$model;
@@ -93,11 +104,13 @@ class BackendController extends app\backend\components\BackendController
                             $consoleConfigWriter->addValues(
                                 $configurableModel->consoleApplicationAttributes()
                             );
+                            $kvConfigWriter->addValues(
+                                [
+                                    'kv-' . $model->module => $configurableModel->keyValueAttributes(),
+                                ]
+                            );
+
                             $configurableModel->saveState();
-
-
-                            //! @todo do save data
-
 
                         } else {
                             $isValid = false;
@@ -120,8 +133,8 @@ class BackendController extends app\backend\components\BackendController
                 $isValid =
                     $commonConfigWriter->commit() &&
                     $webConfigWriter->commit() &&
-                    $consoleConfigWriter->commit();
-
+                    $consoleConfigWriter->commit() &&
+                    $kvConfigWriter->commit();
             }
 
             if ($isValid === true) {

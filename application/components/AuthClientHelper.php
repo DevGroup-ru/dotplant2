@@ -14,11 +14,11 @@ use yii\base\ErrorException;
  */
 class AuthClientHelper {
     public static $ServiceIdMapping = [
-        'app\authclients\GitHub' => 'id',
+        'app\modules\user\authclients\GitHub' => 'id',
         'yii\authclient\clients\YandexOpenId' => 'id',
         'yii\authclient\clients\Twitter' => 'id',
-        'app\authclients\Facebook' => 'id',
-        'app\authclients\VKontakte' => 'uid',
+        'app\modules\user\authclients\Facebook' => 'id',
+        'app\modules\user\authclients\VKontakte' => 'uid',
         'yii\authclient\clients\YandexOAuth' => 'id',
         'yii\authclient\clients\GoogleOAuth' => 'id',
     ];
@@ -70,7 +70,7 @@ class AuthClientHelper {
         $attributes = $client->getUserAttributes();
 
         switch ($client->className()) {
-            case 'app\authclients\GitHub':
+            case 'app\modules\user\authclients\GitHub':
                 try {
                     $emails = $client->api('user/emails');
 
@@ -107,48 +107,48 @@ class AuthClientHelper {
             ],
             'user' => [
                 'username' => [
-                    'app\authclients\GitHub' => 'login',
+                    'app\modules\user\authclients\GitHub' => 'login',
                     'yii\authclient\clients\Twitter' => 'screen_name',
-                    'app\authclients\VKontakte' => 'nickname',
+                    'app\modules\user\authclients\VKontakte' => 'nickname',
                     'yii\authclient\clients\YandexOAuth' => 'login',
                 ],
                 'email' => [
-                    'app\authclients\GitHub' => 'email',
+                    'app\modules\user\authclients\GitHub' => 'email',
                     'yii\authclient\clients\YandexOpenId' => 'email',
-                    'app\authclients\Facebook' => 'email',
+                    'app\modules\user\authclients\Facebook' => 'email',
                     'yii\authclient\clients\YandexOAuth' => 'default_email',
                 ],
                 'first_name' => [
-                    'app\authclients\Facebook' => 'first_name',
-                    'app\authclients\VKontakte' => 'first_name',
+                    'app\modules\user\authclients\Facebook' => 'first_name',
+                    'app\modules\user\authclients\VKontakte' => 'first_name',
                     'yii\authclient\clients\YandexOAuth' => 'first_name',
                 ],
                 'last_name' => [
-                    'app\authclients\Facebook' => 'last_name',
-                    'app\authclients\VKontakte' => 'last_name',
+                    'app\modules\user\authclients\Facebook' => 'last_name',
+                    'app\modules\user\authclients\VKontakte' => 'last_name',
                     'yii\authclient\clients\YandexOAuth' => 'last_name',
                 ],
 //                'name' => [
-//                    'app\authclients\GitHub' => 'name',
+//                    'app\modules\user\authclients\GitHub' => 'name',
 //                    'yii\authclient\clients\YandexOpenId' => 'name',
 //                    'yii\authclient\clients\Twitter' => 'name',
-//                    'app\authclients\Facebook' => 'name',
-//                    'app\authclients\VKontakte' => ['first_name', 'last_name'],
+//                    'app\modules\user\authclients\Facebook' => 'name',
+//                    'app\modules\user\authclients\VKontakte' => ['first_name', 'last_name'],
 //                    'yii\authclient\clients\YandexOAuth' => ['first_name', 'last_name'],
 //                ],
                 'avatar_url' => [
-                    'app\authclients\GitHub' => 'avatar_url',
+                    'app\modules\user\authclients\GitHub' => 'avatar_url',
                     'yii\authclient\clients\Twitter' => 'profile_image_url',
-                    'app\authclients\VKontakte' => 'photo',
+                    'app\modules\user\authclients\VKontakte' => 'photo',
                 ],
                 'company' => [
-                    'app\authclients\GitHub' => 'company',
+                    'app\modules\user\authclients\GitHub' => 'company',
                 ],
                 'url' => [
-                    'app\authclients\GitHub' => 'html_url',
+                    'app\modules\user\authclients\GitHub' => 'html_url',
                 ],
                 'location' => [
-                    'app\authclients\GitHub' => 'location',
+                    'app\modules\user\authclients\GitHub' => 'location',
                 ],
             ],
         ];
