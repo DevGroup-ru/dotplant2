@@ -77,7 +77,8 @@ class OptionGenerate extends Widget
             $groupModel = PropertyGroup::findOne($optionGenerate['group']);
             $properties = Property::getForGroupId($optionGenerate['group']);
         } else {
-            $group_id = array_shift(array_keys($this->property_groups_to_add));
+            $group_ids = array_keys($this->property_groups_to_add);
+            $group_id = array_shift($group_ids);
             $groupModel = PropertyGroup::findOne($group_id);
             $properties = Property::getForGroupId($group_id);
         }

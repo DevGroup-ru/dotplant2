@@ -58,7 +58,7 @@ $config = [
             ],
         ],
         'fixture' => [
-            'class' => 'yii\test\DbFixtureManager',
+            'class' => 'yii\test\DbFixture',
             'basePath' => '@tests/unit/fixtures',
         ],
         'urlManager' => [
