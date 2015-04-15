@@ -6,6 +6,7 @@ use app;
 use app\modules\config\models\BaseConfigurableModel;
 use app\validators\ClassnameValidator;
 use Yii;
+use yii\helpers\StringHelper;
 
 /**
  * Class ConfigConfigurableModel represents configuration model for retrieving user input
@@ -63,12 +64,30 @@ class ConfigConfigurableModel extends BaseConfigurableModel
      */
     public function webApplicationAttributes()
     {
+        $authClients = [];
+        foreach ($this->authClients as $index => $client) {
+            $data = $client->getAttributes();
+            $data['class'] = $data['class_name'];
+            unset($data['class_name'], $data['clientType']);
+            foreach ($data as $key => $value) {
+                if ($value === null || empty($value) === true) {
+                    unset($data[$key]);
+                }
+            }
+            $authClients[StringHelper::basename($data['class'])] = $data;
+        }
         return [
             'modules' => [
                 'user' => [
                     'loginSessionDuration' => $this->loginSessionDuration,
                     'passwordResetTokenExpire' => $this->passwordResetTokenExpire,
                 ],
+            ],
+            'components' => [
+                'authClientCollection' => [
+                    'class' => 'yii\authclient\Collection',
+                    'clients' => $authClients,
+                ]
             ],
         ];
     }
