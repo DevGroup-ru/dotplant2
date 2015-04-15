@@ -62,6 +62,7 @@ return  [
     'Auth Key' => 'Ключ Аутентификации',
     'Author Field' => 'Поле автор',
     'Author User ID' => 'ID автора',
+    'Ability to delete orders' => 'Возможность удалить заказ',
     'Back' => 'Назад',
     'Backend Edit View' => 'Изменить шаблон админки',
     'Backend Render View' => 'Отобразить шаблон админки',

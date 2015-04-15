@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\properties\HasProperties;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\helpers\Json;
 
 /**
@@ -223,6 +224,38 @@ class Order extends \yii\db\ActiveRecord
     }
 
     /**
+     * Первое удаление в корзину, второе из БД
+     *
+     * @return bool
+     */
+    public function beforeDelete()
+    {
+
+        if (intval(Config::getValue('shop.AbilityDeleteOrders')) !== 1 ) {
+            return false;
+        }
+
+        $result = parent::beforeDelete();
+        if (0 === intval($this->is_deleted)) {
+            $this->is_deleted = 1;
+            $this->save();
+
+            return false;
+        }
+        return $result;
+    }
+    /**
+     * Отмена удаления объекта
+     *
+     * @return bool Restore result
+     */
+    public function restoreFromTrash()
+    {
+        $this->is_deleted = 0;
+        return $this->save();
+    }
+
+    /**
      * @return bool
      * @throws \Exception
      */
@@ -248,5 +281,31 @@ class Order extends \yii\db\ActiveRecord
         $this->total_price = $totalPrice;
         $this->items_count = $itemsCount;
         return $this->save(true, ['total_price', 'items_count']);
+    }
+
+    /**
+     * Search tasks
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function search($params)
+    {
+        /** @var $query \yii\db\ActiveQuery */
+        $query = self::find();
+
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]
+        );
+        if (!($this->load($params))) {
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['is_deleted' => $this->is_deleted]);
+        return $dataProvider;
     }
 }
