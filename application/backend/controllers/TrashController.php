@@ -4,6 +4,7 @@ namespace app\backend\controllers;
 
 use app\models\Category;
 use app\models\Object;
+use app\models\Order;
 use app\models\Page;
 use app\models\Product;
 use Yii;
@@ -52,7 +53,8 @@ class TrashController extends Controller
             $models = [
                 new Category(),
                 new Product(),
-                new Page()
+                new Page(),
+                new Order(),
             ];
         }
         foreach ($models as $model) {
@@ -96,6 +98,15 @@ class TrashController extends Controller
         );
 
 
+        $orderModel = new Order();
+        $orderProvider = new ActiveDataProvider(
+            [
+                'query' => $orderModel::find()->andWhere(['is_deleted' => 1]),
+                'pagination' => new Pagination(['defaultPageSize' => 10])
+            ]
+        );
+
+
         return $this->render(
             'index',
             [
@@ -105,6 +116,8 @@ class TrashController extends Controller
                 'productProvider' => $productProvider,
                 'pageModel' => $pageModel,
                 'pageProvider' => $pageProvider,
+                'orderModel' => $orderModel,
+                'orderProvider' => $orderProvider
             ]
         );
 
