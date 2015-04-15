@@ -1,6 +1,7 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
+use app\models\Config;
 use app\widgets\Alert;
 use kartik\widgets\ActiveForm;
 use yii\helpers\Html;
@@ -83,6 +84,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 ); ?>
                 <?=$form->field($model, 'width')?>
                 <?=$form->field($model, 'height')?>
+                <?php
+                $useWatermark = Config::getValue('image.useWatermark', 0);
+                if ($useWatermark == 1) {
+
+                }
+                ?>
                 <?php BackendWidget::end(); ?>
             </article>
 

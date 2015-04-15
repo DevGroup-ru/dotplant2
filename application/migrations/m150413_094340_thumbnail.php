@@ -1,5 +1,6 @@
 <?php
 
+use app\backend\models\BackendMenu;
 use app\models\Image;
 use app\models\Thumbnail;
 use app\models\ThumbnailSize;
@@ -27,6 +28,7 @@ class m150413_094340_thumbnail extends Migration
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
                 'width' => 'INT UNSIGNED NOT NULL',
                 'height' => 'INT UNSIGNED NOT NULL',
+                'default_watermark_id' => 'INT UNSIGNED NULL',
             ],
             $tableOptions
         );
@@ -71,9 +73,37 @@ class m150413_094340_thumbnail extends Migration
                     '/theme/resources/product-images/thumbnail',
                     'image.thumbDir'
                 ],
+                [$image_id, 'Use watermark', 'useWatermark', '0', 'image.useWatermark'],
+                [
+                    $image_id,
+                    'Watermark directory',
+                    'waterDir',
+                    '/theme/resources/product-images/watermark',
+                    'image.waterDir'
+                ],
             ]
         );
-        return false;
+        $this->insert(
+            BackendMenu::tableName(),
+            [
+                'parent_id' => 1,
+                'name' => 'Images',
+                'icon' => 'picture-o',
+                'sort_order' => 10,
+                'added_by_ext' => 'core',
+                'rbac_check' => 'content manage',
+                'translation_category' => 'app'
+            ]
+        );
+        $image_menu_id = Yii::$app->db->lastInsertID;
+        $this->batchInsert(
+            BackendMenu::tableName(),
+            ['parent_id', 'name', 'route', 'added_by_ext', 'rbac_check', 'translation_category'],
+            [
+                [$image_menu_id, 'Thumbnails sizes', 'backend/thumbnail-size/index', 'core', 'content manage', 'app'],
+                [$image_menu_id, 'Watermarks', 'backend/watermark/index', 'core', 'content manage', 'app'],
+            ]
+        );
     }
 
     public function down()
@@ -84,5 +114,12 @@ class m150413_094340_thumbnail extends Migration
         $this->dropTable('{{%thumbnail_watermark}}');
         $this->addColumn(Image::tableName(), 'thumbnail_src', 'VARCHAR(255) NOT NULL');
         //@todo create new thumb to down ImageDropzone::saveThumbnail()
+        $this->delete(Config::tableName(), ['key' => 'useWatermark']);
+        $this->delete(Config::tableName(), ['key' => 'thumbDir']);
+        $this->delete(Config::tableName(), ['key' => 'defaultThumbSize']);
+        $this->delete(Config::tableName(), ['key' => 'image']);
+        $this->delete(BackendMenu::tableName(), ['name' => 'Thumbnails sizes']);
+        $this->delete(BackendMenu::tableName(), ['name' => 'Watermarks']);
+        $this->delete(BackendMenu::tableName(), ['name' => 'Images']);
     }
 }
