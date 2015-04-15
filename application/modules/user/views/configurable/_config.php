@@ -11,9 +11,16 @@ $authClientConfigModel = new AuthClientConfig();
 
 ?>
 
-<?= $form->field($model, 'loginSessionDuration') ?>
+<div class="row">
+    <div class="col-md-12">
+        <?= $form->field($model, 'loginSessionDuration') ?>
 
-<?= $form->field($model, 'passwordResetTokenExpire') ?>
+        <?= $form->field($model, 'passwordResetTokenExpire') ?>
+    </div>
+</div>
+
+
+
 <div class="row">
     <div class="col-md-8">
         <h3 class="no-margin">
