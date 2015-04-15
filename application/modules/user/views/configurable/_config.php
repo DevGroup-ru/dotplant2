@@ -38,28 +38,49 @@ $authClientConfigModel = new AuthClientConfig();
 <?php foreach ($model->authClients as $index => $config): ?>
     <div class="panel panel-default authclient-<?=$index?>">
         <div class="panel-heading">
-            <?=
-            Html::a(
-                Icon::show('times') . ' ' . Yii::t('app', 'Delete'),
-                '#',
-                [
-                    'class' => 'remove-auth-client btn btn-sm btn-danger pull-right',
-                    'data-index' => $index,
-                ]
-            )
+            <div class="row">
+                <div class="col-md-10 col-sm-12">
+                    <?=
+                        \kartik\widgets\TypeaheadBasic::widget([
+                            'model' => $config,
+                            'attribute' => "[$index]class_name",
+                            'data' => AuthClientConfig::classNameAutoComplete(),
+                            'pluginOptions' => ['highlight'=>true],
+                        ])
+                    ?>
+                </div>
+                <div class="col-md-2 col-sm-12">
+                    <?=
+                    Html::a(
+                        Icon::show('times') . ' ' . Yii::t('app', 'Delete'),
+                        '#',
+                        [
+                            'class' => 'remove-auth-client btn btn-sm btn-danger pull-right',
+                            'data-index' => $index,
+                        ]
+                    )
+                    ?>
+                </div>
+            </div>
+            <?php
+//                $form->field(
+//                    $config,
+//                    "[$index]class_name",
+//                    [
+//                        'options' => [
+//                            'class' => 'pull-left text-block',
+//                        ],
+//                    ]
+//                )->label(false)->widget(
+//                    \kartik\widgets\TypeaheadBasic::className(),
+//                    [
+//                        'data' => AuthClientConfig::classNameAutoComplete(),
+//                        'pluginOptions' => ['highlight'=>true],
+//                    ]
+//                )
+
             ?>
-            <?=
-                $form->field(
-                    $config,
-                    "[$index]class_name"
-                )->widget(
-                    \kartik\widgets\TypeaheadBasic::className(),
-                    [
-                        'data' => AuthClientConfig::classNameAutoComplete(),
-                        'pluginOptions' => ['highlight'=>true],
-                    ]
-                )
-            ?>
+
 
         </div>
         <div class="panel-body">
