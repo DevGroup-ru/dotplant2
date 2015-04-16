@@ -8,7 +8,6 @@ use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "thumbnail_size".
- *
  * @property integer $id
  * @property integer $width
  * @property integer $height
@@ -69,8 +68,8 @@ class ThumbnailSize extends ActiveRecord
             return $dataProvider;
         }
         $query->andFilterWhere(['id' => $this->id]);
-        $query->andFilterWhere(['width' => $this->id]);
-        $query->andFilterWhere(['height' => $this->id]);
+        $query->andFilterWhere(['width' => $this->width]);
+        $query->andFilterWhere(['height' => $this->height]);
         return $dataProvider;
     }
 }
