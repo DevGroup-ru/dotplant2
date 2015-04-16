@@ -45,13 +45,14 @@ class AuthClientHelper {
                     'service_type' => $serviceType,
                     'service_id' => $serviceId,
                 ])
+                ->with('user')
                 ->one();
 
             if ($service === null) {
                 return null;
             }
 
-            return $service->getUser();
+            return $service->user;
         } else {
             throw new ErrorException("Unidentified social service used.");
         }

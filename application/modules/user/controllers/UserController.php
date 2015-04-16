@@ -2,6 +2,8 @@
 
 namespace app\modules\user\controllers;
 
+use app;
+use app\modules\user\actions\AuthAction;
 use app\modules\user\models\LoginForm;
 use app\modules\user\models\PasswordResetRequestForm;
 use app\modules\user\models\RegistrationForm;
@@ -11,10 +13,13 @@ use app\modules\user\models\UserService;
 use app\seo\behaviors\MetaBehavior;
 use Yii;
 use yii\base\ErrorException;
+use yii\base\Exception;
 use yii\base\InvalidParamException;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use app\components\AuthClientHelper;
 
@@ -60,7 +65,7 @@ class UserController extends Controller
     {
         return [
             'auth' => [
-                'class' => 'yii\authclient\AuthAction',
+                'class' => 'app\modules\user\actions\AuthAction',
                 'successCallback' => [$this, 'successCallback'],
             ],
         ];
@@ -116,7 +121,7 @@ class UserController extends Controller
                     return $this->goHome();
                 }
             } else {
-                throw new ErrorException(var_export($model->errors));
+                // there were errors
             }
 
         }
@@ -147,10 +152,10 @@ class UserController extends Controller
             $model->username_is_temporary = 0;
             $model->save();
 
-            $auth_action = new \yii\authclient\AuthAction('post-registration', $this);
+            $auth_action = new AuthAction('post-registration', $this);
             return $auth_action->redirect('/');
         } else {
-            $this->layout = 'minimum-layout';
+            $this->layout = $this->module->postRegistrationLayout;
             return $this->render('post-registration', [
                 'model' => $model,
             ]);
@@ -222,7 +227,7 @@ class UserController extends Controller
 
         if ($model->username_is_temporary == 1 || empty($model->email)) {
             // show post-registration form
-            $this->layout = 'minimum-layout';
+            $this->layout = $this->module->postRegistrationLayout;
             $model->setScenario('completeRegistration');
 
             echo $this->render('post-registration', [

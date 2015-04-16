@@ -111,28 +111,6 @@ $config = [
             'class'=>'yii\\rbac\\DbManager',
             'cache' => 'cache',
         ],
-        'authClientCollection' => [
-            'class' => 'yii\authclient\Collection',
-            'clients' => [
-                'google' => [
-                    'class' => 'yii\authclient\clients\GoogleOpenId'
-                ],
-                'yandex' => [
-                    'class' => 'yii\authclient\clients\YandexOpenId'
-                ],
-                'facebook' => [
-                    // register your app here: https://developers.facebook.com/apps/
-                    'class' => 'yii\authclient\clients\Facebook',
-                    'clientId' => '547268812035683',
-                    'clientSecret' => '478d1f1024ee3b3c90cc976eb2ee6ff5',
-                ],
-                'vk' => [
-                    'class' => '\app\components\VK',
-                    'clientId' => '4119510',
-                    'clientSecret' => 'UeyicFQWAhca5fKqPd0U',
-                ],
-            ],
-        ],
         'apiServiceClientCollection' => [
             'class' => 'yii\authclient\Collection',
             'clients' => [
