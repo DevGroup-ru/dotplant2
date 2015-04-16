@@ -2,8 +2,10 @@
 
 use app\backend\widgets\BackendWidget;
 use app\models\Config;
+use app\models\Watermark;
 use app\widgets\Alert;
 use kartik\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use kartik\icons\Icon;
 
@@ -87,7 +89,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php
                 $useWatermark = Config::getValue('image.useWatermark', 0);
                 if ($useWatermark == 1) {
-
+                    $watermarks = Watermark::find()->all();
+                    echo $form->field($model, 'default_watermark_id')->radioList(
+                        ArrayHelper::map(
+                            $watermarks,
+                            'id',
+                            function ($watermarks) {
+                                return Html::img($watermarks->watermark_src, ['style' => 'max-width:200px;']);
+                            }
+                        )
+                    );
                 }
                 ?>
                 <?php BackendWidget::end(); ?>

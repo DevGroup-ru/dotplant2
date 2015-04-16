@@ -3,7 +3,12 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
+use yii\helpers\VarDumper;
 use yii\imagine\Image as Imagine;
+use yii\web\BadRequestHttpException;
+use yii\web\NotFoundHttpException;
 
 /**
  * This is the model class for table "thumbnail".
@@ -63,7 +68,7 @@ class Thumbnail extends \yii\db\ActiveRecord
             $thumb = new Thumbnail;
             $thumb->setAttributes(
                 [
-                    'image_id' => $image->id,
+                    'img_id' => $image->id,
                     'size_id' => $size->id,
                 ]
             );
@@ -87,5 +92,22 @@ class Thumbnail extends \yii\db\ActiveRecord
         $src = "$path/{$file_info['filename']}-{$size->width}x{$size->height}.{$file_info['extension']}";
         $thumb->save(Yii::getAlias('@webroot') . $src);
         return $src;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $useWatermark = Config::getValue('image.useWatermark', 0);
+        if ($useWatermark == 1) {
+            $size = ThumbnailSize::findOne(ArrayHelper::getValue($this, 'size_id', 0));
+            if ($size !== null) {
+                $watermark = Watermark::findOne($size->default_watermark_id);
+                ThumbnailWatermark::getThumbnailWatermark($this, $watermark);
+            } else {
+                throw new BadRequestHttpException;
+            }
+        } else {
+            throw new BadRequestHttpException;
+        }
     }
 }

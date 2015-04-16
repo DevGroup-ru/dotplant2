@@ -9,7 +9,6 @@ use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "image".
- *
  * @property integer $id
  * @property integer $object_id
  * @property integer $object_model_id
@@ -19,7 +18,6 @@ use yii\helpers\ArrayHelper;
  * @property string $image_description
  * @property integer $sort_order
  */
-
 class Image extends \yii\db\ActiveRecord
 {
     private static $identityMap = [];
@@ -33,7 +31,7 @@ class Image extends \yii\db\ActiveRecord
     {
         return [
             [['image_src', 'sort_order'], 'required'],
-            [['object_id','object_model_id', 'sort_order'], 'integer'],
+            [['object_id', 'object_model_id', 'sort_order'], 'integer'],
         ];
     }
 
@@ -75,18 +73,17 @@ class Image extends \yii\db\ActiveRecord
                 if (!isset(self::$identityMap[$objectId])) {
                     self::$identityMap[$objectId] = [];
                 }
-                self::$identityMap[$objectId][$objectModelId] = static::find()
-                    ->where(
-                        [
-                            'object_id' => $objectId,
-                            'object_model_id' => $objectModelId,
-                        ]
-                    )
-                    ->orderBy([
+                self::$identityMap[$objectId][$objectModelId] = static::find()->where(
+                    [
+                        'object_id' => $objectId,
+                        'object_model_id' => $objectModelId,
+                    ]
+                )->orderBy(
+                    [
                         'sort_order' => SORT_ASC,
                         'id' => SORT_ASC
-                    ])
-                    ->all();
+                    ]
+                )->all();
                 $object = Object::findById($objectId);
                 if (is_null($object)) {
                     return self::$identityMap[$objectId][$objectModelId];
@@ -98,7 +95,10 @@ class Image extends \yii\db\ActiveRecord
                     new TagDependency(
                         [
                             'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object->object_class, $objectModelId),
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(
+                                    $object->object_class,
+                                    $objectModelId
+                                ),
                             ],
                         ]
                     )
@@ -162,8 +162,13 @@ class Image extends \yii\db\ActiveRecord
                         $image_model->object_model_id = $model->id;
                         $image_model->filename = basename($new['image_src']);
                         if (preg_match("#^https?://#Us", $new['image_src'])) {
-                            $image_model->filename = basename(preg_replace("#^https?://[^/]#Us", "",
-                                    $new['image_src']));
+                            $image_model->filename = basename(
+                                preg_replace(
+                                    "#^https?://[^/]#Us",
+                                    "",
+                                    $new['image_src']
+                                )
+                            );
                             try {
                                 file_put_contents(
                                     Yii::getAlias('@webroot') . $dir . $image_model->filename,
@@ -179,8 +184,10 @@ class Image extends \yii\db\ActiveRecord
                         }
                         try {
                             //@todo rewrite
-                            $image_model->thumbnail_src = $dir . ImageDropzone::saveThumbnail('@webroot' . $dir,
-                                    $image_model->filename);
+                            $image_model->thumbnail_src = $dir . ImageDropzone::saveThumbnail(
+                                    '@webroot' . $dir,
+                                    $image_model->filename
+                                );
                         } catch (\Exception $e) {
                             // error here :-(
                         }
@@ -194,6 +201,17 @@ class Image extends \yii\db\ActiveRecord
                 }
             }
 
+        }
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $defaultSize = Config::getValue('image.defaultThumbSize', '80x80');
+        $aSize = explode('x', $defaultSize);
+        $size = ThumbnailSize::findOne(['width' => $aSize[0], 'height' => $aSize[1]]);
+        if ($size !== null) {
+            Thumbnail::getImageThumbnailBySize($this, $size);
         }
     }
 }
