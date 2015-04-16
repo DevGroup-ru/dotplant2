@@ -226,4 +226,9 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
   margin-left: 140px;
 }
 
+/* line 194, ../sass/admin.scss */
+.tabs-left > .nav-pills, .tabs-left > .nav-tabs {
+  margin-right: 0;
+}
+
 /*# sourceMappingURL=admin.css.map */

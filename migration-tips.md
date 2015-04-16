@@ -14,3 +14,7 @@ Since users subsystem splited into module the most important thing is to replace
 If you redefined views - keep in mind, that default controller now doesn't handle user-related functions. So you need to rename your theme folders properly.
 
 All social oauth callbacks in your apps should be changed to `user/user/auth` or your social login functions wan't work.
+
+Small-passwords migration WARNING:
+
+> By-default passwords should be at least 8 chars. If you had smaller password - please reset it.

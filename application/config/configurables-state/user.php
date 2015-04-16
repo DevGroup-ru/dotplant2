@@ -9,6 +9,24 @@
 
 return[
     'loginSessionDuration' => 2592000,
-    'passwordResetTokenExpire' => 36011,
+    'passwordResetTokenExpire' => 3601,
+    'authClients' => [
+        [
+            'class_name' => 'app\\modules\\user\\authclients\\Facebook',
+            'clientType' => 'oauth2',
+            'consumerKey' => null,
+            'consumerSecret' => null,
+            'clientId' => null,
+            'clientSecret' => null,
+        ],
+        [
+            'class_name' => 'app\\modules\\user\\authclients\\GitHub',
+            'clientType' => 'oauth2',
+            'consumerKey' => null,
+            'consumerSecret' => null,
+            'clientId' => null,
+            'clientSecret' => null,
+        ],
+    ],
 ];
 

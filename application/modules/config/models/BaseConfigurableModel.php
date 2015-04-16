@@ -97,9 +97,8 @@ abstract class BaseConfigurableModel extends Model
         $this->defaultValues();
         $filename = Yii::getAlias('@app/config/configurables-state/' . $this->module . '.php');
         if (is_readable($filename) === true) {
-            $this->setAttributes(
-                include($filename),
-                false
+            $this->loadAttributesFromState(
+                include($filename)
             );
             return true;
         } else {
@@ -118,9 +117,26 @@ abstract class BaseConfigurableModel extends Model
         $writer = new ApplicationConfigWriter([
             'filename' => $filename,
         ]);
-        $writer->configuration = $this->getAttributes();
+        $writer->configuration = $this->getAttributesForStateSaving();
         return $writer->commit();
+    }
 
+    /**
+     * @return array attributes that used for saving configurable model state
+     */
+    public function getAttributesForStateSaving()
+    {
+        return $this->getAttributes();
+    }
 
+    /**
+     * Fills model attributes with previous saved state
+     * @param $values array of state form file
+     * @return bool result
+     */
+    public function loadAttributesFromState($values)
+    {
+        parent::setAttributes($values, false);
+        return true;
     }
 }

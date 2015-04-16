@@ -9,6 +9,7 @@ use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
 use app\models\Submission;
+use app\properties\PropertyHandlers;
 use app\widgets\image\SaveInfoAction;
 use Yii;
 use yii\filters\AccessControl;
@@ -137,55 +138,58 @@ class PropertiesController extends Controller
         $model->property_group_id = $property_group_id;
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
-            if ($model->is_column_type_stored) {
-                if ($model->isNewRecord) {
-                    $object = Object::findById($model->group->object_id);
-                    Yii::$app->db->createCommand()
-                        ->addColumn($object->column_properties_table_name, $model->key, "TINYTEXT")
-                        ->execute();
-                    if ($object->object_class == Form::className()) {
-                        $submissionObject = Object::getForClass(Submission::className());
-                        $col_type = $this->getColumnType($model->value_type);
-                        Yii::$app->db->createCommand()
-                            ->addColumn($submissionObject->column_properties_table_name, $model->key, $col_type)
-                            ->execute();
-                    }
-                } else {
-                    if ($model->key != $model->getOldAttribute('key')) {
+            $propertyHandler = PropertyHandlers::createHandler($model->handler);
+            if (!$propertyHandler->changePropertyType($model)) {
+                if ($model->is_column_type_stored) {
+                    if ($model->isNewRecord) {
                         $object = Object::findById($model->group->object_id);
                         Yii::$app->db->createCommand()
-                            ->renameColumn(
-                                $object->column_properties_table_name,
-                                $model->getOldAttribute('key'),
-                                $model->key
-                            )->execute();
+                            ->addColumn($object->column_properties_table_name, $model->key, "TINYTEXT")
+                            ->execute();
                         if ($object->object_class == Form::className()) {
                             $submissionObject = Object::getForClass(Submission::className());
+                            $col_type = $this->getColumnType($model->value_type);
+                            Yii::$app->db->createCommand()
+                                ->addColumn($submissionObject->column_properties_table_name, $model->key, $col_type)
+                                ->execute();
+                        }
+                    } else {
+                        if ($model->key != $model->getOldAttribute('key')) {
+                            $object = Object::findById($model->group->object_id);
                             Yii::$app->db->createCommand()
                                 ->renameColumn(
-                                    $submissionObject->column_properties_table_name,
+                                    $object->column_properties_table_name,
                                     $model->getOldAttribute('key'),
                                     $model->key
                                 )->execute();
+                            if ($object->object_class == Form::className()) {
+                                $submissionObject = Object::getForClass(Submission::className());
+                                Yii::$app->db->createCommand()
+                                    ->renameColumn(
+                                        $submissionObject->column_properties_table_name,
+                                        $model->getOldAttribute('key'),
+                                        $model->key
+                                    )->execute();
+                            }
                         }
-                    }
-                    if ($model->value_type != $model->getOldAttribute('value_type')) {
-                        $object = Object::findById($model->group->object_id);
-                        $new_type = $this->getColumnType($model->value_type);
-                        Yii::$app->db->createCommand()
-                            ->alterColumn(
-                                $object->column_properties_table_name,
-                                $model->getOldAttribute('key'),
-                                $new_type
-                            )->execute();
-                        if ($object->object_class == Form::className()) {
-                            $submissionObject = Object::getForClass(Submission::className());
+                        if ($model->value_type != $model->getOldAttribute('value_type')) {
+                            $object = Object::findById($model->group->object_id);
+                            $new_type = $this->getColumnType($model->value_type);
                             Yii::$app->db->createCommand()
-                                ->renameColumn(
-                                    $submissionObject->column_properties_table_name,
+                                ->alterColumn(
+                                    $object->column_properties_table_name,
                                     $model->getOldAttribute('key'),
                                     $new_type
                                 )->execute();
+                            if ($object->object_class == Form::className()) {
+                                $submissionObject = Object::getForClass(Submission::className());
+                                Yii::$app->db->createCommand()
+                                    ->renameColumn(
+                                        $submissionObject->column_properties_table_name,
+                                        $model->getOldAttribute('key'),
+                                        $new_type
+                                    )->execute();
+                            }
                         }
                     }
                 }

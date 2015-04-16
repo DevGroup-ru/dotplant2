@@ -93,5 +93,6 @@ EOT;
 
             $this->form->getView()->registerJs($js);
         }
+        parent::init();
     }
 }

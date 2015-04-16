@@ -3,6 +3,7 @@
 namespace app\commands;
 
 use Imagine\Image\ManipulatorInterface;
+use app\backend\actions\FlushCacheConsoleAction;
 use Yii;
 use yii\console\Controller;
 use app;
@@ -14,6 +15,16 @@ use app\models\Image;
  */
 class AdminController extends Controller
 {
+
+    public function actions()
+    {
+        return [
+            'flush-cache' => [
+                'class' => FlushCacheConsoleAction::className(),
+            ],
+        ];
+    }
+
     /**
      * Generate thumbnails for Image model
      * @param bool $updateThumbnailSrc

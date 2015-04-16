@@ -328,6 +328,51 @@ class OrderController extends Controller
         ];
     }
 
+    /*
+     *
+     */
+    public function actionDelete($id = null)
+    {
+        if ((null === $id) || (null === $model = Order::findOne($id))) {
+            throw new NotFoundHttpException;
+        }
+
+        if (!$model->delete()) {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'The object is placed in the cart'));
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
+        }
+
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                Url::toRoute(['index'])
+            )
+        );
+    }
+
+    public function actionRestore($id = null)
+    {
+        if (null === $id) {
+            new NotFoundHttpException();
+        }
+
+        if (null === $model = Order::findOne(['id' => $id])) {
+            new NotFoundHttpException();
+        }
+
+        $model->restoreFromTrash();
+
+        Yii::$app->session->setFlash('success', Yii::t('app', 'Object successfully restored'));
+
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                Url::toRoute(['view', 'id' => $id])
+            )
+        );
+    }
+
     public function actionDeleteOrderItem($id)
     {
         $orderItem = OrderItem::findOne($id);
