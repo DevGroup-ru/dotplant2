@@ -18,6 +18,8 @@ class ImgSearch extends Widget
     public $thumbnailWidth = 400;
     public $thumbnailHeight = 200;
 
+    public $additionalParams = [];
+
     public function run()
     {
         $cacheKey = "ImgSearch:" . implode("_", [
@@ -44,6 +46,7 @@ class ImgSearch extends Widget
                     'thumbnailOnDemand' => $this->thumbnailOnDemand,
                     'thumbnailWidth' => $this->thumbnailWidth,
                     'thumbnailHeight' => $this->thumbnailHeight,
+                    'additionalParams' => $this->additionalParams,
                 ]
             );
             Yii::$app->cache->set($cacheKey, $result, 86400, new \yii\caching\TagDependency([
