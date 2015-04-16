@@ -231,6 +231,7 @@ class Review extends \yii\db\ActiveRecord
                 'pagination' => [
                     'pageSize' => 10,
                 ],
+                'sort'=> ['defaultOrder' => ['id'=>SORT_DESC]]
             ]
         );
         $dataProvider->sort->attributes['username'] = [
@@ -275,6 +276,7 @@ class Review extends \yii\db\ActiveRecord
                 'pagination' => [
                     'pageSize' => 10,
                 ],
+                'sort'=> ['defaultOrder' => ['id'=>SORT_DESC]]
             ]
         );
         $dataProvider->sort->attributes['username'] = [
