@@ -11,6 +11,7 @@ $config = [
         'seo',
         'backend',
         'app\components\UserPreferencesBootstrap',
+        'core',
     ],
     'defaultRoute' => 'default',
     'modules' => [

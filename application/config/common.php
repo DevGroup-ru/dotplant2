@@ -15,6 +15,9 @@ return [
         'config' => [
             'class' => 'app\modules\config\ConfigModule',
         ],
+        'core' => [
+            'class' => 'app\modules\core\CoreModule',
+        ],
     ],
     'components' => [
         'db' => $db,
