@@ -113,9 +113,9 @@ class ActionColumn extends Column
                 Icon::show($button['icon']) . $buttonText,
                 $url = $this->createUrl($button['url'], $model, $key, $index),
                 [
-                    'data-pjax' => 0,
+                    //'data-pjax' => 0,
+                   // 'data-action' => $button['url'],
                     'class' => $button['class'],
-                    'data-action' => $button['url'],
                     'title' => $button['label'],
                 ]
             ) . ' ';
