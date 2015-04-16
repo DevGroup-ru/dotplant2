@@ -75,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'buttons' => function($model, $key, $index, $parent) {
                         return [
                             [
-                                'url' => 'delete',
+                                'url' => '/backend/review/delete',
                                 'icon' => 'trash-o',
                                 'class' => 'btn-danger',
                                 'label' => 'Delete',
