@@ -18,7 +18,7 @@ class FlushCacheAction extends Action
      * @param Module $current Current Module
      * @return string execute message
      */
-    private function flushCache(Module $current = null)
+    protected function flushCache(Module $current = null)
     {
         $message = '';
 
@@ -61,7 +61,7 @@ class FlushCacheAction extends Action
      * Flush webroot/assets/
      * @return string execute message
      */
-    private function flushAssets()
+    protected function flushAssets()
     {
         $message = '';
         $except = [\Yii::getAlias('@webroot/assets/.gitignore'), \Yii::getAlias('@webroot/assets/index.html')];
