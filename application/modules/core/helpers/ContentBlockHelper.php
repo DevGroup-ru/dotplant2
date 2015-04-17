@@ -10,6 +10,8 @@ use app;
 
 class ContentBlockHelper
 {
+    public static $prefix = '[';
+    public static $suffix = ']';
     private static $chunksByKey = [];
     /**
      * Compiles content string by injecting chunks into content
@@ -27,19 +29,27 @@ class ContentBlockHelper
             4. Replace chunk calls with result
             5. Put result to cache, adding all chunks as additional tags for tag dependency
          */
-
-        $chunkBeginTag = '\[\[';
-        $chunkEndTag = '\]\]';
+        self::preloadChunks();
         $matches = [];
-        preg_match_all('%'.$chunkBeginTag.'([^\]\[]+)'.$chunkEndTag.'%ui', $content, $matches);
+        preg_match_all('%['.static::$prefix.']{2}([^\]\[]+)['.static::$suffix.']{2}%ui', $content, $matches);
         if (!empty($matches)) {
             foreach ($matches[1] as $k => $rawChunk) {
                 $chunkData = static::sanitizeChunk($rawChunk);
-                $chunk = ContentBlock::findOne(['key' => $chunkData['key']]);
-                if (null !== $chunk ) {
+                $cacheChunkKey = $chunkData['key'].$content_key;
+                $replacement = Yii::$app->cache->get($cacheChunkKey);
+                if ($replacement == false) {
+                    $chunk = ContentBlock::findOne(['key' => $chunkData['key']]);
                     $replacement = static::compileChunk($chunk, $chunkData);
-                    $content = str_replace($matches[0][$k], $replacement, $content);
+                    if (null !== $chunk ) {
+                        Yii::$app->cache->set(
+                            $cacheChunkKey,
+                            $replacement,
+                            84600,
+                            $dependency
+                        );
+                    }
                 }
+                $content = str_replace($matches[0][$k], $replacement, $content);
             }
         }
         return $content;
@@ -86,17 +96,20 @@ class ContentBlockHelper
      * @return {string}            Result string ready for replacing
      */
     public static function compileChunk($chunk, $arguments) {
-        $varBeginTag = '\[\[\+';
-        $varndTag = '\]\]';
         $matches = [];
-        preg_match_all('%'.$varBeginTag.'([^\]\[]+)'.$varndTag.'%i', $chunk->value, $matches);
-        foreach ($matches[1] as $replace) {
-            if (array_key_exists($replace, $arguments)) {
-                $chunk->value = str_replace('[[+'.$replace.']]', $arguments[$replace], $chunk->value);
-            } else if(array_key_exists($replace.'-default', $arguments)) {
-                $chunk->value = str_replace('[[+'.$replace.']]', $arguments[$replace.'-default'], $chunk->value);
-            } else {
-                $chunk->value = str_replace('[[+'.$replace.']]', '', $chunk->value);
+        preg_match_all('%['.static::$prefix.']{2}([\+\*\%])([^\]\[]+)['.static::$suffix.']{2}%ui', $chunk->value, $matches);
+        foreach ($matches[2] as $k => $replace) {
+            $token = $matches[1][$k];
+            switch ($token) {
+                case '+':
+                    if (array_key_exists($replace, $arguments)) {
+                        $chunk->value = str_replace($matches[0][$k], $arguments[$replace], $chunk->value);
+                    } else if(array_key_exists($replace.'-default', $arguments)) {
+                        $chunk->value = str_replace($matches[0][$k], $arguments[$replace.'-default'], $chunk->value);
+                    } else {
+                        $chunk->value = str_replace($matches[0][$k], '', $chunk->value);
+                    }
+                    break;
             }
         }
         return $chunk->value;
@@ -142,6 +155,7 @@ class ContentBlockHelper
             Called in compileContentString
             Doing nothing if static::$chunkByKey is not empty array
          */
+        if (!empty(static::$chunksByKey)) return;
         $cacheKey = 'chunksByKey'.ContentBlock::className();
         static::$chunksByKey = Yii::$app->cache->get($cacheKey);
         if ( static::$chunksByKey === false ) {
