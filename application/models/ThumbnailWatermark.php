@@ -105,9 +105,36 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
                     Yii::getAlias($watermark_src)
                 );
             }
-
         }
-        $watermark = Imagine::watermark('@webroot' . $thumb->thumb_src, $watermark_src);
+        $position = [0, 0];
+
+
+        if ($water->position == Watermark::POSITION_CENTER) {
+            $position = [
+                round(($thumbImage->getSize()->getWidth() - $waterImage->getSize()->getWidth()) / 2),
+                round(($thumbImage->getSize()->getHeight() - $waterImage->getSize()->getHeight()) / 2)
+            ];
+        } else {
+            $posStr = explode(' ', $water->position);
+            switch ($posStr[0]) {
+                case 'TOP':
+                    $position[0] = 0;
+                    break;
+                case 'BOTTOM':
+                    $position[0] = $thumbImage->getSize()->getWidth() - $waterImage->getSize()->getWidth();
+                    break;
+            }
+            switch ($posStr[1]) {
+                case 'LEFT':
+                    $position[1] = 0;
+                    break;
+                case 'RIGHT':
+                    $position[1] = $thumbImage->getSize()->getHeight() - $waterImage->getSize()->getHeight();
+                    break;
+            }
+        }
+        //throw new NotFoundHttpException(Json::encode($position));
+        $watermark = Imagine::watermark('@webroot' . $thumb->thumb_src, $watermark_src, $position);
         $path = Config::getValue('image.thumbDir', '/theme/resources/product-images/thumbnail');
         $file_info = pathinfo($thumb->thumb_src);
         $watermark_info = pathinfo($water->watermark_src);

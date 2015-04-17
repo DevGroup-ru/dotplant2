@@ -4,11 +4,9 @@ namespace app\models;
 
 use Yii;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
-use yii\helpers\VarDumper;
 use yii\imagine\Image as Imagine;
 use yii\web\BadRequestHttpException;
-use yii\web\NotFoundHttpException;
+
 
 /**
  * This is the model class for table "thumbnail".
@@ -104,10 +102,8 @@ class Thumbnail extends \yii\db\ActiveRecord
                 $watermark = Watermark::findOne($size->default_watermark_id);
                 ThumbnailWatermark::getThumbnailWatermark($this, $watermark);
             } else {
-                throw new BadRequestHttpException;
+                throw new BadRequestHttpException(Yii::t('app','Set thumbnail size'));
             }
-        } else {
-            throw new BadRequestHttpException;
         }
     }
 }

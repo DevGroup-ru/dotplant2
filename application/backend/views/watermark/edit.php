@@ -1,6 +1,7 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
+use app\models\Watermark;
 use app\widgets\Alert;
 use kartik\widgets\ActiveForm;
 use kartik\widgets\FileInput;
@@ -101,6 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'pluginOptions' => $options,
                     ]
                 );
+                echo $form->field($model, 'position')->dropDownList(Watermark::getPositions());
                 BackendWidget::end(); ?>
             </article>
 

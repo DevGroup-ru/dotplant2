@@ -37,6 +37,7 @@ class m150413_094340_thumbnail extends Migration
             [
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
                 'watermark_src' => 'VARCHAR(255) NOT NULL',
+                'position' => 'enum(\'TOP LEFT\',\'TOP RIGHT\',\'BOTTOM LEFT\',\'BOTTOM RIGHT\',\'CENTER\') NOT NULL DEFAULT \'TOP LEFT\''
             ],
             $tableOptions
         );
@@ -47,18 +48,17 @@ class m150413_094340_thumbnail extends Migration
                 'thumb_id' => 'INT UNSIGNED NOT NULL',
                 'water_id' => 'INT UNSIGNED NOT NULL',
                 'src' => 'VARCHAR(255) NOT NULL',
-                //@todo add type mb enum?
             ],
             $tableOptions
         );
-        $this->dropColumn(Image::tableName(), 'thumbnail_src');
+        //$this->dropColumn(Image::tableName(), 'thumbnail_src');
         $defaultSize = new ThumbnailSize;
         $defaultSize->setAttributes(['width' => 80, 'height' => 80]);
         $defaultSize->save();
-        $images = Image::find()->all();
-        foreach ($images as $image) {
-            Thumbnail::getImageThumbnailBySize($image, $defaultSize);
-        }
+//        $images = Image::find()->all();
+//        foreach ($images as $image) {
+//            Thumbnail::getImageThumbnailBySize($image, $defaultSize);
+//        }
         $this->insert(Config::tableName(), ['parent_id' => 0, 'name' => 'Image', 'key' => 'image', 'path' => 'image']);
         $image_id = Yii::$app->db->lastInsertID;
         $this->batchInsert(
@@ -112,8 +112,8 @@ class m150413_094340_thumbnail extends Migration
         $this->dropTable('{{%thumbnail_size}}');
         $this->dropTable('{{%watermark}}');
         $this->dropTable('{{%thumbnail_watermark}}');
-        $this->addColumn(Image::tableName(), 'thumbnail_src', 'VARCHAR(255) NOT NULL');
-        //@todo create new thumb to down ImageDropzone::saveThumbnail()
+        //$this->addColumn(Image::tableName(), 'thumbnail_src', 'VARCHAR(255) NOT NULL');
+        $this->delete(Config::tableName(), ['key' => 'waterDir']);
         $this->delete(Config::tableName(), ['key' => 'useWatermark']);
         $this->delete(Config::tableName(), ['key' => 'thumbDir']);
         $this->delete(Config::tableName(), ['key' => 'defaultThumbSize']);
