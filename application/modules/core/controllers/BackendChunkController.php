@@ -109,16 +109,16 @@ class BackendChunkController extends BackendController
         );
     }
 
-    public function actionRemoveAll($parent_id)
+    public function actionRemoveAll()
     {
         $items = Yii::$app->request->post('items', []);
         if (!empty($items)) {
-            $items = Page::find()->where(['in', 'id', $items])->all();
+            $items = ContentBlock::find()->where(['in', 'id', $items])->all();
             foreach ($items as $item) {
                 $item->delete();
             }
         }
 
-        return $this->redirect(['index', 'parent_id' => $parent_id]);
+        return $this->redirect(['index']);
     }
 }

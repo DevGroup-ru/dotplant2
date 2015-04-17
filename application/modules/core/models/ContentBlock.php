@@ -32,6 +32,7 @@ class ContentBlock extends \yii\db\ActiveRecord
         return [
             [['value'], 'string'],
             [['preload'], 'integer'],
+            [['key'], 'unique'],
             [['name', 'key'], 'string', 'max' => 255]
         ];
     }
@@ -43,10 +44,10 @@ class ContentBlock extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'key' => 'Key',
-            'value' => 'Value',
-            'preload' => 'Preload',
+            'name' => Yii::t('app', 'Name'),
+            'key' => Yii::t('app','Key'),
+            'value' => Yii::t('app','Value'),
+            'preload' => Yii::t('app', 'Preload'),
         ];
     }
     public function search($params)
