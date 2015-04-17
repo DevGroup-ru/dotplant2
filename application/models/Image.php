@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\behaviors\ImageExist;
 use app\widgets\image\ImageDropzone;
 use Yii;
 use yii\caching\TagDependency;
@@ -44,6 +45,16 @@ class Image extends \yii\db\ActiveRecord
             'image_src' => Yii::t('app', 'Image Src'),
             'image_description' => Yii::t('app', 'Image Description'),
             'sort_order' => Yii::t('app', 'Sort Order'),
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => ImageExist::className(),
+                'srcAttrName' => 'image_src',
+            ]
         ];
     }
 

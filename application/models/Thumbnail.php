@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\behaviors\ImageExist;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\imagine\Image as Imagine;
@@ -34,6 +35,16 @@ class Thumbnail extends \yii\db\ActiveRecord
             [['img_id', 'thumb_src', 'size_id'], 'required'],
             [['img_id', 'size_id'], 'integer'],
             [['thumb_src'], 'string', 'max' => 255]
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => ImageExist::className(),
+                'srcAttrName' => 'thumb_src',
+            ]
         ];
     }
 

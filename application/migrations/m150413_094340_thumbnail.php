@@ -47,18 +47,18 @@ class m150413_094340_thumbnail extends Migration
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
                 'thumb_id' => 'INT UNSIGNED NOT NULL',
                 'water_id' => 'INT UNSIGNED NOT NULL',
-                'src' => 'VARCHAR(255) NOT NULL',
+                'compiled_src' => 'VARCHAR(255) NOT NULL',
             ],
             $tableOptions
         );
-        //$this->dropColumn(Image::tableName(), 'thumbnail_src');
+        $this->dropColumn(Image::tableName(), 'thumbnail_src');
         $defaultSize = new ThumbnailSize;
         $defaultSize->setAttributes(['width' => 80, 'height' => 80]);
         $defaultSize->save();
-//        $images = Image::find()->all();
-//        foreach ($images as $image) {
-//            Thumbnail::getImageThumbnailBySize($image, $defaultSize);
-//        }
+        $images = Image::find()->all();
+        foreach ($images as $image) {
+            Thumbnail::getImageThumbnailBySize($image, $defaultSize);
+        }
         $this->insert(Config::tableName(), ['parent_id' => 0, 'name' => 'Image', 'key' => 'image', 'path' => 'image']);
         $image_id = Yii::$app->db->lastInsertID;
         $this->batchInsert(
@@ -80,6 +80,13 @@ class m150413_094340_thumbnail extends Migration
                     'waterDir',
                     '/theme/resources/product-images/watermark',
                     'image.waterDir'
+                ],
+                [
+                    $image_id,
+                    'No image supplied',
+                    'noImage',
+                    'http://placehold.it/300&text=No+image+supplied',
+                    'image.noImage'
                 ],
             ]
         );
@@ -112,7 +119,8 @@ class m150413_094340_thumbnail extends Migration
         $this->dropTable('{{%thumbnail_size}}');
         $this->dropTable('{{%watermark}}');
         $this->dropTable('{{%thumbnail_watermark}}');
-        //$this->addColumn(Image::tableName(), 'thumbnail_src', 'VARCHAR(255) NOT NULL');
+        $this->addColumn(Image::tableName(), 'thumbnail_src', 'VARCHAR(255) NOT NULL');
+        $this->delete(Config::tableName(), ['key' => 'noImage']);
         $this->delete(Config::tableName(), ['key' => 'waterDir']);
         $this->delete(Config::tableName(), ['key' => 'useWatermark']);
         $this->delete(Config::tableName(), ['key' => 'thumbDir']);

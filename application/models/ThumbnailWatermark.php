@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\behaviors\ImageExist;
 use Imagine\Image\Box;
 use Yii;
 use yii\imagine\Image as Imagine;
@@ -11,7 +12,7 @@ use yii\imagine\Image as Imagine;
  * @property integer $id
  * @property integer $thumb_id
  * @property integer $water_id
- * @property string $src
+ * @property string $compiled_src
  */
 class ThumbnailWatermark extends \yii\db\ActiveRecord
 {
@@ -31,7 +32,17 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
         return [
             [['thumb_id', 'water_id', 'src'], 'required'],
             [['thumb_id', 'water_id'], 'integer'],
-            [['src'], 'string', 'max' => 255]
+            [['compiled_src'], 'string', 'max' => 255]
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => ImageExist::className(),
+                'srcAttrName' => 'compiled_src',
+            ]
         ];
     }
 
@@ -44,7 +55,7 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'thumb_id' => Yii::t('app', 'Thumb ID'),
             'water_id' => Yii::t('app', 'Water ID'),
-            'src' => Yii::t('app', 'Src'),
+            'compiled_src' => Yii::t('app', 'Compiled Src'),
         ];
     }
 
@@ -68,7 +79,7 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
                     'water_id' => $water->id,
                 ]
             );
-            $watermark->src = static::createWatermark($thumb, $water);
+            $watermark->compiled_src = static::createWatermark($thumb, $water);
             $watermark->save();
         }
         return $watermark;
@@ -133,7 +144,6 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
                     break;
             }
         }
-        //throw new NotFoundHttpException(Json::encode($position));
         $watermark = Imagine::watermark('@webroot' . $thumb->thumb_src, $watermark_src, $position);
         $path = Config::getValue('image.thumbDir', '/theme/resources/product-images/thumbnail');
         $file_info = pathinfo($thumb->thumb_src);

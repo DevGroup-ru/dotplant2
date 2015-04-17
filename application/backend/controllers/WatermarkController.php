@@ -69,8 +69,7 @@ class WatermarkController extends Controller
                 $model->watermark_src = $path;
                 $image->saveAs(Yii::getAlias('@webroot') . $path);
             }
-            $save_result = $model->save();
-            if ($save_result === true && $model->validate()) {
+            if ($model->validate() && $model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
                 $returnUrl = Yii::$app->request->get('returnUrl', ['index']);
                 switch (Yii::$app->request->post('action', 'save')) {
