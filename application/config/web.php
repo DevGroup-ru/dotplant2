@@ -111,6 +111,9 @@ $config = [
             'class'=>'yii\\rbac\\DbManager',
             'cache' => 'cache',
         ],
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+        ],
         'apiServiceClientCollection' => [
             'class' => 'yii\authclient\Collection',
             'clients' => [
