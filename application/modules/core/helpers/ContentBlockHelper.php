@@ -56,18 +56,22 @@ class ContentBlockHelper
         $key = substr($rawChunk, (strpos($rawChunk, '$')+1), (strpos($rawChunk, ' ')-1));
         $rawParams = substr($rawChunk, (strpos($rawChunk, $key)+strlen($key)));
         $rawParams = trim(str_replace('&amp;', '&', $rawParams));
-        $rawParams = preg_replace('%[\s]+%', '', $rawParams);
         $chunk['key'] = $key;
         $params = explode('&', $rawParams);
         foreach ($params as $param) {
             if (empty($param)) continue;
             if (strpos($param, '|') !== false ) {
-                list($paramName, $paramValues) = explode('=', $param);
-                list($paramValue, $paramDefaultValue) = explode('|', $paramValues);
-                    if (static::defineValueType($paramValue) !== '') {
-                        $chunk[$paramName] = static::defineValueType($paramValue);
-                    }
-                    $chunk[$paramName.'-default'] = static::defineValueType($paramDefaultValue);
+                list($paramValues, $paramDefaultValue) = explode('|', $param);
+                if (strpos($paramValues, '=') === false ) {
+                    $paramName = $paramValues;
+                    $paramValue = '';
+                } else {
+                    list($paramName, $paramValue) = explode('=', $paramValues);
+                }
+                if (!empty($paramValue) && static::defineValueType($paramValue) !== '') {
+                    $chunk[$paramName] = static::defineValueType($paramValue);
+                }
+                $chunk[$paramName.'-default'] = static::defineValueType($paramDefaultValue);
             } else {
                 if(strpos($param, '=') === false) continue;
                 list($paramName, $paramValue) = explode('=', $param);
@@ -84,7 +88,7 @@ class ContentBlockHelper
      */
     private static function defineValueType($value) {
         if (preg_match('%[\\\']%ui', $value)) {
-            $value = trim($value, "\\'");
+            $value = trim($value, "\\ '");
         } else {
             $value = floatval($value);
         }
@@ -133,7 +137,8 @@ class ContentBlockHelper
      * @param $rawFormat {string}
      * @return array
      */
-    private static function applyFormatter($value, $rawFormat) {
+    private static function applyFormatter($value, $rawFormat)
+    {
         $formattedValue = $value;
         if (null === $rawFormat) {
             return $value;
@@ -141,7 +146,11 @@ class ContentBlockHelper
         $params = explode(',', $rawFormat);
         $method = array_shift($params);
         if (method_exists(Yii::$app->formatter, $method) === true) {
-            $formattedValue = Yii::$app->formatter->$method($value, implode(',', $params));
+            if (!empty($params)) {
+                $formattedValue = Yii::$app->formatter->$method($value, implode(',', $params));
+            } else {
+                $formattedValue = Yii::$app->formatter->$method($value);
+            }
         }
         return $formattedValue;
     }

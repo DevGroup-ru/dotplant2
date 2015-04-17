@@ -2,6 +2,7 @@
 
 namespace app\modules\core\models;
 
+use yii\data\ActiveDataProvider;
 use Yii;
 
 /**
@@ -47,5 +48,31 @@ class ContentBlock extends \yii\db\ActiveRecord
             'value' => 'Value',
             'preload' => 'Preload',
         ];
+    }
+    public function search($params)
+    {
+        /* @var $query \yii\db\ActiveQuery */
+        $query = self::find();
+
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]
+        );
+
+        if (!($this->load($params))) {
+            return $dataProvider;
+        }
+
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'key', $this->key]);
+        $query->andFilterWhere(['like', 'value', $this->value]);
+        $query->andFilterWhere(['preload' => $this->preload]);
+
+        return $dataProvider;
     }
 }
