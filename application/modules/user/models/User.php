@@ -3,9 +3,14 @@
 namespace app\modules\user\models;
 
 use app\properties\HasProperties;
+use app\models\PropertyGroup;
+use app\models\ObjectPropertyGroup;
+
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
+use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
@@ -166,23 +171,33 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        if (Yii::$app->getSession()->has('user-'.$id)) {
-            return new self(Yii::$app->getSession()->get('user-'.$id));
-        } else {
-            if (is_numeric($id)) {
-                $model = Yii::$app->cache->get("User:$id");
-                if ($model === false) {
-                    $model = static::findOne($id);
-                    if ($model !== null) {
-                        Yii::$app->cache->set("User:$id", $model, 3600);
-                    }
-                    
+
+        if (is_numeric($id)) {
+            $model = Yii::$app->cache->get("User:$id");
+            if ($model === false) {
+                $model = static::find()
+                    ->with('services')
+                    ->where('id=:id', [':id'=>$id])
+                    ->one();
+                if ($model !== null) {
+                    Yii::$app->cache->set(
+                        "User:$id",
+                        $model,
+                        3600,
+                        new TagDependency([
+                            'tags' => [
+                                ActiveRecordHelper::getObjectTag($model->className(), $model->id)
+                            ]
+                        ])
+                    );
                 }
-                return $model;
-            } else {
-                return null;
+
             }
+            return $model;
+        } else {
+            return null;
         }
+
     }
 
     /**
@@ -300,27 +315,50 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
 
-//    /**
-//     * @param bool $insert
-//     * @param array $changedAttributes
-//     */
-//    public function afterSave($insert, $changedAttributes)
-//    {
-//        parent::afterSave($insert, $changedAttributes);
-//        if ($insert === true) {
-//            // @todo Сделать через saveProperties
-//            $propertyGroups = PropertyGroup::findAll(['object_id' => $this->getObject()->id]);
-//            foreach ($propertyGroups as $propertyGroup) {
-//                $objectPropertyGroup = new ObjectPropertyGroup;
-//                $objectPropertyGroup->attributes = [
-//                    'object_id' => $this->object->id,
-//                    'object_model_id' => $this->id,
-//                    'property_group_id' => $propertyGroup->id,
-//                ];
-//                $objectPropertyGroup->save();
-//            }
-//        }
-//    }
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        // save bindings to property groups for properties support
+
+        $ids = $this->getPropertyIdsForUsers();
+
+        $currentGroups = array_keys($this->getPropertyGroups());
+
+        $newIds = array_diff($ids, $currentGroups);
+
+        foreach ($newIds as $group_id) {
+            $this->addPropertyGroup($group_id, false);
+        }
+        $this->updatePropertyGroupsInformation();
+    }
+
+    /**
+     * Returns array of ids of propertyGroups for user model
+     * @return array
+     * @throws \Exception
+     */
+    private function getPropertyIdsForUsers()
+    {
+        return PropertyGroup::getDb()->cache(
+            function ($db) {
+                return PropertyGroup::find()
+                    ->select('id')
+                    ->where(['object_id' => $this->getObject()->id])
+                    ->asArray()
+                    ->column($db);
+            },
+            86400,
+            new TagDependency([
+                'tags' => ActiveRecordHelper::getCommonTag(PropertyGroup::className())
+            ])
+        );
+    }
+
 
     /**
      * Returns gravatar image link for user

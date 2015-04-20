@@ -174,7 +174,8 @@ class Property extends ActiveRecord
      */
     public function getHandler()
     {
-        return $this->hasOne(PropertyHandler::className(), ['id' => 'property_handler_id']);
+//        return $this->hasOne(PropertyHandler::className(), ['id' => 'property_handler_id']);
+        return PropertyHandler::findById($this->property_handler_id);
     }
 
     /**

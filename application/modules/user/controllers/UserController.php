@@ -300,34 +300,28 @@ class UserController extends Controller
      */
     public function actionProfile()
     {
-        /** @var \app\modules\user\models\User|HasProperties $model */
-        $model = User::findOne(Yii::$app->user->id);
+        /** @var \app\modules\user\models\User|app\properties\HasProperties $model */
+        $model = User::findIdentity(Yii::$app->user->id);
         $model->scenario = 'updateProfile';
+
+        $model->getPropertyGroups(false, false, true);
+
         $model->abstractModel->setAttrubutesValues(Yii::$app->request->post());
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->abstractModel->validate()) {
             if ($model->save()) {
-//                $model->getPropertyGroups(true);
-//                $model->saveProperties(Yii::$app->request->post());
+                $model->saveProperties(Yii::$app->request->post());
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Your profile has been updated'));
                 $this->refresh();
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Internal error'));
             }
         }
-//        $propertyGroups = PropertyGroup::getForModel($model->getObject()->id, $model->id);
-//        $properties = [];
-//        foreach ($propertyGroups as $propertyGroup) {
-//            $properties[$propertyGroup->id] = [
-//                'group' => $propertyGroup,
-//                'properties' => Property::getForGroupId($propertyGroup->id),
-//            ];
-//        }
-//        unset($propertyGroups);
+
+
         return $this->render(
             'profile',
             [
                 'model' => $model,
-//                'propertyGroups' => $properties,
                 'services' => ArrayHelper::map($model->services, 'id', 'service_type'),
             ]
         );
@@ -340,7 +334,8 @@ class UserController extends Controller
      */
     public function actionChangePassword()
     {
-        $model = User::findOne(Yii::$app->user->id);
+        /** @var app\modules\user\models\User|\yii\web\IdentityInterface $model */
+        $model = User::findIdentity(Yii::$app->user->id);
         if (is_null($model)) {
             throw new NotFoundHttpException;
         }
@@ -353,7 +348,7 @@ class UserController extends Controller
                 $model->addError('password', Yii::t('app', 'Wrong password'));
             }
             if ($formIsValid && $passwordIsValid) {
-                $security = new Security;
+                $security = new \yii\base\Security;
                 $model->password_hash = $security->generatePasswordHash($model->newPassword);
                 if ($model->save(true, ['password_hash'])) {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Password has been changed'));

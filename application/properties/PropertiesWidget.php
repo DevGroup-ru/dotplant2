@@ -34,6 +34,9 @@ class PropertiesWidget extends Widget
     public $model;
     public $viewFile = 'properties-widget';
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
         $this->object = Object::getForClass(get_class($this->model));
