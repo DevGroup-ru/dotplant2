@@ -13,6 +13,9 @@ class ContentBlockHelper
     public static $prefix = '[';
     public static $suffix = ']';
     private static $chunksByKey = [];
+    private static $props = [];
+    const EQUAL_REPLACER = '*&^fawheg76^4e5WcEE';
+
     /**
      * Compiles content string by injecting chunks into content
      * @param  {string} $content     Original content with chunk calls
@@ -48,6 +51,7 @@ class ContentBlockHelper
     }
 
     /**
+     * Extracting chunk data from chunk call
      * @param $rawChunk
      * @return array
      */
@@ -55,14 +59,20 @@ class ContentBlockHelper
         $chunk = [];
         $key = substr($rawChunk, (strpos($rawChunk, '$')+1), (strpos($rawChunk, ' ')-1));
         $rawParams = substr($rawChunk, (strpos($rawChunk, $key)+strlen($key)));
-        $rawParams = trim(str_replace('&amp;', '&', $rawParams));
         $chunk['key'] = $key;
-        $params = explode('&', $rawParams);
+        $matches = [];
+        $rawParams = preg_replace('%[\s]+%u', ' ', $rawParams);
+        preg_match_all('%\'[^\'\|]+\'%ui', $rawParams, $matches);
+        foreach ($matches[0] as $k => $v) {
+            $str = str_replace('=', self::EQUAL_REPLACER, $v);
+            $rawParams = str_replace($v, $str, $rawParams);
+        }
+        $params = static::getParam($rawParams);
         foreach ($params as $param) {
             if (empty($param)) continue;
-            if (strpos($param, '|') !== false ) {
+            if (false !== strpos($param, '|')) {
                 list($paramValues, $paramDefaultValue) = explode('|', $param);
-                if (strpos($paramValues, '=') === false ) {
+                if (false === strpos($paramValues, '=')) {
                     $paramName = $paramValues;
                     $paramValue = '';
                 } else {
@@ -73,12 +83,44 @@ class ContentBlockHelper
                 }
                 $chunk[$paramName.'-default'] = static::defineValueType($paramDefaultValue);
             } else {
-                if(strpos($param, '=') === false) continue;
+                if (false === strpos($param, '=')) continue;
                 list($paramName, $paramValue) = explode('=', $param);
                 $chunk[$paramName] = static::defineValueType($paramValue);
             }
         }
         return $chunk;
+    }
+
+    /**
+     * process syntax analysis of given string.
+     * Extracts possibly param definitions and returns params array
+     * @param $rawParams
+     * @var $equalpos
+     * @var $nextequal
+     * @return array
+     */
+    private static function getParam($rawParams) {
+        $equalpos = mb_stripos($rawParams, '=');
+        if (false === $equalpos) {
+            return [];
+        }
+        $nextequal = mb_stripos($rawParams, '=', $equalpos+1);
+        if (false === $nextequal) {
+            $st = mb_strrpos($rawParams, ' ', -strlen(mb_substr($rawParams, $equalpos)));
+        } else {
+            $st = mb_strrpos($rawParams, ' ', -strlen(mb_substr($rawParams, $nextequal)));
+        }
+        if (false === $st) {
+            static::$props[] = trim($rawParams);
+        } else {
+            $param = mb_substr($rawParams, 0, $st);
+            static::$props[] = trim($param);
+            $rawParams = trim(mb_substr($rawParams, mb_strlen($param)));
+            if (!empty($rawParams)) {
+                static::getParam($rawParams);
+            }
+        }
+        return static::$props;
     }
 
     /**
@@ -94,6 +136,7 @@ class ContentBlockHelper
         }
         return $value;
     }
+
     /**
      * Compiles single chunk
      * @param  {ContentBlock} $chunk     ContentBlock instance
@@ -106,7 +149,7 @@ class ContentBlockHelper
         preg_match_all('%['.static::$prefix.']{2}([\+\*\%])([^\]\[]+)['.static::$suffix.']{2}%ui', $chunk, $matches);
         foreach ($matches[2] as $k => $rawParam) {
             $token = $matches[1][$k];
-            if (strpos($rawParam, ':') === false ) {
+            if (false === strpos($rawParam, ':')) {
                 $paramName = $rawParam; 
             } else {
                 list($paramName, $formatParams) = explode(':', $rawParam);
@@ -114,10 +157,12 @@ class ContentBlockHelper
             switch ($token) {
                 case '+':
                     if (array_key_exists($paramName, $arguments)) {
-                        $replacement = static::applyFormatter($arguments[$paramName], $formatParams);
+                        $argumentValue = str_replace(self::EQUAL_REPLACER, '=', $arguments[$paramName]);
+                        $replacement = static::applyFormatter($argumentValue, $formatParams);
                         $chunk = str_replace($matches[0][$k], $replacement, $chunk);
                     } else if(array_key_exists($paramName.'-default', $arguments)) {
-                        $replacement = static::applyFormatter($arguments[$paramName.'-default'], $formatParams);
+                        $argumentValue = str_replace(self::EQUAL_REPLACER, '=', $arguments[$paramName.'-default']);
+                        $replacement = static::applyFormatter($argumentValue, $formatParams);
                         $chunk = str_replace($matches[0][$k], $replacement, $chunk);
                     } else {
                         $chunk = str_replace($matches[0][$k], '', $chunk);
@@ -139,19 +184,12 @@ class ContentBlockHelper
      */
     private static function applyFormatter($value, $rawFormat)
     {
-        $formattedValue = $value;
         if (null === $rawFormat) {
             return $value;
         }
         $params = explode(',', $rawFormat);
         $method = array_shift($params);
-        if (method_exists(Yii::$app->formatter, $method) === true) {
-            if (!empty($params)) {
-                $formattedValue = Yii::$app->formatter->$method($value, implode(',', $params));
-            } else {
-                $formattedValue = Yii::$app->formatter->$method($value);
-            }
-        }
+        $formattedValue = call_user_func_array([Yii::$app->formatter, $method], [$value, $params]);
         return $formattedValue;
     }
 
@@ -165,7 +203,7 @@ class ContentBlockHelper
         if (!array_key_exists($key, static::$chunksByKey)) {
             $chunkCacheKey = 'chunkCaheKey'.$key.ContentBlock::className();
             static::$chunksByKey[$key] = Yii::$app->cache->get($chunkCacheKey);
-            if (static::$chunksByKey[$key] === false ) {
+            if (false === static::$chunksByKey[$key]) {
                 $chunk = ContentBlock::find()
                     ->where(['key' => $key])
                     ->asArray()
@@ -184,7 +222,6 @@ class ContentBlockHelper
                     );
                 }
             }
-
         }
         return static::$chunksByKey[$key];
     }
@@ -200,7 +237,7 @@ class ContentBlockHelper
         }
         $cacheKey = 'chunksByKey'.ContentBlock::className();
         static::$chunksByKey = Yii::$app->cache->get($cacheKey);
-        if ( static::$chunksByKey === false ) {
+        if (false === static::$chunksByKey) {
             $chunks = ContentBlock::find()
                 ->where(['preload' => 1])
                 ->asArray()

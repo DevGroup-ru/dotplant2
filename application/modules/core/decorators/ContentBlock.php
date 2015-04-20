@@ -24,7 +24,8 @@ class ContentBlock extends PreDecorator
         if (isset($controller->view->blocks['content'])) {
             $dependency = new TagDependency([
                 'tags' => [
-                    ActiveRecordHelper::getCommonTag(get_class($params['model'])),
+                    ActiveRecordHelper::getCommonTag(app\modules\core\models\ContentBlock::className()),
+                    ActiveRecordHelper::getCommonTag(get_class($params['model']))
                 ]
             ]);
             $controller->view->blocks['content'] = ContentBlockHelper::compileContentString(

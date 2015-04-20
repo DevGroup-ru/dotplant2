@@ -1,8 +1,10 @@
 <?php
 
-use kartik\widgets\ActiveForm;
+use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use kartik\icons\Icon;
+use vova07\imperavi\Widget as ImperaviWidget;
+use yii\helpers\Url;
 
 /**
  * @var yii\web\View $this
@@ -61,30 +63,41 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             )
             ?>
-
-
-
         </div>
         <?php $this->endBlock('submit'); ?>
-
         <div class="chunk-form">
-
             <?php $form = ActiveForm::begin(['id' => 'chunk-form']); ?>
-
-            <?= $model->isNewRecord ? '' : $form->field($model, 'id')->textInput(['disabled' => 'disabled']); ?>
-
             <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
-
             <?= $form->field($model, 'key')->textInput(['maxlength' => 255]) ?>
-
-            <?= $form->field($model, 'value')->textarea(['rows' => '20', 'data-editor' => 'html']) ?>
-
+            <?=$form->field($model, 'value')->widget(
+                ImperaviWidget::className(),
+                [
+                    'settings' => [
+                        'replaceDivs' => false,
+                        'minHeight' => 200,
+                        'paragraphize' => false,
+                        'pastePlainText' => true,
+                        'buttonSource' => true,
+                        'imageManagerJson' => Url::to(['/backend/dashboard/imperavi-images-get']),
+                        'plugins' => [
+                            'table',
+                            'fontsize',
+                            'fontfamily',
+                            'fontcolor',
+                            'video',
+                            'imagemanager',
+                        ],
+                        'replaceStyles' => [],
+                        'replaceTags' => [],
+                        'deniedTags' => [],
+                        'removeEmpty' => [],
+                        'imageUpload' => Url::to(['/backend/dashboard/imperavi-image-upload']),
+                    ],
+                ]
+            );?>
             <?= $form->field($model, 'preload')->checkbox() ?>
-
             <?= $this->blocks['submit'] ?>
-
             <?php ActiveForm::end(); ?>
-
         </div>
         </div>
     </div>

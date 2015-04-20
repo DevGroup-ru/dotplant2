@@ -19,7 +19,7 @@ class BackendChunkController extends BackendController
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['administrate'],
+                        'roles' => ['content manage'],
                     ],
                 ],
             ],
@@ -30,7 +30,6 @@ class BackendChunkController extends BackendController
     {
         $searchModel = new ContentBlock(['scenario' => 'search']);
         $dataProvider = $searchModel->search($_GET);
-
         return $this->render(
             'index',
             [
@@ -38,22 +37,18 @@ class BackendChunkController extends BackendController
                 'searchModel' => $searchModel,
             ]
         );
-        
     }
 
     public function actionEdit($id = null)
     {
-        /** @var null|Page|HasProperties $model */
+        /** @var null|ContentBlock $model */
         $model = new ContentBlock();
         if ($id !== null) {
             $model = ContentBlock::findOne($id);
         }
-
         $post = \Yii::$app->request->post();
         if ($model->load($post) && $model->validate()) {
-
             $save_result = $model->save();
-
             if ($save_result) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
                 $returnUrl = Yii::$app->request->get('returnUrl', ['/core/backend-chunk/index']);
@@ -82,7 +77,6 @@ class BackendChunkController extends BackendController
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }
         }
-
         return $this->render(
             'edit',
             [
@@ -96,11 +90,9 @@ class BackendChunkController extends BackendController
         if ((null === $id) || (null === $model = ContentBlock::findOne($id))) {
             throw new NotFoundHttpException;
         }
-
         if ($model->delete()) {
             Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
         }
-
         return $this->redirect(
             Yii::$app->request->get(
                 'returnUrl',
@@ -118,7 +110,6 @@ class BackendChunkController extends BackendController
                 $item->delete();
             }
         }
-
         return $this->redirect(['index']);
     }
 }
