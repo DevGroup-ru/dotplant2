@@ -57,8 +57,12 @@ class ContentBlockHelper
      */
     private static function sanitizeChunk($rawChunk) {
         $chunk = [];
-        $key = substr($rawChunk, (strpos($rawChunk, '$')+1), (strpos($rawChunk, ' ')-1));
-        $rawParams = substr($rawChunk, (strpos($rawChunk, $key)+strlen($key)));
+        if (false === $noParams = mb_strpos($rawChunk, ' ')) {
+            $key = mb_substr($rawChunk, (mb_strpos($rawChunk, '$')+1));
+        } else {
+            $key = mb_substr($rawChunk, (mb_strpos($rawChunk, '$')+1), $noParams-1);
+        }
+        $rawParams = mb_substr($rawChunk, (mb_strpos($rawChunk, $key)+mb_strlen($key)));
         $chunk['key'] = $key;
         $matches = [];
         $rawParams = preg_replace('%[\s]+%u', ' ', $rawParams);
@@ -70,9 +74,9 @@ class ContentBlockHelper
         $params = static::getParam($rawParams);
         foreach ($params as $param) {
             if (empty($param)) continue;
-            if (false !== strpos($param, '|')) {
+            if (false !== mb_strpos($param, '|')) {
                 list($paramValues, $paramDefaultValue) = explode('|', $param);
-                if (false === strpos($paramValues, '=')) {
+                if (false === mb_strpos($paramValues, '=')) {
                     $paramName = $paramValues;
                     $paramValue = '';
                 } else {
@@ -83,7 +87,7 @@ class ContentBlockHelper
                 }
                 $chunk[$paramName.'-default'] = static::defineValueType($paramDefaultValue);
             } else {
-                if (false === strpos($param, '=')) continue;
+                if (false === mb_strpos($param, '=')) continue;
                 list($paramName, $paramValue) = explode('=', $param);
                 $chunk[$paramName] = static::defineValueType($paramValue);
             }
@@ -100,15 +104,15 @@ class ContentBlockHelper
      * @return array
      */
     private static function getParam($rawParams) {
-        $equalpos = mb_stripos($rawParams, '=');
+        $equalpos = mb_strpos($rawParams, '=');
         if (false === $equalpos) {
             return [];
         }
-        $nextequal = mb_stripos($rawParams, '=', $equalpos+1);
+        $nextequal = mb_strpos($rawParams, '=', $equalpos+1);
         if (false === $nextequal) {
-            $st = mb_strrpos($rawParams, ' ', -strlen(mb_substr($rawParams, $equalpos)));
+            $st = mb_strrpos($rawParams, ' ', -mb_strlen(mb_substr($rawParams, $equalpos)));
         } else {
-            $st = mb_strrpos($rawParams, ' ', -strlen(mb_substr($rawParams, $nextequal)));
+            $st = mb_strrpos($rawParams, ' ', -mb_strlen(mb_substr($rawParams, $nextequal)));
         }
         if (false === $st) {
             static::$props[] = trim($rawParams);
@@ -149,7 +153,7 @@ class ContentBlockHelper
         preg_match_all('%['.static::$prefix.']{2}([\+\*\%])([^\]\[]+)['.static::$suffix.']{2}%ui', $chunk, $matches);
         foreach ($matches[2] as $k => $rawParam) {
             $token = $matches[1][$k];
-            if (false === strpos($rawParam, ':')) {
+            if (false === mb_strpos($rawParam, ':')) {
                 $paramName = $rawParam; 
             } else {
                 list($paramName, $formatParams) = explode(':', $rawParam);
