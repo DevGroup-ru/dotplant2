@@ -7,12 +7,11 @@
  * @var $thumbnailWidth integer
  * @var $thumbnailHeight integer
  */
-use app\models\Image;
+
 use kartik\helpers\Html;
 use app\components\Helper;
 
 foreach ($images as $image) {
-    $i = Image::findOne($image->id);
     $image_src = $image->src;
     if ($thumbnailOnDemand === true) {
         $image_src = Helper::thumbnailOnDemand($image_src, $thumbnailWidth, $thumbnailHeight);

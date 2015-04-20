@@ -111,6 +111,15 @@ class m150413_094340_thumbnail extends Migration
                 [$image_menu_id, 'Watermarks', 'backend/watermark/index', 'core', 'content manage', 'app'],
             ]
         );
+        $this->createTable(
+            '{{%error_images}}',
+            [
+                'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
+                'img_id' => 'INT UNSIGNED NOT NULL',
+                'class_name' => 'VARCHAR(255) NOT NULL',
+            ],
+            $tableOptions
+        );
     }
 
     public function down()
@@ -129,5 +138,6 @@ class m150413_094340_thumbnail extends Migration
         $this->delete(BackendMenu::tableName(), ['name' => 'Thumbnails sizes']);
         $this->delete(BackendMenu::tableName(), ['name' => 'Watermarks']);
         $this->delete(BackendMenu::tableName(), ['name' => 'Images']);
+        $this->dropTable('{{%error_images}}');
     }
 }

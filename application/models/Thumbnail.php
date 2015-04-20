@@ -95,9 +95,9 @@ class Thumbnail extends \yii\db\ActiveRecord
      */
     public static function createThumbnail($image, $size)
     {
-        $thumb = Imagine::thumbnail('@webroot' . $image->image_src, $size->width, $size->height);
+        $thumb = Imagine::thumbnail('@webroot' . $image->src, $size->width, $size->height);
         $path = Config::getValue('image.thumbDir', '/theme/resources/product-images/thumbnail');
-        $file_info = pathinfo($image->image_src);
+        $file_info = pathinfo($image->src);
         $src = "$path/{$file_info['filename']}-{$size->width}x{$size->height}.{$file_info['extension']}";
         $thumb->save(Yii::getAlias('@webroot') . $src);
         return $src;
