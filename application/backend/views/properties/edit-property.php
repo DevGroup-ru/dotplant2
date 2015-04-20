@@ -182,9 +182,9 @@ $this->endBlock();
 $js = <<<JS
     "use strict";
     $('input[data-group]').change(function() {
-        var $this = jQuery(this);
-        if ($this.prop('checked')) {
-            $('input[data-group="' + $this.data('group') + '"]').not('[name="' + $this.attr('name') + '"]').prop('checked', false);
+        var object = jQuery(this);
+        if (object.prop('checked')) {
+            $('input[data-group="' + object.data('group') + '"]').not('[name="' + object.attr('name') + '"]').prop('checked', false);
         }
     });
 JS;

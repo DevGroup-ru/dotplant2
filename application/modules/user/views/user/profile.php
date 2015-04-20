@@ -20,73 +20,95 @@ $this->params['breadcrumbs'] = [
     $this->title,
 ];
 
+$propertyGroups = $model->getPropertyGroups();
+
 ?>
 <h1><?= $this->title ?></h1>
-
+<?php
+$form = ActiveForm::begin([
+    'id' => 'profile-form',
+    'type' => ActiveForm::TYPE_VERTICAL,
+]);
+?>
 <div class="row">
-    <div class="span4 well">
-        <?php
-            $form = ActiveForm::begin([
-                'id' => 'profile-form',
-                'type' => ActiveForm::TYPE_VERTICAL,
-            ]);
-        ?>
-            <?= $form->field($model, 'first_name') ?>
-            <?= $form->field($model, 'last_name') ?>
-            <?= $form->field($model, 'email') ?>
-            <?php foreach ($propertyGroups as $group): ?>
-                <?php if ($group['group']->hidden_group_title == 0): ?>
-                    <h4><?= $group['group']->name; ?></h4>
-                <?php endif; ?>
-                <?php
-                    /** @var \app\models\Property[] $properties */
-//                    $properties = $group['properties'];
-                    if (false):
-                ?>
-                <?php foreach ($properties as $property): ?>
-                    <?= $property->handler($form, $model->abstractModel, [], 'frontend_edit_view'); ?>
-                <?php endforeach;
-                endif;
-                ?>
+    <div class="col-md-6 col-sm-12">
 
-            <?php endforeach; ?>
-            <div class="form-group">
-                <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-primary']) ?>
-            </div>
-        <?php ActiveForm::end(); ?>
+        <?= $form->field($model, 'first_name') ?>
+        <?= $form->field($model, 'last_name') ?>
+        <?= $form->field($model, 'email') ?>
+
     </div>
-    <div class="span4 well">
+    <div class="col-md-6 col-sm-12">
+        <?php foreach ($propertyGroups as $groupId => $properties): ?>
+
+            <?php
+
+            $group = \app\models\PropertyGroup::findById($groupId);
+            if (intval($group->hidden_group_title) == 0) {
+                echo Html::tag('h2', $group->name);
+            }
+
+
+            $model->getAbstractModel()->setArrayMode(true);
+
+            $properties = app\models\Property::getForGroupId($groupId);
+
+            foreach ($properties as $prop) {
+                $property_values = $model->getPropertyValuesByPropertyId($prop->id);
+
+                echo $prop->handler($form, $model->getAbstractModel(), [], 'frontend_edit_view');
+
+
+
+            }
+            ?>
+
+
+        <?php endforeach; ?>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-primary']) ?>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
         <?php
-            $authChoice = AuthChoice::begin([
-                'baseAuthUrl' => ['/user/user/auth']
-            ]);
+        $authChoice = AuthChoice::begin([
+            'baseAuthUrl' => ['/user/user/auth']
+        ]);
         ?>
-            <?php if (count($authChoice->clients) > count($services)): ?>
-                <h3><?= Yii::t('app', 'Attach service') ?></h3>
-                <ul class="auth-clients clear">
-                    <?php foreach ($authChoice->clients as $client): ?>
-                        <?php if (!in_array($client->className(), $services)): ?>
-                            <li class="auth-client"><?= $authChoice->clientLink($client) ?></li>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
+        <?php if (count($authChoice->clients) > count($services)): ?>
+            <h3><?= Yii::t('app', 'Attach service') ?></h3>
+            <ul class="auth-clients clear">
+                <?php foreach ($authChoice->clients as $client): ?>
+                    <?php if (!in_array($client->className(), $services)): ?>
+                        <li class="auth-client"><?= $authChoice->clientLink($client) ?></li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
         <?php AuthChoice::end(); ?>
         <?php if (!empty($services)): ?>
             <h3><?= Yii::t('app', 'Detach service') ?></h3>
             <?php
-                $authChoice = AuthChoice::begin([
-                    'baseAuthUrl' => ['/user/user/auth']
-                ]);
+            $authChoice = AuthChoice::begin([
+                'baseAuthUrl' => ['/user/user/auth']
+            ]);
             ?>
-                <ul class="auth-clients clear">
-                    <?php foreach ($authChoice->clients as $client): ?>
-                        <?php if (in_array($client->className(), $services)): ?>
-                            <li class="auth-client"><?= $authChoice->clientLink($client) ?></li>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </ul>
+            <ul class="auth-clients clear">
+                <?php foreach ($authChoice->clients as $client): ?>
+                    <?php if (in_array($client->className(), $services)): ?>
+                        <li class="auth-client"><?= $authChoice->clientLink($client) ?></li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
             <?php AuthChoice::end(); ?>
         <?php endif; ?>
     </div>
 </div>
+
+<?php ActiveForm::end(); ?>

@@ -8,11 +8,36 @@
 
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
+use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Product reviews');
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
+
+<?php
+$this->beginBlock('add-button');
+?>
+<div class="clearfix"></div>
+<?=\app\backend\widgets\RemoveAllButton::widget(
+    [
+        'url' => Url::toRoute(
+            [
+                '/backend/review/remove-all',
+                'returnUrl' => Yii::$app->request->url
+            ]
+        ),
+        'gridSelector' => '.grid-view',
+        'htmlOptions' => [
+            'class' => 'btn btn-danger pull-right'
+        ],
+    ]
+);?>
+<div class="clearfix"></div>
+<?php
+$this->endBlock();
+?>
+
 <div class="reviews-index">
     <?=
     DynaGrid::widget(
@@ -27,9 +52,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'hover' => true,
                 'panel' => [
                     'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
+                    'after' => $this->blocks['add-button'],
                 ],
             ],
             'columns' => [
+                [
+                    'class' => \kartik\grid\CheckboxColumn::className(),
+                    'options' => [
+                        'width' => '10px',
+                    ],
+                ],
+                'id',
                 'text:truncated',
                 [
                     'class' => yii\grid\DataColumn::className(),

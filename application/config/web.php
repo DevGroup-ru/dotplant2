@@ -3,15 +3,16 @@
 use yii\helpers\ArrayHelper;
 
 $config = [
-    'id' => 'basic',
+    'id' => 'dotplant2',
     'basePath' => dirname(__DIR__),
     'extensions' => require(__DIR__ . '/../vendor/yiisoft/extensions.php'),
     'language' => 'ru',
     'bootstrap' => [
+        'core',
         'seo',
         'backend',
         'app\components\UserPreferencesBootstrap',
-        'core',
+
     ],
     'defaultRoute' => 'default',
     'modules' => [
@@ -113,25 +114,6 @@ $config = [
         ],
         'authClientCollection' => [
             'class' => 'yii\authclient\Collection',
-            'clients' => [
-                'google' => [
-                    'class' => 'yii\authclient\clients\GoogleOpenId'
-                ],
-                'yandex' => [
-                    'class' => 'yii\authclient\clients\YandexOpenId'
-                ],
-                'facebook' => [
-                    // register your app here: https://developers.facebook.com/apps/
-                    'class' => 'yii\authclient\clients\Facebook',
-                    'clientId' => '547268812035683',
-                    'clientSecret' => '478d1f1024ee3b3c90cc976eb2ee6ff5',
-                ],
-                'vk' => [
-                    'class' => '\app\components\VK',
-                    'clientId' => '4119510',
-                    'clientSecret' => 'UeyicFQWAhca5fKqPd0U',
-                ],
-            ],
         ],
         'apiServiceClientCollection' => [
             'class' => 'yii\authclient\Collection',
@@ -150,7 +132,7 @@ $config = [
         ],
         'mail' => file_exists(__DIR__ . '/email-config.php') ? require(__DIR__ . '/email-config.php') : [ 'class' => 'yii\swiftmailer\Mailer' ],
         'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'traceLevel' => YII_DEBUG ? 6 : 0,
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',

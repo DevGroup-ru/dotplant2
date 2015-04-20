@@ -4,3 +4,7 @@ common-local.php
 console-local.php
 from-db.php
 email-config.php
+common-configurables.php
+web-configurables.php
+console-configurables.php
+kv-configurables.php

@@ -35,6 +35,11 @@ class ConfigConfigurableModel extends BaseConfigurableModel
     public $authClients = [];
 
     /**
+     * @var string Layout for post-registration process with simplified template
+     */
+    public $postRegistrationLayout;
+
+    /**
      * @inheritdoc
      */
     public function rules()
@@ -43,6 +48,7 @@ class ConfigConfigurableModel extends BaseConfigurableModel
             [['passwordResetTokenExpire', 'loginSessionDuration',], 'integer', 'min' => 60],
             [['passwordResetTokenExpire', 'loginSessionDuration',], 'filter', 'filter'=>'intval'],
             [['passwordResetTokenExpire', 'loginSessionDuration',], 'required'],
+            [['postRegistrationLayout'], 'string',],
         ];
     }
 
@@ -51,8 +57,12 @@ class ConfigConfigurableModel extends BaseConfigurableModel
      */
     public function defaultValues()
     {
-        $this->loginSessionDuration = Yii::$app->modules['user']->loginSessionDuration;
-        $this->passwordResetTokenExpire = Yii::$app->modules['user']->passwordResetTokenExpire;
+        /** @var app\modules\user\UserModule $module */
+        $module = Yii::$app->modules['user'];
+
+        $this->loginSessionDuration = $module->loginSessionDuration;
+        $this->passwordResetTokenExpire = $module->passwordResetTokenExpire;
+        $this->postRegistrationLayout = $module->postRegistrationLayout;
     }
 
     /**
@@ -70,7 +80,7 @@ class ConfigConfigurableModel extends BaseConfigurableModel
             $data['class'] = $data['class_name'];
             unset($data['class_name'], $data['clientType']);
             foreach ($data as $key => $value) {
-                if ($value === null || empty($value) === true) {
+                if (empty($value) === true) {
                     unset($data[$key]);
                 }
             }
@@ -81,6 +91,7 @@ class ConfigConfigurableModel extends BaseConfigurableModel
                 'user' => [
                     'loginSessionDuration' => $this->loginSessionDuration,
                     'passwordResetTokenExpire' => $this->passwordResetTokenExpire,
+                    'postRegistrationLayout' => $this->postRegistrationLayout,
                 ],
             ],
             'components' => [
@@ -216,6 +227,14 @@ class ConfigConfigurableModel extends BaseConfigurableModel
                 'authClients',
             ]
         );
+
+        // clear empty values
+        foreach ($attributes as $index => $value) {
+            if (empty($value) === true) {
+                unset($attributes[$index]);
+            }
+        }
+
         $attributes['authClients'] = [];
         foreach ($this->authClients as $index => $client) {
             $attributes['authClients'][$index] = $client->getAttributes();

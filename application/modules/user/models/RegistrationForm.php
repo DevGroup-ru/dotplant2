@@ -25,7 +25,7 @@ class RegistrationForm extends Model
         return [
             [['username', 'email', 'password', 'confirmPassword'], 'required'],
             ['email', 'email', 'checkDNS' => true],
-            ['password', 'string', 'min' => 6],
+            ['password', 'string', 'min' => 8],
             ['confirmPassword', 'compare', 'compareAttribute' => 'password'],
         ];
     }
