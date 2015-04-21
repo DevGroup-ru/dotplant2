@@ -43,7 +43,7 @@ class AuthAction extends \yii\authclient\AuthAction
                 'error',
                 Yii::t(
                     'app',
-                    'Error occurred during logging in. Please try again.'
+                    $e->getMessage()
                 )
             );
             $this->controller->layout = $this->controller->module->postRegistrationLayout;
