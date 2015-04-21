@@ -39,6 +39,10 @@ class ObjectImageWidget extends Widget
      * @var int
      */
     public $thumbnailHeight = 200;
+    /**
+     * @var bool
+     */
+    public $useWatermark = false;
 
     public function run()
     {
@@ -53,7 +57,8 @@ class ObjectImageWidget extends Widget
                     $this->offset,
                     $this->thumbnailOnDemand ? '1' : '0',
                     $this->thumbnailWidth,
-                    $this->thumbnailHeight
+                    $this->thumbnailHeight,
+                    $this->useWatermark,
                 ]
             );
         $result = Yii::$app->cache->get($cacheKey);
@@ -70,6 +75,7 @@ class ObjectImageWidget extends Widget
                     'thumbnailOnDemand' => $this->thumbnailOnDemand,
                     'thumbnailWidth' => $this->thumbnailWidth,
                     'thumbnailHeight' => $this->thumbnailHeight,
+                    'useWatermark' => $this->useWatermark,
                 ]
             );
             Yii::$app->cache->set(

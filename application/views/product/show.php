@@ -14,6 +14,8 @@
 
 use app\models\Image;
 use app\models\Product;
+use app\models\Thumbnail;
+use app\models\ThumbnailSize;
 use app\widgets\ObjectImageWidget;
 use kartik\helpers\Html;
 use yii\helpers\Url;
@@ -27,12 +29,9 @@ $images = Image::getForModel($model->object->id, $model->id);
 ?>
 <div class="row" itemscope itemtype="http://schema.org/Product">
     <div id="gallery" class="span3">
-        <?php
-        //@todo rewrite to img widget
-        ?>
         <?php if (count($images) > 0): ?>
-            <a href="<?=$images[0]->image_src?>">
-                <img src="<?=$images[0]->thumbnail_src?>" alt="<?=$images[0]->image_description?>" />
+            <a href="<?=$images[0]->src?>">
+                <img src="<?=$images[0]->getThumbnail('80x80')?>" alt="<?=$images[0]->image_description?>" />
             </a>
         <?php endif; ?>
         <div id="differentview" class="moreOptopm carousel slide">
@@ -44,7 +43,6 @@ $images = Image::getForModel($model->object->id, $model->id);
                             'limit' => 3,
                             'offset' => 1,
                             'model' => $model,
-                            'viewFile' => 'img-thumbnail',
                         ]
                     )
                     ?>
@@ -55,7 +53,6 @@ $images = Image::getForModel($model->object->id, $model->id);
                         [
                             'offset' => 4,
                             'model' => $model,
-                            'viewFile' => 'img-thumbnail',
                         ]
                     )
                     ?>

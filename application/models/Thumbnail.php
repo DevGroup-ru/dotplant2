@@ -69,9 +69,6 @@ class Thumbnail extends \yii\db\ActiveRecord
      */
     public static function getImageThumbnailBySize($image, $size)
     {
-        /**
-         * @todo cache
-         */
         $thumb = static::findOne(['img_id' => $image->id, 'size_id' => $size->id]);
         if ($thumb === null) {
             $thumb = new Thumbnail;
@@ -113,7 +110,7 @@ class Thumbnail extends \yii\db\ActiveRecord
                 $watermark = Watermark::findOne($size->default_watermark_id);
                 ThumbnailWatermark::getThumbnailWatermark($this, $watermark);
             } else {
-                throw new BadRequestHttpException(Yii::t('app','Set thumbnail size'));
+                throw new BadRequestHttpException(Yii::t('app', 'Set thumbnail size'));
             }
         }
     }

@@ -9,12 +9,11 @@
  */
 
 use kartik\helpers\Html;
-use app\components\Helper;
 
 foreach ($images as $image) {
     $image_src = $image->src;
     if ($thumbnailOnDemand === true) {
-        $image_src = Helper::thumbnailOnDemand($image_src, $thumbnailWidth, $thumbnailHeight);
+        $image_src = $image->getThumbnail("{$thumbnailWidth}x{$thumbnailHeight}", $useWatermark);
     }
     echo Html::beginTag('div', ['itemscope' => '', 'itemtype' => 'http://schema.org/ImageObject']);
     echo Html::img($image_src, ['alt' => $image->image_description, 'itemprop' => "contentUrl"]);

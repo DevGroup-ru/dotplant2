@@ -219,10 +219,22 @@ class Image extends \yii\db\ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
         $defaultSize = Config::getValue('image.defaultThumbSize', '80x80');
-        $aSize = explode('x', $defaultSize);
-        $size = ThumbnailSize::findOne(['width' => $aSize[0], 'height' => $aSize[1]]);
+        $size = ThumbnailSize::getByDemand($defaultSize);
         if ($size !== null) {
             Thumbnail::getImageThumbnailBySize($this, $size);
         }
+    }
+
+    public function getThumbnail($demand, $useWatermark = false)
+    {
+        $size = ThumbnailSize::getByDemand($demand);
+        $thumb = Thumbnail::getImageThumbnailBySize($this, $size);
+        $src = $thumb->src;
+        if ($useWatermark === true) {
+            $watermark = Watermark::findOne($size->default_watermark_id);
+            $water = ThumbnailWatermark::getThumbnailWatermark($thumb, $watermark);
+            $src = $water->src;
+        }
+        return $src;
     }
 }

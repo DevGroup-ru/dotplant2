@@ -1,6 +1,7 @@
 <?php
 
 use app\backend\models\BackendMenu;
+use app\backgroundtasks\models\Task;
 use app\models\Image;
 use app\models\Thumbnail;
 use app\models\ThumbnailSize;
@@ -51,7 +52,7 @@ class m150413_094340_thumbnail extends Migration
             ],
             $tableOptions
         );
-        $this->dropColumn(Image::tableName(), 'thumbnail_src');
+        //$this->dropColumn(Image::tableName(), 'thumbnail_src');
         $defaultSize = new ThumbnailSize;
         $defaultSize->setAttributes(['width' => 80, 'height' => 80]);
         $defaultSize->save();
@@ -108,7 +109,9 @@ class m150413_094340_thumbnail extends Migration
             ['parent_id', 'name', 'route', 'added_by_ext', 'rbac_check', 'translation_category'],
             [
                 [$image_menu_id, 'Thumbnails sizes', 'backend/thumbnail-size/index', 'core', 'content manage', 'app'],
+                [$image_menu_id, 'Create thumbnails', 'backend/thumbnail/index', 'core', 'content manage', 'app'],
                 [$image_menu_id, 'Watermarks', 'backend/watermark/index', 'core', 'content manage', 'app'],
+                [$image_menu_id, 'Broken images', 'backend/error-images/index', 'core', 'content manage', 'app'],
             ]
         );
         $this->createTable(
@@ -120,6 +123,16 @@ class m150413_094340_thumbnail extends Migration
             ],
             $tableOptions
         );
+        $this->insert(
+            Task::tableName(),
+            [
+                'action' => 'images/check-broken',
+                'type' => Task::TYPE_REPEAT,
+                'initiator' => 1,
+                'name' => 'Check broken images',
+                'cron_expression' => '* */1 * * *',
+            ]
+        );
     }
 
     public function down()
@@ -128,6 +141,7 @@ class m150413_094340_thumbnail extends Migration
         $this->dropTable('{{%thumbnail_size}}');
         $this->dropTable('{{%watermark}}');
         $this->dropTable('{{%thumbnail_watermark}}');
+        $this->dropTable('{{%error_images}}');
         $this->addColumn(Image::tableName(), 'thumbnail_src', 'VARCHAR(255) NOT NULL');
         $this->delete(Config::tableName(), ['key' => 'noImage']);
         $this->delete(Config::tableName(), ['key' => 'waterDir']);
@@ -135,9 +149,11 @@ class m150413_094340_thumbnail extends Migration
         $this->delete(Config::tableName(), ['key' => 'thumbDir']);
         $this->delete(Config::tableName(), ['key' => 'defaultThumbSize']);
         $this->delete(Config::tableName(), ['key' => 'image']);
+        $this->delete(BackendMenu::tableName(), ['name' => 'Broken images']);
         $this->delete(BackendMenu::tableName(), ['name' => 'Thumbnails sizes']);
+        $this->delete(BackendMenu::tableName(), ['name' => 'Create thumbnails']);
         $this->delete(BackendMenu::tableName(), ['name' => 'Watermarks']);
         $this->delete(BackendMenu::tableName(), ['name' => 'Images']);
-        $this->dropTable('{{%error_images}}');
+        $this->delete(Task::tableName(), ['action' => 'images/check-broken']);
     }
 }

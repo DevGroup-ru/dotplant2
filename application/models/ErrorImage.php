@@ -42,4 +42,5 @@ class ErrorImage extends \yii\db\ActiveRecord
             'img_id' => Yii::t('app', 'Img ID'),
         ];
     }
+
 }

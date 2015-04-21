@@ -375,10 +375,9 @@ class ProductController extends Controller
                         $add
                     )->execute();
                 }
-                //@todo rewrite width('images')
                 $query = new Query();
                 $params = $query->select(
-                    ['object_id', 'filename', 'image_src', 'thumbnail_src', 'image_description', 'sort_order']
+                    ['object_id', 'filename', 'image_src', 'image_description', 'sort_order']
                 )->from(Image::tableName())->where(
                     [
                         'object_id' => $model->object->id,
@@ -393,7 +392,6 @@ class ProductController extends Controller
                             $model->id,
                             $param['filename'],
                             $param['image_src'],
-                            $param['thumbnail_src'],
                             $param['image_description'],
                             $param['sort_order'],
                         ];
@@ -405,7 +403,6 @@ class ProductController extends Controller
                             'object_model_id',
                             'filename',
                             'image_src',
-                            'thumbnail_src',
                             'image_description',
                             'sort_order',
                         ],
@@ -472,7 +469,7 @@ class ProductController extends Controller
 
             // save images bindings
             $params = $query->select(
-                ['object_id', 'filename', 'image_src', 'thumbnail_src', 'image_description', 'sort_order']
+                ['object_id', 'filename', 'image_src', 'image_description', 'sort_order']
             )->from(Image::tableName())->where(
                 [
                     'object_id' => $object->id,
@@ -487,7 +484,6 @@ class ProductController extends Controller
                         $newModel->id,
                         $param['filename'],
                         $param['image_src'],
-                        $param['thumbnail_src'],
                         $param['image_description'],
                         $param['sort_order'],
                     ];
@@ -499,7 +495,6 @@ class ProductController extends Controller
                         'object_model_id',
                         'filename',
                         'image_src',
-                        'thumbnail_src',
                         'image_description',
                         'sort_order',
                     ],

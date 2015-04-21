@@ -72,4 +72,16 @@ class ThumbnailSize extends ActiveRecord
         $query->andFilterWhere(['height' => $this->height]);
         return $dataProvider;
     }
+
+    public static function getByDemand($demand)
+    {
+        $sizes = explode('x', $demand);
+        $size = static::findOne(['width' => $sizes[0], 'height' => $sizes[1]]);
+        if ($size === null) {
+            $size = new ThumbnailSize;
+            $size->setAttributes(['width' => $sizes[0], 'height' => $sizes[1]]);
+            $size->save();
+        }
+        return $size;
+    }
 }

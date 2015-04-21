@@ -23,6 +23,7 @@ class ImageExist extends Behavior
             if (preg_match('|http(s)?|i', $src) === 1) {
                 $path = '/assets/noimage.jpg';
                 file_put_contents(Yii::getAlias("@webroot$path"), file_get_contents($src));
+                chmod(Yii::getAlias("@webroot$path"), 0766);
                 $src = $path;
             }
             $errorImage = ErrorImage::findOne(
