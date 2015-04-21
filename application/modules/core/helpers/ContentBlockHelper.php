@@ -13,9 +13,6 @@ class ContentBlockHelper
     public static $prefix = '[';
     public static $suffix = ']';
     private static $chunksByKey = [];
-    private static $props = [];
-    const EQUAL_REPLACER = '*&^fawheg76^4e5WcEE';
-
     /**
      * Compiles content string by injecting chunks into content
      * @param  {string} $content     Original content with chunk calls
@@ -28,7 +25,7 @@ class ContentBlockHelper
         $matches = [];
         preg_match_all('%['.static::$prefix.']{2}([^\]\[]+)['.static::$suffix.']{2}%ui', $content, $matches);
         if (!empty($matches)) {
-            foreach ($matches[1] as $k => $rawChunk) {
+            foreach ($matches[0] as $k => $rawChunk) {
                 $chunkData = static::sanitizeChunk($rawChunk);
                 $cacheChunkKey = $chunkData['key'].$content_key;
                 $replacement = Yii::$app->cache->get($cacheChunkKey);
@@ -57,88 +54,25 @@ class ContentBlockHelper
      */
     private static function sanitizeChunk($rawChunk) {
         $chunk = [];
-        if (false === $noParams = mb_strpos($rawChunk, ' ')) {
-            $key = mb_substr($rawChunk, (mb_strpos($rawChunk, '$')+1));
-        } else {
-            $key = mb_substr($rawChunk, (mb_strpos($rawChunk, '$')+1), $noParams-1);
-        }
-        $rawParams = mb_substr($rawChunk, (mb_strpos($rawChunk, $key)+mb_strlen($key)));
-        $chunk['key'] = $key;
-        $matches = [];
-        $rawParams = preg_replace('%[\s]+%u', ' ', $rawParams);
-        preg_match_all('%\'[^\'\|]+\'%ui', $rawParams, $matches);
-        foreach ($matches[0] as $k => $v) {
-            $str = str_replace('=', self::EQUAL_REPLACER, $v);
-            $rawParams = str_replace($v, $str, $rawParams);
-        }
-        $params = static::getParam($rawParams);
-        foreach ($params as $param) {
-            if (empty($param)) continue;
-            if (false !== mb_strpos($param, '|')) {
-                list($paramValues, $paramDefaultValue) = explode('|', $param);
-                if (false === mb_strpos($paramValues, '=')) {
-                    $paramName = $paramValues;
-                    $paramValue = '';
-                } else {
-                    list($paramName, $paramValue) = explode('=', $paramValues);
-                }
-                if (!empty($paramValue) && static::defineValueType($paramValue) !== '') {
-                    $chunk[$paramName] = static::defineValueType($paramValue);
-                }
-                $chunk[$paramName.'-default'] = static::defineValueType($paramDefaultValue);
-            } else {
-                if (false === mb_strpos($param, '=')) continue;
-                list($paramName, $paramValue) = explode('=', $param);
-                $chunk[$paramName] = static::defineValueType($paramValue);
+        preg_match('%\$([^\s\]]+)[\s\]]%', $rawChunk, $keyMatches);
+        $chunk['key'] = $keyMatches[1];
+        $expression = "#\s*(?P<paramName>[\\w\\d]*)=(('(?P<escapedValue>.*[^\\\\])')|(?P<unescapedValue>.*))(\\|(('(?P<escapedDefault>.*[^\\\\])')|(?P<unescapedDefault>.*)))?[\\]\\s]#uUi";
+        preg_match_all($expression, $rawChunk, $matches);
+        foreach ($matches['paramName'] as $key => $paramName) {
+            if (!empty($matches['escapedValue'][$key])) {
+                $chunk[$paramName] = strval($matches['escapedValue'][$key]);
+            }
+            if (!empty($matches['unescapedValue'][$key])) {
+                $chunk[$paramName] = floatval($matches['unescapedValue'][$key]);
+            }
+            if (!empty($matches['escapedDefault'][$key])) {
+                $chunk[$paramName.'-default'] = strval($matches['escapedDefault'][$key]);
+            }
+            if (!empty($matches['unescapedDefault'][$key])) {
+                $chunk[$paramName.'-default'] = floatval($matches['unescapedDefault'][$key]);
             }
         }
         return $chunk;
-    }
-
-    /**
-     * process syntax analysis of given string.
-     * Extracts possibly param definitions and returns params array
-     * @param $rawParams
-     * @var $equalpos
-     * @var $nextequal
-     * @return array
-     */
-    private static function getParam($rawParams) {
-        $equalpos = mb_strpos($rawParams, '=');
-        if (false === $equalpos) {
-            return [];
-        }
-        $nextequal = mb_strpos($rawParams, '=', $equalpos+1);
-        if (false === $nextequal) {
-            $st = mb_strrpos($rawParams, ' ', -mb_strlen(mb_substr($rawParams, $equalpos)));
-        } else {
-            $st = mb_strrpos($rawParams, ' ', -mb_strlen(mb_substr($rawParams, $nextequal)));
-        }
-        if (false === $st) {
-            static::$props[] = trim($rawParams);
-        } else {
-            $param = mb_substr($rawParams, 0, $st);
-            static::$props[] = trim($param);
-            $rawParams = trim(mb_substr($rawParams, mb_strlen($param)));
-            if (!empty($rawParams)) {
-                static::getParam($rawParams);
-            }
-        }
-        return static::$props;
-    }
-
-    /**
-     * @param $value {string} value string extracted from chunk call
-     * if value vas defined with ' - its string, otherwise - float.
-     * @return float|string
-     */
-    private static function defineValueType($value) {
-        if (preg_match('%[\\\']%ui', $value)) {
-            $value = trim($value, "\\ '");
-        } else {
-            $value = floatval($value);
-        }
-        return $value;
     }
 
     /**
@@ -161,12 +95,10 @@ class ContentBlockHelper
             switch ($token) {
                 case '+':
                     if (array_key_exists($paramName, $arguments)) {
-                        $argumentValue = str_replace(self::EQUAL_REPLACER, '=', $arguments[$paramName]);
-                        $replacement = static::applyFormatter($argumentValue, $formatParams);
+                        $replacement = static::applyFormatter($arguments[$paramName], $formatParams);
                         $chunk = str_replace($matches[0][$k], $replacement, $chunk);
                     } else if(array_key_exists($paramName.'-default', $arguments)) {
-                        $argumentValue = str_replace(self::EQUAL_REPLACER, '=', $arguments[$paramName.'-default']);
-                        $replacement = static::applyFormatter($argumentValue, $formatParams);
+                        $replacement = static::applyFormatter($arguments[$paramName.'-default'], $formatParams);
                         $chunk = str_replace($matches[0][$k], $replacement, $chunk);
                     } else {
                         $chunk = str_replace($matches[0][$k], '', $chunk);
