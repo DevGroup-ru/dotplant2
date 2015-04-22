@@ -76,6 +76,7 @@ class Yml extends Model
             'offer_price' => Yii::t('app', 'Offer price'),
             'offer_picture' => Yii::t('app', 'Offer picture'),
             'offer_description' => Yii::t('app', 'Offer description'),
+            'offer_category' => Yii::t('app', 'Offer category'),
             'offer_param' => Yii::t('app', 'To show all properties of a product in YML'),
         ];
     }
