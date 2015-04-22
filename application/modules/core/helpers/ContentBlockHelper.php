@@ -8,16 +8,34 @@ use yii\helpers\ArrayHelper;
 use yii;
 use app;
 
+/**
+ * Class ContentBlockHelper
+ * Main public static method compileContentString() uses submethods to extract chunk calls from model content field,
+ * fetch chunks from data base table, then compile it and replace chunk calls with compiled chunks data
+ * Example chunk call in model content field should be like: [[$chunk param='value'|'default value' param2=42]].
+ * Chunk declaration should be like : <p>String: [[+param]]</p> <p>Float: [[+param2:format, param1, param2]]</p>
+ * All supported formats you can find at Yii::$app->formatter
+ *
+ * @package app\modules\core\helpers
+ */
 class ContentBlockHelper
 {
     private static $chunksByKey;
-
     /**
      * Compiles content string by injecting chunks into content
-     * @param  {string} $content     Original content with chunk calls
+     * Preloads chunks which have preload = 1
+     * Finding chunk calls with regexp
+     * Iterate matches
+     * While iterating:
+     * Extracts single chunk data with sanitizeChunk() method
+     * Fetches chunk by key using fetchChunkByKey(), who returns chunk value by key from static array if exists, otherwise from db
+     * Compiles single chunk using compileChunk() method
+     * Replaces single chunk call with compiled chunk data in the model content
+     *
+     * @param  {string} $content Original content with chunk calls
      * @param  {string} $content_key Key for caching compiled content version
      * @param  {yii\caching\Dependency} $dependency  Cache dependency
-     * @return {string}              Compiled content with injected chunks
+     * @return {string} Compiled content with injected chunks
      */
     public static function compileContentString($content, $content_key, $dependency)
     {
@@ -48,7 +66,20 @@ class ContentBlockHelper
     }
 
     /**
-     * Extracting chunk data from chunk call
+     * Extracts chunk data from chunk call
+     * uses regexp to extract param data from placeholder
+     * [[$chunk <paramName>='<escapedValue>'|'<escapedDefault>' <paramName>=<unescapedValue>|<unescapedDefault>]]
+     * iterate matches.
+     * While iterating converts escapedValue and escapedDefault into string, unescapedValue and unescapedDefault - into float
+     * Returns chunk data array like:
+     *  [
+     *      'key' => 'chunkKey',
+     *      'firstParam'=> 'string value',
+     *      'firstParam-default'=> 'default string value',
+     *      'secondParam'=> float value,
+     *      'secondParam-default'=> default float value,
+     *  ]
+     *
      * @param $rawChunk
      * @return array
      */
@@ -77,10 +108,18 @@ class ContentBlockHelper
     }
 
     /**
-     * Compiles single chunk
      * @param  {ContentBlock} $chunk     ContentBlock instance
      * @param  {array} $arguments Arguments for this chunk from original content
-     * @return {string}            Result string ready for replacing
+     * @return {string} Result string ready for replacing
+     *
+     * Compiles single chunk
+     * uses regexp to find placeholders and extract it's data from chunk value field
+     * [[<token><paramName>:<format><params>]]
+     * token switch is for future functionality increase
+     * now method only recognizes + token and replaces following param with according $arguments array data
+     * applies formatter according previously defined param values type if needed
+     * if param name from placeholder was not found in arguments array, placeholder in the compiled chunk will be replaced with empty string
+     * returns compiled chunk
      */
     public static function compileChunk($chunk, $arguments)
     {
@@ -88,9 +127,10 @@ class ContentBlockHelper
         preg_match_all('%\[\[(?P<token>[\+\*\%])(?P<paramName>[^\s\:\]]+)\:?(?P<format>[^\,\]]+)?\,?(?P<params>[^\]]+)?\]\]%ui', $chunk, $matches);
         foreach ($matches[0] as $k => $rawParam) {
             $token = $matches['token'][$k];
-            $paramName = $matches['paramName'][$k];
-            $format = $matches['format'][$k];
-            $params = explode(',', $matches['params'][$k]);
+            $paramName = trim($matches['paramName'][$k]);
+            $format = trim($matches['format'][$k]);
+            $params = preg_replace('%[\s]%', '', $matches['params'][$k]);
+            $params = explode(',', $params);
             switch ($token) {
                 case '+':
                     if (array_key_exists($paramName, $arguments)) {
@@ -153,7 +193,7 @@ class ContentBlockHelper
     }
 
     /**
-     * preloading chunks with preload option set to 1
+     * preloads chunks with option preload  = 1
      * and push it to static array
      * @return array|void
      */
