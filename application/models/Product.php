@@ -264,21 +264,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                         ) . ' AND ocats.object_model_id = ' . static::tableName() . '.id'
                     );
                 }
-<<<<<<< HEAD
-                if (null !== $model = $model->one()) {
-                    Yii::$app->cache->set(
-                        $cacheKey,
-                        $model,
-                        86400,
-                        new TagDependency(
-                            [
-                                'tags' => [
-                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
-                                ]
-                            ]
-                        )
-                    );
-=======
                 $model = $model->one();
                 $tags = [
 
@@ -290,7 +275,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     $tags[] = ActiveRecordHelper::getCommonTag(Product::className());
                 } else {
                     $tags[] = ActiveRecordHelper::getObjectTag(Product::className(), $model->id);
->>>>>>> 2.0.0-beta
                 }
                 Yii::$app->cache->set(
                     $cacheKey,
