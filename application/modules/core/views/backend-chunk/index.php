@@ -39,7 +39,6 @@ DynaGrid::widget([
         ],
         'name',
         'key',
-        'value',
         [
             'class' => BooleanColumn::className(),
             'attribute' => 'preload',

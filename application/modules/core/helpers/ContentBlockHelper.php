@@ -10,9 +10,8 @@ use app;
 
 class ContentBlockHelper
 {
-    public static $prefix = '[';
-    public static $suffix = ']';
-    private static $chunksByKey = [];
+    private static $chunksByKey;
+
     /**
      * Compiles content string by injecting chunks into content
      * @param  {string} $content     Original content with chunk calls
@@ -20,19 +19,20 @@ class ContentBlockHelper
      * @param  {yii\caching\Dependency} $dependency  Cache dependency
      * @return {string}              Compiled content with injected chunks
      */
-    public static function compileContentString($content, $content_key, $dependency) {
+    public static function compileContentString($content, $content_key, $dependency)
+    {
         self::preloadChunks();
         $matches = [];
-        preg_match_all('%['.static::$prefix.']{2}([^\]\[]+)['.static::$suffix.']{2}%ui', $content, $matches);
+        preg_match_all('%\[\[([^\]\[]+)\]\]%ui', $content, $matches);
         if (!empty($matches)) {
             foreach ($matches[0] as $k => $rawChunk) {
                 $chunkData = static::sanitizeChunk($rawChunk);
-                $cacheChunkKey = $chunkData['key'].$content_key;
+                $cacheChunkKey = $chunkData['key'] . $content_key;
                 $replacement = Yii::$app->cache->get($cacheChunkKey);
                 if ($replacement === false) {
                     $chunk = self::fetchChunkByKey($chunkData['key']);
                     $replacement = static::compileChunk($chunk, $chunkData);
-                    if (null !== $chunk ) {
+                    if (null !== $chunk) {
                         Yii::$app->cache->set(
                             $cacheChunkKey,
                             $replacement,
@@ -52,7 +52,8 @@ class ContentBlockHelper
      * @param $rawChunk
      * @return array
      */
-    private static function sanitizeChunk($rawChunk) {
+    private static function sanitizeChunk($rawChunk)
+    {
         $chunk = [];
         preg_match('%\$([^\s\]]+)[\s\]]%', $rawChunk, $keyMatches);
         $chunk['key'] = $keyMatches[1];
@@ -66,10 +67,10 @@ class ContentBlockHelper
                 $chunk[$paramName] = floatval($matches['unescapedValue'][$key]);
             }
             if (!empty($matches['escapedDefault'][$key])) {
-                $chunk[$paramName.'-default'] = strval($matches['escapedDefault'][$key]);
+                $chunk[$paramName . '-default'] = strval($matches['escapedDefault'][$key]);
             }
             if (!empty($matches['unescapedDefault'][$key])) {
-                $chunk[$paramName.'-default'] = floatval($matches['unescapedDefault'][$key]);
+                $chunk[$paramName . '-default'] = floatval($matches['unescapedDefault'][$key]);
             }
         }
         return $chunk;
@@ -81,24 +82,22 @@ class ContentBlockHelper
      * @param  {array} $arguments Arguments for this chunk from original content
      * @return {string}            Result string ready for replacing
      */
-    public static function compileChunk($chunk, $arguments) {
+    public static function compileChunk($chunk, $arguments)
+    {
         $matches = [];
-        $formatParams = null;
-        preg_match_all('%['.static::$prefix.']{2}([\+\*\%])([^\]\[]+)['.static::$suffix.']{2}%ui', $chunk, $matches);
-        foreach ($matches[2] as $k => $rawParam) {
-            $token = $matches[1][$k];
-            if (false === mb_strpos($rawParam, ':')) {
-                $paramName = $rawParam; 
-            } else {
-                list($paramName, $formatParams) = explode(':', $rawParam);
-            }
+        preg_match_all('%\[\[(?P<token>[\+\*\%])(?P<paramName>[^\s\:\]]+)\:?(?P<format>[^\,\]]+)?\,?(?P<params>[^\]]+)?\]\]%ui', $chunk, $matches);
+        foreach ($matches[0] as $k => $rawParam) {
+            $token = $matches['token'][$k];
+            $paramName = $matches['paramName'][$k];
+            $format = $matches['format'][$k];
+            $params = explode(',', $matches['params'][$k]);
             switch ($token) {
                 case '+':
                     if (array_key_exists($paramName, $arguments)) {
-                        $replacement = static::applyFormatter($arguments[$paramName], $formatParams);
+                        $replacement = static::applyFormatter($arguments[$paramName], $format, $params);
                         $chunk = str_replace($matches[0][$k], $replacement, $chunk);
-                    } else if(array_key_exists($paramName.'-default', $arguments)) {
-                        $replacement = static::applyFormatter($arguments[$paramName.'-default'], $formatParams);
+                    } else if (array_key_exists($paramName . '-default', $arguments)) {
+                        $replacement = static::applyFormatter($arguments[$paramName . '-default'], $format, $params);
                         $chunk = str_replace($matches[0][$k], $replacement, $chunk);
                     } else {
                         $chunk = str_replace($matches[0][$k], '', $chunk);
@@ -115,17 +114,16 @@ class ContentBlockHelper
      * Find formatter declarations in chunk placeholders. if find trying to apply
      * yii\i18n\Formatter formats see yii\i18n\Formatter for details
      * @param {string} $rawParam single placeholder declaration from chunk
-     * @param $rawFormat {string}
+     * @param $format {string}
+     * @param $params {array}
      * @return array
      */
-    private static function applyFormatter($value, $rawFormat)
+    private static function applyFormatter($value, $format, $params)
     {
-        if (null === $rawFormat) {
+        if (empty($format)) {
             return $value;
         }
-        $params = explode(',', $rawFormat);
-        $method = array_shift($params);
-        $formattedValue = call_user_func_array([Yii::$app->formatter, $method], [$value, $params]);
+        $formattedValue = call_user_func_array([Yii::$app->formatter, $format], [$value, $params]);
         return $formattedValue;
     }
 
@@ -135,29 +133,21 @@ class ContentBlockHelper
      * @param $key {string} Chunk key field
      * @return {string} Chunk value field
      */
-    public static function fetchChunkByKey($key) {
+    public static function fetchChunkByKey($key)
+    {
         if (!array_key_exists($key, static::$chunksByKey)) {
-            $chunkCacheKey = 'chunkCaheKey'.$key.ContentBlock::className();
-            static::$chunksByKey[$key] = Yii::$app->cache->get($chunkCacheKey);
-            if (false === static::$chunksByKey[$key]) {
+            $dependency = new TagDependency([
+                'tags' => [
+                    ActiveRecordHelper::getCommonTag(ContentBlock::className()),
+                ]
+            ]);
+            static::$chunksByKey[$key] = ContentBlock::getDb()->cache(function($db) use ($key) {
                 $chunk = ContentBlock::find()
                     ->where(['key' => $key])
                     ->asArray()
                     ->one();
-                static::$chunksByKey[$key] = $chunk['value'];
-                if (!empty(static::$chunksByKey[$key])) {
-                    Yii::$app->cache->set(
-                        $chunkCacheKey,
-                        static::$chunksByKey[$key],
-                        86400,
-                        new TagDependency([
-                            'tags' => [
-                                ActiveRecordHelper::getCommonTag(ContentBlock::className()),
-                            ]
-                        ])
-                    );
-                }
-            }
+                return static::$chunksByKey[$key] = $chunk['value'];
+            }, 86400, $dependency);
         }
         return static::$chunksByKey[$key];
     }
@@ -167,30 +157,21 @@ class ContentBlockHelper
      * and push it to static array
      * @return array|void
      */
-    public static function preloadChunks() {
-        if (!empty(static::$chunksByKey)) {
-            return;
-        }
-        $cacheKey = 'chunksByKey'.ContentBlock::className();
-        static::$chunksByKey = Yii::$app->cache->get($cacheKey);
-        if (false === static::$chunksByKey) {
-            $chunks = ContentBlock::find()
-                ->where(['preload' => 1])
-                ->asArray()
-                ->all();
-            static::$chunksByKey = ArrayHelper::map($chunks, 'key', 'value');
-            if (!is_null(static::$chunksByKey)) {
-                Yii::$app->cache->set(
-                    $cacheKey,
-                    static::$chunksByKey,
-                    86400,
-                    new TagDependency([
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(ContentBlock::className()),
-                        ]
-                    ])
-                );
-            }
+    public static function preloadChunks()
+    {
+        if (is_null(static::$chunksByKey)) {
+            $dependency = new TagDependency([
+                'tags' => [
+                    ActiveRecordHelper::getCommonTag(ContentBlock::className()),
+                ]
+            ]);
+            static::$chunksByKey = ContentBlock::getDb()->cache(function ($db) {
+                $chunks = ContentBlock::find()
+                    ->where(['preload' => 1])
+                    ->asArray()
+                    ->all();
+                return ArrayHelper::map($chunks, 'key', 'value');
+            }, 86400, $dependency);
         }
         return static::$chunksByKey;
     }
