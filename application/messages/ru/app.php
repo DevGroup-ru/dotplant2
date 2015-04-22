@@ -689,5 +689,8 @@ return  [
     'Settings for shop section' => 'Настройки для секции Магазин',
     'YML type by default' => 'Тип YML описания по умолчанию',
     'Offer name' => 'Наименование товара',
+    'Content Blocks' => 'Чанки',
+    'Create Chunk' => 'Создание чанка',
+
 ];
 
