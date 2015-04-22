@@ -30,6 +30,7 @@ class Yml extends Model
             [['shop_store', 'shop_pickup', 'shop_delivery', 'shop_adult', ], 'integer'],
             ['shop_url', 'url', 'defaultScheme' => 'http'],
             [['shop_name', 'shop_company'], 'string', 'length' => [1, 255]],
+            ['offer_description', 'safe'],
         ];
 
         return $rules;

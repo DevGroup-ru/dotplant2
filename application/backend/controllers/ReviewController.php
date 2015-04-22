@@ -5,6 +5,7 @@ namespace app\backend\controllers;
 use app\reviews\models\Review;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use Yii;
 use yii\web\NotFoundHttpException;
 
 class ReviewController extends Controller
@@ -68,7 +69,22 @@ class ReviewController extends Controller
     public function actionDelete($id, $returnUrl)
     {
         $model = $this->loadModel($id);
-        $model->delete();
+        if ($model->delete() ) {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
+        }
+        return $this->redirect($returnUrl);
+    }
+
+    public function actionRemoveAll($returnUrl = '/backend')
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = Review::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Objects removed'));
+        }
         return $this->redirect($returnUrl);
     }
 
