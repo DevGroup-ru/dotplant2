@@ -13,7 +13,6 @@ use app\modules\user\models\UserService;
 use app\seo\behaviors\MetaBehavior;
 use Yii;
 use yii\base\ErrorException;
-use yii\base\Exception;
 use yii\base\InvalidParamException;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
@@ -172,55 +171,73 @@ class UserController extends Controller
     {
         $model = AuthClientHelper::findUserByService($client);
         if (is_object($model) === false) {
-            // user not found
-            $model = new User(['scenario' => 'registerService']);
-            $security = Yii::$app->security;
-
+            // user not found, retrieve additional data
             $client = AuthClientHelper::retrieveAdditionalData($client);
 
             $attributes = AuthClientHelper::mapUserAttributesWithService($client);
 
-            $model->setAttributes($attributes['user']);
-            $model->status = User::STATUS_ACTIVE;
-
-            if (empty($model->username) === true) {
-                // if we doesn't have username - generate unique random temporary username
-                // it will be needed for saving purposes
-                $model->username = $security->generateRandomString(18);
-                $model->username_is_temporary = 1;
-            }
-
-            $model->setPassword($security->generateRandomString(16));
-
-            $model->generateAuthKey();
+            // check if it is anonymous user
+            if (Yii::$app->user->isGuest === true) {
+                $model = new User(['scenario' => 'registerService']);
+                $security = Yii::$app->security;
 
 
-            if ($model->save() === false) {
 
-                if (isset($model->errors['username'])) {
-                    // regenerate username
+                $model->setAttributes($attributes['user']);
+                $model->status = User::STATUS_ACTIVE;
+
+                if (empty($model->username) === true) {
+                    // if we doesn't have username - generate unique random temporary username
+                    // it will be needed for saving purposes
                     $model->username = $security->generateRandomString(18);
                     $model->username_is_temporary = 1;
-                    $model->save();
                 }
 
-                if (isset($model->errors['email'])) {
-                    // empty email
-                    $model->email = null;
-                    $model->save();
+                $model->setPassword($security->generateRandomString(16));
+
+                $model->generateAuthKey();
+
+
+                if ($model->save() === false) {
+
+                    if (isset($model->errors['username'])) {
+                        // regenerate username
+                        $model->username = $security->generateRandomString(18);
+                        $model->username_is_temporary = 1;
+                        $model->save();
+                    }
+
+                    if (isset($model->errors['email'])) {
+                        // empty email
+                        $model->email = null;
+                        $model->save();
+                    }
+                    if (count($model->errors) > 0) {
+                        throw new ErrorException(Yii::t('app', "Temporary error signing up user"));
+                    }
                 }
-                if (count($model->errors) > 0) {
-                    throw new ErrorException("Temporary error signing up user");
-                }
+            } else {
+                // non anonymous - link to existing account
+                /** @var \app\modules\user\models\User $model */
+                $model = Yii::$app->user->identity;
             }
-
 
             $service = new UserService();
             $service->service_type = $client->className();
             $service->service_id = $attributes['service']['service_id'];
             $service->user_id = $model->id;
-            $service->save();
+            if ($service->save() === false) {
+                throw new ErrorException(Yii::t('app', "Temporary error saving social service"));
+            }
 
+        } elseif (Yii::$app->user->isGuest === false) {
+            // service exists and user logged in
+            // check if this service is binded to current user
+            if ($model->id != Yii::$app->user->id) {
+                throw new ErrorException(Yii::t('app', "This service is already binded to another user"));
+            } else {
+                throw new ErrorException(Yii::t('app', 'This service is already binded.'));
+            }
         }
 
         Yii::$app->user->login($model, 86400);
