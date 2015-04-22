@@ -2,11 +2,13 @@
 
 namespace app\models;
 
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
+use yii\db\Query;
 
 /**
  * This is the model class for table "property_group".
@@ -23,6 +25,9 @@ class PropertyGroup extends ActiveRecord
     private static $identity_map = [];
     private static $groups_by_object_id = [];
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -73,9 +78,12 @@ class PropertyGroup extends ActiveRecord
         ];
     }
 
+    /**
+     * Relation to \app\models\Object
+     * @return \yii\db\ActiveQuery
+     */
     public function getObject()
     {
-        // Order has_one Customer via Customer.id -> customer_id
         return $this->hasOne(Object::className(), ['id' => 'object_id']);
     }
 
@@ -206,16 +214,27 @@ class PropertyGroup extends ActiveRecord
     {
         $cacheKey = "PropertyGroupBy:$object_id:$object_model_id";
         if (false === $groups = Yii::$app->cache->get($cacheKey)) {
-            $group_ids = ObjectPropertyGroup::find()
-                ->select('property_group_id')
-                ->where([
-                    'object_id' => $object_id,
-                    'object_model_id' => $object_model_id,
-                ])->column();
-            if (null === $group_ids) {
-                return null;
-            }
-            if (null === $groups = static::find()->where(['in', 'id', $group_ids])->all()) {
+
+            $groups = Yii::$app->db->cache(
+                function($db) use($object_id, $object_model_id) {
+                    $group_ids = (new Query())->select('property_group_id')
+                        ->from(ObjectPropertyGroup::tableName())
+                        ->where([
+                            'object_id' => $object_id,
+                            'object_model_id' => $object_model_id,
+                        ]);
+                    return PropertyGroup::find()->where(['in', 'id', $group_ids])->all($db);
+                },
+                86400,
+                new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getCommonTag(PropertyGroup::className()),
+                        ActiveRecordHelper::getCommonTag(ObjectPropertyGroup::className()),
+                    ]
+                ])
+            );
+
+            if (null === $groups) {
                 return null;
             }
             if (null !== $object = Object::findById($object_id)) {

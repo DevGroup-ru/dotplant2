@@ -21,7 +21,8 @@ if ($model->username_is_temporary) $model->username = '';
 
             <?= $form->field($model, 'username') ?>
             <?= $form->field($model, 'email') ?>
-            <?= $form->field($model, 'name') ?>
+            <?= $form->field($model, 'first_name') ?>
+            <?= $form->field($model, 'last_name') ?>
         </div>
         <div class="col-md-6">
 

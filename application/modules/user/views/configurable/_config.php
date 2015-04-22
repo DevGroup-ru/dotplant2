@@ -16,6 +16,8 @@ $authClientConfigModel = new AuthClientConfig();
         <?= $form->field($model, 'loginSessionDuration') ?>
 
         <?= $form->field($model, 'passwordResetTokenExpire') ?>
+
+        <?= $form->field($model, 'postRegistrationLayout') ?>
     </div>
 </div>
 

@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= Html::encode($this->title) ?></h1>
 <div class="row">
-    <div class="span4 well">
+    <div class="col-md-4">
         <?php
             $form = ActiveForm::begin([
                 'id' => 'signun-form',

@@ -24,6 +24,14 @@ class UserModule extends BaseModule
      */
     public $passwordResetTokenExpire = 3600;
 
+
+    /**
+     * Layout for post-registration process with simplified template
+     * Post-registration process runs when OAuth/OpenID haven't returned any of needed fields.
+     * @var string
+     */
+    public $postRegistrationLayout = '@app/views/layouts/minimum-layout';
+
     /**
      * @inheritdoc
      */

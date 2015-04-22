@@ -84,6 +84,7 @@ class BackendUserController extends BackendController
         } else {
             $model = $this->findModel($id);
             $model->scenario = 'admin';
+            $model->updatePropertyGroupsInformation(true);
         }
         $assignments = \Yii::$app->authManager->getAssignments($id);
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
