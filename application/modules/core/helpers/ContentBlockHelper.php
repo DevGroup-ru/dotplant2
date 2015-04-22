@@ -8,16 +8,34 @@ use yii\helpers\ArrayHelper;
 use yii;
 use app;
 
+/**
+ * Class ContentBlockHelper
+ * Main public static method compileContentString() using submethods to extract chunk calls from model content field,
+ * fetch chunks from data base table, then compile it and replace chunk calls with compiled chunks data
+ * Example chunk call in model content field should be like: [[$chunk param='value'|'default value' param2=42]].
+ * Chunk declaration should be like : <p>String: [[+param]]</p> <p>Float: [[+param2:format, param1, param2]]</p>
+ * All supported formats you can find at Yii::$app->formatter
+ *
+ * @package app\modules\core\helpers
+ */
 class ContentBlockHelper
 {
     private static $chunksByKey;
-
     /**
      * Compiles content string by injecting chunks into content
-     * @param  {string} $content     Original content with chunk calls
+     * Preloads chunks which have preload = 1
+     * Finding chunk calls with regexp
+     * Iterate matches
+     * Whyle iterate:
+     * Extracting single chunk data with sanitizeChunk() method
+     * Fetching chunk by key using fetchChunkByKey(), who returns chunk value by key from static array if exists, otherwise from db
+     * Compile single chunk using compileChunk() method
+     * Replacing single chunk call with compiled chunk data in the model content
+     *
+     * @param  {string} $content Original content with chunk calls
      * @param  {string} $content_key Key for caching compiled content version
      * @param  {yii\caching\Dependency} $dependency  Cache dependency
-     * @return {string}              Compiled content with injected chunks
+     * @return {string} Compiled content with injected chunks
      */
     public static function compileContentString($content, $content_key, $dependency)
     {
@@ -49,6 +67,20 @@ class ContentBlockHelper
 
     /**
      * Extracting chunk data from chunk call
+     * first preg_match is to extract chunk key
+     * next preg_match_all using named groups to find params data in the chunk call :
+     * [[$chunk <paramName>='<escapedValue>'|'<escapedDefault>' <paramName>=<unescapedValue>|<unescapedDefault>]]
+     * iterate matches.
+     * While iterating converts escapedValue and escapedDefault into string, unescapedValue and unescapedDefault - into float
+     * Returns chunk data array like:
+     *  [
+     *      'key' => 'chunkKey',
+     *      'firstParam'=> 'string value',
+     *      'firstParam-default'=> 'default string value',
+     *      'secondParam'=> float value,
+     *      'secondParam-default'=> default float value,
+     *  ]
+     *
      * @param $rawChunk
      * @return array
      */
@@ -77,10 +109,19 @@ class ContentBlockHelper
     }
 
     /**
-     * Compiles single chunk
      * @param  {ContentBlock} $chunk     ContentBlock instance
      * @param  {array} $arguments Arguments for this chunk from original content
-     * @return {string}            Result string ready for replacing
+     * @return {string} Result string ready for replacing
+     *
+     * Compiles single chunk
+     * using preg_match_all to find placeholders and extract it's data from chunk value field
+     * regexp using named groups to find and extract placeholders data like:
+     * [[<token><paramName>:<format><params>]]
+     * token switch is for future functionality increase
+     * now method only recognizes + token and replacing following param with according $arguments array data
+     * applying formatter according previously defined param values type if needed
+     * if param name from placeholder was not found in arguments array, placeholder in the compiled chunk will be replaced with empty string
+     * returns compiled chunk
      */
     public static function compileChunk($chunk, $arguments)
     {
