@@ -101,6 +101,14 @@ return [
                 'writable' => true,
                 'children' => [
                     [
+                        'name' => 'thumbnail',
+                        'type' => 'dir',
+                    ],
+                    [
+                        'name' => 'watermark',
+                        'type' => 'dir',
+                    ],
+                    [
                         'name' => '.gitignore',
                         'content' => "*\n!.gitignore\n!index.html",
                     ],

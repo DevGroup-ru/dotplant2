@@ -66,6 +66,7 @@ class Watermark extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'watermark_src' => Yii::t('app', 'Watermark Src'),
             'position' => Yii::t('app', 'Position'),
+            'image' => Yii::t('app', 'Image'),
         ];
     }
 

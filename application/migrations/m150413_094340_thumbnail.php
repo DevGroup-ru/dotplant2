@@ -89,6 +89,13 @@ class m150413_094340_thumbnail extends Migration
                     'http://placehold.it/300&text=No+image+supplied',
                     'image.noImage'
                 ],
+                [
+                    $image_id,
+                    'List of recreated isd',
+                    'IdsToRecreate',
+                    '',
+                    'image.IdsToRecreate'
+                ],
             ]
         );
         $this->insert(
@@ -143,6 +150,7 @@ class m150413_094340_thumbnail extends Migration
         $this->dropTable('{{%thumbnail_watermark}}');
         $this->dropTable('{{%error_images}}');
         $this->addColumn(Image::tableName(), 'thumbnail_src', 'VARCHAR(255) NOT NULL');
+        $this->delete(Config::tableName(), ['key' => 'IdsToRecreate']);
         $this->delete(Config::tableName(), ['key' => 'noImage']);
         $this->delete(Config::tableName(), ['key' => 'waterDir']);
         $this->delete(Config::tableName(), ['key' => 'useWatermark']);
