@@ -38,15 +38,13 @@ class SeoModule extends BackendModule implements BootstrapInterface
             }
         );
 
-        if (null !== $orderId = Yii::$app->session->get('cartOrderId')) {
-            $app->on(
-                Application::EVENT_BEFORE_REQUEST,
-                function () use ($app, $orderId) {
-                    $app->getView()->on(View::EVENT_END_BODY, [ManageController::className(), 'renderEcommerceCounters'], ['orderId' => $orderId]);
+        $app->on(
+            Application::EVENT_BEFORE_ACTION,
+            function () use ($app) {
+                if ('cart' === $app->requestedAction->controller->id && 'payment-success' === $app->requestedAction->id) {
+                    $app->getView()->on(View::EVENT_END_BODY, [ManageController::className(), 'renderEcommerceCounters'], ['orderId' => intval(Yii::$app->request->get('id'))]);
                 }
-            );
-
-            Yii::$app->session->remove('cartOrderId');
-        }
+            }
+        );
     }
 }

@@ -675,16 +675,21 @@ class ManageController extends Controller
                     continue;
                 }
                 $category = Category::findById($product->main_category_id);
-                $category = empty($category) ? 'Магазин' : $category->name;
+                $category = empty($category) ? 'Магазин' : str_replace('\'', '', $category->name);
 
                 $products[] = [
                     'id' => $product->id,
-                    'name' => $product->name,
-                    'price' => $product->price,
+                    'name' => str_replace('\'', '', $product->name),
+                    'price' => number_format($product->price, 2, '.', ''),
                     'category' => $category,
                     'qnt' => $item->quantity
                 ];
             }
+
+            $order = [
+                'id' => $order->id,
+                'total' => number_format($order->total_price, 2, '.', ''),
+            ];
 
             echo Yii::$app->view->renderFile(Yii::getAlias('@app/seo/views/manage/_ecommerceCounters.php'), [
                 'order' => $order,

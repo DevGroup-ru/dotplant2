@@ -5,19 +5,19 @@
         <?php $_id = empty($config['google']['id']) ? '' : $config['google']['id'] . '.'; ?>
         ga('<?= $_id; ?>require', 'ecommerce');
         ga('<?= $_id; ?>ecommerce:addTransaction', {
-            'id': '<?= $order->id; ?>',
-            'revenue': '<?= $order->total_price; ?>',
-            'currency': 'RUR'
+            'id': '<?= $order['id']; ?>',
+            'revenue': '<?= $order['total']; ?>',
+            'currency': 'RUB'
         });
         <?php foreach ($products as $p): ?>
         ga('<?= $_id; ?>ecommerce:addItem', {
-            'id': '<?= $order->id; ?>',
+            'id': '<?= $order['id']; ?>',
             'name': '<?= $p['name']; ?>',
             'sku': '<?= $p['name']; ?>',
             'category': '<?= $p['category']; ?>',
             'price': '<?= $p['price']; ?>',
             'quantity': '<?= $p['qnt']; ?>',
-            'currency': 'RUR'
+            'currency': 'RUB'
         });
         <?php endforeach; ?>
         ga('<?= $_id; ?>ecommerce:send');
@@ -29,8 +29,8 @@
         <?php $_id = $config['yandex']['id']; ?>
         <?= $_id; ?>.reachGoal('ORDER',
             {
-                order_id: "<?= $order->id; ?>",
-                order_price: <?= $order->total_price; ?>,
+                order_id: "<?= $order['id']; ?>",
+                order_price: <?= $order['total']; ?>,
                 currency: "RUR",
                 exchange_rate: 1,
                 goods:

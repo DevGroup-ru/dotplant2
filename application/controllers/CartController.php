@@ -446,7 +446,6 @@ class CartController extends Controller
     public function actionPaymentSuccess()
     {
         $order = isset($_GET['id']) ? $this->loadOrder($_GET['id'], [2, 3]) : null;
-        Yii::$app->session->set('cartOrderId', Yii::$app->request->get('id'));
         return $this->render(
             'payment-success',
             [
