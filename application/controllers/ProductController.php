@@ -120,6 +120,7 @@ class ProductController extends Controller
         return $this->render(
             $this->computeViewFile($selected_category, 'list'),
             [
+                'model' => $selected_category,
                 'selected_category' => $selected_category,
                 'selected_category_id' => $selected_category_id,
                 'selected_category_ids' => $selected_category_ids,
