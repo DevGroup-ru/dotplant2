@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'name',
                         'class_name',
                         [
-                            'class' => app\backend\columns\ActionColumn::className(),
+                            'class' => \app\backend\components\ActionColumn::className(),
                         ],
                     ],
                     'theme' => 'panel-default',

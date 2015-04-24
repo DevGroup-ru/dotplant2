@@ -689,5 +689,14 @@ return  [
     'Settings for shop section' => 'Настройки для секции Магазин',
     'YML type by default' => 'Тип YML описания по умолчанию',
     'Offer name' => 'Наименование товара',
+    'All data will be lost' => 'Все дынные будут потеряны',
+    'Create category' => 'Создать категорию',
+    'Edit category' => 'Редактировать категорию',
+    'Create product in this category' => 'Создать продукт в этой категории',
+    'Show products in category' => 'Показать продукты в этой категории',
+    'Delete along with it no matter what' => 'Удалить все товары которые находятся в этой категории',
+    'Delete only that products that exists ONLY in that category' => 'Удалить товары которые находятся только в этой категории',
+    'Delete all products that relate to this category as main' => 'Удалить все товары, где эта категория является главной',
+    'Product deleting rules' => 'Правила удаления товаров',
+    'Show pages inside this page' => 'Показать вложенные страницы',
 ];
-

@@ -37,7 +37,6 @@ use yii\helpers\Json;
  * @property integer $active
  * @property double $price
  * @property double $old_price
- * @property integer $is_deleted
  * @property integer $parent_id
  * @property integer $currency_id
  * @property Product[] $relatedProducts
@@ -78,7 +77,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     'slug_absolute',
                     'sort_order',
                     'parent_id',
-                    'is_deleted',
                     'currency_id',
                 ],
                 'integer'
@@ -110,7 +108,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             [['slug_compiled'], 'string', 'max' => 180],
             [['old_price', 'price',], 'default', 'value' => 0,],
             [['active','unlimited_count'], 'default', 'value' => true],
-            [['parent_id', 'slug_absolute', 'sort_order', 'is_deleted'], 'default', 'value' => 0],
+            [['parent_id', 'slug_absolute', 'sort_order'], 'default', 'value' => 0],
             [['sku','name'], 'default', 'value' => ''],
             [['unlimited_count','currency_id'], 'default', 'value' => 1],
             [['relatedProductsArray'], 'safe'],
@@ -143,7 +141,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'price' => Yii::t('app', 'Price'),
             'old_price' => Yii::t('app', 'Old Price'),
             'option_generate' => Yii::t('app', 'Option Generate'),
-            'is_deleted' => Yii::t('app', 'Is Deleted'),
             'in_warehouse' => Yii::t('app', 'Items in warehouse'),
             'sku' => Yii::t('app', 'SKU'),
             'unlimited_count' => Yii::t('app', 'Unlimited items(don\'t count in warehouse)'),
@@ -202,7 +199,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $query->andFilterWhere(['price' => $this->price]);
         $query->andFilterWhere(['old_price' => $this->old_price]);
         $query->andFilterWhere(['like', 'sku', $this->sku]);
-        $query->andFilterWhere(['is_deleted' => $this->is_deleted]);
         return $dataProvider;
     }
 
@@ -210,10 +206,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      * Returns model instance by ID using per-request Identity Map and cache
      * @param $id
      * @param int $is_active Return only active
-     * @param int $is_deleted Return not deleted
      * @return mixed
      */
-    public static function findById($id, $is_active = 1, $is_deleted = 0)
+    public static function findById($id, $is_active = 1)
     {
         if (!isset(static::$identity_map[$id])) {
             $cacheKey = static::tableName() . ":$id";
@@ -221,9 +216,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 $model = static::find()->where(['id' => $id]);
                 if (null !== $is_active) {
                     $model->andWhere(['active' => $is_active]);
-                }
-                if (null !== $is_deleted) {
-                    $model->andWhere(['is_deleted' => $is_deleted]);
                 }
                 if (null !== $model = $model->one()) {
                     static::$slug_to_id[$model->slug] = $id;
@@ -345,10 +337,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
     public function beforeSave($insert)
     {
-        if (1 === $this->is_deleted) {
-            $this->active = 0;
-        }
-
         if (empty($this->breadcrumbs_label)) {
             $this->breadcrumbs_label = $this->name;
         }
@@ -373,8 +361,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     }
 
     /**
-     * Первое удаление в корзину, второе из БД
-     *
+     * Preparation to delete product.
+     * Deleting all inserted products.
      * @return bool
      */
     public function beforeDelete()
@@ -382,29 +370,11 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (!parent::beforeDelete()) {
             return false;
         }
-        $children = $this->children;
-        if (!empty($children)) {
-            foreach ($children as $child) {
-                $child->delete();
-            }
-        }
-        if ($this->is_deleted == 0) {
-            $this->is_deleted = 1;
-            $this->save(true, ['is_deleted']);
-            return false;
+        foreach ($this->children as $child) {
+            /** @var Product $child */
+            $child->delete();
         }
         return true;
-    }
-
-    /**
-     * Отмена удаления объекта
-     *
-     * @return bool Restore result
-     */
-    public function restoreFromTrash()
-    {
-        $this->is_deleted = 0;
-        return $this->save();
     }
 
     public function saveCategoriesBindings(array $categories_ids)

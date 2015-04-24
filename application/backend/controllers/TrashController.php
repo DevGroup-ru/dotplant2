@@ -72,32 +72,6 @@ class TrashController extends Controller
 
     public function actionIndex()
     {
-
-        $categoryModel = new Category();
-        $categoryProvider = new ActiveDataProvider(
-            [
-                'query' => $categoryModel::find()->andWhere(['is_deleted' => 1]),
-                'pagination' => new Pagination(['defaultPageSize' => 10])
-            ]
-        );
-
-        $productModel = new Product();
-        $productProvider = new ActiveDataProvider(
-            [
-                'query' => $productModel::find()->andWhere(['is_deleted' => 1]),
-                'pagination' => new Pagination(['defaultPageSize' => 10])
-            ]
-        );
-
-        $pageModel = new Page();
-        $pageProvider = new ActiveDataProvider(
-            [
-                'query' => $pageModel::find()->andWhere(['is_deleted' => 1]),
-                'pagination' => new Pagination(['defaultPageSize' => 10])
-            ]
-        );
-
-
         $orderModel = new Order();
         $orderProvider = new ActiveDataProvider(
             [
@@ -110,12 +84,6 @@ class TrashController extends Controller
         return $this->render(
             'index',
             [
-                'categoryModel' => $categoryModel,
-                'categoryProvider' => $categoryProvider,
-                'productModel' => $productModel,
-                'productProvider' => $productProvider,
-                'pageModel' => $pageModel,
-                'pageProvider' => $pageProvider,
                 'orderModel' => $orderModel,
                 'orderProvider' => $orderProvider
             ]
