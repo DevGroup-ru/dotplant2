@@ -91,7 +91,7 @@ class BackendController extends app\backend\components\BackendController
                     $event->configurable = &$model;
                     $event->configurableModel = &$configurableModel;
 
-                    Yii::$app->trigger($configurableModel->configurationSaveEvent(), $event);
+                    $configurableModel->trigger($configurableModel->configurationSaveEvent(), $event);
                     if ($event->isValid === true) {
                         if ($configurableModel->validate() === true) {
                             // apply application configuration
