@@ -11,6 +11,8 @@ use app\widgets\image\RemoveAction;
 use app\widgets\image\SaveInfoAction;
 use app\widgets\image\UploadAction;
 use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
+use devgroup\JsTreeWidget\TreeNodeMoveAction;
+use devgroup\JsTreeWidget\TreeNodesReorderAction;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
@@ -45,6 +47,14 @@ class CategoryController extends Controller
                 'class' => AdjacencyFullTreeDataAction::className(),
                 'class_name' => Category::className(),
                 'model_label_attribute' => 'name',
+            ],
+            'move' => [
+                'class' => TreeNodeMoveAction::className(),
+                'className' => Category::className(),
+            ],
+            'reorder' => [
+                'class' => TreeNodesReorderAction::className(),
+                'className' => Category::className(),
             ],
             'upload' => [
                 'class' => UploadAction::className(),
