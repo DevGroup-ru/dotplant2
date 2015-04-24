@@ -35,5 +35,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'class' => 'list-group-item',
         ]
     ); ?>
+    <?= \yii\helpers\Html::a(
+        '<h4 class="list-group-item-heading">' . Yii::t('app', 'E-commerce counters') . '</h4><p class="list-group-item-text">' . Yii::t('app', 'E-commerce counters management') . '</p>',
+        ['/seo/manage/ecommerce'],
+        [
+            'class' => 'list-group-item',
+        ]
+    ); ?>
 
 </div>

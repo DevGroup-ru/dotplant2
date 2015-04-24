@@ -6,11 +6,27 @@ use app\backend\models\Yml;
 use app\backgroundtasks\helpers\BackgroundTasks;
 use app\models\Config;
 use Yii;
+use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Controller;
 
 class YmlController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['setting manage'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     /**
      * @return string
      */

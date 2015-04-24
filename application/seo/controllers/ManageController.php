@@ -2,6 +2,10 @@
 
 namespace app\seo\controllers;
 
+use app\models\Category;
+use app\models\Order;
+use app\models\OrderItem;
+use app\models\Product;
 use app\seo\models\Config;
 use app\seo\models\Counter;
 use app\seo\models\Meta;
@@ -9,8 +13,10 @@ use app\seo\models\Redirect;
 use app\seo\models\Robots;
 use devgroup\ace\AceHelper;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
+use yii\base\Event;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\helpers\Url;
@@ -618,5 +624,78 @@ class ManageController extends Controller
     public function actionDeleteRedirectFile()
     {
         echo (int)Redirect::deleteRedirectFile();
+    }
+
+    public function actionEcommerce()
+    {
+        $yaCounter = $gaCounter = ['id' => '', 'active' => 0];
+
+        if (Yii::$app->request->isPost) {
+            $gaCounter = array_merge($gaCounter, Yii::$app->request->post('GoogleCounter', []));
+            $yaCounter = array_merge($yaCounter, Yii::$app->request->post('YandexCounter', []));
+
+            $model = Config::getModelByKey('ecommerceCounters');
+            if (empty($model)) {
+                $model = new Config();
+                $model->key = 'ecommerceCounters';
+            }
+            $model->value = Json::encode(['google' => $gaCounter, 'yandex' => $yaCounter]);
+            $model->save();
+        }
+
+        $counters = Config::getModelByKey('ecommerceCounters');
+        if (!empty($counters)) {
+            $counters = Json::decode($counters->value);
+            $gaCounter = !empty($counters['google']) ? $counters['google'] : $gaCounter;
+            $yaCounter = !empty($counters['yandex']) ? $counters['yandex'] : $yaCounter;
+        }
+
+        return $this->render('ecommerce-counters',
+            [
+                'gaCounter' => $gaCounter,
+                'yaCounter' => $yaCounter
+            ]
+        );
+    }
+
+    static public function renderEcommerceCounters(Event $event)
+    {
+        $order = Order::findOne(['id' => $event->data['orderId']]);
+        $config = Config::getModelByKey('ecommerceCounters');
+        if (empty($event->data['orderId']) || empty($config) || empty($order)) {
+            return ;
+        }
+
+        $orderItems = OrderItem::findAll(['order_id' => $event->data['orderId']]);
+        if (!empty($orderItems)) {
+            $products = [];
+            foreach ($orderItems as $item) {
+                $product = Product::findById($item->product_id, null, null);
+                if (empty($product)) {
+                    continue;
+                }
+                $category = Category::findById($product->main_category_id);
+                $category = empty($category) ? 'Магазин' : str_replace('\'', '', $category->name);
+
+                $products[] = [
+                    'id' => $product->id,
+                    'name' => str_replace('\'', '', $product->name),
+                    'price' => number_format($product->price, 2, '.', ''),
+                    'category' => $category,
+                    'qnt' => $item->quantity
+                ];
+            }
+
+            $order = [
+                'id' => $order->id,
+                'total' => number_format($order->total_price, 2, '.', ''),
+            ];
+
+            echo Yii::$app->view->renderFile(Yii::getAlias('@app/seo/views/manage/_ecommerceCounters.php'), [
+                'order' => $order,
+                'products' => $products,
+                'config' => Json::decode($config->value)
+            ]);
+        }
     }
 }

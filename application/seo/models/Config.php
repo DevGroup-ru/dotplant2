@@ -14,6 +14,8 @@ use Yii;
  */
 class Config extends \yii\db\ActiveRecord
 {
+    static private $modelMap = [];
+
     /**
      * @inheritdoc
      */
@@ -64,5 +66,32 @@ class Config extends \yii\db\ActiveRecord
         );
 
         return parent::beforeSave($insert);
+    }
+
+    static public function getModelByKey($key = null)
+    {
+        if (empty($key)) {
+            return null;
+        }
+
+        if (!isset(static::$modelMap[$key])) {
+            $cacheKey = static::className() . ':' . $key;
+            if (false === $cache = Yii::$app->cache->get($cacheKey)) {
+                $cache = static::findOne(['key' => $key]);
+                if (empty($cache)) {
+                    return null;
+                }
+
+                Yii::$app->cache->set($cacheKey, $cache, 0,
+                    new TagDependency(['tags' => [
+                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                    ]])
+                );
+            }
+
+            static::$modelMap[$key] = $cache;
+        }
+
+        return static::$modelMap[$key];
     }
 }
