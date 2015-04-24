@@ -54,8 +54,8 @@ class ShopModule extends BaseModule
         return [
             'configurableModule' => [
                 'class' => 'app\modules\config\behaviors\ConfigurableModuleBehavior',
-//                'configurationView' => '@app/modules/user/views/configurable/_config',
-//                'configurableModel' => 'app\modules\user\models\ConfigConfigurableModel',
+                'configurationView' => '@app/modules/shop/views/configurable/_config',
+                'configurableModel' => 'app\modules\shop\models\ConfigConfigurableModel',
             ]
         ];
     }

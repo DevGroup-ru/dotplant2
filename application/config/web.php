@@ -12,13 +12,16 @@ $config = [
         'seo',
         'backend',
         'app\components\UserPreferencesBootstrap',
-
+        'shop',
     ],
     'defaultRoute' => 'default',
     'modules' => [
         'user' => [
             'class' => 'app\modules\user\UserModule',
             'loginSessionDuration' => 2592000,
+        ],
+        'shop' => [
+            'class' => 'app\modules\shop\ShopModule',
         ],
         'backend' => [
             'class' => 'app\backend\BackendModule',
