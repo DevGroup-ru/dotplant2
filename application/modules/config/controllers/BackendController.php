@@ -135,6 +135,37 @@ class BackendController extends app\backend\components\BackendController
                     $webConfigWriter->commit() &&
                     $consoleConfigWriter->commit() &&
                     $kvConfigWriter->commit();
+
+                if (ini_get('opcache.enable')) {
+                    if (function_exists('opcache_invalidate') === true) {
+                        // invalidate opcache of this files!
+                        opcache_invalidate(
+                            Yii::getAlias($commonConfigWriter->filename),
+                            true
+                        );
+                        opcache_invalidate(
+                            Yii::getAlias($webConfigWriter->filename),
+                            true);
+                        opcache_invalidate(
+                            Yii::getAlias($consoleConfigWriter->filename),
+                            true
+                        );
+                        opcache_invalidate(
+                            Yii::getAlias($kvConfigWriter->filename),
+                            true
+                        );
+
+
+                    } else {
+                        Yii::$app->session->setFlash(
+                            'info',
+                            Yii::t(
+                                'app',
+                                'You have opcache turned on but opcache_invalidate function is not available. That\'s strange.'
+                            )
+                        );
+                    }
+                }
             }
 
             if ($isValid === true) {
