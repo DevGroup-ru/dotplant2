@@ -92,7 +92,7 @@ class OrderController extends Controller
             'relations' => ['user' => ['username']],
             'partialMatchAttributes' => ['start_date', 'end_date', 'user_username'],
         ];
-        if (Config::getValue('shop.showDeletedOrders', '0') == 1) {
+        if (Config::getValue('shop.showDeletedOrders', '0') == 0) {
             $searchModelConfig['additionalConditions'] = [['is_deleted' => 1]];
         }
         $searchModel = new SearchModel($searchModelConfig);

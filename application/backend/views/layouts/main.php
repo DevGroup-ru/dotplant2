@@ -58,7 +58,10 @@ Icon::map($this);
                         <?= FlushCacheButton::widget(
                             [
                                 'url' => Url::to(['/backend/dashboard/flush-cache']),
-                                'htmlOptions' => ['class' => ''],
+                                'htmlOptions' => [
+                                    'class' => '',
+                                    'title' => Yii::t('app', 'Flush cache'),
+                                ],
                                 'label' => Icon::show('eraser'),
                                 'onSuccess' => 'function(data) {
                                     jQuery.smallBox({
@@ -73,16 +76,6 @@ Icon::map($this);
                     </span>
                 </div>
             <?php endif; ?>
-            <div class="dropdown btn-header transparent pull-right">
-                <span><a data-toggle="dropdown" href="#"><i class="fa fa-trash-o"></i></a>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <li><a href="<?= Url::toRoute(['/backend/trash/index', 'returnUrl'=>\app\backend\components\Helper::getReturnUrl()]); ?>"><?= Yii::t('app', 'View trash') ?>
-                            </a>
-                        </li>
-                        <li><a href="<?= Url::toRoute(['/backend/trash/clean', 'returnUrl'=>\app\backend\components\Helper::getReturnUrl()]); ?>"><?= Yii::t('app', 'Clear the cart') ?></a></li>
-                    </ul>
-                </span>
-            </div>
             <div class="btn-header transparent pull-right">
                 <span> <a href="/" title="<?= Yii::t('app', 'Go to site') ?>"><i class="fa fa-newspaper-o"></i></a> </span>
             </div>

@@ -14,6 +14,7 @@ class m150422_105109_hard_deleting extends Migration
         $this->dropColumn(Page::tableName(), 'is_deleted');
         $this->dropColumn(Product::tableName(), 'is_deleted');
         $shopConfig = Config::findOne(['path' => 'shop']);
+        /** @var $shopConfig Config */
         if (!is_null($shopConfig)) {
             $config = new Config;
             $config->attributes = [
