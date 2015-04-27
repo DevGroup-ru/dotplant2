@@ -615,7 +615,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             // post-process categories
             // find & add parent category
             // if we need to show products of child categories in products list
-            if (is_array($categories) && Config::getValue('shop.showProductsOfChildCategories')) {
+            $module = Yii::$app->modules['shop'];
+
+            if (is_array($categories) && $module->showProductsOfChildCategories) {
 
                 do {
                     $repeat = false;
@@ -738,7 +740,10 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             throw new \yii\web\ServerErrorHttpException('Object not found.');
         }
 
-        $onlyParents = intval(Config::getValue('shop.filterOnlyByParentProduct', 1));
+        /** @var \app\modules\shop\ShopModule $module */
+        $module = Yii::$app->modules['shop'];
+
+        $onlyParents = $module->filterOnlyByParentProduct;
         $query = static::find();
         if (1 === $onlyParents) {
             $query->andWhere([static::tableName() . '.parent_id' => 0, static::tableName() . '.active' => 1]);
@@ -849,7 +854,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                             'tags' => [
                                 ActiveRecordHelper::getCommonTag(Category::className()),
                                 ActiveRecordHelper::getCommonTag(static::className()),
-                                ActiveRecordHelper::getCommonTag(Config::className()),
+                                ActiveRecordHelper::getCommonTag($module->className()),
                             ]
                         ]
                     )
@@ -875,7 +880,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                         'tags' => [
                             ActiveRecordHelper::getCommonTag(Category::className()),
                             ActiveRecordHelper::getCommonTag(static::className()),
-                            ActiveRecordHelper::getCommonTag(Config::className()),
+                            ActiveRecordHelper::getCommonTag($module->className()),
                         ]
                     ]
                 )
