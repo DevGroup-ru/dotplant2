@@ -14,7 +14,7 @@ use kartik\icons\Icon;
     </div>
 </div>
 <div class="row">
-    <?php $form = ActiveForm::begin(['id' => 'config-form', 'type'=> ActiveForm::TYPE_HORIZONTAL]); ?>
+    <?php $form = ActiveForm::begin(['id' => 'config-form', 'type'=> ActiveForm::TYPE_VERTICAL]); ?>
     <article class="col-xs-12 col-lg-12">
 
         <div class="jarviswidget well jarviswidget-color-darken" id="wid-id-configurations" data-widget-sortable="false" data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false" role="widget" style="">
@@ -86,7 +86,7 @@ use kartik\icons\Icon;
                             </ul>
                             <div class="tab-content">
                                 <?php foreach ($models as $i => $model): ?>
-                                    <div class="tab-pane <?= $i===0 ? 'active' : '' ?>">
+                                    <div class="tab-pane <?= $i===0 ? 'active' : '' ?>" id="tab-configurable-<?=$i?>">
 
                                         <?= $this->render($model->getConfigurationView(), [
                                             'configurable' => $model,

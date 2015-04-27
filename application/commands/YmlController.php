@@ -80,7 +80,7 @@ TPL;
         $categories = Category::find()->where(['active' => 1, 'is_deleted' => 0])->asArray();
         /** @var Category $row */
         foreach ($categories->each(500) as $row) {
-            $section_categories .= '<category id="'.$row['id'].'" '.(0 != $row['parent_id'] ? 'parentId="'.$row['parent_id'].'"' : '').'>'.$row['name'].'</category>' . PHP_EOL;
+            $section_categories .= '<category id="'.$row['id'].'" '.(0 != $row['parent_id'] ? 'parentId="'.$row['parent_id'].'"' : '').'>'.htmlspecialchars(trim(strip_tags($row['name']))).'</category>' . PHP_EOL;
         }
         unset($row, $categories);
 
@@ -106,7 +106,8 @@ TPL;
         /** @var Product $row */
         foreach ($products->each(100) as $row) {
             $price = $this->getByYmlParam($ymlConfig, 'offer_price', $row, 0);
-            if (intval($price) <= 0) {
+            $price = intval($price);
+            if ($price <= 0 || $price >= 1000000000) {
                 continue;
             }
 
@@ -117,14 +118,35 @@ TPL;
             $offer .= '<currencyId>'.$ymlConfig->currency_id.'</currencyId>' . PHP_EOL;
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_category', $row, '<categoryId>%s</categoryId>' . PHP_EOL);
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_picture', $row,
-                function($value) use ($ymlConfig) {
+                function($value) use ($ymlConfig)
+                {
                     $value = urlencode($value);
                     $value = '<picture>'.rtrim($ymlConfig->shop_url, '/').$value.'</picture>' . PHP_EOL;
                     return $value;
                 }
             );
-            $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_name', $row, '<name>%s</name>'. PHP_EOL);
-            $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_description', $row, '<description>%s</description>'. PHP_EOL);
+            $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_name', $row,
+                function($value) use ($ymlConfig)
+                {
+                    if (mb_strlen($value, 'UTF-8') > 120) {
+                        $value = mb_substr($value, 0, 120, 'UTF-8');
+                        $value = mb_substr($value, 0, mb_strrpos($value, ' ', 'UTF-8'), 'UTF-8');
+                    }
+                    $value = '<name>'.htmlspecialchars(trim(strip_tags($value))).'</name>'. PHP_EOL;
+                    return $value;
+                }
+            );
+            $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_description', $row,
+                function($value) use ($ymlConfig)
+                {
+                    if (mb_strlen($value, 'UTF-8') > 175) {
+                        $value = mb_substr($value, 0, 175, 'UTF-8');
+                        $value = mb_substr($value, 0, mb_strrpos($value, ' ', 'UTF-8'), 'UTF-8');
+                    }
+                    $value = '<description>'.htmlspecialchars(trim(strip_tags($value))).'</description>'. PHP_EOL;
+                    return $value;
+                }
+            );
 
             $offer .= '</offer>';
 

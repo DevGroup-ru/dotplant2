@@ -6,6 +6,7 @@ use kartik\icons\Icon;
 use app\backend\components\ActiveForm;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
 
 /**
  * @var $this \yii\web\View
@@ -187,7 +188,18 @@ $this->params['breadcrumbs'][] = $this->title;
             );?>
 
             <?=$form->field($model, 'sort_order');?>
-
+            <?=
+            $form->field($model, 'parent_id')->dropDownList(
+                ArrayHelper::merge(
+                    [0 => Yii::t('app', 'Root')],
+                    ArrayHelper::map(
+                        \app\models\Category::find()->where('id != :id', ['id' => $model->id])->all(),
+                        'id',
+                        'name'
+                    )
+                )
+            );
+            ?>
             <?php BackendWidget::end(); ?>
 
             <?php

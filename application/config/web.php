@@ -3,21 +3,25 @@
 use yii\helpers\ArrayHelper;
 
 $config = [
-    'id' => 'basic',
+    'id' => 'dotplant2',
     'basePath' => dirname(__DIR__),
     'extensions' => require(__DIR__ . '/../vendor/yiisoft/extensions.php'),
     'language' => 'ru',
     'bootstrap' => [
+        'core',
         'seo',
         'backend',
         'app\components\UserPreferencesBootstrap',
-        'core',
+        'shop',
     ],
     'defaultRoute' => 'default',
     'modules' => [
         'user' => [
             'class' => 'app\modules\user\UserModule',
             'loginSessionDuration' => 2592000,
+        ],
+        'shop' => [
+            'class' => 'app\modules\shop\ShopModule',
         ],
         'backend' => [
             'class' => 'app\backend\BackendModule',
@@ -131,7 +135,7 @@ $config = [
         ],
         'mail' => file_exists(__DIR__ . '/email-config.php') ? require(__DIR__ . '/email-config.php') : [ 'class' => 'yii\swiftmailer\Mailer' ],
         'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'traceLevel' => YII_DEBUG ? 6 : 0,
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
