@@ -5,6 +5,7 @@ use kartik\icons\Icon;
 use yii\helpers\Url;
 use devgroup\JsTreeWidget\TreeWidget;
 use devgroup\JsTreeWidget\ContextMenuHelper;
+use app\backend\components\Helper;
 
 $this->title = Yii::t('app', 'Categories');
 if (is_object($model)) {
@@ -33,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'label' => 'Edit',
                         'icon' => 'fa fa-pencil',
                         'action' => ContextMenuHelper::actionUrl(
-                            ['/backend/category/edit']
+                            ['/backend/category/edit', 'returnUrl' => Helper::getReturnUrl()]
                         ),
                     ],
                     'open' => [
@@ -42,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'action' => ContextMenuHelper::actionUrl(
                             ['/backend/category/index'],
                             [
-                                'parent_id',
+                                'parent_id' => 'id',
                             ]
                         ),
                     ],
@@ -50,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'label' => 'Create',
                         'icon' => 'fa fa-plus-circle',
                         'action' => ContextMenuHelper::actionUrl(
-                            ['/backend/category/edit'],
+                            ['/backend/category/edit', 'returnUrl' => Helper::getReturnUrl()],
                             [
                                 'parent_id',
                             ]
@@ -59,8 +60,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'delete' => [
                         'label' => 'Delete',
                         'icon' => 'fa fa-trash-o',
-                        'action' => ContextMenuHelper::actionUrl(
-                            ['/backend/category/delete']
+                        'action' => new \yii\web\JsExpression(
+                            "function(node) {
+                                jQuery('#delete-category-confirmation')
+                                    .attr('data-url', '/backend/category/delete?id=' + jQuery(node.reference[0]).data('id'))
+                                    .attr('data-items', '')
+                                    .modal('show');
+                                return true;
+                            }"
                         ),
                     ],
                 ],
@@ -89,6 +96,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]
                     ),
                     'gridSelector' => '.grid-view',
+                    'modalSelector' => '#delete-category-confirmation',
                     'htmlOptions' => [
                         'class' => 'btn btn-danger pull-right'
                     ],
@@ -113,58 +121,30 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'id',
                     ],
                     [
-                        'class' => 'app\backend\columns\TextWrapper',
+                        'class' => 'yii\grid\DataColumn',
                         'attribute' => 'name',
-                        'callback_wrapper' => function($content, $model, $key, $index, $parent) {
-                            if (1 === $model->is_deleted) {
-                                $content = '<div class="is_deleted"><span class="fa fa-trash-o"></span>'.$content.'</div>';
-                            }
-
-                            return $content;
-                        }
                     ],
                     'title',
                     'slug',
                     [
                         'class' => 'app\backend\components\ActionColumn',
-                        'buttons' => function($model, $key, $index, $parent) {
-                            if (1 === $model->is_deleted) {
-                                return [
-                                    [
-                                        'url' => 'edit',
-                                        'icon' => 'pencil',
-                                        'class' => 'btn-primary',
-                                        'label' => Yii::t('app', 'Edit'),
-                                    ],
-                                    [
-                                        'url' => 'restore',
-                                        'icon' => 'refresh',
-                                        'class' => 'btn-success',
-                                        'label' => Yii::t('app', 'Restore'),
-                                    ],
-                                    [
-                                        'url' => 'delete',
-                                        'icon' => 'trash-o',
-                                        'class' => 'btn-danger',
-                                        'label' => Yii::t('app', 'Delete'),
-                                    ],
-                                ];
-                            }
-                            return [
-                                [
-                                    'url' => 'edit',
-                                    'icon' => 'pencil',
-                                    'class' => 'btn-primary',
-                                    'label' => Yii::t('app', 'Edit'),
+                        'buttons' => [
+                            [
+                                'url' => 'edit',
+                                'icon' => 'pencil',
+                                'class' => 'btn-primary',
+                                'label' => Yii::t('app', 'Edit'),
+                            ],
+                            [
+                                'url' => 'delete',
+                                'icon' => 'trash-o',
+                                'class' => 'btn-danger',
+                                'label' => Yii::t('app', 'Delete'),
+                                'options' => [
+                                    'data-action' => 'delete-category',
                                 ],
-                                [
-                                    'url' => 'delete',
-                                    'icon' => 'trash-o',
-                                    'class' => 'btn-danger',
-                                    'label' => Yii::t('app', 'Delete'),
-                                ],
-                            ];
-                        },
+                            ],
+                        ],
                         'url_append' => '&parent_id='.(is_object($model)?$model->id:0),
                     ],
                 ],
@@ -187,6 +167,3 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
     </div>
 </div>
-
-
-

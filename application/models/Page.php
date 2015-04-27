@@ -29,7 +29,6 @@ use yii\db\ActiveRecord;
  * @property integer $sort_order
  * @property string $date_added
  * @property string $date_modified
- * @property integer $is_deleted
  * @property string $show_type
  * @property string $name
  */
@@ -52,7 +51,7 @@ class Page extends ActiveRecord
     {
         return [
             [['slug', 'title'], 'required'],
-            [['robots', 'is_deleted', 'parent_id', 'sort_order'], 'integer'],
+            [['robots', 'parent_id', 'sort_order'], 'integer'],
             [['slug_absolute', 'published', 'searchable'], 'boolean'],
             [
                 ['content', 'title', 'h1', 'meta_description', 'breadcrumbs_label', 'announce', 'slug_compiled', 'name'],
@@ -88,7 +87,6 @@ class Page extends ActiveRecord
             'sort_order' => Yii::t('app', 'Sort Order'),
             'date_added' => Yii::t('app', 'Date Added'),
             'date_modified' => Yii::t('app', 'Date Modified'),
-            'is_deleted' => Yii::t('app', 'Is Deleted'),
             'subdomain' => Yii::t('app', 'Subdomain'),
             'name' => Yii::t('app', 'Name'),
         ];
@@ -145,7 +143,6 @@ class Page extends ActiveRecord
         $query->andFilterWhere(['like', 'h1', $this->h1]);
         $query->andFilterWhere(['like', 'meta_description', $this->meta_description]);
         $query->andFilterWhere(['like', 'breadcrumbs_label', $this->breadcrumbs_label]);
-        $query->andFilterWhere(['is_deleted' => $this->is_deleted]);
         return $dataProvider;
     }
 
@@ -182,10 +179,6 @@ class Page extends ActiveRecord
         }
         $this->date_modified = date('Y-m-d H:i:s');
         $this->slug_compiled = $this->compileSlug();
-
-        if (1 === $this->is_deleted) {
-            $this->published = 0;
-        }
 
         \yii\caching\TagDependency::invalidate(
             Yii::$app->cache,
@@ -309,35 +302,19 @@ class Page extends ActiveRecord
     }
 
     /**
-     * Первое удаление в корзину, второе из БД
-     *
+     * Preparation to delete page.
+     * Deleting all inserted pages.
      * @return bool
      */
     public function beforeDelete()
     {
-        if (null !== $children = static::find()->where(['parent_id' => $this->id])->all()) {
-            foreach ($children as $child) {
-                $child->delete();
-            }
-        }
-        $result = parent::beforeDelete();
-        if (0 === intval($this->is_deleted)) {
-            $this->is_deleted = 1;
-            $this->save();
-
+        if (!parent::beforeDelete()) {
             return false;
         }
-        return $result;
-    }
-
-    /**
-     * Отмена удаления объекта
-     *
-     * @return bool Restore result
-     */
-    public function restoreFromTrash()
-    {
-        $this->is_deleted = 0;
-        return $this->save();
+        foreach ($this->children as $child) {
+            /** @var Page $child */
+            $child->delete();
+        }
+        return true;
     }
 }
