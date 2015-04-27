@@ -33,18 +33,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     'panel' => [
                         'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
                     ],
+                    'rowOptions' => function ($model, $key, $index, $grid) {
+                        if ($model->is_deleted) {
+                            return [
+                                'class' => 'danger',
+                            ];
+                        }
+                        return [];
+                    },
                 ],
                 'columns' => [
                     [
-                        'class' => 'app\backend\columns\TextWrapper',
                         'attribute' => 'id',
-                        'callback_wrapper' => function($content, $model, $key, $index, $parent) {
-                            if (1 === $model->is_deleted) {
-                                $content = '<div class="is_deleted"><span class="fa fa-trash-o"></span>'.$content.'</div>';
-                            }
-
-                            return $content;
-                        }
                     ],
                     [
                         'attribute' => 'manager_id',
@@ -112,7 +112,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'class' => 'app\backend\components\ActionColumn',
                         'buttons' =>  function($model, $key, $index, $parent) {
-
                             $result = [
                                 [
                                     'url' => 'view',
@@ -121,31 +120,19 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'label' => Yii::t('app','View'),
                                 ],
                             ];
-
-                            if (intval(Config::getValue('shop.AbilityDeleteOrders')) === 1 ) {
-
-                                if (1 === $model->is_deleted) {
-                                    $result[] =   [
-                                        'url' => 'restore',
-                                        'icon' => 'refresh',
-                                        'class' => 'btn-success',
-                                        'label' => Yii::t('app', 'Restore'),
-                                    ];
-                                }
-
+                            if (intval(Config::getValue('shop.AbilityDeleteOrders')) === 1 && $model->is_deleted == 0) {
                                 $result[] =  [
                                     'url' => 'delete',
                                     'icon' => 'trash-o',
                                     'class' => 'btn-danger',
                                     'label' => Yii::t('app', 'Delete'),
+                                    'options' => [
+                                        'data-action' => 'delete',
+                                    ],
                                 ];
-
-
                             }
                             return $result;
                         },
-
-
                     ],
                 ],
             ]

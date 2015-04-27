@@ -112,6 +112,9 @@ $this->endBlock();
                                 'icon' => 'trash-o',
                                 'class' => 'btn-danger',
                                 'label' => 'Delete',
+                                'options' => [
+                                    'data-action' => 'delete',
+                                ],
                             ],
                         ];
                     }

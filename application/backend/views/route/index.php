@@ -39,20 +39,6 @@ $this->endBlock();
             'route',
             [
                 'class' => ActionColumn::className(),
-                'buttons' => [
-                    [
-                        'url' => 'edit',
-                        'icon' => 'pencil',
-                        'class' => 'btn-primary',
-                        'label' => Yii::t('app', 'Edit'),
-                    ],
-                    [
-                        'url' => 'delete',
-                        'icon' => 'trash-o',
-                        'class' => 'btn-danger',
-                        'label' => Yii::t('app', 'Delete'),
-                    ],
-                ],
             ],
         ],
         

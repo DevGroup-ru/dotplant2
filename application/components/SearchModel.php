@@ -21,12 +21,13 @@ class SearchModel extends Model
     private $relationAttributes = [];
     private $rules;
     private $scenarios;
+    public $additionalConditions;
     public $defaultOrder;
     public $groupBy;
     public $pageSize = 20;
     public $partialMatchAttributes = [];
     public $relations = [];
-    
+
     /**
      * @param ActiveQuery $query
      * @param string $attribute
@@ -199,6 +200,11 @@ class SearchModel extends Model
         $this->load($params);
         foreach ($this->attributes as $name => $value) {
             $this->addCondition($query, $name, in_array($name, $this->partialMatchAttributes));
+        }
+        if (!is_null($this->additionalConditions)) {
+            foreach ((array) $this->additionalConditions as $condition) {
+                $query->andWhere($condition);
+            }
         }
         return $dataProvider;
     }

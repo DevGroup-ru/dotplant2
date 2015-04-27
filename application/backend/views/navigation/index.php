@@ -85,20 +85,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'route_params',
                     [
                         'class' => 'app\backend\components\ActionColumn',
-                        'buttons' => [
-                            [
-                                'url' => 'edit',
-                                'icon' => 'pencil',
-                                'class' => 'btn-primary',
-                                'label' => 'Edit',
-                            ],
-                            [
-                                'url' => 'delete',
-                                'icon' => 'trash-o',
-                                'class' => 'btn-danger',
-                                'label' => 'Delete',
-                            ],
-                        ],
                         'url_append' => "&parent_id={$parent_id}",
                     ],
                 ],

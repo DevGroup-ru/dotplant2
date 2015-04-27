@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'h1',
                         'meta_description',
                         [
-                            'class' => app\backend\columns\ActionColumn::className(),
+                            'class' => app\backend\components\ActionColumn::className(),
                         ],
                     ],
                     'theme' => 'panel-default',

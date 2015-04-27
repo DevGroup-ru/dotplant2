@@ -6,6 +6,7 @@ use app\backend\models\Notification;
 use app\backend\models\OrderChat;
 use app\components\Helper;
 use app\components\SearchModel;
+use app\models\Config;
 use app\models\Order;
 use app\models\OrderItem;
 use app\models\OrderStatus;
@@ -85,14 +86,16 @@ class OrderController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new SearchModel(
-            [
-                'defaultOrder' => ['id' => SORT_DESC],
-                'model' => Order::className(),
-                'relations' => ['user' => ['username']],
-                'partialMatchAttributes' => ['start_date', 'end_date', 'user_username'],
-            ]
-        );
+        $searchModelConfig = [
+            'defaultOrder' => ['id' => SORT_DESC],
+            'model' => Order::className(),
+            'relations' => ['user' => ['username']],
+            'partialMatchAttributes' => ['start_date', 'end_date', 'user_username'],
+        ];
+        if (Config::getValue('shop.showDeletedOrders', '0') == 0) {
+            $searchModelConfig['additionalConditions'] = [['is_deleted' => 1]];
+        }
+        $searchModel = new SearchModel($searchModelConfig);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render(
             'index',

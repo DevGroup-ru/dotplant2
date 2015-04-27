@@ -153,6 +153,9 @@ Html::submitButton(
                                 'icon' => 'trash-o',
                                 'class' => 'btn-danger',
                                 'label' => 'Delete',
+                                'options' => [
+                                    'data-action' => 'delete',
+                                ],
                             ],
                         ],
                         'url_append' => '&property_group_id=' . $model->id,

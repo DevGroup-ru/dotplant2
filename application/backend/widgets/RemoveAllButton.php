@@ -11,6 +11,7 @@ class RemoveAllButton extends Widget
     public $url;
     public $gridSelector;
     public $htmlOptions = [];
+    public $modalSelector = '#delete-confirmation';
 
     public function init()
     {
@@ -21,7 +22,6 @@ class RemoveAllButton extends Widget
         if (!isset($this->htmlOptions['id'])) {
             $this->htmlOptions['id'] = 'deleteItems';
         }
-
         Html::addCssClass($this->htmlOptions, 'btn');
     }
 
@@ -42,20 +42,12 @@ class RemoveAllButton extends Widget
     protected function registerScript()
     {
         $this->view->registerJs("
-            $('#{$this->htmlOptions['id']}').on('click', function() {
+            jQuery('#{$this->htmlOptions['id']}').on('click', function() {
                 var items =  $('{$this->gridSelector}').yiiGridView('getSelectedRows');
-                if (items.length && confirm('" . \Yii::t('app', 'Are you sure you want to delete these objects?') . "')) {
-                    $.ajax({
-                        'url': '{$this->url}',
-                        'type': 'post',
-                        'data': {
-                            'items': items
-                        },
-                        success: function (data) {
-                            location.reload();
-                        }
-                    });
+                if (items.length) {
+                    jQuery('{$this->modalSelector}').attr('data-url', '{$this->url}').attr('data-items', items).modal('show');
                 }
+                return false;
             });
         ");
     }

@@ -18,6 +18,7 @@ use yii\helpers\Json;
  * @property integer $order_status_id
  * @property integer $shipping_option_id
  * @property integer $payment_type_id
+ * @property integer $is_deleted
  * @property string $external_id
  * @property integer $items_count
  * @property double $total_price
@@ -231,29 +232,18 @@ class Order extends \yii\db\ActiveRecord
      */
     public function beforeDelete()
     {
-
-        if (intval(Config::getValue('shop.AbilityDeleteOrders')) !== 1 ) {
+        if (intval(Config::getValue('shop.AbilityDeleteOrders')) !== 1) {
             return false;
         }
-
-        $result = parent::beforeDelete();
+        if (!parent::beforeDelete()) {
+            return false;
+        }
         if (0 === intval($this->is_deleted)) {
             $this->is_deleted = 1;
             $this->save();
-
             return false;
         }
-        return $result;
-    }
-    /**
-     * Отмена удаления объекта
-     *
-     * @return bool Restore result
-     */
-    public function restoreFromTrash()
-    {
-        $this->is_deleted = 0;
-        return $this->save();
+        return true;
     }
 
     /**

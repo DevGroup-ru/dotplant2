@@ -39,20 +39,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'name',
                 [
                     'class' => ActionColumn::className(),
-                    'buttons' => [
-                        [
-                            'url' => 'update',
-                            'icon' => 'pencil',
-                            'class' => 'btn-primary',
-                            'label' => Yii::t('app', 'Edit'),
-                        ],
-                        [
-                            'url' => 'delete',
-                            'icon' => 'trash-o',
-                            'class' => 'btn-danger',
-                            'label' => Yii::t('app', 'Delete'),
-                        ],
-                    ],
                 ],
             ],
         ]
