@@ -800,11 +800,12 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $query->limit($limit);
         } else {
             $products_query = clone $query;
+            $products_query->limit(null);
 
             if (false === $pages = Yii::$app->cache->get($cacheKey)) {
                 $pages = new Pagination(
                     [
-                        'defaultPageSize' => $productsPerPage,
+                        'defaultPageSize' => !is_null($query->limit) ? $query->limit : $productsPerPage,
                         'forcePageParam' => false,
                         'totalCount' => $products_query->count(),
                     ]
