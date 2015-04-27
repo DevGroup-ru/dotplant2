@@ -63,12 +63,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'delete' => [
                     'label' => 'Delete',
                     'icon' => 'fa fa-trash-o',
-                    'action' => ContextMenuHelper::actionUrl(
-                        ['/backend/page/delete']
+                    'action' => new \yii\web\JsExpression(
+                        "function(node) {
+                            jQuery('#delete-confirmation')
+                                .attr('data-url', '/backend/page./delete?id=' + jQuery(node.reference[0]).data('id'))
+                                .attr('data-items', '')
+                                .modal('show');
+                            return true;
+                        }"
                     ),
                 ],
-
-
             ],
         ]);
         ?>
@@ -113,15 +117,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'id',
                     ],
                     [
-                        'class' => 'app\backend\columns\TextWrapper',
+                        'class' => 'yii\grid\DataColumn',
                         'attribute' => 'title',
-                        'callback_wrapper' => function($content, $model, $key, $index, $parent) {
-                            if (1 === $model->is_deleted) {
-                                $content = '<div class="is_deleted"><span class="fa fa-trash-o"></span>'.$content.'</div>';
-                            }
-
-                            return $content;
-                        }
                     ],
 
                     'slug',
@@ -131,47 +128,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'class' => 'app\backend\components\ActionColumn',
-                        'buttons' =>
-                            function($model, $key, $index, $parent) {
-                                if (1 === $model->is_deleted) {
-                                    return [
-                                        [
-                                            'url' => 'edit',
-                                            'icon' => 'pencil',
-                                            'class' => 'btn-primary',
-                                            'label' => Yii::t('app', 'Edit' ),
-                                        ],
-                                        [
-                                            'url' => 'restore',
-                                            'icon' => 'refresh',
-                                            'class' => 'btn-success',
-                                            'label' => Yii::t('app', 'Restore'),
-                                        ],
-                                        [
-                                            'url' => 'delete',
-                                            'icon' => 'trash-o',
-                                            'class' => 'btn-danger',
-                                            'label' => Yii::t('app', 'Delete'),
-                                        ],
-                                    ];
-                                } else {
-                                    return [
-                                        [
-                                            'url' => 'edit',
-                                            'icon' => 'pencil',
-                                            'class' => 'btn-primary',
-                                            'label' => Yii::t('app', 'Edit'),
-
-                                        ],
-                                        [
-                                            'url' => 'delete',
-                                            'icon' => 'trash-o',
-                                            'class' => 'btn-danger',
-                                            'label' => Yii::t('app', 'Delete'),
-                                        ],
-                                    ];
-                                }
-                            },
                         'url_append' => '&parent_id='.(is_object($model)?$model->id:0),
                     ],
                 ],

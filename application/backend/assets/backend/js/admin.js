@@ -118,20 +118,43 @@ $(function(){
     });
     $('[data-toggle="tooltip"]').tooltip();
 
-    $('[data-action="delete"]').on('click', function(e){
-        var $this = $(this);
-        bootbox.confirm('Are you sure you want to delete this object?', function(result){
-            if (result === true) {
-                $.ajax({
-                    'type' : 'post',
-                    'url' : $this.attr('href'),
-                    'success': function(data) {
-                        window.location.reload();
-                    }
-                });
+    jQuery('[data-toggle="tooltip"]').tooltip();
+    jQuery('[data-action="delete"]').on('click', function(e) {
+        jQuery('#delete-confirmation').attr('data-url', jQuery(this).attr('href')).attr('data-items', '').modal('show');
+        return false;
+    });
+    jQuery('#delete-confirmation [data-action="confirm"]').click(function() {
+        var $modal = jQuery(this).parents('.modal').eq(0);
+        var data =  typeof($modal.attr('data-items')) == "string" && $modal.attr('data-items').length > 0
+            ? {'items': $modal.attr('data-items').split(',')}
+            :{};
+        jQuery.ajax({
+            'url': $modal.attr('data-url'),
+            'type': 'post',
+            'data': data,
+            'success': function (data) {
+                location.reload();
             }
         });
-
+        return true;
+    });
+    jQuery('body').on('click', '[data-action="delete-category"]', function() {
+        jQuery('#delete-category-confirmation').attr('data-url', jQuery(this).attr('href')).attr('data-items', '').modal('show');
         return false;
+    });
+    jQuery('#delete-category-confirmation [data-action="confirm"]').click(function() {
+        var $modal = jQuery(this).parents('.modal').eq(0);
+        var data =  typeof($modal.attr('data-items')) == "string" && $modal.attr('data-items').length > 0
+            ? {'items': $modal.attr('data-items').split(',')}
+            :{};
+        jQuery.ajax({
+            'url': $modal.attr('data-url') + '&mode=' + jQuery('#delete-mode').val(),
+            'type': 'post',
+            'data': data,
+            'success': function (data) {
+                location.reload();
+            }
+        });
+        return true;
     });
 });

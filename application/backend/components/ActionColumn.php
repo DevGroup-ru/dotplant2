@@ -6,6 +6,7 @@ use Closure;
 use kartik\icons\Icon;
 use Yii;
 use yii\grid\Column;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use app\backend\components\Helper;
@@ -48,16 +49,13 @@ class ActionColumn extends Column
                 'label' => Yii::t('app', 'Edit'),
             ],
             [
-                'url' => 'clone',
-                'icon' => 'copy',
-                'class' => 'btn-success',
-                'label' => Yii::t('app', 'Clone'),
-            ],
-            [
                 'url' => 'delete',
                 'icon' => 'trash-o',
                 'class' => 'btn-danger',
                 'label' => Yii::t('app', 'Delete'),
+                'options' => [
+                    'data-action' => 'delete',
+                ],
             ]
         ];
 
@@ -112,12 +110,15 @@ class ActionColumn extends Column
             $data .= Html::a(
                 Icon::show($button['icon']) . $buttonText,
                 $url = $this->createUrl($button['url'], $model, $key, $index),
-                [
-                    //'data-pjax' => 0,
-                   // 'data-action' => $button['url'],
-                    'class' => $button['class'],
-                    'title' => $button['label'],
-                ]
+                    ArrayHelper::merge(
+                        isset($button['options']) ? $button['options'] : [],
+                        [
+                            //'data-pjax' => 0,
+                            // 'data-action' => $button['url'],
+                            'class' => $button['class'],
+                            'title' => $button['label'],
+                        ]
+                    )
             ) . ' ';
         }
         $data .= '</div>';

@@ -58,7 +58,10 @@ Icon::map($this);
                         <?= FlushCacheButton::widget(
                             [
                                 'url' => Url::to(['/backend/dashboard/flush-cache']),
-                                'htmlOptions' => ['class' => ''],
+                                'htmlOptions' => [
+                                    'class' => '',
+                                    'title' => Yii::t('app', 'Flush cache'),
+                                ],
                                 'label' => Icon::show('eraser'),
                                 'onSuccess' => 'function(data) {
                                     jQuery.smallBox({
@@ -73,16 +76,6 @@ Icon::map($this);
                     </span>
                 </div>
             <?php endif; ?>
-            <div class="dropdown btn-header transparent pull-right">
-                <span><a data-toggle="dropdown" href="#"><i class="fa fa-trash-o"></i></a>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <li><a href="<?= Url::toRoute(['/backend/trash/index', 'returnUrl'=>\app\backend\components\Helper::getReturnUrl()]); ?>"><?= Yii::t('app', 'View trash') ?>
-                            </a>
-                        </li>
-                        <li><a href="<?= Url::toRoute(['/backend/trash/clean', 'returnUrl'=>\app\backend\components\Helper::getReturnUrl()]); ?>"><?= Yii::t('app', 'Clear the cart') ?></a></li>
-                    </ul>
-                </span>
-            </div>
             <div class="btn-header transparent pull-right">
                 <span> <a href="/" title="<?= Yii::t('app', 'Go to site') ?>"><i class="fa fa-newspaper-o"></i></a> </span>
             </div>
@@ -141,25 +134,73 @@ Icon::map($this);
             </div>
         </div>
     </div>
+    <?php
+    \yii\bootstrap\Modal::begin(
+        [
+            'id' => 'delete-confirmation',
+            'footer' =>
+                Html::button(
+                    Yii::t('app', 'Delete'),
+                    [
+                        'class' => 'btn btn-danger',
+                        'data-action' => 'confirm',
+                        'data-dismiss' => 'modal',
+                    ]
+                )
+                . Html::button(
+                    Yii::t('app', 'Cancel'),
+                    [
+                        'class' => 'btn btn-default',
+                        'data-dismiss' => 'modal',
+                    ]
+                ),
+            'header' => Yii::t('app', 'Are you sure you want to delete this object?'),
+        ]
+    )
+    ?>
+    <div class="alert alert-danger">
+        <i class="fa fa-exclamation-triangle fa-lg"></i>
+        <?= Yii::t('app', 'All data will be lost') ?>
+    </div>
+    <?php \yii\bootstrap\Modal::end() ?>
+    <?php
+    \yii\bootstrap\Modal::begin(
+        [
+            'id' => 'delete-category-confirmation',
+            'footer' =>
+                Html::button(
+                    Yii::t('app', 'Delete'),
+                    [
+                        'class' => 'btn btn-primary',
+                        'data-action' => 'confirm',
+                        'data-dismiss' => 'modal',
+                    ]
+                )
+                . Html::button(
+                    Yii::t('app', 'Cancel'),
+                    [
+                        'class' => 'btn btn-default',
+                        'data-dismiss' => 'modal',
+                    ]
+                ),
+            'header' => Yii::t('app', 'Вы действительно хотите удалить данную категорию?'),
+        ]
+    )
+    ?>
+    <div class="control-group">
+        <label class="control-label" for="delete-action"><?= Yii::t('app', 'Product deleting rules') ?></label>
+        <div>
+            <?=
+            Html::dropDownList(
+                'delete_mode',
+                \app\models\Category::DELETE_MODE_SINGLE_CATEGORY,
+                \app\models\Category::deleteModesList(), ['class' => 'form-control', 'id' => 'delete-mode']
+            )
+            ?>
+        </div>
+    </div>
+    <?php \yii\bootstrap\Modal::end() ?>
     <?php $this->endBody(); ?>
-    <script type="text/javascript">
-        $(function(){
-            $('[data-toggle="popover"]').popover({
-                container: 'body'
-            });
-            $('[data-toggle="tooltip"]').tooltip();
-            jQuery('[data-action="delete"]').on('click', function(e){
-                if (confirm('<?= Yii::t('app', 'Are you sure you want to delete this object?') ?>')) {
-                    jQuery.ajax({
-                        'type' : 'post',
-                        'url' : jQuery(this).attr('href')
-                    });
-                }
-                window.location.reload();
-                return false;
-            });
-        });
-    </script>
 </body>
 </html>
 <?php $this->endPage(); ?>

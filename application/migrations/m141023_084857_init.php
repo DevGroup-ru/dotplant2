@@ -1179,7 +1179,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\text\TextProperty::className(),
+                    \app\properties\handlers\text\TextPropertyWidget::className(),
                 ],
                 [
                     'Select',
@@ -1187,7 +1187,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\select\SelectProperty::className(),
+                    \app\properties\handlers\select\SelectPropertyWidget::className(),
                 ],
                 [
                     'Checkbox',
@@ -1195,7 +1195,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\checkbox\CheckboxProperty::className(),
+                    \app\properties\handlers\checkbox\CheckboxPropertyWidget::className(),
                 ],
                 [
                     'Text area',
@@ -1203,7 +1203,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\textArea\TextAreaProperty::className(),
+                    \app\properties\handlers\textArea\TextAreaPropertyWidget::className(),
                 ],
             ]
         );

@@ -97,20 +97,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'options' => [
                             'width' => '95px',
                         ],
-                        'buttons' => [
-                                [
-                                    'url' => 'edit',
-                                    'icon' => 'pencil',
-                                    'class' => 'btn-primary',
-                                    'label' => 'Edit',
-                                ],
-                                [
-                                    'url' => 'delete',
-                                    'icon' => 'trash-o',
-                                    'class' => 'btn-danger',
-                                    'label' => 'Delete',
-                                ],
-                            ],
                         'url_append' => '&parent_id='.(is_object($model)?$model->id:0),
                     ],
                 ],
