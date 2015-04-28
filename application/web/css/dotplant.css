@@ -69,23 +69,23 @@ a.logo {
   -o-border-radius: 0;
   border-radius: 0;
 }
-/* line 44, ../sass/dotplant.scss */
+/* line 48, ../sass/dotplant.scss */
 #navbar .navbar-collapse {
   padding-left: 0;
 }
-/* line 48, ../sass/dotplant.scss */
+/* line 52, ../sass/dotplant.scss */
 #navbar .navbar-nav > li > a {
   color: #fff;
 }
-/* line 50, ../sass/dotplant.scss */
+/* line 54, ../sass/dotplant.scss */
 #navbar .navbar-nav > li > a:hover {
   background: #4f9aff;
 }
-/* line 54, ../sass/dotplant.scss */
+/* line 58, ../sass/dotplant.scss */
 #navbar .navbar-nav > li.active > a {
   background: #000;
 }
-/* line 59, ../sass/dotplant.scss */
+/* line 63, ../sass/dotplant.scss */
 #navbar.affix {
   position: fixed;
   top: 0;

@@ -186,3 +186,11 @@ div#Product-grid, div#reviews-grid {
   max-height: 400px;
   overflow: auto;
 }
+
+.scrollable-options-list {
+  max-height: 150px;
+  overflow: scroll;
+  label {
+    display: block;
+  }
+}
