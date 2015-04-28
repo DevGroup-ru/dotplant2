@@ -4,7 +4,9 @@ namespace app\controllers;
 
 use app\components\Controller;
 use app\components\filters\FilterQueryInterface;
-use app\components\LastViewedProducts;
+use app\modules\core\helpers\EventTriggeringHelper;
+use app\modules\shop\events\ProductPageShowed;
+use app\modules\shop\helpers\LastViewedProducts;
 use app\models\Category;
 use app\models\Config;
 use app\models\Object;
@@ -186,7 +188,12 @@ class ProductController extends Controller
 
         $category_group_id = intval($request->get('category_group_id', 0));
 
-        (new LastViewedProducts())->saveToSession($product->id);
+        // trigger that we are to show product to user!
+        // wow! such product! very events!
+        $specialEvent = new ProductPageShowed([
+            'product_id' => $product->id,
+        ]);
+        EventTriggeringHelper::triggerSpecialEvent($specialEvent);
 
         if (!empty($product->meta_description)) {
             $this->view->registerMetaTag(
@@ -253,9 +260,13 @@ class ProductController extends Controller
                 )
             );
         }
+
+        /** @var \app\modules\shop\ShopModule $module */
+        $module = Yii::$app->modules['shop'];
+
         $pages = new Pagination(
             [
-                'defaultPageSize' => Config::getValue('shop.searchResultsLimit', 9),
+                'defaultPageSize' => $module->searchResultsLimit,
                 'forcePageParam' => false,
                 'totalCount' => count($ids),
             ]

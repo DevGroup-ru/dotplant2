@@ -15,6 +15,8 @@
         <?= $form->field($model, 'showProductsOfChildCategories')->checkbox() ?>
 
         <?= $form->field($model, 'maxProductsToCompare') ?>
+
+        <?= $form->field($model, 'maxLastViewedProducts') ?>
     </div>
     <div class="col-md-6 col-sm-12">
         <?= $form->field($model, 'cartCountsUniqueProducts')->checkbox() ?>

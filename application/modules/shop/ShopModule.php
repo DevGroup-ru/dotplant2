@@ -4,6 +4,7 @@ namespace app\modules\shop;
 
 use app;
 use app\components\BaseModule;
+use app\modules\core\helpers\EventTriggeringHelper;
 
 /**
  * Shop module is the base core module of DotPlant2 CMS handling all common e-commerce features
@@ -47,6 +48,11 @@ class ShopModule extends BaseModule
     public $filterOnlyByParentProduct = true;
 
     /**
+     * @var int How much last viewed products ID's to store in session
+     */
+    public $maxLastViewedProducts = 9;
+
+    /**
      * @inheritdoc
      */
     public function behaviors()
@@ -58,5 +64,11 @@ class ShopModule extends BaseModule
                 'configurableModel' => 'app\modules\shop\models\ConfigConfigurableModel',
             ]
         ];
+    }
+
+    public function triggerSpecialEvent($event)
+    {
+        $triggeringType = EventTriggeringHelper::TYPE_APPLICATION;
+
     }
 }

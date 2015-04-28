@@ -112,6 +112,21 @@ class BackendController extends app\backend\components\BackendController
 
                             $configurableModel->saveState();
 
+                            if (isset(Yii::$app->modules[$model->module]) === true) {
+                                /** @var \yii\base\Module $module */
+                                $module = Yii::$app->modules[$model->module];
+
+                                // invalidate cache by module class name tag
+                                TagDependency::invalidate(
+                                    Yii::$app->cache,
+                                    [
+                                        ActiveRecordHelper::getCommonTag($module->className)
+                                    ]
+                                );
+
+
+                            }
+
                         } else {
                             $isValid = false;
                         }

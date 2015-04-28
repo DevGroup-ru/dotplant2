@@ -50,6 +50,11 @@ class ConfigConfigurableModel extends BaseConfigurableModel
     public $filterOnlyByParentProduct = true;
 
     /**
+     * @var int How much last viewed products ID's to store in session
+     */
+    public $maxLastViewedProducts = 9;
+
+    /**
      * @inheritdoc
      */
     public function rules()
@@ -66,6 +71,12 @@ class ConfigConfigurableModel extends BaseConfigurableModel
             ],
             [
                 [
+                    'maxLastViewedProducts',
+                ],
+                'integer',
+            ],
+            [
+                [
                     'productsPerPage',
                     'maxProductsToCompare',
                     'searchResultsLimit',
@@ -78,6 +89,7 @@ class ConfigConfigurableModel extends BaseConfigurableModel
                     'productsPerPage',
                     'maxProductsToCompare',
                     'searchResultsLimit',
+                    'maxLastViewedProducts',
                 ],
                 'required',
             ],

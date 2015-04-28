@@ -4,7 +4,7 @@
 
 ### Users
 
-Since users subsystem splited into module the most important thing is to replace your URLs including calls to yii\helpers\Url:
+Since users subsystem splited into module the most important thing is to replace your URLs including calls to `yii\helpers\Url`:
 
 1. `default/(login|logout|...)` changed to `user/user/login`
 2. `cabinet/profile` changed to `user/user/profile`
@@ -18,3 +18,10 @@ All social oauth callbacks in your apps should be changed to `user/user/auth` or
 Small-passwords migration WARNING:
 
 > By-default passwords should be at least 8 chars. If you had smaller password - please reset it.
+
+
+### Shop
+
+Shop splited into module 'shop'.
+
+LastViewedProducts changed it's namespace from `app\components\LastViewedProducts` to `app\modules\shop\helpers\LastViewedProducts`.

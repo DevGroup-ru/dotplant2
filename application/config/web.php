@@ -98,6 +98,7 @@ $config = [
                 [
                     'class' => 'app\components\ObjectRule',
                 ],
+                'events-beacon' => 'core/events-beacon/index',
             ],
         ],
         'assetManager' => [
