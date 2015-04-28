@@ -188,17 +188,19 @@ $this->params['breadcrumbs'][] = $this->title;
             );?>
 
             <?=$form->field($model, 'sort_order');?>
-            <?=
-            $form->field($model, 'parent_id')->dropDownList(
-                ArrayHelper::merge(
-                    [0 => Yii::t('app', 'Root')],
-                    ArrayHelper::map(
-                        \app\models\Category::find()->where('id != :id', ['id' => $model->id])->all(),
-                        'id',
-                        'name'
+            <?php
+            if($model->isNewRecord === false) {
+                echo $form->field($model, 'parent_id')->dropDownList(
+                    ArrayHelper::merge(
+                        [0 => Yii::t('app', 'Root')],
+                        ArrayHelper::map(
+                            \app\models\Category::find()->where('id != :id', ['id' => $model->id])->all(),
+                            'id',
+                            'name'
+                        )
                     )
-                )
-            );
+                );
+            }
             ?>
             <?php BackendWidget::end(); ?>
 
