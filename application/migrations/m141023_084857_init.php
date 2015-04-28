@@ -22,7 +22,7 @@ use app\models\Order;
 use app\models\OrderItem;
 use app\models\OrderStatus;
 use app\models\OrderTransaction;
-use app\models\Page;
+use app\modules\core\models\Page;
 use app\models\PaymentType;
 use app\models\Product;
 use app\models\Property;

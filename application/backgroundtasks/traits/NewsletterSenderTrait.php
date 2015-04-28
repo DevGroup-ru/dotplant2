@@ -2,7 +2,7 @@
 
 namespace app\backgroundtasks\traits;
 
-use app\models\Page;
+use app\modules\core\models\Page;
 use app\models\SubscribeEmail;
 use app\properties\HasProperties;
 use Yii;

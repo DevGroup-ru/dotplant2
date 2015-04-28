@@ -1,9 +1,9 @@
 <?php
 
-namespace app\components;
+namespace app\modules\core\components;
 
 use app\models\Config;
-use app\models\Page;
+use app\modules\core\models\Page;
 use Yii;
 use yii\web\UrlRuleInterface;
 
@@ -11,14 +11,18 @@ class PageRule implements UrlRuleInterface
 {
     public function createUrl($manager, $route, $params)
     {
-        if (($route == 'page/show' || $route == 'page/list') && isset($params['id'])) {
-            if (null !== $model = Page::findById($params['id'])) {
-                $url = ($model->slug_compiled === ':mainpage:') ? '' : $model->slug_compiled;
-                unset($params['id']);
-                $_query = http_build_query($params);
-                $url = (!empty($_query)) ? $url.'?'.$_query : $url;
-                return $url;
-            }
+        if (isset($params['model'])) {
+            $model = $params['model'];
+            unset($params['model']);
+        } else if (isset($params['id'])) {
+            $model = Page::findById($params['id']);
+            unset($params['id']);
+        }
+        if (($route == 'page/show' || $route == 'page/list') && null !== $model) {
+            $url = ($model->slug_compiled === ':mainpage:') ? '' : $model->slug_compiled;
+            $_query = http_build_query($params);
+            $url = (!empty($_query)) ? $url.'?'.$_query : $url;
+            return $url;
         }
         return false;
     }
@@ -33,7 +37,7 @@ class PageRule implements UrlRuleInterface
         $_path = !empty($_path) ? $_path : ':mainpage:';
         if (null !== $model = Page::getByUrlPath($_path)) {
             return [
-                'page/' . $model['show_type'],
+                '/core/page/' . $model['show_type'],
                 ['id' => $model['id']]
             ];
         }

@@ -93,7 +93,7 @@ $config = [
                 'search' => 'default/search',
                 'robots.txt' => 'seo/manage/get-robots',
                 [
-                    'class' => 'app\components\PageRule',
+                    'class' => 'app\modules\core\components\PageRule',
                 ],
                 [
                     'class' => 'app\components\ObjectRule',

@@ -1,11 +1,11 @@
 <?php
 
-namespace app\controllers;
+namespace app\modules\core\controllers;
 
 use app\components\Controller;
 use app\models\Config;
 use app\models\Object;
-use app\models\Page;
+use app\modules\core\models\Page;
 use app\models\Search;
 use app\reviews\traits\ProcessReviews;
 use app\seo\behaviors\MetaBehavior;

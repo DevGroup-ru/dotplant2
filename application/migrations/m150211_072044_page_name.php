@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Page;
+use app\modules\core\models\Page;
 use yii\db\Migration;
 
 class m150211_072044_page_name extends Migration

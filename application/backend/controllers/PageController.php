@@ -4,7 +4,7 @@ namespace app\backend\controllers;
 
 use app\models\Config;
 use app\models\Object;
-use app\models\Page;
+use app\modules\core\models\Page;
 use app\models\ViewObject;
 use app\properties\HasProperties;
 use app\widgets\image\RemoveAction;
@@ -14,6 +14,7 @@ use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 

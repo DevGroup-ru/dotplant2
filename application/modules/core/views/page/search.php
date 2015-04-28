@@ -1,15 +1,15 @@
 <?php
     /**
      * @var \yii\web\View $this
-     * @var \app\models\Page[] $pagelist
+     * @var \app\modules\core\models\Page[] $pagelist
      * @var \yii\data\Pagination $pages
      */
 ?>
 <?php if (count($pagelist) > 0): ?>
-    <div class="tab-pane  active" id="blockView">
+    <div class="tab-pane active" id="blockView">
         <ul>
             <?php foreach($pagelist as $page): ?>
-                <li><a href="<?= \yii\helpers\Url::to(['page/show', 'id' => $page->id]) ?>"><?= $page->breadcrumbs_label; ?></a></li>
+                <li><a href="<?= \yii\helpers\Url::to(['/page/show', 'id' => $page->id]) ?>"><?= $page->breadcrumbs_label; ?></a></li>
             <?php endforeach; ?>
         </ul>
     </div>

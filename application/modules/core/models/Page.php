@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\modules\core\models;
 
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
@@ -8,6 +8,7 @@ use app\properties\HasProperties;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
+use app\models\Config;
 
 /**
  * This is the model class for table "page".
