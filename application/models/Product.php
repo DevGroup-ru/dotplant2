@@ -715,7 +715,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
         $onlyParents = $module->filterOnlyByParentProduct;
         $query = static::find();
-        if (1 === $onlyParents) {
+        if (true === $onlyParents) {
             $query->andWhere([static::tableName() . '.parent_id' => 0, static::tableName() . '.active' => 1]);
         } else {
             $query->andWhere(['!=', static::tableName() . '.parent_id', 0]);
