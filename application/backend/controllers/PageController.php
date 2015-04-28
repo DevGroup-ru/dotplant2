@@ -14,7 +14,6 @@ use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
-use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
