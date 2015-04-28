@@ -1053,12 +1053,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/florianv/swap.git",
-                "reference": "1d31b5fab2ea39b2692ef8086333b5d906bbbd92"
+                "reference": "74d7b401a31c817b1754bf98053435e53fa2c6ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/florianv/swap/zipball/1d31b5fab2ea39b2692ef8086333b5d906bbbd92",
-                "reference": "1d31b5fab2ea39b2692ef8086333b5d906bbbd92",
+                "url": "https://api.github.com/repos/florianv/swap/zipball/74d7b401a31c817b1754bf98053435e53fa2c6ba",
+                "reference": "74d7b401a31c817b1754bf98053435e53fa2c6ba",
                 "shasum": ""
             },
             "require": {
@@ -1100,7 +1100,7 @@
                 "exchange rates",
                 "money"
             ],
-            "time": "2015-02-27 17:29:48"
+            "time": "2015-04-27 20:40:59"
         },
         {
             "name": "fortawesome/font-awesome",
@@ -2953,12 +2953,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "d747c3a3e45ed541beb09ddcac9af35e4559cb1b"
+                "reference": "4ba5e3337122f686d0b84e7e0c29a674378f47fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/d747c3a3e45ed541beb09ddcac9af35e4559cb1b",
-                "reference": "d747c3a3e45ed541beb09ddcac9af35e4559cb1b",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/4ba5e3337122f686d0b84e7e0c29a674378f47fc",
+                "reference": "4ba5e3337122f686d0b84e7e0c29a674378f47fc",
                 "shasum": ""
             },
             "require": {
@@ -3029,7 +3029,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2015-04-20 17:41:47"
+            "time": "2015-04-28 06:42:58"
         },
         {
             "name": "phly/http",
@@ -3306,12 +3306,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "a2f372cefa2ce22b84c9f027f40c5a17793d6aac"
+                "reference": "228c25ca4250aeb99c1c9b3903bd1a4ab9c1f6e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/a2f372cefa2ce22b84c9f027f40c5a17793d6aac",
-                "reference": "a2f372cefa2ce22b84c9f027f40c5a17793d6aac",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/228c25ca4250aeb99c1c9b3903bd1a4ab9c1f6e3",
+                "reference": "228c25ca4250aeb99c1c9b3903bd1a4ab9c1f6e3",
                 "shasum": ""
             },
             "require": {
@@ -3386,7 +3386,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2015-04-27 08:22:56"
+            "time": "2015-04-28 02:10:16"
         },
         {
             "name": "yiisoft/yii2-authclient",
@@ -3888,12 +3888,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-gii.git",
-                "reference": "b0ed0ad42de3f9539c935b36794b880f78f9c39b"
+                "reference": "4407ae95a8d62aff867d98e277a2697934360b0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/b0ed0ad42de3f9539c935b36794b880f78f9c39b",
-                "reference": "b0ed0ad42de3f9539c935b36794b880f78f9c39b",
+                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/4407ae95a8d62aff867d98e277a2697934360b0f",
+                "reference": "4407ae95a8d62aff867d98e277a2697934360b0f",
                 "shasum": ""
             },
             "require": {
@@ -3933,7 +3933,7 @@
                 "gii",
                 "yii2"
             ],
-            "time": "2015-04-24 15:35:21"
+            "time": "2015-04-27 22:17:50"
         }
     ],
     "aliases": [],
