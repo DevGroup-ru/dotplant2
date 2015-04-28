@@ -6,6 +6,7 @@ use app;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%events}}".
@@ -116,7 +117,7 @@ class Events extends \yii\db\ActiveRecord
     public static function findByName($name)
     {
         foreach (static::$identity_map_by_classname as $class_name => $model) {
-            if ($model->name === $name) {
+            if ($model->event_name === $name) {
                 return $model;
             }
         }
@@ -124,7 +125,7 @@ class Events extends \yii\db\ActiveRecord
         $model = Yii::$app->cache->get($cacheKey);
         if ($model === false) {
             $model = self::find()
-                ->where(['name' => $name])
+                ->where(['event_name' => $name])
                 ->one();
             if ($model !== null) {
                 Yii::$app->cache->set(
@@ -141,5 +142,53 @@ class Events extends \yii\db\ActiveRecord
         }
         static::$identity_map_by_classname[$model->event_class_name] = $model;
         return $model;
+    }
+
+    /**
+     * Returns Events models by names using identity map by classname and cache
+     * @param string[] $name Array of event names to find
+     * @return Events[]
+     */
+    public static function findByNames($names)
+    {
+        $result = [];
+
+        foreach (static::$identity_map_by_classname as $class_name => $model) {
+            if (in_array($model->name, $names) === true) {
+                $result[] = $model;
+                if(($key = array_search($model->name, $names)) !== false) {
+                    unset($names[$key]);
+                }
+            }
+        }
+        if (count($names) === 0) {
+            return $result;
+        }
+        $cacheKey = "Event:byNames:".implode(',', $names);
+        $models = Yii::$app->cache->get($cacheKey);
+        if ($models === false) {
+            $models = self::find()
+                ->where(['event_name' => $names])
+                ->with('handlers')
+                ->all();
+
+            Yii::$app->cache->set(
+                $cacheKey,
+                $models,
+                86400,
+                new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getCommonTag(Events::className())
+                    ]
+                ])
+            );
+
+        }
+        foreach ($models as $model) {
+            static::$identity_map_by_classname[$model->event_class_name] = $model;
+            $result[] = $model;
+        }
+
+        return $result;
     }
 }

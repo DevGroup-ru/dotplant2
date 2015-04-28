@@ -95,7 +95,7 @@ class EventTriggeringHelper
 
                 $triggeringType = Json::encode($handler->triggering_type);
 
-                $eventName = Json::encode($eventsModel->name);
+                $eventName = Json::encode($eventsModel->event_name);
 
                 Yii::$app->controller->view->registerJs(<<<JS
     DotPlant2Events.RegisterTrigger(
