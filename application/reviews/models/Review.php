@@ -27,6 +27,7 @@ use yii\data\ActiveDataProvider;
  * @property string $text
  * @property integer $rate
  * @property string $rating_id
+ * @property string $image_path
  */
 class Review extends \yii\db\ActiveRecord
 {
@@ -42,6 +43,7 @@ class Review extends \yii\db\ActiveRecord
     public $username;
     public $captcha;
     public $useCaptcha = false;
+    public $file;
 
     /**
      * @inheritdoc
@@ -59,8 +61,9 @@ class Review extends \yii\db\ActiveRecord
         $rules = [
             [['author_name', 'text'], 'required', 'on' => 'default'],
             [['object_id', 'object_model_id', 'author_user_id', 'rate'], 'integer'],
-            [['date_submitted', 'username', 'name', 'slug'], 'safe'],
-            [['author_name', 'author_email', 'author_phone', 'text', 'status', 'rating_id'], 'string'],
+            [['date_submitted', 'username', 'name', 'slug', 'image_path'], 'safe'],
+            ['file','file','extensions'=> ['gif', 'jpg', 'png', 'JPG', 'JPEG']],
+            [['author_name', 'author_email', 'author_phone', 'text', 'status', 'rating_id', 'image_path'], 'string'],
             [['author_email'], 'email'],
         ];
         if ($this->useCaptcha) {

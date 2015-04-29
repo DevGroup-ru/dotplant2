@@ -2,6 +2,7 @@
 
 namespace app\reviews\traits;
 
+use app\components\Helper;
 use app\models\Config;
 use app\models\Object;
 use app\models\RatingItem;
@@ -9,6 +10,7 @@ use app\models\RatingValues;
 use app\reviews\models\Review;
 use Yii;
 use yii\helpers\Json;
+use yii\web\UploadedFile;
 
 trait ProcessReviews
 {
@@ -22,11 +24,24 @@ trait ProcessReviews
             $review->object_id = $object_id;
             $review->object_model_id = $object_model_id;
             $review->load($_POST);
-            if (!\Yii::$app->getUser()->isGuest) {
+            if (!\Yii::$app->getUser()->isGuest &&
+                !(Yii::$app->user->can('admin') && isset($_POST['Review']['author_name']))
+            ) {
                 $review->author_name = \Yii::$app->user->identity->awesomeUsername;
             }
             $review->status = Review::STATUS_NEW;
             $review->date_submitted = date("Y-m-d H:i:s");
+
+            $review->file = UploadedFile::getInstance($review, 'file');
+
+            if ($review->file && $review->validate()) {
+
+                $review->image_path =   '/theme/resources/product-images' .
+                                         '/' . Helper::createSlug($review->file->baseName).
+                                         '.' . $review->file->extension;
+                $review->file->saveAs(Yii::getAlias('@webroot').$review->image_path);
+
+            }
             if ($review->save()) {
                 Yii::$app->session->setFlash(
                     'info',

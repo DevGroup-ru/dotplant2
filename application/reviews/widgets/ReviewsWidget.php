@@ -18,6 +18,7 @@ class ReviewsWidget extends Widget
     public $allow_rate = false;
     public $sort = SORT_ASC;
     public $registerCanonical = false;
+    public $allow_image = false;
 
     public $useCaptcha = false;
 
@@ -65,6 +66,7 @@ class ReviewsWidget extends Widget
                 ),
                 'model' => $model,
                 'allow_rate' => $this->allow_rate,
+                'allow_image' => $this->allow_image,
                 'useCaptcha' => $this->useCaptcha,
                 'additionalParams' => $this->additionalParams,
             ]
