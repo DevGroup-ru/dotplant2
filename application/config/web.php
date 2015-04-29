@@ -23,6 +23,9 @@ $config = [
         'shop' => [
             'class' => 'app\modules\shop\ShopModule',
         ],
+        'page' => [
+            'class' => 'app\modules\page\PageModule',
+        ],
         'backend' => [
             'class' => 'app\backend\BackendModule',
             'layout' => '@app/backend/views/layouts/main',
@@ -93,7 +96,7 @@ $config = [
                 'search' => 'default/search',
                 'robots.txt' => 'seo/manage/get-robots',
                 [
-                    'class' => 'app\components\PageRule',
+                    'class' => 'app\modules\page\components\PageRule',
                 ],
                 [
                     'class' => 'app\components\ObjectRule',

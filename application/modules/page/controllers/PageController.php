@@ -1,11 +1,11 @@
 <?php
 
-namespace app\controllers;
+namespace app\modules\page\controllers;
 
 use app\components\Controller;
 use app\models\Config;
 use app\models\Object;
-use app\models\Page;
+use app\modules\page\models\Page;
 use app\models\Search;
 use app\reviews\traits\ProcessReviews;
 use app\seo\behaviors\MetaBehavior;
@@ -15,6 +15,7 @@ use Yii;
 use yii\caching\TagDependency;
 use yii\data\Pagination;
 use yii\db\ActiveQuery;
+use yii\helpers\VarDumper;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -89,14 +90,13 @@ class PageController extends Controller
             ->orderBy('date_added DESC, sort_order');
 
         $countQuery = clone $children;
-
         $pages = new Pagination(
             [
-                'defaultPageSize' => Config::getValue('page.pagesPerList', 10),
+                'defaultPageSize' => $this->module->pagesPerList,
                 'forcePageParam' => false,
                 'pageSizeLimit' => [
-                    Config::getValue('page.minPagesPerList', 1),
-                    Config::getValue('page.maxPagesPerList', 50)
+                    $this->module->minPagesPerList,
+                    $this->module->maxPagesPerList
                 ],
                 'totalCount' => $countQuery->count(),
             ]
@@ -126,6 +126,9 @@ class PageController extends Controller
 
     public function actionSearch()
     {
+        /**
+         * @param $module \app\modules\page\PageModule
+         */
         if (!Yii::$app->request->isAjax) {
             throw new ForbiddenHttpException();
         }
@@ -148,8 +151,12 @@ class PageController extends Controller
         }
         $pages = new Pagination(
             [
-                'defaultPageSize' => Config::getValue('page.searchResultsLimit', 10),
+                'defaultPageSize' => $this->module->searchResultsLimit,
                 'forcePageParam' => false,
+                'pageSizeLimit' => [
+                    $this->module->minPagesPerList,
+                    $this->module->maxPagesPerList
+                ],
                 'totalCount' => count($ids),
             ]
         );

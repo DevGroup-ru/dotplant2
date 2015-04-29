@@ -31,20 +31,20 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="col-md-4">
         <?=
         TreeWidget::widget([
-            'treeDataRoute' => ['/backend/page/getTree', 'selected_id' => $parent_id],
+            'treeDataRoute' => ['/page/backend/getTree', 'selected_id' => $parent_id],
             'contextMenuItems' => [
                 'edit' => [
                     'label' => 'Edit',
                     'icon' => 'fa fa-pencil',
                     'action' => ContextMenuHelper::actionUrl(
-                        ['/backend/page/edit']
+                        ['/page/backend/edit']
                     ),
                 ],
                 'show' => [
                     'label' => 'Show pages inside this page',
                     'icon' => 'fa fa-folder-o',
                     'action' => ContextMenuHelper::actionUrl(
-                        ['/backend/page/index'],
+                        ['/page/backend/index'],
                         [
                             'parent_id' => 'id',
                         ]
@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'Create',
                     'icon' => 'fa fa-plus-circle',
                     'action' => ContextMenuHelper::actionUrl(
-                        ['/backend/page/edit'],
+                        ['/page/backend/edit'],
                         [
                             'parent_id' => 'id',
                         ]
@@ -66,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'action' => new \yii\web\JsExpression(
                         "function(node) {
                             jQuery('#delete-confirmation')
-                                .attr('data-url', '/backend/page./delete?id=' + jQuery(node.reference[0]).data('id'))
+                                .attr('data-url', '/page/backend./delete?id=' + jQuery(node.reference[0]).data('id'))
                                 .attr('data-items', '')
                                 .modal('show');
                             return true;
@@ -85,13 +85,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?=
                 \yii\helpers\Html::a(
                     Icon::show('plus') . Yii::t('app', 'Add'),
-                    ['/backend/page/edit', 'parent_id' => (is_object($model) ? $model->id : 0), 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
+                    ['/page/backend/edit', 'parent_id' => (is_object($model) ? $model->id : 0), 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
                     ['class' => 'btn btn-success']
                 )
                 ?>
             </div>
             <?= \app\backend\widgets\RemoveAllButton::widget([
-                'url' => \yii\helpers\Url::toRoute(['/backend/page/remove-all', 'parent_id' => (is_object($model) ? $model->id : 0)]),
+                'url' => \yii\helpers\Url::toRoute(['/page/backend/remove-all', 'parent_id' => (is_object($model) ? $model->id : 0)]),
                 'gridSelector' => '.grid-view',
                 'htmlOptions' => [
                     'class' => 'btn btn-danger pull-right'

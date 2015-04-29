@@ -2,7 +2,7 @@
 
 use app\models\Category;
 use app\models\Config;
-use app\models\Page;
+use app\modules\page\models\Page;
 use app\models\Product;
 use yii\db\Migration;
 

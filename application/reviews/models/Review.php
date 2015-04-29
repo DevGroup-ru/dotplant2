@@ -5,7 +5,7 @@ namespace app\reviews\models;
 use app\backgroundtasks\traits\SearchModelTrait;
 use app\models\Object;
 use app\models\Product;
-use app\models\Page;
+use app\modules\page\models\Page;
 use app\modules\user\models\User;
 use Yii;
 use yii\base\Exception;
