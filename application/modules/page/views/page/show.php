@@ -2,7 +2,7 @@
 
 /**
  * @var $breadcrumbs array
- * @var $model \app\modules\core\models\Page
+ * @var $model \app\modules\page\models\Page
  * @var $this \yii\web\View
  */
 

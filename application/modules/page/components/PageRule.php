@@ -1,9 +1,9 @@
 <?php
 
-namespace app\modules\core\components;
+namespace app\modules\page\components;
 
 use app\models\Config;
-use app\modules\core\models\Page;
+use app\modules\page\models\Page;
 use Yii;
 use yii\web\UrlRuleInterface;
 
@@ -37,7 +37,7 @@ class PageRule implements UrlRuleInterface
         $_path = !empty($_path) ? $_path : ':mainpage:';
         if (null !== $model = Page::getByUrlPath($_path)) {
             return [
-                '/core/page/' . $model['show_type'],
+                '/page/page/' . $model['show_type'],
                 ['id' => $model['id']]
             ];
         }

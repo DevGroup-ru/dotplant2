@@ -1,10 +1,10 @@
 <?php
 
-namespace app\backend\controllers;
+namespace app\modules\page\controllers;
 
 use app\models\Config;
 use app\models\Object;
-use app\modules\core\models\Page;
+use app\modules\page\models\Page;
 use app\models\ViewObject;
 use app\properties\HasProperties;
 use app\widgets\image\RemoveAction;
@@ -14,10 +14,9 @@ use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
-class PageController extends Controller
+class BackendController extends \app\backend\components\BackendController
 {
 
     public function behaviors()
@@ -110,12 +109,12 @@ class PageController extends Controller
             if ($save_result) {
                 $this->runAction('save-info');
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/page/index']);
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/page/backend/index']);
                 switch (Yii::$app->request->post('action', 'save')) {
                     case 'next':
                         return $this->redirect(
                             [
-                                '/backend/page/edit',
+                                '/page/backend/edit',
                                 'returnUrl' => $returnUrl,
                                 'parent_id' => Yii::$app->request->get('parent_id', null)
                             ]
@@ -126,7 +125,7 @@ class PageController extends Controller
                         return $this->redirect(
                             Url::toRoute(
                                 [
-                                    '/backend/page/edit',
+                                    '/page/backend/edit',
                                     'id' => $model->id,
                                     'returnUrl' => $returnUrl,
                                     'parent_id' => $model->parent_id

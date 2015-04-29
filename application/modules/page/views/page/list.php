@@ -2,8 +2,8 @@
 
 /**
  * @var $breadcrumbs array
- * @var $children \app\modules\core\models\Page[]
- * @var $model \app\modules\core\models\Page,
+ * @var $children \app\modules\page\models\Page[]
+ * @var $model \app\modules\page\models\Page,
  * @var $pages \app\widgets\PagesList
  */
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\core\models;
+namespace app\modules\page\models;
 
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;

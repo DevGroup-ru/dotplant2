@@ -1,7 +1,7 @@
 <?php
     /**
      * @var \yii\web\View $this
-     * @var \app\modules\core\models\Page[] $pagelist
+     * @var \app\modules\page\models\Page[] $pagelist
      * @var \yii\data\Pagination $pages
      */
 ?>

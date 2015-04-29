@@ -2,7 +2,7 @@
 
 namespace app\widgets;
 
-use app\modules\core\models\Page;
+use app\modules\page\models\Page;
 use Yii;
 use yii\base\Widget;
 

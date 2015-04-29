@@ -95,7 +95,7 @@ class FloatingPanel extends Widget
                     $items[] = [
                         'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit page'),
                         'url' => [
-                            '/backend/page/edit',
+                            '/page/backend/edit',
                             'id' => $page->id,
                             'parent_id' =>$page->parent_id,
 

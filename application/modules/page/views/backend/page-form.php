@@ -10,11 +10,11 @@ use yii\helpers\Url;
 
 
 $this->title = Yii::t('app', 'Page edit');
-$this->params['breadcrumbs'][] = ['url' => ['/backend/page/index'], 'label' => Yii::t('app', 'Pages')];
+$this->params['breadcrumbs'][] = ['url' => ['/page/backend/index'], 'label' => Yii::t('app', 'Pages')];
 if ($model->parent_id > 0) {
     $this->params['breadcrumbs'][] = [
         'url' => [
-            '/backend/page/index',
+            '/page/backend/index',
             'id' => $model->parent_id,
             'parent_id' => $model->parent->parent_id
         ],
@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?=
     Html::a(
         Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
-        Yii::$app->request->get('returnUrl', ['/backend/page/index']),
+        Yii::$app->request->get('returnUrl', ['/page/backend/index']),
         ['class' => 'btn btn-danger']
     )
     ?>

@@ -25,3 +25,7 @@ Small-passwords migration WARNING:
 Shop splited into module 'shop'.
 
 LastViewedProducts changed it's namespace from `app\components\LastViewedProducts` to `app\modules\shop\helpers\LastViewedProducts`.
+
+### Pages
+Pages split to page module.
+All changes in DB contained in m150428_120959_page_move migration
