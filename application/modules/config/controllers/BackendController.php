@@ -120,7 +120,7 @@ class BackendController extends app\backend\components\BackendController
                                 TagDependency::invalidate(
                                     Yii::$app->cache,
                                     [
-                                        ActiveRecordHelper::getCommonTag($module->className)
+                                        ActiveRecordHelper::getCommonTag($module->className())
                                     ]
                                 );
 

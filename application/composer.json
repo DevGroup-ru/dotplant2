@@ -28,6 +28,11 @@
         "yii\\composer\\Installer::postCreateProject": {
             "setPermission": [
                 {
+                    "config/configurables-state": "0777",
+                    "config/configurables-kv": "0777",
+                    "config/common-configurables.php": "0666",
+                    "config/console-configurables.php": "0666",
+                    "config/kv-configurables.php": "0666",
                     "messages": "0777",
                     "seo/redirects": "0777",
                     "runtime": "0777",
