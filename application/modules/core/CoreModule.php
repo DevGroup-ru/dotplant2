@@ -16,6 +16,13 @@ use yii\base\BootstrapInterface;
  */
 class CoreModule extends BaseModule implements BootstrapInterface
 {
+    // To be implemented!
+    public $themeExtensionId = 0;
+
+    public $themeModuleName = '';
+
+    public $themeModuleLocation = '';
+
     /**
      * @inheritdoc
      */
