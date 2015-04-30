@@ -3,7 +3,7 @@
 namespace app\widgets\image;
 
 use Yii;
-use app\models\Image;
+use app\modules\image\models\Image;
 
 class UploadAction extends \devgroup\dropzone\UploadAction
 {

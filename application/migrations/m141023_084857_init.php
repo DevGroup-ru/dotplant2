@@ -13,7 +13,7 @@ use app\models\DynamicContent;
 use app\models\ErrorLog;
 use app\models\ErrorUrl;
 use app\models\Form;
-use app\models\Image;
+use app\modules\image\models\Image;
 use app\models\Layout;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
@@ -22,7 +22,7 @@ use app\models\Order;
 use app\models\OrderItem;
 use app\models\OrderStatus;
 use app\models\OrderTransaction;
-use app\models\Page;
+use app\modules\page\models\Page;
 use app\models\PaymentType;
 use app\models\Product;
 use app\models\Property;
@@ -1179,7 +1179,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\text\TextProperty::className(),
+                    \app\properties\handlers\text\TextPropertyWidget::className(),
                 ],
                 [
                     'Select',
@@ -1187,7 +1187,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\select\SelectProperty::className(),
+                    \app\properties\handlers\select\SelectPropertyWidget::className(),
                 ],
                 [
                     'Checkbox',
@@ -1195,7 +1195,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\checkbox\CheckboxProperty::className(),
+                    \app\properties\handlers\checkbox\CheckboxPropertyWidget::className(),
                 ],
                 [
                     'Text area',
@@ -1203,7 +1203,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\textArea\TextAreaProperty::className(),
+                    \app\properties\handlers\textArea\TextAreaPropertyWidget::className(),
                 ],
             ]
         );

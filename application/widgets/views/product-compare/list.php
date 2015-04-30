@@ -21,7 +21,7 @@ if (is_array($prods)) {
             ]
         );
 
-        $img = app\widgets\ObjectImageWidget::widget(
+        $img = app\modules\image\widgets\ObjectImageWidget::widget(
             [
                 'model' => $prod,
                 'displayCountPictures' => 1,

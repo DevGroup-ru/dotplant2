@@ -5,7 +5,7 @@ namespace app\backend\controllers;
 use app\backend\actions\PropertyHandler;
 use app\models\Category;
 use app\models\Config;
-use app\models\Image;
+use app\modules\image\models\Image;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\Product;

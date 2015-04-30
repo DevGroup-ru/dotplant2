@@ -18,6 +18,9 @@ return [
         'core' => [
             'class' => 'app\modules\core\CoreModule',
         ],
+        'image' => [
+            'class' => 'app\modules\image\ImageModule',
+        ],
     ],
     'components' => [
         'db' => $db,

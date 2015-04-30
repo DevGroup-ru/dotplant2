@@ -91,7 +91,7 @@ class BackendController extends app\backend\components\BackendController
                     $event->configurable = &$model;
                     $event->configurableModel = &$configurableModel;
 
-                    Yii::$app->trigger($configurableModel->configurationSaveEvent(), $event);
+                    $configurableModel->trigger($configurableModel->configurationSaveEvent(), $event);
                     if ($event->isValid === true) {
                         if ($configurableModel->validate() === true) {
                             // apply application configuration
@@ -111,6 +111,21 @@ class BackendController extends app\backend\components\BackendController
                             );
 
                             $configurableModel->saveState();
+
+                            if (isset(Yii::$app->modules[$model->module]) === true) {
+                                /** @var \yii\base\Module $module */
+                                $module = Yii::$app->modules[$model->module];
+
+                                // invalidate cache by module class name tag
+                                TagDependency::invalidate(
+                                    Yii::$app->cache,
+                                    [
+                                        ActiveRecordHelper::getCommonTag($module->className())
+                                    ]
+                                );
+
+
+                            }
 
                         } else {
                             $isValid = false;
@@ -135,6 +150,37 @@ class BackendController extends app\backend\components\BackendController
                     $webConfigWriter->commit() &&
                     $consoleConfigWriter->commit() &&
                     $kvConfigWriter->commit();
+
+                if (ini_get('opcache.enable')) {
+                    if (function_exists('opcache_invalidate') === true) {
+                        // invalidate opcache of this files!
+                        opcache_invalidate(
+                            Yii::getAlias($commonConfigWriter->filename),
+                            true
+                        );
+                        opcache_invalidate(
+                            Yii::getAlias($webConfigWriter->filename),
+                            true);
+                        opcache_invalidate(
+                            Yii::getAlias($consoleConfigWriter->filename),
+                            true
+                        );
+                        opcache_invalidate(
+                            Yii::getAlias($kvConfigWriter->filename),
+                            true
+                        );
+
+
+                    } else {
+                        Yii::$app->session->setFlash(
+                            'info',
+                            Yii::t(
+                                'app',
+                                'You have opcache turned on but opcache_invalidate function is not available. That\'s strange.'
+                            )
+                        );
+                    }
+                }
             }
 
             if ($isValid === true) {

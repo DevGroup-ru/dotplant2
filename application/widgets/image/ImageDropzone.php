@@ -2,7 +2,7 @@
 
 namespace app\widgets\image;
 
-use app\models\Image;
+use app\modules\image\models\Image;
 use devgroup\dropzone\DropZone;
 use Imagine\Image\ManipulatorInterface;
 use Yii;

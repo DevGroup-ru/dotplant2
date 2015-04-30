@@ -6,7 +6,7 @@
  * @var $url string
  */
 
-use app\widgets\ObjectImageWidget;
+use app\modules\image\widgets\ObjectImageWidget;
 use kartik\helpers\Html;
 
 ?>

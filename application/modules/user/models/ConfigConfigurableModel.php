@@ -143,7 +143,7 @@ class ConfigConfigurableModel extends BaseConfigurableModel
     public function init()
     {
         parent::init();
-        Yii::$app->on(self::configurationSaveEvent(), function($event) {
+        $this->on(self::configurationSaveEvent(), function($event) {
             /** @var ConfigConfigurableModel $model */
             $model = $event->configurableModel;
 

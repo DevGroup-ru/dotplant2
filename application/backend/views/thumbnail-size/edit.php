@@ -1,17 +1,17 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
-use app\models\Config;
-use app\models\Watermark;
+use app\modules\image\models\Watermark;
 use app\widgets\Alert;
 use kartik\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use kartik\icons\Icon;
+use app\modules\image\models\ThumbnailSize;
 
 /**
  * @var yii\web\View $this
- * @var \app\models\ThumbnailSize $model
+ * @var \app\modules\image\models\ThumbnailSize $model
  */
 
 $this->title = Yii::t('app', 'Thumbnail size edit');
@@ -87,8 +87,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?=$form->field($model, 'width')?>
                 <?=$form->field($model, 'height')?>
                 <?php
-                $useWatermark = Config::getValue('image.useWatermark', 0);
-                if ($useWatermark == 1) {
+                if (Yii::$app->getModule('image')->useWatermark == 1) {
                     $watermarks = Watermark::find()->all();
                     echo $form->field($model, 'default_watermark_id')->radioList(
                         ArrayHelper::map(
@@ -101,6 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     );
                 }
                 ?>
+                <?= $form->field($model, 'resize_mode')->dropDownList(ThumbnailSize::getResizeModes()) ?>
                 <?php BackendWidget::end(); ?>
             </article>
 

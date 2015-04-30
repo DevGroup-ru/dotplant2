@@ -43,7 +43,7 @@
         <div class="thumbnail">
             <a href="<?=$url?>">
                 <?=
-                \app\widgets\ObjectImageWidget::widget(
+                \app\modules\image\widgets\ObjectImageWidget::widget(
                     [
                         'limit' => 1,
                         'model' => $product,

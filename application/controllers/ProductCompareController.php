@@ -25,7 +25,10 @@ class ProductCompareController extends Controller
         if (null == $comparisonProductList || !is_array($comparisonProductList)) {
             $comparisonProductList = [];
         }
-        $maxProductsToCompare = Config::getValue('shop.maxProductsToCompare', 3);
+        /** @var \app\modules\shop\ShopModule $module */
+        $module = Yii::$app->modules['shop'];
+
+        $maxProductsToCompare = $module->maxProductsToCompare;
         $comparisonProductList[] = $id;
         if (count($comparisonProductList) > $maxProductsToCompare) {
             $comparisonProductList = array_slice(

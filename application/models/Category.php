@@ -29,7 +29,6 @@ use yii\helpers\Url;
  * @property string $content
  * @property string $announce
  * @property integer $sort_order
- * @property integer $is_deleted
  * @property boolean $active
  * @property Category[] $children
  * @property Category $parent
@@ -37,6 +36,10 @@ use yii\helpers\Url;
 class Category extends ActiveRecord
 {
     use GetImages;
+
+    const DELETE_MODE_SINGLE_CATEGORY = 1;
+    const DELETE_MODE_ALL = 2;
+    const DELETE_MODE_MAIN_CATEGORY = 3;
     /**
      * Category identity map
      * [
@@ -54,6 +57,8 @@ class Category extends ActiveRecord
      */
     private static $id_by_slug_group_parent = [];
     private static $id_by_name_group_parent = [];
+
+    public $deleteMode = 1;
 
     public function behaviors()
     {
@@ -74,6 +79,19 @@ class Category extends ActiveRecord
     }
 
     /**
+     * Return delete modes list
+     * @return array
+     */
+    public static function deleteModesList()
+    {
+        return [
+            self::DELETE_MODE_SINGLE_CATEGORY => Yii::t('app', 'Delete only that products that exists ONLY in that category'),
+            self::DELETE_MODE_ALL => Yii::t('app', 'Delete along with it no matter what'),
+            self::DELETE_MODE_MAIN_CATEGORY => Yii::t('app', 'Delete all products that relate to this category as main'),
+        ];
+    }
+
+    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -88,7 +106,7 @@ class Category extends ActiveRecord
     {
         return [
             [['category_group_id', 'parent_id', 'name', 'slug'], 'required'],
-            [['category_group_id', 'parent_id', 'slug_absolute', 'sort_order', 'is_deleted', 'active'], 'integer'],
+            [['category_group_id', 'parent_id', 'slug_absolute', 'sort_order', 'active'], 'integer'],
             [['name', 'title', 'h1', 'meta_description', 'breadcrumbs_label', 'content', 'announce'], 'string'],
             [['slug'], 'string', 'max' => 80],
             [['slug_compiled'], 'string', 'max' => 180],
@@ -117,7 +135,6 @@ class Category extends ActiveRecord
             'content' => Yii::t('app', 'Content'),
             'announce' => Yii::t('app', 'Announce'),
             'sort_order' => Yii::t('app', 'Sort Order'),
-            'is_deleted' => Yii::t('app', 'Is Deleted'),
             'active' => Yii::t('app', 'Active'),
             'title_append' => Yii::t('app', 'Title Append'),
         ];
@@ -160,10 +177,9 @@ class Category extends ActiveRecord
      * Returns model using indentity map and cache
      * @param string $id
      * @param int|null $is_active
-     * @param int|null $is_deleted
      * @return Category|null
      */
-    public static function findById($id, $is_active = 1, $is_deleted = 0)
+    public static function findById($id, $is_active = 1)
     {
         if (!isset(static::$identity_map[$id])) {
             $cacheKey = static::tableName() . ":$id";
@@ -171,9 +187,6 @@ class Category extends ActiveRecord
                 $model = static::find()->where(['id' => $id])->with('images');
                 if (null !== $is_active) {
                     $model->andWhere(['active' => $is_active]);
-                }
-                if (null !== $is_deleted) {
-                    $model->andWhere(['is_deleted' => $is_deleted]);
                 }
                 if (null !== $model = $model->one()) {
                     Yii::$app->cache->set(
@@ -415,14 +428,6 @@ class Category extends ActiveRecord
         return $models;
     }
 
-    public function beforeSave($insert)
-    {
-        if (1 === $this->is_deleted) {
-            $this->active = 0;
-        }
-        return parent::beforeSave($insert);
-    }
-
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
@@ -435,50 +440,68 @@ class Category extends ActiveRecord
     }
 
     /**
-     * "Мягкое" удаление категории, включая все вложенные категории и продукты
-     * Повторный вызов удаляет из БД
+     * Preparation to delete category.
+     * Deleting related products and inserted categories.
      * @return bool
      */
     public function beforeDelete()
     {
-        if (null !== $children = static::find()->where(['parent_id' => $this->id])->all()) {
-            foreach ($children as $child) {
-                $child->delete();
-            }
-        }
-        if (null !== $products = Product::find()->where(['main_category_id' => $this->id])->all()) {
-            foreach ($products as $product) {
-                $product->delete();
-            }
-        }
-        $result = parent::beforeDelete();
-        if (0 === intval($this->is_deleted)) {
-            $this->is_deleted = 1;
-            $this->save();
-
+        if (!parent::beforeDelete()) {
             return false;
         }
-        return $result;
-    }
-
-    /**
-     * Отменяет "мягкое" удаление; так-же откатывает все вложенные категории и продукты
-     */
-    public function restoreFromTrash()
-    {
-        $this->is_deleted = 0;
-        $this->save();
-        if (null !== $children = static::find()->where(['parent_id' => $this->id])->all()) {
-            foreach ($children as $child) {
-                $child->restoreFromTrash();
-            }
+        $productObject = Object::getForClass(Product::className());
+        switch ($this->deleteMode) {
+            case self::DELETE_MODE_ALL:
+                $products =
+                    !is_null($productObject)
+                        ? Product::find()
+                        ->join(
+                            'INNER JOIN',
+                            $productObject->categories_table_name . ' pc',
+                            'pc.object_model_id = product.id'
+                        )
+                        ->where('pc.category_id = :id', [':id' => $this->id])
+                        ->all()
+                        : [];
+                break;
+            case self::DELETE_MODE_MAIN_CATEGORY:
+                $products = Product::findAll(['main_category_id' => $this->id]);
+                break;
+            default:
+                $products =
+                    !is_null($productObject)
+                        ? Product::find()
+                        ->join(
+                            'INNER JOIN',
+                            $productObject->categories_table_name . ' pc',
+                            'pc.object_model_id = product.id'
+                        )
+                        ->join(
+                            'INNER JOIN',
+                            $productObject->categories_table_name . ' pc2',
+                            'pc2.object_model_id = product.id'
+                        )
+                        ->where('pc.category_id = :id', [':id' => $this->id])
+                        ->groupBy('pc2.object_model_id')
+                        ->having('COUNT(*) = 1')
+                        ->all()
+                        : [];
+                break;
         }
-        if (null !== $products = Product::find()->where(['main_category_id' => $this->id])->all()) {
-            foreach ($products as $product) {
-                $product->restoreFromTrash();
-            }
+        foreach ($products as $product) {
+            $product->delete();
         }
-
+        foreach ($this->children as $child) {
+            $child->deleteMode = $this->deleteMode;
+            $child->delete();
+        }
+        if (!is_null($productObject)) {
+            Yii::$app->db
+                ->createCommand()
+                ->delete($productObject->categories_table_name, ['category_id' => $this->id])
+                ->execute();
+        }
+        return true;
     }
 
     /**

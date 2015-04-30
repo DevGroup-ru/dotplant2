@@ -2,8 +2,8 @@
 
 namespace app\commands;
 
-use app\models\ErrorImage;
-use app\models\Image;
+use app\modules\image\models\ErrorImage;
+use app\modules\image\models\Image;
 use app\models\Thumbnail;
 use app\models\ThumbnailSize;
 use Yii;

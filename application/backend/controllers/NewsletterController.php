@@ -3,7 +3,7 @@
 namespace app\backend\controllers;
 
 use app\backend\models\NewsletterConfig;
-use app\models\Page;
+use app\modules\page\models\Page;
 use app\models\SubscribeEmail;
 use Yii;
 use yii\filters\AccessControl;

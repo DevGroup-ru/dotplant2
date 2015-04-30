@@ -20,7 +20,7 @@ $formName = 'YmlSettings'
 
 <?php
     $yml_relations = [
-        'getImage' => \app\models\Image::className(),
+        'getImage' => \app\modules\image\models\Image::className(),
         'getCategory' => \app\models\Category::className(),
     ];
 
@@ -38,6 +38,38 @@ $formName = 'YmlSettings'
             }, ''),
         ];
     }
+
+    $prop_group = \app\models\Object::getForClass(\app\models\Product::className())->id;
+    $prop_group = (new \yii\db\Query())
+        ->select(['pg.name as pgname', 'p.name', 'p.id'])
+        ->from(\app\models\Property::tableName().' as p', \app\models\PropertyGroup::tableName().'as pg')
+        ->leftJoin(\app\models\PropertyGroup::tableName().'as pg', 'pg.id=p.property_group_id')
+        ->where(['pg.object_id' => $prop_group])
+        ->all();
+
+    $yml_settings['properties_map'] = ['html' => '', 'fields' => []];
+    $yml_settings['properties_map'] = array_reduce(
+        array_reduce(
+            $prop_group,
+            function($result, $i)
+            {
+                if (isset($result[$i['pgname']])) {
+                    $result[$i['pgname']]['html'] .= '<option value="'.htmlspecialchars($i['id']).'">'.htmlspecialchars($i['name']).'</option>';
+                    $result[$i['pgname']]['fields'][$i['pgname']][$i['id']] = $i['name'];
+                    $result[$i['pgname']]['name'] = $i['pgname'];
+                }
+                return $result;
+            },
+            array_fill_keys(array_unique(array_column($prop_group, 'pgname')), ['fields' => [], 'html' => '', 'name' => ''])
+        ),
+        function($result, $i)
+        {
+            $result['fields'] = array_replace($result['fields'], $i['fields']);
+            $result['html'] .= '<optgroup label="'.$i['name'].'">'.$i['html'].'</optgroup>';
+            return $result;
+        },
+        $yml_settings['properties_map']
+    );
 ?>
 
 <?php $form = \kartik\widgets\ActiveForm::begin(['id' => 'yml-form', 'type' => \kartik\widgets\ActiveForm::TYPE_HORIZONTAL]); ?>
@@ -112,7 +144,7 @@ $formName = 'YmlSettings'
                             if ('field' === $value['type']) {
                                 $_key_list = $yml_settings['product_fields'];
                             } elseif ('property' === $value['type']) {
-                                $_key_list = [];
+                                $_key_list = $yml_settings['properties_map']['fields'];
                             } elseif ('relation' === $value['type']) {
                                 $_key_list = $yml_settings['relations_keys'];
                             }
@@ -184,7 +216,7 @@ $formName = 'YmlSettings'
             ?>
         }
 
-        ymlSelectProperties = '';
+        ymlSelectProperties = '<?= $yml_settings['properties_map']['html']; ?>';
 
         $('#offers_section').on('change', 'select[data-ymlselect]', function(event, flag) {
             var selType = $(this).data('ymlselect');

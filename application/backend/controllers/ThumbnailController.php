@@ -5,7 +5,7 @@ namespace app\backend\controllers;
 
 use app\backgroundtasks\helpers\BackgroundTasks;
 use app\models\Config;
-use app\models\Image;
+use app\modules\image\models\Image;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;

@@ -12,13 +12,19 @@ $config = [
         'seo',
         'backend',
         'app\components\UserPreferencesBootstrap',
-
+        'shop',
     ],
     'defaultRoute' => 'default',
     'modules' => [
         'user' => [
             'class' => 'app\modules\user\UserModule',
             'loginSessionDuration' => 2592000,
+        ],
+        'shop' => [
+            'class' => 'app\modules\shop\ShopModule',
+        ],
+        'page' => [
+            'class' => 'app\modules\page\PageModule',
         ],
         'backend' => [
             'class' => 'app\backend\BackendModule',
@@ -90,11 +96,12 @@ $config = [
                 'search' => 'default/search',
                 'robots.txt' => 'seo/manage/get-robots',
                 [
-                    'class' => 'app\components\PageRule',
+                    'class' => 'app\modules\page\components\PageRule',
                 ],
                 [
                     'class' => 'app\components\ObjectRule',
                 ],
+                'events-beacon' => 'core/events-beacon/index',
             ],
         ],
         'assetManager' => [

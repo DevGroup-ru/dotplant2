@@ -224,7 +224,7 @@ class UserController extends Controller
 
             $service = new UserService();
             $service->service_type = $client->className();
-            $service->service_id = $attributes['service']['service_id'];
+            $service->service_id = '' . $attributes['service']['service_id'];
             $service->user_id = $model->id;
             if ($service->save() === false) {
                 throw new ErrorException(Yii::t('app', "Temporary error saving social service"));

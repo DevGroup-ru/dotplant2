@@ -8,9 +8,7 @@
 
 namespace app\backend\controllers;
 
-
-use app\models\Config;
-use app\models\Watermark;
+use app\modules\image\models\Watermark;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -62,11 +60,8 @@ class WatermarkController extends Controller
         if ($model->load($post)) {
             $image = UploadedFile::getInstance($model, 'image');
             if ($image !== null) {
-                $path = Config::getValue(
-                        'image.waterDir',
-                        '/theme/resources/product-images/watermark'
-                    ) . '/' . $image->name;
-                $model->watermark_src = $path;
+                $path = Yii::$app->getModule('image')->watermarkDirectory;
+                $model->watermark_src = $path . '/' . $image->name;
                 $image->saveAs(Yii::getAlias('@webroot') . $path);
             }
             if ($model->validate() && $model->save()) {

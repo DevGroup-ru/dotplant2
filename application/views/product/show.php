@@ -12,11 +12,9 @@
  * @var $values_by_property_id integer
  */
 
-use app\models\Image;
+use app\modules\image\models\Image;
 use app\models\Product;
-use app\models\Thumbnail;
-use app\models\ThumbnailSize;
-use app\widgets\ObjectImageWidget;
+use app\modules\image\widgets\ObjectImageWidget;
 use kartik\helpers\Html;
 use yii\helpers\Url;
 

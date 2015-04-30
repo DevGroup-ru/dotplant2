@@ -11,6 +11,8 @@ use app\widgets\image\RemoveAction;
 use app\widgets\image\SaveInfoAction;
 use app\widgets\image\UploadAction;
 use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
+use devgroup\JsTreeWidget\TreeNodeMoveAction;
+use devgroup\JsTreeWidget\TreeNodesReorderAction;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
@@ -45,6 +47,14 @@ class CategoryController extends Controller
                 'class' => AdjacencyFullTreeDataAction::className(),
                 'class_name' => Category::className(),
                 'model_label_attribute' => 'name',
+            ],
+            'move' => [
+                'class' => TreeNodeMoveAction::className(),
+                'className' => Category::className(),
+            ],
+            'reorder' => [
+                'class' => TreeNodesReorderAction::className(),
+                'className' => Category::className(),
             ],
             'upload' => [
                 'class' => UploadAction::className(),
@@ -172,13 +182,14 @@ class CategoryController extends Controller
         );
     }
 
-    public function actionDelete($id = null, $parent_id = null)
+    public function actionDelete($id = null, $parent_id = null, $mode = null)
     {
 
         if ((null === $id) || (null === $model = Category::findById($id, null, null))) {
             throw new NotFoundHttpException;
         }
 
+        $model->deleteMode = $mode;
         if (!$model->delete()) {
             Yii::$app->session->setFlash('success', Yii::t('app', 'The object is placed in the cart'));
         } else {
@@ -194,16 +205,17 @@ class CategoryController extends Controller
 
     }
 
-    public function actionRemoveAll($parent_id)
+    public function actionRemoveAll($parent_id, $mode = null)
     {
         $items = Yii::$app->request->post('items', []);
         if (!empty($items)) {
-            $items = Category::find()->where(['in', 'id', $items])->all();
+            $items = Category::findAll(['id' => $items]);
+            /** @var Category[] $items */
             foreach ($items as $item) {
+                $item->deleteMode = $mode;
                 $item->delete();
             }
         }
-
         return $this->redirect(['index', 'parent_id' => $parent_id]);
     }
 
@@ -227,26 +239,5 @@ class CategoryController extends Controller
             $out['results'] = ['id' => 0, 'text' => Yii::t('app', 'No matching records found')];
         }
         echo Json::encode($out);
-    }
-
-    public function actionRestore($id = null)
-    {
-        if (null === $id) {
-            throw new NotFoundHttpException;
-        }
-
-        if (null === $model = Category::findOne(['id' => $id])) {
-            throw new NotFoundHttpException;
-        }
-
-        $model->restoreFromTrash();
-
-        Yii::$app->session->setFlash('success', Yii::t('app', 'Object successfully restored'));
-        return $this->redirect(
-            Yii::$app->request->get(
-                'returnUrl',
-                Url::toRoute(['edit', 'id' => $id, 'parent_id' => $model->parent_id])
-            )
-        );
     }
 }

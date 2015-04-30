@@ -2,7 +2,7 @@
 
 namespace app\traits;
 
-use app\models\Image;
+use app\modules\image\models\Image;
 
 /**
  * Trait to create relation of images width object

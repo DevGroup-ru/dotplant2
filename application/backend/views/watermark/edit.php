@@ -1,7 +1,7 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
-use app\models\Watermark;
+use app\modules\image\models\Watermark;
 use app\widgets\Alert;
 use kartik\widgets\ActiveForm;
 use kartik\widgets\FileInput;
@@ -10,7 +10,7 @@ use kartik\icons\Icon;
 
 /**
  * @var yii\web\View $this
- * @var \app\models\Watermark $model
+ * @var \app\modules\image\models\Watermark $model
  */
 
 $this->title = Yii::t('app', 'Watermark edit');

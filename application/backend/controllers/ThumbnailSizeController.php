@@ -3,7 +3,7 @@
 namespace app\backend\controllers;
 
 
-use app\models\ThumbnailSize;
+use app\modules\image\models\ThumbnailSize;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;

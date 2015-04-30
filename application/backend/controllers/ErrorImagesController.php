@@ -3,8 +3,8 @@
 namespace app\backend\controllers;
 
 
-use app\models\ErrorImage;
-use app\models\Image;
+use app\modules\image\models\ErrorImage;
+use app\modules\image\models\Image;
 use app\models\Object;
 use yii\filters\AccessControl;
 use yii\web\Controller;
