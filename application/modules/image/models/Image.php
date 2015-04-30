@@ -3,10 +3,10 @@
 namespace app\modules\image\models;
 
 use app\behaviors\ImageExist;
+use app\models\Object;
 use app\widgets\image\ImageDropzone;
 use Yii;
 use yii\caching\TagDependency;
-use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "image".

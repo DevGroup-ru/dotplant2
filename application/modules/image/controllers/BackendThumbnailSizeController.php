@@ -1,16 +1,14 @@
 <?php
 
-namespace app\backend\controllers;
-
+namespace app\modules\image\controllers;
 
 use app\modules\image\models\ThumbnailSize;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
-class ThumbnailSizeController extends Controller
+class BackendThumbnailSizeController extends \app\backend\components\BackendController
 {
     public function behaviors()
     {

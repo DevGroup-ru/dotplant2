@@ -1,15 +1,13 @@
 <?php
 
-namespace app\backend\controllers;
-
+namespace app\modules\image\controllers;
 
 use app\modules\image\models\ErrorImage;
 use app\modules\image\models\Image;
 use app\models\Object;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 
-class ErrorImagesController extends Controller
+class BackendErrorImagesController extends \app\backend\components\BackendController
 {
     public function behaviors()
     {

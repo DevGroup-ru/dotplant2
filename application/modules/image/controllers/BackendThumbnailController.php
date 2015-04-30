@@ -1,7 +1,6 @@
 <?php
 
-namespace app\backend\controllers;
-
+namespace app\modules\image\controllers;
 
 use app\backgroundtasks\helpers\BackgroundTasks;
 use app\models\Config;
@@ -9,9 +8,8 @@ use app\modules\image\models\Image;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
 
-class ThumbnailController extends Controller
+class BackendThumbnailController extends \app\backend\components\BackendController
 {
     public function behaviors()
     {

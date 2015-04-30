@@ -2,6 +2,7 @@
 
 use app\backend\models\BackendMenu;
 use app\backgroundtasks\models\Task;
+use app\modules\config\models\Configurable;
 use app\modules\image\models\Image;
 use app\modules\image\models\Thumbnail;
 use app\modules\image\models\ThumbnailSize;
@@ -83,20 +84,11 @@ class m150413_094340_thumbnail extends Migration
             BackendMenu::tableName(),
             ['parent_id', 'name', 'route', 'added_by_ext', 'rbac_check', 'translation_category'],
             [
-                [$image_menu_id, 'Thumbnails sizes', 'backend/thumbnail-size/index', 'core', 'content manage', 'app'],
-                [$image_menu_id, 'Create thumbnails', 'backend/thumbnail/index', 'core', 'content manage', 'app'],
-                [$image_menu_id, 'Watermarks', 'backend/watermark/index', 'core', 'content manage', 'app'],
-                [$image_menu_id, 'Broken images', 'backend/error-images/index', 'core', 'content manage', 'app'],
+                [$image_menu_id, 'Thumbnails sizes', 'image/backend-thumbnail-size/index', 'core', 'content manage', 'app'],
+                [$image_menu_id, 'Create thumbnails', 'image/backend-thumbnail/index', 'core', 'content manage', 'app'],
+                [$image_menu_id, 'Watermarks', 'image/backend-watermark/index', 'core', 'content manage', 'app'],
+                [$image_menu_id, 'Broken images', 'image/backend-error-images/index', 'core', 'content manage', 'app'],
             ]
-        );
-        $this->createTable(
-            '{{%error_images}}',
-            [
-                'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
-                'img_id' => 'INT UNSIGNED NOT NULL',
-                'class_name' => 'VARCHAR(255) NOT NULL',
-            ],
-            $tableOptions
         );
         $this->createTable(
             ErrorImage::tableName(),
@@ -117,10 +109,19 @@ class m150413_094340_thumbnail extends Migration
                 'cron_expression' => '* */1 * * *',
             ]
         );
+        $this->insert(
+            Configurable::tableName(),
+            [
+                'module' => 'image',
+                'sort_order' => 8,
+                'section_name' => 'Images',
+            ]
+        );
     }
 
     public function down()
     {
+        $this->delete(Configurable::tableName(), ['module' => 'image']);
         $this->dropTable(Thumbnail::tableName());
         $this->dropTable(ThumbnailSize::tableName());
         $this->dropTable(Watermark::tableName());
