@@ -74,7 +74,7 @@ class YandexSpamChecker implements SpamCheckable
             ];
         }
         $is_spam = false;
-        if ($spamFlag === 'yes') {
+        if ($spamFlag[0] == 'yes') {
             $is_spam = true;
         }
         return [
