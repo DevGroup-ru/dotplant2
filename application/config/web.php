@@ -39,12 +39,11 @@ $config = [
             'manageRoles' => ['admin'],
         ],
         'seo' => [
-            'class' => 'app\seo\SeoModule',
+            'class' => 'app\modules\seo\SeoModule',
             'include' => [
                 'basic/default',
                 'basic/page',
             ],
-            'layout' => '@app/backend/views/layouts/main',
         ],
         'dynagrid' =>  [
             'class' => '\kartik\dynagrid\Module',

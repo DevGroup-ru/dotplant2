@@ -34,7 +34,7 @@
                     "config/console-configurables.php": "0666",
                     "config/kv-configurables.php": "0666",
                     "messages": "0777",
-                    "seo/redirects": "0777",
+                    "modules/seo/redirects": "0777",
                     "runtime": "0777",
                     "web/assets": "0777",
                     "web/data": "0777",

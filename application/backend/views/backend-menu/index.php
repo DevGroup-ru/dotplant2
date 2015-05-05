@@ -3,7 +3,7 @@
 /**
  * @var yii\web\View $this
  * @var yii\data\ActiveDataProvider $dataProvider
- * @var app\seo\models\Redirect $searchModel
+ * @var app\modules\seo\models\Redirect $searchModel
  */
 
 use kartik\helpers\Html;

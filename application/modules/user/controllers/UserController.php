@@ -10,7 +10,7 @@ use app\modules\user\models\RegistrationForm;
 use app\modules\user\models\ResetPasswordForm;
 use app\modules\user\models\User;
 use app\modules\user\models\UserService;
-use app\seo\behaviors\MetaBehavior;
+use app\modules\seo\behaviors\MetaBehavior;
 use Yii;
 use yii\base\ErrorException;
 use yii\base\InvalidParamException;

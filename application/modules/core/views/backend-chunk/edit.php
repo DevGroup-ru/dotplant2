@@ -8,7 +8,7 @@ use yii\helpers\Url;
 
 /**
  * @var yii\web\View $this
- * @var app\seo\models\Counter $model
+ * @var app\modules\seo\models\Counter $model
  * @var yii\widgets\ActiveForm $form
  */
 $this->title = Yii::t('app', 'Create Chunk');
