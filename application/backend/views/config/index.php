@@ -10,6 +10,9 @@ use app\backend\components\ActionColumn;
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
+use devgroup\JsTreeWidget\TreeWidget;
+use devgroup\JsTreeWidget\ContextMenuHelper;
+use app\backend\components\Helper;
 
 $this->title = Yii::t('app', 'Configs');
 $this->params['breadcrumbs'][] = $this->title;
@@ -18,18 +21,55 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="config-index">
     <div class="row">
         <div class="col-md-4">
+
             <?=
-                app\backend\widgets\JSTree::widget([
-                    'model' => new app\models\Config,
-                    'routes' => [
-                        'getTree' => ['/backend/config/getTree', 'selected_id' => 0],
-                        'open' => ['/backend/config/index'],
-                        'edit' => ['/backend/config/update'],
-                        'delete' => ['/backend/config/delete'],
-                        'create' => ['/backend/config/update'],
+            TreeWidget::widget([
+                'treeDataRoute' => ['/backend/config/getTree'],
+                'contextMenuItems' => [
+                    'edit' => [
+                        'label' => 'Edit',
+                        'icon' => 'fa fa-pencil',
+                        'action' => ContextMenuHelper::actionUrl(
+                            ['/backend/config/update', 'returnUrl' => Helper::getReturnUrl()]
+                        ),
                     ],
-                ]);
+                    'open' => [
+                        'label' => 'Open',
+                        'icon' => 'fa fa-folder-open',
+                        'action' => ContextMenuHelper::actionUrl(
+                            ['/backend/config/index'],
+                            [
+                                'parent_id' => 'id',
+                            ]
+                        ),
+                    ],
+                    'create' => [
+                        'label' => 'Create',
+                        'icon' => 'fa fa-plus-circle',
+                        'action' => ContextMenuHelper::actionUrl(
+                            ['/backend/config/update', 'returnUrl' => Helper::getReturnUrl()],
+                            [
+                                'parent_id' => 'id',
+                            ]
+                        ),
+                    ],
+                    'delete' => [
+                        'label' => 'Delete',
+                        'icon' => 'fa fa-trash-o',
+                        'action' => new \yii\web\JsExpression(
+                            "function(node) {
+                                jQuery('#delete-confirmation')
+                                    .attr('data-url', '/backend/config/delete?id=' + jQuery(node.reference[0]).data('id'))
+                                    .attr('data-items', '')
+                                    .modal('show');
+                                return true;
+                            }"
+                        ),
+                    ],
+                ],
+            ]);
             ?>
+
         </div>
         <div class="col-md-8">
             <?php \yii\widgets\Pjax::begin() ?>

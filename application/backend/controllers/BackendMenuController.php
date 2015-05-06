@@ -2,10 +2,9 @@
 
 namespace app\backend\controllers;
 
-use app\backend\actions\JSTreeGetTrees;
 use app\backend\models\BackendMenu;
+use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use Yii;
-use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -34,10 +33,9 @@ class BackendMenuController extends Controller
     {
         return [
             'getTree' => [
-                'class' => JSTreeGetTrees::className(),
-                'modelName' => BackendMenu::className(),
-                'label_attribute' => 'name',
-                'vary_by_type_attribute' => null,
+                'class' => AdjacencyFullTreeDataAction::className(),
+                'class_name' => BackendMenu::className(),
+                'model_label_attribute' => 'name',
             ],
         ];
     }
