@@ -10,6 +10,8 @@ use kartik\select2\Select2;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
+use devgroup\JsTreeWidget\TreeWidget;
+use devgroup\JsTreeWidget\ContextMenuHelper;
 
 /**
  * @var $this \yii\web\View
