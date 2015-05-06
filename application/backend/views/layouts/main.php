@@ -26,7 +26,7 @@ Icon::map($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head(); ?>
 </head>
-<body class="fixed-header fixed-ribbon">
+<body class="fixed-header fixed-ribbon <?= Yii::$app->request->cookies->getValue('backend_menu', 'normal') ?>">
     <?php $this->beginBody(); ?>
     <header id="header">
         <div id="logo-group">

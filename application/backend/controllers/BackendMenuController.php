@@ -8,6 +8,8 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Controller;
+use yii\web\Cookie;
+use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 
@@ -159,5 +161,24 @@ class BackendMenuController extends Controller
         }
 
         return $this->redirect(['index', 'parent_id' => $parent_id]);
+    }
+
+
+    public function actionAjaxToggle($status)
+    {
+        if (!Yii::$app->request->isAjax) {
+             throw new HttpException(403);
+        }
+        $currentStatus = Yii::$app->request->cookies->getValue('backend_menu', 'normal');
+        $cookieData =[
+            'name' => 'backend_menu',
+            'value' => 'normal',
+            'expire' => time() + 86400 * 365,
+        ];
+        if ($status !== $currentStatus) {
+            $cookieData['value'] = $status;
+        }
+        Yii::$app->response->cookies->add(new Cookie($cookieData));
+
     }
 }
