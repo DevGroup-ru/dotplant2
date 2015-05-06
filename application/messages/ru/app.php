@@ -711,4 +711,10 @@ return  [
     'Offer picture' => 'Изображение',
     'Offer description' => 'Описание',
     'Offer category' => 'Категория',
+    'Main page' => 'Главная страница',
+    'Includes' => 'Включить для',
+    'Duration' => 'Продолжтельность',
+    'Meta cache' => 'Кэш мета-данных',
+    'Counters cache' => 'Кэш счетчиков',
+    'Robots cache' => 'Кэш robots',
 ];

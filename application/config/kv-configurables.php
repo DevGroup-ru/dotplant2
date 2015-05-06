@@ -10,5 +10,6 @@
 return[
     'kv-user' => [],
     'kv-shop' => [],
+    'kv-seo' => [],
 ];
 

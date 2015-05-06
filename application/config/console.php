@@ -22,7 +22,7 @@ $config = [
             'controllerNamespace' => 'app\data\commands'
         ],
         'seo' => [
-            'class' => 'app\seo\SeoModule',
+            'class' => 'app\modules\seo\SeoModule',
             'mainPage' => '', // главная страница
         ],
     ],
