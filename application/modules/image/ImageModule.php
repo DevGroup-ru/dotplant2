@@ -8,9 +8,9 @@ class ImageModule extends BaseModule
 {
     public $defaultThumbnailSize = '80x80';
     public $noImageSrc = 'http://placehold.it/300&text=Image+not+found';
-    public $thumbnailsDirectory = '/theme/resources/product-images/thumbnail';
+    public $thumbnailsDirectory = 'thumbnail';
     public $useWatermark = 0;
-    public $watermarkDirectory = '/theme/resources/product-images/watermark';
+    public $watermarkDirectory = 'watermark';
 
     public function behaviors()
     {

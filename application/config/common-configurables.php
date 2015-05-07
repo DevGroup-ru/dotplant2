@@ -12,9 +12,15 @@ return[
         'image' => [
             'defaultThumbnailSize' => '80x80',
             'noImageSrc' => 'http://placehold.it/300&text=Image+not+found',
-            'thumbnailsDirectory' => '/theme/resources/product-images/thumbnail',
+            'thumbnailsDirectory' => 'thumbnail',
             'useWatermark' => '0',
-            'watermarkDirectory' => '/theme/resources/product-images/watermark',
+            'watermarkDirectory' => 'watermark',
+        ],
+    ],
+    'components' => [
+        'fs' => [
+            'class' => 'creocoder\\flysystem\\LocalFilesystem',
+            'path' => '@webroot/files',
         ],
     ],
 ];

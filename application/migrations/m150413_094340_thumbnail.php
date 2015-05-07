@@ -22,7 +22,7 @@ class m150413_094340_thumbnail extends Migration
             [
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
                 'img_id' => 'INT UNSIGNED NOT NULL',
-                'thumb_src' => 'VARCHAR(255) NOT NULL',
+                'thumb_filename' => 'VARCHAR(255) NOT NULL',
                 'size_id' => 'INT UNSIGNED NOT NULL',
             ],
             $tableOptions
@@ -60,6 +60,7 @@ class m150413_094340_thumbnail extends Migration
             $tableOptions
         );
         $this->dropColumn(Image::tableName(), 'thumbnail_src');
+        $this->dropColumn(Image::tableName(), 'image_src');
         $defaultSize = new ThumbnailSize;
         $defaultSize->setAttributes(['width' => 80, 'height' => 80]);
         $defaultSize->save();
@@ -126,7 +127,8 @@ class m150413_094340_thumbnail extends Migration
         $this->dropTable(ThumbnailSize::tableName());
         $this->dropTable(Watermark::tableName());
         $this->dropTable(ThumbnailWatermark::tableName());
-        $this->addColumn(Image::tableName(), 'thumbnail_src', 'VARCHAR(255) NOT NULL');
+        $this->addColumn(Image::tableName(), 'thumbnail_src', 'VARCHAR(255)');
+        $this->addColumn(Image::tableName(), 'image_src', 'VARCHAR(255)');
         $this->dropTable(ErrorImage::tableName());
         $this->delete(BackendMenu::tableName(), ['name' => 'Broken images']);
         $this->delete(BackendMenu::tableName(), ['name' => 'Thumbnails sizes']);

@@ -3,6 +3,7 @@
 namespace app\modules\image\models;
 
 use app\behaviors\ImageExist;
+use Imagine\Image\Box;
 use Imagine\Image\ManipulatorInterface;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -15,7 +16,7 @@ use yii\web\BadRequestHttpException;
  * This is the model class for table "thumbnail".
  * @property integer $id
  * @property integer $img_id
- * @property string $thumb_src
+ * @property string $thumb_filename
  * @property integer $size_id
  */
 class Thumbnail extends \yii\db\ActiveRecord
@@ -34,7 +35,7 @@ class Thumbnail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['img_id', 'thumb_src', 'size_id'], 'required'],
+            [['img_id', 'thumb_filename', 'size_id'], 'required'],
             [['img_id', 'size_id'], 'integer'],
             [['thumb_src'], 'string', 'max' => 255]
         ];
@@ -45,7 +46,7 @@ class Thumbnail extends \yii\db\ActiveRecord
         return [
             [
                 'class' => ImageExist::className(),
-                'srcAttrName' => 'thumb_src',
+                'srcAttrName' => 'thumb_filename',
             ]
         ];
     }
@@ -58,7 +59,7 @@ class Thumbnail extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'img_id' => Yii::t('app', 'Img ID'),
-            'thumb_src' => Yii::t('app', 'Thumb Src'),
+            'thumb_filename' => Yii::t('app', 'Thumb Src'),
             'size_id' => Yii::t('app', 'Size ID'),
         ];
     }
@@ -80,7 +81,7 @@ class Thumbnail extends \yii\db\ActiveRecord
                     'size_id' => $size->id,
                 ]
             );
-            $thumb->thumb_src = static::createThumbnail($image, $size);
+            $thumb->thumb_filename = static::createThumbnail($image, $size);
             $thumb->save();
         }
         return $thumb;
@@ -94,13 +95,14 @@ class Thumbnail extends \yii\db\ActiveRecord
      */
     public static function createThumbnail($image, $size)
     {
+        $file = Imagine::getImagine()->read(Yii::$app->fs->readStream($image->filename));
+        $thumb = $file->thumbnail(new Box($size->width, $size->height));
         $path = Yii::$app->getModule('image')->thumbnailsDirectory;
-        $file_info = pathinfo($image->image_src);
-        $src = "$path/{$file_info['filename']}-{$size->width}x{$size->height}.{$file_info['extension']}";
-        if (file_exists('@webroot' . $image->image_src)) {
-            $thumb = Imagine::thumbnail('@webroot' . $image->image_src, $size->width, $size->height, $size->resize_mode);
-            $thumb->save(Yii::getAlias('@webroot') . $src);
-        }
+        $listContents = Yii::$app->fs->listContents();
+        $filesInfo = ArrayHelper::index($listContents, 'basename');
+        $stream = $thumb->get($filesInfo[$image->filename]['extension']);
+        $src = "$path/{$filesInfo[$image->filename]['filename']}-{$size->width}x{$size->height}.{$filesInfo[$image->filename]['extension']}";
+        Yii::$app->fs->put($src, $stream);
         return $src;
     }
 

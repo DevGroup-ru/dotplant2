@@ -14,8 +14,6 @@ use yii\caching\TagDependency;
  * @property integer $object_id
  * @property integer $object_model_id
  * @property string $filename
- * @property string $image_src
- * @property string $thumbnail_src
  * @property string $image_description
  * @property integer $sort_order
  */
@@ -31,7 +29,7 @@ class Image extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['image_src', 'sort_order'], 'required'],
+            [['sort_order'], 'required'],
             [['object_id', 'object_model_id', 'sort_order'], 'integer'],
         ];
     }
@@ -42,7 +40,6 @@ class Image extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'object_id' => Yii::t('app', 'Object ID'),
             'object_model_id' => Yii::t('app', 'Object Model ID'),
-            'image_src' => Yii::t('app', 'Image Src'),
             'image_description' => Yii::t('app', 'Image Description'),
             'sort_order' => Yii::t('app', 'Sort Order'),
         ];
@@ -230,7 +227,7 @@ class Image extends \yii\db\ActiveRecord
     {
         $size = ThumbnailSize::getByDemand($demand);
         $thumb = Thumbnail::getImageThumbnailBySize($this, $size);
-        $src = $thumb->src;
+        $src = $thumb->thumb_filename;
         if ($useWatermark === true) {
             $watermark = Watermark::findOne($size->default_watermark_id);
             $water = ThumbnailWatermark::getThumbnailWatermark($thumb, $watermark);
