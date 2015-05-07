@@ -4,7 +4,7 @@ $(function () {
         console.log($("#parameter-template").html());
 
         var compiled = _.template($("#parameter-template").html());
-        var $property = $(compiled({ index: $('.add-property .parameter').length  })
+        var $property = $(compiled({ index: $('#properties .parameter').length  })
         );
         $property.find('.property_id').change(function () {
             var $select = $(this).parent().parent().find('.select');
@@ -39,8 +39,8 @@ $(function () {
         return false;
     });
 
-    $("#dynamic-content-form").submit(function () {
-        var $input = $("#apply_if_params");
+    $(".form-vertical").submit(function () {
+        var $input = $("#" + current_field_id);
         $input.val();
 
         var serialized = {};
@@ -50,7 +50,7 @@ $(function () {
             serialized[key] = value;
         });
 
-        $("#apply_if_params").val(JSON.stringify(serialized));
+        $("#" + current_field_id).val(JSON.stringify(serialized));
 
         return true;
     });
