@@ -40,9 +40,6 @@ $(function () {
     });
 
     $(".form-vertical").submit(function () {
-        var $input = $("#" + current_field_id);
-        $input.val();
-
         var serialized = {};
         $("#properties .parameter").each(function () {
             var key = $(this).find('.property_id').val();
