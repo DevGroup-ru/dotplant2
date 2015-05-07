@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @var $reviews \app\modules\review\models\Review[]
+ * @var $useCaptcha boolean
+ */
+
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
 use yii\helpers\Html;
@@ -20,7 +25,7 @@ use yii\helpers\Html;
 
             $itemView .= Html::beginTag('div', ['class' => 'review-author']);
             if ($model->user) {
-                $itemView .= Icon::show('user') . Html::encode($model->user->getAwesomeUsername());
+                $itemView .= Icon::show('user') . Html::encode($model->user->getDisplayName());
             } else {
                 $itemView .= Icon::show('user') . Html::encode($model->author_name);
             }
@@ -47,7 +52,7 @@ use yii\helpers\Html;
                     <small>[<?= Html::a(Yii::t('app', 'Login'),
                             ['/default/login', 'returnUrl' => Yii::$app->request->absoluteUrl]) ?>]</small>
                 <?php else : ?>
-                    <small>[<?= Yii::$app->getUser()->getIdentity()->getAwesomeUserName() ?>]</small>
+                    <small>[<?= Yii::$app->getUser()->getIdentity()->getDisplayName() ?>]</small>
                 <?php endif; ?>
             </h2>
         </div>

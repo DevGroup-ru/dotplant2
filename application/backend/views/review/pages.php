@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     DynaGrid::widget(
         [
             'options' => [
-                'id' => 'reviews-grid',
+                'id' => 'review-grid',
             ],
             'theme' => 'panel-default',
             'gridOptions' => [
@@ -71,12 +71,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'editableOptions' => [
                         'inputType' => \kartik\editable\Editable::INPUT_DROPDOWN_LIST,
                         'placement' => \kartik\popover\PopoverX::ALIGN_LEFT,
-                        'data' => \app\reviews\models\Review::getStatuses(),
+                        'data' => \app\module\review\models\Review::getStatuses(),
                         'formOptions' => [
                             'action' => 'update-status',
                         ],
                     ],
-                    'filter' => \app\reviews\models\Review::getStatuses(),
+                    'filter' => \app\module\review\models\Review::getStatuses(),
                     'format' => 'raw',
                 ],
                 [

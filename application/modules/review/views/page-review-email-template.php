@@ -1,7 +1,6 @@
 <?php
-/** @var \app\reviews\models\Review $review */
-
-use app\models\Product;
+/** @var \app\modules\review\models\Review $review */
+use app\modules\page\models\Page;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -54,20 +53,20 @@ use yii\helpers\Url;
         </tr>
         <?php
         $row = '';
-        $obj = Product::findById($review->object_model_id);
+        $obj = Page::findById($review->object_model_id);
         if ($obj !== null) {
             $row = Html::tag(
                 'tr',
-                Html::tag('th', 'Продукт', ['style' => 'text-align: left;']) . Html::tag(
+                Html::tag('th', 'Страница', ['style' => 'text-align: left;']) . Html::tag(
                     'td',
-                    Html::a($obj->name, Url::to(['/product/show', 'model' => $obj], true))
+                    Html::a($obj->name, Url::to(['/page/show', 'id' => $obj->id], true))
                 ),
                 ['style' => 'background: #f5f5f5;']
             );
         }
         $output = Html::tag(
             'p',
-            'See review details ' . Html::a('here', Url::to(['/backend/review/products'], true))
+            'See review details ' . Html::a('here', Url::to(['/backend/review/pages'], true))
         );
         echo $row;
         ?>

@@ -1,12 +1,11 @@
 <?php
 
-namespace app\reviews\traits;
+namespace app\modules\review\traits;
 
-use app\models\Config;
 use app\models\Object;
 use app\models\RatingItem;
 use app\models\RatingValues;
-use app\reviews\models\Review;
+use app\modules\review\models\Review;
 use Yii;
 use yii\helpers\Json;
 
@@ -23,7 +22,7 @@ trait ProcessReviews
             $review->object_model_id = $object_model_id;
             $review->load($_POST);
             if (!\Yii::$app->getUser()->isGuest) {
-                $review->author_name = \Yii::$app->user->identity->awesomeUsername;
+                $review->author_name = \Yii::$app->user->identity->getDisplayName();
             }
             $review->status = Review::STATUS_NEW;
             $review->date_submitted = date("Y-m-d H:i:s");
@@ -33,22 +32,16 @@ trait ProcessReviews
                     Yii::t('app', 'Your review will appear on the website immediately after moderation')
                 );
                 $review_saved = true;
-                $reviewEmail = Config::getValue('core.reviews.reviewEmail', null);
-                if ($reviewEmail !== null) {
+                if (Yii::$app->getModule('review')->email !== null) {
                     $object = Object::findById($review->object_id);
-                    $objName = strtolower($object->name);
-                    $sendEmail = Config::getValue("core.reviews.{$objName}Reviews.{$objName}ReviewSend", 0);
-                    if ($sendEmail == 1) {
+                    if (Yii::$app->getModule('review')->isEnableNotification($object->name)) {
                         try {
                             Yii::$app->mail->compose(
-                                Config::getValue(
-                                    "core.reviews.{$objName}Reviews.{$objName}ReviewEmailTemplate",
-                                    '@app/reviews/views/page-review-email-template'
-                                ),
+                                Yii::$app->getModule('review')->getEmailTemplate($object->name),
                                 [
                                     'review' => $review,
                                 ]
-                            )->setTo(explode(',', $reviewEmail))->setFrom(
+                            )->setTo(explode(',', Yii::$app->getModule('review')->email))->setFrom(
                                 Yii::$app->mail->transport->getUsername()
                             )->setSubject(Yii::t('app', 'Review #{reviewId}', ['reviewId' => $review->id]))->send();
                         } catch (\Exception $e) {

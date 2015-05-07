@@ -1,9 +1,9 @@
 <?php
 
-namespace app\reviews\widgets;
+namespace app\modules\review\widgets;
 
 use app\components\ObjectRule;
-use app\reviews\models\Review;
+use app\modules\review\models\Review;
 use yii\base\Widget;
 use yii\data\ArrayDataProvider;
 
