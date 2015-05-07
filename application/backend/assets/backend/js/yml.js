@@ -10,14 +10,16 @@ $(function () {
             var keyType = $(group).find('select[data-ymlselect="type"]').val();
 
             if ('change' == flag) {
-                if ('field' == keyType) {
-                    $(this).html(ymlSelectFields);
-                }
-                else if ('property' == keyType) {
-                    $(this).html(ymlSelectProperties);
-                }
-                else if ('relation' == keyType) {
-                    $(this).html(ymlSelectRelKeys);
+                switch (keyType) {
+                    case 'field':
+                        $(this).html(ymlSelectFields);
+                        break;
+                    case 'property':
+                        $(this).html(ymlSelectProperties);
+                        break;
+                    case 'relation':
+                        $(this).html(ymlSelectRelKeys);
+                        break;
                 }
 
                 $(group).find('select[data-ymlselect="value"]').trigger('change', ['change']);

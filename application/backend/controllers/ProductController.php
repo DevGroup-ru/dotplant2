@@ -429,11 +429,7 @@ class ProductController extends Controller
         if ($model === null) {
             throw new NotFoundHttpException;
         }
-        if (1 === $model->is_deleted) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Unable to clone a remote object') . '!');
-            $this->redirect(Url::toRoute('index'));
-            return;
-        }
+
         /** @var Product|HasProperties $newModel */
         $newModel = new Product;
         $newModel->setAttributes($model->attributes, false);
