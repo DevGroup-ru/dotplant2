@@ -1,15 +1,11 @@
 $(function () {
 
     function addProperty(property_id, selected) {
-        var $property = $(
-            _.template(
-                $("#parameter-template").html(),
-                {
-                    index: $('.add-property .parameter').length
-                }
-            )
-        );
+        console.log($("#parameter-template").html());
 
+        var compiled = _.template($("#parameter-template").html());
+        var $property = $(compiled({ index: $('.add-property .parameter').length  })
+        );
         $property.find('.property_id').change(function () {
             var $select = $(this).parent().parent().find('.select');
             $select.empty();
@@ -38,7 +34,6 @@ $(function () {
         $("#properties").append($property);
     }
 
-
     $(".add-property").click(function () {
         addProperty(0, 0);
         return false;
@@ -59,7 +54,6 @@ $(function () {
 
         return true;
     });
-
     for (var c in current_selections) {
         addProperty(c, current_selections[c]);
     }

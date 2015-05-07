@@ -200,7 +200,9 @@ SCRIPT;
 </div>
 <?php BackendWidget::end(); ?>
 <?php ActiveForm::end(); ?>
-<script type="x-tmpl-underscore" id="parameter-template">
+
+
+<section style="display: none" data-type="x-tmpl-underscore" id="parameter-template">
     <div class="row form-group parameter">
         <label class="col-md-2 control-label" for="PropertyValue_<%- index %>">
             <select class="property_id">
@@ -225,4 +227,4 @@ SCRIPT;
         </div>
     </div>
 
-</script>
+</section>
