@@ -8,7 +8,7 @@ use app\models\Object;
 use app\modules\page\models\Page;
 use app\models\Search;
 use app\reviews\traits\ProcessReviews;
-use app\seo\behaviors\MetaBehavior;
+use app\modules\seo\behaviors\MetaBehavior;
 use app\traits\LoadModel;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;

@@ -17,9 +17,11 @@ use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\data\Pagination;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "product".
+ *
  * @property integer $id
  * @property integer $main_category_id
  * @property string $name
@@ -331,10 +333,12 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     {
         if ($this->activeWarehousesState === null) {
             $this->activeWarehousesState = WarehouseProduct::getDb()->cache(
-                function ($db) {
-                    return WarehouseProduct::find()->where(
-                        ['in', 'warehouse_id', Warehouse::activeWarehousesIds()]
-                    )->andWhere('product_id=:product_id', [':product_id' => $this->id])->with('warehouse')->all();
+                function($db) {
+                    return WarehouseProduct::find()
+                        ->where(['in', 'warehouse_id', Warehouse::activeWarehousesIds()])
+                        ->andWhere('product_id=:product_id', [':product_id'=>$this->id])
+                        ->with('warehouse')
+                        ->all();
                 },
                 86400,
                 new TagDependency(
@@ -522,6 +526,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
     /**
      * Makes an array of category ids from string
+     *
      * @param array $fields
      * @param $multipleValuesDelimiter
      * @param array $additionalFields
@@ -581,18 +586,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             // post-process categories
             // find & add parent category
             // if we need to show products of child categories in products list
-            $module = Yii::$app->modules['shop'];
-
-            if (is_array($categories) && $module->showProductsOfChildCategories) {
+            if (is_array($categories) && Config::getValue('shop.showProductsOfChildCategories')) {
 
                 do {
                     $repeat = false;
                     foreach ($categories as $cat) {
                         $model = Category::findById($cat, null, null);
                         if ($model === null) {
-                            echo "\n\nUnknown category with id " . intval(
-                                    $cat
-                                ) . " for model with id:" . $this->id . "\n\n";
+                            echo "\n\nUnknown category with id ".intval($cat) ." for model with id:".$this->id."\n\n";
                             continue;
                         }
                         if (intval($model->parent_id) > 0 && in_array($model->parent_id, $categories) === false) {
@@ -684,6 +685,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     /**
      * Returns products for special filtration query
      * Used in ProductsWidget and ProductController
+     *
      * @param $category_group_id
      * @param array $values_by_property_id
      * @param null|integer|string $selected_category_id
@@ -701,8 +703,10 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (null === $object = Object::getForClass(static::className())) {
             throw new \yii\web\ServerErrorHttpException('Object not found.');
         }
+
         /** @var \app\modules\shop\ShopModule $module */
         $module = Yii::$app->modules['shop'];
+
         $onlyParents = $module->filterOnlyByParentProduct;
         $query = static::find()->with('images');
         if (true === $onlyParents) {

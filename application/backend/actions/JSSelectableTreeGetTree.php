@@ -116,7 +116,7 @@ class JSSelectableTreeGetTree extends Action
             if (count($item['state']) == 0) {
                 unset($item['state']);
             }
-            
+
 
             $result[] = $item;
         }

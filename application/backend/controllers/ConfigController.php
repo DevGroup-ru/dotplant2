@@ -2,9 +2,9 @@
 
 namespace app\backend\controllers;
 
-use app\backend\actions\JSTreeGetTrees;
 use app\components\SearchModel;
 use app\models\Config;
+use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\VarDumper;
@@ -36,11 +36,9 @@ class ConfigController extends Controller
     {
         return [
             'getTree' => [
-                'class' => JSTreeGetTrees::className(),
-                'modelName' => Config::className(),
-                'label_attribute' => 'name',
-                'vary_by_type_attribute' => null,
-                'show_deleted' => null
+                'class' => AdjacencyFullTreeDataAction::className(),
+                'class_name' => Config::className(),
+                'model_label_attribute' => 'name',
             ],
         ];
     }

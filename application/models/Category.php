@@ -15,6 +15,7 @@ use yii\helpers\Url;
 
 /**
  * This is the model class for table "category".
+ *
  * @property integer $id
  * @property integer $category_group_id
  * @property integer $parent_id
@@ -29,6 +30,7 @@ use yii\helpers\Url;
  * @property string $content
  * @property string $announce
  * @property integer $sort_order
+ * @property integer $is_deleted
  * @property boolean $active
  * @property Category[] $children
  * @property Category $parent
@@ -40,11 +42,13 @@ class Category extends ActiveRecord
     const DELETE_MODE_SINGLE_CATEGORY = 1;
     const DELETE_MODE_ALL = 2;
     const DELETE_MODE_MAIN_CATEGORY = 3;
+
     /**
      * Category identity map
      * [
      *      'category_id' => $category_model_instance,
      * ]
+     *
      * Used by findById
      * @var array
      */
@@ -177,6 +181,7 @@ class Category extends ActiveRecord
      * Returns model using indentity map and cache
      * @param string $id
      * @param int|null $is_active
+     * @param int|null $is_deleted
      * @return Category|null
      */
     public static function findById($id, $is_active = 1)

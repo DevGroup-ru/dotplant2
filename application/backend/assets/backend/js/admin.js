@@ -69,6 +69,26 @@ Admin.copyFrom = function(selectorsFrom, selectorTo) {
 	}
 };
 
+var AdminMenu = {
+    typeArray:['normal', 'hidden-menu', 'minified'],
+
+    init:function(){
+        this.changeMenu();
+    },
+    changeMenu:function() {
+        $("#hide-menu a").click(function(){
+            $.get('/backend/backend-menu/ajax-toggle', {'status': 'hidden-menu'});
+        });
+        $("span[data-action='minifyMenu']").click(function(){
+            $.get('/backend/backend-menu/ajax-toggle', {'status': 'minified'});
+        });
+    }
+};
+
+$(function () {
+    AdminMenu.init();
+});
+
 $(function () {
     $('.ajax-notifications').on('click', '[data-type="new-notification"]', function () {
         var $link = $(this);

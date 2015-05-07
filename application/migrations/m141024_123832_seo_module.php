@@ -8,7 +8,7 @@ class m141024_123832_seo_module extends Migration
     {
         $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB';
         $this->createTable(
-            \app\seo\models\Config::tableName(),
+            \app\modules\seo\models\Config::tableName(),
             [
                 'key' => 'VARCHAR(255) NOT NULL PRIMARY KEY',
                 'value' => 'TEXT NOT NULL',
@@ -16,7 +16,7 @@ class m141024_123832_seo_module extends Migration
             $tableOptions
         );
         $this->createTable(
-            \app\seo\models\Counter::tableName(),
+            \app\modules\seo\models\Counter::tableName(),
             [
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
                 'name' => 'VARCHAR(255) DEFAULT NULL',
@@ -26,7 +26,7 @@ class m141024_123832_seo_module extends Migration
             $tableOptions
         );
         $this->createTable(
-            \app\seo\models\LinkAnchor::tableName(),
+            \app\modules\seo\models\LinkAnchor::tableName(),
             [
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
                 'model_name' => 'VARCHAR(60) NOT NULL',
@@ -37,7 +37,7 @@ class m141024_123832_seo_module extends Migration
             $tableOptions
         );
         $this->createTable(
-            \app\seo\models\LinkAnchorBinding::tableName(),
+            \app\modules\seo\models\LinkAnchorBinding::tableName(),
             [
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
                 'link_anchor_id' => 'INT UNSIGNED NOT NULL',
@@ -51,7 +51,7 @@ class m141024_123832_seo_module extends Migration
             $tableOptions
         );
         $this->createTable(
-            \app\seo\models\ModelAnchorIndex::tableName(),
+            \app\modules\seo\models\ModelAnchorIndex::tableName(),
             [
                 'model_name' => 'VARCHAR(255) NOT NULL PRIMARY KEY',
                 'model_id' => 'VARCHAR(255) NOT NULL',
@@ -60,7 +60,7 @@ class m141024_123832_seo_module extends Migration
             $tableOptions
         );
         $this->createTable(
-            \app\seo\models\Redirect::tableName(),
+            \app\modules\seo\models\Redirect::tableName(),
             [
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
                 'type' => 'enum(\'STATIC\',\'PREG\') NOT NULL DEFAULT \'STATIC\'',
@@ -71,7 +71,7 @@ class m141024_123832_seo_module extends Migration
             $tableOptions
         );
         $this->createTable(
-            \app\seo\models\Meta::tableName(),
+            \app\modules\seo\models\Meta::tableName(),
             [
                 'key' => 'VARCHAR(255) NOT NULL PRIMARY KEY',
                 'name' => 'VARCHAR(255) NOT NULL',
@@ -80,7 +80,7 @@ class m141024_123832_seo_module extends Migration
             $tableOptions
         );
         $this->createTable(
-            \app\seo\models\Sitemap::tableName(),
+            \app\modules\seo\models\Sitemap::tableName(),
             [
                 'uid' => 'VARCHAR(255) NOT NULL PRIMARY KEY',
                 'url' => 'VARCHAR(255) NOT NULL',
@@ -91,13 +91,13 @@ class m141024_123832_seo_module extends Migration
 
     public function down()
     {
-        $this->dropTable(\app\seo\models\Sitemap::tableName());
-        $this->dropTable(\app\seo\models\Meta::tableName());
-        $this->dropTable(\app\seo\models\Redirect::tableName());
-        $this->dropTable(\app\seo\models\ModelAnchorIndex::tableName());
-        $this->dropTable(\app\seo\models\LinkAnchorBinding::tableName());
-        $this->dropTable(\app\seo\models\LinkAnchor::tableName());
-        $this->dropTable(\app\seo\models\Counter::tableName());
-        $this->dropTable(\app\seo\models\Config::tableName());
+        $this->dropTable(\app\modules\seo\models\Sitemap::tableName());
+        $this->dropTable(\app\modules\seo\models\Meta::tableName());
+        $this->dropTable(\app\modules\seo\models\Redirect::tableName());
+        $this->dropTable(\app\modules\seo\models\ModelAnchorIndex::tableName());
+        $this->dropTable(\app\modules\seo\models\LinkAnchorBinding::tableName());
+        $this->dropTable(\app\modules\seo\models\LinkAnchor::tableName());
+        $this->dropTable(\app\modules\seo\models\Counter::tableName());
+        $this->dropTable(\app\modules\seo\models\Config::tableName());
     }
 }
