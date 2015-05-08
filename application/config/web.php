@@ -48,6 +48,9 @@ $config = [
         'review' => [
             'class' => 'app\modules\review\ReviewModule',
         ],
+        'data' => [
+            'class' => 'app\modules\data\DataModule',
+        ],
         'dynagrid' =>  [
             'class' => '\kartik\dynagrid\Module',
             'dbSettings' => [
