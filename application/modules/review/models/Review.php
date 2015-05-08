@@ -1,6 +1,6 @@
 <?php
 
-namespace app\reviews\models;
+namespace app\modules\review\models;
 
 use app\backgroundtasks\traits\SearchModelTrait;
 use app\models\Object;
