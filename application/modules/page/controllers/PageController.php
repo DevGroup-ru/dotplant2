@@ -7,7 +7,6 @@ use app\models\Config;
 use app\models\Object;
 use app\modules\page\models\Page;
 use app\models\Search;
-use app\reviews\traits\ProcessReviews;
 use app\modules\seo\behaviors\MetaBehavior;
 use app\traits\LoadModel;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -23,7 +22,6 @@ use yii\web\Response;
 class PageController extends Controller
 {
     use LoadModel;
-    use ProcessReviews;
 
     public function behaviors()
     {
@@ -51,7 +49,6 @@ class PageController extends Controller
             );
         }
 
-        $this->processReviews(Object::getForClass($model->className())->id, $model->id);
 
         $this->view->title = $model->title;
         if (!empty($model->h1)) {

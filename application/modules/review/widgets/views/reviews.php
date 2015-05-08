@@ -43,7 +43,17 @@ use yii\helpers\Html;
         },
     ]) ?>
     <?php \yii\widgets\Pjax::end() ?>
-    <?php $form = ActiveForm::begin(['id' => 'review-form']); ?>
+    <?php $form = ActiveForm::begin(
+        [
+            'action'=>[
+                'review/process/index',
+                'object_id'=> $object_id,
+                'object_model_id' => $object_model_id,
+                'returnUrl'=>Yii::$app->request->url
+            ],
+            'id' => 'review-form'
+        ]
+    ); ?>
     <div class="row">
         <div class="col-md-12">
             <h2>

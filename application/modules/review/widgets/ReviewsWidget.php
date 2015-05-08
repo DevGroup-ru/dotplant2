@@ -6,6 +6,7 @@ use app\components\ObjectRule;
 use app\modules\review\models\Review;
 use yii\base\Widget;
 use yii\data\ArrayDataProvider;
+use Yii;
 
 class ReviewsWidget extends Widget
 {
@@ -66,6 +67,8 @@ class ReviewsWidget extends Widget
                         ],
                     ]
                 ),
+                'object_id' => $this->object_id,
+                'object_model_id' => $this->object_model_id,
                 'model' => $model,
                 'allow_rate' => $this->allow_rate,
                 'useCaptcha' => $this->useCaptcha,

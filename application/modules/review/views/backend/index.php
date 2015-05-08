@@ -94,12 +94,12 @@ $this->endBlock();
                     'editableOptions' => [
                         'inputType' => \kartik\editable\Editable::INPUT_DROPDOWN_LIST,
                         'placement' => \kartik\popover\PopoverX::ALIGN_LEFT,
-                        'data' => \app\reviews\models\Review::getStatuses(),
+                        'data' => \app\modules\review\models\Review::getStatuses(),
                         'formOptions' => [
                             'action' => 'update-status',
                         ],
                     ],
-                    'filter' => \app\reviews\models\Review::getStatuses(),
+                    'filter' => \app\modules\review\models\Review::getStatuses(),
                     'format' => 'raw',
                 ],
                 'rate',

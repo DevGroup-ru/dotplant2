@@ -1,14 +1,14 @@
 <?php
 
-namespace app\backend\controllers;
+namespace app\modules\review\controllers;
 
-use app\reviews\models\Review;
+use app\modules\review\models\Review;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use Yii;
 use yii\web\NotFoundHttpException;
 
-class ReviewController extends Controller
+class BackendController extends \app\backend\components\BackendController
 {
     public function behaviors()
     {

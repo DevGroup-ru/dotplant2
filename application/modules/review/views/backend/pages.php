@@ -71,12 +71,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'editableOptions' => [
                         'inputType' => \kartik\editable\Editable::INPUT_DROPDOWN_LIST,
                         'placement' => \kartik\popover\PopoverX::ALIGN_LEFT,
-                        'data' => \app\module\review\models\Review::getStatuses(),
+                        'data' => \app\modules\review\models\Review::getStatuses(),
                         'formOptions' => [
                             'action' => 'update-status',
                         ],
                     ],
-                    'filter' => \app\module\review\models\Review::getStatuses(),
+                    'filter' => app\modules\review\models\Review::getStatuses(),
                     'format' => 'raw',
                 ],
                 [
