@@ -121,7 +121,7 @@ $config = [
             'loginUrl' => ['/login'],
         ],
         'authManager' => [
-            'class'=>'yii\\rbac\\DbManager',
+            'class'=>'app\components\CachedDbRbacManager',
             'cache' => 'cache',
         ],
         'authClientCollection' => [
