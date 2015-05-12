@@ -6,7 +6,9 @@
  */
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\helpers\Json;
 use kartik\icons\Icon;
+
 
 $this->title = Yii::t('app', 'Explore extensions');
 $this->params['breadcrumbs'][] = ['url' => ['/core/backend-extensions/index'], 'label' => Yii::t('app', 'Extensions')];
@@ -52,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ?>
 
                 <?= Html::a(
-                    Icon::show('cloud-download') . ' ' . Yii::t('app', 'Show package'),
+                    Icon::show('eye') . ' ' . Yii::t('app', 'Show package'),
                     ['/core/backend-extensions/show-package', 'name' => $package->getName()],
                     ['class'=>'show-package btn btn-primary btn-md']
                 ) ?>
@@ -60,3 +62,26 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     <?php endforeach; ?>
 </div>
+
+<?php
+
+$extensionInformation = Json::encode(Yii::t('app', 'Extension information'));
+
+
+$js = <<<JS
+
+$(".show-package").click(function(){
+    var that = $(this),
+        url = that.attr('href');
+
+    that.dialogAction(
+        url,
+        {
+            title: $extensionInformation
+        }
+    );
+    return false;
+})
+
+JS;
+$this->registerJs($js);

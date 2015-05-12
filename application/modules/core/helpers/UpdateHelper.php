@@ -34,7 +34,7 @@ class UpdateHelper extends Component
      * @param bool $updateComposer True if we also need to run composer update before all actions
      * @return \Symfony\Component\Process\Process
      */
-    public function applyMigrations($migrationPath, $applyAppMigrations = true, $updateComposer = true)
+    public function applyMigrations($migrationPath, $applyAppMigrations = true, $updateComposer = true, $down = false)
     {
         if ($applyAppMigrations === true) {
             $this->applyAppMigrations($updateComposer)->mustRun();
@@ -42,7 +42,7 @@ class UpdateHelper extends Component
             $this->updateComposer()->mustRun();
         }
 
-        $builder = $this->migrationCommandBuilder($migrationPath);
+        $builder = $this->migrationCommandBuilder($migrationPath, $down);
 
         $process = $builder->getProcess();
 
@@ -64,13 +64,13 @@ class UpdateHelper extends Component
      * @param bool $updateComposer True if we should update composer before applying migrations
      * @return \Symfony\Component\Process\Process
      */
-    public function applyAppMigrations($updateComposer = true)
+    public function applyAppMigrations($updateComposer = true, $down = false)
     {
         if ($updateComposer === true) {
             $this->updateComposer()->mustRun();
         }
 
-        $builder = $this->migrationCommandBuilder();
+        $builder = $this->migrationCommandBuilder('', $down);
 
         $process = $builder->getProcess();
 
@@ -86,7 +86,7 @@ class UpdateHelper extends Component
      *
      * @return \Symfony\Component\Process\ProcessBuilder
      */
-    private function migrationCommandBuilder($migrationPath = '')
+    private function migrationCommandBuilder($migrationPath = '', $down = false)
     {
         $builder = new ProcessBuilder();
 
@@ -95,7 +95,7 @@ class UpdateHelper extends Component
             ->setPrefix($this->getPhpExecutable())
             ->setArguments([
                 realpath(Yii::getAlias('@app').'/yii'),
-                'migrate/up',
+                'migrate/'.($down?'down':'up'),
                 '--color=0',
                 '--interactive=0',
             ]);

@@ -3,7 +3,9 @@
 namespace app\components;
 
 use app;
+use app\modules\config\models\Configurable;
 use app\modules\config\helpers\ConfigurationUpdater;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Symfony\Component\Process\Process;
 use Yii;
 
@@ -24,7 +26,7 @@ abstract class ExtensionModule extends \yii\base\Module
             static::className()
         );
         $module = Yii::$app->getModule(static::$moduleId);
-        $module->updateModule($applyAppMigrations, $updateComposer, true);
+        return $module->updateModule($applyAppMigrations, $updateComposer, true);
     }
 
     /**
@@ -51,6 +53,29 @@ abstract class ExtensionModule extends \yii\base\Module
         if ($updateConfig === true) {
             $this->updateConfig();
         }
+
+        return $process->getExitCode() === 0;
+    }
+
+    public function uninstallModule()
+    {
+
+        $this->removeConfig();
+
+        // apply migrations
+        $migrationPath = $this->getMigrationsPath();
+
+        /** @var Process $process */
+        $process = Yii::$app->updateHelper
+            ->applyMigrations(
+                $migrationPath,
+                false,
+                false,
+                true
+            );
+        $process->mustRun();
+
+        return $process->getExitCode() === 0;
     }
 
     /**
@@ -76,7 +101,7 @@ abstract class ExtensionModule extends \yii\base\Module
             // This extension has config behavior
 
             // Find corresponding configurable
-            $configurable = app\modules\config\models\Configurable::find()
+            $configurable = Configurable::find()
                 ->where(['module' => $this->id])
                 ->one();
 
@@ -87,8 +112,55 @@ abstract class ExtensionModule extends \yii\base\Module
                     $array,
                     false
                 );
+
             }
+
+
         }
+        \yii\caching\TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                ActiveRecordHelper::getCommonTag(Configurable::className()),
+
+            ]
+        );
+    }
+
+    /**
+     * Remove module configuration from config files.
+     */
+    public function removeConfig()
+    {
+        if ($this->getBehavior('configurableModule') !== null) {
+            // This extension has config behavior
+
+            // Find corresponding configurable
+            $configurables = Configurable::find()
+                ->where('module!=:module', [':module' => $this->id])
+                ->all();
+
+            if ($configurables !== null) {
+                // The trick is to use previous saved values from other configurables
+                // and exclude current module from configuration
+                // that is done by setting not to load existing configuration
+
+                ConfigurationUpdater::updateConfiguration(
+                    $configurables,
+                    false,
+                    false
+                );
+
+            }
+
+
+        }
+        \yii\caching\TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                ActiveRecordHelper::getCommonTag(Configurable::className()),
+
+            ]
+        );
     }
 
 
