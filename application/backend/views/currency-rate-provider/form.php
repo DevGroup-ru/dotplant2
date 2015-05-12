@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model app\models\CurrencyRateProvider */
+/* @var $model app\modules\shop\models\CurrencyRateProvider */
 
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;

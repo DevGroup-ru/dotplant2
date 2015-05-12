@@ -62,7 +62,7 @@ AppAsset::register($this);
                             ]
                         ),
                         [
-                            '/product-compare/compare',
+                            '/shop/product-compare/compare',
                         ],
                         [
                             'class' => 'btn',

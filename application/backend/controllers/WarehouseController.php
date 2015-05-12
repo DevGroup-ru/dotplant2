@@ -119,7 +119,7 @@ class WarehouseController extends Controller
             }
 
             $model->setAttributes(current($post));
-            TagDependency::invalidate(Yii::$app->cache, ActiveRecordHelper::getObjectTag(\app\models\Product::className(), $model->product_id));
+            TagDependency::invalidate(Yii::$app->cache, ActiveRecordHelper::getObjectTag(\app\modules\shop\models\Product::className(), $model->product_id));
             return $model->save();
 
 

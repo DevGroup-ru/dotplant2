@@ -10,8 +10,8 @@ use yii\helpers\Url;
 
 $this->title = 'DotPlant demo site';
 $this->context->layout = 'main-page';
-$featuredProducts = \app\models\Product::find()->orderBy('`sort_order` DESC')->limit(8)->all();
-$latestProducts = \app\models\Product::find()->orderBy('`id` DESC')->limit(6)->all();
+$featuredProducts = \app\modules\shop\models\Product::find()->orderBy('`sort_order` DESC')->limit(8)->all();
+$latestProducts = \app\modules\shop\models\Product::find()->orderBy('`id` DESC')->limit(6)->all();
 
 ?>
 <?php if (count($featuredProducts) > 0): ?>
@@ -28,7 +28,7 @@ $latestProducts = \app\models\Product::find()->orderBy('`id` DESC')->limit(6)->a
                                         $product = $featuredProducts[$j * 4 + $i];
                                         $url = Url::toRoute(
                                             [
-                                                'product/show',
+                                                '/shop/product/show',
                                                 'model' => $product,
                                             ]
                                         );
@@ -72,11 +72,11 @@ $latestProducts = \app\models\Product::find()->orderBy('`id` DESC')->limit(6)->a
                 foreach ($latestProducts as $product) {
                     $url = Url::to(
                         [
-                            'product/show',
+                            '/shop/product/show',
                             'model' => $product,
                         ]
                     );
-                    echo $this->render('@app/views/product/item', ['product' => $product, 'url' => $url]);
+                    echo $this->render('@app/modules/shop/views/product/item', ['product' => $product, 'url' => $url]);
                 }
             ?>
         </ul>

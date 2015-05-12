@@ -2,7 +2,7 @@
 
 namespace app\widgets;
 
-use app\models\Cart;
+use app\modules\shop\models\Cart;
 use yii\base\Widget;
 
 class CartInfo extends Widget

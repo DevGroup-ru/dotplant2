@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use app\actions\SubmitFormAction;
 use app\models\Config;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\models\Search;
 use app\modules\seo\behaviors\MetaBehavior;
 use Yii;

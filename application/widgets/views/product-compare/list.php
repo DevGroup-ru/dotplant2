@@ -14,7 +14,7 @@ if (is_array($prods)) {
         }
         $url = Url::to(
             [
-                'product/show',
+                '/shop/product/show',
                 'model' => $prod,
                 'last_category_id' => $prod->main_category_id,
                 'category_group_id' => $prod->category->category_group_id,
@@ -30,7 +30,7 @@ if (is_array($prods)) {
             ]
         );
         echo '<div class="col-md-4">';
-        echo Html::beginForm('/product-compare/remove', 'get');
+        echo Html::beginForm('/shop/product-compare/remove', 'get');
             echo Html::hiddenInput('backUrl', Yii::$app->request->url);
             echo Html::hiddenInput('id', $prod->id);
             echo '<a href="' . $url . '" alt="' . $prod->name . '" title="' . $prod->name . '">';
@@ -51,7 +51,7 @@ if (is_array($prods)) {
 ?>
 <div class="row">
     <div class="col-md-8">
-        <?= Html::beginForm('/product-compare/add', 'get') ?>
+        <?= Html::beginForm('/shop/product-compare/add', 'get') ?>
         <?= Html::hiddenInput('id', $id) ?>
         <?= Html::hiddenInput('backUrl', Yii::$app->request->url) ?>
         <?= Html::button(Yii::t('app', 'Add to compare'),

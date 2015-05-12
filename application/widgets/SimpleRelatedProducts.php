@@ -30,7 +30,7 @@ use yii\base\Widget;
 class SimpleRelatedProducts extends Widget
 {
     /**
-     * @var null|app\models\Product Product model instance
+     * @var null|app\modules\shop\models\Product Product model instance
      */
     public $model = null;
 

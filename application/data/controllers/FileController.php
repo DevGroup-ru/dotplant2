@@ -155,7 +155,7 @@ class FileController extends Controller
 
             $availablePropertyGroups = [];
 
-            /** @var \app\models\Product $exampleModel - product for example */
+            /** @var \app\modules\shop\models\Product $exampleModel - product for example */
             $exampleModel = new $object->object_class;
             if ($exampleModel->hasMethod('getPropertyGroups')) {
                 $availablePropertyGroups = $exampleModel->getPropertyGroups(

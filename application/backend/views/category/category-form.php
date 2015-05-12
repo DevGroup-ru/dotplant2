@@ -10,12 +10,12 @@ use yii\helpers\ArrayHelper;
 
 /**
  * @var $this \yii\web\View
- * @var $model \app\models\Category
+ * @var $model \app\modules\shop\models\Category
  */
 $this->title = Yii::t('app', 'Category edit');
 
 $this->params['breadcrumbs'][] = ['url' => ['/backend/category/index'], 'label' => Yii::t('app', 'Categories')];
-if (($model->parent_id > 0) && (null !== $parent = \app\models\Category::findById($model->parent_id, null, null))) {
+if (($model->parent_id > 0) && (null !== $parent = \app\modules\shop\models\Category::findById($model->parent_id, null, null))) {
     $this->params['breadcrumbs'][] = [
         'url' => [
             '/backend/category/index',
@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?=Html::a(
             Icon::show('eye') . Yii::t('app', 'Preview'),
             [
-                '/product/list',
+                '/shop/product/list',
                 'category_id' => $model->id,
                 'category_group_id' => $model->category_group_id,
             ],
@@ -107,7 +107,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php if ($model->parent_id == 0): ?>
                 <?=$form->field($model, 'category_group_id')->dropDownList(
-                        \app\components\Helper::getModelMap(\app\models\CategoryGroup::className(), 'id', 'name')
+                        \app\components\Helper::getModelMap(\app\modules\shop\models\CategoryGroup::className(), 'id', 'name')
                     )?>
             <?php endif; ?>
 
@@ -194,7 +194,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ArrayHelper::merge(
                         [0 => Yii::t('app', 'Root')],
                         ArrayHelper::map(
-                            \app\models\Category::find()->where('id != :id', ['id' => $model->id])->all(),
+                            \app\modules\shop\models\Category::find()->where('id != :id', ['id' => $model->id])->all(),
                             'id',
                             'name'
                         )

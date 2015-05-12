@@ -2,7 +2,7 @@
 
 namespace app\widgets;
 
-use app\models\Product;
+use app\modules\shop\models\Product;
 use Yii;
 use yii\base\Widget;
 

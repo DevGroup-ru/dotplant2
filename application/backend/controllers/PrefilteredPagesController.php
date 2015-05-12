@@ -5,7 +5,7 @@ namespace app\backend\controllers;
 use app\models\Config;
 use app\models\Object;
 use app\models\PrefilteredPages;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;

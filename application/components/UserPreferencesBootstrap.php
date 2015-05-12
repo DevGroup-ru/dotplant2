@@ -3,7 +3,7 @@
 namespace app\components;
 
 use app;
-use app\models\UserPreferences;
+use app\modules\shop\models\UserPreferences;
 use Yii;
 use yii\base\Application;
 

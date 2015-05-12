@@ -11,12 +11,15 @@ use yii\db\ActiveRecord;
  * Class Tree
  * @package app\behaviors
  * @property \yii\db\ActiveRecord $owner
+ * @property \yii\db\ActiveRecord[] $children
+ * @property \yii\db\ActiveRecord $parent
  */
 class Tree extends Behavior
 {
     public $idAttribute = 'id';
     public $parentIdAttribute = 'parent_id';
     public $sortOrder = 'id ASC';
+    public $cascadeDeleting = false; // @todo Set default value equals true and check all models that use Tree behavior
 
     /**
      * @return ActiveRecord
@@ -154,5 +157,30 @@ class Tree extends Behavior
             $tree[] = $tree_item;
         }
         return $tree;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function events()
+    {
+        return [
+            ActiveRecord::EVENT_AFTER_DELETE => 'afterDelete',
+        ];
+    }
+
+    /**
+     * After delete event.
+     * It deletes children models.
+     * @param $event
+     * @throws \Exception
+     */
+    public function afterDelete($event)
+    {
+        if ($this->cascadeDeleting) {
+            foreach ($this->children as $child) {
+                $child->delete();
+            }
+        }
     }
 }

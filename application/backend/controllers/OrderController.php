@@ -12,7 +12,7 @@ use app\models\OrderItem;
 use app\models\OrderStatus;
 use app\models\OrderTransaction;
 use app\models\PaymentType;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\models\ShippingOption;
 use app\modules\user\models\User;
 use kartik\helpers\Html;

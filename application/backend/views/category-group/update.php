@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model app\models\CategoryGroup */
+/* @var $model app\modules\shop\models\CategoryGroup */
 
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;

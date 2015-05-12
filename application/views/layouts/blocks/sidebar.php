@@ -1,5 +1,5 @@
 <div id="sidebar" class="span3">
-    <?php if ($this->beginCache('SidebarMenu', ['duration'=>86400, 'dependency'=>new yii\caching\TagDependency(['tags'=>\devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(\app\models\Category::className())])])): ?>
+    <?php if ($this->beginCache('SidebarMenu', ['duration'=>86400, 'dependency'=>new yii\caching\TagDependency(['tags'=>\devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(\app\modules\shop\models\Category::className())])])): ?>
     <?=
         \yii\widgets\Menu::widget(
             [
@@ -7,7 +7,7 @@
                 'options' => [
                     'class' => 'nav nav-tabs nav-stacked',
                 ],
-                'items' => \app\models\Category::getMenuItems(),
+                'items' => \app\modules\shop\models\Category::getMenuItems(),
             ]
         )
     ?>
@@ -20,11 +20,11 @@
     <?php endif; ?>
     <br/>
     <?php
-        $product = \app\models\Product::findOne(['id' => 1]);
+        $product = \app\modules\shop\models\Product::findOne(['id' => 1]);
         if (!is_null($product)):
             $url = \yii\helpers\Url::to(
                 [
-                    'product/show',
+                    '/shop/product/show',
                     'model' => $product,
                 ]
             );

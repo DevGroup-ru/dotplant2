@@ -52,6 +52,10 @@ class ShopModule extends BaseModule
      */
     public $maxLastViewedProducts = 9;
 
+    // A new order config below.
+    // @todo Need to add this attributes to module ConfigurableModel
+    public $allowToAddSameProduct = 0;
+
     /**
      * @inheritdoc
      */

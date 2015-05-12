@@ -3,7 +3,7 @@
 namespace app\backend\controllers;
 
 use Yii;
-use app\models\CategoryGroup;
+use app\modules\shop\models\CategoryGroup;
 use app\components\SearchModel;
 use yii\filters\AccessControl;
 use yii\web\Controller;

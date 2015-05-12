@@ -58,14 +58,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'currency_rate_provider_id',
                         'class' => \kartik\grid\EditableColumn::className(),
                         'editableOptions' => [
-                            'data' => [0=>'-']+\app\components\Helper::getModelMap(\app\models\CurrencyRateProvider::className(), 'id', 'name'),
+                            'data' => [0=>'-']+\app\components\Helper::getModelMap(\app\modules\shop\models\CurrencyRateProvider::className(), 'id', 'name'),
                             'inputType' => 'dropDownList',
                             'placement' => 'left',
                             'formOptions' => [
                                 'action' => 'update-editable',
                             ],
                         ],
-                        'filter' => \app\components\Helper::getModelMap(\app\models\CurrencyRateProvider::className(), 'id', 'name'),
+                        'filter' => \app\components\Helper::getModelMap(\app\modules\shop\models\CurrencyRateProvider::className(), 'id', 'name'),
                         'format' => 'raw',
                         'value' => function ($model, $key, $index, $column) {
                             if ($model === null || $model->rateProvider === null) {

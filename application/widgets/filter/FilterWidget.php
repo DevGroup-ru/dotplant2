@@ -23,7 +23,7 @@ class FilterWidget extends Widget
     public $objectId = null;
     public $onlyAvailableFilters = true;
     public $disableInsteadOfHide = false;
-    public $route = '/product/list';
+    public $route = '/shop/product/list';
     public $title = 'Filter';
     public $viewFile = 'filterWidget';
     private $disabled_ids = [];
