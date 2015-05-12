@@ -38,7 +38,7 @@ class ReviewModule extends BaseModule
             'configurableModule' => [
                 'class' => 'app\modules\config\behaviors\ConfigurableModuleBehavior',
                 'configurationView' => '@app/modules/review/views/configurable/_config',
-                'configurableModel' => 'app\modules\review\models\ConfigConfigurableModel',
+                'configurableModel' => 'app\modules\review\models\ConfigConfigurationModel',
             ]
         ];
     }
