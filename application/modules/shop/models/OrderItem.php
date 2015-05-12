@@ -3,6 +3,7 @@
 namespace app\modules\shop\models;
 
 use app\behaviors\Tree;
+use app\modules\shop\components\DiscountProductInterface;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -26,7 +27,7 @@ use yii\db\ActiveRecord;
  * @property OrderItem $parent
  * @property Product $product
  */
-class OrderItem extends ActiveRecord
+class OrderItem extends ActiveRecord implements DiscountProductInterface
 {
 
     public function behaviors()
