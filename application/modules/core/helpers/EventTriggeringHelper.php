@@ -59,8 +59,7 @@ class EventTriggeringHelper
         /** @var Events $eventsModel Events model instance for determining handlers*/
         $eventsModel = Events::findByClassName($event->className());
         if ($eventsModel === null) {
-            throw new Exception("No such event for this class!".$event->className());
-            return false;
+            throw new Exception("No such event for this class ".$event->className());
         }
 
         foreach ($eventsModel->handlers as $handler) {

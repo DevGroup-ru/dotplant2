@@ -2,7 +2,7 @@
 
 /** @var \app\modules\config\models\Configurable $configurable */
 /** @var \app\backend\components\ActiveForm $form */
-/** @var \app\modules\user\models\ConfigConfigurableModel $model */
+/** @var \app\modules\user\models\ConfigConfigurationModel $model */
 use \app\modules\user\models\AuthClientConfig;
 use \yii\helpers\Html;
 use \kartik\icons\Icon;

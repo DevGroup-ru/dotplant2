@@ -3,16 +3,16 @@
 namespace app\modules\page\models;
 
 use app;
-use app\modules\config\models\BaseConfigurableModel;
+use app\modules\config\models\BaseConfigurationModel;
 use Yii;
 
 /**
- * Class ConfigConfigurableModel represents configuration model for retrieving user input
+ * Class ConfigConfigurationModel represents configuration model for retrieving user input
  * in backend configuration subsystem.
  *
  * @package app\modules\page\models
  */
-class ConfigConfigurableModel extends BaseConfigurableModel
+class ConfigConfigurationModel extends BaseConfigurationModel
 {
     /**
      * @var int minimum pages per list to show
@@ -133,6 +133,15 @@ class ConfigConfigurableModel extends BaseConfigurableModel
      * @return mixed
      */
     public function keyValueAttributes()
+    {
+        return [];
+    }
+
+    /**
+     * Returns array of aliases that should be set in common config
+     * @return array
+     */
+    public function aliases()
     {
         return [];
     }

@@ -11,7 +11,7 @@ use yii\helpers\StringHelper;
  * Abstract class for configurable models of configurable modules.
  * @package app\models
  */
-abstract class BaseConfigurableModel extends Model
+abstract class BaseConfigurationModel extends Model
 {
     /**
      * @var string module name, filled by Configurable
@@ -29,12 +29,23 @@ abstract class BaseConfigurableModel extends Model
 
     /**
      * Get module name
-     * @param $module
      * @return string
      */
-    public function getModule($module)
+    public function getModule()
     {
         return $this->module;
+    }
+
+    /**
+     * @return null|\yii\base\Module Returns module instance loaded in current application instance
+     */
+    public function getModuleInstance()
+    {
+        if (isset(Yii::$app->modules[$this->module]) === true) {
+            return Yii::$app->modules[$this->module];
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -76,6 +87,12 @@ abstract class BaseConfigurableModel extends Model
      * @return mixed
      */
     abstract public function keyValueAttributes();
+
+    /**
+     * Returns array of aliases that should be set in common config
+     * @return array
+     */
+    abstract public function aliases();
 
     /**
      * The name of event that is triggered when this configuration is being saved.

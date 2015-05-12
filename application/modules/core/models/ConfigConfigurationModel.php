@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\review\models;
+namespace app\modules\core\models;
 
 use app;
 use app\modules\config\models\BaseConfigurationModel;
@@ -10,20 +10,14 @@ use Yii;
  * Class ConfigConfigurationModel represents configuration model for retrieving user input
  * in backend configuration subsystem.
  *
- * @package app\modules\review\models
+ * @package app\modules\shop\models
  */
 class ConfigConfigurationModel extends BaseConfigurationModel
 {
-    public $email;
-    public $notification = [];
-    public $emailTemplate = [];
-
-    public function attributeLabels()
-    {
-        return [
-            'email' => Yii::t('app', 'E-mail'),
-        ];
-    }
+    /**
+     * @var string Path to composer home directory(ie. /home/user/.composer/)
+     */
+    public $composerHomeDirectory = './';
 
     /**
      * @inheritdoc
@@ -31,9 +25,10 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public function rules()
     {
         return [
-            [['email'], 'string'],
-            [['notification'], 'each', 'rule' => ['boolean']],
-            [['emailTemplate'], 'each', 'rule' => ['string']],
+            [
+                'composerHomeDirectory',
+                'string',
+            ]
         ];
     }
 
@@ -42,9 +37,10 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public function defaultValues()
     {
-        /** @var app\modules\review\reviewModule $module */
-        $module = Yii::$app->getModule('review');
-        $attributes = array_keys($this->getAttributes());
+        /** @var app\modules\shop\ShopModule $module */
+        $module = $this->getModuleInstance();
+
+        $attributes = array_keys($this->getAttributes(null, ['composerHomeDirectory']));
         foreach ($attributes as $attribute) {
             $this->{$attribute} = $module->{$attribute};
         }
@@ -59,10 +55,15 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public function webApplicationAttributes()
     {
-        $attributes = $this->getAttributes();
+        $attributes = $this->getAttributes(null, ['composerHomeDirectory']);
         return [
             'modules' => [
-                'review' => $attributes,
+                'core' => $attributes,
+            ],
+            'components' => [
+                'updateHelper' => [
+                    'composerHomeDirectory' => $this->composerHomeDirectory,
+                ]
             ],
         ];
     }
@@ -99,5 +100,16 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public function keyValueAttributes()
     {
         return [];
+    }
+
+    /**
+     * Returns array of aliases that should be set in common config
+     * @return array
+     */
+    public function aliases()
+    {
+        return [
+            '@core' => dirname(__FILE__) . '/../',
+        ];
     }
 }

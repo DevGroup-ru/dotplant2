@@ -12,5 +12,7 @@ use Yii;
  */
 class ConfigModule extends BaseModule
 {
-
+    public $controllerMap = [
+        'backend' => 'app\modules\config\backend\ConfigController',
+    ];
 }

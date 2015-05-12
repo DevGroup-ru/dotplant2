@@ -104,4 +104,9 @@ class Navigation extends \yii\db\ActiveRecord
         $this->addCondition($query, Navigation::tableName(), 'route_params', true);
         return $dataProvider;
     }
+
+    public function getChildren()
+    {
+        return $this->hasMany(Navigation::className(), ['parent_id'=>'id']);
+    }
 }

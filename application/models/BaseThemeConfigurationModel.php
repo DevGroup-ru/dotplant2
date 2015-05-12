@@ -1,53 +1,24 @@
 <?php
 
-namespace app\modules\review\models;
+namespace app\models;
 
 use app;
-use app\modules\config\models\BaseConfigurationModel;
 use Yii;
 
-/**
- * Class ConfigConfigurationModel represents configuration model for retrieving user input
- * in backend configuration subsystem.
- *
- * @package app\modules\review\models
- */
-class ConfigConfigurationModel extends BaseConfigurationModel
+class BaseThemeConfigurationModel extends app\modules\config\models\BaseConfigurationModel
 {
-    public $email;
-    public $notification = [];
-    public $emailTemplate = [];
-
-    public function attributeLabels()
-    {
-        return [
-            'email' => Yii::t('app', 'E-mail'),
-        ];
-    }
-
     /**
-     * @inheritdoc
+     * @var bool Should this theme be registered as @theme alias in config
      */
-    public function rules()
-    {
-        return [
-            [['email'], 'string'],
-            [['notification'], 'each', 'rule' => ['boolean']],
-            [['emailTemplate'], 'each', 'rule' => ['string']],
-        ];
-    }
+    public $registerThemeAlias = true;
 
     /**
-     * @inheritdoc
+     * Fills model attributes with default values
+     * @return void
      */
     public function defaultValues()
     {
-        /** @var app\modules\review\reviewModule $module */
-        $module = Yii::$app->getModule('review');
-        $attributes = array_keys($this->getAttributes());
-        foreach ($attributes as $attribute) {
-            $this->{$attribute} = $module->{$attribute};
-        }
+        return;
     }
 
     /**
@@ -59,11 +30,12 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public function webApplicationAttributes()
     {
-        $attributes = $this->getAttributes();
         return [
             'modules' => [
-                'review' => $attributes,
-            ],
+                $this->getModule() => [
+                    'class' => $this->getModuleInstance()->className(),
+                ],
+            ]
         ];
     }
 
@@ -99,5 +71,24 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public function keyValueAttributes()
     {
         return [];
+    }
+
+    /**
+     * Returns array of aliases that should be set in common config
+     * @return array
+     */
+    public function aliases()
+    {
+        if ($this->registerThemeAlias === true) {
+            if ($this->getModuleInstance() !== null) {
+                $reflectionClass = new \ReflectionClass($this->getModuleInstance());
+                return [
+                    '@' . $this->getModule() => dirname($reflectionClass->getFileName()),
+                ];
+            }
+        }
+
+        return [];
+
     }
 }
