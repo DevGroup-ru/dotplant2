@@ -9,11 +9,11 @@ use yii\helpers\ArrayHelper;
 
 
 /**
- * Class ConfigConfigurableModel represents configuration model for retrieving image input
+ * Class ConfigConfigurationModel represents configuration model for retrieving image input
  * in backend configuration subsystem.
  * @package app\modules\shop\models
  */
-class ConfigConfigurableModel extends BaseConfigurationModel
+class ConfigConfigurationModel extends BaseConfigurationModel
 {
     public $defaultThumbnailSize;
     public $noImageSrc;
@@ -27,7 +27,7 @@ class ConfigConfigurableModel extends BaseConfigurationModel
         return [
             [['noImageSrc', 'defaultThumbnailSize', 'thumbnailsDirectory', 'watermarkDirectory'], 'string'],
             ['useWatermark', 'boolean'],
-            ['components', 'required', 'isArray'],
+            ['components', 'isArray'],
         ];
     }
 
@@ -121,6 +121,14 @@ class ConfigConfigurableModel extends BaseConfigurationModel
      * @return mixed
      */
     public function keyValueAttributes()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritdoc
+     **/
+    public function aliases()
     {
         return [];
     }

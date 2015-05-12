@@ -4,10 +4,8 @@ namespace app\modules\image\models;
 
 use app\behaviors\ImageExist;
 use Imagine\Image\Box;
-use Imagine\Image\ManipulatorInterface;
 use Yii;
 use yii\helpers\ArrayHelper;
-use yii\helpers\VarDumper;
 use yii\imagine\Image as Imagine;
 use yii\web\BadRequestHttpException;
 
@@ -37,7 +35,7 @@ class Thumbnail extends \yii\db\ActiveRecord
         return [
             [['img_id', 'thumb_filename', 'size_id'], 'required'],
             [['img_id', 'size_id'], 'integer'],
-            [['thumb_src'], 'string', 'max' => 255]
+            [['thumb_filename'], 'string', 'max' => 255]
         ];
     }
 
