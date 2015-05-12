@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Json;
 use kartik\dynagrid\DynaGrid;
 
 /**
@@ -43,27 +44,23 @@ $this->params['breadcrumbs'][] = $this->title;
         'current_package_version_timestamp',
         [
             'class' => 'app\backend\components\ActionColumn',
+            'urlCreator' => function($action, $model, $key, $index) {
+
+                $params = [
+                    '/core/backend-extensions/' . $action,
+                    'name' => $model->name,
+                ];
+
+                $params['returnUrl'] = app\backend\components\Helper::getReturnUrl();
+
+                return yii\helpers\Url::toRoute($params);
+            },
             'buttons' => [
                 [
-                    'url' => 'view',
+                    'url' => 'show-package',
                     'icon' => 'eye',
-                    'class' => 'btn-info',
+                    'class' => 'btn-info btn-show-package',
                     'label' => Yii::t('app', 'View'),
-                ],
-                [
-                    'url' => 'edit',
-                    'icon' => 'pencil',
-                    'class' => 'btn-primary',
-                    'label' => Yii::t('app','Edit'),
-                ],
-                [
-                    'url' => 'delete',
-                    'icon' => 'trash-o',
-                    'class' => 'btn-danger',
-                    'label' => Yii::t('app','Delete'),
-                    'options' => [
-                        'data-action' => 'delete',
-                    ],
                 ],
             ],
             'options' => [
@@ -83,3 +80,22 @@ $this->params['breadcrumbs'][] = $this->title;
 
     ]
 ]); ?>
+
+<?php
+$extensionInformation = Json::encode(Yii::t('app', 'Extension information'));
+$js = <<<JS
+$(".btn-show-package").click(function(){
+    var that = $(this),
+        url = that.attr('href');
+
+    that.dialogAction(
+        url,
+        {
+            title: $extensionInformation
+        }
+    );
+    return false;
+})
+JS;
+
+$this->registerJs($js);

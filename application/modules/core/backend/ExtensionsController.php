@@ -9,6 +9,7 @@ use Packagist\Api\Result\Package\Version;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\helpers\VarDumper;
+use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 use yii\filters\AccessControl;
@@ -132,7 +133,13 @@ class ExtensionsController extends BackendController
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Unable to activate extension').': '.$e->getMessage());
                 return $this->renderContent('');
             }
+            if ($result) {
+                $extension->is_active = 1;
+                $extension->save();
+            }
             return $this->renderContent($result ? 'yes' : 'no');
+        } else {
+            throw new BadRequestHttpException;
         }
     }
 
@@ -161,5 +168,27 @@ class ExtensionsController extends BackendController
             Yii::$app->session->setFlash('error', Yii::t('app', 'Package not found on packagist.'));
             return $this->renderContent('');
         }
+    }
+
+    public function actionDeactivateExtension($name)
+    {
+        $extension = Extensions::findByName($name);
+        if ($extension === null) {
+            throw new NotFoundHttpException;
+        }
+
+        if ($extension->is_active) {
+
+            if ($extension->deactivateExtension()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Extension deactivated.'));
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Can\'t deactivate extension.'));
+            }
+
+
+        } else {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Extension already inactive'));
+        }
+        return $this->renderContent('');
     }
 }

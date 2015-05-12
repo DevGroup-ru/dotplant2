@@ -9,5 +9,13 @@
 
 
 
-return[];
+return[
+    'modules' => [
+        'data' => [
+            'exportDirPath' => '@app/modules/data/files/export',
+            'importDirPath' => '@app/modules/data/files/import',
+            'defaultType' => 'csv',
+        ],
+    ],
+];
 

@@ -12,8 +12,9 @@
 return[
     'kv-user' => [],
     'kv-shop' => [],
-    'kv-seo' => [],
     'kv-page' => [],
+    'kv-seo' => [],
+    'kv-core' => [],
     'kv-review' => [],
     'kv-data' => [],
     'kv-twitterCards' => [],

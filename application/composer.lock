@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "hash": "5ad532ebb11a6d4513d756ab1f9ce852",
@@ -1446,12 +1446,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/bootstrap-fileinput.git",
-                "reference": "f6bfe0ae7edc34b0043c924e6cb6dc87d3840012"
+                "reference": "9f4e4ef1d896be7138ed78fc6066057d6b6ba58a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/f6bfe0ae7edc34b0043c924e6cb6dc87d3840012",
-                "reference": "f6bfe0ae7edc34b0043c924e6cb6dc87d3840012",
+                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/9f4e4ef1d896be7138ed78fc6066057d6b6ba58a",
+                "reference": "9f4e4ef1d896be7138ed78fc6066057d6b6ba58a",
                 "shasum": ""
             },
             "type": "library",
@@ -1486,7 +1486,7 @@
                 "progress",
                 "upload"
             ],
-            "time": "2015-05-10 19:53:55"
+            "time": "2015-05-12 17:53:52"
         },
         {
             "name": "kartik-v/bootstrap-popover-x",
@@ -1815,12 +1815,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-editable.git",
-                "reference": "79e86d44499b0843579e76c0ba70246da5a64962"
+                "reference": "ec5a3cd9114b22d20401780cbf7beafce791ed16"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-editable/zipball/79e86d44499b0843579e76c0ba70246da5a64962",
-                "reference": "79e86d44499b0843579e76c0ba70246da5a64962",
+                "url": "https://api.github.com/repos/kartik-v/yii2-editable/zipball/ec5a3cd9114b22d20401780cbf7beafce791ed16",
+                "reference": "ec5a3cd9114b22d20401780cbf7beafce791ed16",
                 "shasum": ""
             },
             "require": {
@@ -1855,7 +1855,7 @@
                 "popover-x",
                 "widget"
             ],
-            "time": "2015-04-21 15:13:26"
+            "time": "2015-05-12 16:59:10"
         },
         {
             "name": "kartik-v/yii2-field-range",
@@ -2782,12 +2782,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-widget-select2.git",
-                "reference": "b2a3981d3848c35a983bfcd57022cd18df40e418"
+                "reference": "1332599cf6c432b28ec6b5327c68612b0911a01e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/b2a3981d3848c35a983bfcd57022cd18df40e418",
-                "reference": "b2a3981d3848c35a983bfcd57022cd18df40e418",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/1332599cf6c432b28ec6b5327c68612b0911a01e",
+                "reference": "1332599cf6c432b28ec6b5327c68612b0911a01e",
                 "shasum": ""
             },
             "require": {
@@ -2822,7 +2822,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-05-09 08:06:45"
+            "time": "2015-05-12 14:02:40"
         },
         {
             "name": "kartik-v/yii2-widget-sidenav",
@@ -3530,12 +3530,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "aced82e3cd15d40e5fadebec5dae9fb1ae666596"
+                "reference": "8766cebf28beac9a45b511d7dba053da9d35eb9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/aced82e3cd15d40e5fadebec5dae9fb1ae666596",
-                "reference": "aced82e3cd15d40e5fadebec5dae9fb1ae666596",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/8766cebf28beac9a45b511d7dba053da9d35eb9f",
+                "reference": "8766cebf28beac9a45b511d7dba053da9d35eb9f",
                 "shasum": ""
             },
             "require": {
@@ -3570,17 +3570,17 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony EventDispatcher Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-05-05 20:46:18"
+            "homepage": "https://symfony.com",
+            "time": "2015-05-12 15:16:46"
         },
         {
             "name": "symfony/process",
@@ -3588,12 +3588,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Process.git",
-                "reference": "e14f07f6da1c5c4de684304508b68c409b614622"
+                "reference": "fd1d003a9947789503c1334cad9137b4f1e99293"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Process/zipball/e14f07f6da1c5c4de684304508b68c409b614622",
-                "reference": "e14f07f6da1c5c4de684304508b68c409b614622",
+                "url": "https://api.github.com/repos/symfony/Process/zipball/fd1d003a9947789503c1334cad9137b4f1e99293",
+                "reference": "fd1d003a9947789503c1334cad9137b4f1e99293",
                 "shasum": ""
             },
             "require": {
@@ -3619,17 +3619,17 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
                     "name": "Fabien Potencier",
                     "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony Process Component",
-            "homepage": "http://symfony.com",
-            "time": "2015-04-24 07:12:41"
+            "homepage": "https://symfony.com",
+            "time": "2015-05-12 15:48:43"
         },
         {
             "name": "vova07/yii2-imperavi-widget",

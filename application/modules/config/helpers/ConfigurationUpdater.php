@@ -46,11 +46,13 @@ class ConfigurationUpdater
             'loadExistingConfiguration' => $loadExistingConfiguration,
         ]);
 
+
         $isValid = true;
         $errorModule = '';
 
         foreach ($configurables as $model) {
             $configurableModel = $model->getConfigurableModel();
+            $configurableModel->loadState();
             $dataOk = true;
             if ($usePostData === true) {
                 $dataOk = $configurableModel->load(Yii::$app->request->post());
@@ -119,7 +121,6 @@ class ConfigurationUpdater
         if ($isValid === true) {
 
             // add aliases to common config
-
 
             $isValid =
                 $commonConfigWriter->commit() &&

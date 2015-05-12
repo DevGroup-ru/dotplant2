@@ -34,7 +34,7 @@ class UpdateHelper extends Component
      * @param bool $updateComposer True if we also need to run composer update before all actions
      * @return \Symfony\Component\Process\Process
      */
-    public function applyMigrations($migrationPath, $applyAppMigrations = true, $updateComposer = true, $down = false)
+    public function applyMigrations($migrationPath, $migrationTable = '{{%migration}}', $applyAppMigrations = true, $updateComposer = true, $down = false)
     {
         if ($applyAppMigrations === true) {
             $this->applyAppMigrations($updateComposer)->mustRun();
@@ -42,7 +42,7 @@ class UpdateHelper extends Component
             $this->updateComposer()->mustRun();
         }
 
-        $builder = $this->migrationCommandBuilder($migrationPath, $down);
+        $builder = $this->migrationCommandBuilder($migrationPath, $migrationTable, $down);
 
         $process = $builder->getProcess();
 
@@ -70,7 +70,7 @@ class UpdateHelper extends Component
             $this->updateComposer()->mustRun();
         }
 
-        $builder = $this->migrationCommandBuilder('', $down);
+        $builder = $this->migrationCommandBuilder('', '{{%migration}}', $down);
 
         $process = $builder->getProcess();
 
@@ -86,7 +86,7 @@ class UpdateHelper extends Component
      *
      * @return \Symfony\Component\Process\ProcessBuilder
      */
-    private function migrationCommandBuilder($migrationPath = '', $down = false)
+    private function migrationCommandBuilder($migrationPath = '', $migrationTable = '{{%migration}}', $down = false)
     {
         $builder = new ProcessBuilder();
 
@@ -98,7 +98,11 @@ class UpdateHelper extends Component
                 'migrate/'.($down?'down':'up'),
                 '--color=0',
                 '--interactive=0',
+                '--migrationTable=' . $migrationTable,
+                $down ? 65536 : 0
             ]);
+
+
 
         if (empty($migrationPath) === false) {
             $builder->add('--migrationPath=' . $migrationPath);

@@ -44,6 +44,7 @@ abstract class ExtensionModule extends \yii\base\Module
         $process = Yii::$app->updateHelper
             ->applyMigrations(
                 $migrationPath,
+                $this->getMigrationTable(),
                 $applyAppMigrations,
                 $updateComposer
             );
@@ -69,6 +70,7 @@ abstract class ExtensionModule extends \yii\base\Module
         $process = Yii::$app->updateHelper
             ->applyMigrations(
                 $migrationPath,
+                $this->getMigrationTable(),
                 false,
                 false,
                 true
@@ -89,6 +91,11 @@ abstract class ExtensionModule extends \yii\base\Module
         return realpath(
             "$directory/{$this->migrationsFolder}/"
         );
+    }
+
+    public function getMigrationTable()
+    {
+        return 'migrations_' . md5($this->className());
     }
 
     /**

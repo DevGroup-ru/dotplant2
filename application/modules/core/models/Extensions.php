@@ -2,6 +2,7 @@
 
 namespace app\modules\core\models;
 
+use app\components\ExtensionModule;
 use Yii;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
@@ -186,7 +187,7 @@ class Extensions extends \yii\db\ActiveRecord
         if ($package === null) {
             return false;
         } else {
-            return $package->is_active;
+            return boolval($package->is_active);
         }
     }
 
@@ -254,6 +255,34 @@ class Extensions extends \yii\db\ActiveRecord
         $moduleClassName = $this->namespace_prefix . 'Module';
         if (class_exists($moduleClassName) === true) {
             return $moduleClassName::installModule(false, false);
+        } else {
+            Yii::$app->session->setFlash('error', "Extension module class not found.");
+            return false;
+        }
+    }
+
+    public function deactivateExtension()
+    {
+        /** @var \app\components\ExtensionModule $moduleClassName */
+        $moduleClassName = $this->namespace_prefix . 'Module';
+        if (class_exists($moduleClassName) === true) {
+            $moduleId = $moduleClassName::$moduleId;
+            if (isset(Yii::$app->modules[$moduleId])) {
+
+                /** @var ExtensionModule $module */
+                $module = Yii::$app->getModule($moduleId);
+                if ($module->uninstallModule()) {
+                    $this->is_active = 0;
+                    return $this->save();
+                } else {
+                    Yii::$app->session->setFlash('error', "Can't uninstall extension.");
+                    return false;
+                }
+
+            } else {
+                Yii::$app->session->setFlash('error', "Extension module is not loaded in application config.");
+                return false;
+            }
         } else {
             Yii::$app->session->setFlash('error', "Extension module class not found.");
             return false;
