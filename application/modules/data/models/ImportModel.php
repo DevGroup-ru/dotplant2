@@ -2,6 +2,7 @@
 
 namespace app\modules\data\models;
 
+use app\modules\data\DataModule;
 use Yii;
 use yii\base\Model;
 use yii\helpers\Json;
@@ -106,6 +107,8 @@ class ImportModel extends Model implements \Serializable
             [['file'], 'file', 'extensions' => 'csv, xls, xlsx'],
             [['object'], 'integer'],
             [['object'], 'required'],
+            [['type'] ,'in', 'range'=> array_keys(self::knownTypes())],
+            [['type'] ,'default', 'value'=> Yii::$app->modules['data']->defaultType ],
             [['fields', 'conditions' ,'type'], 'safe'],
             [['addPropertyGroups', 'multipleValuesDelimiter', 'additionalFields'], 'safe'],
             [['createIfNotExists'], 'boolean'],

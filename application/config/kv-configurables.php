@@ -13,5 +13,6 @@ return[
     'kv-seo' => [],
     'kv-page' => [],
     'kv-review' => [],
+    'kv-data' => [],
 ];
 

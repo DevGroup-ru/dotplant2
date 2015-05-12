@@ -35,3 +35,6 @@ Pages split to reviews module.
 All changes in DB contained in m150508_084640_review_move , m150506_133039_review_module  migrations
 ReviewsWidget changed it's namespace from `app\reviews\widgets` to `app\modules\review\widgets`.
 If you used the own template of the ReviewsWidget , change the action of form
+
+### Data
+All changes in DB contained in m150512_060716_data_module_move  migrations

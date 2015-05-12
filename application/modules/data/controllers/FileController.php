@@ -13,7 +13,6 @@ use yii\base\ErrorException;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
 use yii\web\HttpException;
 use yii\web\UploadedFile;
 
@@ -21,7 +20,7 @@ use yii\web\UploadedFile;
  * Class FileController
  * @package app\modules\data\controllers
  */
-class FileController extends Controller
+class FileController  extends \app\backend\components\BackendController
 {
     /**
      * @return array
@@ -172,6 +171,10 @@ class FileController extends Controller
             $fields['additionalFields'] = [];
             if ($exampleModel instanceof ExportableInterface) {
                 $fields['additionalFields'] = $exampleModel::exportableAdditionalFields();
+            }
+
+            if ($model->type === null) {
+                $model->type = Yii::$app->modules['data']->defaultType;
             }
 
             return $this->render('import-export', [
