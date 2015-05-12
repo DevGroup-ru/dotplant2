@@ -6,6 +6,8 @@ use app;
 use app\backend\components\BackendController;
 use app\modules\core\models\Extensions;
 use Yii;
+use yii\data\ArrayDataProvider;
+use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 
@@ -28,8 +30,21 @@ class ExtensionsController extends BackendController
 
     public function actionExplore($q='', $p=1)
     {
+        $p = intval($p);
         $client = new app\modules\core\components\PackagistClient();
-        $packages = $client->search($q, ['type'=>'yii2-extension'], $p);
+        $packages = $client->search($q, ['type'=>'dotplant2-extension'], $p);
+
+
+
+
+        return $this->render(
+            'explore',
+            [
+                'packages' => $packages,
+                'query' => $q,
+                'page' => $p,
+            ]
+        );
     }
 
     public function actionUpdateComposer()

@@ -1,0 +1,27 @@
+.packages-grid {
+  .package {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 4px;
+
+    .package-name {
+      font-size: 120%;
+      font-weight: bold;
+      color: #3e3e3e;
+    }
+    .description {
+      height: 120px;
+      overflow: hidden;
+    }
+    .repository-url {
+      font-size: 80%;
+      color: #666666;
+      text-decoration: underline;
+      margin: 4px;
+      display: block;
+    }
+  }
+}
+.packages-search {
+  margin-bottom: 8px;
+}
