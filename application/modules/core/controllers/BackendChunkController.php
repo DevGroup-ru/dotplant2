@@ -2,7 +2,7 @@
 
 namespace app\modules\core\controllers;
 
-use app\modules\config\controllers\BackendController;
+use app\backend\components\BackendController;
 use yii\filters\AccessControl;
 use app\modules\core\models\ContentBlock;
 use Yii;

@@ -19,7 +19,7 @@ use yii\helpers\Html;
 class Configurable extends \yii\db\ActiveRecord
 {
     /**
-     * @var BaseConfigurableModel Configurable model instance for this Configurable record
+     * @var BaseConfigurationModel Configurable model instance for this Configurable record
      */
     private $configurableModel = null;
     /**
@@ -103,7 +103,7 @@ class Configurable extends \yii\db\ActiveRecord
 
     /**
      * Returns module configurable model that will handle user input
-     * @return \app\modules\config\models\BaseConfigurableModel
+     * @return \app\modules\config\models\BaseConfigurationModel
      * @throws InvalidConfigException
      */
     public function getConfigurableModel()

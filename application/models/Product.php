@@ -172,7 +172,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     }
 
     /**
-     * Search tasks
+     * Search products
      * @param $params
      * @return ActiveDataProvider
      */

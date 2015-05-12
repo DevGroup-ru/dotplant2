@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\page\controllers;
+namespace app\modules\page\backend;
 
 use app\models\Config;
 use app\models\Object;
@@ -16,7 +16,7 @@ use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 
-class BackendController extends \app\backend\components\BackendController
+class PageController extends \app\backend\components\BackendController
 {
 
     public function behaviors()

@@ -57,7 +57,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
             'configurableModule' => [
                 'class' => 'app\modules\config\behaviors\ConfigurableModuleBehavior',
                 'configurationView' => '@app/modules/seo/views/configurable/_config',
-                'configurableModel' => 'app\modules\seo\models\ConfigConfigurableModel',
+                'configurableModel' => 'app\modules\seo\models\ConfigConfigurationModel',
             ]
         ];
     }

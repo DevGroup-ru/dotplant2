@@ -3,18 +3,18 @@
 namespace app\modules\user\models;
 
 use app;
-use app\modules\config\models\BaseConfigurableModel;
+use app\modules\config\models\BaseConfigurationModel;
 use app\validators\ClassnameValidator;
 use Yii;
 use yii\helpers\StringHelper;
 
 /**
- * Class ConfigConfigurableModel represents configuration model for retrieving user input
+ * Class ConfigConfigurationModel represents configuration model for retrieving user input
  * in backend configuration subsystem.
  *
  * @package app\modules\user\models
  */
-class ConfigConfigurableModel extends BaseConfigurableModel
+class ConfigConfigurationModel extends BaseConfigurationModel
 {
     /**
      * Duration of login session for users in seconds.
@@ -144,7 +144,7 @@ class ConfigConfigurableModel extends BaseConfigurableModel
     {
         parent::init();
         $this->on(self::configurationSaveEvent(), function($event) {
-            /** @var ConfigConfigurableModel $model */
+            /** @var ConfigConfigurationModel $model */
             $model = $event->configurableModel;
 
 
@@ -261,5 +261,16 @@ class ConfigConfigurableModel extends BaseConfigurableModel
         }
 
         return true;
+    }
+
+    /**
+     * Returns array of aliases that should be set in common config
+     * @return array
+     */
+    public function aliases()
+    {
+        return [
+            '@user' => dirname(__FILE__) . '/../',
+        ];
     }
 }

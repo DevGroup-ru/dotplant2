@@ -2,10 +2,10 @@
 
 namespace app\modules\seo\models;
 
-use app\modules\config\models\BaseConfigurableModel;
+use app\modules\config\models\BaseConfigurationModel;
 use app\modules\seo\SeoModule;
 
-class ConfigConfigurableModel extends BaseConfigurableModel
+class ConfigConfigurationModel extends BaseConfigurationModel
 {
     public $cacheConfig;
     public $include;
@@ -86,6 +86,14 @@ class ConfigConfigurableModel extends BaseConfigurableModel
      * @return mixed
      */
     public function keyValueAttributes()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function aliases()
     {
         return [];
     }

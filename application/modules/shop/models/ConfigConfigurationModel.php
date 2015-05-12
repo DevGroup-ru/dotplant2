@@ -3,16 +3,16 @@
 namespace app\modules\shop\models;
 
 use app;
-use app\modules\config\models\BaseConfigurableModel;
+use app\modules\config\models\BaseConfigurationModel;
 use Yii;
 
 /**
- * Class ConfigConfigurableModel represents configuration model for retrieving user input
+ * Class ConfigConfigurationModel represents configuration model for retrieving user input
  * in backend configuration subsystem.
  *
  * @package app\modules\shop\models
  */
-class ConfigConfigurableModel extends BaseConfigurableModel
+class ConfigConfigurationModel extends BaseConfigurationModel
 {
     /**
      * @var int How much products per page to show
@@ -121,7 +121,7 @@ class ConfigConfigurableModel extends BaseConfigurableModel
     public function defaultValues()
     {
         /** @var app\modules\shop\ShopModule $module */
-        $module = Yii::$app->modules['shop'];
+        $module = $this->getModuleInstance();
 
         $attributes = array_keys($this->getAttributes());
         foreach ($attributes as $attribute) {
@@ -180,5 +180,14 @@ class ConfigConfigurableModel extends BaseConfigurableModel
         return [];
     }
 
-
+    /**
+     * Returns array of aliases that should be set in common config
+     * @return array
+     */
+    public function aliases()
+    {
+        return [
+            '@shop' => dirname(__FILE__) . '/../',
+        ];
+    }
 }
