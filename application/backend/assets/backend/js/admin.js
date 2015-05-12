@@ -138,17 +138,17 @@ $(function(){
     });
     $('[data-toggle="tooltip"]').tooltip();
 
-    jQuery('[data-toggle="tooltip"]').tooltip();
-    jQuery('[data-action="delete"]').on('click', function(e) {
-        jQuery('#delete-confirmation').attr('data-url', jQuery(this).attr('href')).attr('data-items', '').modal('show');
+    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-action="delete"]').on('click', function(e) {
+        $('#delete-confirmation').attr('data-url', $(this).attr('href')).attr('data-items', '').modal('show');
         return false;
     });
-    jQuery('#delete-confirmation [data-action="confirm"]').click(function() {
-        var $modal = jQuery(this).parents('.modal').eq(0);
+    $('#delete-confirmation [data-action="confirm"]').click(function() {
+        var $modal = $(this).parents('.modal').eq(0);
         var data =  typeof($modal.attr('data-items')) == "string" && $modal.attr('data-items').length > 0
             ? {'items': $modal.attr('data-items').split(',')}
             :{};
-        jQuery.ajax({
+        $.ajax({
             'url': $modal.attr('data-url'),
             'type': 'post',
             'data': data,
@@ -158,17 +158,17 @@ $(function(){
         });
         return true;
     });
-    jQuery('body').on('click', '[data-action="delete-category"]', function() {
-        jQuery('#delete-category-confirmation').attr('data-url', jQuery(this).attr('href')).attr('data-items', '').modal('show');
+    $('body').on('click', '[data-action="delete-category"]', function() {
+        $('#delete-category-confirmation').attr('data-url', $(this).attr('href')).attr('data-items', '').modal('show');
         return false;
     });
-    jQuery('#delete-category-confirmation [data-action="confirm"]').click(function() {
-        var $modal = jQuery(this).parents('.modal').eq(0);
+    $('#delete-category-confirmation [data-action="confirm"]').click(function() {
+        var $modal = $(this).parents('.modal').eq(0);
         var data =  typeof($modal.attr('data-items')) == "string" && $modal.attr('data-items').length > 0
             ? {'items': $modal.attr('data-items').split(',')}
             :{};
-        jQuery.ajax({
-            'url': $modal.attr('data-url') + '&mode=' + jQuery('#delete-mode').val(),
+        $.ajax({
+            'url': $modal.attr('data-url') + '&mode=' + $('#delete-mode').val(),
             'type': 'post',
             'data': data,
             'success': function (data) {
