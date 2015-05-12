@@ -26,6 +26,11 @@ class ApplicationConfigWriter extends Component
     public $configuration = null;
 
     /**
+     * @var string Code to append
+     */
+    public $append = '';
+
+    /**
      * @inheritdoc
      * @throws InvalidConfigException
      */
@@ -88,6 +93,8 @@ class ApplicationConfigWriter extends Component
  * This file is auto-generated.
  * Please don't modify it by-hand or all your changes can be lost.
  */
+
+{$this->append}
 
 return
 EOF;

@@ -5,8 +5,8 @@ namespace app\models;
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
 use app\components\Helper;
-use app\data\components\ImportableInterface;
-use app\data\components\ExportableInterface;
+use app\modules\data\components\ImportableInterface;
+use app\modules\data\components\ExportableInterface;
 use app\properties\HasProperties;
 use app\traits\GetImages;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -174,7 +174,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     }
 
     /**
-     * Search tasks
+     * Search products
      * @param $params
      * @return ActiveDataProvider
      */

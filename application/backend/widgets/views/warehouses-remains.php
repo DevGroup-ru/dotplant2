@@ -4,7 +4,7 @@ use kartik\helpers\Html;
 use yii\helpers\Url;
 /** @var $remains app\models\WarehouseProduct[] */
 /** @var $model app\models\Product */
-
+/** @var $this \yii\web\View */
 ?>
 
 <table class="table table-condensed table-striped table-hover">
@@ -68,8 +68,7 @@ use yii\helpers\Url;
     </tbody>
 </table>
 
-<script>
-    $(function(){
+<?php $this->beginBlock('warehousesWidget'); ?>
         $('.warehouse-remain-input').change(function(){
             var formData = {},
                 $this = $(this);
@@ -89,5 +88,5 @@ use yii\helpers\Url;
             });
             return true;
         })
-    })
-</script>
+<?php $this->endBlock(); ?>
+<?php $this->registerJs($this->blocks['warehousesWidget'], \yii\web\View::POS_READY); ?>

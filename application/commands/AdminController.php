@@ -61,7 +61,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Clear test reviews, orders and other information
+     * Clear test review, orders and other information
      * @throws \yii\db\Exception
      */
     public function actionClearTests()
