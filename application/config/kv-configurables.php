@@ -10,11 +10,12 @@
 
 
 return[
-    'kv-user' => [],
     'kv-shop' => [],
-    'kv-seo' => [],
-    'kv-image' => [],
+    'kv-user' => [],
     'kv-page' => [],
+    'kv-image' => [],
+    'kv-seo' => [],
+    'kv-core' => [],
     'kv-review' => [],
     'kv-data' => [],
 ];

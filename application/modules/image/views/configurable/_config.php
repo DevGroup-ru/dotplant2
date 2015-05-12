@@ -1,10 +1,11 @@
 <?php
 
 /** @var \app\modules\config\models\Configurable $configurable */
-use yii\bootstrap\Tabs;
-
 /** @var \app\backend\components\ActiveForm $form */
-/** @var \app\modules\image\models\ConfigConfigurableModel $model */
+/** @var \app\modules\image\models\ConfigConfigurationModel $model */
+
+use app\backend\widgets\BackendWidget;
+use yii\bootstrap\Tabs;
 
 ?>
 
@@ -15,18 +16,18 @@ use yii\bootstrap\Tabs;
         <?=$form->field($model, 'noImageSrc')?>
         <?=$form->field($model, 'thumbnailsDirectory')?>
         <?=$form->field($model, 'watermarkDirectory')?>
+    </div>
+    <div class="col-md-6 col-sm-12" id="fs-config">
         <?php
-        $configTabs = [];
         foreach ($model['components'] as $componentName => $componentConf) {
-            $item = [];
-            $item['label'] = $componentName;
+            BackendWidget::begin(['id' => $componentName, 'title' => Yii::t('app', $componentName)]);
 
             $necessaryContent = '';
             foreach ($componentConf['necessary'] as $necessaryConfName => $necessaryConfVal) {
                 $content = $form->field($model, "components[{$componentName}][necessary][{$necessaryConfName}]")->label(
                     $necessaryConfName
                 );
-                if (is_bool($necessaryConfVal) === true) {
+                if (is_bool($necessaryConfVal) === true || $necessaryConfName === 'active') {
                     $content = $content->widget(\kartik\widgets\SwitchInput::className());
                 }
                 $necessaryContent .= $content;
@@ -41,7 +42,7 @@ use yii\bootstrap\Tabs;
                     $unnecessaryConfName
                 );
             }
-            $item['content'] = Tabs::widget(
+            echo Tabs::widget(
                 [
                     'items' => [
                         ['label' => Yii::t('app', 'necessary'), 'content' => $necessaryContent],
@@ -49,10 +50,9 @@ use yii\bootstrap\Tabs;
                     ]
                 ]
             );
-            $configTabs[] = $item;
+            BackendWidget::end();
         }
         ?>
-        <?=Tabs::widget(['items' => $configTabs]);?>
     </div>
 </div>
 

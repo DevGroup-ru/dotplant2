@@ -232,7 +232,7 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
 }
 
 /* line 198, ../sass/admin.scss */
-#meta-form header, #counter-form header, #robots-form header {
+#meta-form header, #counter-form header, #robots-form header, #fs-config header {
   display: block;
 }
 
@@ -266,5 +266,3 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
 .packages-search {
   margin-bottom: 8px;
 }
-
-/*# sourceMappingURL=admin.css.map */
