@@ -22,7 +22,7 @@ class m150413_094340_thumbnail extends Migration
             [
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
                 'img_id' => 'INT UNSIGNED NOT NULL',
-                'thumb_filename' => 'VARCHAR(255) NOT NULL',
+                'thumb_path' => 'VARCHAR(255) NOT NULL',
                 'size_id' => 'INT UNSIGNED NOT NULL',
             ],
             $tableOptions
@@ -44,7 +44,7 @@ class m150413_094340_thumbnail extends Migration
             Watermark::tableName(),
             [
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
-                'watermark_src' => 'VARCHAR(255) NOT NULL',
+                'watermark_path' => 'VARCHAR(255) NOT NULL',
                 'position' => 'enum(\'TOP LEFT\',\'TOP RIGHT\',\'BOTTOM LEFT\',\'BOTTOM RIGHT\',\'CENTER\') NOT NULL DEFAULT \'TOP LEFT\''
             ],
             $tableOptions

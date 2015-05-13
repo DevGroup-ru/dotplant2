@@ -30,7 +30,7 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['thumb_id', 'water_id', 'src'], 'required'],
+            [['thumb_id', 'water_id', 'compiled_src'], 'required'],
             [['thumb_id', 'water_id'], 'integer'],
             [['compiled_src'], 'string', 'max' => 255]
         ];
@@ -67,9 +67,6 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
      */
     public static function getThumbnailWatermark($thumb, $water)
     {
-        /**
-         * @todo cache
-         */
         $watermark = static::findOne(['thumb_id' => $thumb->id, 'water_id' => $water->id]);
         if ($watermark === null) {
             $watermark = new ThumbnailWatermark();
@@ -93,28 +90,19 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
      */
     public static function createWatermark($thumb, $water)
     {
-        $thumbImage = Imagine::getImagine()->open(Yii::getAlias('@webroot' . $thumb->thumb_src));
-        $waterImage = Imagine::getImagine()->open(Yii::getAlias('@webroot' . $water->watermark_src));
-        $thumbSize = $thumbImage->getSize();
-        $waterSize = $waterImage->getSize();
-        $watermark_src = '@webroot' . $water->watermark_src;
+        $thumbImagine = Imagine::getImagine()->read(Yii::$app->fs->readStream($thumb->thumb_path));
+        $waterImagine = Imagine::getImagine()->read(Yii::$app->fs->readStream($water->watermark_path));
+        $thumbSize = $thumbImagine->getSize();
+        $waterSize = $waterImagine->getSize();
+
         // Resize watermark if it to large
         if ($thumbSize->getWidth() < $waterSize->getWidth() || $thumbSize->getHeight() < $waterSize->getHeight()) {
             $t = $thumbSize->getHeight() / $waterSize->getHeight();
-            $watermark_src = '@runtime' . str_replace(
-                    Yii::$app->getModule('image')->watermarkDirectory,
-                    '',
-                    $water->watermark_src
-                );
             if (round($t * $waterSize->getWidth()) <= $thumbSize->getWidth()) {
-                $waterImage->resize(new Box(round($t * $waterSize->getWidth()), $thumbSize->getHeight()))->save(
-                    Yii::getAlias($watermark_src)
-                );
+                $waterImagine->resize(new Box(round($t * $waterSize->getWidth()), $thumbSize->getHeight()));
             } else {
                 $t = $thumbSize->getWidth() / $waterSize->getWidth();
-                $waterImage->resize(new Box($thumbSize->getWidth(), round($t * $waterSize->getHeight())))->save(
-                    Yii::getAlias($watermark_src)
-                );
+                $waterImagine->resize(new Box($thumbSize->getWidth(), round($t * $waterSize->getHeight())));
             }
         }
         $position = [0, 0];
@@ -122,8 +110,8 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
 
         if ($water->position == Watermark::POSITION_CENTER) {
             $position = [
-                round(($thumbImage->getSize()->getWidth() - $waterImage->getSize()->getWidth()) / 2),
-                round(($thumbImage->getSize()->getHeight() - $waterImage->getSize()->getHeight()) / 2)
+                round(($thumbImagine->getSize()->getWidth() - $waterImagine->getSize()->getWidth()) / 2),
+                round(($thumbImagine->getSize()->getHeight() - $waterImagine->getSize()->getHeight()) / 2)
             ];
         } else {
             $posStr = explode(' ', $water->position);
@@ -132,7 +120,7 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
                     $position[0] = 0;
                     break;
                 case 'BOTTOM':
-                    $position[0] = $thumbImage->getSize()->getWidth() - $waterImage->getSize()->getWidth();
+                    $position[0] = $thumbImagine->getSize()->getWidth() - $waterImagine->getSize()->getWidth();
                     break;
             }
             switch ($posStr[1]) {
@@ -140,16 +128,35 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
                     $position[1] = 0;
                     break;
                 case 'RIGHT':
-                    $position[1] = $thumbImage->getSize()->getHeight() - $waterImage->getSize()->getHeight();
+                    $position[1] = $thumbImagine->getSize()->getHeight() - $waterImagine->getSize()->getHeight();
                     break;
             }
         }
-        $watermark = Imagine::watermark('@webroot' . $thumb->thumb_src, $watermark_src, $position);
+        $tmpThumbFilePath = Yii::getAlias(
+            '@runtime/' . str_replace(Yii::$app->getModule('image')->thumbnailsDirectory, '', $thumb->thumb_path)
+        );
+        $tmpWaterFilePath = Yii::getAlias(
+            '@runtime/' . str_replace(Yii::$app->getModule('image')->watermarkDirectory, '', $water->watermark_path)
+        );
+        $thumbImagine->save($tmpThumbFilePath);
+        $waterImagine->save($tmpWaterFilePath);
+        //next line use existing images from file system. need to save Imagines an save paths
+        $watermark = Imagine::watermark(
+            $tmpThumbFilePath,
+            $tmpWaterFilePath,
+            $position
+        );
         $path = Yii::$app->getModule('image')->thumbnailsDirectory;
-        $file_info = pathinfo($thumb->thumb_src);
-        $watermark_info = pathinfo($water->watermark_src);
-        $src = "$path/{$file_info['filename']}-{$watermark_info['filename']}.{$file_info['extension']}";
-        $watermark->save(Yii::getAlias('@webroot') . $src);
-        return $src;
+        $fileInfo = pathinfo($thumb->thumb_path);
+        $watermarkInfo = pathinfo($water->watermark_path);
+        $fileName = "{$fileInfo['filename']}-{$watermarkInfo['filename']}.{$fileInfo['extension']}";
+        $watermark->save(Yii::getAlias('@runtime/') . $fileName);
+        $stream = fopen(Yii::getAlias('@runtime/') . $fileName, 'r+');
+        Yii::$app->fs->putStream("$path/$fileName", $stream);
+        fclose($stream);
+        unlink($tmpThumbFilePath);
+        unlink($tmpWaterFilePath);
+        unlink(Yii::getAlias('@runtime/' . $fileName));
+        return "$path/$fileName";
     }
 }

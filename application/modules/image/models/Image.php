@@ -6,6 +6,7 @@ use app\behaviors\ImageExist;
 use app\models\Object;
 use app\widgets\image\ImageDropzone;
 use Yii;
+use yii\base\Exception;
 use yii\caching\TagDependency;
 
 /**
@@ -227,11 +228,16 @@ class Image extends \yii\db\ActiveRecord
     {
         $size = ThumbnailSize::getByDemand($demand);
         $thumb = Thumbnail::getImageThumbnailBySize($this, $size);
-        $src = $thumb->thumb_filename;
+        $src = $thumb->thumb_path;
         if ($useWatermark === true) {
             $watermark = Watermark::findOne($size->default_watermark_id);
-            $water = ThumbnailWatermark::getThumbnailWatermark($thumb, $watermark);
-            $src = $water->src;
+            if ($watermark !== null) {
+                $water = ThumbnailWatermark::getThumbnailWatermark($thumb, $watermark);
+                $src = $water->src;
+            } else {
+                throw new Exception(Yii::t('app', 'Set watermark id'));
+            }
+
         }
         return $src;
     }

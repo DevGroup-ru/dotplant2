@@ -99,7 +99,8 @@ class ConfigConfigurationModel extends BaseConfigurationModel
         foreach ($this->components as $name => $component) {
             $necessary = ArrayHelper::getValue($component, 'necessary', []);
             $unnecessary = ArrayHelper::getValue($component, 'unnecessary', []);
-            if (ArrayHelper::remove($necessary, 'active', false) === true) {
+            $active = ArrayHelper::remove($necessary, 'active', false);
+            if ($active === true || $active === '1') {
                 foreach ($unnecessary as $confName => $confVal) {
                     if ($confVal === '') {
                         ArrayHelper::remove($unnecessary, $confName);
@@ -108,6 +109,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 $components[$name] = ArrayHelper::merge($necessary, $unnecessary);
             }
         }
+
         return [
             'modules' => [
                 'image' => $attributes,

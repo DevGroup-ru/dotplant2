@@ -91,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $this->registerCss('.file-preview img {max-width:100%;}');
                     $options = [
                         'initialPreview' => [
-                            Html::img($model->watermark_src)
+                            Html::img($model->watermark_path)
                         ]
                     ];
                 }

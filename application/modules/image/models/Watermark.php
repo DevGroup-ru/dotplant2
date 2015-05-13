@@ -8,7 +8,7 @@ use yii\data\ActiveDataProvider;
 /**
  * This is the model class for table "watermark".
  * @property integer $id
- * @property string $watermark_src
+ * @property string $watermark_path
  * @property string $position
  */
 class Watermark extends \yii\db\ActiveRecord
@@ -40,8 +40,8 @@ class Watermark extends \yii\db\ActiveRecord
         return [
             [['image'], 'safe'],
             [['image'], 'file', 'extensions' => 'jpg, gif, png'],
-            [['watermark_src'], 'required'],
-            [['watermark_src'], 'string', 'max' => 255],
+            [['watermark_path'], 'required'],
+            [['watermark_path'], 'string', 'max' => 255],
             [['position'], 'string'],
         ];
     }
@@ -64,7 +64,7 @@ class Watermark extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'watermark_src' => Yii::t('app', 'Watermark Src'),
+            'watermark_path' => Yii::t('app', 'Watermark Src'),
             'position' => Yii::t('app', 'Position'),
             'image' => Yii::t('app', 'Image'),
         ];
@@ -91,7 +91,7 @@ class Watermark extends \yii\db\ActiveRecord
             return $dataProvider;
         }
         $query->andFilterWhere(['id' => $this->id]);
-        $query->andFilterWhere(['like', 'watermark_src' => $this->watermark_src]);
+        $query->andFilterWhere(['like', 'watermark_path' => $this->watermark_path]);
         return $dataProvider;
     }
 }

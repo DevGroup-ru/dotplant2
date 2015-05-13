@@ -13,7 +13,7 @@ class ImageExist extends Behavior
     public function getSrc()
     {
         $src = $this->owner->{$this->srcAttrName};
-        if (file_exists(Yii::getAlias("@webroot{$src}")) === false) {
+        if (Yii::$app->fs->has($src) === false) {
             $src = Yii::$app->getModule('image')->noImageSrc;
             if (preg_match('|http(s)?|i', $src) === 1) {
                 $path = '/assets/noimage.jpg';

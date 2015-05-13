@@ -10,8 +10,8 @@
 
 
 return[
-    '@shop' => '/Users/bethrezen/git-my/dotplant2/application/modules/shop/models/../',
-    '@user' => '/Users/bethrezen/git-my/dotplant2/application/modules/user/models/../',
-    '@core' => '/Users/bethrezen/git-my/dotplant2/application/modules/core/models/../',
+    '@shop' => '/var/www/images/application/modules/shop/models/../',
+    '@user' => '/var/www/images/application/modules/user/models/../',
+    '@core' => '/var/www/images/application/modules/core/models/../',
 ];
 

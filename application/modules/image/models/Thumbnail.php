@@ -14,7 +14,7 @@ use yii\web\BadRequestHttpException;
  * This is the model class for table "thumbnail".
  * @property integer $id
  * @property integer $img_id
- * @property string $thumb_filename
+ * @property string $thumb_path
  * @property integer $size_id
  */
 class Thumbnail extends \yii\db\ActiveRecord
@@ -33,9 +33,9 @@ class Thumbnail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['img_id', 'thumb_filename', 'size_id'], 'required'],
+            [['img_id', 'thumb_path', 'size_id'], 'required'],
             [['img_id', 'size_id'], 'integer'],
-            [['thumb_filename'], 'string', 'max' => 255]
+            [['thumb_path'], 'string', 'max' => 255]
         ];
     }
 
@@ -44,7 +44,7 @@ class Thumbnail extends \yii\db\ActiveRecord
         return [
             [
                 'class' => ImageExist::className(),
-                'srcAttrName' => 'thumb_filename',
+                'srcAttrName' => 'thumb_path',
             ]
         ];
     }
@@ -57,7 +57,7 @@ class Thumbnail extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'img_id' => Yii::t('app', 'Img ID'),
-            'thumb_filename' => Yii::t('app', 'Thumb Src'),
+            'thumb_path' => Yii::t('app', 'Thumb Src'),
             'size_id' => Yii::t('app', 'Size ID'),
         ];
     }
@@ -79,7 +79,7 @@ class Thumbnail extends \yii\db\ActiveRecord
                     'size_id' => $size->id,
                 ]
             );
-            $thumb->thumb_filename = static::createThumbnail($image, $size);
+            $thumb->thumb_path = static::createThumbnail($image, $size);
             $thumb->save();
         }
         return $thumb;

@@ -13,12 +13,12 @@ BackendWidget::begin(['title' => '']);
 echo Html::beginTag('div', ['class' => 'form-group no-margin']);
 echo Html::a(
     Yii::t('app', 'Create thumbnails for all images'),
-    ['/backend/thumbnail/recreate', 'param' => 'all'],
+    ['recreate', 'param' => 'all'],
     ['class' => 'btn btn-success']
 );
 echo Html::a(
     Yii::t('app', 'Create thumbnails for images ids from config'),
-    ['/backend/thumbnail/recreate', 'param' => 'config'],
+    ['recreate', 'param' => 'config'],
     ['class' => 'btn btn-success col-md-offset-1']
 );
 echo Html::endTag('div');

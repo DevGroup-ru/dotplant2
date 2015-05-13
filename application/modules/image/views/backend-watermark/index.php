@@ -22,14 +22,14 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php $this->beginBlock('add-button'); ?>
 <?=Html::a(
     Icon::show('plus') . ' ' . Yii::t('app', 'Add'),
-    ['/backend/watermark/edit', 'returnUrl' => Helper::getReturnUrl()],
+    ['edit', 'returnUrl' => Helper::getReturnUrl()],
     [
         'class' => 'btn btn-success',
     ]
 )?>
 <?=RemoveAllButton::widget(
     [
-        'url' => '/backend/watermark/remove-all',
+        'url' => 'remove-all',
         'gridSelector' => '.grid-view',
         'htmlOptions' => [
             'class' => 'btn btn-danger pull-right'
@@ -53,9 +53,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             [
                 'class' => TextWrapper::className(),
-                'attribute' => 'watermark_src',
+                'attribute' => 'watermark_path',
                 'callback_wrapper' => function ($content, $model) {
-                    return Html::img($model->watermark_src, ['style' => 'max-width:200px;max-height:200px;']);
+                    return Html::img($model->watermark_path, ['style' => 'max-width:200px;max-height:200px;']);
                 }
             ],
             [

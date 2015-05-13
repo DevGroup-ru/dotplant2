@@ -53,9 +53,11 @@ class BackendWatermarkController extends \app\backend\components\BackendControll
         if ($model->load($post)) {
             $image = UploadedFile::getInstance($model, 'image');
             if ($image !== null) {
-                $path = Yii::$app->getModule('image')->watermarkDirectory;
-                $model->watermark_src = $path . '/' . $image->name;
-                $image->saveAs(Yii::getAlias('@webroot') . $path);
+                $path = Yii::$app->getModule('image')->watermarkDirectory . '/' . $image->name;
+                $model->watermark_path = $path;
+                $stream = fopen($image->tempName, 'r+');
+                Yii::$app->fs->writeStream($path, $stream);
+                fclose($stream);
             }
             if ($model->validate() && $model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
