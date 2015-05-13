@@ -81,17 +81,17 @@ class m150507_064204_new_order extends Migration
         // Update Object model data
         $this->update(
             Object::tableName(),
-            ['object_class' => 'app\modules\page\models\Category'],
+            ['object_class' => 'app\modules\shop\models\Category'],
             ['object_class' => 'app\models\Category']
         );
         $this->update(
             Object::tableName(),
-            ['object_class' => 'app\modules\page\models\Product'],
+            ['object_class' => 'app\modules\shop\models\Product'],
             ['object_class' => 'app\models\Product']
         );
         $this->update(
             Object::tableName(),
-            ['object_class' => 'app\modules\page\models\Order'],
+            ['object_class' => 'app\modules\shop\models\Order'],
             ['object_class' => 'app\models\Order']
         );
         // Update DynamicContent model data
