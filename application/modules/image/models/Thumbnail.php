@@ -111,7 +111,9 @@ class Thumbnail extends \yii\db\ActiveRecord
             $size = ThumbnailSize::findOne(ArrayHelper::getValue($this, 'size_id', 0));
             if ($size !== null) {
                 $watermark = Watermark::findOne($size->default_watermark_id);
-                ThumbnailWatermark::getThumbnailWatermark($this, $watermark);
+                if ($watermark !== null) {
+                    ThumbnailWatermark::getThumbnailWatermark($this, $watermark);
+                }
             } else {
                 throw new BadRequestHttpException(Yii::t('app', 'Set thumbnail size'));
             }
@@ -123,7 +125,7 @@ class Thumbnail extends \yii\db\ActiveRecord
         parent::afterDelete();
         Yii::$app->fs->delete($this->thumb_path);
         $thumbnailWatermarks = ThumbnailWatermark::findAll(['thumb_id' => $this->id]);
-        foreach($thumbnailWatermarks as $thumbnailWatermark){
+        foreach ($thumbnailWatermarks as $thumbnailWatermark) {
             $thumbnailWatermark->delete();
         }
     }

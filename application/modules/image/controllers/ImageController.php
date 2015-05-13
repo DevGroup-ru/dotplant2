@@ -6,6 +6,7 @@ namespace app\modules\image\controllers;
 use app\modules\image\models\Image;
 use app\modules\image\models\Thumbnail;
 use app\modules\image\models\ThumbnailWatermark;
+use app\modules\image\models\Watermark;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -37,6 +38,19 @@ class ImageController extends Controller
         $response->format = Response::FORMAT_RAW;
         $response->getHeaders()->set('Content-type', Yii::$app->fs->getMimetype($thumb->thumb_path));
         return $thumb->file;
+    }
+
+    public function actionWatermark($fileName)
+    {
+        $response = Yii::$app->getResponse();
+        $water = Watermark::findOne(['watermark_path' => $fileName]);
+        if ($water === null) {
+            throw new NotFoundHttpException;
+        }
+
+        $response->format = Response::FORMAT_RAW;
+        $response->getHeaders()->set('Content-type', Yii::$app->fs->getMimetype($water->watermark_path));
+        return $water->file;
     }
 
     public function actionThumbnailWatermark($fileName)

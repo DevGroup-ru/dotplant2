@@ -8,6 +8,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use kartik\icons\Icon;
 use app\modules\image\models\ThumbnailSize;
+use yii\helpers\Url;
 
 /**
  * @var yii\web\View $this
@@ -94,13 +95,16 @@ $this->params['breadcrumbs'][] = $this->title;
                             $watermarks,
                             'id',
                             function ($watermarks) {
-                                return Html::img($watermarks->watermark_path, ['style' => 'max-width:200px;']);
+                                return Html::img(
+                                    Url::to(['/image/image/watermark', 'fileName' => $watermarks->watermark_path]),
+                                    ['style' => 'max-width:200px;']
+                                );
                             }
                         )
                     );
                 }
                 ?>
-                <?= $form->field($model, 'resize_mode')->dropDownList(ThumbnailSize::getResizeModes()) ?>
+                <?=$form->field($model, 'resize_mode')->dropDownList(ThumbnailSize::getResizeModes())?>
                 <?php BackendWidget::end(); ?>
             </article>
 

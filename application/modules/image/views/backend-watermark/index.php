@@ -7,6 +7,7 @@ use kartik\dynagrid\DynaGrid;
 use kartik\grid\CheckboxColumn;
 use kartik\icons\Icon;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /**
  * @var yii\web\View $this
@@ -55,7 +56,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => TextWrapper::className(),
                 'attribute' => 'watermark_path',
                 'callback_wrapper' => function ($content, $model) {
-                    return Html::img($model->watermark_path, ['style' => 'max-width:200px;max-height:200px;']);
+                    return Html::img(
+                        Url::to(['/image/image/watermark', 'fileName' => $model->watermark_path]),
+                        ['style' => 'max-width:200px;max-height:200px;']
+                    );
                 }
             ],
             [

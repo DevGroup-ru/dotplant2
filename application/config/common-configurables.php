@@ -20,7 +20,7 @@ return[
             'defaultThumbnailSize' => '80x80',
             'noImageSrc' => 'http://placehold.it/300&text=Image+not+found',
             'thumbnailsDirectory' => 'thumbnail',
-            'useWatermark' => '0',
+            'useWatermark' => '1',
             'watermarkDirectory' => 'watermark',
         ],
     ],

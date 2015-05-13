@@ -233,7 +233,7 @@ class Image extends \yii\db\ActiveRecord
             $watermark = Watermark::findOne($size->default_watermark_id);
             if ($watermark !== null) {
                 $water = ThumbnailWatermark::getThumbnailWatermark($thumb, $watermark);
-                $src = $water->src;
+                $src = $water->compiled_src;
             } else {
                 throw new Exception(Yii::t('app', 'Set watermark id'));
             }

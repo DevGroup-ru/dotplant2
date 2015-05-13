@@ -107,7 +107,7 @@ $config = [
                     'class' => 'app\components\ObjectRule',
                 ],
                 'events-beacon' => 'core/events-beacon/index',
-                'image/image/<action:(image|thumbnail|thumbnail-watermark)>/<fileName:.+>' => 'image/image/<action>',
+                'image/image/<action:(image|thumbnail|watermark|thumbnail-watermark)>/<fileName:.+>' => 'image/image/<action>',
             ],
         ],
         'assetManager' => [

@@ -7,6 +7,7 @@ use kartik\widgets\ActiveForm;
 use kartik\widgets\FileInput;
 use yii\helpers\Html;
 use kartik\icons\Icon;
+use yii\helpers\Url;
 
 /**
  * @var yii\web\View $this
@@ -91,7 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $this->registerCss('.file-preview img {max-width:100%;}');
                     $options = [
                         'initialPreview' => [
-                            Html::img($model->watermark_path)
+                            Html::img(Url::to(['/image/image/watermark', 'fileName' => $model->watermark_path]))
                         ]
                     ];
                 }
