@@ -2,6 +2,7 @@
 
 namespace app\modules\image\models;
 
+use app\behaviors\ImageExist;
 use Yii;
 use yii\data\ActiveDataProvider;
 
@@ -67,6 +68,16 @@ class Watermark extends \yii\db\ActiveRecord
             'watermark_path' => Yii::t('app', 'Watermark Src'),
             'position' => Yii::t('app', 'Position'),
             'image' => Yii::t('app', 'Image'),
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => ImageExist::className(),
+                'srcAttrName' => 'watermark_path',
+            ]
         ];
     }
 

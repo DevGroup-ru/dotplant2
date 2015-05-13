@@ -51,7 +51,7 @@ class Image extends \yii\db\ActiveRecord
         return [
             [
                 'class' => ImageExist::className(),
-                'srcAttrName' => 'image_src',
+                'srcAttrName' => 'filename',
             ]
         ];
     }

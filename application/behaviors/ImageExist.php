@@ -8,19 +8,14 @@ use yii\base\Behavior;
 
 class ImageExist extends Behavior
 {
-    public $srcAttrName = 'image_src';
+    public $srcAttrName = 'filename';
 
-    public function getSrc()
+    public function getFile()
     {
         $src = $this->owner->{$this->srcAttrName};
         if (Yii::$app->fs->has($src) === false) {
             $src = Yii::$app->getModule('image')->noImageSrc;
-            if (preg_match('|http(s)?|i', $src) === 1) {
-                $path = '/assets/noimage.jpg';
-                file_put_contents(Yii::getAlias("@webroot$path"), file_get_contents($src));
-                chmod(Yii::getAlias("@webroot$path"), 0766);
-                $src = $path;
-            }
+            $stream = file_get_contents($src);
             $errorImage = ErrorImage::findOne(
                 ['img_id' => $this->owner->id, 'class_name' => $this->owner->className()]
             );
@@ -29,7 +24,9 @@ class ImageExist extends Behavior
                 $errorImage->setAttributes(['img_id' => $this->owner->id, 'class_name' => $this->owner->className()]);
                 $errorImage->save();
             }
+        } else {
+            $stream = Yii::$app->fs->readStream($src);
         }
-        return $src;
+        return stream_get_contents($stream);
     }
 }
