@@ -129,6 +129,7 @@ class UpdateHelper extends Component
     {
         $builder = $this->getComposerBuilder()
             ->add('require')
+            ->add('--prefer-dist')
             ->add($package);
 
         $process = $builder->getProcess();
