@@ -8,6 +8,8 @@ use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\helpers\Json;
 
+// @todo Delete this class
+
 /**
  * This is the model class for table "cart".
  *

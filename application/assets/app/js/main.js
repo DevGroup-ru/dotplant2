@@ -18,7 +18,7 @@ var Shop = {
                 }
             },
             'type' : 'post',
-            'url' : '/cart/add'
+            'url' : '/shop/new-cart/add'
         });
     },
     'changeAmount' : function(orderItemId, quantity, callback) {
@@ -35,24 +35,7 @@ var Shop = {
                 }
             },
             'type' : 'post',
-            'url' : '/cart/change-quantity'
-        });
-    },
-    'changeAdditionalParams' : function(orderItemId, params, callback) {
-        var data = {
-            'id' : orderItemId,
-            'additionalParams' : params
-        };
-        jQuery.ajax({
-            'data' : data,
-            'dataType' : 'json',
-            'success' : function(data) {
-                if (typeof(callback) === 'function') {
-                    callback(data);
-                }
-            },
-            'type' : 'post',
-            'url' : '/cart/change-additional-params'
+            'url' : '/shop/new-cart/change-quantity'
         });
     }
 };

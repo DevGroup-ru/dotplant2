@@ -3,6 +3,7 @@
 namespace app\modules\shop\models;
 
 use app\behaviors\Tree;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -35,6 +36,9 @@ class OrderItem extends ActiveRecord
             [
                 'class' => Tree::className(),
                 'cascadeDeleting' => true,
+            ],
+            [
+                'class' => ActiveRecordHelper::className(),
             ],
         ];
     }

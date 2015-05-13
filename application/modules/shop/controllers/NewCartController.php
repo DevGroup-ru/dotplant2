@@ -2,6 +2,7 @@
 
 namespace app\modules\shop\controllers;
 
+use app\modules\shop\models\Currency;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderItem;
 use app\modules\shop\models\Product;
@@ -24,13 +25,14 @@ class NewCartController extends Controller
     /**
      * Get Order.
      * @param bool $create Create order if it does not exist
+     * @param bool $throwException Throw exception if it does not exist
      * @return Order
      * @throws NotFoundHttpException
      */
-    protected function loadOrder($create = false)
+    protected function loadOrder($create = false, $throwException = true)
     {
         $model = Order::getOrder($create);
-        if (is_null($model)) {
+        if (is_null($model) && $throwException) {
             throw new NotFoundHttpException;
         }
         return $model;
@@ -103,13 +105,17 @@ class NewCartController extends Controller
 
     public function actionChangeQuantity()
     {
-        // @todo Throw exception if order stage isn't a forming.
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $id = Yii::$app->request->post('id');
         $quantity = Yii::$app->request->post('quantity');
         if (is_null($id) || is_null($quantity) || (double) Yii::$app->request->post('quantity') <= 0) {
             throw new BadRequestHttpException;
         }
         $orderItem = $this->loadOrderItem($id);
+        $order = $this->loadOrder();
+        if (is_null($order->stage) || $order->stage->immutable_by_user == 1) {
+            throw new BadRequestHttpException;
+        }
         $orderItem->quantity = $quantity;
         // @todo Consider lock_product_price ?
         if ($orderItem->lock_product_price == 0) {
@@ -119,7 +125,20 @@ class NewCartController extends Controller
         $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
         $orderItem->total_price = $totalPriceWithoutDiscount; // @todo Need to implement discount. It has been calculated without discount now
         $orderItem->save();
-        $this->loadOrder()->calculate(true);
+        $mainCurrency = Currency::getMainCurrency();
+        if ($order->calculate(true)) {
+            return [
+                'success' => true,
+                'itemsCount' => $order->items_count,
+                'itemPrice' => $mainCurrency->format($orderItem->total_price),
+                'totalPrice' => $mainCurrency->format($order->total_price),
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => Yii::t('app', 'Cannot change quantity'),
+            ];
+        }
     }
 
     /**
@@ -151,5 +170,14 @@ class NewCartController extends Controller
             throw new BadRequestHttpException;
         }
         $result = $this->addProductsToOrder(Yii::$app->request->post('products'));
+    }
+
+    public function actionIndex()
+    {
+        $model = $this->loadOrder(false, false);
+        if (!is_null($model)) {
+            $model->calculate();
+        }
+        return $this->render('index', ['model' => $model]);
     }
 }
