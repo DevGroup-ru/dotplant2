@@ -23,31 +23,36 @@ class ConfigurationUpdater
      * @param bool $usePostData
      * @return bool
      */
-    public static function updateConfiguration(&$configurables, $usePostData = true)
+    public static function updateConfiguration(&$configurables, $usePostData = true, $loadExistingConfiguration = true)
     {
         $commonConfigWriter = new ApplicationConfigWriter([
             'filename' => '@app/config/common-configurables.php',
+            'loadExistingConfiguration' => $loadExistingConfiguration,
         ]);
         $webConfigWriter = new ApplicationConfigWriter([
             'filename' => '@app/config/web-configurables.php',
+            'loadExistingConfiguration' => $loadExistingConfiguration,
         ]);
         $consoleConfigWriter = new ApplicationConfigWriter([
             'filename' => '@app/config/console-configurables.php',
+            'loadExistingConfiguration' => $loadExistingConfiguration,
         ]);
         $kvConfigWriter = new ApplicationConfigWriter([
             'filename' => '@app/config/kv-configurables.php',
+            'loadExistingConfiguration' => $loadExistingConfiguration,
         ]);
         $aliasesConfigWriter = new ApplicationConfigWriter([
             'filename' => '@app/config/aliases.php',
+            'loadExistingConfiguration' => $loadExistingConfiguration,
         ]);
+
 
         $isValid = true;
         $errorModule = '';
 
-        $aliases = [];
-
         foreach ($configurables as $model) {
             $configurableModel = $model->getConfigurableModel();
+            $configurableModel->loadState();
             $dataOk = true;
             if ($usePostData === true) {
                 $dataOk = $configurableModel->load(Yii::$app->request->post());
@@ -116,7 +121,6 @@ class ConfigurationUpdater
         if ($isValid === true) {
 
             // add aliases to common config
-
 
             $isValid =
                 $commonConfigWriter->commit() &&

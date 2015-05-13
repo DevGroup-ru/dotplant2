@@ -10,6 +10,7 @@
 
 
 return[
+    'kv-user' => [],
     'kv-shop' => [],
     'kv-user' => [],
     'kv-page' => [],
@@ -18,5 +19,6 @@ return[
     'kv-core' => [],
     'kv-review' => [],
     'kv-data' => [],
+    'kv-twitterCards' => [],
 ];
 

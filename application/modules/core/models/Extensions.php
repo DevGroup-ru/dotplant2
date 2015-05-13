@@ -2,6 +2,7 @@
 
 namespace app\modules\core\models;
 
+use app\components\ExtensionModule;
 use Yii;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
@@ -15,7 +16,6 @@ use yii\data\ActiveDataProvider;
  * @property integer $id
  * @property string $name
  * @property integer $is_active
- * @property string $packagist_name
  * @property string $force_version
  * @property integer $type
  * @property string $latest_version
@@ -27,6 +27,7 @@ use yii\data\ActiveDataProvider;
 class Extensions extends \yii\db\ActiveRecord
 {
     private static $identity_map = [];
+    private static $identity_map_by_package_name = [];
 
     /**
      * @inheritdoc
@@ -54,10 +55,10 @@ class Extensions extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'packagist_name', 'namespace_prefix'], 'required'],
+            [['name', 'namespace_prefix'], 'required'],
             [['is_active', 'type'], 'integer'],
             [['current_package_version_timestamp', 'latest_package_version_timestamp'], 'safe'],
-            [['name', 'packagist_name', 'force_version', 'latest_version', 'homepage', 'namespace_prefix'], 'string', 'max' => 255]
+            [['name', 'force_version', 'latest_version', 'homepage', 'namespace_prefix'], 'string', 'max' => 255]
         ];
     }
 
@@ -70,7 +71,6 @@ class Extensions extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
             'is_active' => Yii::t('app', 'Is Active'),
-            'packagist_name' => Yii::t('app', 'Packagist Name'),
             'force_version' => Yii::t('app', 'Force Version'),
             'type' => Yii::t('app', 'Type'),
             'latest_version' => Yii::t('app', 'Latest Version'),
@@ -84,17 +84,29 @@ class Extensions extends \yii\db\ActiveRecord
     /**
      * Returns model instance by ID using IdentityMap
      * @param integer $id
-     * @return Object
+     * @return Extensions|null
      */
     public static function findById($id)
     {
         if (!isset(static::$identity_map[$id])) {
-            static::$identity_map[$id] = Yii::$app->cache->get(static::tableName() . ': ' . $id);
+            static::$identity_map[$id] = Yii::$app->cache->get(static::tableName() . ':' . $id);
             if (static::$identity_map[$id] === false) {
                 static::$identity_map[$id] = static::findOne($id);
-                if (is_object(static::$identity_map[$id])) {
+                if (is_object(static::$identity_map[$id]) === true) {
                     Yii::$app->cache->set(
-                        static::tableName() . ': ' . $id,
+                        static::tableName() . ':' . $id,
+                        static::$identity_map[$id],
+                        86400,
+                        new TagDependency(
+                            [
+                                'tags' => [
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id),
+                                ],
+                            ]
+                        )
+                    );
+                    Yii::$app->cache->set(
+                        static::tableName() . ':name:' . static::$identity_map[$id]->name,
                         static::$identity_map[$id],
                         86400,
                         new TagDependency(
@@ -107,8 +119,76 @@ class Extensions extends \yii\db\ActiveRecord
                     );
                 }
             }
+            if (is_object(static::$identity_map[$id]) === false) {
+                static::$identity_map_by_package_name[static::$identity_map[$id]->name] = static::$identity_map[$id];
+            }
         }
         return static::$identity_map[$id];
+    }
+
+    /**
+     * Returns model instance by name using IdentityMap
+     * @param string $name
+     * @return Extensions|null
+     */
+    public static function findByName($name)
+    {
+        if (!isset(static::$identity_map_by_package_name[$name])) {
+            static::$identity_map_by_package_name[$name] = Yii::$app->cache->get(static::tableName() . ':name:' . $name);
+            if (static::$identity_map_by_package_name[$name] === false) {
+                static::$identity_map_by_package_name[$name] = static::find()
+                    ->where(['name' => $name])
+                    ->one();
+                if (is_object(static::$identity_map_by_package_name[$name]) === true) {
+                    $id = static::$identity_map_by_package_name[$name]->id;
+                    Yii::$app->cache->set(
+                        static::tableName() . ':' . $id,
+                        static::$identity_map_by_package_name[$name],
+                        86400,
+                        new TagDependency(
+                            [
+                                'tags' => [
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id),
+                                ],
+                            ]
+                        )
+                    );
+                    Yii::$app->cache->set(
+                        static::tableName() . ':name:' . $name,
+                        static::$identity_map_by_package_name[$name],
+                        86400,
+                        new TagDependency(
+                            [
+                                'tags' => [
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id),
+                                ],
+                            ]
+                        )
+                    );
+                }
+            }
+            if (is_object(static::$identity_map_by_package_name[$name]) === true) {
+                $id = static::$identity_map_by_package_name[$name]->id;
+                static::$identity_map[$id] = static::$identity_map_by_package_name[$name];
+            }
+        }
+        return static::$identity_map_by_package_name[$name];
+    }
+
+    public static function isPackageInstalled($name)
+    {
+        $package = static::findByName($name);
+        return $package !== null;
+    }
+
+    public static function isPackageActive($name)
+    {
+        $package = static::findByName($name);
+        if ($package === null) {
+            return false;
+        } else {
+            return boolval($package->is_active);
+        }
     }
 
     /**
@@ -137,7 +217,6 @@ class Extensions extends \yii\db\ActiveRecord
         $query->andFilterWhere(['latest_version' => $this->latest_version]);
 
         $query->andFilterWhere(['like', 'name', $this->name]);
-        $query->andFilterWhere(['like', 'packagist_name', $this->packagist_name]);
         $query->andFilterWhere(['like', 'force_version', $this->force_version]);
         $query->andFilterWhere(['like', 'current_package_version_timestamp', $this->current_package_version_timestamp]);
         $query->andFilterWhere(['like', 'latest_package_version_timestamp', $this->latest_package_version_timestamp]);
@@ -153,5 +232,60 @@ class Extensions extends \yii\db\ActiveRecord
     public function getExtensionType()
     {
         return ExtensionTypes::findById($this->type);
+    }
+
+
+    public function activateExtension($update = true)
+    {
+        // non-active extension exists in database and composer but not installed(or uninstalled)
+        if ($update === true) {
+            /** @var \app\modules\core\helpers\UpdateHelper $updateHelper */
+            $updateHelper = Yii::$app->updateHelper;
+
+            try {
+                $updateHelper->updateComposer($this->name)->mustRun();
+            } catch (\Exception $e) {
+                Yii::$app->session->setFlash('error', "Error updating composer");
+                return false;
+            }
+        }
+
+        // install!
+        /** @var \app\components\ExtensionModule $moduleClassName */
+        $moduleClassName = $this->namespace_prefix . 'Module';
+        if (class_exists($moduleClassName) === true) {
+            return $moduleClassName::installModule(false, false);
+        } else {
+            Yii::$app->session->setFlash('error', "Extension module class not found.");
+            return false;
+        }
+    }
+
+    public function deactivateExtension()
+    {
+        /** @var \app\components\ExtensionModule $moduleClassName */
+        $moduleClassName = $this->namespace_prefix . 'Module';
+        if (class_exists($moduleClassName) === true) {
+            $moduleId = $moduleClassName::$moduleId;
+            if (isset(Yii::$app->modules[$moduleId])) {
+
+                /** @var ExtensionModule $module */
+                $module = Yii::$app->getModule($moduleId);
+                if ($module->uninstallModule()) {
+                    $this->is_active = 0;
+                    return $this->save();
+                } else {
+                    Yii::$app->session->setFlash('error', "Can't uninstall extension.");
+                    return false;
+                }
+
+            } else {
+                Yii::$app->session->setFlash('error', "Extension module is not loaded in application config.");
+                return false;
+            }
+        } else {
+            Yii::$app->session->setFlash('error', "Extension module class not found.");
+            return false;
+        }
     }
 }

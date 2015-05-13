@@ -192,13 +192,14 @@ class ConfigConfigurationModel extends BaseConfigurationModel
 
             $authClientsData = Yii::$app->request->post('AuthClientConfig');
             $isValid = true;
-
-            foreach ($authClientsData as $index => $data) {
-                if (isset($model->authClients[$index]) === true) {
-                    $model->authClients[$index]->setAttributes($data);
-                    $model->authClients[$index]->determineType();
-                    if ($model->authClients[$index]->validate() === false) {
-                        $isValid = false;
+            if (is_array($authClientsData) === true) {
+                foreach ($authClientsData as $index => $data) {
+                    if (isset($model->authClients[$index]) === true) {
+                        $model->authClients[$index]->setAttributes($data);
+                        $model->authClients[$index]->determineType();
+                        if ($model->authClients[$index]->validate() === false) {
+                            $isValid = false;
+                        }
                     }
                 }
             }

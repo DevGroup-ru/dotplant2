@@ -66,4 +66,9 @@ class Response extends \yii\web\Response
      * @var \app\models\DynamicContent matched DynamicContent model from DynamicContentTrait
      */
     public $matched_dynamic_content_trait_model = null;
+
+    /**
+     * @var bool Is this is the response to backend
+     */
+    public $is_backend = false;
 }

@@ -177,4 +177,30 @@ $(function(){
         });
         return true;
     });
+    $('a[data-action="post"]').click(function(){
+        var that = $(this);
+
+        if (that.hasClass('ladda-button') === false) {
+            that.addClass('ladda-button');
+            that.wrapInner('<span class="ladda-label"></span>');
+            that.attr('data-style', 'expand-right');
+            that.data('spinnerColor', '#fff');
+        }
+
+
+        var l = that.ladda();
+        l.ladda('start');
+
+        var $form = $('<form>')
+                .attr('action', that.attr('href'))
+                .attr('method', 'post'),
+            $hidden = $('<input type="hidden">')
+                .attr('name', $('meta[name="csrf-param"]').attr('content'))
+                .attr('value', $('meta[name="csrf-token"]').attr('content'));
+        $form.append($hidden);
+        $('document').append($form);
+        $form.submit();
+
+        return false;
+    });
 });
