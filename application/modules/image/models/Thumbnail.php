@@ -117,4 +117,14 @@ class Thumbnail extends \yii\db\ActiveRecord
             }
         }
     }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        Yii::$app->fs->delete($this->thumb_path);
+        $thumbnailWatermarks = ThumbnailWatermark::findAll(['thumb_id' => $this->id]);
+        foreach($thumbnailWatermarks as $thumbnailWatermark){
+            $thumbnailWatermark->delete();
+        }
+    }
 }

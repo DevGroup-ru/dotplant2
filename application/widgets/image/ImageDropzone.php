@@ -20,11 +20,16 @@ class ImageDropzone extends DropZone
 
     public $uploadDir = 'upload';
 
-    public static function saveThumbnail($dir, $filename, $width=80, $height=80)
+    public static function saveThumbnail($dir, $filename, $width = 80, $height = 80)
     {
         if (trim($filename) && file_exists(Yii::getAlias($dir . '/' . $filename))) {
 
-            $image = \yii\imagine\Image::thumbnail(Yii::getAlias($dir . '/' . $filename), $width, $height, ManipulatorInterface::THUMBNAIL_INSET);
+            $image = \yii\imagine\Image::thumbnail(
+                Yii::getAlias($dir . '/' . $filename),
+                $width,
+                $height,
+                ManipulatorInterface::THUMBNAIL_INSET
+            );
             $image->save($dir . '/small-' . $filename);
 
 
@@ -40,17 +45,13 @@ class ImageDropzone extends DropZone
 
         $i = 0;
         foreach ($files as $file) {
-            $fhName = 'file_' . $i++;
+            $fhName = 'file_' . $i ++;
 
             // Create the mock file:
             $this->getView()->registerJs(
-                'var '
-                . $fhName
-                . ' = { name: "'
-                . $file['name']
-                . '", size: '
-                . (file_exists($path . $file['name']) ? filesize($path . $file['name']) : 0)
-                . ' };'
+                'var ' . $fhName . ' = { name: "' . $file['name'] . '", size: ' . Yii::$app->fs->getSize(
+                    $file['name']
+                ) . ' };'
             );
             // Call the default addedfile event handler
             $this->getView()->registerJs(
@@ -63,10 +64,8 @@ class ImageDropzone extends DropZone
             $this->getView()->registerJs(
                 'jQuery(' . $fhName . '.previewElement).find("[name=\"id[]\"]").val(' . $file['id'] . ');
                 jQuery(' . $fhName . '.previewElement).data("filename", "' . $file['name'] . '");
-                jQuery(' . $fhName . '.previewElement).find(".description textarea").text("'
-                . $file['description'] . '");
-                jQuery(' . $fhName . '.previewElement).find(".description textarea").attr("name", "description['
-                . $file['id'] . ']")'
+                jQuery(' . $fhName . '.previewElement).find(".description textarea").text("' . $file['description'] . '");
+                jQuery(' . $fhName . '.previewElement).find(".description textarea").attr("name", "description[' . $file['id'] . ']")'
             );
         }
     }
@@ -74,7 +73,9 @@ class ImageDropzone extends DropZone
     protected function createDropzone()
     {
         $this->getView()->registerJs(
-            'var ' . $this->dropzoneName . ' = new Dropzone("#' . $this->id . '", ' . Json::encode($this->options) . ');'
+            'var ' . $this->dropzoneName . ' = new Dropzone("#' . $this->id . '", ' . Json::encode(
+                $this->options
+            ) . ');'
         );
     }
 
@@ -114,7 +115,7 @@ class ImageDropzone extends DropZone
             $this->storedFiles[] = [
                 'id' => $file->id,
                 'name' => $file->filename,
-                'thumbnail' => $thumbnail_src,
+                'thumbnail' => Url::to(['/image/image/thumbnail', 'fileName' => $thumbnail_src]),
                 'description' => $file->image_description,
             ];
         }
@@ -132,8 +133,7 @@ class ImageDropzone extends DropZone
             [
                 'acceptedFiles' => 'image/*',
                 'params' => $params,
-                'previewTemplate' =>
-                    '<div class="file-row">
+                'previewTemplate' => '<div class="file-row">
                         ' . Html::input('hidden', 'id[]') . '
                         <!-- This is used as the file preview template -->
                         <div>
@@ -144,7 +144,11 @@ class ImageDropzone extends DropZone
                             <div class="dz-error-message"><span data-dz-errormessage></span></div>
                         </div>
                         <div class="description">
-                            ' . Html::textarea('description', '', ['style' => 'width: 100%; min-width: 80px; height: 80px;']) . '
+                            ' . Html::textarea(
+                        'description',
+                        '',
+                        ['style' => 'width: 100%; min-width: 80px; height: 80px;']
+                    ) . '
                         </div>
                         <div>
                             <p class="size" data-dz-size></p>
@@ -157,7 +161,7 @@ class ImageDropzone extends DropZone
                         <div>
                           <button data-dz-remove class="btn btn-danger delete">
                             <i class="fa fa-trash-o"></i>
-                            <span>'.Yii::t('app', 'Delete') . '</span>
+                            <span>' . Yii::t('app', 'Delete') . '</span>
                           </button>
                         </div>
                       </div>',

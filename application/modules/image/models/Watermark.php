@@ -105,4 +105,14 @@ class Watermark extends \yii\db\ActiveRecord
         $query->andFilterWhere(['like', 'watermark_path' => $this->watermark_path]);
         return $dataProvider;
     }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        Yii::$app->fs->delete($this->watermark_path);
+        $thumbnailWatermarks = ThumbnailWatermark::findAll(['water_id' => $this->id]);
+        foreach($thumbnailWatermarks as $thumbnailWatermark){
+            $thumbnailWatermark->delete();
+        }
+    }
 }

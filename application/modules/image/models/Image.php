@@ -241,4 +241,14 @@ class Image extends \yii\db\ActiveRecord
         }
         return $src;
     }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        Yii::$app->fs->delete($this->filename);
+        $thumbnails = Thumbnail::findAll(['img_id' => $this->id]);
+        foreach($thumbnails as $thumbnail){
+            $thumbnail->delete();
+        }
+    }
 }

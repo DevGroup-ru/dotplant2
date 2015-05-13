@@ -159,4 +159,10 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
         unlink(Yii::getAlias('@runtime/' . $fileName));
         return "$path/$fileName";
     }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        Yii::$app->fs->delete($this->compiled_src);
+    }
 }
