@@ -2,6 +2,7 @@
 
 namespace app\widgets\image;
 
+use app\components\Helper;
 use Yii;
 use app\modules\image\models\Image;
 use yii\helpers\Json;
@@ -47,10 +48,12 @@ class UploadAction extends \devgroup\dropzone\UploadAction
         if ($file->hasError) {
             throw new HttpException(500, 'Upload error');
         }
-
-        $fileName = $file->name;
+        $transliteratedFileName = Helper::createSlug(
+            substr(strstr(strtolower($file->name), $file->extension, true), 0, - 1)
+        );
+        $fileName = $transliteratedFileName . '.' . $file->extension;
         if (Yii::$app->fs->has($fileName)) {
-            $fileName = $file->baseName . '-' . uniqid() . '.' . $file->extension;
+            $fileName = $transliteratedFileName . '-' . uniqid() . '.' . $file->extension;
         }
 
         $stream = fopen($file->tempName, 'r+');
