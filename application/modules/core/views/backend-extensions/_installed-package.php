@@ -3,6 +3,14 @@
 use yii\helpers\Html;
 use kartik\icons\Icon;
 
+echo Html::a(
+    Icon::show('refresh') . ' ' . Yii::t('app', 'Update extension'),
+    ['/core/backend-extensions/update-extension', 'name' => $package->getName()],
+    [
+        'class' => 'btn btn-sm btn-success',
+        'data-action' => 'post',
+    ]
+);
 
 /** @var \Packagist\Api\Result\Package $package */
 if (\app\modules\core\models\Extensions::isPackageActive($package->getName()) === true) {

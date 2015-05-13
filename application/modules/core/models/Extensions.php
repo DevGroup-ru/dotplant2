@@ -288,4 +288,35 @@ class Extensions extends \yii\db\ActiveRecord
             return false;
         }
     }
+
+    public function removeExtensionPackage()
+    {
+
+        /** @var \app\modules\core\helpers\UpdateHelper $updateHelper */
+        $updateHelper = Yii::$app->updateHelper;
+
+        try {
+            $process = $updateHelper->composerRemove($this->name)->mustRun();
+        } catch (\Exception $e) {
+            Yii::$app->session->setFlash('error', "Error removing composer package");
+            return false;
+        }
+        return $process->getExitCode()===0;
+
+    }
+
+    public function installExtensionPackage()
+    {
+
+        /** @var \app\modules\core\helpers\UpdateHelper $updateHelper */
+        $updateHelper = Yii::$app->updateHelper;
+
+        try {
+            return $updateHelper->composerRequire($this->name)->mustRun();
+        } catch (\Exception $e) {
+            Yii::$app->session->setFlash('error', "Error adding composer package");
+            return false;
+        }
+
+    }
 }

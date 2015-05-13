@@ -17,7 +17,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     /**
      * @var string Path to composer home directory(ie. /home/user/.composer/)
      */
-    public $composerHomeDirectory = './';
+    public $composerHomeDirectory = './composer/';
 
     /**
      * @inheritdoc

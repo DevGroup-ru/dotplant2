@@ -11,7 +11,8 @@
     },
     "minimum-stability": "dev",
     "require": {
-      "devgroup/dotplant": "dev-master"
+      "devgroup/dotplant": "dev-master",
+        "dotplant/twitter-cards": "dev-master"
     },
     "require-dev": {
       "devgroup/dotplant-dev": "dev-master"
