@@ -177,7 +177,7 @@ $(function(){
         });
         return true;
     });
-    $('a[data-action="post"]').click(function(){
+    $('body').on('click', 'a[data-action="post"]', function(){
         var that = $(this);
 
         if (that.hasClass('ladda-button') === false) {
@@ -203,4 +203,5 @@ $(function(){
 
         return false;
     });
+
 });

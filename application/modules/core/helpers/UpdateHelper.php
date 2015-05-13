@@ -129,6 +129,35 @@ class UpdateHelper extends Component
     {
         $builder = $this->getComposerBuilder()
             ->add('require')
+            ->add('--prefer-dist')
+            ->add($package);
+
+        $process = $builder->getProcess();
+        $process
+            ->setTimeout($this->composerTimeout)
+            ->setIdleTimeout($this->composerIdleTimeout);
+
+        return $process;
+    }
+
+    /**
+     * Runs composer remove command for uninstalling new package to CMS.
+     * Migrations and other actions should be handled separately.
+     * This command only executes 'composer remove your/package'
+     *
+     * Function returns Process, but not runs it.
+     * For synchronous run use composerRequire()->mustRun()
+     * For async run use composerRequire()->start & wait
+     *
+     * @param string $package Package name, version can be appended with space
+     * @throws \Symfony\Component\Process\Exception\ProcessFailedException
+     * @throws \Symfony\Component\Process\Exception\ProcessTimedOutException
+     * @return \Symfony\Component\Process\Process
+     */
+    public function composerRemove($package)
+    {
+        $builder = $this->getComposerBuilder()
+            ->add('remove')
             ->add($package);
 
         $process = $builder->getProcess();

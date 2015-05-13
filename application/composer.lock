@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5ad532ebb11a6d4513d756ab1f9ce852",
+    "hash": "8fcf8a4e164c4c48d80b374ffdee959d",
     "packages": [
         {
             "name": "bower-asset/ace-builds",
@@ -1060,6 +1060,32 @@
                 "string"
             ],
             "time": "2015-01-01 18:34:57"
+        },
+        {
+            "name": "dotplant/twitter-cards",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DevGroup-ru/ext-dotplant2-twitter-cards.git",
+                "reference": "1da728a375b711a8d9e1ee59e247d0f3182b2607"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DevGroup-ru/ext-dotplant2-twitter-cards/zipball/1da728a375b711a8d9e1ee59e247d0f3182b2607",
+                "reference": "1da728a375b711a8d9e1ee59e247d0f3182b2607",
+                "shasum": ""
+            },
+            "require": {
+                "devgroup/dotplant": "dev-master"
+            },
+            "type": "dotplant2-extension",
+            "autoload": {
+                "psr-4": {
+                    "DotPlant\\TwitterCards\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "time": "2015-05-12 08:11:36"
         },
         {
             "name": "egeloen/http-adapter",
@@ -3633,16 +3659,16 @@
         },
         {
             "name": "vova07/yii2-imperavi-widget",
-            "version": "1.2.2",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vova07/yii2-imperavi-widget.git",
-                "reference": "d51f5708f123984cb16644c944fdfeb49de45a2d"
+                "reference": "94de44aef41221e0571ddb41c43ff5a4016214e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vova07/yii2-imperavi-widget/zipball/d51f5708f123984cb16644c944fdfeb49de45a2d",
-                "reference": "d51f5708f123984cb16644c944fdfeb49de45a2d",
+                "url": "https://api.github.com/repos/vova07/yii2-imperavi-widget/zipball/94de44aef41221e0571ddb41c43ff5a4016214e6",
+                "reference": "94de44aef41221e0571ddb41c43ff5a4016214e6",
                 "shasum": ""
             },
             "require": {
@@ -3691,7 +3717,7 @@
                 "yii 2",
                 "yii2"
             ],
-            "time": "2015-04-03 08:07:30"
+            "time": "2015-05-13 10:27:16"
         },
         {
             "name": "yiisoft/yii2",
@@ -3699,12 +3725,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "492aeb766b30eb00747c54096f790d2afd1090c8"
+                "reference": "4a0ba5317a577d9b972cff1f5bf6ed4df2fbf8a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/492aeb766b30eb00747c54096f790d2afd1090c8",
-                "reference": "492aeb766b30eb00747c54096f790d2afd1090c8",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/c32baa712bbba6389a5ddba35705a36aba54657e",
+                "reference": "4a0ba5317a577d9b972cff1f5bf6ed4df2fbf8a8",
                 "shasum": ""
             },
             "require": {
@@ -3779,7 +3805,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2015-05-11 09:52:29"
+            "time": "2015-05-13 10:19:46"
         },
         {
             "name": "yiisoft/yii2-authclient",
@@ -4333,6 +4359,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "devgroup/dotplant": 20,
+        "dotplant/twitter-cards": 20,
         "devgroup/dotplant-dev": 20
     },
     "prefer-stable": false,
