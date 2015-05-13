@@ -11,11 +11,13 @@ use app\modules\image\models\Watermark;
 use Imagine\Image\ManipulatorInterface;
 use app\modules\image\models\ErrorImage;
 use yii\db\Migration;
+use yii\db\Query;
 
 class m150413_094340_thumbnail extends Migration
 {
     public function up()
     {
+
         $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB';
         $this->createTable(
             Thumbnail::tableName(),
@@ -34,9 +36,7 @@ class m150413_094340_thumbnail extends Migration
                 'width' => 'INT UNSIGNED NOT NULL',
                 'height' => 'INT UNSIGNED NOT NULL',
                 'default_watermark_id' => 'INT UNSIGNED NULL',
-                'resize_mode' => 'ENUM(\''. ManipulatorInterface::THUMBNAIL_INSET . '\',\''
-                    . ManipulatorInterface::THUMBNAIL_OUTBOUND . '\') DEFAULT \''
-                    . ManipulatorInterface::THUMBNAIL_INSET . '\'',
+                'resize_mode' => 'ENUM(\'' . ManipulatorInterface::THUMBNAIL_INSET . '\',\'' . ManipulatorInterface::THUMBNAIL_OUTBOUND . '\') DEFAULT \'' . ManipulatorInterface::THUMBNAIL_INSET . '\'',
             ],
             $tableOptions
         );
@@ -59,15 +59,26 @@ class m150413_094340_thumbnail extends Migration
             ],
             $tableOptions
         );
-        $this->dropColumn(Image::tableName(), 'thumbnail_src');
-        $this->dropColumn(Image::tableName(), 'image_src');
+
         $defaultSize = new ThumbnailSize;
         $defaultSize->setAttributes(['width' => 80, 'height' => 80]);
         $defaultSize->save();
-        $images = Image::find()->all();
+        $query = new Query;
+        $query->select('*')->from('image');
+        $images = $query->all();
         foreach ($images as $image) {
-            Thumbnail::getImageThumbnailBySize($image, $defaultSize);
+            if (file_exists(Yii::getAlias("@webroot{$image['image_src']}")) === true) {
+                $stream = fopen(Yii::getAlias("@webroot{$image['image_src']}"), 'r+');
+                Yii::$app->fs->putStream($image['filename'], $stream);
+            } else {
+                $this->delete(Image::tableName(), ['id' => $image['id']]);
+            }
         }
+
+        $this->dropColumn(Image::tableName(), 'thumbnail_src');
+        $this->dropColumn(Image::tableName(), 'image_src');
+
+
         $this->insert(
             BackendMenu::tableName(),
             [
@@ -85,7 +96,14 @@ class m150413_094340_thumbnail extends Migration
             BackendMenu::tableName(),
             ['parent_id', 'name', 'route', 'added_by_ext', 'rbac_check', 'translation_category'],
             [
-                [$image_menu_id, 'Thumbnails sizes', 'image/backend-thumbnail-size/index', 'core', 'content manage', 'app'],
+                [
+                    $image_menu_id,
+                    'Thumbnails sizes',
+                    'image/backend-thumbnail-size/index',
+                    'core',
+                    'content manage',
+                    'app'
+                ],
                 [$image_menu_id, 'Create thumbnails', 'image/backend-thumbnail/index', 'core', 'content manage', 'app'],
                 [$image_menu_id, 'Watermarks', 'image/backend-watermark/index', 'core', 'content manage', 'app'],
                 [$image_menu_id, 'Broken images', 'image/backend-error-images/index', 'core', 'content manage', 'app'],
