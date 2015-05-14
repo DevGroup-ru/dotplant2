@@ -312,5 +312,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     </div>
 </section>
+<?php
+$event = new \app\backend\events\BackendEntityEditFormEvent($form, $model);
 
+$this->trigger('backend-page-edit-form', $event);
+?>
 <?php ActiveForm::end(); ?>

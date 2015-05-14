@@ -65,10 +65,4 @@ class ShopModule extends BaseModule
             ]
         ];
     }
-
-    public function triggerSpecialEvent($event)
-    {
-        $triggeringType = EventTriggeringHelper::TYPE_APPLICATION;
-
-    }
 }

@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8fcf8a4e164c4c48d80b374ffdee959d",
+    "hash": "41a0bdcdf3e7578598ce039112f868fb",
     "packages": [
         {
             "name": "bower-asset/ace-builds",
@@ -1060,32 +1060,6 @@
                 "string"
             ],
             "time": "2015-01-01 18:34:57"
-        },
-        {
-            "name": "dotplant/twitter-cards",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/DevGroup-ru/ext-dotplant2-twitter-cards.git",
-                "reference": "1da728a375b711a8d9e1ee59e247d0f3182b2607"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/DevGroup-ru/ext-dotplant2-twitter-cards/zipball/1da728a375b711a8d9e1ee59e247d0f3182b2607",
-                "reference": "1da728a375b711a8d9e1ee59e247d0f3182b2607",
-                "shasum": ""
-            },
-            "require": {
-                "devgroup/dotplant": "dev-master"
-            },
-            "type": "dotplant2-extension",
-            "autoload": {
-                "psr-4": {
-                    "DotPlant\\TwitterCards\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "time": "2015-05-12 08:11:36"
         },
         {
             "name": "egeloen/http-adapter",
@@ -3265,12 +3239,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "1a6814fa9d7197fb9f35e8657264a45904cabc1b"
+                "reference": "166a16f7e966d5eac46fb7a9849db21734718495"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/1a6814fa9d7197fb9f35e8657264a45904cabc1b",
-                "reference": "1a6814fa9d7197fb9f35e8657264a45904cabc1b",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/166a16f7e966d5eac46fb7a9849db21734718495",
+                "reference": "166a16f7e966d5eac46fb7a9849db21734718495",
                 "shasum": ""
             },
             "require": {
@@ -3341,7 +3315,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2015-04-29 12:07:30"
+            "time": "2015-05-13 16:20:53"
         },
         {
             "name": "phly/http",
@@ -3725,12 +3699,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "4a0ba5317a577d9b972cff1f5bf6ed4df2fbf8a8"
+                "reference": "e68f817c6036dec1b226bf0d7a6e7d94fffa6402"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/c32baa712bbba6389a5ddba35705a36aba54657e",
-                "reference": "4a0ba5317a577d9b972cff1f5bf6ed4df2fbf8a8",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/e68f817c6036dec1b226bf0d7a6e7d94fffa6402",
+                "reference": "e68f817c6036dec1b226bf0d7a6e7d94fffa6402",
                 "shasum": ""
             },
             "require": {
@@ -3805,7 +3779,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2015-05-13 10:19:46"
+            "time": "2015-05-13 22:26:25"
         },
         {
             "name": "yiisoft/yii2-authclient",
@@ -4359,7 +4333,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "devgroup/dotplant": 20,
-        "dotplant/twitter-cards": 20,
         "devgroup/dotplant-dev": 20
     },
     "prefer-stable": false,

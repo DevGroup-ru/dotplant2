@@ -2,6 +2,7 @@
 
 namespace app\modules\page\backend;
 
+use app\backend\events\BackendEntityEditEvent;
 use app\models\Config;
 use app\models\Object;
 use app\modules\page\models\Page;
@@ -91,50 +92,58 @@ class PageController extends \app\backend\components\BackendController
         }
         $model->parent_id = $parent_id;
 
-        $post = \Yii::$app->request->post();
-        if ($model->load($post) && $model->validate()) {
-            $save_result = $model->save();
-            $model->saveProperties($post);
+        $event = new BackendEntityEditEvent($model);
+        $this->trigger('backend-page-edit', $event);
 
-            if (null !== $view_object = ViewObject::getByModel($model, true)) {
-                if ($view_object->load($post, 'ViewObject')) {
-                    if ($view_object->view_id <= 0) {
-                        $view_object->delete();
-                    } else {
-                        $view_object->save();
+        $post = \Yii::$app->request->post();
+        if ($event->isValid && $model->load($post)) {
+            $saveStateEvent = new BackendEntityEditEvent($model);
+            $this->trigger('backend-page-edit-save', $saveStateEvent);
+
+            if ($saveStateEvent->isValid && $model->validate()) {
+                $save_result = $model->save();
+                $model->saveProperties($post);
+
+                if (null !== $view_object = ViewObject::getByModel($model, true)) {
+                    if ($view_object->load($post, 'ViewObject')) {
+                        if ($view_object->view_id <= 0) {
+                            $view_object->delete();
+                        } else {
+                            $view_object->save();
+                        }
                     }
                 }
-            }
 
-            if ($save_result) {
-                $this->runAction('save-info');
-                Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                $returnUrl = Yii::$app->request->get('returnUrl', ['/page/backend/index']);
-                switch (Yii::$app->request->post('action', 'save')) {
-                    case 'next':
-                        return $this->redirect(
-                            [
-                                '/page/backend/edit',
-                                'returnUrl' => $returnUrl,
-                                'parent_id' => Yii::$app->request->get('parent_id', null)
-                            ]
-                        );
-                    case 'back':
-                        return $this->redirect($returnUrl);
-                    default:
-                        return $this->redirect(
-                            Url::toRoute(
+                if ($save_result) {
+                    $this->runAction('save-info');
+                    Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
+                    $returnUrl = Yii::$app->request->get('returnUrl', ['/page/backend/index']);
+                    switch (Yii::$app->request->post('action', 'save')) {
+                        case 'next':
+                            return $this->redirect(
                                 [
                                     '/page/backend/edit',
-                                    'id' => $model->id,
                                     'returnUrl' => $returnUrl,
-                                    'parent_id' => $model->parent_id
+                                    'parent_id' => Yii::$app->request->get('parent_id', null)
                                 ]
-                            )
-                        );
+                            );
+                        case 'back':
+                            return $this->redirect($returnUrl);
+                        default:
+                            return $this->redirect(
+                                Url::toRoute(
+                                    [
+                                        '/page/backend/edit',
+                                        'id' => $model->id,
+                                        'returnUrl' => $returnUrl,
+                                        'parent_id' => $model->parent_id
+                                    ]
+                                )
+                            );
+                    }
+                } else {
+                    \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
                 }
-            } else {
-                \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }
         }
 

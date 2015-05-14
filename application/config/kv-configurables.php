@@ -13,10 +13,10 @@ return[
     'kv-user' => [],
     'kv-shop' => [],
     'kv-page' => [],
-    'kv-image' => [],
     'kv-seo' => [],
     'kv-core' => [],
     'kv-review' => [],
     'kv-data' => [],
+    'kv-twitterCards' => [],
 ];
 
