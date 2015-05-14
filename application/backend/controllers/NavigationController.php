@@ -3,6 +3,7 @@
 namespace app\backend\controllers;
 
 use app\widgets\navigation\models\Navigation;
+use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -29,11 +30,9 @@ class NavigationController extends Controller
     {
         return [
             'getTree' => [
-                'class' => 'app\backend\actions\JSTreeGetTree',
-                'modelName' => Navigation::className(),
-                'label_attribute' => 'name',
-                'vary_by_type_attribute' => null,
-                'expand_in_admin_attribute' => null,
+                'class' => AdjacencyFullTreeDataAction::className(),
+                'class_name' => Navigation::className(),
+                'model_label_attribute' => 'name',
             ],
         ];
     }

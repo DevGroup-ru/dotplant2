@@ -3,7 +3,7 @@
 use kartik\helpers\Html;
 use yii\helpers\Url;
 /** @var $remains app\models\WarehouseProduct[] */
-/** @var $model app\models\Product */
+/** @var $model app\modules\shop\models\Product */
 
 ?>
 

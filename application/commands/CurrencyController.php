@@ -5,7 +5,7 @@ namespace app\commands;
 use Yii;
 use yii\console\Controller;
 use app;
-use app\models\Currency;
+use app\modules\shop\models\Currency;
 
 class CurrencyController extends Controller
 {
@@ -27,7 +27,7 @@ class CurrencyController extends Controller
         $httpAdapter = new \Ivory\HttpAdapter\CurlHttpAdapter();
 
         foreach ($currencies as $currency) {
-            /** @var app\models\CurrencyRateProvider $providerModel */
+            /** @var app\modules\shop\models\CurrencyRateProvider $providerModel */
             $providerModel = $currency->rateProvider;
             if ($providerModel !== null) {
                 try {

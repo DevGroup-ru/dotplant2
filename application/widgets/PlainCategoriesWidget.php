@@ -2,7 +2,7 @@
 
 namespace app\widgets;
 
-use app\models\Category;
+use app\modules\shop\models\Category;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Widget;

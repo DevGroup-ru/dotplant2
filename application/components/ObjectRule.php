@@ -2,7 +2,7 @@
 
 namespace app\components;
 
-use app\models\Category;
+use app\modules\shop\models\Category;
 use app\models\Object;
 use app\models\PrefilteredPages;
 use app\models\Route;
@@ -121,7 +121,7 @@ class ObjectRule implements UrlRuleInterface
             }
 
             return [
-                'product/list',
+                'shop/product/list',
                 $params
             ];
         }

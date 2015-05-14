@@ -25,8 +25,9 @@ Icon::map($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head(); ?>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 </head>
-<body class="fixed-header fixed-ribbon">
+<body class="fixed-header fixed-ribbon <?= Yii::$app->request->cookies->getValue('backend_menu', 'normal') ?>">
     <?php $this->beginBody(); ?>
     <header id="header">
         <div id="logo-group">
@@ -193,8 +194,8 @@ Icon::map($this);
             <?=
             Html::dropDownList(
                 'delete_mode',
-                \app\models\Category::DELETE_MODE_SINGLE_CATEGORY,
-                \app\models\Category::deleteModesList(), ['class' => 'form-control', 'id' => 'delete-mode']
+                \app\modules\shop\models\Category::DELETE_MODE_SINGLE_CATEGORY,
+                \app\modules\shop\models\Category::deleteModesList(), ['class' => 'form-control', 'id' => 'delete-mode']
             )
             ?>
         </div>

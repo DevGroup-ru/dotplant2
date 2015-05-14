@@ -17,7 +17,7 @@ use yii\caching\TagDependency;
 class WarehousesRemains extends Widget
 {
     /**
-     * @var app\models\Product Product model
+     * @var app\modules\shop\models\Product Product model
      */
     public $model = null;
 

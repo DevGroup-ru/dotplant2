@@ -4,10 +4,10 @@ use app\backend\models\ApiService;
 use app\backend\models\Notification;
 use app\backend\models\OrderChat;
 use app\components\Helper;
-use app\models\Cart;
-use app\models\Category;
-use app\models\CategoryGroup;
-use app\models\CategoryGroupRouteTemplates;
+use app\modules\shop\models\Cart;
+use app\modules\shop\models\Category;
+use app\modules\shop\models\CategoryGroup;
+use app\modules\shop\models\CategoryGroupRouteTemplates;
 use app\models\Config;
 use app\models\DynamicContent;
 use app\models\ErrorLog;
@@ -24,7 +24,7 @@ use app\models\OrderStatus;
 use app\models\OrderTransaction;
 use app\modules\page\models\Page;
 use app\models\PaymentType;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyHandler;
@@ -1121,7 +1121,7 @@ class m141023_084857_init extends Migration
             ['route', 'url_template', 'object_id', 'name'],
             [
                 [
-                    'product/list',
+                    'shop/product/list',
                     Json::encode(
                         [
                             [
@@ -1141,7 +1141,7 @@ class m141023_084857_init extends Migration
                     ''
                 ],
                 [
-                    'product/show',
+                    'shop/product/show',
                     Json::encode(
                         [
                             [
@@ -1947,7 +1947,7 @@ class m141023_084857_init extends Migration
                 }
             }
             $property = $psv = $propertyStaticValuesCount = null;
-            $route = Route::findOne(['route' => 'product/list']);
+            $route = Route::findOne(['route' => 'shop/product/list']);
             $urlTemplate = Json::decode($route->url_template);
             foreach ($propertyValues as $propertyId => $values) {
                 $urlTemplate[] = [
@@ -1974,7 +1974,7 @@ class m141023_084857_init extends Migration
                 'Вентиляторы',
                 'Кондиционеры',
             ];
-            $category = \app\models\Category::findOne(['parent_id' => 0]);
+            $category = \app\modules\shop\models\Category::findOne(['parent_id' => 0]);
             $category->attributes = [
                 'name' => 'Каталог',
                 'h1' => 'Каталог',

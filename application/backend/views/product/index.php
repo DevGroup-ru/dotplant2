@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Product;
+use app\modules\shop\models\Product;
 use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
 use yii\helpers\Url;
@@ -10,7 +10,7 @@ use app\backend\components\Helper;
 
 $this->title = Yii::t('app', 'Products');
 $this->params['breadcrumbs'][] = $this->title;
-$parent_id = Yii::$app->request->get('parent_id', app\models\Category::findRootForCategoryGroup(1)->id);
+$parent_id = Yii::$app->request->get('parent_id', app\modules\shop\models\Category::findRootForCategoryGroup(1)->id);
 ?>
 
 <?=app\widgets\Alert::widget(
@@ -187,7 +187,7 @@ $this->endBlock();
                         'class' => \kartik\grid\EditableColumn::className(),
                         'editableOptions' => [
                             'data' => [0 => '-'] + \app\components\Helper::getModelMap(
-                                    \app\models\Currency::className(),
+                                    \app\modules\shop\models\Currency::className(),
                                     'id',
                                     'name'
                                 ),
@@ -198,7 +198,7 @@ $this->endBlock();
                             ],
                         ],
                         'filter' => \app\components\Helper::getModelMap(
-                            \app\models\Currency::className(),
+                            \app\modules\shop\models\Currency::className(),
                             'id',
                             'name'
                         ),

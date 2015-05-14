@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Currency */
+/* @var $model app\modules\shop\models\Currency */
 
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
@@ -55,7 +55,7 @@ $this->params['breadcrumbs'] = [
             <?= $form->field($model, 'is_main')->textInput()->widget(\kartik\widgets\SwitchInput::className()) ?>
             <?= $form->field($model, 'convert_nominal') ?>
             <?= $form->field($model, 'currency_rate_provider_id')->dropDownList(
-                [0=>'-']+app\components\Helper::getModelMap(\app\models\CurrencyRateProvider::className(), 'id', 'name')
+                [0=>'-']+app\components\Helper::getModelMap(\app\modules\shop\models\CurrencyRateProvider::className(), 'id', 'name')
             ) ?>
             <?= $form->field(
                 $model,

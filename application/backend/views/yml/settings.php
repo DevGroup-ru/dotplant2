@@ -21,11 +21,11 @@ $formName = 'YmlSettings'
 <?php
     $yml_relations = [
         'getImage' => \app\models\Image::className(),
-        'getCategory' => \app\models\Category::className(),
+        'getCategory' => \app\modules\shop\models\Category::className(),
     ];
 
     $yml_settings = [];
-    $yml_settings['product_fields'] = (new \app\models\Product())->attributeLabels();
+    $yml_settings['product_fields'] = (new \app\modules\shop\models\Product())->attributeLabels();
     $yml_settings['relations_keys'] = array_combine(array_keys($yml_relations), array_keys($yml_relations));
     $yml_settings['relations_map'] = [];
     foreach ($yml_relations as $key => $value) {
@@ -39,7 +39,7 @@ $formName = 'YmlSettings'
         ];
     }
 
-    $prop_group = \app\models\Object::getForClass(\app\models\Product::className())->id;
+    $prop_group = \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id;
     $prop_group = (new \yii\db\Query())
         ->select(['pg.name as pgname', 'p.name', 'p.id'])
         ->from(\app\models\Property::tableName().' as p', \app\models\PropertyGroup::tableName().'as pg')

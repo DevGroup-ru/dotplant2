@@ -1,7 +1,7 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\backend\widgets\GridView;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
@@ -10,10 +10,12 @@ use kartik\select2\Select2;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
+use devgroup\JsTreeWidget\TreeWidget;
+use devgroup\JsTreeWidget\ContextMenuHelper;
 
 /**
  * @var $this \yii\web\View
- * @var $model \app\models\Product
+ * @var $model \app\modules\shop\models\Product
  */
 $this->title = Yii::t('app', 'Product edit');
 
@@ -47,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
         Html::a(
             Icon::show('eye') . Yii::t('app', 'Preview'),
             [
-                '/product/show',
+                '/shop/product/show',
                 'model' => $model,
                 'category_group_id' => is_null($model->mainCategory) ? null : $model->mainCategory->category_group_id,
             ],
@@ -117,7 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $form->field($model, 'price',[
         'addon' => [
             'append' => [
-                'content' => Html::activeDropDownList($model, 'currency_id', app\models\Currency::getSelection()),
+                'content' => Html::activeDropDownList($model, 'currency_id', app\modules\shop\models\Currency::getSelection()),
             ],
         ],
     ])?>

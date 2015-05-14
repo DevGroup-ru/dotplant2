@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @var \app\models\Cart $order
+ * @var \app\modules\shop\models\Cart $order
  */
 
-$mainCurrency = \app\models\Currency::getMainCurrency();
+$mainCurrency = \app\modules\shop\models\Currency::getMainCurrency();
 
 if ($order === null) {
     $itemsCount = '0';

@@ -5,7 +5,7 @@
  */
 
 use app\models\Object;
-use \app\models\Product;
+use \app\modules\shop\models\Product;
 ?>
 <div class="form-group row">
     <div class="col-md-12">

@@ -5,7 +5,7 @@ namespace app\backend\controllers;
 use app\backend\actions\DeleteOne;
 use app\backend\actions\MultipleDelete;
 use app\backend\actions\UpdateEditable;
-use app\models\Currency;
+use app\modules\shop\models\Currency;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;

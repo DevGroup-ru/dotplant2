@@ -2,7 +2,7 @@
 
 namespace app\backend\controllers;
 
-use app\models\Category;
+use app\modules\shop\models\Category;
 use app\models\Config;
 use app\models\Object;
 use app\models\ViewObject;

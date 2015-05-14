@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \yii\web\View $this
- * @var \app\models\Product $product
+ * @var \app\modules\shop\models\Product $product
  * @var integer $orderId
  */
 $url = \yii\helpers\Url::to(

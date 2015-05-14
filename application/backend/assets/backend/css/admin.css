@@ -231,4 +231,7 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
   margin-right: 0;
 }
 
-/*# sourceMappingURL=admin.css.map */
+/* line 198, ../sass/admin.scss */
+#meta-form header, #counter-form header, #robots-form header {
+  display: block;
+}

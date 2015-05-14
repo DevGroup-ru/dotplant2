@@ -3,8 +3,8 @@
 namespace app\commands;
 
 use app\backend\models\Yml;
-use app\models\Category;
-use app\models\Product;
+use app\modules\shop\models\Category;
+use app\modules\shop\models\Product;
 use yii\helpers\Url;
 
 class YmlController extends \yii\console\Controller
@@ -113,7 +113,7 @@ TPL;
 
             $offer = '<offer id="'.$row->id.'" '.$offer_type.' available="true">' . PHP_EOL;
 
-            $offer .= '<url>'.Url::to(['product/show', 'model' => $row, 'category_group_id' => 1], true).'</url>' . PHP_EOL;
+            $offer .= '<url>'.Url::to(['/shop/product/show', 'model' => $row, 'category_group_id' => 1], true).'</url>' . PHP_EOL;
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_price', $row, '<price>%s</price>'. PHP_EOL);
             $offer .= '<currencyId>'.$ymlConfig->currency_id.'</currencyId>' . PHP_EOL;
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_category', $row, '<categoryId>%s</categoryId>' . PHP_EOL);

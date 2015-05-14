@@ -3,12 +3,12 @@
 namespace app\backend\controllers;
 
 use app\backend\actions\PropertyHandler;
-use app\models\Category;
+use app\modules\shop\models\Category;
 use app\models\Config;
 use app\models\Image;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\models\Property;
 use app\models\PropertyStaticValues;
 use app\models\ViewObject;
@@ -56,7 +56,7 @@ class ProductController extends Controller
             ],
             'getCatTree' => [
                 'class' => 'app\backend\actions\JSSelectableTreeGetTree',
-                'modelName' => 'app\models\Category',
+                'modelName' => 'app\modules\shop\models\Category',
                 'label_attribute' => 'name',
                 'vary_by_type_attribute' => null,
             ],

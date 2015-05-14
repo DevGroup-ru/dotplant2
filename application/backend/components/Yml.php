@@ -2,9 +2,9 @@
 
 namespace app\backend\components;
 
-use app\models\Category;
+use app\modules\shop\models\Category;
 use app\models\Config;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\models\Property;
 use app\properties\PropertyValue;
 use Yii;
@@ -219,7 +219,7 @@ class Yml
 
             // общие для всех типов поля
             $url = $doc->createElement('url',  htmlentities("http://" . Config::getValue('core.serverName') . Url::to([
-                'product/show',
+                '/shop/product/show',
                 'model' => $product
             ])));
             $price = $doc->createElement('price', $product->convertedPrice());
