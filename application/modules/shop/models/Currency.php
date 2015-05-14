@@ -3,6 +3,7 @@
 namespace app\modules\shop\models;
 
 use app\moduled\shop\models\CurrencyRateProvider;
+use app\modules\shop\components\SpecialPriceProductInterface;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\caching\TagDependency;
@@ -29,12 +30,24 @@ use yii\data\ActiveDataProvider;
  * @property double $additional_nominal
  * @property integer $currency_rate_provider_id
  */
-class Currency extends \yii\db\ActiveRecord
+class Currency extends \yii\db\ActiveRecord implements SpecialPriceProductInterface
 {
     private static $mainCurrency = null;
     private static $selection = null;
     private static $identity_map = [];
     private $formatter = null;
+
+
+    public function setPriceProduct(Product &$product, Order $order = null)
+    {
+        $currency = Currency::getMainCurrency();
+
+        if ($product->currency_id !== $currency->id) {
+            $foreignCurrency = Currency::findById($product->currency_id);
+            $product->total_price = round($product->total_price / $foreignCurrency->convert_nominal * $foreignCurrency->convert_rate, 2);
+        }
+    }
+
     /**
      * @inheritdoc
      */
