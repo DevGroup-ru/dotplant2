@@ -6,6 +6,7 @@ use app\models\Config;
 use app\modules\user\models\User;
 use app\properties\HasProperties;
 use Yii;
+use yii\base\Exception;
 use yii\behaviors\TimestampBehavior;
 use yii\data\ActiveDataProvider;
 use yii\db\Expression;
@@ -200,6 +201,7 @@ class Order extends \yii\db\ActiveRecord
                 }
             }
             $orderEmail = Config::getValue('shop.orderEmail', null);
+            // @todo Implement via OrderStageLeaf
             if (!empty($orderEmail)) {
                 try {
                     Yii::$app->mail->compose(
@@ -355,13 +357,21 @@ class Order extends \yii\db\ActiveRecord
         if (is_null(self::$order) && !Yii::$app->user->isGuest) {
             self::$order = self::findOne(['user_id' => Yii::$app->user->id]);
         }
-        if (is_null(self::$order) && $create === true) {
+        if ((is_null(self::$order) || is_null(self::$order->stage) || self::$order->stage->is_in_cart == 0)
+            && $create === true
+        ) {
+            // @todo Use static method of OrderStage to get initialOrderStageId (Maxim Usenko)
+            $initialOrderStage = OrderStage::findOne(['is_initial' => 1]);
+            if (is_null($initialOrderStage)) {
+                throw new Exception('Initial order stage not found');
+            }
             $order = new static;
             $order->user_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : 0;
+            $order->order_stage_id = $initialOrderStage->id;
             $order->temporary = 1;
             mt_srand();
             $order->hash = md5(mt_rand() . uniqid());
-            if ($order->save(true, ['user_id', 'temporary', 'hash'])) {
+            if ($order->save(true, ['user_id', 'temporary', 'hash', 'order_stage_id'])) {
                 self::$order = $order;
                 Yii::$app->session->set('orderId', $order->id);
             }
@@ -373,10 +383,36 @@ class Order extends \yii\db\ActiveRecord
     /**
      * Calculate order total price and items count with all additional markups.
      * @param bool $callSave Call save method after calculating.
+     * @param bool $deleteNotActiveProducts Delete Order Item if product is not active or is not exist.
      * @return bool
      */
-    public function calculate($callSave = false)
+    public function calculate($callSave = false, $deleteNotActiveProducts = true)
     {
-        // @todo Implement this method.
+        $itemsCount = 0;
+        $totalPrice = 0;
+        foreach ($this->items as $item) {
+            if ($deleteNotActiveProducts && (!isset($item->product) || $item->product->active == 0)) {
+                $item->delete();
+                continue;
+            }
+            if (Yii::$app->getModule('shop')->countChildrenProducts == 1) {
+                $itemsCount += Yii::$app->getModule('shop')->countUniqueProductsOnly == 1 ? 1 : $item->quantity;
+            } else {
+                if ($item->parent_id == 0) {
+                    $itemsCount += Yii::$app->getModule('shop')->countUniqueProductsOnly == 1 ? 1 : $item->quantity;
+                }
+            }
+            // @todo get order item discount
+            $totalPrice += $item->total_price;
+        }
+        if (!is_null($this->shippingOption)) {
+            // @todo get shipping price
+        }
+        // @todo get order discount
+        $this->items_count = $itemsCount;
+        $this->total_price = $totalPrice;
+        $this->total_price_with_shipping = $totalPrice + $this->shipping_price;
+        $this->total_price_with_shipping = $totalPrice + $this->shipping_price;
+        return $callSave ? $this->save(true, ['items_count', 'total_price', 'total_price_with_shipping']) : true;
     }
 }

@@ -55,6 +55,8 @@ class ShopModule extends BaseModule
     // A new order config below.
     // @todo Need to add this attributes to module ConfigurableModel
     public $allowToAddSameProduct = 0;
+    public $countUniqueProductsOnly = 1;
+    public $countChildrenProducts = 1;
 
     /**
      * @inheritdoc
@@ -73,6 +75,5 @@ class ShopModule extends BaseModule
     public function triggerSpecialEvent($event)
     {
         $triggeringType = EventTriggeringHelper::TYPE_APPLICATION;
-
     }
 }

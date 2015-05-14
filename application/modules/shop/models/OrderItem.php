@@ -3,7 +3,7 @@
 namespace app\modules\shop\models;
 
 use app\behaviors\Tree;
-use app\modules\shop\components\DiscountProductInterface;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -27,7 +27,7 @@ use yii\db\ActiveRecord;
  * @property OrderItem $parent
  * @property Product $product
  */
-class OrderItem extends ActiveRecord implements DiscountProductInterface
+class OrderItem extends ActiveRecord
 {
 
     public function behaviors()
@@ -36,6 +36,9 @@ class OrderItem extends ActiveRecord implements DiscountProductInterface
             [
                 'class' => Tree::className(),
                 'cascadeDeleting' => true,
+            ],
+            [
+                'class' => ActiveRecordHelper::className(),
             ],
         ];
     }
