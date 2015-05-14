@@ -3,34 +3,11 @@
 namespace app\modules\shop\components;
 
 
+use app\modules\shop\models\Discount;
 use app\modules\shop\models\Order;
-use app\modules\user\models\User;
+use app\modules\shop\models\Product;
 
 interface DiscountInterface
 {
-    /**
-     * @return array
-     */
-    public function getFilters();
-
-    /**
-     * @return Order
-     */
-    public function getOrder();
-
-    /**
-     * @return User
-     */
-    public function getUser();
-
-    /**
-     * @return float
-     */
-    public function getOrderDiscount();
-
-    /**
-     * @return float
-     */
-    public function getProductDiscount($id_product);
-
+    public function checkDiscount(Discount $discount, Product $product = null, Order $order = null);
 }

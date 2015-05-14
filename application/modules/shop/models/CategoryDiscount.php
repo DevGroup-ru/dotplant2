@@ -2,6 +2,7 @@
 
 namespace app\modules\shop\models;
 
+use app\modules\shop\components\DiscountInterface;
 use Yii;
 
 /**
@@ -11,8 +12,32 @@ use Yii;
  * @property integer $category_id
  * @property integer $discount_id
  */
-class CategoryDiscount extends \yii\db\ActiveRecord
+class CategoryDiscount extends \yii\db\ActiveRecord implements DiscountInterface
 {
+
+    public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
+    {
+        $result = false;
+        if (intval(self::find()->where(['discount_id'=>$discount->id])->count()) === 0) {
+            $result = true;
+        } else {
+           if( self::find()
+                ->leftJoin(
+                    '{{%product_category%}}',
+                    '{{%product_category%}}.category_id = '.self::tableName().'.category_id'
+                )
+                ->where(
+                    [
+                        self::tableName().'.discount_id'=>$discount->id,
+                        '{{%product_category%}}.object_model_id' => $product->id
+                    ]
+                )
+                ->count() > 0) {
+               $result = true;
+           }
+        }
+        return $result;
+    }
     /**
      * @inheritdoc
      */

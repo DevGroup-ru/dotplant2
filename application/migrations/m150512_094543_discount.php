@@ -71,6 +71,42 @@ class m150512_094543_discount extends Migration
 
 
 
+        $this->createTable(
+            '{{%discount_type}}',
+            [
+                'id' => Schema::TYPE_PK,
+                'name' => Schema::TYPE_STRING . ' NOT NULL',
+                'class' => Schema::TYPE_STRING . ' NOT NULL',
+                'active' => Schema::TYPE_BOOLEAN . ' NOT NULL DEFAULT 1',
+                'checking_class' => "ENUM('Order','OrderItem') NOT NULL",
+                'sort_order' => Schema::TYPE_INTEGER .' NOT NULL DEFAULT 0'
+            ]
+        );
+
+        $this->batchInsert(
+            '{{%discount_type}}',
+            [
+                'name', 'class', 'checking_class'
+            ],
+            [
+                [
+                    'Discount Code', 'app\modules\shop\models\DiscountCode', 'Order'
+                ],
+                [
+                    'Category Discount', 'app\modules\shop\models\CategoryDiscount', 'OrderItem'
+                ],
+                [
+                    'User Discount', 'app\modules\shop\models\UserDiscount', 'Order'
+                ],
+                [
+                    'Order Discount', 'app\modules\shop\models\OrderDiscount', 'Order'
+                ],
+                [
+                    'Product Discount', 'app\modules\shop\models\ProductDiscount', 'OrderItem'
+                ],
+            ]
+        );
+
 
     }
 
@@ -82,6 +118,7 @@ class m150512_094543_discount extends Migration
         $this->dropTable('{{%user_discount}}');
         $this->dropTable('{{%order_discount}}');
         $this->dropTable('{{%product_discount}}');
+        $this->dropTable('{{%discount_type}}');
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace app\modules\shop\models;
 
+use app\modules\shop\components\DiscountInterface;
 use Yii;
 
 /**
@@ -15,8 +16,18 @@ use Yii;
  * @property integer $maximum_uses
  * @property integer $used
  */
-class DiscountCode extends \yii\db\ActiveRecord
+class DiscountCode extends \yii\db\ActiveRecord implements DiscountInterface
 {
+    public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
+    {
+        $result = false;
+        if (intval(self::find()->where(['discount_id'=>$discount->id])->count()) === 0)
+        {
+            $result = true;
+        }
+        return $result;
+    }
+
     /**
      * @inheritdoc
      */

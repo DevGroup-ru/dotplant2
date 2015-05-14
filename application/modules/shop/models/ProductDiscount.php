@@ -12,14 +12,19 @@ use Yii;
  * @property integer $product_id
  * @property integer $discount_id
  */
-class ProductDiscount extends \yii\db\ActiveRecord
+class ProductDiscount extends \yii\db\ActiveRecord implements DiscountInterface
 {
-
-    public function checkProduct(DiscountInterface $object)
+    public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
-
+        $result = false;
+        if (intval(self::find()->where(['discount_id'=>$discount->id])->count()) === 0)
+        {
+            $result = true;
+        } elseif (intval(self::find()->where(['discount_id'=>$discount->id, 'product_id'=>$product->id])->count()) === 1) {
+            $result = true;
+        }
+        return $result;
     }
-
     /**
      * @inheritdoc
      */

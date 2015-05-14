@@ -3,7 +3,9 @@
 namespace app\modules\shop\models;
 
 use app\modules\shop\components\DiscountInterface;
+use app\modules\shop\components\SpecialPriceProductInterface;
 use Yii;
+use yii\data\ActiveDataProvider;
 
 /**
  * This is the model class for table "{{%discount}}".
@@ -15,53 +17,61 @@ use Yii;
  * @property integer $value_in_percent
  * @property double $apply_order_price_lg
  */
-class Discount extends \yii\db\ActiveRecord implements DiscountInterface
+class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterface
 {
 
-    public $user;
-    public $order;
-
-    protected  $filters = [
-
-    ];
+    public $options = [];
 
 
-    public function getFilters()
+    private static  $allDiscounts = [];
+
+    public function setPriceProduct(Product &$product, Order $order = null)
     {
-        $filters =  $this->filters;
-        $result = [];
-
-
-        return $result;
+        self::getAllDiscounts();
+        if (isset(self::$allDiscounts['products'])) {
+            foreach (self::$allDiscounts['products'] as $discount) {
+                $discountFlag = false;
+                foreach ($this->getTypes() as $discountType) {
+                    $discountTypeObject = new $discountType->class;
+                    if ($discountTypeObject instanceof DiscountInterface) {
+                        $discountFlag = $discountTypeObject->checkDiscount($discount, $product, $order);
+                        if ($discountFlag === false)
+                            break;
+                    }
+                }
+                if ($discountFlag === true) {
+                    $product->total_price = $discount->getDiscountPrice($product->total_price);
+                }
+            }
+        }
     }
 
 
-    public function getOrder()
+    public static function getAllDiscounts()
     {
-        return $this->order;
+        $discounts = Discount::find()->where(['active'=>1])->all();
+        foreach ($discounts as $discount) {
+            self::$allDiscounts[$discount->appliance][] = $discount;
+        }
+        return self::$allDiscounts;
     }
 
-    public function getUser()
+    public function getDiscountPrice($price)
     {
-        return $this->user;
+        if (intval($this->value_in_percent) === 1) {
+            $price *= (100 - $this->value) /100;
+        } else {
+            $price -= $this->value;
+        }
+
+
+        return $price;
     }
 
-    public function getOrderDiscount()
+    public function getTypes()
     {
-        $result = 0;
-
-        return $result;
+        return DiscountType::findAll(['active'=>1]);
     }
-
-    public function getProductDiscount($id_product)
-    {
-        $result = 0;
-
-        return $result;
-    }
-
-
-
 
 
     /**
@@ -86,6 +96,16 @@ class Discount extends \yii\db\ActiveRecord implements DiscountInterface
         ];
     }
 
+    public function afterDelete()
+    {
+        foreach ($this->getTypes() as $type) {
+            $className = $type->class;
+            $className::deleteAll(['discount_id'=>$this->id]);
+        }
+
+        return parent::afterDelete();
+    }
+
     /**
      * @inheritdoc
      */
@@ -99,5 +119,34 @@ class Discount extends \yii\db\ActiveRecord implements DiscountInterface
             'value_in_percent' => Yii::t('app', 'Value In Percent'),
             'apply_order_price_lg' => Yii::t('app', 'Apply Order Price Lg'),
         ];
+    }
+
+
+    /**
+     * Search tasks
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function search($params)
+    {
+        /* @var $query \yii\db\ActiveQuery */
+        $query = self::find();
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]
+        );
+        if (!($this->load($params))) {
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'appliance', $this->appliance]);
+
+
+        return $dataProvider;
     }
 }
