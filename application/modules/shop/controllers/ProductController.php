@@ -9,7 +9,6 @@ use app\modules\shop\models\Category;
 use app\models\Object;
 use app\modules\shop\models\Product;
 use app\models\Search;
-use app\reviews\traits\ProcessReviews;
 use app\traits\DynamicContentTrait;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
@@ -24,7 +23,6 @@ use yii\web\ServerErrorHttpException;
 class ProductController extends Controller
 {
     use DynamicContentTrait;
-    use ProcessReviews;
 
     /**
      * Products listing by category with filtration support.
@@ -200,8 +198,6 @@ class ProductController extends Controller
 
         $selected_category = ($selected_category_id > 0) ? Category::findById($selected_category_id) : null;
 
-        $this->processReviews($object->id, $product->id);
-
         $this->view->title = $product->title;
         $this->view->blocks['announce'] = $product->announce;
         $this->view->blocks['content'] = $product->content;
@@ -277,7 +273,7 @@ class ProductController extends Controller
                         $pages->limit
                     )
                 ]
-            )->addOrderBy('sort_order')->all();
+            )->addOrderBy('sort_order')->with('images')->all();
             Yii::$app->cache->set(
                 $cacheKey,
                 $products,

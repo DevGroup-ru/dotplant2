@@ -1,15 +1,11 @@
 $(function () {
 
     function addProperty(property_id, selected) {
-        var $property = $(
-            _.template(
-                $("#parameter-template").html(),
-                {
-                    index: $('.add-property .parameter').length
-                }
-            )
-        );
+        console.log($("#parameter-template").html());
 
+        var compiled = _.template($("#parameter-template").html());
+        var $property = $(compiled({ index: $('#properties .parameter').length  })
+        );
         $property.find('.property_id').change(function () {
             var $select = $(this).parent().parent().find('.select');
             $select.empty();
@@ -38,16 +34,12 @@ $(function () {
         $("#properties").append($property);
     }
 
-
     $(".add-property").click(function () {
         addProperty(0, 0);
         return false;
     });
 
-    $("#dynamic-content-form").submit(function () {
-        var $input = $("#apply_if_params");
-        $input.val();
-
+    $(".form-vertical").submit(function () {
         var serialized = {};
         $("#properties .parameter").each(function () {
             var key = $(this).find('.property_id').val();
@@ -55,11 +47,10 @@ $(function () {
             serialized[key] = value;
         });
 
-        $("#apply_if_params").val(JSON.stringify(serialized));
+        $("#" + current_field_id).val(JSON.stringify(serialized));
 
         return true;
     });
-
     for (var c in current_selections) {
         addProperty(c, current_selections[c]);
     }

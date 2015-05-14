@@ -2,8 +2,12 @@
 
 namespace app\widgets\image;
 
+use app\components\Helper;
 use Yii;
-use app\models\Image;
+use app\modules\image\models\Image;
+use yii\helpers\Json;
+use yii\web\HttpException;
+use yii\web\UploadedFile;
 
 class UploadAction extends \devgroup\dropzone\UploadAction
 {
@@ -21,23 +25,58 @@ class UploadAction extends \devgroup\dropzone\UploadAction
 
     public function afterUpload($data)
     {
-        ImageDropzone::saveThumbnail($this->uploadDir . '/', $data['filename'], $this->thumbnail_width, $this->thumbnail_height);
-
-
-        $image = new Image([
-            'object_id' => $data['params']['objectId'],
-            'object_model_id' => $data['params']['modelId'],
-            'filename' => $data['filename'],
-            'image_src' => $data['src'] . $data['filename'],
-            'thumbnail_src' => $data['src'] . 'small-' . $data['filename'],
-            'image_description' => '',
-            'sort_order' => 0,
-        ]);
+        $image = new Image(
+            [
+                'object_id' => $data['params']['objectId'],
+                'object_model_id' => $data['params']['modelId'],
+                'filename' => $data['filename'],
+                'image_description' => '',
+                'sort_order' => 0,
+            ]
+        );
         if ($image->save()) {
             return $image->toArray();
         } else {
             return $image->getErrors();
         }
 
+    }
+
+    public function run()
+    {
+        $file = UploadedFile::getInstanceByName($this->fileName);
+        if ($file->hasError) {
+            throw new HttpException(500, 'Upload error');
+        }
+        $transliteratedFileName = Helper::createSlug(
+            substr(strstr(strtolower($file->name), $file->extension, true), 0, - 1)
+        );
+        $fileName = $transliteratedFileName . '.' . $file->extension;
+        if (Yii::$app->fs->has($fileName)) {
+            $fileName = $transliteratedFileName . '-' . uniqid() . '.' . $file->extension;
+        }
+
+        $stream = fopen($file->tempName, 'r+');
+        Yii::$app->fs->writeStream($fileName, $stream);
+        fclose($stream);
+        $response = [
+            'filename' => $fileName,
+        ];
+
+        if (isset($this->afterUploadHandler)) {
+            $data = [
+                'data' => $this->afterUploadData,
+                'file' => $file,
+                'dirName' => $this->uploadDir,
+                'filename' => $fileName,
+                'params' => Yii::$app->request->post(),
+            ];
+
+            if ($result = call_user_func($this->afterUploadHandler, $data)) {
+                $response['afterUpload'] = $result;
+            }
+        }
+
+        return Json::encode($response);
     }
 }

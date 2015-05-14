@@ -1,0 +1,32 @@
+/* line 2, ../sass/extensions.scss */
+.packages-grid .package {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 4px;
+}
+/* line 7, ../sass/extensions.scss */
+.packages-grid .package .package-name {
+  font-size: 120%;
+  font-weight: bold;
+  color: #3e3e3e;
+}
+/* line 12, ../sass/extensions.scss */
+.packages-grid .package .description {
+  height: 120px;
+  overflow: hidden;
+}
+/* line 16, ../sass/extensions.scss */
+.packages-grid .package .repository-url {
+  font-size: 80%;
+  color: #666666;
+  text-decoration: underline;
+  margin: 4px;
+  display: block;
+}
+
+/* line 25, ../sass/extensions.scss */
+.packages-search {
+  margin-bottom: 8px;
+}
+
+/*# sourceMappingURL=extensions.css.map */

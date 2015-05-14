@@ -4,7 +4,7 @@
  * @var yii\web\View $this
  */
 
-use app\widgets\ImgSearch;
+use app\modules\image\widgets\ObjectImageWidget;
 use kartik\helpers\Html;
 use yii\helpers\Url;
 
@@ -39,11 +39,10 @@ $mainCurrency = \app\modules\shop\models\Currency::getMainCurrency();
                                             <i class="tag"></i>
                                             <a href="<?= $url ?>">
                                                 <?=
-                                                    ImgSearch::widget(
+                                                    ObjectImageWidget::widget(
                                                         [
                                                             'limit' => 1,
-                                                            'objectId' => $product->object->id,
-                                                            'objectModelId' => $product->id,
+                                                            'model' => $product
                                                         ]
                                                     )
                                                 ?>
@@ -68,7 +67,7 @@ $mainCurrency = \app\modules\shop\models\Currency::getMainCurrency();
 <?php if (count($latestProducts) > 0): ?>
     <h4><?= Yii::t('app', 'New products') ?></h4>
     <div id="blockView">
-        <ul class="thumbnails">
+        <div class="row">
             <?php
                 foreach ($latestProducts as $product) {
                     $url = Url::to(
@@ -80,6 +79,6 @@ $mainCurrency = \app\modules\shop\models\Currency::getMainCurrency();
                     echo $this->render('@app/modules/shop/views/product/item', ['product' => $product, 'url' => $url]);
                 }
             ?>
-        </ul>
+        </div>
     </div>
 <?php endif; ?>

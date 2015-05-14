@@ -30,6 +30,7 @@ class BackendAsset extends AssetBundle
     ];
     public $js = [
         'js/admin.js',
+        'js/DialogActions.js',
         'http://st-4.dotplant.ru/js/plugin/SmartNotification_jarvis.uglify.min.js',
         'http://st-2.dotplant.ru/js/plugin/msie-fix/jquery.mb.browser.min.js',
         'http://st-3.dotplant.ru/js/app.min.js',
@@ -47,5 +48,6 @@ class BackendAsset extends AssetBundle
         'yii\widgets\ActiveFormAsset',
         'yii\jui\JuiAsset',
         '\kartik\icons\FontAwesomeAsset',
+        'app\backend\assets\LaddaAsset',
     ];
 }

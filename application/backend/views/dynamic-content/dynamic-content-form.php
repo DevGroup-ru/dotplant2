@@ -24,7 +24,8 @@ $action = isset($model->id) ? 'edit?id=' . $model->id : 'edit';
 
 $this->registerJs('
      var static_values_properties = '. Json::encode($static_values_properties) .';
-     var current_selections = '.( empty($model->apply_if_params)?"{}":$model->apply_if_params ).';',
+     var current_selections = '.( empty($model->apply_if_params)?"{}":$model->apply_if_params ).';
+     var current_field_id= "apply_if_params"',
     \yii\web\View::POS_HEAD,
     'propertyData'
 );
@@ -200,10 +201,12 @@ SCRIPT;
 </div>
 <?php BackendWidget::end(); ?>
 <?php ActiveForm::end(); ?>
-<script type="x-tmpl-underscore" id="parameter-template">
+
+
+<section style="display: none" data-type="x-tmpl-underscore" id="parameter-template">
     <div class="row form-group parameter">
         <label class="col-md-2 control-label" for="PropertyValue_<%- index %>">
-            <select class="property_id">
+            <select class="property_id form-control">
                 <option value="0">- <?=Yii::t('app', 'select')?> -</option>
                 <?php foreach ($static_values_properties as $prop) {
         echo "<option value=\"" . $prop['property']->id . "\">" . Html::encode($prop['property']->name) . "</option>";
@@ -225,4 +228,4 @@ SCRIPT;
         </div>
     </div>
 
-</script>
+</section>

@@ -2,7 +2,7 @@
 
 /** @var \app\modules\config\models\Configurable $configurable */
 /** @var \app\backend\components\ActiveForm $form */
-/** @var \app\modules\seo\models\ConfigConfigurableModel $model */
+/** @var \app\modules\seo\models\ConfigConfigurationModel $model */
 /** @var \yii\web\View $this */
 
 use app\backend\widgets\BackendWidget;
