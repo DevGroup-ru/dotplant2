@@ -86,6 +86,7 @@ class m150413_094340_thumbnail extends Migration
                 'name' => 'Images',
                 'icon' => 'picture-o',
                 'sort_order' => 10,
+                'route' => '',
                 'added_by_ext' => 'core',
                 'rbac_check' => 'content manage',
                 'translation_category' => 'app'
