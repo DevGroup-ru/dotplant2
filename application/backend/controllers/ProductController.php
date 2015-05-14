@@ -669,7 +669,7 @@ class ProductController extends Controller
             $query = new \yii\db\Query();
             $query->select('id, name AS text')->from(Product::tableName())->andWhere(
                 ['like', 'name', $search]
-            )->andWhere(['is_deleted' => 0])->orderBy(['sort_order' => SORT_ASC, 'name' => SORT_ASC]);
+            )->andWhere(['active' => 1])->orderBy(['sort_order' => SORT_ASC, 'name' => SORT_ASC]);
             $command = $query->createCommand();
             $data = $command->queryAll();
 

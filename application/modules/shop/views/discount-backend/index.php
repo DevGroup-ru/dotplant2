@@ -36,13 +36,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?=
                 \yii\helpers\Html::a(
                     Icon::show('plus') . Yii::t('app', 'Add'),
-                    ['/page/backend/edit', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
+                    ['/shop/discount-backend/edit', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
                     ['class' => 'btn btn-success']
                 )
                 ?>
             </div>
             <?= \app\backend\widgets\RemoveAllButton::widget([
-                'url' => \yii\helpers\Url::toRoute(['/page/backend/remove-all', 'parent_id' => (is_object($model) ? $model->id : 0)]),
+                'url' => \yii\helpers\Url::toRoute(['/shop/discount-backend/remove-all']),
                 'gridSelector' => '.grid-view',
                 'htmlOptions' => [
                     'class' => 'btn btn-danger pull-right'
@@ -94,7 +94,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'panel'=>[
                     'heading'=>'<h3 class="panel-title">'.$this->title.'</h3>',
                     'after' => $this->blocks['buttonGroup'],
-
                 ],
 
             ]
