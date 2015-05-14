@@ -1,4 +1,5 @@
 <?php
+use yii\helpers\Html;
 
 ?>
     <div id="properties-widget-<?=$widget_id?>">
@@ -12,12 +13,19 @@
 
 
             $items[] = [
-                'label' => $opg->group->name . ' <i class="fa fa-times remove-property-group" data-pg="' . json_encode(
+                'label' => $opg->group->name . ' ' . Html::tag(
+                        'i',
+                        '',
                         [
-                            'id' => $opg->group->id,
-                            'form_name' => $model->formName(),
+                            'class' => 'fa fa-times remove-property-group',
+                            'data-pg' => json_encode(
+                                [
+                                    'id' => $opg->group->id,
+                                    'form_name' => $model->formName(),
+                                ]
+                            )
                         ]
-                    ) . '"></i>',
+                    ),
                 'url' => '#pg-' . $opg->group->id,
                 'active' => ($i == 0),
                 'linkOptions' => [
@@ -128,6 +136,11 @@ $(function() {
     $("#properties-widget-%1$s .remove-property-group").click(function() {
         var $form = $("#%2$s"),
             $this = $(this);
+        var data = JSON.parse($this.attr('data-pg'));
+        var $hidden = $('<input type="hidden">');
+        $hidden.attr('name', 'RemovePropetryGroup[' + data.form_name + ']').val(data.id);
+        $form.append($hidden);
+        $form.find(":submit:first").mouseup().click();
     });
 });
 JS;

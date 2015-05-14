@@ -213,7 +213,7 @@ class ProductController extends Controller
 
 
                     $action = Yii::$app->request->post('action', 'save');
-                    if (Yii::$app->request->post('AddPropetryGroup')) {
+                    if (Yii::$app->request->post('AddPropetryGroup')||Yii::$app->request->post('RemovePropetryGroup')) {
                         $action = 'save';
                     }
                     $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/product/index']);
