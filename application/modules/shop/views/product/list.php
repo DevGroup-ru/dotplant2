@@ -84,7 +84,7 @@ $this->endBlock();
 <div id="<?=($listView === 'listView' ? 'listView' : 'blockView')?>">
     <?php
     if ($listView === 'blockView') {
-        echo '<ul class="thumbnails">';
+        echo '<div class="row">';
     }
     ?>
     <?php foreach ($products as $product): ?>
@@ -102,7 +102,7 @@ $this->endBlock();
     <?php endforeach; ?>
     <?php
     if ($listView === 'blockView') {
-        echo '</ul><hr class="soft">';
+        echo '</div><hr class="soft">';
     }
     ?>
 </div>

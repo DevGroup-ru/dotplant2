@@ -10,7 +10,7 @@ use app\widgets\ImgSearch;
 use kartik\helpers\Html;
 
 ?>
-<li class="span3">
+<div class="col-md-4">
     <div class="thumbnail">
         <a href="<?=$url?>">
             <?=
@@ -41,4 +41,4 @@ use kartik\helpers\Html;
             </h4>
         </div>
     </div>
-</li>
+</div>

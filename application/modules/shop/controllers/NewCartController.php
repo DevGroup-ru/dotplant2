@@ -7,11 +7,10 @@ use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderItem;
 use app\modules\shop\models\Product;
 use app\modules\shop\ShopModule;
-use kartik\helpers\Html;
-use yii\helpers\VarDumper;
+use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
-use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -61,13 +60,16 @@ class NewCartController extends Controller
     protected function addProductsToOrder($products, $parentId = 0)
     {
         if (!is_array($products)) {
-            return []; // @todo Say about error
+            throw new BadRequestHttpException;
         }
         $order = $this->loadOrder(true);
-        $result = [];
+        $result = [
+            'errors' => [],
+            'itemModalPreview' => '',
+        ];
         foreach ($products as $product) {
-            if (!isset($product['id']) || null === $productModel = Product::findById($product['id'])) {
-                // @todo Say about error
+            if (!isset($product['id']) || is_null($productModel = Product::findById($product['id']))) {
+                $result['errors'][] = Yii::t('app', 'Product not found.');
                 continue;
             }
             /** @var Product $productModel */
@@ -75,7 +77,7 @@ class NewCartController extends Controller
                 ? (float) $product['quantity']
                 : 1;
             if ($this->module->allowToAddSameProduct
-                || is_null($orderItem = OrderItem::findOne(['order_id' => $order->id, 'product_id' => $productModel->id]))
+                || is_null($orderItem = OrderItem::findOne(['order_id' => $order->id, 'product_id' => $productModel->id, 'parent_id' => 0]))
             ) {
                 $orderItem = new OrderItem;
                 $totalPriceWithoutDiscount = $productModel->price * $quantity;
@@ -95,12 +97,48 @@ class NewCartController extends Controller
                 $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
                 $orderItem->total_price = $totalPriceWithoutDiscount; // @todo Need to implement discount. It has been calculated without discount now
             }
-            $orderItem->save();
+            if (!$orderItem->save()) {
+                $result['errors'][] = Yii::t('app', 'Cannot save order item.');
+            }
             if (isset($product['children'])) {
-                $this->addProductsToOrder($product['children'], $orderItem->id); // @todo Merge result array
+                $result = ArrayHelper::merge($result, $this->addProductsToOrder($product['children'], $orderItem->id));
+            }
+            if ($parentId === 0) {
+                $result['itemModalPreview'] .= $this->renderPartial(
+                    'item-modal-preview',
+                    [
+                        'order' => $order,
+                        'orderItem' => $orderItem,
+                        'product' => $product,
+                    ]
+                );
             }
         }
-        return $result;
+        if ($parentId === 0) {
+            $order->calculate(true);
+        }
+        $mainCurrency = Currency::getMainCurrency();
+        return ArrayHelper::merge(
+            $result,
+            [
+                'itemsCount' => $order->items_count,
+                'success' => true, // @todo Return true success value
+                'totalPrice' => $mainCurrency->format($order->total_price),
+            ]
+        );
+    }
+
+    public function actionAdd()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (!is_array(Yii::$app->request->post('products', null))) {
+            throw new BadRequestHttpException;
+        }
+        $order = $this->loadOrder(true);
+        if (is_null($order->stage) || $order->stage->immutable_by_user == 1) {
+            throw new BadRequestHttpException;
+        }
+        return $this->addProductsToOrder(Yii::$app->request->post('products'));
     }
 
     public function actionChangeQuantity()
@@ -108,7 +146,7 @@ class NewCartController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
         $id = Yii::$app->request->post('id');
         $quantity = Yii::$app->request->post('quantity');
-        if (is_null($id) || is_null($quantity) || (double) Yii::$app->request->post('quantity') <= 0) {
+        if (is_null($id) || is_null($quantity) || (double) $quantity <= 0) {
             throw new BadRequestHttpException;
         }
         $orderItem = $this->loadOrderItem($id);
@@ -149,27 +187,24 @@ class NewCartController extends Controller
      */
     public function actionDelete($id)
     {
-        // @todo Throw exception if order stage isn't a forming.
-        $this->loadOrderItem($id)->delete();
-        $this->loadOrder()->calculate(true);
-    }
-
-    public function actionTest()
-    {
-        echo Html::beginForm(['/shop/new-cart/add']);
-        echo Html::textInput('products[0][id]', 5);
-        echo Html::textInput('products[0][children][0][id]', 3);
-        echo Html::submitButton();
-        echo Html::endForm();
-    }
-
-    public function actionAdd()
-    {
-//        Yii::$app->response->format = Response::FORMAT_JSON;
-        if (!is_array(Yii::$app->request->post('products', null))) {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $order = $this->loadOrder();
+        if (is_null($order->stage) || $order->stage->immutable_by_user == 1) {
             throw new BadRequestHttpException;
         }
-        $result = $this->addProductsToOrder(Yii::$app->request->post('products'));
+        if ($this->loadOrderItem($id)->delete() && $order->calculate(true)) {
+            $mainCurrency = Currency::getMainCurrency();
+            return [
+                'success' => true,
+                'itemsCount' => $order->items_count,
+                'totalPrice' => $mainCurrency->format($order->total_price),
+            ];
+        } else {
+            return [
+                'success' => false,
+                'message' => Yii::t('app', 'Cannot change additional params'),
+            ];
+        }
     }
 
     public function actionIndex()

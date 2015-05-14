@@ -1,13 +1,13 @@
-<div id="sidebar" class="span3">
+<div id="sidebar" class="col-md-3">
     <?php if ($this->beginCache('SidebarMenu', ['duration'=>86400, 'dependency'=>new yii\caching\TagDependency(['tags'=>\devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(\app\modules\shop\models\Category::className())])])): ?>
     <?=
         \yii\widgets\Menu::widget(
             [
                 'id' => 'sideMenu',
                 'options' => [
-                    'class' => 'nav nav-tabs nav-stacked',
+                    'class' => 'nav nav-pills nav-stacked',
                 ],
-                'items' => \app\modules\shop\models\Category::getMenuItems(),
+                'items' => \app\modules\shop\models\Category::getMenuItems(1),
             ]
         )
     ?>
