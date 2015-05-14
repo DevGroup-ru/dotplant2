@@ -95,10 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             $watermarks,
                             'id',
                             function ($watermarks) {
-                                return Html::img(
-                                    Url::to(['/image/image/watermark', 'fileName' => $watermarks->watermark_path]),
-                                    ['style' => 'max-width:200px;']
-                                );
+                                return Html::img($watermarks->file, ['style' => 'max-width:200px;']);
                             }
                         )
                     );

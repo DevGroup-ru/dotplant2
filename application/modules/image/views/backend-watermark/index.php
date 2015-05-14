@@ -56,10 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => TextWrapper::className(),
                 'attribute' => 'watermark_path',
                 'callback_wrapper' => function ($content, $model) {
-                    return Html::img(
-                        Url::to(['/image/image/watermark', 'fileName' => $model->watermark_path]),
-                        ['style' => 'max-width:200px;max-height:200px;']
-                    );
+                    return Html::img($model->file, ['style' => 'max-width:200px;max-height:200px;']);
                 }
             ],
             [

@@ -228,12 +228,12 @@ class Image extends \yii\db\ActiveRecord
     {
         $size = ThumbnailSize::getByDemand($demand);
         $thumb = Thumbnail::getImageThumbnailBySize($this, $size);
-        $src = $thumb->thumb_path;
+        $src = $thumb->file;
         if ($useWatermark === true) {
             $watermark = Watermark::findOne($size->default_watermark_id);
             if ($watermark !== null) {
                 $water = ThumbnailWatermark::getThumbnailWatermark($thumb, $watermark);
-                $src = $water->compiled_src;
+                $src = $water->file;
             } else {
                 throw new Exception(Yii::t('app', 'Set watermark id'));
             }

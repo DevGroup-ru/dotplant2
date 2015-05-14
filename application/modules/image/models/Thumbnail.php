@@ -5,6 +5,7 @@ namespace app\modules\image\models;
 use app\behaviors\ImageExist;
 use Imagine\Image\Box;
 use Yii;
+use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\imagine\Image as Imagine;
 use yii\web\BadRequestHttpException;
@@ -93,15 +94,19 @@ class Thumbnail extends \yii\db\ActiveRecord
      */
     public static function createThumbnail($image, $size)
     {
-        $file = Imagine::getImagine()->read(Yii::$app->fs->readStream($image->filename));
-        $thumb = $file->thumbnail(new Box($size->width, $size->height));
-        $path = Yii::$app->getModule('image')->thumbnailsDirectory;
-        $listContents = Yii::$app->fs->listContents();
-        $filesInfo = ArrayHelper::index($listContents, 'basename');
-        $stream = $thumb->get($filesInfo[$image->filename]['extension']);
-        $src = "$path/{$filesInfo[$image->filename]['filename']}-{$size->width}x{$size->height}.{$filesInfo[$image->filename]['extension']}";
-        Yii::$app->fs->put($src, $stream);
-        return $src;
+        try {
+            $file = Imagine::getImagine()->read(Yii::$app->fs->readStream($image->filename));
+            $thumb = $file->thumbnail(new Box($size->width, $size->height));
+            $path = Yii::$app->getModule('image')->thumbnailsDirectory;
+            $listContents = Yii::$app->fs->listContents();
+            $filesInfo = ArrayHelper::index($listContents, 'basename');
+            $stream = $thumb->get($filesInfo[$image->filename]['extension']);
+            $src = "$path/{$filesInfo[$image->filename]['filename']}-{$size->width}x{$size->height}.{$filesInfo[$image->filename]['extension']}";
+            Yii::$app->fs->put($src, $stream);
+            return $src;
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     public function afterSave($insert, $changedAttributes)

@@ -2,9 +2,12 @@
 
 namespace app\behaviors;
 
+use app\modules\image\components\CompileSrcInterface;
 use app\modules\image\models\ErrorImage;
 use Yii;
 use yii\base\Behavior;
+use yii\helpers\ArrayHelper;
+use yii\web\HttpException;
 
 class ImageExist extends Behavior
 {
@@ -15,7 +18,6 @@ class ImageExist extends Behavior
         $src = $this->owner->{$this->srcAttrName};
         if (Yii::$app->fs->has($src) === false) {
             $src = Yii::$app->getModule('image')->noImageSrc;
-            $stream = file_get_contents($src);
             $errorImage = ErrorImage::findOne(
                 ['img_id' => $this->owner->id, 'class_name' => $this->owner->className()]
             );
@@ -25,8 +27,22 @@ class ImageExist extends Behavior
                 $errorImage->save();
             }
         } else {
-            $stream = Yii::$app->fs->readStream($src);
+            $fs = Yii::$app->fs;
+            $components = ArrayHelper::index(Yii::$app->getModule('image')->components, 'necessary.class');
+            $adapterName = ArrayHelper::getValue($components, $fs::className() . '.necessary.srcAdapter', null);
+            if ($adapterName === null) {
+                throw new HttpException(Yii::t('app', 'Set src compiler adapter'));
+            }
+            if (class_exists($adapterName) === false) {
+                throw new HttpException(Yii::t('app', "Class $adapterName not found"));
+            }
+            $adapter = new $adapterName;
+            if ($adapter instanceof CompileSrcInterface) {
+                $src = $adapter->CompileSrc($src);
+            } else {
+                throw new HttpException(Yii::t('app', "Class $adapterName should implement CompileSrcInterface"));
+            }
         }
-        return stream_get_contents($stream);
+        return $src;
     }
 }

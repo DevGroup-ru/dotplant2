@@ -13,14 +13,9 @@ use kartik\helpers\Html;
 use yii\helpers\Url;
 
 foreach ($images as $image) {
-    $image_src = Url::to(['/image/image/image', 'fileName' => $image->filename]);
+    $image_src = $image->file;
     if ($thumbnailOnDemand === true) {
         $image_src = $image->getThumbnail("{$thumbnailWidth}x{$thumbnailHeight}", $useWatermark);
-        if ($useWatermark === true) {
-            $image_src = Url::to(['/image/image/thumbnail-watermark', 'fileName' => $image_src]);
-        } else {
-            $image_src = Url::to(['/image/image/thumbnail', 'fileName' => $image_src]);
-        }
     }
     echo Html::tag(
         'div',

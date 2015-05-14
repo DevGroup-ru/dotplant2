@@ -105,7 +105,6 @@ class ImageDropzone extends DropZone
             ]
         )->orderBy(['sort_order' => SORT_ASC])->all();
 
-        $path = Yii::getAlias('@webroot' . $this->uploadDir);
 
         /** Image $file */
 
@@ -115,7 +114,7 @@ class ImageDropzone extends DropZone
             $this->storedFiles[] = [
                 'id' => $file->id,
                 'name' => $file->filename,
-                'thumbnail' => Url::to(['/image/image/thumbnail', 'fileName' => $thumbnail_src]),
+                'thumbnail' => $thumbnail_src,
                 'description' => $file->image_description,
             ];
         }

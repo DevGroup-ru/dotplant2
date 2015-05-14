@@ -17,7 +17,6 @@ use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\data\Pagination;
-use yii\helpers\Json;
 
 /**
  * This is the model class for table "product".
@@ -560,7 +559,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 $categories = array_map('trim', $categories);
                 $categoryIds = [];
                 foreach ($categories as $part) {
-                    $cat = Category::findBySlug($part, 1, - 1);
+                    $cat = Category::findBySlug($part, 1, -1);
                     if (is_object($cat)) {
                         $categoryIds[] = $cat->id;
                     }
@@ -571,7 +570,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 $categories = array_map('trim', $categories);
                 $categoryIds = [];
                 foreach ($categories as $part) {
-                    $cat = Category::findByName($part, 1, - 1);
+                    $cat = Category::findByName($part, 1, -1);
                     if (is_object($cat)) {
                         $categoryIds[] = $cat->id;
                     }
@@ -586,7 +585,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             // post-process categories
             // find & add parent category
             // if we need to show products of child categories in products list
-            if (is_array($categories) && Config::getValue('shop.showProductsOfChildCategories')) {
+            $module = Yii::$app->modules['shop'];
+            if (is_array($categories) && $module->showProductsOfChildCategories) {
 
                 do {
                     $repeat = false;

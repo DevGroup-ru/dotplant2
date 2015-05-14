@@ -90,11 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 if ($model->isNewRecord === false) {
                     $this->registerCss('span.file-input > div.file-preview {display:block;}');
                     $this->registerCss('.file-preview img {max-width:100%;}');
-                    $options = [
-                        'initialPreview' => [
-                            Html::img(Url::to(['/image/image/watermark', 'fileName' => $model->watermark_path]))
-                        ]
-                    ];
+                    $options = ['initialPreview' => [Html::img($model->file)]];
                 }
                 echo $form->field($model, 'image')->widget(
                     FileInput::classname(),

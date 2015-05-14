@@ -94,19 +94,25 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public function commonApplicationAttributes()
     {
         $attributes = $this->attributes;
-        unset($attributes['components']);
+
         $components = [];
         foreach ($this->components as $name => $component) {
             $necessary = ArrayHelper::getValue($component, 'necessary', []);
             $unnecessary = ArrayHelper::getValue($component, 'unnecessary', []);
             $active = ArrayHelper::remove($necessary, 'active', false);
+            ArrayHelper::remove($necessary, 'srcAdapter');
             if ($active === true || $active === '1') {
                 foreach ($unnecessary as $confName => $confVal) {
                     if ($confVal === '') {
                         ArrayHelper::remove($unnecessary, $confName);
                     }
                 }
-                $components[$name] = ArrayHelper::merge($necessary, $unnecessary);
+                if (ArrayHelper::keyExists('fs', $components)) {
+                    $components[$name] = ArrayHelper::merge($necessary, $unnecessary);
+                } else {
+                    $components['fs'] = ArrayHelper::merge($necessary, $unnecessary);
+                }
+
             }
         }
 

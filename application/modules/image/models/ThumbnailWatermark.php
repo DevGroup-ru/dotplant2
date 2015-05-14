@@ -5,6 +5,7 @@ namespace app\modules\image\models;
 use app\behaviors\ImageExist;
 use Imagine\Image\Box;
 use Yii;
+use yii\base\Exception;
 use yii\imagine\Image as Imagine;
 
 /**
@@ -90,74 +91,76 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
      */
     public static function createWatermark($thumb, $water)
     {
-        $thumbImagine = Imagine::getImagine()->read(Yii::$app->fs->readStream($thumb->thumb_path));
-        $waterImagine = Imagine::getImagine()->read(Yii::$app->fs->readStream($water->watermark_path));
-        $thumbSize = $thumbImagine->getSize();
-        $waterSize = $waterImagine->getSize();
+        try {
+            $thumbImagine = Imagine::getImagine()->read(Yii::$app->fs->readStream($thumb->thumb_path));
+            $waterImagine = Imagine::getImagine()->read(Yii::$app->fs->readStream($water->watermark_path));
+            $thumbSize = $thumbImagine->getSize();
+            $waterSize = $waterImagine->getSize();
+            // Resize watermark if it to large
+            if ($thumbSize->getWidth() < $waterSize->getWidth() || $thumbSize->getHeight() < $waterSize->getHeight()) {
+                $t = $thumbSize->getHeight() / $waterSize->getHeight();
+                if (round($t * $waterSize->getWidth()) <= $thumbSize->getWidth()) {
+                    $waterImagine->resize(new Box(round($t * $waterSize->getWidth()), $thumbSize->getHeight()));
+                } else {
+                    $t = $thumbSize->getWidth() / $waterSize->getWidth();
+                    $waterImagine->resize(new Box($thumbSize->getWidth(), round($t * $waterSize->getHeight())));
+                }
+            }
+            $position = [0, 0];
 
-        // Resize watermark if it to large
-        if ($thumbSize->getWidth() < $waterSize->getWidth() || $thumbSize->getHeight() < $waterSize->getHeight()) {
-            $t = $thumbSize->getHeight() / $waterSize->getHeight();
-            if (round($t * $waterSize->getWidth()) <= $thumbSize->getWidth()) {
-                $waterImagine->resize(new Box(round($t * $waterSize->getWidth()), $thumbSize->getHeight()));
+            if ($water->position == Watermark::POSITION_CENTER) {
+                $position = [
+                    round(($thumbImagine->getSize()->getWidth() - $waterImagine->getSize()->getWidth()) / 2),
+                    round(($thumbImagine->getSize()->getHeight() - $waterImagine->getSize()->getHeight()) / 2)
+                ];
             } else {
-                $t = $thumbSize->getWidth() / $waterSize->getWidth();
-                $waterImagine->resize(new Box($thumbSize->getWidth(), round($t * $waterSize->getHeight())));
+                $posStr = explode(' ', $water->position);
+                switch ($posStr[0]) {
+                    case 'TOP':
+                        $position[0] = 0;
+                        break;
+                    case 'BOTTOM':
+                        $position[0] = $thumbImagine->getSize()->getWidth() - $waterImagine->getSize()->getWidth();
+                        break;
+                }
+                switch ($posStr[1]) {
+                    case 'LEFT':
+                        $position[1] = 0;
+                        break;
+                    case 'RIGHT':
+                        $position[1] = $thumbImagine->getSize()->getHeight() - $waterImagine->getSize()->getHeight();
+                        break;
+                }
             }
+            $tmpThumbFilePath = Yii::getAlias(
+                '@runtime/' . str_replace(Yii::$app->getModule('image')->thumbnailsDirectory, '', $thumb->thumb_path)
+            );
+            $tmpWaterFilePath = Yii::getAlias(
+                '@runtime/' . str_replace(Yii::$app->getModule('image')->watermarkDirectory, '', $water->watermark_path)
+            );
+            $thumbImagine->save($tmpThumbFilePath);
+            $waterImagine->save($tmpWaterFilePath);
+            
+            $watermark = Imagine::watermark(
+                $tmpThumbFilePath,
+                $tmpWaterFilePath,
+                $position
+            );
+            $path = Yii::$app->getModule('image')->thumbnailsDirectory;
+            $fileInfo = pathinfo($thumb->thumb_path);
+            $watermarkInfo = pathinfo($water->watermark_path);
+            $fileName = "{$fileInfo['filename']}-{$watermarkInfo['filename']}.{$fileInfo['extension']}";
+            $watermark->save(Yii::getAlias('@runtime/') . $fileName);
+            $stream = fopen(Yii::getAlias('@runtime/') . $fileName, 'r+');
+            Yii::$app->fs->putStream("$path/$fileName", $stream);
+            fclose($stream);
+            unlink($tmpThumbFilePath);
+            unlink($tmpWaterFilePath);
+            unlink(Yii::getAlias('@runtime/' . $fileName));
+            return "$path/$fileName";
+        } catch (Exception $e) {
+            return false;
         }
-        $position = [0, 0];
-
-
-        if ($water->position == Watermark::POSITION_CENTER) {
-            $position = [
-                round(($thumbImagine->getSize()->getWidth() - $waterImagine->getSize()->getWidth()) / 2),
-                round(($thumbImagine->getSize()->getHeight() - $waterImagine->getSize()->getHeight()) / 2)
-            ];
-        } else {
-            $posStr = explode(' ', $water->position);
-            switch ($posStr[0]) {
-                case 'TOP':
-                    $position[0] = 0;
-                    break;
-                case 'BOTTOM':
-                    $position[0] = $thumbImagine->getSize()->getWidth() - $waterImagine->getSize()->getWidth();
-                    break;
-            }
-            switch ($posStr[1]) {
-                case 'LEFT':
-                    $position[1] = 0;
-                    break;
-                case 'RIGHT':
-                    $position[1] = $thumbImagine->getSize()->getHeight() - $waterImagine->getSize()->getHeight();
-                    break;
-            }
-        }
-        $tmpThumbFilePath = Yii::getAlias(
-            '@runtime/' . str_replace(Yii::$app->getModule('image')->thumbnailsDirectory, '', $thumb->thumb_path)
-        );
-        $tmpWaterFilePath = Yii::getAlias(
-            '@runtime/' . str_replace(Yii::$app->getModule('image')->watermarkDirectory, '', $water->watermark_path)
-        );
-        $thumbImagine->save($tmpThumbFilePath);
-        $waterImagine->save($tmpWaterFilePath);
-        //next line use existing images from file system. need to save Imagines an save paths
-        $watermark = Imagine::watermark(
-            $tmpThumbFilePath,
-            $tmpWaterFilePath,
-            $position
-        );
-        $path = Yii::$app->getModule('image')->thumbnailsDirectory;
-        $fileInfo = pathinfo($thumb->thumb_path);
-        $watermarkInfo = pathinfo($water->watermark_path);
-        $fileName = "{$fileInfo['filename']}-{$watermarkInfo['filename']}.{$fileInfo['extension']}";
-        $watermark->save(Yii::getAlias('@runtime/') . $fileName);
-        $stream = fopen(Yii::getAlias('@runtime/') . $fileName, 'r+');
-        Yii::$app->fs->putStream("$path/$fileName", $stream);
-        fclose($stream);
-        unlink($tmpThumbFilePath);
-        unlink($tmpWaterFilePath);
-        unlink(Yii::getAlias('@runtime/' . $fileName));
-        return "$path/$fileName";
     }
 
     public function afterDelete()
