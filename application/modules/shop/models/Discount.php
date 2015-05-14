@@ -2,7 +2,6 @@
 
 namespace app\modules\shop\models;
 
-use app\modules\shop\components\DiscountInterface;
 use app\modules\shop\components\SpecialPriceProductInterface;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -21,9 +20,21 @@ class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
 {
 
     public $options = [];
-
+    public $applianceValues = [];
 
     private static  $allDiscounts = [];
+
+
+    public function init()
+    {
+        $this->applianceValues = [
+            'order_without_delivery' => Yii::t('app', 'Order without delivery'),
+            'order_with_delivery' => Yii::t('app', 'Order with delivery'),
+            'products' => Yii::t('app', 'Products'),
+            'delivery' => Yii::t('app', 'Delivery'),
+        ];
+        return parent::init();
+    }
 
     public function setPriceProduct(Product &$product, Order $order = null)
     {
@@ -31,13 +42,10 @@ class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
         if (isset(self::$allDiscounts['products'])) {
             foreach (self::$allDiscounts['products'] as $discount) {
                 $discountFlag = false;
-                foreach ($this->getTypes() as $discountType) {
-                    $discountTypeObject = new $discountType->class;
-                    if ($discountTypeObject instanceof DiscountInterface) {
-                        $discountFlag = $discountTypeObject->checkDiscount($discount, $product, $order);
-                        if ($discountFlag === false)
-                            break;
-                    }
+                foreach ($this->getTypeObjects() as $discountTypeObject) {
+                    $discountFlag = $discountTypeObject->checkDiscount($discount, $product, $order);
+                    if ($discountFlag === false)
+                        break;
                 }
                 if ($discountFlag === true) {
                     $product->total_price = $discount->getDiscountPrice($product->total_price);
@@ -46,10 +54,9 @@ class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
         }
     }
 
-
     public static function getAllDiscounts()
     {
-        $discounts = Discount::find()->where(['active'=>1])->all();
+        $discounts = Discount::find()->all();
         foreach ($discounts as $discount) {
             self::$allDiscounts[$discount->appliance][] = $discount;
         }
@@ -67,12 +74,20 @@ class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
 
         return $price;
     }
-
-    public function getTypes()
+    public function getTypeObjects()
     {
-        return DiscountType::findAll(['active'=>1]);
-    }
+        $result = [];
 
+        $types = DiscountType::find()->where(['active'=>1])->orderBy(['sort_order'=>SORT_ASC])->all();
+        foreach ($types as $type) {
+            $discountTypeObject = new $type->class;
+            if ($discountTypeObject instanceof AbstractDiscountType) {
+                $result[] = $discountTypeObject;
+            }
+        }
+
+        return $result;
+    }
 
     /**
      * @inheritdoc
@@ -90,6 +105,7 @@ class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
         return [
             [['name', 'appliance', 'value'], 'required'],
             [['appliance'], 'string'],
+            [['appliance'], 'in', 'range'=> array_keys($this->applianceValues)],
             [['value', 'apply_order_price_lg'], 'number'],
             [['value_in_percent'], 'integer'],
             [['name'], 'string', 'max' => 255]

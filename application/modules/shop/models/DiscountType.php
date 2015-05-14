@@ -13,6 +13,7 @@ use Yii;
  * @property integer $active
  * @property string $checking_class
  * @property integer $sort_order
+ * @property string $add_view
  */
 class DiscountType extends \yii\db\ActiveRecord
 {
