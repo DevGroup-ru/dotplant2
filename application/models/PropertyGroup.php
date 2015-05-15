@@ -214,27 +214,16 @@ class PropertyGroup extends ActiveRecord
     {
         $cacheKey = "PropertyGroupBy:$object_id:$object_model_id";
         if (false === $groups = Yii::$app->cache->get($cacheKey)) {
-
-            $groups = Yii::$app->db->cache(
-                function($db) use($object_id, $object_model_id) {
-                    $group_ids = (new Query())->select('property_group_id')
-                        ->from(ObjectPropertyGroup::tableName())
-                        ->where([
-                            'object_id' => $object_id,
-                            'object_model_id' => $object_model_id,
-                        ]);
-                    return PropertyGroup::find()->where(['in', 'id', $group_ids])->all($db);
-                },
-                86400,
-                new TagDependency([
-                    'tags' => [
-                        ActiveRecordHelper::getCommonTag(PropertyGroup::className()),
-                        ActiveRecordHelper::getCommonTag(ObjectPropertyGroup::className()),
-                    ]
-                ])
-            );
-
-            if (null === $groups) {
+            $group_ids = ObjectPropertyGroup::find()
+                ->select('property_group_id')
+                ->where([
+                    'object_id' => $object_id,
+                    'object_model_id' => $object_model_id,
+                ])->column();
+            if (null === $group_ids) {
+                return null;
+            }
+            if (null === $groups = static::find()->where(['in', 'id', $group_ids])->all()) {
                 return null;
             }
             if (null !== $object = Object::findById($object_id)) {
