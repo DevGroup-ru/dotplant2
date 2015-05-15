@@ -14,11 +14,9 @@ use kartik\helpers\Html;
     <tr class="warning" style="color: #666; font-size: 12px;">
         <td style="padding-left: 40px;">
             <?=
-            \app\widgets\ImgSearch::widget([
+            \app\modules\image\widgets\ObjectImageWidget::widget([
                 'limit' => 1,
-                'objectId' => \app\models\Object::getForClass(Product::className())->id,
-                'objectModelId' => $item->product_id,
-                'viewFile' => 'img-thumbnail',
+                'model' => $item->product,
             ])
             ?>
         </td>

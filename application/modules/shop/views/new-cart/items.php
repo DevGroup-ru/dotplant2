@@ -38,11 +38,9 @@ foreach ($items as $i => $item) {
         <tr>
             <td>
                 <?=
-                \app\widgets\ImgSearch::widget([
+                \app\modules\image\widgets\ObjectImageWidget::widget([
                     'limit' => 1,
-                    'objectId' => \app\models\Object::getForClass(Product::className())->id,
-                    'objectModelId' => $item->product_id,
-                    'viewFile' => 'img-thumbnail',
+                    'model' => $item->product,
                 ])
                 ?>
             </td>
