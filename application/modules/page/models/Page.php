@@ -5,6 +5,7 @@ namespace app\modules\page\models;
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
 use app\properties\HasProperties;
+use app\traits\GetImages;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
@@ -12,7 +13,6 @@ use app\models\Config;
 
 /**
  * This is the model class for table "page".
- *
  * @property integer $id
  * @property integer $parent_id
  * @property string $slug
@@ -35,6 +35,7 @@ use app\models\Config;
  */
 class Page extends ActiveRecord
 {
+    use GetImages;
     private static $identity_map = [];
 
     /**
@@ -55,7 +56,16 @@ class Page extends ActiveRecord
             [['robots', 'parent_id', 'sort_order'], 'integer'],
             [['slug_absolute', 'published', 'searchable'], 'boolean'],
             [
-                ['content', 'title', 'h1', 'meta_description', 'breadcrumbs_label', 'announce', 'slug_compiled', 'name'],
+                [
+                    'content',
+                    'title',
+                    'h1',
+                    'meta_description',
+                    'breadcrumbs_label',
+                    'announce',
+                    'slug_compiled',
+                    'name'
+                ],
                 'string'
             ],
             [['date_added', 'date_modified'], 'safe'],
@@ -120,7 +130,7 @@ class Page extends ActiveRecord
     public function search($params)
     {
         /** @var $query \yii\db\ActiveQuery */
-        $query = self::find();
+        $query = self::find()->with('images');
         if (null != $this->parent_id) {
             $query->andWhere(['parent_id' => $this->parent_id]);
         }
@@ -161,11 +171,13 @@ class Page extends ActiveRecord
                         $cacheKey,
                         static::$identity_map[$id],
                         86400,
-                        new \yii\caching\TagDependency([
-                            'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                        new \yii\caching\TagDependency(
+                            [
+                                'tags' => [
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                                ]
                             ]
-                        ])
+                        )
                     );
                 }
             }
@@ -185,7 +197,7 @@ class Page extends ActiveRecord
             Yii::$app->cache,
             [
                 \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
-                'Page:'.$this->slug_compiled
+                'Page:' . $this->slug_compiled
             ]
         );
 
@@ -193,7 +205,7 @@ class Page extends ActiveRecord
             Yii::$app->cache,
             [
                 \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
-                'Page:'.$this->id.':0'
+                'Page:' . $this->id . ':0'
             ]
         );
 
@@ -201,7 +213,7 @@ class Page extends ActiveRecord
             Yii::$app->cache,
             [
                 \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
-                'Page:'.$this->id.':1'
+                'Page:' . $this->id . ':1'
             ]
         );
 
@@ -212,7 +224,6 @@ class Page extends ActiveRecord
         if (empty($this->h1)) {
             $this->h1 = $this->title;
         }
-
 
 
         return parent::beforeSave($insert);
@@ -292,11 +303,13 @@ class Page extends ActiveRecord
                 $cacheKey,
                 $page,
                 $duration,
-                new \yii\caching\TagDependency([
-                    'tags' => [
-                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                new \yii\caching\TagDependency(
+                    [
+                        'tags' => [
+                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                        ]
                     ]
-                ])
+                )
             );
         }
         return $page;

@@ -14,6 +14,17 @@ $this->title = Yii::t('app', 'Prefiltered page edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/prefiltered-pages/index'], 'label' => Yii::t('app', 'Prefiltered pages')];
 $this->params['breadcrumbs'][] = $this->title;
 
+
+
+$this->registerJs('
+    var static_values_properties = '. Json::encode($static_values_properties) .';
+    var current_selections = '.( empty($model->params)?"{}":$model->params ).';
+    var current_field_id= "params"',
+        \yii\web\View::POS_HEAD,
+        'propertyData'
+);
+
+\app\backend\assets\PropertyAsset::register($this);
 ?>
 
 <?= app\widgets\Alert::widget([
@@ -177,10 +188,10 @@ SCRIPT;
     </div>
 <?php BackendWidget::end(); ?>
 <?php ActiveForm::end(); ?>
-<script type="x-tmpl-underscore" id="parameter-template">
+<section style="display: none" data-type="x-tmpl-underscore" id="parameter-template">
     <div class="row form-group parameter">
         <label class="col-md-2 control-label" for="PropertyValue_<%- index %>">
-            <select class="property_id">
+            <select class="property_id form-control">
                 <option value="0">- <?= Yii::t('app', 'select') ?> -</option>
                 <?php foreach ($static_values_properties as $prop) {
                     echo "<option value=\"".$prop['property']->id."\">" .
@@ -203,81 +214,4 @@ SCRIPT;
             </div>
         </div>
     </div>
-</script>
-<script>
-$(function(){
-    var static_values_properties = <?= Json::encode($static_values_properties) ?>;
-
-    function addProperty(property_id, selected) {
-        var index = $('.add-property .parameter').length,
-            $property = $(
-            _.template(
-                $("#parameter-template").html(),
-                {
-                    'index' : index
-                }
-            )
-        );
-
-        $property.find('.property_id').change(function(){
-            var $select = $(this).parent().parent().find('.select');
-            $select.empty();
-            var property_id = $(this).val();
-            if (property_id>0){
-                if (static_values_properties[property_id]['has_static_values'] === false) {
-                    $select.replaceWith($('<input type="text" id="PropertyValue_'+index+'" class="form-control select">'));
-                } else {
-                    var static_values = static_values_properties[property_id]['static_values_select'];
-                    for (var i in static_values) {
-                        var $option = $('<option>');
-                        $option
-                            .val(i)
-                            .html(static_values[i]);
-                        $select.append($option);
-                    }
-                }
-            }
-        });
-        $property.find('.btn-remove').click(function(){
-            $(this).parent().parent().parent().parent().remove();
-            return false;
-        });
-        if (property_id > 0 && selected > 0) {
-            $property.find('.property_id').val(property_id).change();
-            $property.find('.select').val(selected);
-        }
-
-
-        $("#properties").append($property);
-    }
-
-
-    $(".add-property").click(function(){
-        addProperty(0, 0);
-        return false;
-    });
-
-    $("#prefiltered-pages-form").submit(function(){
-        var $input = $("#params");
-        $input.val();
-
-        var serialized = {};
-        $("#properties .parameter").each(function(){
-            var key = $(this).find('.property_id').val();
-            var value = $(this).find('.select').val();
-            serialized[key]=value;
-        });
-
-        $("#params").val(JSON.stringify(serialized));
-
-        return true;
-    });
-
-    var current_selections = <?= empty($model->params)?"{}":$model->params ?>;
-    for (var c in current_selections) {
-        addProperty(c, current_selections[c]);
-    }
-});
-
-
-</script>
+</section>

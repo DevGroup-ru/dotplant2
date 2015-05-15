@@ -2,9 +2,6 @@
 
 namespace app\modules\shop\models;
 
-use app\modules\shop\components\DiscountInterface;
-use app\modules\shop\components\DiscountProductInterface;
-use app\modules\shop\components\FilterInterface;
 use Yii;
 
 /**
@@ -14,8 +11,18 @@ use Yii;
  * @property integer $user_id
  * @property integer $discount_id
  */
-class UserDiscount extends \yii\db\ActiveRecord implements DiscountInterface
+class UserDiscount extends AbstractDiscountType
 {
+
+    public function getFullName()
+    {
+        return $this->user_id;
+    }
+
+
+
+
+
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
         $result = false;

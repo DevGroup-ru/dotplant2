@@ -59,7 +59,10 @@ class NavigationWidget extends Widget
             }
         }
         if (null === $items) {
-            $root = Navigation::findOne($this->rootId);
+            $root = Navigation::find()
+                ->where(['id' => $this->rootId])
+                ->with('children')
+                ->one();
             $items = [];
             foreach ($root->children as $child) {
                 $items[] = self::getTree($child);

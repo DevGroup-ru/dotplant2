@@ -29,16 +29,17 @@ $mainCurrency = \app\modules\shop\models\Currency::getMainCurrency();
         <tr>
             <td>
                 <?=
-                \app\widgets\ImgSearch::widget([
-                    'limit' => 1,
-                    'objectId' => \app\models\Object::getForClass(Product::className())->id,
-                    'objectModelId' => $item->product_id,
-                    'viewFile' => 'img-thumbnail',
-                ])
+                \app\modules\image\widgets\ObjectImageWidget::widget(
+                    [
+                        'limit' => 1,
+                        'model' => $item,
+                        'viewFile' => 'img-thumbnail',
+                    ]
+                )
                 ?>
             </td>
-            <td><?= $item->product->name?></td>
-            <td><?= $item->product->formattedPrice(null, false, false) ?></td>
+            <td><?=$item->product->name?></td>
+            <td><?=$item->product->formattedPrice(null, false, false)?></td>
 
             <td>
                 <?php if ($immutable === true): ?>
@@ -50,38 +51,40 @@ $mainCurrency = \app\modules\shop\models\Currency::getMainCurrency();
                             <i class="fa fa-minus"></i></button>
                         <button class="btn btn-primary plus" type="button" data-action="change-quantity">
                             <i class="fa fa-plus"></i></button>
-                        <button class="btn btn-danger" type="button" data-action="delete" data-url="<?=\yii\helpers\Url::toRoute([
-                            'cart/delete',
-                            'id' => $item->product_id
-                        ])?>"><i class="fa fa-trash-o"></i></button>
+                        <button class="btn btn-danger" type="button" data-action="delete" data-url="<?=\yii\helpers\Url::toRoute(
+                            [
+                                'cart/delete',
+                                'id' => $item->product_id
+                            ]
+                        )?>"><i class="fa fa-trash-o"></i></button>
                     </div>
                 <?php endif; ?>
             </td>
             <td>
                 <span class="item-price">
                     <?=
-                        $mainCurrency->format(
-                            $item->product->convertedPrice() * $item->quantity
-                        )
+                    $mainCurrency->format(
+                        $item->product->convertedPrice() * $item->quantity
+                    )
                     ?>
                 </span>
             </td>
         </tr>
     <?php endforeach; ?>
     <?php if (isset($shippingOption)): ?>
-    <tr class="shipping-data">
-        <td colspan="4"><?= Html::encode($shippingOption->name) ?></td>
-        <td><?= $mainCurrency->format($shippingOption->cost) ?></td>
-    </tr>
+        <tr class="shipping-data">
+            <td colspan="4"><?=Html::encode($shippingOption->name)?></td>
+            <td><?=$mainCurrency->format($shippingOption->cost)?></td>
+        </tr>
     <?php endif; ?>
 
     <tr>
         <td colspan="3"></td>
-        <td><strong><span class="items-count"><?= $totalQuantity ?></span></strong></td>
+        <td><strong><span class="items-count"><?=$totalQuantity?></span></strong></td>
         <td>
             <span class="label label-info">
                 <span class="total-price ">
-                    <?= $mainCurrency->format($totalPrice) ?>
+                    <?=$mainCurrency->format($totalPrice)?>
                 </span>
 
             </span>

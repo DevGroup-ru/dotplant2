@@ -38,14 +38,6 @@ AppAsset::register($this);
                 <a href="/" class="logo">DotPlant<sup>2</sup></a>
             </div>
             <div class="col-md-4">
-                &nbsp;
-            </div>
-            <div class="col-md-4">
-
-            </div>
-        </div>
-    </div>
-
                 <?php if (!Yii::$app->user->isGuest): ?>
                     <?= Yii::t('app', 'Hello') ?>
                     <strong><?= Html::a(Yii::$app->user->identity->username, ['/cabinet']) ?>!</strong>
@@ -70,46 +62,52 @@ AppAsset::register($this);
                     )
                     ?>
                 <?php endif; ?>
-
-            <?php
-                echo \app\widgets\CartInfo::widget()
-            ?>
-
+            </div>
+            <div class="col-md-4">
                 <?php
-                    $form = \yii\widgets\ActiveForm::begin(
-                        [
-                            'action' => ['/default/search'],
-                            'id' => 'search-form',
-                            'method' => 'get',
-                            'options' => [
-                                'class' => 'form-inline navbar-search',
-                            ],
+                $form = \yii\widgets\ActiveForm::begin(
+                    [
+                        'action' => ['/default/search'],
+                        'id' => 'search-form',
+                        'method' => 'get',
+                        'options' => [
+                            'class' => 'form-inline navbar-search',
+                        ],
+                    ]
+                );
+                $model = new \app\models\Search;
+                $model->load(Yii::$app->request->get());
+                echo $form->field(
+                    $model,
+                    'q',
+                    [
+                        'options' => [
+                            'class' => '',
+                            'tag' => 'span',
+                        ],
+                        'template' => '{input}',
+                    ]
+                )->widget(
+                    \app\widgets\AutoCompleteSearch::className(),
+                    [
+                        'options' => [
+                            'class' => 'form-control',
+                            'placeholder' => Yii::t('app', 'Search'),
                         ]
-                    );
-                    $model = new \app\models\Search;
-                    $model->load(Yii::$app->request->get());
-                    echo $form->field(
-                        $model,
-                        'q',
-                        [
-                            'options' => [
-                                'class' => '',
-                                'tag' => 'span',
-                            ],
-                            'template' => '{input}',
-                        ]
-                    )->widget(
-                        \app\widgets\AutoCompleteSearch::className(),
-                        [
-                            'options' => [
-                                'class' => 'srchTxt',
-                                'placeholder' => Yii::t('app', 'Search'),
-                            ]
-                        ]
-                    );
-                    echo Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']);
-                    \yii\widgets\ActiveForm::end();
+                    ]
+                );
+                echo Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']);
+                \yii\widgets\ActiveForm::end();
                 ?>
+            </div>
+            <div class="col-md-2">
+                <?= \app\widgets\CartInfo::widget() ?>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="navbar navbar-inverse">
                 <?=
                     \app\widgets\navigation\NavigationWidget::widget(
                         [
@@ -120,14 +118,17 @@ AppAsset::register($this);
                                         ? Yii::t('app', 'Login')
                                         : Yii::t('app', 'Logout'),
                                     'itemOptions' => [
-                                        'class' => 'btn btn-large btn-success',
+                                        'class' => 'pull-right',
                                     ],
                                     'url' => Yii::$app->user->isGuest ? '/login' : '/logout',
                                 ],
                             ],
                             'options' => [
-                                'class' => 'nav pull-right',
+                                'class' => 'nav nav-pills',
                             ],
                         ]
                     )
                 ?>
+            </div>
+        </div>
+    </div>

@@ -2,7 +2,6 @@
 
 namespace app\modules\shop\models;
 
-use app\modules\shop\components\DiscountInterface;
 use Yii;
 
 /**
@@ -16,8 +15,14 @@ use Yii;
  * @property integer $maximum_uses
  * @property integer $used
  */
-class DiscountCode extends \yii\db\ActiveRecord implements DiscountInterface
+class DiscountCode extends AbstractDiscountType
 {
+
+    public function getFullName()
+    {
+        return $this->code;
+    }
+
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
         $result = false;

@@ -11,18 +11,22 @@ class PageRule implements UrlRuleInterface
 {
     public function createUrl($manager, $route, $params)
     {
-        if (isset($params['model'])) {
-            $model = $params['model'];
-            unset($params['model']);
-        } else if (isset($params['id'])) {
-            $model = Page::findById($params['id']);
-            unset($params['id']);
-        }
-        if (($route == 'page/show' || $route == 'page/list') && null !== $model) {
-            $url = ($model->slug_compiled === ':mainpage:') ? '' : $model->slug_compiled;
-            $_query = http_build_query($params);
-            $url = (!empty($_query)) ? $url.'?'.$_query : $url;
-            return $url;
+        if ($route == 'page/show' || $route == 'page/list') {
+            if (isset($params['model'])) {
+                $model = $params['model'];
+                unset($params['model']);
+            } else {
+                if (isset($params['id'])) {
+                    $model = Page::findById($params['id']);
+                    unset($params['id']);
+                }
+            }
+            if (null !== $model) {
+                $url = ($model->slug_compiled === ':mainpage:') ? '' : $model->slug_compiled;
+                $_query = http_build_query($params);
+                $url = (!empty($_query)) ? $url . '?' . $_query : $url;
+                return $url;
+            }
         }
         return false;
     }

@@ -2,7 +2,6 @@
 
 namespace app\modules\shop\models;
 
-use app\modules\shop\components\DiscountInterface;
 use Yii;
 
 /**
@@ -11,9 +10,21 @@ use Yii;
  * @property integer $id
  * @property integer $product_id
  * @property integer $discount_id
+ * @property Product $product
  */
-class ProductDiscount extends \yii\db\ActiveRecord implements DiscountInterface
+class ProductDiscount extends AbstractDiscountType
 {
+
+    public function getFullName()
+    {
+        return $this->product->name;
+    }
+
+    public function getProduct()
+    {
+        return $this->hasOne(Product::className(),['id'=>'product_id']);
+    }
+
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
         $result = false;

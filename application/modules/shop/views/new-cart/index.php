@@ -26,8 +26,8 @@ jQuery('input[data-type=quantity]').blur(function() {
     }
     Shop.changeAmount($input.data('id'), quantity, function(data) {
         if (data.success) {
-            jQuery('#cart-table .total-price').text(data.totalPrice);
-            jQuery('#cart-table .items-count').text(data.itemsCount);
+            jQuery('#cart-table .total-price, #cart-info-widget .total-price').text(data.totalPrice);
+            jQuery('#cart-table .items-count, #cart-info-widget .items-count').text(data.itemsCount);
             $input.parents('tr').eq(0).find('.item-price').text(data.itemPrice);
             $input.val(quantity);
         }
@@ -43,14 +43,14 @@ jQuery('#cart-table [data-action="change-quantity"]').click(function() {
     if ($this.hasClass('plus')) {
         quantity++;
     } else {
-        if(quantity > 1) {
+        if (quantity > 1) {
             quantity--;
         }
     }
     Shop.changeAmount($input.data('id'), quantity, function(data) {
         if (data.success) {
-            jQuery('#cart-table .total-price').text(data.totalPrice);
-            jQuery('#cart-table .items-count').text(data.itemsCount);
+            jQuery('#cart-table .total-price, #cart-info-widget .total-price').text(data.totalPrice);
+            jQuery('#cart-table .items-count, #cart-info-widget .items-count').text(data.itemsCount);
             $input.parents('tr').eq(0).find('.item-price').text(data.itemPrice);
             $input.val(quantity);
         }

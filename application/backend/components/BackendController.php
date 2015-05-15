@@ -13,4 +13,10 @@ use app\components\Controller;
 class BackendController extends Controller
 {
     public $layout = '@app/backend/views/layouts/main';
+
+    public function beforeAction($action)
+    {
+        Yii::$app->response->is_backend = true;
+        return parent::beforeAction($action);
+    }
 }

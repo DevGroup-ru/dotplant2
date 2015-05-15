@@ -388,4 +388,15 @@ class User extends ActiveRecord implements IdentityInterface
         $name = trim($this->first_name . ' ' . $this->last_name);
         return $name ? $name : $this->username;
     }
+
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+        if ($insert) {
+            $this->setPassword($this->password);
+        }
+        return true;
+    }
 }

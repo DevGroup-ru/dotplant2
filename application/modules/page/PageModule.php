@@ -32,6 +32,10 @@ class PageModule extends BaseModule
      */
     public $searchResultsLimit = 10;
 
+    public $controllerMap = [
+        'backend' => 'app\modules\page\backend\PageController',
+    ];
+
     /**
      * @inheritdoc
      */
@@ -41,7 +45,7 @@ class PageModule extends BaseModule
             'configurableModule' => [
                 'class' => 'app\modules\config\behaviors\ConfigurableModuleBehavior',
                 'configurationView' => '@app/modules/page/views/configurable/_config',
-                'configurableModel' => 'app\modules\page\models\ConfigConfigurableModel',
+                'configurableModel' => 'app\modules\page\models\ConfigConfigurationModel',
             ]
         ];
     }

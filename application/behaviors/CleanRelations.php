@@ -2,7 +2,7 @@
 
 namespace app\behaviors;
 
-use app\models\Image;
+use app\modules\image\models\Image;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;

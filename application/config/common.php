@@ -5,6 +5,11 @@ Yii::setAlias('config', __DIR__);
 $db = require(__DIR__ . '/db.php');
 $params = require(__DIR__ . '/params.php');
 
+$aliases = require(__DIR__ . '/aliases.php');
+foreach ($aliases as $alias => $path) {
+    Yii::setAlias($alias, $path);
+}
+
 return [
     'timeZone' => 'Europe/Moscow',
     'modules' => [
@@ -18,12 +23,18 @@ return [
         'core' => [
             'class' => 'app\modules\core\CoreModule',
         ],
+        'image' => [
+            'class' => 'app\modules\image\ImageModule',
+        ],
     ],
     'components' => [
         'db' => $db,
         'formatter' => [
             'class' => 'app\components\Formatter',
         ],
+        'updateHelper' => [
+            'class' => 'app\modules\core\helpers\UpdateHelper',
+        ]
     ],
     'params' => $params,
 ];

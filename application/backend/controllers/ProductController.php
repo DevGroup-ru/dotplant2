@@ -5,7 +5,7 @@ namespace app\backend\controllers;
 use app\backend\actions\PropertyHandler;
 use app\modules\shop\models\Category;
 use app\models\Config;
-use app\models\Image;
+use app\modules\image\models\Image;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\modules\shop\models\Product;
@@ -377,7 +377,7 @@ class ProductController extends Controller
                 }
                 $query = new Query();
                 $params = $query->select(
-                    ['object_id', 'filename', 'image_src', 'thumbnail_src', 'image_description', 'sort_order']
+                    ['object_id', 'filename', 'image_src', 'image_description', 'sort_order']
                 )->from(Image::tableName())->where(
                     [
                         'object_id' => $model->object->id,
@@ -392,7 +392,6 @@ class ProductController extends Controller
                             $model->id,
                             $param['filename'],
                             $param['image_src'],
-                            $param['thumbnail_src'],
                             $param['image_description'],
                             $param['sort_order'],
                         ];
@@ -404,7 +403,6 @@ class ProductController extends Controller
                             'object_model_id',
                             'filename',
                             'image_src',
-                            'thumbnail_src',
                             'image_description',
                             'sort_order',
                         ],
@@ -429,11 +427,7 @@ class ProductController extends Controller
         if ($model === null) {
             throw new NotFoundHttpException;
         }
-        if (1 === $model->is_deleted) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Unable to clone a remote object') . '!');
-            $this->redirect(Url::toRoute('index'));
-            return;
-        }
+
         /** @var Product|HasProperties $newModel */
         $newModel = new Product;
         $newModel->setAttributes($model->attributes, false);
@@ -471,7 +465,7 @@ class ProductController extends Controller
 
             // save images bindings
             $params = $query->select(
-                ['object_id', 'filename', 'image_src', 'thumbnail_src', 'image_description', 'sort_order']
+                ['object_id', 'filename', 'image_src', 'image_description', 'sort_order']
             )->from(Image::tableName())->where(
                 [
                     'object_id' => $object->id,
@@ -486,7 +480,6 @@ class ProductController extends Controller
                         $newModel->id,
                         $param['filename'],
                         $param['image_src'],
-                        $param['thumbnail_src'],
                         $param['image_description'],
                         $param['sort_order'],
                     ];
@@ -498,7 +491,6 @@ class ProductController extends Controller
                         'object_model_id',
                         'filename',
                         'image_src',
-                        'thumbnail_src',
                         'image_description',
                         'sort_order',
                     ],
@@ -669,7 +661,7 @@ class ProductController extends Controller
             $query = new \yii\db\Query();
             $query->select('id, name AS text')->from(Product::tableName())->andWhere(
                 ['like', 'name', $search]
-            )->andWhere(['is_deleted' => 0])->orderBy(['sort_order' => SORT_ASC, 'name' => SORT_ASC]);
+            )->andWhere(['active' => 1])->orderBy(['sort_order' => SORT_ASC, 'name' => SORT_ASC]);
             $command = $query->createCommand();
             $data = $command->queryAll();
 

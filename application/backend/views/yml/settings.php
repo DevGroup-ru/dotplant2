@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $this \yii\web\View
+ **/
 
 use \yii\helpers\Html;
 use \kartik\icons\Icon;
@@ -11,17 +14,24 @@ $this->params['breadcrumbs'][] = [
 ];
 $this->params['breadcrumbs'][] = $this->title;
 
-$formName = 'YmlSettings'
+$formName = 'YmlSettings';
+
+\app\backend\assets\YmlAsset::register($this);
+
 ?>
 
 <?= app\widgets\Alert::widget([
     'id' => 'alert',
 ]); ?>
 
+
+
+
+
 <?php
     $yml_relations = [
-        'getImage' => \app\models\Image::className(),
-        'getCategory' => \app\modules\shop\models\Category::className(),
+        'getImage' => \app\modules\image\models\Image::className(),
+        'getCategory' => \app\models\Category::className(),
     ];
 
     $yml_settings = [];
@@ -192,77 +202,30 @@ $formName = 'YmlSettings'
 </div>
 <?php \kartik\widgets\ActiveForm::end(); ?>
 
-<script>
-    $(function() {
-        ymlSelectFields = '<?= array_reduce(
-            $yml_settings['product_fields'],
-             function($result, $i) {
-                $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
-                return $result;
-             }, ''); ?>';
+<?php $this->beginBlock('jsValues') ?>
+    ymlSelectFields = '<?= array_reduce(
+    $yml_settings['product_fields'],
+    function($result, $i) {
+        $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
+        return $result;
+    }, ''); ?>';
 
-        ymlSelectRelKeys = '<?= array_reduce(
-            $yml_settings['relations_keys'],
-             function($result, $i) {
-                $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
-                return $result;
-             }, ''); ?>';
+    ymlSelectRelKeys = '<?= array_reduce(
+    $yml_settings['relations_keys'],
+    function($result, $i) {
+        $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
+        return $result;
+    }, ''); ?>';
 
-        ymlSelectRelations = {
-            <?php
-                foreach ($yml_settings['relations_map'] as $k => $v) {
-                    echo $k.': \''.$v['html'].'\','.PHP_EOL;
-                }
-            ?>
-        }
+    ymlSelectRelations = {
+<?php
+foreach ($yml_settings['relations_map'] as $k => $v) {
+    echo $k.': \''.$v['html'].'\','.PHP_EOL;
+}
+?>
+    };
 
-        ymlSelectProperties = '<?= $yml_settings['properties_map']['html']; ?>';
+    ymlSelectProperties = '<?= $yml_settings['properties_map']['html']; ?>';
+<?php $this->endBlock(); ?>
 
-        $('#offers_section').on('change', 'select[data-ymlselect]', function(event, flag) {
-            var selType = $(this).data('ymlselect');
-            var group = $(this).parents('.offer-group');
-
-            if ('type' == selType) {
-                $(group).find('select[data-ymlselect="key"]').trigger('change', ['change']);
-            }
-            else if ('key' == selType) {
-                var keyType = $(group).find('select[data-ymlselect="type"]').val();
-
-                if ('change' == flag) {
-                    if ('field' == keyType) {
-                        $(this).html(ymlSelectFields);
-                    }
-                    else if ('property' == keyType) {
-                        $(this).html(ymlSelectProperties);
-                    }
-                    else if ('relation' == keyType) {
-                        $(this).html(ymlSelectRelKeys);
-                    }
-
-                    $(group).find('select[data-ymlselect="value"]').trigger('change', ['change']);
-                }
-                else {
-                    if ('relation' == keyType) {
-                        $(group).find('select[data-ymlselect="value"]').trigger('change', ['change']);
-                    }
-                }
-            }
-            else if ('value' == selType) {
-                var type = $(group).find('select[data-ymlselect="type"]').val();
-                var key = $(group).find('select[data-ymlselect="key"]').val();
-                if ('change' == flag) {
-                    if ('relation' == type) {
-                        $(this).html(ymlSelectRelations[key]);
-                        $(this).show();
-                    }
-                    else {
-                        $(this).val('');
-                        $(this).hide();
-                    }
-                }
-            }
-
-            return true;
-        });
-    });
-</script>
+<?php $this->registerJs($this->blocks['jsValues'], \yii\web\View::POS_HEAD) ; ?>
