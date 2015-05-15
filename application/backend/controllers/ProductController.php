@@ -91,7 +91,7 @@ class ProductController extends Controller
                         if ($model === null || $model->active === null) {
                             return null;
                         }
-                        if ($model->active === 1) {
+                        if ($model->active === '1') {
                             $label_class = 'label-success';
                             $value = 'Active';
                         } else {
