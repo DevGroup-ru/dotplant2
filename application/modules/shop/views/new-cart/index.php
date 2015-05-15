@@ -10,6 +10,7 @@ $this->title = Yii::t('app', 'Cart');
 <h1><?= Yii::t('app', 'Cart') ?></h1>
 <?php if (!is_null($model) && $model->items_count > 0): ?>
     <?= $this->render('items', ['model' => $model, 'items' => $model->items]) ?>
+    <?= \yii\helpers\Html::a(Yii::t('app', 'Begin order'), ['/shop/new-cart/stage'], ['class' => 'btn btn-success']); ?>
 <?php else: ?>
     <p><?= Yii::t('app', 'Your cart is empty') ?></p>
 <?php endif; ?>

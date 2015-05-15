@@ -360,8 +360,7 @@ class Order extends \yii\db\ActiveRecord
         if ((is_null(self::$order) || is_null(self::$order->stage) || self::$order->stage->is_in_cart == 0)
             && $create === true
         ) {
-            // @todo Use static method of OrderStage to get initialOrderStageId (Maxim Usenko)
-            $initialOrderStage = OrderStage::findOne(['is_initial' => 1]);
+            $initialOrderStage = OrderStage::getInitialStage();
             if (is_null($initialOrderStage)) {
                 throw new Exception('Initial order stage not found');
             }
