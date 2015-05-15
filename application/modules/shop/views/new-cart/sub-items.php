@@ -55,7 +55,7 @@ use kartik\helpers\Html;
             </span>
         </td>
     </tr>
-    <?php if (isset($subItems[$item->id])): ?>
+    <?php if (isset($subItems[$item->product_id])): ?>
         <?=
         $this->render(
             'sub-items',
@@ -63,7 +63,7 @@ use kartik\helpers\Html;
                 'mainCurrency' => $mainCurrency,
                 'model' => $model,
                 'immutable' => $immutable,
-                'items' => $subItems[$item->id],
+                'items' => $subItems[$item->product_id],
             ]
         )
         ?>

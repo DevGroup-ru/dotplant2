@@ -79,7 +79,7 @@ foreach ($items as $i => $item) {
                 </span>
             </td>
         </tr>
-        <?php if (isset($subItems[$item->id])): ?>
+        <?php if (isset($subItems[$item->product_id])): ?>
             <?=
                 $this->render(
                     'sub-items',
@@ -87,7 +87,7 @@ foreach ($items as $i => $item) {
                         'mainCurrency' => $mainCurrency,
                         'model' => $model,
                         'immutable' => $immutable,
-                        'items' => $subItems[$item->id],
+                        'items' => $subItems[$item->product_id],
                     ]
                 )
             ?>
