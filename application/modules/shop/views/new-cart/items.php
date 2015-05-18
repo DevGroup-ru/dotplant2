@@ -47,7 +47,13 @@ foreach ($items as $i => $item) {
             <td>
                 <?= Html::encode($item->product->name) ?>
             </td>
-            <td><?= $item->product->formattedPrice(null, false, false) ?></td>
+            <td>
+                <?=
+                $mainCurrency->format(
+                    $item->product->getTotalPrice($model)
+                )
+                ?>
+            </td>
             <td>
                 <?php if ($immutable === true): ?>
                     <?= $item->quantity ?>
@@ -71,9 +77,22 @@ foreach ($items as $i => $item) {
             </td>
             <td>
                 <span class="item-price">
+                    <?php
+                    if ($item->discount_amount > 0) {
+                        echo Html::tag('span',
+                            $mainCurrency->format(
+                                $item->total_price_without_discount
+                            ),
+                            [
+                                'style' => 'text-decoration: line-through;'
+                            ]
+                        ).'<br>';
+                    }
+                    ?>
+
                     <?=
                     $mainCurrency->format(
-                        $item->product->convertedPrice() * $item->quantity
+                        $item->total_price
                     )
                     ?>
                 </span>

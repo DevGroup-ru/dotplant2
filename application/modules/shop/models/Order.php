@@ -304,7 +304,7 @@ class Order extends \yii\db\ActiveRecord
                 $item->delete();
             } else {
                 $options = Json::decode($item['additional_options']);
-                $totalPrice += $item->quantity * ($item->product->convertedPrice() + $options['additionalPrice']);
+                $totalPrice += $item->quantity * ($item->product->getTotalPrice($this) + $options['additionalPrice']);
                 if ($cartCountsUniqueProducts === true) {
                     $itemsCount ++;
                 } else {

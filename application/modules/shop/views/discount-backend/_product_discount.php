@@ -11,7 +11,8 @@ use kartik\select2\Select2;
 
 
 
-<?= $form->field($object, 'product_id')->widget(
+<?= $form->field($object, 'product_id');
+   /* ->widget(
     Select2::className(),
     [
         'options' => [
@@ -30,4 +31,4 @@ use kartik\select2\Select2;
             ],
         ],
     ]
-); ?>
+); */?>

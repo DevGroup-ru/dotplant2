@@ -88,6 +88,7 @@ class NewCartController extends Controller
             ) {
                 $orderItem = new OrderItem;
                 $totalPriceWithoutDiscount = $productModel->price * $quantity;
+                $totalPrice = $productModel->getTotalPrice($order) * $quantity;
                 $orderItem->attributes = [
                     'parent_id' => $parentId,
                     'order_id' => $order->id,
@@ -95,14 +96,17 @@ class NewCartController extends Controller
                     'quantity' => $quantity,
                     'price_per_pcs' => $productModel->price,
                     'total_price_without_discount' => $totalPriceWithoutDiscount,
-                    'total_price' => $totalPriceWithoutDiscount, // @todo Need to implement discount. It has been calculated without discount now
+                    'total_price' =>  $totalPrice,
+                    'discount_amount' => $totalPriceWithoutDiscount - $totalPrice
                 ];
             } else {
                 /** @var OrderItem $orderItem */
                 $orderItem->quantity += $quantity;
-                $totalPriceWithoutDiscount = $productModel->price * $orderItem->quantity;
+                $totalPriceWithoutDiscount = $productModel->price * $quantity;
+                $totalPrice = $productModel->getTotalPrice($order) * $quantity;
                 $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
-                $orderItem->total_price = $totalPriceWithoutDiscount; // @todo Need to implement discount. It has been calculated without discount now
+                $orderItem->total_price = $totalPrice;
+                $orderItem->discount_amount = $totalPriceWithoutDiscount - $totalPrice;
             }
             if (!$orderItem->save()) {
                 $result['errors'][] = Yii::t('app', 'Cannot save order item.');
@@ -167,8 +171,10 @@ class NewCartController extends Controller
             $orderItem->price_per_pcs = $orderItem->product->price;
         }
         $totalPriceWithoutDiscount = $orderItem->price_per_pcs * $orderItem->quantity;
+        $totalPrice = $orderItem->product->getTotalPrice($order) * $quantity;
         $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
-        $orderItem->total_price = $totalPriceWithoutDiscount; // @todo Need to implement discount. It has been calculated without discount now
+        $orderItem->total_price = $totalPrice;
+        $orderItem->discount_amount = $totalPriceWithoutDiscount - $totalPrice;
         $orderItem->save();
         $mainCurrency = Currency::getMainCurrency();
         if ($order->calculate(true)) {
