@@ -12,8 +12,8 @@ use yii\helpers\Html;
     $this->title = Yii::t('app', 'Order stages leafs');
     $this->params['breadcrumbs'] = [
         [
-            'label' => Yii::t('app', 'Shop backend'),
-            'url' => Url::to(['/shop']),
+            'label' => Yii::t('app', 'Order stage subsystem'),
+            'url' => Url::to(['index']),
         ],
         $this->title,
     ];
@@ -23,7 +23,7 @@ use yii\helpers\Html;
 
 <?php
     $this->beginBlock('buttons');
-        echo Html::a(Icon::show('plus') . Yii::t('app', 'Add'), Url::to(['stage-leaf-edit']), ['class' => 'btn btn-success']);
+        echo Html::a(Icon::show('plus') . Yii::t('app', 'Add'), Url::to(['leaf-edit']), ['class' => 'btn btn-success']);
     $this->endBlock();
 
     echo \kartik\dynagrid\DynaGrid::widget([
@@ -52,13 +52,13 @@ use yii\helpers\Html;
                 'class' => 'app\backend\components\ActionColumn',
                 'buttons' => [
                     [
-                        'url' => 'stage-leaf-edit',
+                        'url' => 'leaf-edit',
                         'icon' => 'pencil',
                         'class' => 'btn-primary',
                         'label' => Yii::t('app', 'Edit'),
                     ],
                     [
-                        'url' => 'stage-leaf-delete',
+                        'url' => 'leaf-delete',
                         'icon' => 'trash-o',
                         'class' => 'btn-danger',
                         'label' => Yii::t('app', 'Delete'),

@@ -17,24 +17,35 @@ use yii\helpers\Html;
 <div class="col-md-12">
     <div class="row">
         <div class="col-md-5">
-        <?=
-            array_reduce(OrderStageHelper::getPreviousButtons($stage),
-                function ($result, $item)
-                {
-                    $result .= Html::a($item['label'], $item['url'], ['class' => $item['css']]);
-                    return $result;
-                }, '');
-        ?>
+            <ul class="list-stage-buttons">
+            <?=
+                array_reduce(OrderStageHelper::getPreviousButtons($stage),
+                    function ($result, $item)
+                    {
+                        $result .= '<li>'.Html::a($item['label'], $item['url'], ['class' => $item['css']]).'</li>';
+                        return $result;
+                    }, '');
+            ?>
+            </ul>
         </div>
         <div class="col-md-5 pull-right">
-        <?=
-        array_reduce(OrderStageHelper::getNextButtons($stage),
-            function ($result, $item)
-            {
-                $result .= Html::a($item['label'], $item['url'], ['class' => $item['css']]);
-                return $result;
-            }, '');
-        ?>
+            <ul class="list-stage-buttons">
+            <?=
+            array_reduce(OrderStageHelper::getNextButtons($stage),
+                function ($result, $item)
+                {
+                    $result .= '<li>'.Html::a($item['label'], $item['url'], ['class' => $item['css']]).'</li>';
+                    return $result;
+                }, '');
+            ?>
+            </ul>
         </div>
     </div>
 </div>
+
+<style>
+    .list-stage-buttons li {
+        list-style-type: none;
+        padding: 5px 0;
+    }
+</style>

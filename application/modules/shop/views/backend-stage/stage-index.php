@@ -12,8 +12,8 @@ use yii\helpers\Html;
     $this->title = Yii::t('app', 'Order stages');
     $this->params['breadcrumbs'] = [
         [
-            'label' => Yii::t('app', 'Shop backend'),
-            'url' => Url::to(['/shop']),
+            'label' => Yii::t('app', 'Order stage subsystem'),
+            'url' => Url::to(['index']),
         ],
         $this->title,
     ];

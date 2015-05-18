@@ -2,21 +2,22 @@
 /**
  * @var \app\modules\shop\models\OrderStageLeaf $model
  * @var array $stages
+ * @var array $events
  */
 
     use app\backend\widgets\BackendWidget;
     use yii\bootstrap\ActiveForm;
     use \yii\helpers\Url;
 
-    $this->title = Yii::t('app', 'Create order stage leaf');
+    $this->title = Yii::t('app', 'Edit order stage leaf');
     $this->params['breadcrumbs'] = [
         [
-            'label' => Yii::t('app', 'Shop backend'),
-            'url' => Url::to(['/shop/backend/index']),
+            'label' => Yii::t('app', 'Order stage subsystem'),
+            'url' => Url::to(['index']),
         ],
         [
             'label' => Yii::t('app', 'Order stages leafs'),
-            'url' => Url::to(['/shop/backend/stage-leaf-index']),
+            'url' => Url::to(['leaf-index']),
         ],
         $this->title,
     ];
@@ -49,7 +50,7 @@
     <?= $form->field($model, 'assign_to_role'); ?>
     <?= $form->field($model, 'notify_new_assigned_user')->checkbox(); ?>
     <?= $form->field($model, 'role_assignment_policy'); ?>
-    <?= $form->field($model, 'event_name'); ?>
+    <?= $form->field($model, 'event_name')->dropDownList($events); ?>
 
 <?php
     BackendWidget::end();

@@ -2,13 +2,14 @@
 
 namespace app\modules\shop\controllers;
 
+use app\modules\core\models\Events;
 use app\modules\shop\models\OrderStage;
 use app\modules\shop\models\OrderStageLeaf;
 use yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 
-class BackendController extends \app\backend\components\BackendController
+class BackendStageController extends \app\backend\components\BackendController
 {
     public function behaviors()
     {
@@ -34,17 +35,17 @@ class BackendController extends \app\backend\components\BackendController
     {
         $searchModel = new OrderStage();
         $dataProvider = $searchModel->search(Yii::$app->request->get());
-        return $this->render('stage/index', [
+        return $this->render('stage-index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
-    public function actionStageLeafIndex()
+    public function actionLeafIndex()
     {
         $searchModel = new OrderStageLeaf();
         $dataProvider = $searchModel->search(Yii::$app->request->get());
-        return $this->render('stage/leaf-index', [
+        return $this->render('leaf-index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -74,16 +75,26 @@ class BackendController extends \app\backend\components\BackendController
             }
         }
 
+        $events = array_reduce(Events::find()->all(),
+            function ($result, $item)
+            {
+                /** @var Events $item */
+                $result[$item->event_name] = $item->event_name;
+                return $result;
+            }, ['' => '']);
+
         if (empty($model)) {
             $model = new OrderStage();
             $model->loadDefaultValues();
-            return $this->render('stage/create', ['model' => $model]);
         }
 
-        return $this->render('stage/edit', ['model' => $model]);
+        return $this->render('stage-edit', [
+            'model' => $model,
+            'events' => $events,
+        ]);
     }
 
-    public function actionStageLeafEdit($id = null)
+    public function actionLeafEdit($id = null)
     {
         $model = null;
         if (null !== $id) {
@@ -107,6 +118,11 @@ class BackendController extends \app\backend\components\BackendController
             }
         }
 
+        if (empty($model)) {
+            $model = new OrderStageLeaf();
+            $model->loadDefaultValues();
+        }
+
         $stages = array_reduce(OrderStage::find()->all(),
             function ($result, $item)
             {
@@ -114,19 +130,24 @@ class BackendController extends \app\backend\components\BackendController
                 return $result;
             }, []);
 
-        if (empty($model)) {
-            $model = new OrderStageLeaf();
-            $model->loadDefaultValues();
-            return $this->render('stage/leaf-create', [
-                'model' => $model,
-                'stages' => $stages,
-            ]);
-        }
+        $events = array_reduce(Events::find()->all(),
+            function ($result, $item)
+            {
+                /** @var Events $item */
+                $result[$item->event_name] = $item->event_name;
+                return $result;
+            }, ['' => '']);
 
-        return $this->render('stage/leaf-edit', [
+        return $this->render('leaf-edit', [
             'model' => $model,
             'stages' => $stages,
+            'events' => $events,
         ]);
+    }
+
+    public function actionRenderGraph()
+    {
+        return $this->render('render-graph');
     }
 }
 ?>
