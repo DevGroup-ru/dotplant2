@@ -10,6 +10,14 @@ class BaseOrderStageHandlers
     /**
      * @param $event OrderStageLeafEvent
      */
+    public static function handleCustomer(OrderStageLeafEvent $event)
+    {
+        $event->setStatus(true);
+    }
+
+    /**
+     * @param $event OrderStageLeafEvent
+     */
     public static function handlePayment(OrderStageLeafEvent $event)
     {
         $event->setStatus(true);
@@ -21,6 +29,10 @@ class BaseOrderStageHandlers
     public static function handleDelivery(OrderStageLeafEvent $event)
     {
         $event->setStatus(true);
+    }
+
+    public static function handleStageCustomer(OrderStageEvent $event)
+    {
     }
 
     public static function handleStagePayment(OrderStageEvent $event)

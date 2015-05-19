@@ -18,21 +18,20 @@ use yii\helpers\Json;
  * Model fields:
  * @property integer $id
  * @property integer $user_id
+ * @property integer $customer_id
+ * @property integer $contragent_id
  * @property integer $manager_id
  * @property string $start_date
  * @property string $update_date
  * @property string $end_date
  * @property integer $cart_forming_time
  * @property integer $order_stage_id
- * @property integer $shipping_option_id
  * @property integer $payment_type_id
  * @property integer $assigned_id
  * @property integer $tax_id
  * @property string $external_id
  * @property integer $items_count
  * @property double $total_price
- * @property double $shipping_price
- * @property double $total_price_with_shipping
  * @property double $total_payed
  * @property string $hash
  * @property bool $is_deleted
@@ -48,6 +47,7 @@ use yii\helpers\Json;
  * @property User $user
  * @property User $manager
  * @property float $fullPrice
+ * @property OrderDeliveryInformation $orderDeliveryInformation
  */
 class Order extends \yii\db\ActiveRecord
 {
@@ -93,19 +93,22 @@ class Order extends \yii\db\ActiveRecord
             [
                 [
                     'user_id',
+                    'customer_id',
+                    'contragent_id',
                     'order_stage_id',
                     'total_price',
-                    'shipping_option_id',
                     'payment_type_id',
                 ],
                 'required'
             ],
-            [['user_id', 'order_stage_id', 'shipping_option_id', 'payment_type_id', 'assigned_id', 'tax_id'], 'integer'],
+            [['user_id', 'customer_id', 'contragent_id', 'order_stage_id', 'payment_type_id', 'assigned_id', 'tax_id'], 'integer'],
             [['start_date', 'end_date', 'update_date'], 'safe'],
             [['start_date', 'end_date', 'update_date'], 'safe'],
-            [['total_price', 'items_count', 'shipping_price', 'total_price_with_shipping', 'total_payed'], 'number'],
+            [['total_price', 'items_count', 'total_payed'], 'number'],
             [['external_id'], 'string', 'max' => 38],
             [['is_deleted', 'temporary', 'show_price_changed_notification'], 'boolean'],
+            [['user_id', 'customer_id', 'contragent_id',], 'default', 'value' => 0],
+            [['temporary'], 'default', 'value' => 1],
         ];
     }
 
@@ -119,7 +122,6 @@ class Order extends \yii\db\ActiveRecord
                 'user_id',
                 'cart_forming_time',
                 'order_stage_id',
-                'shipping_option_id',
                 'items_count',
                 'total_price',
                 'hash',
@@ -131,13 +133,12 @@ class Order extends \yii\db\ActiveRecord
                 'start_date',
                 'end_date',
                 'order_stage_id',
-                'shipping_option_id',
                 'payment_type_id',
                 'items_count',
                 'total_price',
                 'hash',
             ],
-            'shippingOption' => ['shipping_option_id', 'order_stage_id'],
+            'shippingOption' => ['order_stage_id'],
             'paymentType' => ['payment_type_id', 'order_stage_id'],
             'changeManager' => ['manager_id'],
         ];
@@ -151,21 +152,20 @@ class Order extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'user_id' => Yii::t('app', 'User'),
+            'customer_id' => Yii::t('app', 'Customer'),
+            'contragent_id' => Yii::t('app', 'Contragent'),
             'manager_id' => Yii::t('app', 'Manager'),
             'start_date' => Yii::t('app', 'Start Date'),
             'update_date' => Yii::t('app', 'Update date'),
             'end_date' => Yii::t('app', 'End Date'),
             'cart_forming_time' => Yii::t('app', 'Cart Forming Time'),
             'order_stage_id' => Yii::t('app', 'Stage'),
-            'shipping_option_id' => Yii::t('app', 'Shipping Option'),
             'payment_type_id' => Yii::t('app', 'Payment Type'),
             'assigned_id' => Yii::t('app', 'Assigned'),
             'tax_id' => Yii::t('app', 'Tax'),
             'external_id' => Yii::t('app', 'External ID'),
             'items_count' => Yii::t('app', 'Items Count'),
             'total_price' => Yii::t('app', 'Total Price'),
-            'shipping_price' => Yii::t('app', 'Shipping price'),
-            'total_price_with_shipping' => Yii::t('app', 'Total price with shipping'),
             'total_payed' => Yii::t('app', 'Total payed'),
             'hash' => Yii::t('app', 'Hash'),
             'is_deleted' => Yii::t('app', 'Is deleted'),
@@ -237,7 +237,8 @@ class Order extends \yii\db\ActiveRecord
 
     public function getShippingOption()
     {
-        return $this->hasOne(ShippingOption::className(), ['id' => 'shipping_option_id']);
+        $orderDelivery = OrderDeliveryInformation::getByOrderId($this->id);
+        return empty($orderDelivery) ? null : $orderDelivery->shippingOption;
     }
 
     public function getPaymentType()
@@ -255,6 +256,19 @@ class Order extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
+    /**
+     * @return Customer|null
+     */
+    public function getCustomer()
+    {
+        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
+    }
+
+    public function getContragent()
+    {
+        return $this->hasOne(Contragent::className(), ['id' => 'contragent_id']);
+    }
+
     public function getManager()
     {
         return $this->hasOne(User::className(), ['id' => 'manager_id']);
@@ -267,6 +281,11 @@ class Order extends \yii\db\ActiveRecord
             $fullPrice += $this->shippingOption->cost;
         }
         return $fullPrice;
+    }
+
+    public function getOrderDeliveryInformation()
+    {
+        return OrderDeliveryInformation::getByOrderId($this->id);
     }
 
     /**
@@ -287,6 +306,12 @@ class Order extends \yii\db\ActiveRecord
             $this->save();
             return false;
         }
+
+        $customer = $this->getCustomer();
+        if (0 === intval($customer->user_id)) {
+            $customer->delete();
+        }
+
         return true;
     }
 
@@ -366,9 +391,9 @@ class Order extends \yii\db\ActiveRecord
                 throw new Exception('Initial order stage not found');
             }
             $order = new static;
+            $order->loadDefaultValues();
             $order->user_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : 0;
             $order->order_stage_id = $initialOrderStage->id;
-            $order->temporary = 1;
             mt_srand();
             $order->hash = md5(mt_rand() . uniqid());
             if ($order->save(true, ['user_id', 'temporary', 'hash', 'order_stage_id'])) {
@@ -411,8 +436,7 @@ class Order extends \yii\db\ActiveRecord
         // @todo get order discount
         $this->items_count = $itemsCount;
         $this->total_price = $totalPrice;
-        $this->total_price_with_shipping = $totalPrice + $this->shipping_price;
-        $this->total_price_with_shipping = $totalPrice + $this->shipping_price;
-        return $callSave ? $this->save(true, ['items_count', 'total_price', 'total_price_with_shipping']) : true;
+        return $callSave ? $this->save(true, ['items_count', 'total_price',]) : true;
     }
 }
+?>

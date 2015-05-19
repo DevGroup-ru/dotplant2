@@ -2,6 +2,7 @@
 
 namespace app\modules\user\models;
 
+use app\modules\shop\models\Customer;
 use app\properties\HasProperties;
 use app\models\PropertyGroup;
 use app\models\ObjectPropertyGroup;
@@ -31,6 +32,7 @@ use yii\web\IdentityInterface;
  * @property string $last_name
  * @property \app\modules\user\models\UserService[] $services
  * @property string $displayName  Display name for the user visual identification
+ * Relations:
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -400,3 +402,4 @@ class User extends ActiveRecord implements IdentityInterface
         return true;
     }
 }
+?>
