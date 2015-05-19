@@ -57,6 +57,7 @@ class ShopModule extends BaseModule
     public $allowToAddSameProduct = 0;
     public $countUniqueProductsOnly = 1;
     public $countChildrenProducts = 1;
+    public $defaultMeasureId = 1;
 
     /**
      * @inheritdoc

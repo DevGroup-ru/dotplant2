@@ -81,8 +81,8 @@ class NewCartController extends Controller
                 continue;
             }
             /** @var Product $productModel */
-            $quantity = isset($product['quantity']) && (float) $product['quantity'] > 0
-                ? (float) $product['quantity']
+            $quantity = isset($product['quantity']) && (double) $product['quantity'] > 0
+                ? (double) $product['quantity']
                 : 1;
             if ($this->module->allowToAddSameProduct
                 || is_null($orderItem = OrderItem::findOne(['order_id' => $order->id, 'product_id' => $productModel->id, 'parent_id' => 0]))
@@ -94,7 +94,7 @@ class NewCartController extends Controller
                     'parent_id' => $parentId,
                     'order_id' => $order->id,
                     'product_id' => $productModel->id,
-                    'quantity' => $quantity,
+                    'quantity' => $orderItem->product->measure->ceilQuantity($quantity),
                     'price_per_pcs' => $productModel->price,
                     'total_price_without_discount' => $totalPriceWithoutDiscount,
                     'total_price' =>  $totalPrice,
@@ -166,7 +166,7 @@ class NewCartController extends Controller
         if (is_null($order->stage) || $order->stage->immutable_by_user == 1) {
             throw new BadRequestHttpException;
         }
-        $orderItem->quantity = $quantity;
+        $orderItem->quantity = $orderItem->product->measure->ceilQuantity($quantity);
         // @todo Consider lock_product_price ?
         if ($orderItem->lock_product_price == 0) {
             $orderItem->price_per_pcs = $orderItem->product->price;

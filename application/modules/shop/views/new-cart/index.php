@@ -21,8 +21,9 @@ $this->beginBlock('cart-js')
 jQuery('input[data-type=quantity]').blur(function() {
     var $input = jQuery(this);
     var quantity = parseFloat($input.val());
-    if (isNaN(quantity) || quantity < 1) {
-        quantity = 1;
+    var nominal = parseFloat($input.attr('data-nominal'));
+    if (isNaN(quantity) || quantity < nominal) {
+        quantity = nominal;
     }
     Shop.changeAmount($input.data('id'), quantity, function(data) {
         if (data.success) {
@@ -37,14 +38,15 @@ jQuery('#cart-table [data-action="change-quantity"]').click(function() {
     var $this = jQuery(this);
     var $input = $this.parents('td').eq(0).find('input[data-type=quantity]');
     var quantity = parseFloat($input.val());
+    var nominal = parseFloat($input.attr('data-nominal'));
     if (isNaN(quantity)) {
-        quantity = 1;
+        quantity = nominal;
     }
     if ($this.hasClass('plus')) {
-        quantity++;
+        quantity += nominal;
     } else {
-        if (quantity > 1) {
-            quantity--;
+        if (quantity > nominal) {
+            quantity -= nominal;
         }
     }
     Shop.changeAmount($input.data('id'), quantity, function(data) {

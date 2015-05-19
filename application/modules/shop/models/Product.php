@@ -14,6 +14,7 @@ use app\properties\HasProperties;
 use app\traits\GetImages;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\base\Exception;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
@@ -42,7 +43,9 @@ use yii\data\Pagination;
  * @property double $old_price
  * @property integer $parent_id
  * @property integer $currency_id
+ * @property integer $measure_id
  * @property Product[] $relatedProducts
+ * @property Measure $measure
  * @property string $sku
  * @property boolean unlimited_count
  */
@@ -984,5 +987,17 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     {
         $currency = Currency::findById($this->currency_id);
         return $this->formattedPrice($currency, $oldPrice, $schemaOrg);
+    }
+
+    public function getMeasure()
+    {
+        $measure = Measure::findById($this->measure_id);
+        if (is_null($measure)) {
+            $measure = Measure::findById(Yii::$app->getModule('shop')->defaultMeasureId);
+        }
+        if (is_null($measure)) {
+            throw new Exception('Measure not found');
+        }
+        return $measure;
     }
 }

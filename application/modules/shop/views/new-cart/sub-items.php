@@ -31,7 +31,7 @@ use kartik\helpers\Html;
                 <div class="form-inline">
                     <div class="form-group">
                         <div class="btn-group">
-                            <input class="form-control input-sm" style="float: left; margin-right: -2px; max-width: 74px;" placeholder="1" size="16" type="text" data-type="quantity" data-id="<?= $item->id ?>" value="<?= $item->quantity ?>" />
+                            <input class="form-control input-sm" style="float: left; margin-right: -2px; max-width: 74px;" placeholder="1" size="16" type="text" data-type="quantity" data-id="<?= $item->id ?>" value="<?= $item->quantity ?>" ata-nominal="<?= $item->product->measure->nominal ?>" />
                             <button class="btn btn-primary btn-sm minus" type="button" data-action="change-quantity">
                                 <i class="fa fa-minus"></i></button>
                             <button class="btn btn-primary btn-sm plus" type="button" data-action="change-quantity">
