@@ -3,6 +3,7 @@
 namespace app\modules\shop\models;
 
 use app\models\Config;
+use app\modules\shop\components\PriceHelper;
 use app\modules\user\models\User;
 use app\properties\HasProperties;
 use Yii;
@@ -304,7 +305,7 @@ class Order extends \yii\db\ActiveRecord
                 $item->delete();
             } else {
                 $options = Json::decode($item['additional_options']);
-                $totalPrice += $item->quantity * ($item->product->getTotalPrice($this) + $options['additionalPrice']);
+                $totalPrice += $item->quantity * (PriceHelper::getProductPrice($item->product, $this) + $options['additionalPrice']);
                 if ($cartCountsUniqueProducts === true) {
                     $itemsCount ++;
                 } else {

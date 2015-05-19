@@ -50,7 +50,7 @@ foreach ($items as $i => $item) {
             <td>
                 <?=
                 $mainCurrency->format(
-                    $item->product->getTotalPrice($model)
+                    $item->price_per_pcs
                 )
                 ?>
             </td>

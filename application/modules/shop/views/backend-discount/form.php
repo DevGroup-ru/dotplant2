@@ -13,7 +13,7 @@ use yii\helpers\Url;
 /* @var $form ActiveForm */
 
 $this->title = Yii::t('app', 'Discount edit');
-$this->params['breadcrumbs'][] = ['url' => ['/shop/discount-backend/index'], 'label' => Yii::t('app', 'Discounts')];
+$this->params['breadcrumbs'][] = ['url' => ['/shop/backend-discount/index'], 'label' => Yii::t('app', 'Discounts')];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?=
     Html::a(
         Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
-        Yii::$app->request->get('returnUrl', ['/shop/discount-backend/index']),
+        Yii::$app->request->get('returnUrl', ['/shop/backend-discount/index']),
         ['class' => 'btn btn-danger']
     )
     ?>

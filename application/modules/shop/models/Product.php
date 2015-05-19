@@ -54,7 +54,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     private $category_ids = null;
 
     public $total_price = 0;
-    public $spetial_price_desc = [];
+    public $special_price_desc = [];
 
     public $relatedProductsArray = [];
 
@@ -328,22 +328,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $object = Object::getForClass($this->className());
         return $result->andWhere(['object_id' => $object->id]);
     }
-
-
-    public function getTotalPrice(Order $order = null)
-    {
-        if ($this->total_price == 0) {
-            $this->total_price = $this->price;
-            foreach(SpecialPriceList::find()->where(['object_id'=>$this->object->id])->all() as $specialPriceRow) {
-                $class = new $specialPriceRow->class;
-                if ($class instanceof SpecialPriceProductInterface) {
-                    $class->setPriceProduct($this, $order);
-                }
-            }
-        }
-        return $this->total_price;
-    }
-
 
 
     /**

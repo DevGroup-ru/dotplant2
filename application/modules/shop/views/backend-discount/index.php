@@ -36,13 +36,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?=
                 \yii\helpers\Html::a(
                     Icon::show('plus') . Yii::t('app', 'Add'),
-                    ['/shop/discount-backend/edit', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
+                    ['/shop/backend-discount/edit', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
                     ['class' => 'btn btn-success']
                 )
                 ?>
             </div>
             <?= \app\backend\widgets\RemoveAllButton::widget([
-                'url' => \yii\helpers\Url::toRoute(['/shop/discount-backend/remove-all']),
+                'url' => \yii\helpers\Url::toRoute(['/shop/backend-discount/remove-all']),
                 'gridSelector' => '.grid-view',
                 'htmlOptions' => [
                     'class' => 'btn btn-danger pull-right'

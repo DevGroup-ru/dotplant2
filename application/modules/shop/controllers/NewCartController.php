@@ -4,6 +4,7 @@ namespace app\modules\shop\controllers;
 
 use app\modules\core\helpers\EventTriggeringHelper;
 use app\modules\core\models\Events;
+use app\modules\shop\components\PriceHelper;
 use app\modules\shop\events\OrderStageEvent;
 use app\modules\shop\events\OrderStageLeafEvent;
 use app\modules\shop\models\Currency;
@@ -88,7 +89,7 @@ class NewCartController extends Controller
             ) {
                 $orderItem = new OrderItem;
                 $totalPriceWithoutDiscount = $productModel->price * $quantity;
-                $totalPrice = $productModel->getTotalPrice($order) * $quantity;
+                $totalPrice = PriceHelper::getProductPrice($productModel, $order, $quantity);
                 $orderItem->attributes = [
                     'parent_id' => $parentId,
                     'order_id' => $order->id,
@@ -103,7 +104,7 @@ class NewCartController extends Controller
                 /** @var OrderItem $orderItem */
                 $orderItem->quantity += $quantity;
                 $totalPriceWithoutDiscount = $productModel->price * $quantity;
-                $totalPrice = $productModel->getTotalPrice($order) * $quantity;
+                $totalPrice = PriceHelper::getProductPrice($productModel, $order, $quantity);
                 $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
                 $orderItem->total_price = $totalPrice;
                 $orderItem->discount_amount = $totalPriceWithoutDiscount - $totalPrice;
@@ -171,7 +172,7 @@ class NewCartController extends Controller
             $orderItem->price_per_pcs = $orderItem->product->price;
         }
         $totalPriceWithoutDiscount = $orderItem->price_per_pcs * $orderItem->quantity;
-        $totalPrice = $orderItem->product->getTotalPrice($order) * $quantity;
+        $totalPrice = PriceHelper::getProductPrice($orderItem->product, $order, $quantity);
         $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
         $orderItem->total_price = $totalPrice;
         $orderItem->discount_amount = $totalPriceWithoutDiscount - $totalPrice;

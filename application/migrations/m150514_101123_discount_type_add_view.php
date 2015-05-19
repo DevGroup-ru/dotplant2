@@ -16,7 +16,7 @@ class m150514_101123_discount_type_add_view extends Migration
         $this->update(
             '{{%discount_type}}',
             [
-                'add_view' => '@app/modules/shop/views/discount-backend/_discount_code'
+                'add_view' => '@app/modules/shop/views/backend-discount/_discount_code'
             ],
             [
                 'class' => 'app\modules\shop\models\DiscountCode'
@@ -26,7 +26,7 @@ class m150514_101123_discount_type_add_view extends Migration
         $this->update(
             '{{%discount_type}}',
             [
-                'add_view' => '@app/modules/shop/views/discount-backend/_category_discount'
+                'add_view' => '@app/modules/shop/views/backend-discount/_category_discount'
             ],
             [
                 'class' => 'app\modules\shop\models\CategoryDiscount'
@@ -36,7 +36,7 @@ class m150514_101123_discount_type_add_view extends Migration
         $this->update(
             '{{%discount_type}}',
             [
-                'add_view' => '@app/modules/shop/views/discount-backend/_user_discount'
+                'add_view' => '@app/modules/shop/views/backend-discount/_user_discount'
             ],
             [
                 'class' => 'app\modules\shop\models\UserDiscount'
@@ -46,7 +46,7 @@ class m150514_101123_discount_type_add_view extends Migration
         $this->update(
             '{{%discount_type}}',
             [
-                'add_view' => '@app/modules/shop/views/discount-backend/_order_discount'
+                'add_view' => '@app/modules/shop/views/backend-discount/_order_discount'
             ],
             [
                 'class' => 'app\modules\shop\models\OrderDiscount'
@@ -56,7 +56,7 @@ class m150514_101123_discount_type_add_view extends Migration
         $this->update(
             '{{%discount_type}}',
             [
-                'add_view' => '@app/modules/shop/views/discount-backend/_product_discount'
+                'add_view' => '@app/modules/shop/views/backend-discount/_product_discount'
             ],
             [
                 'class' => 'app\modules\shop\models\ProductDiscount'

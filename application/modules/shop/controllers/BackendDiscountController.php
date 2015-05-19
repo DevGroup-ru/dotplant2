@@ -10,8 +10,9 @@ use yii\filters\AccessControl;
 use app\backend\components\BackendController;
 use Yii;
 use yii\helpers\Url;
+use yii\web\NotFoundHttpException;
 
-class DiscountBackendController extends BackendController
+class BackendDiscountController extends BackendController
 {
     public function behaviors()
     {
@@ -60,18 +61,20 @@ class DiscountBackendController extends BackendController
 
         if ($id !== false) {
             $model = Discount::findOne($id);
+        } else {
+            $model->loadDefaultValues();
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->save()) {
 
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                $returnUrl = Yii::$app->request->get('returnUrl', ['/shop/discount-backend/index']);
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/shop/backend-discount/index']);
                 switch (Yii::$app->request->post('action', 'save')) {
                     case 'next':
                         return $this->redirect(
                             [
-                                '/shop/discount-backend/edit',
+                                '/shop/backend-discount/edit',
                                 'returnUrl' => $returnUrl,
                             ]
                         );
@@ -81,7 +84,7 @@ class DiscountBackendController extends BackendController
                         return $this->redirect(
                             Url::toRoute(
                                 [
-                                    '/shop/discount-backend/edit',
+                                    '/shop/backend-discount/edit',
                                     'id' => $model->id,
                                     'returnUrl' => $returnUrl,
                                 ]
@@ -110,6 +113,41 @@ class DiscountBackendController extends BackendController
         ]);
     }
 
+    /*
+   *
+   */
+    public function actionDelete($id = null)
+    {
+        if ((null === $id) || (null === $model = Discount::findOne($id))) {
+            throw new NotFoundHttpException;
+        }
+
+        if (!$model->delete()) {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'The object is placed in the cart'));
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
+        }
+
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                '/shop/backend-discount/index'
+            )
+        );
+    }
+
+    public function actionRemoveAll()
+    {
+        $items = Yii::$app->request->post('items', []);
+        if (!empty($items)) {
+            $items = Discount::find()->where(['in', 'id', $items])->all();
+            foreach ($items as $item) {
+                $item->delete();
+            }
+        }
+
+        return $this->redirect(['index']);
+    }
 
     public function actionDeleteFilters($typeId, $id, $returnUrl)
     {

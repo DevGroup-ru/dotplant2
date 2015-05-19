@@ -112,13 +112,14 @@ class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function afterDelete()
     {
-        foreach ($this->getTypes() as $type) {
-            $className = $type->class;
-            $className::deleteAll(['discount_id'=>$this->id]);
+        foreach ($this->getTypeObjects() as $typeObject) {
+            $typeObject::deleteAll(['discount_id'=>$this->id]);
         }
-
         return parent::afterDelete();
     }
 
