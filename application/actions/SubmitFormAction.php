@@ -127,6 +127,7 @@ class SubmitFormAction extends Action
             $submission->abstractModel->formName() => $post[$form->abstractModel->formName()],
         ];
         $submission->saveProperties($data);
+        return $submission->id;
         if ($haveSpam === false) {
             if (!empty($form->email_notification_addresses)) {
                 try {
@@ -145,6 +146,6 @@ class SubmitFormAction extends Action
                 }
             }
         }
-        return "1";
+        return $submission->id;
     }
 }

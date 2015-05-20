@@ -87,6 +87,7 @@ class Events extends \yii\db\ActiveRecord
                 function($db) use ($class_name) {
                     return self::find()
                         ->where(['event_class_name' => $class_name])
+                        ->with('handlers')
                         ->one($db);
                 },
                 86400,

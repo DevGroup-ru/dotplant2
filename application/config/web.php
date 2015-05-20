@@ -48,6 +48,9 @@ $config = [
         'review' => [
             'class' => 'app\modules\review\ReviewModule',
         ],
+        'data' => [
+            'class' => 'app\modules\data\DataModule',
+        ],
         'dynagrid' =>  [
             'class' => '\kartik\dynagrid\Module',
             'dbSettings' => [
@@ -118,7 +121,7 @@ $config = [
             'loginUrl' => ['/login'],
         ],
         'authManager' => [
-            'class'=>'yii\\rbac\\DbManager',
+            'class'=>'app\components\CachedDbRbacManager',
             'cache' => 'cache',
         ],
         'authClientCollection' => [

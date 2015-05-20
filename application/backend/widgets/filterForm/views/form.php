@@ -1,13 +1,15 @@
 <?php
+/**
+ * @var $data array
+ * @var $this \yii\web\View
+ * @var $widgetId string
+ * @var $fieldName string
+ **
+ */
+
 use app\backend\widgets\Select2;
 use kartik\icons\Icon;
 
-/**
- * @var $data array
- * @var $this \yii\base\View
- * @var $widgetId string
- * @var $fieldName string
- **/
 ?>
 
 
@@ -20,7 +22,7 @@ use kartik\icons\Icon;
             'name' => $fieldName,
             'value' => '',
             'data' => $data,
-            'options' => ['placeholder' => Yii::t('app','Select ...')]
+            'options' => ['placeholder' => Yii::t('app', 'Select ...')]
         ]); ?>
     </div>
 
@@ -38,11 +40,8 @@ use kartik\icons\Icon;
     </div>
 </div>
 
-<script>
-    $(function () {
+<?php $this->beginBlock('widgetJs'); ?>
         $("#button-<?=$widgetId?>").click(function () {
-
-
             condition_value = $("#select-<?=$widgetId?> option:selected").val();
             condition_label = $("#select-<?=$widgetId?> option:selected").text();
             condition_name = 'ImportModel[conditions][<?= $fieldName ?>][' + condition_value + ']';
@@ -78,21 +77,20 @@ use kartik\icons\Icon;
 
                 text = text + '</div>';
 
-                text = text + '<div class="col-md-8">' ;
+                text = text + '<div class="col-md-8">';
                 if (operators.length != 0) {
                     text = text + '<input class="form-control" value="" name="' + condition_name + '[option]" type="text">';
                 }
                 text = text + '</div>';
-
                 text = text + '<div class="col-md-1"><a class=" btn btn-danger btn-remove" onclick="$(\'#<?= $fieldName ?>_form' + condition_value + '\').remove()"><?= Yii::t('app','Delete') ?></a></div>';
                 text = text + '</div>';
-
-
             }
-
             $("#<?='conditions-'.$widgetId?>").append(text)
 
-
-        })
-    })
-</script>
+        });
+<?php $this->endBlock(); ?>
+<?php $this->registerJs(
+    $this->blocks['widgetJs'],
+    \yii\web\View::POS_READY,
+    'widgetJs'.$widgetId
+); ?>

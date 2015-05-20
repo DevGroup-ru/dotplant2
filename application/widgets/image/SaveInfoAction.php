@@ -2,7 +2,7 @@
 
 namespace app\widgets\image;
 
-use app\models\Image;
+use app\modules\image\models\Image;
 use yii\base\Action;
 
 class SaveInfoAction extends Action

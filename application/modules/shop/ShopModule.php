@@ -61,14 +61,8 @@ class ShopModule extends BaseModule
             'configurableModule' => [
                 'class' => 'app\modules\config\behaviors\ConfigurableModuleBehavior',
                 'configurationView' => '@app/modules/shop/views/configurable/_config',
-                'configurableModel' => 'app\modules\shop\models\ConfigConfigurableModel',
+                'configurableModel' => 'app\modules\shop\models\ConfigConfigurationModel',
             ]
         ];
-    }
-
-    public function triggerSpecialEvent($event)
-    {
-        $triggeringType = EventTriggeringHelper::TYPE_APPLICATION;
-
     }
 }

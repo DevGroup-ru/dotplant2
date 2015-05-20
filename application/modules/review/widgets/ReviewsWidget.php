@@ -3,22 +3,29 @@
 namespace app\modules\review\widgets;
 
 use app\components\ObjectRule;
+use app\models\Form;
 use app\modules\review\models\Review;
+use yii\base\InvalidParamException;
 use yii\base\Widget;
 use yii\data\ArrayDataProvider;
+use yii\helpers\VarDumper;
+use yii\widgets\ActiveForm;
 use Yii;
+use app\models\Object;
+use app\models\PropertyGroup;
+use yii\helpers\Html;
+use app\models\Property;
 
 class ReviewsWidget extends Widget
 {
-    public $object_id = null;
-    public $object_model_id = null;
     public $additionalParams = [];
-    public $maxPerPage = 50;
     public $model = null;
     public $viewFile = 'reviews';
     public $allow_rate = false;
     public $sort = SORT_ASC;
     public $registerCanonical = false;
+
+    public $formId = null;
 
     public $useCaptcha = false;
 
@@ -27,6 +34,28 @@ class ReviewsWidget extends Widget
      */
     public function run()
     {
+//        $reviews = Review::getForObjectModel($this->model->id);
+//        return VarDumper::dump($reviews);
+
+        if ((null === $form = Form::findById($this->formId)) || null === $this->model) {
+            throw new InvalidParamException;
+        }
+        $formObject = Object::getForClass(Form::className());
+        $groups = PropertyGroup::getForModel($formObject->id, $form->id);
+        $review = new Review(['scenario' => 'check']);
+        return $this->render(
+            $this->viewFile,
+            [
+                'object_id' => $this->model->object->id,
+                'object_model_id' => $this->model->id,
+                'model' => $form,
+                'review' => $review,
+                'groups' => $groups,
+            ]
+        );
+
+        return;
+
         if ($this->registerCanonical === true) {
             $this->getView()->registerLinkTag(
                 [

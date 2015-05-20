@@ -2,7 +2,7 @@
 
 namespace app\widgets;
 
-use app\models\Image;
+use app\modules\image\models\Image;
 use Yii;
 use yii\base\Widget;
 

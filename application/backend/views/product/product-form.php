@@ -10,6 +10,8 @@ use kartik\select2\Select2;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
+use devgroup\JsTreeWidget\TreeWidget;
+use devgroup\JsTreeWidget\ContextMenuHelper;
 
 /**
  * @var $this \yii\web\View
@@ -428,9 +430,7 @@ SCRIPT;
                     'class' => 'app\backend\columns\TextWrapper',
                     'attribute' => 'name',
                     'callback_wrapper' => function ($content, $model, $key, $index, $parent) {
-                        if (1 === $model->is_deleted) {
-                            $content = '<div class="is_deleted"><span class="fa fa-trash-o"></span>'.$content.'</div>';
-                        }
+
                         return $content;
                     }
                 ],
@@ -439,28 +439,7 @@ SCRIPT;
                 [
                     'class' => 'app\backend\components\ActionColumn',
                     'buttons' => function($model, $key, $index, $parent) {
-                        if (1 === $model->is_deleted) {
-                            return [
-                                [
-                                    'url' => 'edit',
-                                    'icon' => 'pencil',
-                                    'class' => 'btn-primary',
-                                    'label' => 'Edit',
-                                ],
-                                [
-                                    'url' => 'restore',
-                                    'icon' => 'refresh',
-                                    'class' => 'btn-success',
-                                    'label' => 'Restore',
-                                ],
-                                [
-                                    'url' => 'delete',
-                                    'icon' => 'trash-o',
-                                    'class' => 'btn-danger',
-                                    'label' => 'Delete',
-                                ],
-                            ];
-                        }
+
                         return null;
                     }
                 ],

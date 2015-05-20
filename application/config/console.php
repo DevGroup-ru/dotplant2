@@ -18,8 +18,8 @@ $config = [
             'controllerNamespace' => 'app\backgroundtasks\commands'
         ],
         'data' => [
-            'class' => 'app\data\Module',
-            'controllerNamespace' => 'app\data\commands'
+            'class' => 'app\modules\data\DataModule',
+            'controllerNamespace' => 'app\modules\data\commands'
         ],
         'seo' => [
             'class' => 'app\modules\seo\SeoModule',

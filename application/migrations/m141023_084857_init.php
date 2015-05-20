@@ -13,7 +13,7 @@ use app\models\DynamicContent;
 use app\models\ErrorLog;
 use app\models\ErrorUrl;
 use app\models\Form;
-use app\models\Image;
+use app\modules\image\models\Image;
 use app\models\Layout;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
@@ -33,11 +33,11 @@ use app\models\Route;
 use app\models\ShippingOption;
 use app\models\Submission;
 use app\models\SubscribeEmail;
+use app\modules\review\models\Review;
 use app\modules\user\models\User;
 use app\modules\user\models\UserService;
 use app\models\View;
 use app\models\ViewObject;
-use app\reviews\models\Review;
 use app\widgets\navigation\models\Navigation;
 use yii\db\Migration;
 use yii\helpers\Json;
@@ -1179,7 +1179,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\text\TextPropertyWidget::className(),
+                    '\app\properties\handlers\text\TextProperty',
                 ],
                 [
                     'Select',
@@ -1187,7 +1187,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\select\SelectPropertyWidget::className(),
+                    '\app\properties\handlers\select\SelectProperty',
                 ],
                 [
                     'Checkbox',
@@ -1195,7 +1195,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\checkbox\CheckboxPropertyWidget::className(),
+                    '\app\properties\handlers\checkbox\CheckboxProperty',
                 ],
                 [
                     'Text area',
@@ -1203,7 +1203,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\textArea\TextAreaPropertyWidget::className(),
+                    '\app\properties\handlers\textArea\TextAreaProperty',
                 ],
             ]
         );

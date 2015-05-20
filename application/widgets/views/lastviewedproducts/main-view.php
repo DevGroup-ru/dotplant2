@@ -5,14 +5,14 @@ use yii\helpers\Url;
 ?>
 
 <div class="last-viewed-products">
-    <?= isset($title) ? "<h3>" . Yii::t('app', $title) . "</h3>" : "" ?>
+    <?=isset($title) ? "<h3>" . Yii::t('app', $title) . "</h3>" : ""?>
     <div class="container">
         <div class="row">
             <?php $counter = 0; ?>
             <?php foreach ($products as $product) { ?>
                 <?php
                 if (isset($elementNumber)) {
-                    if ($elementNumber < ++$counter) {
+                    if ($elementNumber < ++ $counter) {
                         break;
                     }
                 }
@@ -28,9 +28,9 @@ use yii\helpers\Url;
                         ]
                     );
                     ?>
-                    <a href="<?= $url ?>" class="thumbnail">
-                        <?= app\widgets\ImgSearch::widget(['object_id'=>1, 'object_model_id'=>$product->id, 'displayCountPictures'=>1]) ?>
-                        <div class='name'><?= $product->name ?></div>
+                    <a href="<?=$url?>" class="thumbnail">
+                        <?=app\modules\image\widgets\ObjectImageWidget::widget(['model' => $product, 'displayCountPictures' => 1])?>
+                        <div class='name'><?=$product->name?></div>
                     </a>
                 </div>
             <?php } ?>

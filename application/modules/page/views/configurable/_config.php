@@ -2,7 +2,7 @@
 
 /** @var \app\modules\config\models\Configurable $configurable */
 /** @var \app\backend\components\ActiveForm $form */
-/** @var \app\modules\shop\models\ConfigConfigurableModel $model */
+/** @var \app\modules\shop\models\ConfigConfigurationModel $model */
 
 ?>
 

@@ -35,3 +35,20 @@ Pages split to reviews module.
 All changes in DB contained in m150508_084640_review_move , m150506_133039_review_module  migrations
 ReviewsWidget changed it's namespace from `app\reviews\widgets` to `app\modules\review\widgets`.
 If you used the own template of the ReviewsWidget , change the action of form
+
+### Data
+All changes in DB contained in m150512_060716_data_module_move  migrations
+
+### Images
+
+Images subsystem splited to module `Images`. To migrate do this steps:
+
+1. Update dependencies via composer
+2. Apply migration m150413_094340_thumbnail.php
+3. Widget ImgSearch.php changed it's name, namespace and parameters:
+    * name from `ImgSearch.php` to `ObjectImageWidget.php`
+    * namespace from `app\widgets` to `app\modules\image\widgets`
+    * parameters `model` instead of `objectId` and `objectModelId`; added bool `useWatermark`
+4. Model `Image` changed namespace from `app\models` to `app\modules\image\models`
+5. Removed columns `image_src` and `thumbnail_src` from table `image`
+6. Image, thumbnail, watermark and thumbnail width watermark src can be received by controller `app\modules\image\controllers\ImageController`

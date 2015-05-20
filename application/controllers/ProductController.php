@@ -273,7 +273,7 @@ class ProductController extends Controller
                         $pages->limit
                     )
                 ]
-            )->addOrderBy('sort_order')->all();
+            )->addOrderBy('sort_order')->with('images')->all();
             Yii::$app->cache->set(
                 $cacheKey,
                 $products,

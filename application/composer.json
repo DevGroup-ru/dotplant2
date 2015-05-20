@@ -40,7 +40,8 @@
                     "web/data": "0777",
                     "web/upload": "0777",
                     "yii": "0755",
-                    "web/upload/images": "0777"
+                    "web/upload/images": "0777",
+                    "web/files": "0777"
                 }
             ]
         },

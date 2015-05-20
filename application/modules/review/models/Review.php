@@ -2,30 +2,30 @@
 
 namespace app\modules\review\models;
 
+use app\actions\SubmitFormAction;
 use app\backgroundtasks\traits\SearchModelTrait;
 use app\models\Object;
 use app\models\Product;
+use app\models\PropertyGroup;
 use app\modules\page\models\Page;
 use app\modules\user\models\User;
 use Yii;
 use yii\base\Exception;
+use app\models\Submission;
+use yii\base\Model;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
+use app\properties\HasProperties;
+use yii\helpers\VarDumper;
+use app\models\Property;
+use yii\base\ModelEvent;
 
 /**
  * This is the model class for table "review".
  *
- * @property integer $id
- * @property integer $object_id
+ * @property integer $submission_id
  * @property integer $object_model_id
- * @property string $date_submitted
- * @property integer $author_user_id
- * @property string $author_name
- * @property string $author_email
- * @property string $author_phone
  * @property integer $status
- * @property string $text
- * @property integer $rate
  * @property string $rating_id
  * @property \app\modules\user\models\User $user
  * @property Product $product
@@ -38,10 +38,6 @@ class Review extends \yii\db\ActiveRecord
     const STATUS_APPROVED = 'APPROVED';
     const STATUS_NOT_APPROVED = 'NOT APPROVED';
 
-    public $name;
-    public $slug;
-    public $slug_compiled;
-    public $username;
     public $captcha;
     public $useCaptcha = false;
 
@@ -56,29 +52,50 @@ class Review extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+
     public function rules()
     {
-        $rules = [
-            [['author_name', 'text'], 'required', 'on' => 'default'],
-            [['object_id', 'object_model_id', 'author_user_id', 'rate'], 'integer'],
-            [['date_submitted', 'username', 'name', 'slug'], 'safe'],
-            [['author_name', 'author_email', 'author_phone', 'text', 'status', 'rating_id'], 'string'],
-            [['author_email'], 'email'],
+        return [
+            [['submission_id','object_model_id','author_email','review_text'],'required'],
+            [['submission_id','object_model_id'],'integer'],
+            [['review_text','rating_id','status'],'string'],
+            ['author_email', 'email']
         ];
-        if ($this->useCaptcha) {
-            $rules[] = [['captcha'], 'captcha', 'captchaAction' => '/default/captcha'];
-            $rules[] = [['captcha', 'object_model_id'], 'required'];
-        } else {
-            $rules[] = [['object_model_id'], 'required'];
-        }
-        return $rules;
+////        if ($this->useCaptcha) {
+////            $rules[] = [['captcha'], 'captcha', 'captchaAction' => '/default/captcha'];
+////            $rules[] = [['captcha'], 'required'];
+////        }
+//        return $rules;
     }
+    public function scenarios()
+    {
+        return [
+            'check' => [
+                'review_text',
+                'author_email',
+                'object_model_id',
+            ],
+            'default' => [
+                'submission_id',
+                'object_model_id',
+                'author_email',
+                'review_text'
+            ],
+            'search' => [
+                'status',
+            ]
+        ];
+    }
+
 
     public function behaviors()
     {
         return [
             [
                 'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+            [
+                'class' => HasProperties::className(),
             ],
         ];
     }
@@ -98,61 +115,62 @@ class Review extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'object_id' => Yii::t('app', 'Object ID'),
+            'id' =>Yii::t('app', 'ID'),
+            'submission_id' => Yii::t('app', 'Submission ID'),
             'object_model_id' => Yii::t('app', 'Object Model ID'),
-            'date_submitted' => Yii::t('app', 'Date Submitted'),
-            'author_user_id' => Yii::t('app', 'Author User ID'),
-            'author_name' => Yii::t('app', 'Username'),
-            'author_email' => Yii::t('app', 'Email'),
-            'author_phone' => Yii::t('app', 'Phone'),
+            'author_email' => Yii::t('app', 'Author email'),
+            'review_text' => Yii::t('app', 'Review text'),
             'status' => Yii::t('app', 'Status'),
-            'text' => Yii::t('app', 'Text'),
-            'rate' => Yii::t('app', 'Rate'),
-            'slug' => Yii::t('app', 'Slug'),
-            'slug_compiled' => Yii::t('app', 'Slug Compiled'),
             'rating_id' => 'Rating id',
-            'name' => Yii::t('app', 'Name'),
-            'username' => 'Login',
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getUser()
+    public function getSubmission()
     {
-        return $this->hasOne(\app\modules\user\models\User::className(), ['id' => 'author_user_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     * @throws Exception
-     */
-    public function getProduct()
-    {
-        $object = Object::getForClass(Product::className());
-        if ($object !== null) {
-            return $this->hasOne(Product::className(), ['id' => 'object_model_id']);
-        } else {
-            throw new Exception('Object not found in database');
-        }
-    }
-    public function getPage()
-    {
-        $object = Object::getForClass(Page::className());
-        if ($object !== null) {
-            return $this->hasOne(Page::className(), ['id' => 'object_model_id']);
-        } else {
-            throw new Exception('Object not found in database');
-        }
+        return $this->hasOne(Submission::className(), ['id' => 'submission_id']);
     }
 
     /**
      * Получает отзывы по конкретной инстанции модели
      */
-    public static function getForObjectModel($object_id, $object_model_id, $sort = SORT_ASC)
+    public static function getForObjectModel($object_model_id, $sort = SORT_ASC)
     {
+        /**@var $models \app\modules\review\models\Review[] */
+        $models = Review::find()
+            ->with(
+                ['submission' => function ($query) {
+                    $query->andWhere('spam != :spam', [':spam' => Yii::$app->formatter->asBoolean(true)]);
+                    $query->andWhere(['is_deleted' => 0]);
+                    }
+                ]
+            )
+            ->where(
+                [
+                    'object_model_id' => $object_model_id,
+                    //'status' => self::STATUS_APPROVED,
+                ]
+            )
+            ->all();
+        /**
+         *@var $model \app\modules\review\models\Review
+         *@var $submission \app\models\Submission
+         */
+        foreach ($models as $model) {
+            if (null !== $submission = Submission::findOne(['id' => $model->submission_id])) {
+                VarDumper::dump($submission->abstractModel->attributes, 3, true);
+                $submissionObject = Object::getForClass(Submission::className());
+                $groups = PropertyGroup::getForModel($submissionObject->id, $submission->id);
+                foreach ($groups as $group) {
+                    $properties = Property::getForGroupId($group->id);
+                    VarDumper::dump($properties, 10,1);
+                }
+
+            }
+        }
+        return $models;
+
+
+
         $cacheKey = 'Reviews: ' . (int)$object_id . ':' . (int)$object_model_id . ':' . (int)$sort;
         $models = Yii::$app->cache->get($cacheKey);
         if ($models === false) {
@@ -185,36 +203,6 @@ class Review extends \yii\db\ActiveRecord
             }
         }
         return $models;
-    }
-
-    public function scenarios()
-    {
-        return [
-            'default' => [
-                'object_id',
-                'object_model_id',
-                'author_user_id',
-                'author_name',
-                'author_email',
-                'author_phone',
-                'text',
-                'rate',
-                'captcha',
-            ],
-            'search' => [
-                'object_id',
-                'name',
-                'slug',
-                'slug_compiled',
-                'username',
-                'author_name',
-                'author_email',
-                'author_phone',
-                'status',
-                'text',
-                'rate',
-            ]
-        ];
     }
 
     public function productSearch($params)

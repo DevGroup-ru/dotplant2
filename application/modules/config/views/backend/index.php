@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use app\backend\components\ActiveForm;
 use kartik\icons\Icon;
-
+$this->title = Yii::t('app', 'Configuration');
 ?>
 
 <div class="row">
