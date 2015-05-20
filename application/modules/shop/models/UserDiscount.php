@@ -2,6 +2,7 @@
 
 namespace app\modules\shop\models;
 
+use app\modules\user\models\User;
 use Yii;
 
 /**
@@ -10,17 +11,21 @@ use Yii;
  * @property integer $id
  * @property integer $user_id
  * @property integer $discount_id
+ * @property User $user
  */
 class UserDiscount extends AbstractDiscountType
 {
 
     public function getFullName()
     {
-        return $this->user_id;
+        return $this->user_id .' '.$this->user->first_name .' '.$this->user->last_name;
     }
 
 
-
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
 
 
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)

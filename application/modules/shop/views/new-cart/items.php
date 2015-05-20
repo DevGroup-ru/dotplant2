@@ -112,12 +112,14 @@ foreach ($items as $i => $item) {
             ?>
         <?php endif; ?>
     <?php endforeach; ?>
-    <?php if (isset($shippingOption)): ?>
+
+    <?php foreach($model->specialPriceObjects as $object): ?>
         <tr class="shipping-data">
-            <td colspan="4"><?= Html::encode($shippingOption->name) ?></td>
-            <td><?= $mainCurrency->format($shippingOption->cost) ?></td>
+            <td colspan="4"><?= $object->getOrderObjectDescription() ?></td>
+            <td><?= $mainCurrency->format($object->price) ?></td>
         </tr>
-    <?php endif; ?>
+    <?php endforeach; ?>
+
 
     <tr>
         <td colspan="3"></td>

@@ -62,18 +62,26 @@ class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
                     if ($discountFlag === false) {
                         break;
                     }
-
                 }
+                $special_price_list_id = SpecialPriceList::getModel(
+                    self::className(),
+                    $product->object->id
+                )->id;
+
                 if ($discountFlag === true) {
                     $oldPrice = $price;
                     $price = $discount->getDiscountPrice($price);
                     SpecialPriceObject::setObject(
-                        SpecialPriceList::getModel(
-                            self::className(),
-                            $product->object->id
-                        )->id,
+                        $special_price_list_id,
                         $product->id,
                         ($price - $oldPrice)
+                    );
+                } else {
+                    SpecialPriceObject::deleteAll(
+                        [
+                            'special_price_list_id' =>  $special_price_list_id,
+                            'object_model_id' =>  $product->id
+                        ]
                     );
                 }
             }
@@ -100,16 +108,26 @@ class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
                     }
 
                 }
+
+                $special_price_list_id = SpecialPriceList::getModel(
+                    self::className(),
+                    $order->object->id
+                )->id;
+
                 if ($discountFlag === true) {
                     $oldPrice = $price;
                     $price = $discount->getDiscountPrice($price);
                     SpecialPriceObject::setObject(
-                        SpecialPriceList::getModel(
-                            self::className(),
-                            $order->object->id
-                        )->id,
+                        $special_price_list_id,
                         $order->id,
                         ($price - $oldPrice)
+                    );
+                } else {
+                    SpecialPriceObject::deleteAll(
+                        [
+                           'special_price_list_id' =>  $special_price_list_id,
+                            'object_model_id' =>  $order->id
+                        ]
                     );
                 }
             }
@@ -117,6 +135,11 @@ class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
         return $price;
     }
 
+
+    public function getDescription()
+    {
+        return Yii::t('app', 'Discount');
+    }
 
 
     public static function getAllDiscounts()

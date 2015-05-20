@@ -100,7 +100,7 @@ class NewCartController extends Controller
                     'parent_id' => $parentId,
                     'order_id' => $order->id,
                     'product_id' => $productModel->id,
-                    'quantity' => $orderItem->product->measure->ceilQuantity($quantity),
+                    'quantity' => $quantity,
                     'price_per_pcs' =>  PriceHelper::getProductPrice(
                         $productModel,
                         $order,

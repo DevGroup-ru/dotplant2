@@ -8,4 +8,6 @@ use app\modules\shop\models\Order;
 interface SpecialPriceOrderInterface
 {
     public function getPriceOrder(Order $order, $price);
+
+    public function getDescription();
 }

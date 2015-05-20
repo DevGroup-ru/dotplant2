@@ -40,6 +40,7 @@ use yii\helpers\Json;
  * Relations:
  * @property \app\properties\AbstractModel $abstractModel
  * @property OrderItem[] $items
+ * @property SpecialPriceObject[] $specialPriceObjects
  * @property ShippingOption $shippingOption
  * @property OrderStage $stage
  * @property PaymentType $paymentType
@@ -271,6 +272,22 @@ class Order extends \yii\db\ActiveRecord
     public function getManager()
     {
         return $this->hasOne(User::className(), ['id' => 'manager_id']);
+    }
+
+    public function getSpecialPriceObjects()
+    {
+        return SpecialPriceObject::find()
+            ->leftJoin(
+                SpecialPriceList::tableName(),
+                SpecialPriceList::tableName().'.id ='.SpecialPriceObject::tableName().'.special_price_list_id'
+            )
+            ->where(
+                [
+                    SpecialPriceObject::tableName().'.object_model_id'=>$this->id,
+                    SpecialPriceList::tableName().'.object_id' => $this->object->id
+                ]
+            )
+            ->all();
     }
 
     public function getFullPrice()

@@ -11,6 +11,7 @@ use Yii;
  * @property integer $special_price_list_id
  * @property integer $object_model_id
  * @property double $price
+ * @property SpecialPriceList $specialPriceList
  */
 class SpecialPriceObject extends \yii\db\ActiveRecord
 {
@@ -21,6 +22,19 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
     {
         return '{{%special_price_object}}';
     }
+
+    public function getSpecialPriceList()
+    {
+        return $this->hasOne(SpecialPriceList::className(), ['id'=>'special_price_list_id']);
+    }
+
+
+    public function getOrderObjectDescription()
+    {
+        $class = $this->specialPriceList->class;
+        return (new $class)->getDescription();
+    }
+
 
     /**
      * @inheritdoc
