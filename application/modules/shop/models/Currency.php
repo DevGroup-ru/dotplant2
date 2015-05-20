@@ -38,14 +38,14 @@ class Currency extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
     private $formatter = null;
 
 
-    public function setPriceProduct(Product &$product, Order $order = null)
+    public function getPriceProduct(Product $product, Order $order = null, $price)
     {
         $currency = Currency::getMainCurrency();
-
         if ($product->currency_id !== $currency->id) {
             $foreignCurrency = Currency::findById($product->currency_id);
-            $product->total_price = round($product->total_price / $foreignCurrency->convert_nominal * $foreignCurrency->convert_rate, 2);
+            $price = $price / $foreignCurrency->convert_nominal * $foreignCurrency->convert_rate ;
         }
+        return round($price, 2);
     }
 
     /**

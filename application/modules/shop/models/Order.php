@@ -3,7 +3,7 @@
 namespace app\modules\shop\models;
 
 use app\models\Config;
-use app\modules\shop\components\PriceHelper;
+use app\modules\shop\helpers\PriceHelper;
 use app\modules\user\models\User;
 use app\properties\HasProperties;
 use Yii;
@@ -47,7 +47,6 @@ use yii\helpers\Json;
  * @property User $user
  * @property User $manager
  * @property float $fullPrice
- * @property OrderDeliveryInformation $orderDeliveryInformation
  */
 class Order extends \yii\db\ActiveRecord
 {
@@ -321,7 +320,6 @@ class Order extends \yii\db\ActiveRecord
      */
     public function reCalc()
     {
-        $totalPrice = 0;
         $itemsCount = 0;
         $cartCountsUniqueProducts = Config::getValue('shop.cartCountsUniqueProducts', '0') === '0';
 
@@ -329,8 +327,6 @@ class Order extends \yii\db\ActiveRecord
             if (is_null($item->product)) {
                 $item->delete();
             } else {
-                $options = Json::decode($item['additional_options']);
-                $totalPrice += $item->quantity * (PriceHelper::getProductPrice($item->product, $this) + $options['additionalPrice']);
                 if ($cartCountsUniqueProducts === true) {
                     $itemsCount ++;
                 } else {
@@ -338,7 +334,7 @@ class Order extends \yii\db\ActiveRecord
                 }
             }
         }
-        $this->total_price = $totalPrice;
+        $this->total_price = PriceHelper::getOrderPrice($this);
         $this->items_count = $itemsCount;
         return $this->save(true, ['total_price', 'items_count']);
     }
@@ -414,7 +410,6 @@ class Order extends \yii\db\ActiveRecord
     public function calculate($callSave = false, $deleteNotActiveProducts = true)
     {
         $itemsCount = 0;
-        $totalPrice = 0;
         foreach ($this->items as $item) {
             if ($deleteNotActiveProducts && (!isset($item->product) || $item->product->active == 0)) {
                 $item->delete();
@@ -427,16 +422,13 @@ class Order extends \yii\db\ActiveRecord
                     $itemsCount += Yii::$app->getModule('shop')->countUniqueProductsOnly == 1 ? 1 : $item->quantity;
                 }
             }
-            // @todo get order item discount
-            $totalPrice += $item->total_price;
         }
         if (!is_null($this->shippingOption)) {
             // @todo get shipping price
         }
         // @todo get order discount
         $this->items_count = $itemsCount;
-        $this->total_price = $totalPrice;
-        return $callSave ? $this->save(true, ['items_count', 'total_price',]) : true;
+        $this->total_price = PriceHelper::getOrderPrice($this);
+        return $callSave ? $this->save(true, ['items_count', 'total_price', 'total_price_with_shipping']) : true;
     }
 }
-?>

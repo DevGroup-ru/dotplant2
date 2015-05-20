@@ -4,7 +4,7 @@ namespace app\modules\shop\controllers;
 
 use app\modules\core\helpers\EventTriggeringHelper;
 use app\modules\core\models\Events;
-use app\modules\shop\components\PriceHelper;
+use app\modules\shop\helpers\PriceHelper;
 use app\modules\shop\events\OrderStageEvent;
 use app\modules\shop\events\OrderStageLeafEvent;
 use app\modules\shop\models\Currency;
@@ -13,6 +13,7 @@ use app\modules\shop\models\OrderItem;
 use app\modules\shop\models\OrderStage;
 use app\modules\shop\models\OrderStageLeaf;
 use app\modules\shop\models\Product;
+use app\modules\shop\models\SpecialPriceList;
 use app\modules\shop\ShopModule;
 use yii\helpers\Url;
 use Yii;
@@ -88,14 +89,24 @@ class NewCartController extends Controller
                 || is_null($orderItem = OrderItem::findOne(['order_id' => $order->id, 'product_id' => $productModel->id, 'parent_id' => 0]))
             ) {
                 $orderItem = new OrderItem;
-                $totalPriceWithoutDiscount = $productModel->price * $quantity;
+                $totalPriceWithoutDiscount = PriceHelper::getProductPrice(
+                    $productModel,
+                    $order,
+                    $quantity,
+                    SpecialPriceList::TYPE_CORE
+                );
                 $totalPrice = PriceHelper::getProductPrice($productModel, $order, $quantity);
                 $orderItem->attributes = [
                     'parent_id' => $parentId,
                     'order_id' => $order->id,
                     'product_id' => $productModel->id,
                     'quantity' => $orderItem->product->measure->ceilQuantity($quantity),
-                    'price_per_pcs' => $productModel->price,
+                    'price_per_pcs' =>  PriceHelper::getProductPrice(
+                        $productModel,
+                        $order,
+                        1,
+                        SpecialPriceList::TYPE_CORE
+                    ),
                     'total_price_without_discount' => $totalPriceWithoutDiscount,
                     'total_price' =>  $totalPrice,
                     'discount_amount' => $totalPriceWithoutDiscount - $totalPrice
@@ -103,8 +114,17 @@ class NewCartController extends Controller
             } else {
                 /** @var OrderItem $orderItem */
                 $orderItem->quantity += $quantity;
-                $totalPriceWithoutDiscount = $productModel->price * $quantity;
-                $totalPrice = PriceHelper::getProductPrice($productModel, $order, $quantity);
+                $totalPriceWithoutDiscount = PriceHelper::getProductPrice(
+                    $productModel,
+                    $order,
+                    $quantity,
+                    SpecialPriceList::TYPE_CORE
+                );
+                $totalPrice = PriceHelper::getProductPrice(
+                    $productModel,
+                    $order,
+                    $quantity
+                );
                 $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
                 $orderItem->total_price = $totalPrice;
                 $orderItem->discount_amount = $totalPriceWithoutDiscount - $totalPrice;
@@ -113,7 +133,10 @@ class NewCartController extends Controller
                 $result['errors'][] = Yii::t('app', 'Cannot save order item.');
             }
             if (isset($product['children'])) {
-                $result = ArrayHelper::merge($result, $this->addProductsToOrder($product['children'], $orderItem->id));
+                $result = ArrayHelper::merge(
+                    $result,
+                    $this->addProductsToOrder($product['children'], $orderItem->id)
+                );
             }
             if ($parentId === 0) {
                 $result['itemModalPreview'] .= $this->renderPartial(
@@ -169,10 +192,24 @@ class NewCartController extends Controller
         $orderItem->quantity = $orderItem->product->measure->ceilQuantity($quantity);
         // @todo Consider lock_product_price ?
         if ($orderItem->lock_product_price == 0) {
-            $orderItem->price_per_pcs = $orderItem->product->price;
+            $orderItem->price_per_pcs = PriceHelper::getProductPrice(
+                $orderItem->product,
+                $order,
+                1,
+                SpecialPriceList::TYPE_CORE
+            );
         }
-        $totalPriceWithoutDiscount = $orderItem->price_per_pcs * $orderItem->quantity;
-        $totalPrice = PriceHelper::getProductPrice($orderItem->product, $order, $quantity);
+        $totalPriceWithoutDiscount = PriceHelper::getProductPrice(
+            $orderItem->product,
+            $order,
+            $orderItem->product->measure->ceilQuantity($quantity),
+            SpecialPriceList::TYPE_CORE
+        );
+        $totalPrice = PriceHelper::getProductPrice(
+            $orderItem->product,
+            $order,
+            $orderItem->product->measure->ceilQuantity($quantity)
+        );
         $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
         $orderItem->total_price = $totalPrice;
         $orderItem->discount_amount = $totalPriceWithoutDiscount - $totalPrice;

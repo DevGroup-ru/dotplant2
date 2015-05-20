@@ -69,7 +69,10 @@ class BackendDiscountController extends BackendController
             if ($model->save()) {
 
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                $returnUrl = Yii::$app->request->get('returnUrl', ['/shop/backend-discount/index']);
+                $returnUrl = Yii::$app->request->get(
+                    'returnUrl',
+                    ['/shop/backend-discount/index']
+                );
                 switch (Yii::$app->request->post('action', 'save')) {
                     case 'next':
                         return $this->redirect(
@@ -97,8 +100,7 @@ class BackendDiscountController extends BackendController
         }
 
         if (Yii::$app->request->isPost && !$model->isNewRecord) {
-            foreach($model->getTypeObjects() as $object)
-            {
+            foreach ($model::getTypeObjects() as $object) {
                 $object->discount_id = $model->id;
 
                 if ($object->load(Yii::$app->request->post()) && $object->validate()) {
@@ -108,14 +110,16 @@ class BackendDiscountController extends BackendController
         }
 
 
-        return $this->render('form', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'form',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
-    /*
-   *
-   */
+
+
     public function actionDelete($id = null)
     {
         if ((null === $id) || (null === $model = Discount::findOne($id))) {
@@ -153,7 +157,7 @@ class BackendDiscountController extends BackendController
     {
         $discountType = DiscountType::findOne($typeId);
         $class = new $discountType->class;
-        /** @var $class AbstractDiscountType * */
+        /*** @var $class AbstractDiscountType */
         $class::deleteAll(['id' => $id]);
         $this->redirect($returnUrl);
     }

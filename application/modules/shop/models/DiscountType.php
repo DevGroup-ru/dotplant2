@@ -22,7 +22,7 @@ class DiscountType extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'discount_type';
+        return '{{%discount_type}}';
     }
 
     /**

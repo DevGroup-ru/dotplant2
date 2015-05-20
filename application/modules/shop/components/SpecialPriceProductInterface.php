@@ -9,5 +9,6 @@ use app\modules\shop\models\Product;
 interface SpecialPriceProductInterface
 {
 
-    public function setPriceProduct(Product &$product, Order $order = null);
+    public function getPriceProduct(Product $product, Order $order = null, $price);
+
 }

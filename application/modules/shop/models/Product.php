@@ -56,9 +56,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     private static $slug_to_id = [];
     private $category_ids = null;
 
-    public $total_price = 0;
-    public $special_price_desc = [];
-
     public $relatedProductsArray = [];
 
     /**
