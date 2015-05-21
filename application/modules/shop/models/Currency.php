@@ -2,7 +2,7 @@
 
 namespace app\modules\shop\models;
 
-use app\moduled\shop\models\CurrencyRateProvider;
+use app\modules\shop\models\CurrencyRateProvider;
 use app\modules\shop\components\SpecialPriceProductInterface;
 use Yii;
 use yii\base\InvalidConfigException;

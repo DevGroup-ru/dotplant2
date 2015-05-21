@@ -1,6 +1,6 @@
 <?php
 
-namespace app\moduled\shop\models;
+namespace app\modules\shop\models;
 
 use Ivory\HttpAdapter\HttpAdapterInterface;
 use Yii;
