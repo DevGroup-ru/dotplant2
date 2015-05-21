@@ -8,6 +8,7 @@ use app\backend\models\OrderChat;
 use app\components\Helper;
 use app\components\SearchModel;
 use app\models\Config;
+use app\modules\shop\helpers\PriceHelper;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderDeliveryInformation;
 use app\modules\shop\models\OrderItem;
@@ -15,6 +16,7 @@ use app\modules\shop\models\OrderStage;
 use app\modules\shop\models\PaymentType;
 use app\modules\shop\models\Product;
 use app\modules\shop\models\ShippingOption;
+use app\modules\shop\models\SpecialPriceList;
 use app\modules\user\models\User;
 use kartik\helpers\Html;
 use Yii;
@@ -440,10 +442,27 @@ class BackendOrderController extends BackendController
         $product = Product::findById($productId);
         if (is_null($orderItem)) {
             $orderItem = new OrderItem;
+            $totalPriceWithoutDiscount = PriceHelper::getProductPrice(
+                $product,
+                $order,
+                $product->measure->nominal,
+                SpecialPriceList::TYPE_CORE
+            );
+            $totalPrice = PriceHelper::getProductPrice($product, $order, $product->measure->nominal);
             $orderItem->attributes = [
-                'product_id' => $productId,
-                'order_id' => $orderId,
+                'parent_id' => 0,
+                'order_id' => $order->id,
+                'product_id' => $product->id,
                 'quantity' => $product->measure->nominal,
+                'price_per_pcs' =>  PriceHelper::getProductPrice(
+                    $product,
+                    $order,
+                    1,
+                    SpecialPriceList::TYPE_CORE
+                ),
+                'total_price_without_discount' => $totalPriceWithoutDiscount,
+                'total_price' =>  $totalPrice,
+                'discount_amount' => $totalPriceWithoutDiscount - $totalPrice
             ];
         } else {
             $orderItem->quantity++;
