@@ -16,6 +16,7 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
  * @property string $type_id
  * @property integer $sort_order
  * @property string $params
+ * @property string $handler
  */
 class SpecialPriceList extends \yii\db\ActiveRecord
 {
@@ -77,7 +78,7 @@ class SpecialPriceList extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['object_id', 'class', 'type_id'], 'required'],
+            [['object_id', 'class', 'type_id', 'handler'], 'required'],
             [['object_id', 'active', 'sort_order', 'type_id'], 'integer'],
             [['params'], 'string'],
             [['class'], 'string', 'max' => 255]

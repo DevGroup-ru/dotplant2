@@ -30,23 +30,12 @@ use yii\data\ActiveDataProvider;
  * @property double $additional_nominal
  * @property integer $currency_rate_provider_id
  */
-class Currency extends \yii\db\ActiveRecord implements SpecialPriceProductInterface
+class Currency extends \yii\db\ActiveRecord
 {
     private static $mainCurrency = null;
     private static $selection = null;
     private static $identity_map = [];
     private $formatter = null;
-
-
-    public function getPriceProduct(Product $product, Order $order = null, $price)
-    {
-        $currency = Currency::getMainCurrency();
-        if ($product->currency_id !== $currency->id) {
-            $foreignCurrency = Currency::findById($product->currency_id);
-            $price = $price / $foreignCurrency->convert_nominal * $foreignCurrency->convert_rate ;
-        }
-        return round($price, 2);
-    }
 
     /**
      * @inheritdoc

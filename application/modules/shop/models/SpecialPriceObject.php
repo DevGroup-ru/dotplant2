@@ -32,7 +32,7 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
     public function getOrderObjectDescription()
     {
         $class = $this->specialPriceList->class;
-        return (new $class)->getDescription();
+        return $class;
     }
 
 

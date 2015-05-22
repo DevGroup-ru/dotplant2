@@ -3,6 +3,9 @@
 namespace app\modules\shop\models;
 
 use app\models\Config;
+use app\modules\core\helpers\EventTriggeringHelper;
+use app\modules\core\models\Events;
+use app\modules\shop\events\OrderCalculateEvent;
 use app\modules\shop\helpers\PriceHelper;
 use app\modules\user\models\User;
 use app\properties\HasProperties;
@@ -368,10 +371,12 @@ class Order extends \yii\db\ActiveRecord
                 }
             }
         }
-        if (!is_null($this->shippingOption)) {
-            // @todo get shipping price
-        }
-        // @todo get order discount
+
+        $event = new OrderCalculateEvent();
+        $event->order = $this;
+        $event->price = PriceHelper::getOrderPrice($this,SpecialPriceList::TYPE_CORE);
+        EventTriggeringHelper::triggerSpecialEvent($event);
+
         $this->items_count = $itemsCount;
         $this->total_price = PriceHelper::getOrderPrice($this);
         return $callSave ? $this->save(true, ['items_count', 'total_price', 'total_price_with_shipping']) : true;

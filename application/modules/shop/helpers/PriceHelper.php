@@ -3,14 +3,10 @@
 namespace app\modules\shop\helpers;
 
 
-use app\modules\shop\components\SpecialPriceObjectInterface;
-use app\modules\shop\components\SpecialPriceOrderInterface;
-use app\modules\shop\components\SpecialPriceProductInterface;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\Product;
 use app\modules\shop\models\SpecialPriceList;
 use app\modules\shop\models\SpecialPriceListType;
-use app\modules\shop\models\SpecialPriceObject;
 use yii\caching\TagDependency;
 use \devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
@@ -72,9 +68,8 @@ class PriceHelper
         }
         foreach ($specialPriceList as $specialPriceRow) {
             $class = new $specialPriceRow->class;
-            if ($class instanceof SpecialPriceProductInterface) {
-                $price = $class->getPriceProduct($product, $order, $price);
-            }
+            $handler = $specialPriceRow->handler;
+                $price = $class::$handler($product, $order, $specialPriceRow, $price);
         }
 
         return round($price * $quantity, 2);
@@ -137,9 +132,9 @@ class PriceHelper
         }
         foreach ($specialPriceList as $specialPriceRow) {
             $class = new $specialPriceRow->class;
-            if ($class instanceof SpecialPriceOrderInterface) {
-                $price = $class->getPriceOrder($order, $price);
-            }
+            $handler = $specialPriceRow->handler;
+            $price = $class::$handler($order, $specialPriceRow, $price);
+
         }
 
         return round($price, 2);

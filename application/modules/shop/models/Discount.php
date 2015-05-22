@@ -2,12 +2,16 @@
 
 namespace app\modules\shop\models;
 
+use app\modules\core\events\SpecialEvent;
 use app\modules\shop\components\SpecialPriceOrderInterface;
 use app\modules\shop\components\SpecialPriceProductInterface;
+use app\modules\shop\events\OrderCalculateEvent;
 use Yii;
+use yii\base\Event;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use \devgroup\TagDependencyHelper\ActiveRecordHelper;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%discount}}".
@@ -19,13 +23,11 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
  * @property integer $value_in_percent
  * @property double $apply_order_price_lg
  */
-class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterface, SpecialPriceOrderInterface
+class Discount extends \yii\db\ActiveRecord
 {
 
     public $options = [];
     public $applianceValues = [];
-
-    private static $_allDiscounts = [];
 
 
     public function init()
@@ -39,135 +41,6 @@ class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
         return parent::init();
     }
 
-    /***
-     * @param Product $product
-     * @param Order $order
-     * @param $price
-     * @return mixed
-     */
-    public function getPriceProduct(Product $product, Order $order = null, $price)
-    {
-        self::getAllDiscounts();
-        if (isset(self::$_allDiscounts['products'])) {
-            foreach (self::$_allDiscounts['products'] as $discount) {
-                $discountFlag = false;
-                foreach (self::getTypeObjects() as $discountTypeObject) {
-                    $discountFlag = $discountTypeObject
-                        ->checkDiscount(
-                            $discount,
-                            $product,
-                            $order
-                        );
-
-                    if ($discountFlag === false) {
-                        break;
-                    }
-                }
-                $special_price_list_id = SpecialPriceList::getModel(
-                    self::className(),
-                    $product->object->id
-                )->id;
-
-                if ($discountFlag === true) {
-                    $oldPrice = $price;
-                    $price = $discount->getDiscountPrice($price);
-                    SpecialPriceObject::setObject(
-                        $special_price_list_id,
-                        $product->id,
-                        ($price - $oldPrice)
-                    );
-                } else {
-                    SpecialPriceObject::deleteAll(
-                        [
-                            'special_price_list_id' =>  $special_price_list_id,
-                            'object_model_id' =>  $product->id
-                        ]
-                    );
-                }
-            }
-        }
-        return $price;
-    }
-
-    public function getPriceOrder(Order $order, $price)
-    {
-        self::getAllDiscounts();
-        if (isset(self::$_allDiscounts['order_with_delivery'])) {
-            foreach (self::$_allDiscounts['order_with_delivery'] as $discount) {
-                $discountFlag = false;
-                foreach (self::getTypeObjects() as $discountTypeObject) {
-                    $discountFlag = $discountTypeObject
-                        ->checkDiscount(
-                            $discount,
-                            null,
-                            $order
-                        );
-
-                    if ($discountFlag === false) {
-                        break;
-                    }
-
-                }
-
-                $special_price_list_id = SpecialPriceList::getModel(
-                    self::className(),
-                    $order->object->id
-                )->id;
-
-                if ($discountFlag === true) {
-                    $oldPrice = $price;
-                    $price = $discount->getDiscountPrice($price);
-                    SpecialPriceObject::setObject(
-                        $special_price_list_id,
-                        $order->id,
-                        ($price - $oldPrice)
-                    );
-                } else {
-                    SpecialPriceObject::deleteAll(
-                        [
-                           'special_price_list_id' =>  $special_price_list_id,
-                            'object_model_id' =>  $order->id
-                        ]
-                    );
-                }
-            }
-        }
-        return $price;
-    }
-
-
-    public function getDescription()
-    {
-        return Yii::t('app', 'Discount');
-    }
-
-
-    public static function getAllDiscounts()
-    {
-        if (!self::$_allDiscounts) {
-            $cacheKey = 'getAllDiscounts';
-            if (!self::$_allDiscounts = Yii::$app->cache->get($cacheKey)) {
-                $discounts = self::find()->all();
-                foreach ($discounts as $discount) {
-                    self::$_allDiscounts[$discount->appliance][] = $discount;
-                }
-                Yii::$app->cache->set(
-                    $cacheKey,
-                    self::$_allDiscounts,
-                    86400,
-                    new TagDependency(
-                        [
-                            'tags' => [
-                                ActiveRecordHelper::getCommonTag(self::className())
-                            ]
-                        ]
-                    )
-                );
-            }
-
-        }
-        return self::$_allDiscounts;
-    }
 
     public function getDiscountPrice($price)
     {
@@ -290,5 +163,27 @@ class Discount extends \yii\db\ActiveRecord implements SpecialPriceProductInterf
 
 
         return $dataProvider;
+    }
+
+
+    public function beforeSave($insert)
+    {
+        \yii\caching\TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
+                'Discount:' . $this->id . ':0'
+            ]
+        );
+
+        \yii\caching\TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
+                'Discount:' . $this->id . ':1'
+            ]
+        );
+
+        return parent::beforeSave($insert);
     }
 }
