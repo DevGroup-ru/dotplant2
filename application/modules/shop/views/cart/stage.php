@@ -9,9 +9,18 @@ use yii\helpers\Html;
 ?>
 
 <?php
+    $form = \yii\bootstrap\ActiveForm::begin([
+        'id' => 'shop-stage',
+        'layout' => 'horizontal',
+    ]);
     $stageView = Yii::getAlias($stage->view);
     if (is_file($stageView)) {
-        echo $this->renderFile($stageView);
+        $eventData = empty($eventData) ? [] : $eventData;
+        echo $this->renderFile($stageView,
+            array_merge($eventData, [
+                'form' => $form,
+            ])
+        );
     }
 ?>
 <div class="col-md-12">
@@ -22,7 +31,7 @@ use yii\helpers\Html;
                 array_reduce(OrderStageHelper::getPreviousButtons($stage),
                     function ($result, $item)
                     {
-                        $result .= '<li>'.Html::a($item['label'], $item['url'], ['class' => $item['css']]).'</li>';
+                        $result .= '<li>'.Html::submitButton($item['label'], ['data-action' => $item['url'], 'class' => $item['css']]).'</li>';
                         return $result;
                     }, '');
             ?>
@@ -34,7 +43,7 @@ use yii\helpers\Html;
             array_reduce(OrderStageHelper::getNextButtons($stage),
                 function ($result, $item)
                 {
-                    $result .= '<li>'.Html::a($item['label'], $item['url'], ['class' => $item['css']]).'</li>';
+                    $result .= '<li>'.Html::submitButton($item['label'], ['data-action' => $item['url'], 'class' => $item['css']]).'</li>';
                     return $result;
                 }, '');
             ?>
@@ -42,6 +51,20 @@ use yii\helpers\Html;
         </div>
     </div>
 </div>
+<?php
+    $form->end();
+    ob_start();
+?>
+    jQuery(function(){
+        $('form#shop-stage button[type="submit"]').on('click', function(event) {
+            event.preventDefault();
+            $('form#shop-stage').attr('action', $(this).attr('data-action'));
+            $('form#shop-stage').submit();
+        });
+    }(jQuery));
+<?php
+    $this->registerJs(ob_get_clean(), \yii\web\View::POS_END);
+?>
 
 <style>
     .list-stage-buttons li {

@@ -280,20 +280,23 @@ class CartController extends Controller
 
         /** @var OrderStage $orderStage */
         $orderStage = $order->stage;
+        $eventData = [];
 
-        if (null !== Yii::$app->session->get('OrderStageReach')) {
-            /** @var Events $eventClass */
-            $eventClass = Events::findByName($orderStage->event_name);
-            if (!empty($eventClass) && is_subclass_of($eventClass->event_class_name, OrderStageEvent::className())) {
-                /** @var OrderStageEvent $event */
-                $event = new $eventClass->event_class_name;
-                EventTriggeringHelper::triggerSpecialEvent($event);
-            }
-            Yii::$app->session->remove('OrderStageReach');
+//        if (null !== Yii::$app->session->get('OrderStageReach')) {
+        /** @var Events $eventClass */
+        $eventClass = Events::findByName($orderStage->event_name);
+        if (!empty($eventClass) && is_subclass_of($eventClass->event_class_name, OrderStageEvent::className())) {
+            /** @var OrderStageEvent $event */
+            $event = new $eventClass->event_class_name;
+            EventTriggeringHelper::triggerSpecialEvent($event);
+            $eventData = $event->eventData();
         }
+        Yii::$app->session->remove('OrderStageReach');
+//        }
 
         return $this->render('stage', [
             'stage' => $orderStage,
+            'eventData' => $eventData,
         ]);
     }
 
@@ -324,22 +327,26 @@ class CartController extends Controller
             return $this->redirect(Url::to(['stage']));
         }
 
-        /** @var Events $eventClassName */
-        $eventClassName = Events::findByName($orderStageLeaf->event_name);
-        if (!empty($eventClassName) && is_subclass_of($eventClassName->event_class_name, OrderStageLeafEvent::className())) {
-            /** @var OrderStageLeafEvent $event */
-            $event = new $eventClassName->event_class_name;
-            EventTriggeringHelper::triggerSpecialEvent($event);
-            if ($event->getStatus()) {
-                $order->order_stage_id = $order->order_stage_id == $orderStageLeaf->stage_to_id ? $orderStageLeaf->stage_from_id : $orderStageLeaf->stage_to_id;
-                $order->save();
-
-                Yii::$app->session->set('OrderStageReach', true);
-
-                return $this->redirect(Url::to(['stage']));
-            }
+        if (null !== Yii::$app->request->get('previous') && 1 !== intval($orderStageLeaf->stageFrom->immutable_by_user)) {
+            $order->order_stage_id = $orderStageLeaf->stageFrom->id;
+            $order->save();
         } else {
-            return $this->redirect(Url::to(['stage']));
+            /** @var Events $eventClassName */
+            $eventClassName = Events::findByName($orderStageLeaf->event_name);
+            if (!empty($eventClassName) && is_subclass_of($eventClassName->event_class_name, OrderStageLeafEvent::className())) {
+                /** @var OrderStageLeafEvent $event */
+                $event = new $eventClassName->event_class_name;
+                EventTriggeringHelper::triggerSpecialEvent($event);
+                if ($event->getStatus()) {
+                    $order->order_stage_id = $order->order_stage_id == $orderStageLeaf->stage_to_id ? $orderStageLeaf->stage_from_id : $orderStageLeaf->stage_to_id;
+                    $order->save();
+
+                    Yii::$app->session->set('OrderStageReach', true);
+                }
+            }
         }
+
+        return $this->redirect(Url::to(['stage']));
     }
 }
+?>

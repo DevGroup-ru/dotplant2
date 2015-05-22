@@ -14,11 +14,13 @@ class OrderStageHelper
             function ($result, $item)
             {
                 /** @var OrderStageLeaf $item */
-                $result[] = [
-                    'label' => $item->button_label,
-                    'css' => $item->button_css_class,
-                    'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id])
-                ];
+                if (0 === intval($item->stageTo->immutable_by_user)) {
+                    $result[] = [
+                        'label' => $item->button_label,
+                        'css' => $item->button_css_class,
+                        'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id])
+                    ];
+                }
                 return $result;
             }, []);
     }
@@ -29,14 +31,15 @@ class OrderStageHelper
             function ($result, $item)
             {
                 /** @var OrderStageLeaf $item */
-                $result[] = [
-                    'label' => $item->button_label,
-                    'css' => $item->button_css_class,
-                    'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id])
-                ];
+                if (0 === intval($item->stageFrom->immutable_by_user)) {
+                    $result[] = [
+                        'label' => $item->button_label,
+                        'css' => $item->button_css_class,
+                        'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id, 'previous' => 1])
+                    ];
+                }
                 return $result;
             }, []);
-
     }
 }
 ?>

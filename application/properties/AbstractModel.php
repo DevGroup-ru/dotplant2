@@ -340,3 +340,4 @@ class AbstractModel extends Model
         return $this->ownerModel;
     }
 }
+?>

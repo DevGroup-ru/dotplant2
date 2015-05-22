@@ -72,5 +72,17 @@ class DeliveryInformation extends \yii\db\ActiveRecord
     {
         return $this->hasOne(City::className(), ['id' => 'city_id']);
     }
+
+    public static function createNewDeliveryInformation(Contragent $contragent = null)
+    {
+        if (empty($contragent)) {
+            return null;
+        }
+
+        $model = new static();
+        $model->contragent_id = $contragent->id;
+
+        return $model;
+    }
 }
 ?>

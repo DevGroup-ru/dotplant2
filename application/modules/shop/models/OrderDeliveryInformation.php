@@ -2,6 +2,11 @@
 
 namespace app\modules\shop\models;
 
+use app\models\Property;
+use app\models\PropertyGroup;
+use app\properties\AbstractModel;
+use app\properties\HasProperties;
+use app\properties\PropertyValue;
 use Yii;
 
 /**
@@ -21,6 +26,9 @@ use Yii;
  */
 class OrderDeliveryInformation extends \yii\db\ActiveRecord
 {
+    /** @var PropertyGroup $propertyGroup */
+    protected $propertyGroup = null;
+
     /**
      * @inheritdoc
      */
@@ -60,6 +68,18 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => HasProperties::className(),
+            ],
+            [
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+        ];
+    }
+
     public function getOrder()
     {
         return $this->hasOne(Order::className(), ['id' => 'order_id']);
@@ -70,9 +90,55 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
         return $this->hasOne(ShippingOption::className(), ['id' => 'shipping_option_id']);
     }
 
+    public function setPropertyGroup($group)
+    {
+        $this->propertyGroup = $group;
+    }
+
+    public function getPropertyGroup()
+    {
+        return $this->propertyGroup;
+    }
+
     public static function getByOrderId($id = null)
     {
         return static::findOne(['order_id' => $id]);
+    }
+
+    public static function createNewOrderDeliveryInformation(Order $order = null)
+    {
+        if (empty($order)) {
+            return null;
+        }
+
+        $model = new static();
+        $model->order_id = $order->id;
+
+        $groups = PropertyGroup::getForObjectId($model->getObject()->id, true);
+        $group = array_shift($groups);
+
+        if (null !== $group) {
+            $model->setPropertyGroup($group);
+            $abstractModel = new AbstractModel();
+            $abstractModel->setPropertiesModels(array_reduce($group->properties,
+                function($result, $item)
+                {
+                    /** @var Property $item */
+                    $result[$item->key] = $item;
+                    return $result;
+                }, []));
+            $abstractModel->setAttributes(array_reduce($group->properties,
+                function($result, $item) use ($model)
+                {
+                    /** @var Property $item */
+                    $result[$item->key] = new PropertyValue([], $item->id, $model->getObject()->id, null);
+                    return $result;
+                }, []));
+            $abstractModel->setFormName('OrderDeliveryInformationNew');
+            $model->setAbstractModel($abstractModel);
+        }
+
+        return $model;
     }
 }
 ?>

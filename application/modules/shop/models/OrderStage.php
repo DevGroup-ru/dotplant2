@@ -23,6 +23,7 @@ use yii\data\ActiveDataProvider;
  * @property string $reach_goal_ga
  * @property string $event_name
  * @property string $view
+ * Relations:
  * @property OrderStageLeaf[] $nextLeafs
  * @property OrderStageLeaf[] $prevLeafs
  */
@@ -119,6 +120,5 @@ class OrderStage extends \yii\db\ActiveRecord
         return $this->hasMany(OrderStageLeaf::className(), ['stage_to_id' => 'id'])
             ->addOrderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC]);
     }
-
 }
 ?>

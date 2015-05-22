@@ -36,7 +36,6 @@ use yii\db\Expression;
  * @property bool $is_deleted
  * @property bool $temporary
  * @property bool $show_price_changed_notification
- * @property float $fullPrice
  * Relations:
  * @property \app\properties\AbstractModel $abstractModel
  * @property OrderItem[] $items
@@ -47,6 +46,10 @@ use yii\db\Expression;
  * @property OrderTransaction[] $transactions
  * @property User $user
  * @property User $manager
+ * @property float $fullPrice
+ * @property Contragent $contragent
+ * @property Customer $customer
+ * @property OrderDeliveryInformation $orderDeliveryInformation
  */
 class Order extends \yii\db\ActiveRecord
 {
@@ -250,7 +253,7 @@ class Order extends \yii\db\ActiveRecord
 
     public function getOrderDeliveryInformation()
     {
-        return OrderDeliveryInformation::getByOrderId($this->id);
+        return $this->hasOne(OrderDeliveryInformation::className(), ['order_id' => 'id']);
     }
 
     /**
@@ -374,3 +377,4 @@ class Order extends \yii\db\ActiveRecord
         return $callSave ? $this->save(true, ['items_count', 'total_price', 'total_price_with_shipping']) : true;
     }
 }
+?>

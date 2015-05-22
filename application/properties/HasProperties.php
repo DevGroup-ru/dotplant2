@@ -35,6 +35,7 @@ class HasProperties extends Behavior
     private $property_id_to_group_id = [];
     private $static_values = null;
     private $table_inheritance_row = null;
+    private $propertiesFormName = null;
     public $props;
     
     /**
@@ -202,11 +203,15 @@ class HasProperties extends Behavior
         }
     }
 
+    public function setPropertiesFormName($name = null)
+    {
+        $this->propertiesFormName = $name;
+    }
+
     public function saveProperties($data)
     {
-
         $form = $this->owner->formName();
-        $formProperties = 'Properties_'.$form.'_'.$this->owner->id;
+        $formProperties = empty($this->propertiesFormName) ? 'Properties_'.$form.'_'.$this->owner->id : $this->propertiesFormName;
 
         $this->getPropertyGroups();
         if (isset($data['AddPropetryGroup']) && isset($data['AddPropetryGroup'][$form])) {
@@ -277,8 +282,15 @@ class HasProperties extends Behavior
 
     public function getAbstractModel()
     {
-        $this->getPropertyGroups(!is_object($this->abstract_model), false, true);
+        if (empty($this->abstract_model)) {
+            $this->getPropertyGroups(!is_object($this->abstract_model), false, true);
+        }
         return $this->abstract_model;
+    }
+
+    public function setAbstractModel(AbstractModel $model)
+    {
+        $this->abstract_model = $model;
     }
 
     public function getPropertyValuesByKey($key)

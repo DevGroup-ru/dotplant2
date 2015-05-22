@@ -53,6 +53,7 @@ class m150515_141224_order_customers extends Migration
                 'planned_delivery_time_range' => Schema::TYPE_STRING,
             ], $tableOptions);
 
+
         $this->insert('{{%object}}', [
             'name' => 'Customer',
             'object_class' => 'app\modules\shop\models\Customer',
@@ -64,6 +65,16 @@ class m150515_141224_order_customers extends Migration
             'link_slug_static_value' => 'customer_slug_static',
             'object_slug_attribute' => 'slug',
         ]);
+
+        $this->createTable('{{%customer_eav}}',
+            [
+                'id' => Schema::TYPE_PK,
+                'object_model_id' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
+                'property_group_id' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
+                'key' => Schema::TYPE_STRING . ' NOT NULL',
+                'value' => Schema::TYPE_TEXT,
+                'sort_order' => Schema::TYPE_INTEGER,
+            ], $tableOptions);
 
         $this->insert('{{%object}}', [
             'name' => 'Contragent',
@@ -77,6 +88,16 @@ class m150515_141224_order_customers extends Migration
             'object_slug_attribute' => 'slug',
         ]);
 
+        $this->createTable('{{%contragent_eav}}',
+            [
+                'id' => Schema::TYPE_PK,
+                'object_model_id' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
+                'property_group_id' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
+                'key' => Schema::TYPE_STRING . ' NOT NULL',
+                'value' => Schema::TYPE_TEXT,
+                'sort_order' => Schema::TYPE_INTEGER,
+            ], $tableOptions);
+
         $this->insert('{{%object}}', [
             'name' => 'OrderDeliveryInformation',
             'object_class' => 'app\modules\shop\models\OrderDeliveryInformation',
@@ -88,6 +109,16 @@ class m150515_141224_order_customers extends Migration
             'link_slug_static_value' => 'order_delivery_information_slug_static',
             'object_slug_attribute' => 'slug',
         ]);
+
+        $this->createTable('{{%order_delivery_information_eav}}',
+            [
+                'id' => Schema::TYPE_PK,
+                'object_model_id' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
+                'property_group_id' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
+                'key' => Schema::TYPE_STRING . ' NOT NULL',
+                'value' => Schema::TYPE_TEXT,
+                'sort_order' => Schema::TYPE_INTEGER,
+            ], $tableOptions);
 
         $this->addColumn('{{%order}}', 'customer_id', Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL');
         $this->addColumn('{{%order}}', 'contragent_id', Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL');
@@ -318,7 +349,7 @@ class m150515_141224_order_customers extends Migration
             'notify_manager' => 0,
             'notify_new_assigned_user' => 0,
             'role_assignment_policy' => 'random',
-            'event_name' => 'order_stageleaf_delivery_choose',
+            'event_name' => 'order_stageleaf_customer',
         ]);
 
         $this->insert('{{%order_stage_leaf}}', [
@@ -330,7 +361,7 @@ class m150515_141224_order_customers extends Migration
             'notify_manager' => 0,
             'notify_new_assigned_user' => 0,
             'role_assignment_policy' => 'random',
-            'event_name' => 'order_stageleaf_payment_choose',
+            'event_name' => 'order_stageleaf_delivery_choose',
         ]);
 
         $this->insert('{{%order_stage_leaf}}', [
@@ -344,7 +375,7 @@ class m150515_141224_order_customers extends Migration
             'assign_to_role' => null,
             'notify_new_assigned_user' => 0,
             'role_assignment_policy' => 'random',
-            'event_name' => 'order_stageleaf_manager_process',
+            'event_name' => 'order_stageleaf_payment_choose',
         ]);
 
     }
@@ -355,6 +386,9 @@ class m150515_141224_order_customers extends Migration
         $this->dropTable('{{%contragent}}');
         $this->dropTable('{{%delivery_information}}');
         $this->dropTable('{{%order_delivery_information}}');
+        $this->dropTable('{{%contragent_eav}}');
+        $this->dropTable('{{%customer_eav}}');
+        $this->dropTable('{{%order_delivery_information_eav}}');
 
         $this->delete('{{%object}}', ['name' => 'Customer']);
         $this->delete('{{%object}}', ['name' => 'Contragent']);

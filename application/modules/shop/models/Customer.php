@@ -2,6 +2,11 @@
 
 namespace app\modules\shop\models;
 
+use app\models\Property;
+use app\models\PropertyGroup;
+use app\properties\AbstractModel;
+use app\properties\HasProperties;
+use app\properties\PropertyValue;
 use Yii;
 
 /**
@@ -17,9 +22,12 @@ use Yii;
  * @property string $phone
  * Relations:
  * @property Contragent[] $contragents
+ * @property Contragent $contragent
  */
 class Customer extends \yii\db\ActiveRecord
 {
+    protected $propertyGroup = null;
+
     /**
      * @inheritdoc
      */
@@ -35,8 +43,10 @@ class Customer extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'contragent_id'], 'integer'],
-            [['contragent_id'], 'required'],
-            [['first_name', 'middle_name', 'last_name', 'email', 'phone'], 'string', 'max' => 255]
+            [['contragent_id', 'user_id', 'first_name'], 'required'],
+            [['first_name', 'middle_name', 'last_name', 'email', 'phone'], 'string', 'max' => 255],
+            [['email'], 'email'],
+
         ];
     }
 
@@ -57,14 +67,79 @@ class Customer extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => HasProperties::className(),
+            ],
+            [
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+        ];
+    }
+
     public function getContragents()
     {
         return $this->hasMany(Contragent::className(), ['id' => 'contragent_id']);
     }
 
+    public function getContragent()
+    {
+        return $this->hasOne(Contragent::className(), ['id' => 'contragent_id'])
+            ->orderBy(['id' => SORT_ASC]);
+    }
+
+    /**
+     * @param null $id
+     * @return Customer|null
+     */
     public static function getCustomerByUserId($id = null)
     {
-        return static::findOne(['user_id' => $id]);
+        return intval($id) > 0 ? static::findOne(['user_id' => $id]) : null;
+    }
+
+    public static function createEmptyCustomer($user_id = 0, $contragent_id = null)
+    {
+        $model = new static();
+            $model->user_id = $user_id;
+            $model->contragent_id = $contragent_id;
+
+        $groups = PropertyGroup::getForObjectId($model->getObject()->id, true);
+        $group = array_shift($groups);
+
+        if (null !== $group) {
+            $model->setPropertyGroup($group);
+            $abstractModel = new AbstractModel();
+            $abstractModel->setPropertiesModels(array_reduce($group->properties,
+                function($result, $item)
+                {
+                    /** @var Property $item */
+                    $result[$item->key] = $item;
+                    return $result;
+                }, []));
+            $abstractModel->setAttributes(array_reduce($group->properties,
+                function($result, $item) use ($model)
+                {
+                    /** @var Property $item */
+                    $result[$item->key] = new PropertyValue([], $item->id, $model->getObject()->id, null);
+                    return $result;
+                }, []));
+            $abstractModel->setFormName('CustomerNew');
+            $model->setAbstractModel($abstractModel);
+        }
+
+        return $model;
+    }
+
+    public function setPropertyGroup($group)
+    {
+        $this->propertyGroup = $group;
+    }
+
+    public function getPropertyGroup()
+    {
+        return $this->propertyGroup;
     }
 }
 ?>

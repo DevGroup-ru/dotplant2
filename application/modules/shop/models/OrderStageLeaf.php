@@ -23,6 +23,9 @@ use yii\data\ActiveDataProvider;
  * @property integer $notify_new_assigned_user
  * @property string $role_assignment_policy
  * @property string $event_name
+ * Relations:
+ * @property OrderStage $stageFrom
+ * @property OrderStage $stageTo
  */
 class OrderStageLeaf extends \yii\db\ActiveRecord
 {
