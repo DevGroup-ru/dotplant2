@@ -8,7 +8,7 @@ $mainCurrency = \app\modules\shop\models\Currency::getMainCurrency();
 
 if (is_null($order)) {
     $itemsCount = 0;
-    $totalPrice = $mainCurrency->format($mainCurrency->format(0));
+    $totalPrice = $mainCurrency->format(0);
 } else {
     $itemsCount = $order->items_count;
     $totalPrice = $mainCurrency->format($order->total_price);
