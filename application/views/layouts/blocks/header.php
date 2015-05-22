@@ -101,7 +101,7 @@ AppAsset::register($this);
                 ?>
             </div>
             <div class="col-md-2">
-                <?= \app\widgets\CartInfo::widget() ?>
+                <?= \app\modules\shop\widgets\CartInfo::widget() ?>
             </div>
         </div>
     </div>
