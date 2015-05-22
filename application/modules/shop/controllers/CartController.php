@@ -2,185 +2,225 @@
 
 namespace app\modules\shop\controllers;
 
-use app\behaviors\Csrf;
-use app\modules\shop\models\Cart;
+use app\modules\core\helpers\EventTriggeringHelper;
+use app\modules\core\models\Events;
+use app\modules\shop\helpers\PriceHelper;
+use app\modules\shop\events\OrderStageEvent;
+use app\modules\shop\events\OrderStageLeafEvent;
+use app\modules\shop\models\Currency;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderItem;
-use app\modules\shop\models\OrderTransaction;
-use app\modules\shop\models\PaymentType;
+use app\modules\shop\models\OrderStage;
+use app\modules\shop\models\OrderStageLeaf;
 use app\modules\shop\models\Product;
-use app\modules\shop\models\ShippingOption;
-use app\properties\HasProperties;
-use devgroup\TagDependencyHelper\ActiveRecordHelper;
+use app\modules\shop\models\SpecialPriceList;
+use app\modules\shop\ShopModule;
+use yii\helpers\Url;
 use Yii;
-use yii\caching\TagDependency;
-use yii\db\Expression;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
+/**
+ * Class CartController
+ * @package app\modules\shop\controllers
+ * @property ShopModule $module
+ */
 class CartController extends Controller
 {
-    private function getCachedData($cacheKey, $className)
-    {
-        $data = Yii::$app->cache->get($cacheKey);
-        if ($data === false) {
-            $data = call_user_func([$className, 'findAll'], ['active' => 1]);
-            Yii::$app->cache->set(
-                $cacheKey,
-                $data,
-                86400,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag($className),
-                        ],
-                    ]
-                )
-            );
-        }
-        return $data;
-    }
-
     /**
-     * @param $id
-     * @param null $allowedStatuses
-     * @return Order|null|Response
+     * Get Order.
+     * @param bool $create Create order if it does not exist
+     * @param bool $throwException Throw exception if it does not exist
+     * @return Order
      * @throws NotFoundHttpException
      */
-    private function loadOrder($id, $allowedStatuses = null)
+    protected function loadOrder($create = false, $throwException = true)
     {
-        /** @var Cart $model */
-        $model = Order::findOne($id);
-        if ($model === null) {
+        $model = Order::getOrder($create);
+        if (is_null($model) && $throwException) {
             throw new NotFoundHttpException;
-        }
-        if (Yii::$app->user->isGuest) {
-            if (!Yii::$app->session->has('orders') || !in_array($id, (array) Yii::$app->session->get('orders'))) {
-                throw new NotFoundHttpException;
-            }
-        } else {
-            if ($model->user_id != Yii::$app->user->id) {
-                throw new NotFoundHttpException;
-            }
-        }
-        if ($allowedStatuses !==null && !in_array($model->order_status_id, (array) $allowedStatuses)) {
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot change this order'));
-            return $this->redirect(['/cart']);
         }
         return $model;
     }
 
-    private function loadLastTransactionOrder($allowedStatuses = null)
+    /**
+     * Get OrderItem.
+     * @param int $id
+     * @param bool $checkOrderAttachment
+     * @return OrderItem
+     * @throws NotFoundHttpException
+     */
+    protected function loadOrderItem($id, $checkOrderAttachment = true)
     {
-        $query = Order::find()
-            ->join('JOIN', OrderTransaction::tableName(), OrderTransaction::tableName() . '.order_id = Order.id')
-            ->orderBy(OrderTransaction::tableName() . '.id DESC')
-            ->limit(1);
-        if (Yii::$app->user->isGuest) {
-            if (Yii::$app->session->has('orders') && is_array(Yii::$app->session->get('orders'))) {
-                $query->where(['in', Order::tableName() . '.id', Yii::$app->session->get('orders')]);
-            } else {
-                return null;
-            }
-        } else {
-            $query->where(['user_id' => Yii::$app->user->id]);
+        /** @var OrderItem $orderItemModel */
+        $orderModel = $checkOrderAttachment ? $this->loadOrder() : null;
+        $orderItemModel = OrderItem::findOne($id);
+        if (is_null($orderItemModel)
+            || ($checkOrderAttachment && (is_null($orderModel) || $orderItemModel->order_id != $orderModel->id))
+        ) {
+            throw new NotFoundHttpException;
         }
-        if ($allowedStatuses === null) {
-            $query->andWhere(['in', 'id', $allowedStatuses]);
-        }
-        return $query->one();
+        return $orderItemModel;
     }
 
-    public function behaviors()
+    protected function addProductsToOrder($products, $parentId = 0)
     {
-        return [
-            [
-                'class' => Csrf::className(),
-                'disabledActions' => ['payment-result', 'payment-success', 'payment-error'],
-            ],
+        if (!is_array($products)) {
+            throw new BadRequestHttpException;
+        }
+        $order = $this->loadOrder(true);
+        $result = [
+            'errors' => [],
+            'itemModalPreview' => '',
         ];
-    }
-
-    public function actionIndex()
-    {
-        $cart = Cart::getCart(false);
-        if ($cart !== null) {
-            $cart->reCalc(true);
+        foreach ($products as $product) {
+            if (!isset($product['id']) || is_null($productModel = Product::findById($product['id']))) {
+                $result['errors'][] = Yii::t('app', 'Product not found.');
+                continue;
+            }
+            /** @var Product $productModel */
+            $quantity = isset($product['quantity']) && (double) $product['quantity'] > 0
+                ? (double) $product['quantity']
+                : 1;
+            if ($this->module->allowToAddSameProduct
+                || is_null($orderItem = OrderItem::findOne(['order_id' => $order->id, 'product_id' => $productModel->id, 'parent_id' => 0]))
+            ) {
+                $orderItem = new OrderItem;
+                $totalPriceWithoutDiscount = PriceHelper::getProductPrice(
+                    $productModel,
+                    $order,
+                    $quantity,
+                    SpecialPriceList::TYPE_CORE
+                );
+                $totalPrice = PriceHelper::getProductPrice($productModel, $order, $quantity);
+                $orderItem->attributes = [
+                    'parent_id' => $parentId,
+                    'order_id' => $order->id,
+                    'product_id' => $productModel->id,
+                    'quantity' => $quantity,
+                    'price_per_pcs' =>  PriceHelper::getProductPrice(
+                        $productModel,
+                        $order,
+                        1,
+                        SpecialPriceList::TYPE_CORE
+                    ),
+                    'total_price_without_discount' => $totalPriceWithoutDiscount,
+                    'total_price' =>  $totalPrice,
+                    'discount_amount' => $totalPriceWithoutDiscount - $totalPrice
+                ];
+            } else {
+                /** @var OrderItem $orderItem */
+                $orderItem->quantity += $quantity;
+                $totalPriceWithoutDiscount = PriceHelper::getProductPrice(
+                    $productModel,
+                    $order,
+                    $quantity,
+                    SpecialPriceList::TYPE_CORE
+                );
+                $totalPrice = PriceHelper::getProductPrice(
+                    $productModel,
+                    $order,
+                    $quantity
+                );
+                $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
+                $orderItem->total_price = $totalPrice;
+                $orderItem->discount_amount = $totalPriceWithoutDiscount - $totalPrice;
+            }
+            if (!$orderItem->save()) {
+                $result['errors'][] = Yii::t('app', 'Cannot save order item.');
+            }
+            if (isset($product['children'])) {
+                $result = ArrayHelper::merge(
+                    $result,
+                    $this->addProductsToOrder($product['children'], $orderItem->id)
+                );
+            }
+            if ($parentId === 0) {
+                $result['itemModalPreview'] .= $this->renderPartial(
+                    'item-modal-preview',
+                    [
+                        'order' => $order,
+                        'orderItem' => $orderItem,
+                        'product' => $product,
+                    ]
+                );
+            }
         }
-        return $this->render('index', ['cart' => $cart]);
+        if ($parentId === 0) {
+            $order->calculate(true);
+        }
+        $mainCurrency = Currency::getMainCurrency();
+        return ArrayHelper::merge(
+            $result,
+            [
+                'itemsCount' => $order->items_count,
+                'success' => true, // @todo Return true success value
+                'totalPrice' => $mainCurrency->format($order->total_price),
+            ]
+        );
     }
 
     public function actionAdd()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        if (Yii::$app->request->post('id') === null) {
+        if (!is_array(Yii::$app->request->post('products', null))) {
             throw new BadRequestHttpException;
         }
-        $product = Product::findOne(Yii::$app->request->post('id'));
-        if ($product === null) {
-            throw new NotFoundHttpException;
+        $order = $this->loadOrder(true);
+        if (is_null($order->stage) || $order->stage->immutable_by_user == 1) {
+            throw new BadRequestHttpException;
         }
-        $quantity = Yii::$app->request->post('quantity', 1);
-        $additionalParams = Yii::$app->request->post('additionalParams', '{"additionalPrice":0}');
-        $cart = Cart::getCart(true);
-        if (isset($cart->items[$product->id])) {
-            $cart->items[$product->id] = [
-                'quantity' => $quantity + $cart->items[$product->id]['quantity'],
-                'additionalParams' => $additionalParams
-            ];
-        } else {
-            $cart->items[$product->id] = [
-                'quantity' => $quantity,
-                'additionalParams' => $additionalParams
-            ];
-        }
-        if ($cart->reCalc()) {
-            return [
-                'success' => true,
-                'itemsCount' => $cart->items_count,
-                'totalPrice' => Yii::$app->formatter->asDecimal($cart->total_price, 2),
-                'itemModalPreview' => $this->renderPartial(
-                    'item-modal-preview',
-                    [
-                        'order' => $cart,
-                        'product' => $product,
-                    ]
-                ),
-            ];
-        } else {
-            return [
-                'success' => false,
-                'message' => Yii::t('app', 'Cannot add product to cart'),
-            ];
-        }
+        return $this->addProductsToOrder(Yii::$app->request->post('products'));
     }
 
     public function actionChangeQuantity()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        if (Yii::$app->request->post('id') === null || Yii::$app->request->post('quantity') === null
-            || (int) Yii::$app->request->post('quantity') < 1) {
+        $id = Yii::$app->request->post('id');
+        $quantity = Yii::$app->request->post('quantity');
+        if (is_null($id) || is_null($quantity) || (double) $quantity <= 0) {
             throw new BadRequestHttpException;
         }
-        $id = Yii::$app->request->post('id');
-        /** @var Product $product */
-        $product = Product::findOne($id);
-        $cart = Cart::getCart(false);
-        if ($cart === null || !isset($cart->items[$id]) || $product === null) {
-            throw new NotFoundHttpException;
+        $orderItem = $this->loadOrderItem($id);
+        $order = $this->loadOrder();
+        if (is_null($order->stage) || $order->stage->immutable_by_user == 1) {
+            throw new BadRequestHttpException;
         }
-        $cart->items[$id]['quantity'] = Yii::$app->request->post('quantity');
-        $additionalParams = Json::decode($cart->items[$id]['additionalParams']);
-        if ($cart->reCalc()) {
+        $orderItem->quantity = $orderItem->product->measure->ceilQuantity($quantity);
+        // @todo Consider lock_product_price ?
+        if ($orderItem->lock_product_price == 0) {
+            $orderItem->price_per_pcs = PriceHelper::getProductPrice(
+                $orderItem->product,
+                $order,
+                1,
+                SpecialPriceList::TYPE_CORE
+            );
+        }
+        $totalPriceWithoutDiscount = PriceHelper::getProductPrice(
+            $orderItem->product,
+            $order,
+            $orderItem->product->measure->ceilQuantity($quantity),
+            SpecialPriceList::TYPE_CORE
+        );
+        $totalPrice = PriceHelper::getProductPrice(
+            $orderItem->product,
+            $order,
+            $orderItem->product->measure->ceilQuantity($quantity)
+        );
+        $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
+        $orderItem->total_price = $totalPrice;
+        $orderItem->discount_amount = $totalPriceWithoutDiscount - $totalPrice;
+        $orderItem->save();
+        $mainCurrency = Currency::getMainCurrency();
+        if ($order->calculate(true)) {
             return [
                 'success' => true,
-                'itemsCount' => $cart->items_count,
-                'itemPrice' => Yii::$app->formatter->asDecimal($cart->items[$id]['quantity'] * ($product->convertedPrice() + $additionalParams['additionalPrice']), 2),
-                'totalPrice' => Yii::$app->formatter->asDecimal($cart->total_price, 2),
+                'itemsCount' => $order->items_count,
+                'itemPrice' => $mainCurrency->format($orderItem->total_price),
+                'totalPrice' => $mainCurrency->format($order->total_price),
             ];
         } else {
             return [
@@ -190,30 +230,25 @@ class CartController extends Controller
         }
     }
 
-    public function actionChangeAdditionalParams()
+    /**
+     * Delete OrderItem action.
+     * @param int $id
+     * @throws NotFoundHttpException
+     * @throws \Exception
+     */
+    public function actionDelete($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        if (Yii::$app->request->post('id') === null || Yii::$app->request->post('additionalParams') === null) {
+        $order = $this->loadOrder();
+        if (is_null($order->stage) || $order->stage->immutable_by_user == 1) {
             throw new BadRequestHttpException;
         }
-        $id = Yii::$app->request->post('id');
-        /** @var Product $product */
-        $product = Product::findOne($id);
-        $cart = Cart::getCart(false);
-        if ($cart === null || !isset($cart->items[$id]) || $product === null) {
-            throw new NotFoundHttpException;
-        }
-        $additionalParams = ArrayHelper::merge(
-            Json::decode($cart->items[$id]['additionalParams']),
-            Json::decode(Yii::$app->request->post('additionalParams'))
-        );
-        $cart->items[$id]['additionalParams'] = Json::encode($additionalParams);
-        if ($cart->reCalc()) {
+        if ($this->loadOrderItem($id)->delete() && $order->calculate(true)) {
+            $mainCurrency = Currency::getMainCurrency();
             return [
                 'success' => true,
-                'itemsCount' => $cart->items_count,
-                'itemPrice' => Yii::$app->formatter->asDecimal($cart->items[$id]['quantity'] * ($product->convertedPrice() + $additionalParams['additionalPrice']), 2),
-                'totalPrice' => Yii::$app->formatter->asDecimal($cart->total_price, 2),
+                'itemsCount' => $order->items_count,
+                'totalPrice' => $mainCurrency->format($order->total_price),
             ];
         } else {
             return [
@@ -223,250 +258,88 @@ class CartController extends Controller
         }
     }
 
-
-    public function actionGetDeliveryPrice()
+    public function actionIndex()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if (Yii::$app->request->post('shipping_option_id') === null) {
-            throw new BadRequestHttpException;
+        $model = $this->loadOrder(false, false);
+        if (!is_null($model)) {
+            $model->calculate();
         }
-
-        $cart = Cart::getCart(false);
-        if ($cart) {
-
-            /** @var ShippingOption $shippingOption */
-            $shippingOption = ShippingOption::findOne(Yii::$app->request->post('shipping_option_id'));
-
-            if ($shippingOption) {
-
-                return [
-                    'success' =>true,
-                    'name' => $shippingOption->name,
-                    'shipping_price' => $shippingOption->cost,
-                    'total_price' => Yii::$app->formatter->asDecimal($cart->total_price),
-                    'full_price' => Yii::$app->formatter->asDecimal($cart->total_price + $shippingOption->cost),
-                    'currency' => Yii::$app->params['currency']
-                ];
-
-            }
-
-        }
-
-        return [
-            'success' => false,
-            'message' => Yii::t('app', 'Error data'),
-        ];
-
-
+        return $this->render('index', ['model' => $model]);
     }
 
-
-    public function actionDelete($id)
+    /**
+     * @return string|Response
+     * @throws NotFoundHttpException
+     */
+    public function actionStage()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $cart = Cart::getCart(false);
-        if ($cart === null || !isset($cart->items[$id])) {
-            throw new NotFoundHttpException;
+        $order = $this->loadOrder(false, false);
+        if (empty($order)) {
+            return $this->redirect(Url::to(['index']));
         }
-        unset($cart->items[$id]);
-        if ($cart->reCalc()) {
-            return [
-                'success' => true,
-                'itemsCount' => $cart->items_count,
-                'totalPrice' => Yii::$app->formatter->asDecimal($cart->total_price, 2),
-            ];
-        } else {
-            return [
-                'success' => false,
-                'message' => Yii::t('app', 'Cannot delete'),
-            ];
+
+        /** @var OrderStage $orderStage */
+        $orderStage = $order->stage;
+
+        if (null !== Yii::$app->session->get('OrderStageReach')) {
+            /** @var Events $eventClass */
+            $eventClass = Events::findByName($orderStage->event_name);
+            if (!empty($eventClass) && is_subclass_of($eventClass->event_class_name, OrderStageEvent::className())) {
+                /** @var OrderStageEvent $event */
+                $event = new $eventClass->event_class_name;
+                EventTriggeringHelper::triggerSpecialEvent($event);
+            }
+            Yii::$app->session->remove('OrderStageReach');
         }
+
+        return $this->render('stage', [
+            'stage' => $orderStage,
+        ]);
     }
 
-    public function actionShippingOption($id = null)
+    /**
+     * @param null $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws \yii\base\Exception
+     */
+    public function actionStageLeaf($id = null)
     {
-        if ($id === null) {
-            $cart = Cart::getCart();
-            if ($cart === null || $cart->items_count == 0 || !$cart->reCalc(true)) {
-                return $this->redirect(['/cart']);
-            }
-            /** @var Order|HasProperties $order */
-            $order = new Order;
-            $order->attributes = [
-                'user_id' => !Yii::$app->user->isGuest ? Yii::$app->user->id : 0,
-                'order_status_id' => 1,
-                'hash' => md5(mt_rand() . uniqid()),
-                'total_price' => $cart->total_price,
-                'items_count' => $cart->items_count,
-                'cart_forming_time' => new Expression(
-                    "UNIX_TIMESTAMP(CURRENT_TIMESTAMP) - UNIX_TIMESTAMP(:timestamp)",
-                    [
-                        ':timestamp' => $cart->create_time,
-                    ]
-                ),
-            ];
-            $order->getPropertyGroups(true, true);
-        } else {
-            $cart = null;
-            $order = $this->loadOrder($id, [1, 2]);
-            $order->scenario = 'shippingOption';
+        if (empty($id)) {
+            return $this->redirect(Url::to(['stage']));
         }
-        if (Yii::$app->request->isPost) {
-            $order->load(Yii::$app->request->post());
-            $order->abstractModel->setAttrubutesValues(Yii::$app->request->post());
-            $modelValidate = $order->validate();
-            $propertyValidate = $order->abstractModel->validate();
-            if ($modelValidate && $propertyValidate) {
-                $order->order_status_id = 2;
-                $formNameWithoutId = $order->abstractModel->formName();
+        /** @var OrderStageLeaf $orderStageLeaf */
+        $orderStageLeaf = OrderStageLeaf::findOne(['id' => $id]);
+        if (empty($orderStageLeaf)) {
+            return $this->redirect(Url::to(['stage']));
+        }
+
+        $order = $this->loadOrder(false, false);
+        if (empty($order)) {
+            return $this->redirect(Url::to(['index']));
+        }
+
+        $orderStage = $order->stage;
+        if ($orderStage->id !== $orderStageLeaf->stage_from_id && $orderStage->id !== $orderStageLeaf->stage_to_id) {
+            return $this->redirect(Url::to(['stage']));
+        }
+
+        /** @var Events $eventClassName */
+        $eventClassName = Events::findByName($orderStageLeaf->event_name);
+        if (!empty($eventClassName) && is_subclass_of($eventClassName->event_class_name, OrderStageLeafEvent::className())) {
+            /** @var OrderStageLeafEvent $event */
+            $event = new $eventClassName->event_class_name;
+            EventTriggeringHelper::triggerSpecialEvent($event);
+            if ($event->getStatus()) {
+                $order->order_stage_id = $order->order_stage_id == $orderStageLeaf->stage_to_id ? $orderStageLeaf->stage_from_id : $orderStageLeaf->stage_to_id;
                 $order->save();
-                if ($cart !== null) {
-                    foreach ($cart->items as $productId => $orderOptions) {
-                        $orderItem = new OrderItem;
-                        $orderItem->attributes = [
-                            'order_id' => $order->id,
-                            'product_id' => $productId,
-                            'quantity' => $orderOptions['quantity'],
-                            'additional_options' => $orderOptions['additionalParams'],
-                        ];
-                        $orderItem->save();
-                    }
-                    $cart->items = [];
-                    $cart->reCalc();
-                }
-                if (Yii::$app->session->has('orders')) {
-                    $orders = Yii::$app->session->get('orders');
-                    $orders[] = $order->id;
-                    Yii::$app->session->set('orders', $orders);
-                } else {
-                    Yii::$app->session->set('orders', [$order->id]);
-                }
-                $data = [
-                    'AddPropetryGroup' => [
-                        $order->formName() => array_keys($order->getPropertyGroups()),
-                    ],
-                    $formNameWithoutId . $order->id => Yii::$app->request->post($formNameWithoutId),
-                ];
-                $order->saveProperties($data);
-                return $this->redirect(['/cart/payment-type', 'id' => $order->id]);
-            } else {
-                Yii::$app->session->setFlash('error', Yii::t('app', 'Please fill required form fields'));
+
+                Yii::$app->session->set('OrderStageReach', true);
+
+                return $this->redirect(Url::to(['stage']));
             }
-        }
-        $shippingOptions = $this->getCachedData('CartShippingOptions', ShippingOption::className());
-        return $this->render(
-            'shipping-options',
-            [
-                'cart' => $cart,
-                'order' => $order,
-                'shippingOptions' => $shippingOptions,
-            ]
-        );
-    }
-
-    public function actionPaymentType($id)
-    {
-        $order = $this->loadOrder($id, 2);
-        $paymentTypes = $this->getCachedData('CartPaymentTypes', PaymentType::className());
-
-        if ($order->payment_type_id === 0 && count($paymentTypes) > 0) {
-            $order->payment_type_id = reset($paymentTypes)->id;
-        }
-        if (Yii::$app->request->isPost) {
-            $order->scenario = 'paymentType';
-            $order->load(Yii::$app->request->post());
-            $paymentType = PaymentType::find($order->payment_type_id);
-            if ($order->validate() && $paymentType !== null) {
-                $order->save();
-                return $this->redirect(['/cart/payment', 'id' => $order->id]);
-            }
-        }
-
-        return $this->render(
-            'payment-type',
-            [
-                'order' => $order,
-                'paymentTypes' => $paymentTypes,
-            ]
-        );
-    }
-
-    public function actionPayment($id)
-    {
-        $order = $this->loadOrder($id, 2);
-        $commissionType = null;
-        switch ($commissionType) {
-            // multiply
-            case 1:
-                $totalSum = $order->fullPrice * ($order->paymentType->commission + 100) / 100;
-                break;
-            // add fix
-            case 2:
-                $totalSum = $order->fullPrice + $order->paymentType->commission;
-                break;
-            // round down
-            case 3:
-                $totalSum = $order->fullPrice * (100 - $order->paymentType->commission) / 100;
-                break;
-            // without commission
-            default:
-                $totalSum = $order->fullPrice;
-        }
-        $transaction = new OrderTransaction;
-        $transaction->attributes = [
-            'order_id' => $id,
-            'payment_type_id' => $order->payment_type_id,
-            'status' => OrderTransaction::TRANSACTION_START,
-            'total_sum' => $totalSum,
-        ];
-        $transaction->save();
-        return $this->render(
-            'payment',
-            [
-                'order' => $order,
-                'payment' => $order->paymentType->payment,
-                'transaction' => $transaction,
-            ]
-        );
-    }
-
-    public function actionPaymentResult()
-    {
-        if (isset($_GET['id'])) {
-            $id = $_GET['id'];
-        } elseif (isset($_GET['paymentId'])) {
-            $id = $_GET['paymentId'];
         } else {
-            throw new BadRequestHttpException;
+            return $this->redirect(Url::to(['stage']));
         }
-        /** @var PaymentType $paymentType */
-        $paymentType = PaymentType::findOne($id);
-        if ($paymentType ===  null) {
-            throw new NotFoundHttpException;
-        }
-        $paymentType->payment->checkResult();
-    }
-
-    public function actionPaymentSuccess()
-    {
-        $order = isset($_GET['id']) ? $this->loadOrder($_GET['id'], [2, 3]) : null;
-        return $this->render(
-            'payment-success',
-            [
-                'order' => $order,
-            ]
-        );
-    }
-
-    public function actionPaymentError()
-    {
-        $order = isset($_GET['id']) ? $this->loadOrder($_GET['id']) : $this->loadLastTransactionOrder([2]);
-        return $this->render(
-            'payment-error',
-            [
-                'order' => $order,
-            ]
-        );
     }
 }

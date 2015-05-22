@@ -251,7 +251,7 @@ class m150515_141224_order_customers extends Migration
             'reach_goal_ym' => '',
             'reach_goal_ga' => '',
             'event_name' => 'order_stage_customer',
-            'view' => '@app/modules/shop/views/new-cart/stages/name.php',
+            'view' => '@app/modules/shop/views/cart/stages/name.php',
         ]);
         $stageCustomer = $this->db->lastInsertID;
 
@@ -269,7 +269,7 @@ class m150515_141224_order_customers extends Migration
             'reach_goal_ym' => '',
             'reach_goal_ga' => '',
             'event_name' => 'order_stage_delivery',
-            'view' => '@app/modules/shop/views/new-cart/stages/delivery.php',
+            'view' => '@app/modules/shop/views/cart/stages/delivery.php',
         ]);
         $stageDelivery = $this->db->lastInsertID;
 
@@ -287,7 +287,7 @@ class m150515_141224_order_customers extends Migration
             'reach_goal_ym' => '',
             'reach_goal_ga' => '',
             'event_name' => 'order_stage_payment',
-            'view' => '@app/modules/shop/views/new-cart/stages/payment.php',
+            'view' => '@app/modules/shop/views/cart/stages/payment.php',
         ]);
         $stagePayment = $this->db->lastInsertID;
 

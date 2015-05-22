@@ -17,7 +17,7 @@ class OrderStageHelper
                 $result[] = [
                     'label' => $item->button_label,
                     'css' => $item->button_css_class,
-                    'url' => Url::to(['/shop/new-cart/stage-leaf', 'id' => $item->id])
+                    'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id])
                 ];
                 return $result;
             }, []);
@@ -32,7 +32,7 @@ class OrderStageHelper
                 $result[] = [
                     'label' => $item->button_label,
                     'css' => $item->button_css_class,
-                    'url' => Url::to(['/shop/new-cart/stage-leaf', 'id' => $item->id])
+                    'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id])
                 ];
                 return $result;
             }, []);

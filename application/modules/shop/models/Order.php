@@ -11,7 +11,6 @@ use yii\base\Exception;
 use yii\behaviors\TimestampBehavior;
 use yii\data\ActiveDataProvider;
 use yii\db\Expression;
-use yii\helpers\Json;
 
 /**
  * This is the model class for table "{{%order}}".
@@ -37,6 +36,7 @@ use yii\helpers\Json;
  * @property bool $is_deleted
  * @property bool $temporary
  * @property bool $show_price_changed_notification
+ * @property float $fullPrice
  * Relations:
  * @property \app\properties\AbstractModel $abstractModel
  * @property OrderItem[] $items
@@ -47,7 +47,6 @@ use yii\helpers\Json;
  * @property OrderTransaction[] $transactions
  * @property User $user
  * @property User $manager
- * @property float $fullPrice
  */
 class Order extends \yii\db\ActiveRecord
 {
@@ -55,6 +54,7 @@ class Order extends \yii\db\ActiveRecord
      * @var Order $order
      */
     protected static $order;
+
     /**
      * @inheritdoc
      */
@@ -174,57 +174,6 @@ class Order extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function afterSave($insert, $changedAttributes)
-    {
-        if (isset($changedAttributes['order_stage_id']) && !is_null(
-                $changedAttributes['order_stage_id']
-            ) && $this->order_stage_id == 3
-        ) {
-            if (isset($this->abstractModel->attributes['email']) && !empty($this->abstractModel->attributes['email'])
-            ) {
-                try {
-                    Yii::$app->mail->compose(
-                            Config::getValue(
-                                'shop.clientOrderEmailTemplate',
-                                '@app/views/cart/client-order-email-template'
-                            ),
-                            [
-                                'order' => $this,
-                            ]
-                        )->setTo(trim($this->abstractModel->email))->setFrom(
-                            Yii::$app->mail->transport->getUsername()
-                        )->setSubject(Yii::t('app', 'Order #{orderId}', ['orderId' => $this->id]))->send();
-                } catch (\Exception $e) {
-                    // do nothing
-                }
-            }
-            $orderEmail = Config::getValue('shop.orderEmail', null);
-            // @todo Implement via OrderStageLeaf
-            if (!empty($orderEmail)) {
-                try {
-                    Yii::$app->mail->compose(
-                            Config::getValue(
-                                'shop.orderEmailTemplate',
-                                '@app/views/cart/order-email-template'
-                            ),
-                            [
-                                'order' => $this,
-                            ]
-                        )->setTo(explode(',', $orderEmail))->setFrom(
-                            Yii::$app->mail->transport->getUsername()
-                        )->setSubject(Yii::t('app', 'Order #{orderId}', ['orderId' => $this->id]))->send();
-                } catch (\Exception $e) {
-                    // do nothing
-
-                }
-            }
-        }
-        parent::afterSave($insert, $changedAttributes);
-    }
-
     public function getItems()
     {
         return $this->hasMany(OrderItem::className(), ['order_id' => 'id']);
@@ -279,12 +228,12 @@ class Order extends \yii\db\ActiveRecord
         return SpecialPriceObject::find()
             ->leftJoin(
                 SpecialPriceList::tableName(),
-                SpecialPriceList::tableName().'.id ='.SpecialPriceObject::tableName().'.special_price_list_id'
+                SpecialPriceList::tableName() . '.id =' . SpecialPriceObject::tableName() . '.special_price_list_id'
             )
             ->where(
                 [
-                    SpecialPriceObject::tableName().'.object_model_id'=>$this->id,
-                    SpecialPriceList::tableName().'.object_id' => $this->object->id
+                    SpecialPriceObject::tableName() . '.object_model_id' => $this->id,
+                    SpecialPriceList::tableName() . '.object_id' => $this->object->id
                 ]
             )
             ->all();
@@ -332,31 +281,6 @@ class Order extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return bool
-     * @throws \Exception
-     */
-    public function reCalc()
-    {
-        $itemsCount = 0;
-        $cartCountsUniqueProducts = Config::getValue('shop.cartCountsUniqueProducts', '0') === '0';
-
-        foreach ($this->items as $item) {
-            if (is_null($item->product)) {
-                $item->delete();
-            } else {
-                if ($cartCountsUniqueProducts === true) {
-                    $itemsCount ++;
-                } else {
-                    $itemsCount += $item->quantity;
-                }
-            }
-        }
-        $this->total_price = PriceHelper::getOrderPrice($this);
-        $this->items_count = $itemsCount;
-        return $this->save(true, ['total_price', 'items_count']);
-    }
-
-    /**
      * Search tasks
      * @param $params
      * @return ActiveDataProvider
@@ -386,6 +310,7 @@ class Order extends \yii\db\ActiveRecord
      * Get current order.
      * @param bool $create Create order if it does not exist
      * @return Order
+     * @throws Exception
      */
     public static function getOrder($create = false)
     {

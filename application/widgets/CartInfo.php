@@ -2,7 +2,7 @@
 
 namespace app\widgets;
 
-use app\modules\shop\models\Cart;
+use app\modules\shop\models\Order;
 use yii\base\Widget;
 
 class CartInfo extends Widget
@@ -11,7 +11,7 @@ class CartInfo extends Widget
 
     public function run()
     {
-        $order = Cart::getCart(false);
+        $order = Order::getOrder(false);
         echo $this->render(
             $this->viewFile,
             [

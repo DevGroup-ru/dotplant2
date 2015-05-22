@@ -13,7 +13,7 @@ var Shop = {
                 }
             },
             'type' : 'post',
-            'url' : '/shop/new-cart/add'
+            'url' : '/shop/cart/add'
         });
     },
     'addToCart' : function(productId, quantity, callback, children) {
@@ -40,7 +40,7 @@ var Shop = {
                 }
             },
             'type' : 'post',
-            'url' : '/shop/new-cart/change-quantity'
+            'url' : '/shop/cart/change-quantity'
         });
     }
 };
