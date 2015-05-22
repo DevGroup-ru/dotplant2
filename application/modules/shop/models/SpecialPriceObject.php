@@ -11,6 +11,7 @@ use Yii;
  * @property integer $special_price_list_id
  * @property integer $object_model_id
  * @property double $price
+ * @property string $name
  * @property SpecialPriceList $specialPriceList
  */
 class SpecialPriceObject extends \yii\db\ActiveRecord
@@ -29,12 +30,6 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
     }
 
 
-    public function getOrderObjectDescription()
-    {
-        $class = $this->specialPriceList->class;
-        return $class;
-    }
-
 
     /**
      * @inheritdoc
@@ -42,7 +37,7 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['special_price_list_id', 'object_model_id'], 'required'],
+            [['special_price_list_id', 'object_model_id', 'name'], 'required'],
             [['special_price_list_id', 'object_model_id'], 'integer'],
             [['price'], 'number']
         ];
@@ -61,7 +56,7 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function setObject($special_price_list_id, $object_model_id, $price)
+    public static function setObject($special_price_list_id, $object_model_id, $price, $name)
     {
         $object = self::find()
             ->where(
@@ -80,6 +75,7 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
 
 
         $object->price = $price;
+        $object->name = $name;
         $object->save();
 
     }

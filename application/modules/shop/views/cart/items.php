@@ -115,7 +115,7 @@ foreach ($items as $i => $item) {
 
     <?php foreach($model->specialPriceObjects as $object): ?>
         <tr class="shipping-data">
-            <td colspan="4"><?= $object->getOrderObjectDescription() ?></td>
+            <td colspan="4"><?= $object->name ?></td>
             <td><?= $mainCurrency->format($object->price) ?></td>
         </tr>
     <?php endforeach; ?>

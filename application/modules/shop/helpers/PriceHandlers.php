@@ -174,7 +174,8 @@ class PriceHandlers
                     SpecialPriceObject::setObject(
                         $special_price_list_id,
                         $event->order->id,
-                        $discountPrice
+                        $discountPrice,
+                        $discount->name
                     );
 
 
