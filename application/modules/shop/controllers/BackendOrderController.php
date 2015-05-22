@@ -18,6 +18,7 @@ use app\modules\shop\models\Product;
 use app\modules\shop\models\ShippingOption;
 use app\modules\shop\models\SpecialPriceList;
 use app\modules\user\models\User;
+use app\properties\HasProperties;
 use kartik\helpers\Html;
 use Yii;
 use yii\caching\TagDependency;
@@ -34,6 +35,22 @@ use yii\web\Response;
  */
 class BackendOrderController extends BackendController
 {
+    /**
+     * Finds the Order model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param string $id
+     * @return Order the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Order::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
     protected function getManagersList()
     {
         $managers = Yii::$app->cache->get('ManagersList');
@@ -336,11 +353,9 @@ class BackendOrderController extends BackendController
         ];
     }
 
-    /*
-     *
-     */
     public function actionDelete($id = null)
     {
+        /** @var Order $model */
         if ((null === $id) || (null === $model = Order::findOne($id))) {
             throw new NotFoundHttpException;
         }
@@ -355,28 +370,6 @@ class BackendOrderController extends BackendController
             Yii::$app->request->get(
                 'returnUrl',
                 Url::toRoute(['index'])
-            )
-        );
-    }
-
-    public function actionRestore($id = null)
-    {
-        if (null === $id) {
-            new NotFoundHttpException();
-        }
-
-        if (null === $model = Order::findOne(['id' => $id])) {
-            new NotFoundHttpException();
-        }
-
-        $model->restoreFromTrash();
-
-        Yii::$app->session->setFlash('success', Yii::t('app', 'Object successfully restored'));
-
-        return $this->redirect(
-            Yii::$app->request->get(
-                'returnUrl',
-                Url::toRoute(['view', 'id' => $id])
             )
         );
     }
@@ -410,7 +403,7 @@ class BackendOrderController extends BackendController
         ];
     }
 
-    public function actionAutoCompleteSearch($orderId, $term)
+    public function actionAutoCompleteSearch($orderId, $term, $parentId = 0)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $query = Product::find()->orderBy('sort_order');
@@ -426,6 +419,7 @@ class BackendOrderController extends BackendController
                     [
                         'orderId' => $orderId,
                         'product' => $product,
+                        'parentId' => $parentId,
                     ]
                 ),
             ];
@@ -433,7 +427,7 @@ class BackendOrderController extends BackendController
         return $result;
     }
 
-    public function actionAddProduct($orderId, $productId)
+    public function actionAddProduct($orderId, $productId, $parentId = 0)
     {
         $order = $this->findModel($orderId);
         /** @var OrderItem $orderItem */
@@ -450,7 +444,7 @@ class BackendOrderController extends BackendController
             );
             $totalPrice = PriceHelper::getProductPrice($product, $order, $product->measure->nominal);
             $orderItem->attributes = [
-                'parent_id' => 0,
+                'parent_id' => $parentId,
                 'order_id' => $order->id,
                 'product_id' => $product->id,
                 'quantity' => $product->measure->nominal,
@@ -474,6 +468,7 @@ class BackendOrderController extends BackendController
 
     public function actionUpdateOrderProperties($id)
     {
+        /** @var Order|HasProperties $model */
         $model = $this->findModel($id);
         $model->abstractModel->setAttrubutesValues(Yii::$app->request->post());
         if ($model->abstractModel->validate()) {
@@ -483,19 +478,41 @@ class BackendOrderController extends BackendController
         return $this->redirect(['view', 'id' => $id]);
     }
 
-    /**
-     * Finds the Order model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $id
-     * @return Order the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
+    public function actionCreate($returnUrl = ['index'])
     {
-        if (($model = Order::findOne($id)) !== null) {
-            return $model;
+        $model = Order::create(false, false);
+        if (!is_null($model)) {
+            $orderDeliveryInformation = new OrderDeliveryInformation;
+            $orderDeliveryInformation->attributes = [
+                'order_id' => $model->id,
+            ];
+            $orderDeliveryInformation->save(true, ['order_id']);
+            return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            Yii::$app->session->addFlash('error', Yii::t('app', 'Cannot create a new order.'));
+            return $this->redirect($returnUrl);
         }
+    }
+
+    public function actionUpdatePaymentType($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $post = Yii::$app->request->post();
+        if (!isset($post['Order']['payment_type_id'])) {
+            throw new BadRequestHttpException;
+        }
+        $value = $post['Order']['payment_type_id'];
+        $order = $this->findModel($id);
+        $order->payment_type_id = $value;
+        /** @var PaymentType $paymentType */
+        $paymentType = PaymentType::findOne($value);
+        if ($paymentType === null || !$order->save(true, ['payment_type_id'])) {
+            return [
+                'message' => Yii::t('app', 'Cannot change a payment type'),
+            ];
+        }
+        return [
+            'output' => Html::tag('span', $paymentType->name),
+        ];
     }
 }

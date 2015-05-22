@@ -4,7 +4,6 @@ use app\backend\widgets\BackendWidget;
 use kartik\editable\Editable;
 use yii\helpers\Html;
 use kartik\dynagrid\DynaGrid;
-use yii\helpers\Json;
 
 /**
  * @var $this yii\web\View
@@ -16,6 +15,15 @@ use yii\helpers\Json;
 $this->title = Yii::t('app', 'Order #{id}', ['id' => $model->id]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Orders'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+$items = [];
+foreach ($model->items as $item) {
+    if (isset($items[$item->parent_id])) {
+        $items[$item->parent_id][] = $item;
+    } else {
+        $items[$item->parent_id] = [$item];
+    }
+}
+
 ?>
 <h1 class="page-title txt-color-blueDark">
     <?=Html::encode($this->title)?>
@@ -24,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
         )?>&nbsp;&nbsp;<?=Yii::t('app', 'Print')?></a>
     <a href="<?=Yii::$app->request->get(
         'returnUrl',
-        '/backend/order/index'
+        \yii\helpers\Url::toRoute(['index'])
     )?>" class="btn btn-danger pull-right do-not-print"><?=\kartik\icons\Icon::show(
             'arrow-circle-left'
         )?>&nbsp;&nbsp;<?=Yii::t('app', 'Back')?></a>
@@ -67,7 +75,7 @@ if ($sum_transactions < $model->total_price):
                     <th><?=$model->getAttributeLabel('user')?></th>
                     <td>
                         <?=
-                        !is_null($model->user) ? $model->user->username : '<em>' . Yii::t('yii', '(not set)') . '</em>'
+                        !is_null($model->user) ? $model->user->username : Html::tag('em', Yii::t('yii', '(not set)'))
                         ?>
                     </td>
                 </tr>
@@ -81,7 +89,7 @@ if ($sum_transactions < $model->total_price):
                                 'data' => $managers,
                                 'displayValue' => !is_null(
                                     $model->manager
-                                ) ? $model->manager->username : '<em>' . Yii::t('yii', '(not set)') . '</em>',
+                                ) ? $model->manager->username : Html::tag('em', Yii::t('yii', '(not set)')),
                                 'formOptions' => [
                                     'action' => ['change-manager', 'id' => $model->id],
                                 ],
@@ -101,7 +109,7 @@ if ($sum_transactions < $model->total_price):
                     <td><?=$model->end_date?></td>
                 </tr>
                 <tr>
-                    <th><?=$model->getAttributeLabel('order_status_id')?></th>
+                    <th><?=$model->getAttributeLabel('order_stage_id')?></th>
                     <td>
                         <?=
                         Editable::widget(
@@ -115,7 +123,7 @@ if ($sum_transactions < $model->total_price):
                                 'displayValue' => $model->stage !== null ? Html::tag(
                                     'span',
                                     $model->stage->name_short
-                                ) : 'Not set',
+                                ) : Html::tag('em', Yii::t('yii', '(not set)')),
                                 'formOptions' => [
                                     'action' => ['update-stage', 'id' => $model->id],
                                 ],
@@ -142,7 +150,7 @@ if ($sum_transactions < $model->total_price):
                                     'displayValue' => !is_null($model->shippingOption) ? Html::tag(
                                         'span',
                                         $model->shippingOption->name
-                                    ) : 'Not set',
+                                    ) : Html::tag('em', Yii::t('yii', '(not set)')),
                                     'formOptions' => [
                                         'action' => [
                                             'update-shipping-option',
@@ -161,10 +169,25 @@ if ($sum_transactions < $model->total_price):
                     <th><?=$model->getAttributeLabel('payment_type_id')?></th>
                     <td>
                         <?=
-                        !is_null($model->paymentType) ? $model->paymentType->name : '<em>' . Yii::t(
-                                'yii',
-                                '(not set)'
-                            ) . '</em>'
+                        Editable::widget(
+                            [
+                                'attribute' => 'payment_type_id',
+                                'data' => \app\components\Helper::getModelMap(
+                                    \app\modules\shop\models\PaymentType::className(),
+                                    'id',
+                                    'name'
+                                ),
+                                'displayValue' => $model->paymentType !== null ? Html::tag(
+                                    'span',
+                                    $model->paymentType->name
+                                ) : Html::tag('em', Yii::t('yii', '(not set)')),
+                                'formOptions' => [
+                                    'action' => ['update-payment-type', 'id' => $model->id],
+                                ],
+                                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                                'model' => $model,
+                            ]
+                        )
                         ?>
                     </td>
                 </tr>
@@ -174,10 +197,9 @@ if ($sum_transactions < $model->total_price):
                         <td>
                             <button data-toggle="modal" data-target="#custom-fields-modal" class="kv-editable-value kv-editable-link">
                                 <?=
-                                !empty($attribute) ? Html::encode($attribute) : '<em>' . Yii::t(
-                                        'yii',
-                                        '(not set)'
-                                    ) . '</em>'
+                                !empty($attribute)
+                                    ? Html::encode($attribute)
+                                    : Html::tag('em', Yii::t('yii', '(not set)'))
                                 ?>
                             </button>
                         </td>
@@ -205,41 +227,9 @@ if ($sum_transactions < $model->total_price):
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($model->items as $item): ?>
-                    <tr>
-                        <td><?=$item->product->name?></td>
-                        <td><?=$item->product->convertedPrice()?></td>
-                        <td>
-                            <?=
-                            Editable::widget(
-                                [
-                                    'attribute' => 'quantity',
-                                    'options' => [
-                                        'id' => 'edit-quantity' . $item->id,
-                                    ],
-                                    'formOptions' => [
-                                        'action' => [
-                                            'change-order-item-quantity',
-                                            'id' => $item->id,
-                                        ],
-                                    ],
-                                    'inputType' => Editable::INPUT_TEXT,
-                                    'model' => $item,
-                                ]
-                            )
-                            ?>
-                        </td>
-                        <td><?=Yii::$app->formatter->asDecimal(
-                                $item->quantity * $item->product->convertedPrice(),
-                                2
-                            )?></td>
-                        <td><?=Html::a(
-                                \kartik\icons\Icon::show('remove'),
-                                ['delete-order-item', 'id' => $item->id],
-                                ['class' => 'btn btn-primary btn-xs do-not-print']
-                            )?></td>
-                    </tr>
-                <?php endforeach; ?>
+                <?php if (isset($items[0])): ?>
+                    <?= $this->render('items', ['allItems' => $items, 'items' => $items[0]]) ?>
+                <?php endif; ?>
                 <?php if (isset($model->shippingOption)): ?>
                     <tr>
                         <td colspan="3"><?=Html::encode($model->shippingOption->name)?></td>
@@ -257,17 +247,36 @@ if ($sum_transactions < $model->total_price):
                 <br />
 
                 <div class="row">
-                    <div class="col-xs-3">
+                    <div class="col-xs-6">
                         <label for="add-product"><?=Yii::t('app', 'Add a new product to order')?></label>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-xs-3">
+                <div class="row form-inline">
+                    <div class="col-xs-6 form-group">
+                        <?=
+                        Html::dropDownList(
+                            'parentId',
+                            [],
+                            ['0' => Yii::t('app', 'Select a parent order item')] + \yii\helpers\ArrayHelper::map(
+                                $model->items,
+                                'id',
+                                function($element) {
+                                    return !is_null($element->product)
+                                        ? $element->product->name :
+                                        Yii::t('app', 'Product not found');
+                                }
+                            ),
+                            [
+                                'class' => 'form-control input-group-addon col-xs-3',
+                                'id' => 'add-product-parent',
+                            ]
+                        )
+                        ?>
                         <?=
                         \app\widgets\AutoCompleteSearch::widget(
                             [
                                 'options' => [
-                                    'class' => 'form-control',
+                                    'class' => 'form-control col-xs-3',
                                 ],
                                 'id' => 'add-product',
                                 'name' => 'add-product',
@@ -421,6 +430,10 @@ $js = <<<JS
     $('#print-button').click(function () {
         window.print();
         return false;
+    });
+    jQuery('#add-product-parent').change(function() {
+        var parentId = jQuery(this).val();
+        jQuery('#add-product').autocomplete('option', 'source', '/shop/backend-order/auto-complete-search?orderId={$model->id}&parentId=' + parentId);
     });
 JS;
 $this->registerJs($js);
