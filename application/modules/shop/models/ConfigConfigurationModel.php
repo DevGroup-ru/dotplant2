@@ -30,11 +30,6 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $showProductsOfChildCategories = true;
 
     /**
-     * @var bool Should cart count unique products or sum all quantity
-     */
-    public $cartCountsUniqueProducts = false;
-
-    /**
      * @var int How much products to show on search results page
      */
     public $searchResultsLimit = 9;
@@ -53,6 +48,26 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      * @var int How much last viewed products ID's to store in session
      */
     public $maxLastViewedProducts = 9;
+
+    /**
+     * @var bool Allow to add same product in the order
+     */
+    public $allowToAddSameProduct = 0;
+
+    /**
+     * @var bool Count only unique products in the order
+     */
+    public $countUniqueProductsOnly = 1;
+
+    /**
+     * @var bool Count children products in the order
+     */
+    public $countChildrenProducts = 1;
+
+    /**
+     * @var int Default measure ID
+     */
+    public $defaultMeasureId = 1;
 
     /**
      * @inheritdoc
@@ -96,7 +111,6 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             [
                 [
                     'showProductsOfChildCategories',
-                    'cartCountsUniqueProducts',
                     'deleteOrdersAbility',
                     'filterOnlyByParentProduct',
                 ],
@@ -105,13 +119,27 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             [
                 [
                     'showProductsOfChildCategories',
-                    'cartCountsUniqueProducts',
                     'deleteOrdersAbility',
                     'filterOnlyByParentProduct',
                 ],
                 'filter',
                 'filter' => 'boolval',
             ],
+            [['allowToAddSameProduct', 'countUniqueProductsOnly', 'countChildrenProducts'], 'boolean'],
+            [['defaultMeasureId'], 'integer'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'allowToAddSameProduct' => Yii::t('app', 'Allow to add same product'),
+            'countUniqueProductsOnly' => Yii::t('app', 'Count unique products only'),
+            'countChildrenProducts' => Yii::t('app', 'Count children products'),
+            'defaultMeasureId' => Yii::t('app', 'Default measure'),
         ];
     }
 

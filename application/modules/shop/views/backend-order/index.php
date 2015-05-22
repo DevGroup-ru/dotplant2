@@ -32,6 +32,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     'hover' => true,
                     'panel' => [
                         'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
+                        'after' => Html::a(
+                            \kartik\icons\Icon::show('plus') . Yii::t('app', 'Add'),
+                            ['create', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
+                            ['class' => 'btn btn-success']
+                        ),
                     ],
                     'rowOptions' => function ($model, $key, $index, $grid) {
                         if ($model->is_deleted) {

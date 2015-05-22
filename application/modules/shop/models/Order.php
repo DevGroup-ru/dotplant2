@@ -2,7 +2,6 @@
 
 namespace app\modules\shop\models;
 
-use app\models\Config;
 use app\modules\shop\helpers\PriceHelper;
 use app\modules\user\models\User;
 use app\properties\HasProperties;
@@ -263,7 +262,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public function beforeDelete()
     {
-        if (intval(Config::getValue('shop.AbilityDeleteOrders')) !== 1) {
+        if (Yii::$app->getModule('shop')->deleteOrdersAbility === 0) {
             return false;
         }
         if (!parent::beforeDelete()) {
@@ -274,7 +273,6 @@ class Order extends \yii\db\ActiveRecord
             $this->save();
             return false;
         }
-
         $customer = $this->getCustomer();
         if (0 === intval($customer->user_id)) {
             $customer->delete();
@@ -310,6 +308,35 @@ class Order extends \yii\db\ActiveRecord
     }
 
     /**
+     * Create a new order.
+     * @param bool $throwException Throw an exception if a order has not been saved
+     * @param bool $assignToUser Assign to a current user
+     * @return Order
+     * @throws Exception
+     */
+    public static function create($throwException = true, $assignToUser = true)
+    {
+        $initialOrderStage = OrderStage::getInitialStage();
+        if (is_null($initialOrderStage)) {
+            throw new Exception('Initial order stage not found');
+        }
+        $model = new static;
+        $model->loadDefaultValues();
+        $model->user_id = !Yii::$app->user->isGuest && $assignToUser ? Yii::$app->user->id : 0;
+        $model->order_stage_id = $initialOrderStage->id;
+        mt_srand();
+        $model->hash = md5(mt_rand() . uniqid());
+        if (!$model->save(true, ['user_id', 'temporary', 'hash', 'order_stage_id'])) {
+            if ($throwException) {
+                throw new Exception('Cannot create a new order.');
+            } else {
+                return null;
+            }
+        }
+        return $model;
+    }
+
+    /**
      * Get current order.
      * @param bool $create Create order if it does not exist
      * @return Order
@@ -327,20 +354,9 @@ class Order extends \yii\db\ActiveRecord
         if ((is_null(self::$order) || is_null(self::$order->stage) || self::$order->stage->is_in_cart == 0)
             && $create === true
         ) {
-            $initialOrderStage = OrderStage::getInitialStage();
-            if (is_null($initialOrderStage)) {
-                throw new Exception('Initial order stage not found');
-            }
-            $order = new static;
-            $order->loadDefaultValues();
-            $order->user_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : 0;
-            $order->order_stage_id = $initialOrderStage->id;
-            mt_srand();
-            $order->hash = md5(mt_rand() . uniqid());
-            if ($order->save(true, ['user_id', 'temporary', 'hash', 'order_stage_id'])) {
-                self::$order = $order;
-                Yii::$app->session->set('orderId', $order->id);
-            }
+            $model = self::create();
+            self::$order = $model;
+            Yii::$app->session->set('orderId', $model->id);
         }
         Yii::endProfile("GetOrder");
         return self::$order;

@@ -3,7 +3,7 @@
 use kartik\helpers\Html;
 
 ?>
-<div class="jarviswidget" id="<?= Html::encode($_id) ?>">
+<?= Html::beginTag('div', $options) ?>
  
     <header>
         <h2><?= $title ?></h2>

@@ -111,6 +111,7 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
             return null;
         }
 
+        /** @var OrderDeliveryInformation|HasProperties $model */
         $model = new static();
         $model->order_id = $order->id;
 

@@ -232,7 +232,7 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
 }
 
 /* line 198, ../sass/admin.scss */
-#meta-form header, #counter-form header, #robots-form header, #fs-config header {
+#meta-form header, #counter-form header, #robots-form header, #fs-config header, .jarviswidget.visible-header header {
   display: block;
 }
 
