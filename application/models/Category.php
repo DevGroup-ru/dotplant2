@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
+use app\modules\shop\models\FilterSets;
 use app\properties\HasProperties;
 use app\traits\GetImages;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -63,6 +64,17 @@ class Category extends ActiveRecord
     private static $id_by_name_group_parent = [];
 
     public $deleteMode = 1;
+
+    /**
+     * @var null|string Url path caching variable
+     */
+    private $urlPath = null;
+
+    /** @var null|array Array of parent categories ids including root category */
+    private $parentIds = null;
+
+    /** @var FilterSets[] */
+    private $filterSets = null;
 
     public function behaviors()
     {
@@ -312,44 +324,42 @@ class Category extends ActiveRecord
 
     public function getUrlPath($include_parent_category = true)
     {
-        if ($this->parent_id == 0) {
-            if ($include_parent_category) {
-                return $this->slug;
-            } else {
-                return '';
+        if ($this->urlPath === null) {
+            if ($this->parent_id == 0) {
+                if ($include_parent_category) {
+                    return $this->slug;
+                } else {
+                    return '';
+                }
             }
+            $slugs = [$this->slug];
+            $parent_category = $this->parent_id > 0 ? $this->parent : 0;
+            while ($parent_category !== null) {
+                $slugs[] = $parent_category->slug;
+                $parent_category = $parent_category->parent;
+            }
+            if ($include_parent_category === false) {
+                array_pop($slugs);
+            }
+            $this->urlPath = implode("/", array_reverse($slugs));
         }
-        $slugs = [$this->slug];
-        $parent_category = $this->parent_id > 0 ? $this->parent : 0;
-        while ($parent_category !== null) {
-            $slugs[] = $parent_category->slug;
-            $parent_category = $parent_category->parent;
-        }
-        if ($include_parent_category === false) {
-            array_pop($slugs);
-        }
-        return implode("/", array_reverse($slugs));
+        return $this->urlPath;
     }
 
-    public function getIdPath($include_parent_category = true)
+    /**
+     * @return array Returns array of ids of parent categories(breadcrumbs ids)
+     */
+    public function getParentIds()
     {
-        if ($this->parent_id == 0) {
-            if ($include_parent_category) {
-                return $this->id;
-            } else {
-                return '';
+        if ($this->parentIds === null) {
+            $this->parentIds = [];
+            $parent_category = $this->parent_id > 0 ? $this->parent : null;
+            while ($parent_category !== null) {
+                $this->parentIds[] = intval($parent_category->id);
+                $parent_category = $parent_category->parent;
             }
         }
-        $ids = [$this->id];
-        $parent_category = $this->parent;
-        while ($parent_category !== null) {
-            $ids[] = $parent_category->id;
-            $parent_category = $parent_category->parent;
-        }
-        if ($include_parent_category === false) {
-            array_pop($ids);
-        }
-        return array_reverse($ids);
+        return $this->parentIds;
     }
 
     /**
@@ -557,5 +567,13 @@ class Category extends ActiveRecord
             )
         );
         return $items;
+    }
+
+    public function filterSets()
+    {
+        if ($this->filterSets === null) {
+            $this->filterSets = FilterSets::getForCategoryId($this->id);
+        }
+        return $this->filterSets;
     }
 }

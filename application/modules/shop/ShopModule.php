@@ -13,6 +13,13 @@ use app\modules\core\helpers\EventTriggeringHelper;
 class ShopModule extends BaseModule
 {
     /**
+     * @inheritdoc
+     */
+    public $controllerMap = [
+        'backend-filter-sets' => 'app\modules\shop\backend\FilterSetsController',
+    ];
+
+    /**
      * @var int How much products per page to show
      */
     public $productsPerPage = 15;
