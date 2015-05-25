@@ -4,10 +4,10 @@ use app\backend\models\ApiService;
 use app\backend\models\Notification;
 use app\backend\models\OrderChat;
 use app\components\Helper;
-use app\models\Cart;
-use app\models\Category;
-use app\models\CategoryGroup;
-use app\models\CategoryGroupRouteTemplates;
+use app\modules\shop\models\Cart;
+use app\modules\shop\models\Category;
+use app\modules\shop\models\CategoryGroup;
+use app\modules\shop\models\CategoryGroupRouteTemplates;
 use app\models\Config;
 use app\models\DynamicContent;
 use app\models\ErrorLog;
@@ -18,26 +18,25 @@ use app\models\Layout;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;
-use app\models\Order;
-use app\models\OrderItem;
-use app\models\OrderStatus;
-use app\models\OrderTransaction;
+use app\modules\shop\models\Order;
+use app\modules\shop\models\OrderItem;
+use app\modules\shop\models\OrderTransaction;
 use app\modules\page\models\Page;
-use app\models\PaymentType;
-use app\models\Product;
+use app\modules\shop\models\PaymentType;
+use app\modules\shop\models\Product;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyHandler;
 use app\models\PropertyStaticValues;
 use app\models\Route;
-use app\models\ShippingOption;
+use app\modules\shop\models\ShippingOption;
 use app\models\Submission;
 use app\models\SubscribeEmail;
 use app\modules\user\models\User;
 use app\modules\user\models\UserService;
 use app\models\View;
 use app\models\ViewObject;
-use app\reviews\models\Review;
+use app\modules\review\models\Review;
 use app\widgets\navigation\models\Navigation;
 use yii\db\Migration;
 use yii\helpers\Json;
@@ -521,20 +520,6 @@ class m141023_084857_init extends Migration
                 'KEY `ix-order-user_id` (`user_id`)',
                 'KEY `ix-order-manager_id` (`manager_id`)',
                 'UNIQUE KEY `uq-order-hash` (`hash`)',
-            ],
-            $tableOptions
-        );
-        $this->createTable(
-            OrderStatus::tableName(),
-            [
-                'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
-                'title' => 'VARCHAR(255) NOT NULL',
-                'short_title' => 'VARCHAR(255) NOT NULL',
-                'label' => 'VARCHAR(255) DEFAULT NULL',
-                'external_id' => 'VARCHAR(38) DEFAULT NULL',
-                'edit_allowed' => 'TINYINT UNSIGNED DEFAULT \'0\'',
-                'not_deletable' => 'TINYINT UNSIGNED DEFAULT \'0\'',
-                'internal_comment' => 'TEXT DEFAULT NULL',
             ],
             $tableOptions
         );
@@ -1121,7 +1106,7 @@ class m141023_084857_init extends Migration
             ['route', 'url_template', 'object_id', 'name'],
             [
                 [
-                    'product/list',
+                    'shop/product/list',
                     Json::encode(
                         [
                             [
@@ -1141,7 +1126,7 @@ class m141023_084857_init extends Migration
                     ''
                 ],
                 [
-                    'product/show',
+                    'shop/product/show',
                     Json::encode(
                         [
                             [
@@ -1255,68 +1240,6 @@ class m141023_084857_init extends Migration
                 'breadcrumbs_label' => 'Catalog',
                 'slug' => 'catalog',
                 'slug_compiled' => 'catalog',
-            ]
-        );
-        $this->batchInsert(
-            OrderStatus::tableName(),
-            ['title', 'edit_allowed', 'not_deletable', 'internal_comment', 'short_title', 'label'],
-            [
-                [
-                    'Формирование заказа клиентом',
-                    0,
-                    1,
-                    'Клиент определяется с заказом.',
-                    'не сформирован',
-                    'label label-default'
-                ],
-                [
-                    'Ожидается оплата',
-                    1,
-                    1,
-                    'Ожидается подтверждение оплаты от платежной системы или администратора.',
-                    'оплата',
-                    'label label-warning'
-                ],
-                [
-                    'Оплачен/ожидается обработка',
-                    1,
-                    1,
-                    'Оплачен или оплата наличными',
-                    'оплачен / требует обработки',
-                    'label label-danger'
-                ],
-                [
-                    'В обработке',
-                    1,
-                    1,
-                    'Заказ в процессе обработки сотрудниками магазина.',
-                    'в обработке',
-                    'label label-success'
-                ],
-                [
-                    'Доставка',
-                    1,
-                    1,
-                    'Доставка в процессе или доставлено на склад для самовывоза',
-                    'доставка',
-                    'label label-info'
-                ],
-                [
-                    'Доставлен',
-                    1,
-                    1,
-                    'Доставлен и/или оплачен наличными. Заказ закрыт.',
-                    'закрыт',
-                    'label label-primary'
-                ],
-                [
-                    'Отменен',
-                    1,
-                    1,
-                    'Заказ отменен',
-                    'отменен',
-                    'label label-primary'
-                ],
             ]
         );
         $this->batchInsert(
@@ -1947,7 +1870,7 @@ class m141023_084857_init extends Migration
                 }
             }
             $property = $psv = $propertyStaticValuesCount = null;
-            $route = Route::findOne(['route' => 'product/list']);
+            $route = Route::findOne(['route' => 'shop/product/list']);
             $urlTemplate = Json::decode($route->url_template);
             foreach ($propertyValues as $propertyId => $values) {
                 $urlTemplate[] = [
@@ -1974,7 +1897,7 @@ class m141023_084857_init extends Migration
                 'Вентиляторы',
                 'Кондиционеры',
             ];
-            $category = \app\models\Category::findOne(['parent_id' => 0]);
+            $category = \app\modules\shop\models\Category::findOne(['parent_id' => 0]);
             $category->attributes = [
                 'name' => 'Каталог',
                 'h1' => 'Каталог',
@@ -2340,7 +2263,6 @@ class m141023_084857_init extends Migration
         $this->dropTable(OrderChat::tableName());
         $this->dropTable(OrderTransaction::tableName());
         $this->dropTable(OrderItem::tableName());
-        $this->dropTable(OrderStatus::tableName());
         $this->dropTable(Order::tableName());
         $this->dropTable(Cart::tableName());
         $this->dropTable(SubscribeEmail::tableName());

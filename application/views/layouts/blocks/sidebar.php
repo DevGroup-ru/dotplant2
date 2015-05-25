@@ -1,4 +1,4 @@
-<div id="sidebar" class="span3">
+<div id="sidebar" class="col-md-3">
     <?php if ($this->beginCache(
         'SidebarMenu',
         [
@@ -6,7 +6,7 @@
             'dependency' => new yii\caching\TagDependency(
                 [
                     'tags' => \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(
-                        \app\models\Category::className()
+                        \app\modules\shop\models\Category::className()
                     )
                 ]
             )
@@ -17,9 +17,9 @@
             [
                 'id' => 'sideMenu',
                 'options' => [
-                    'class' => 'nav nav-tabs nav-stacked',
+                    'class' => 'nav nav-pills nav-stacked',
                 ],
-                'items' => \app\models\Category::getMenuItems(),
+                'items' => \app\modules\shop\models\Category::getMenuItems(1),
             ]
         )?>
         <?php $this->endCache();
@@ -31,7 +31,7 @@
     <?php endif; ?>
     <br />
     <?php
-    $product = \app\models\Product::findOne(['id' => 1]);
+    $product = \app\modules\shop\models\Product::findOne(['id' => 1]);
     if (!is_null($product)):
         $url = \yii\helpers\Url::to(
             [

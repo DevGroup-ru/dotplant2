@@ -14,11 +14,10 @@ use yii\widgets\Breadcrumbs;
         <div class="container">
             <div class="row">
                 <?php include('blocks/sidebar.php'); ?>
-                <div class="span9">
+                <div class="col-md-9">
                     <?=
                         Breadcrumbs::widget(
                             [
-                                'itemTemplate' => "<li>{link} <span class=\"divider\">/</span></li>\n",
                                 'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
                                 'options' => [
                                     'itemprop' => "breadcrumb",

@@ -1,6 +1,6 @@
 <?php
 
-use app\models\RelatedProduct;
+use app\modules\shop\models\RelatedProduct;
 use yii\db\Migration;
 
 class m150129_125119_related_products extends Migration

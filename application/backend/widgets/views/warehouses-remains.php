@@ -2,8 +2,8 @@
 
 use kartik\helpers\Html;
 use yii\helpers\Url;
-/** @var $remains app\models\WarehouseProduct[] */
-/** @var $model app\models\Product */
+/** @var $remains \app\modules\shop\models\WarehouseProduct[] */
+/** @var $model app\modules\shop\models\Product */
 /** @var $this \yii\web\View */
 ?>
 

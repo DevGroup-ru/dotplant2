@@ -3,9 +3,9 @@
 namespace app\widgets;
 
 use app\models\ObjectStaticValues;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\models\Object;
-use app\models\Category;
+use app\modules\shop\models\Category;
 use Yii;
 use yii\base\Widget;
 use yii\db\Expression;
@@ -19,7 +19,7 @@ class CategoriesWidget extends Widget
     public $category_group_id = null;
     public $current_selections = [];
     public $omit_root = true;
-    public $route = '/product/list';
+    public $route = '/shop/product/list';
     public $title = 'Catalogue';
     public $viewFile = 'categoriesWidget';
     public $recursive = true;

@@ -2,7 +2,7 @@
 
 namespace app\backend\widgets\filterForm;
 
-use app\models\Category;
+use app\modules\shop\models\Category;
 use yii\helpers\ArrayHelper;
 use Yii;
 

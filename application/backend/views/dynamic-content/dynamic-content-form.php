@@ -4,7 +4,7 @@
  */
 
 use app\backend\widgets\BackendWidget;
-use app\backend\widgets\Select2;
+use kartik\widgets\Select2;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
@@ -158,18 +158,10 @@ $this->registerJs('
 ); ?>
 <div id="properties">
     <?php
-    $url = Url::to(['/backend/category/autocomplete']);
-    $initScript = <<< SCRIPT
-    function (element, callback) {
-        var id=$(element).val();
-        if (id !== "") {
-            $.ajax("{$url}?id=" + id, {
-                dataType: "json"
-            }).done(function(data) { callback(data.results);});
-        }
-    }
-SCRIPT;
-
+    $url = Url::to(['/shop/backend-category/autocomplete']);
+    $category = $model->apply_if_last_category_id > 0
+        ? \app\modules\shop\models\Category::findById($model->apply_if_last_category_id)
+        : null;
     ?>
     <?=$form->field($model, 'apply_if_last_category_id')->widget(
         Select2::classname(),
@@ -183,8 +175,8 @@ SCRIPT;
                     'data' => new JsExpression('function(term,page) { return {search:term}; }'),
                     'results' => new JsExpression('function(data,page) { return {results:data.results}; }'),
                 ],
-                'initSelection' => new JsExpression($initScript)
             ],
+            'initValueText' => !is_null($category) ? $category->name : '',
         ]
     );
     ?>

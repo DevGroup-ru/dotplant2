@@ -21,7 +21,7 @@ use yii\helpers\Url;
                     <?php
                     $url = Url::to(
                         [
-                            'product/show',
+                            '/shop/product/show',
                             'model' => $product,
                             'last_category_id' => $product->main_category_id,
                             'category_group_id' => $product->category->category_group_id,

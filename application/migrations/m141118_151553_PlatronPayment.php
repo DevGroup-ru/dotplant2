@@ -8,7 +8,7 @@ class m141118_151553_PlatronPayment extends Migration
     {
 
         $this->insert(
-            \app\models\PaymentType::tableName(),
+            \app\modules\shop\models\PaymentType::tableName(),
             [
                 'name' => 'Platron',
                 'class' => 'app\components\payment\PlatronPayment',
@@ -29,7 +29,7 @@ class m141118_151553_PlatronPayment extends Migration
     public function down()
     {
         $this->delete(
-            \app\models\PaymentType::tableName(),
+            \app\modules\shop\models\PaymentType::tableName(),
             ['name' => 'Platron']
         );
 

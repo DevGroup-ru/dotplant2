@@ -2,7 +2,7 @@
 
 namespace app\backend\widgets;
 
-use app\models\Category;
+use app\modules\shop\models\Category;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;

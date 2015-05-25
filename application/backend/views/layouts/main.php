@@ -193,8 +193,8 @@ Icon::map($this);
             <?=
             Html::dropDownList(
                 'delete_mode',
-                \app\models\Category::DELETE_MODE_SINGLE_CATEGORY,
-                \app\models\Category::deleteModesList(), ['class' => 'form-control', 'id' => 'delete-mode']
+                \app\modules\shop\models\Category::DELETE_MODE_SINGLE_CATEGORY,
+                \app\modules\shop\models\Category::deleteModesList(), ['class' => 'form-control', 'id' => 'delete-mode']
             )
             ?>
         </div>

@@ -24,7 +24,7 @@ class FloatingPanel extends Widget
         ];
 
         switch (Yii::$app->requestedRoute) {
-            case 'product/list':
+            case 'shop/product/list':
                 if (isset($_GET['properties'])) {
                     $apply_if_params = [];
                     foreach ($_GET['properties'] as $property_id => $values) {
@@ -49,8 +49,8 @@ class FloatingPanel extends Widget
                                     'DynamicContent' => [
                                         'apply_if_params' => Json::encode($apply_if_params),
                                         'apply_if_last_category_id' => $_GET['last_category_id'],
-                                        'object_id' => app\models\Object::getForClass(app\models\Product::className())->id,
-                                        'route' => 'product/list',
+                                        'object_id' => app\models\Object::getForClass(app\modules\shop\models\Product::className())->id,
+                                        'route' => 'shop/product/list',
                                     ]
                                 ],
                             ];
@@ -62,7 +62,7 @@ class FloatingPanel extends Widget
                     // no properties selected - go to category edit page
 
                     if (isset($_GET['last_category_id'])) {
-                        $cat = app\models\Category::findById($_GET['last_category_id']);
+                        $cat = app\modules\shop\models\Category::findById($_GET['last_category_id']);
                         $items[] = [
                             'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit category'),
                             'url' => [
@@ -75,7 +75,7 @@ class FloatingPanel extends Widget
                 }
 
                 break;
-            case 'product/show':
+            case 'shop/product/show':
                 if (isset($_GET['model_id'])) {
                     $items[] = [
                         'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit product'),

@@ -3,14 +3,9 @@
 "use strict";
 
 var Shop = {
-    'addToCart' : function(productId, quantity, callback, additionalParams) {
-        var data = {
-            'id' : productId,
-            'quantity' : typeof(quantity) !== 'undefined' ? quantity : 1,
-            'additionalParams' : typeof(additionalParams) !== 'undefined' ? additionalParams : '{"additionalPrice":0}'
-        };
+    'addBatchToCart' : function(data, callback) {
         jQuery.ajax({
-            'data' : data,
+            'data' : {'products': data},
             'dataType' : 'json',
             'success' : function(data) {
                 if (typeof(callback) === 'function') {
@@ -18,8 +13,18 @@ var Shop = {
                 }
             },
             'type' : 'post',
-            'url' : '/cart/add'
+            'url' : '/shop/cart/add'
         });
+    },
+    'addToCart' : function(productId, quantity, callback, children) {
+        var item = {
+            'id' : productId,
+            'quantity' : typeof(quantity) !== 'undefined' ? quantity : 1
+        };
+        if (typeof(children) !== 'undefined') {
+            item.children = children;
+        }
+        this.addBatchToCart([item], callback);
     },
     'changeAmount' : function(orderItemId, quantity, callback) {
         var data = {
@@ -35,24 +40,7 @@ var Shop = {
                 }
             },
             'type' : 'post',
-            'url' : '/cart/change-quantity'
-        });
-    },
-    'changeAdditionalParams' : function(orderItemId, params, callback) {
-        var data = {
-            'id' : orderItemId,
-            'additionalParams' : params
-        };
-        jQuery.ajax({
-            'data' : data,
-            'dataType' : 'json',
-            'success' : function(data) {
-                if (typeof(callback) === 'function') {
-                    callback(data);
-                }
-            },
-            'type' : 'post',
-            'url' : '/cart/change-additional-params'
+            'url' : '/shop/cart/change-quantity'
         });
     }
 };

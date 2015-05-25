@@ -2,7 +2,7 @@
 
 use yii\db\Schema;
 use yii\db\Migration;
-use app\models\Order;
+use app\modules\shop\models\Order;
 use app\models\Config;
 
 class m150415_095657_delete_order_field extends Migration

@@ -5,7 +5,7 @@ namespace app\modules\data\components;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
