@@ -9,6 +9,8 @@
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
 use yii\helpers\Url;
+use kartik\grid\GridView;
+use app\modules\review\models\Review;
 
 $this->title = Yii::t('app', 'Product reviews');
 $this->params['breadcrumbs'][] = $this->title;
@@ -63,50 +65,88 @@ $this->endBlock();
                     ],
                 ],
                 'id',
-                'text:truncated',
-                [
-                    'class' => yii\grid\DataColumn::className(),
-                    'attribute' => 'username',
-                    'value' => function ($data) {
-                        return isset($data->user) ? $data->user->username : 'not registered';
-                    },
-                ],
-                'author_name',
                 'author_email',
-                'author_phone',
                 [
                     'class' => yii\grid\DataColumn::className(),
-                    'attribute' => 'name',
+                    'attribute' => 'Form',
                     'value' => function ($data) {
-                        return isset($data->product) ? $data->product->name : null;
+                        if (isset($data->submission)) {
+                            /**@var $form \app\models\Form */
+                            $form = \app\models\Form::findById($data->submission->form_id);
+                            if (null !== $form) {
+                                return $form->name;
+                            }
+                        }
                     },
                 ],
                 [
                     'class' => yii\grid\DataColumn::className(),
-                    'attribute' => 'slug',
+                    'attribute' => 'object_model_id',
                     'value' => function ($data) {
-                        return isset($data->product) ? $data->product->slug : null;
+                        /** @var $object \app\models\Object*/
+                        if (null !== $object = \app\models\Object::findById($data->object_id)) {
+                            $class = $object->object_class;
+                            $resource = $class::findById($data->object_model_id);
+                            if (null !== $resource) {
+                                return $resource->name;
+                            }
+                            return null;
+                        }
                     },
                 ],
+                [
+                    'class' => yii\grid\DataColumn::className(),
+                    'attribute' => 'processed_by_user_id',
+                    'value' => function ($data) {
+                        if (isset($data->submission)) {
+                            if (null !== $data->submission->processed_by_user_id) {
+                                /** @var $user \app\modules\user\models\User */
+                                $user = \app\modules\user\models\User::findIdentity($data->submission->processed_by_user_id);
+                                return $user->getDisplayName();
+                            } else {
+                                return Yii::t('app', 'Guest');
+                            }
+                        }
+                        return null;
+                    }
+                ],
+                'submission.date_received',
+//                [
+//                    'attribute'=>'date_received',
+//                    'value'=>function ($model) {
+//                        return date("y-m-d h:i", strtotime($model->submission->date_received));
+//                    },
+//                    'filter'=>GridView::FILTER_DATE,
+//                    'format'=>'raw',
+//                    'filterWidgetOptions' => [
+//                        'pluginOptions' => ['format' => 'y-m-d h:i']
+//                    ],
+//
+//                ],
                 [
                     'attribute' => 'status',
                     'class' => \kartik\grid\EditableColumn::className(),
                     'editableOptions' => [
                         'inputType' => \kartik\editable\Editable::INPUT_DROPDOWN_LIST,
                         'placement' => \kartik\popover\PopoverX::ALIGN_LEFT,
-                        'data' => \app\modules\review\models\Review::getStatuses(),
+                        'data' => Review::getStatuses(),
                         'formOptions' => [
                             'action' => 'update-status',
                         ],
                     ],
-                    'filter' => \app\modules\review\models\Review::getStatuses(),
+                    'filter' => Review::getStatuses(),
                     'format' => 'raw',
                 ],
-                'rate',
                 [
                     'class' => 'app\backend\components\ActionColumn',
                     'buttons' => function($model, $key, $index, $parent) {
                         return [
+                            [
+                                'url' => 'view',
+                                'icon' => 'eye',
+                                'class' => 'btn-info',
+                                'label' => Yii::t('app', 'View'),
+                            ],
                             [
                                 'url' => 'delete',
                                 'icon' => 'trash-o',

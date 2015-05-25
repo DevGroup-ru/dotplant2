@@ -23,7 +23,7 @@ class ProcessController extends Controller
             ];
     }
 
-    public function actionProcess($id, $object_id, $object_model_id, $returnUrl = '/')
+    public function actionProcess($id, $object_model_id, $object_id, $returnUrl = '/')
     {
         if (false === Yii::$app->request->isPost) {
             throw new HttpException(403);
@@ -35,6 +35,7 @@ class ProcessController extends Controller
         if (Yii::$app->user->isGuest === false) {
             $review->author_email = Yii::$app->user->identity->email;
         }
+        $review->object_id = $object_id;
         $review->object_model_id = $object_model_id;
         if ($review->validate()) {
             $submission_id = Yii::$app->runAction('review/process/submission', ['id' => $id]);
@@ -67,6 +68,7 @@ class ProcessController extends Controller
                             foreach ($items as $key => $item) {
                                 $model = new RatingValues();
                                 $model->loadDefaultValues();
+                                $model->object_id = $object_id;
                                 $model->object_model_id = $object_model_id;
                                 $model->rating_item_id = $item['id'];
                                 $model->value = isset($ratingData['values'][$item['id']]) ? intval(

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @var $reviews \app\modules\review\models\Review[]
  * @var $useCaptcha boolean
@@ -13,42 +12,55 @@ use app\models\Property;
 
 ?>
 <div class = "widget-reviews">
-    <!--<?php //\yii\widgets\Pjax::begin() ?>
-<?//= \yii\widgets\ListView::widget([
-    //        'dataProvider' => $reviews,
-    //        'itemView' => function ($model, $key, $index, $widget) {
-    //            $itemView = Html::beginTag('div', ['class' => 'row review']);
-    //            $itemView .= Html::beginTag('div', ['class' => 'col-md-4']);
-    //
-    //            $itemView .= Html::beginTag('div', ['class' => 'review-date_submitted label label-default']);
-    //            $itemView .= Icon::show('calendar');
-    //            $itemView .= date("d.m.Y H:i:s", strtotime($model->date_submitted));
-    //            $itemView .= '</div>';
-    //
-    //            $itemView .= Html::beginTag('div', ['class' => 'review-author']);
-    //            if ($model->user) {
-    //                $itemView .= Icon::show('user') . Html::encode($model->user->getDisplayName());
-    //            } else {
-    //                $itemView .= Icon::show('user') . Html::encode($model->author_name);
-    //            }
-    //            $itemView .= '</div>';
-    //
-    //            $itemView .= '</div>';
-    //
-    //            $itemView .= Html::beginTag('div', ['class' => 'col-md-8']);
-    //            $itemView .= Html::encode($model->text);
-    //            $itemView .= '</div>';
-    //
-    //            $itemView .= '</div>';
-    //
-    //            return $itemView;
-    //        },
-    //    ]) ?>
-<?php //\yii\widgets\Pjax::end() ?>-->
+    <?php \yii\widgets\Pjax::begin() ?>
+    <?= \yii\widgets\ListView::widget([
+        'dataProvider' => $reviews,
+        'itemView' => function ($model, $key, $index, $widget) use($groups){
+            $itemView = Html::beginTag('div', ['class' => 'row review']);
+            $itemView .= Html::beginTag('div', ['class' => 'col-md-4']);
+
+            $itemView .= Html::beginTag('div', ['class' => 'review-date_submitted label label-default']);
+            $itemView .= Icon::show('calendar');
+            $itemView .= date("d.m.Y H:i:s", strtotime($model->submission->date_received));
+            $itemView .= '</div>';
+
+            $itemView .= Html::beginTag('div', ['class' => 'review-author']);
+
+            if (null === $model->submission->processed_by_user_id) {
+                $itemView .= Icon::show('user') . Yii::t('app', 'Guest');
+            } else {
+                $user = \app\modules\user\models\User::findIdentity($model->submission->processed_by_user_id);
+                $itemView .= Icon::show('user') . Html::encode($user->getDisplayName());
+            }
+            $itemView .= '</div>';
+
+            $itemView .= '</div>';
+
+            $itemView .= Html::beginTag('div', ['class' => 'col-md-8']);
+            $itemView .= Html::encode($model->review_text);
+            $itemView .= '</div>';
+            $model->submission->getPropertyGroups(true);
+            foreach ($groups as $group){
+                $properties = Property::getForGroupId($group->id);
+                foreach ($properties as $property) {
+                    if ($propertyValues = $model->submission->getPropertyValuesByPropertyId($property->id)) {
+                        $itemView .= Html::beginTag('div', ['class' => 'col-md-8']);
+                        $itemView .= $property->handler('form', $model->submission->abstractModel, $propertyValues, 'frontend_render_view');
+                        $itemView .= '</div>';
+                    }
+                }
+            }
+            $itemView .= '</div>';
+
+            return $itemView;
+        },
+    ]) ?>
+    <?php \yii\widgets\Pjax::end() ?>
     <?php $form = ActiveForm::begin(
         [
             'action'=>[
-                'review/process/process',
+                '/review/process/process',
+                'object_id' => $object_id,
                 'object_model_id' => $object_model_id,
                 'id' => $model->id,
                 'returnUrl'=>Yii::$app->request->url
@@ -77,10 +89,6 @@ use app\models\Property;
                 ?>
             </div>
         </div>
-    <?php else : ?>
-        <?//=
-        //$form->field($review, 'author_email', ['value' => Yii::$app->getUser()->getIdentity()->email])->hiddenInput()->label(false)
-        ?>
     <?php endif; ?>
     <div class = "col-md-6">
         <?=
@@ -94,7 +102,7 @@ use app\models\Property;
         <?php endforeach; ?>
     <?php endforeach; ?>
 
-    <!--<?php/*
+    <?php
     if ($useCaptcha) {
         echo $form->field($model, 'captcha')->widget(yii\captcha\Captcha::className(), [
             'template' => '<div class="row"><div class="col-lg-6">{image}</div><div class="col-lg-6">{input}</div></div>',
@@ -102,7 +110,7 @@ use app\models\Property;
         ]);
 
     }
-    */?>-->
+    ?>
     <div class = "row">
         <div class = "col-md-12">
             <div class = "form-group no-margin">

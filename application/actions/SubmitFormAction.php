@@ -106,6 +106,9 @@ class SubmitFormAction extends Action
                 'spam' => Yii::$app->formatter->asBoolean($haveSpam),
             ]
         );
+        if (false === Yii::$app->user->isGuest) {
+            $submission->processed_by_user_id = Yii::$app->user->identity->getId();
+        }
         if (!($form->abstractModel->validate() && $submission->save())) {
             return "0";
         }
@@ -127,7 +130,6 @@ class SubmitFormAction extends Action
             $submission->abstractModel->formName() => $post[$form->abstractModel->formName()],
         ];
         $submission->saveProperties($data);
-        return $submission->id;
         if ($haveSpam === false) {
             if (!empty($form->email_notification_addresses)) {
                 try {

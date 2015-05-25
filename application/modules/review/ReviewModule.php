@@ -9,25 +9,8 @@ use app\components\BaseModule;
  */
 class ReviewModule extends BaseModule
 {
-    /**
-     * @var string email's to send notification
-     */
-    public $email;
-    /***
-     * @var array contain bool values. If 1 when send notification Object to email
-     */
-    public $notification = [
-        'Product' => 0,
-        'Page' => 0,
-    ];
-
-    /**
-     * @var array email template
-     */
-    public $emailTemplate = [
-        'Product' => '@app/modules/review/views/page-review-email-template',
-        'Page' => '@app/modules/review/views/page-review-email-template',
-    ];
+    public $maxPerPage = 2;
+    public $pageSize = 2;
 
     /**
      * @return array the behavior configurations.
@@ -41,25 +24,5 @@ class ReviewModule extends BaseModule
                 'configurableModel' => 'app\modules\review\models\ConfigConfigurationModel',
             ]
         ];
-    }
-
-    /**
-     * @param string $objectName
-     * @return string renderFile
-     */
-    public function getEmailTemplate($objectName)
-    {
-        return isset($this->emailTemplate[$objectName]) && !empty($this->emailTemplate[$objectName])
-            ? $this->emailTemplate[$objectName]
-            : '@app/modules/review/views/page-review-email-template';
-    }
-
-    /**
-     * @param $objectName
-     * @return bool Need send notification ?
-     */
-    public function isEnableNotification($objectName)
-    {
-        return isset($this->notification[$objectName]) && (int) $this->notification[$objectName] === 1;
     }
 }

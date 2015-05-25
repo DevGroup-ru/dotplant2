@@ -4,9 +4,14 @@ namespace app\modules\review\controllers;
 
 use app\modules\review\models\Review;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
+use yii\helpers\VarDumper;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use Yii;
 use yii\web\NotFoundHttpException;
+use app\components\SearchModel;
+use app\models\Submission;
 
 class BackendController extends \app\backend\components\BackendController
 {
@@ -25,11 +30,15 @@ class BackendController extends \app\backend\components\BackendController
         ];
     }
 
-    public function actionProducts()
+    public function actionIndex()
     {
-        $searchModel = new Review(['scenario' => 'search']);
-        $dataProvider = $searchModel->productSearch($_GET);
-
+        $searchModelConfig = [
+            'defaultOrder' => ['id' => SORT_DESC],
+            'model' => Review::className(),
+            'relations' => ['submission' => ['submission']],
+        ];
+        $searchModel = new SearchModel($searchModelConfig);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render(
             'index',
             [
@@ -38,31 +47,87 @@ class BackendController extends \app\backend\components\BackendController
             ]
         );
     }
-    public function actionPages()
-    {
-        $searchModel = new Review(['scenario' => 'search']);
-        $dataProvider = $searchModel->pageSearch($_GET);
 
+    public function actionView($id)
+    {
+        $review = Review::find()
+            ->with(['submission'])
+            ->where(['id' => $id])
+            ->one();
+        if (null === $review) {
+            throw new NotFoundHttpException;
+        }
         return $this->render(
-            'pages',
+            'submission-view',
             [
-                'dataProvider' => $dataProvider,
-                'searchModel' => $searchModel,
+                'review' => $review
             ]
         );
     }
 
-    public function actionUpdateStatus()
+    public function actionUpdateStatus($id = null)
     {
-        $id = \Yii::$app->request->post('editableKey');
-        $index = \Yii::$app->request->post('editableIndex');
-        $reviews = \Yii::$app->request->post('Review', []);
-        if ($id !== null && $index !== null) {
-            $review = $this->loadModel($id);
-            $review->status = $reviews[$index]['status'];
-            return $review->update();
+        if (null === $id) {
+            $id = \Yii::$app->request->post('editableKey');
+            $index = \Yii::$app->request->post('editableIndex');
+            if (null === $id || null === $index) {
+                throw new BadRequestHttpException;
+            } else {
+                $review = $this->loadModel($id);
+                $reviews = \Yii::$app->request->post('Review', []);
+                $review->status = $reviews[$index]['status'];
+                return $review->update();
+            }
         } else {
-            return false;
+            $reviews = $reviews = \Yii::$app->request->post('Review');
+            $status = $reviews['status'];
+            $review = $this->loadModel($id);
+            $review->status = $status;
+            if ($review->update()) {
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Review successfully updated'));
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('app', 'Error occurred while updating review'));
+            }
+            return $this->redirect(
+                Url::toRoute(
+                    [
+                        '/review/backend/view',
+                        'id' => $review->id
+                    ]
+                )
+            );
+        }
+    }
+    public function actionMarkSpam($id, $spam = 1)
+    {
+        if ($spam === 1) {
+            $message = Yii::t('app', 'Entry successfully marked as spam');
+        } else {
+            $message = Yii::t('app', 'Entry successfully marked as not spam');
+        }
+
+        $sql = Yii::$app->db->createCommand()
+            ->update(
+                Submission::tableName(),
+                [
+                    'spam' => Yii::$app->formatter->asBoolean($spam),
+                ],
+                [
+                    'id' => $id
+                ]);
+        if ($sql->execute()) {
+            Yii::$app->session->setFlash(
+                'success',
+                $message
+            );
+            return $this->redirect(
+                Url::toRoute(
+                    [
+                        '/review/backend/view',
+                        'id' => $id
+                    ]
+                )
+            );
         }
     }
 

@@ -8,13 +8,9 @@ use app\modules\review\models\Review;
 use yii\base\InvalidParamException;
 use yii\base\Widget;
 use yii\data\ArrayDataProvider;
-use yii\helpers\VarDumper;
-use yii\widgets\ActiveForm;
 use Yii;
 use app\models\Object;
 use app\models\PropertyGroup;
-use yii\helpers\Html;
-use app\models\Property;
 
 class ReviewsWidget extends Widget
 {
@@ -24,6 +20,7 @@ class ReviewsWidget extends Widget
     public $allow_rate = false;
     public $sort = SORT_ASC;
     public $registerCanonical = false;
+    public $object_id;
 
     public $formId = null;
 
@@ -34,28 +31,12 @@ class ReviewsWidget extends Widget
      */
     public function run()
     {
-//        $reviews = Review::getForObjectModel($this->model->id);
-//        return VarDumper::dump($reviews);
 
-        if ((null === $form = Form::findById($this->formId)) || null === $this->model) {
+        if ((null === $form = Form::findById($this->formId))
+            || null === $this->model
+            || null === $object = Object::findById($this->object_id)) {
             throw new InvalidParamException;
         }
-        $formObject = Object::getForClass(Form::className());
-        $groups = PropertyGroup::getForModel($formObject->id, $form->id);
-        $review = new Review(['scenario' => 'check']);
-        return $this->render(
-            $this->viewFile,
-            [
-                'object_id' => $this->model->object->id,
-                'object_model_id' => $this->model->id,
-                'model' => $form,
-                'review' => $review,
-                'groups' => $groups,
-            ]
-        );
-
-        return;
-
         if ($this->registerCanonical === true) {
             $this->getView()->registerLinkTag(
                 [
@@ -65,15 +46,18 @@ class ReviewsWidget extends Widget
                 'canonical'
             );
         }
-        $reviews = Review::getForObjectModel($this->object_id, $this->object_model_id, $this->sort);
-        $model = new Review();
-        $model->useCaptcha = $this->useCaptcha;
-        if (!\Yii::$app->getUser()->isGuest) {
-            $model->author_user_id = \Yii::$app->getUser()->id;
-        }
-        $pageSize = \Yii::$app->request->get('review-per-page', 10);
-        if ($pageSize > $this->maxPerPage) {
-            $pageSize = $this->maxPerPage;
+        $formObject = Object::getForClass(Form::className());
+        $groups = PropertyGroup::getForModel($formObject->id, $form->id);
+        $models = Review::getForObjectModel($this->model->id, $object->id, $form->id);
+
+        $review = new Review(['scenario' => 'check']);
+        $review->useCaptcha = $this->useCaptcha;
+        /** @var $module \app\modules\review\ReviewModule */
+        $module = Yii::$app->getModule('review');
+        $maxPerPage = $module->maxPerPage;
+        $pageSize = $module->pageSize;
+        if ($pageSize > $maxPerPage) {
+            $pageSize = $maxPerPage;
         }
         return $this->render(
             $this->viewFile,
@@ -81,24 +65,26 @@ class ReviewsWidget extends Widget
                 'reviews' => new ArrayDataProvider(
                     [
                         'id' => 'review',
-                        'allModels' => $reviews,
+                        'allModels' => $models,
                         'pagination' => [
                             'pageSize' => $pageSize,
-                            'params' => array_merge($_GET, $this->additionalParams),
+                            'params' =>  array_merge($_GET, $this->additionalParams),
                         ],
                         'sort' => [
                             'attributes' => [
-                                'date_submitted',
+                                'submission_id',
                             ],
                             'defaultOrder' => [
-                                'date_submitted' => $this->sort,
+                                'submission_id' => $this->sort,
                             ],
                         ],
                     ]
                 ),
-                'object_id' => $this->object_id,
-                'object_model_id' => $this->object_model_id,
-                'model' => $model,
+                'object_id' => $object->id,
+                'object_model_id' => $this->model->id,
+                'model' => $form,
+                'review' => $review,
+                'groups' => $groups,
                 'allow_rate' => $this->allow_rate,
                 'useCaptcha' => $this->useCaptcha,
                 'additionalParams' => $this->additionalParams,
