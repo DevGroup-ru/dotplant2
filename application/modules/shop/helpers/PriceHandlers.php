@@ -5,6 +5,7 @@ namespace app\modules\shop\helpers;
 
 use app\modules\shop\events\OrderCalculateEvent;
 use app\modules\shop\models\Currency;
+use app\modules\shop\models\DeliveryInformation;
 use app\modules\shop\models\Discount;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\Product;
@@ -13,6 +14,7 @@ use app\modules\shop\models\SpecialPriceObject;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
+use yii\helpers\ArrayHelper;
 
 class PriceHandlers
 {
@@ -24,12 +26,11 @@ class PriceHandlers
         Order $order = null,
         SpecialPriceList $specialPrice,
         $price
-    )
-    {
+    ) {
         $currency = Currency::getMainCurrency();
         if ($product->currency_id !== $currency->id) {
             $foreignCurrency = Currency::findById($product->currency_id);
-            $price = $price / $foreignCurrency->convert_nominal * $foreignCurrency->convert_rate ;
+            $price = $price / $foreignCurrency->convert_nominal * $foreignCurrency->convert_rate;
         }
         return round($price, 2);
     }
@@ -46,8 +47,7 @@ class PriceHandlers
         Order $order = null,
         SpecialPriceList $specialPrice,
         $price
-    )
-    {
+    ) {
         self::getAllDiscounts();
         if (isset(self::$_allDiscounts['products'])) {
             foreach (self::$_allDiscounts['products'] as $discount) {
@@ -79,15 +79,14 @@ class PriceHandlers
         Order $order,
         SpecialPriceList $specialPrice,
         $price
-    )
-    {
+    ) {
 
         $discountPrice = 0;
 
         $discountObjects = SpecialPriceObject::findAll(
             [
-                'special_price_list_id'=>$specialPrice->id,
-                'object_model_id'=>$order->id
+                'special_price_list_id' => $specialPrice->id,
+                'object_model_id' => $order->id
             ]
         );
 
@@ -103,9 +102,22 @@ class PriceHandlers
         Order $order,
         SpecialPriceList $specialPrice,
         $price
-    )
-    {
-        return $price;
+    ) {
+
+        $deliveryPrice = 0;
+
+        $deliveryObjects = SpecialPriceObject::findAll(
+            [
+                'special_price_list_id' => $specialPrice->id,
+                'object_model_id' => $order->id
+            ]
+        );
+
+        foreach ($deliveryObjects as $object) {
+            $deliveryPrice += $object->price;
+        }
+
+        return $price + $deliveryPrice;
     }
 
     private static function getAllDiscounts()
@@ -139,57 +151,91 @@ class PriceHandlers
     public static function handleSaveDiscounts(OrderCalculateEvent $event)
     {
         self::getAllDiscounts();
-        if (isset(self::$_allDiscounts['order_with_delivery'])) {
-            foreach (self::$_allDiscounts['order_with_delivery'] as $discount) {
-                $discountFlag = false;
-                foreach (Discount::getTypeObjects() as $discountTypeObject) {
-                    $discountFlag = $discountTypeObject
-                        ->checkDiscount(
-                            $discount,
-                            null,
-                            $event->order
-                        );
 
-                    if ($discountFlag === false) {
-                        break;
+
+        foreach (self::$_allDiscounts as $discountTypeName => $discountType) {
+            if (in_array($discountTypeName, ['order_without_delivery', 'order_with_delivery', 'delivery'])) {
+                foreach ($discountType as $discount) {
+                    $discountFlag = false;
+                    foreach (Discount::getTypeObjects() as $discountTypeObject) {
+                        $discountFlag = $discountTypeObject
+                            ->checkDiscount(
+                                $discount,
+                                null,
+                                $event->order
+                            );
+
+                        if ($discountFlag === false) {
+                            break;
+                        }
+
                     }
 
-                }
-
-                $special_price_list_id = SpecialPriceList::find()->where(
-                    [
-                        'handler' => 'getDiscountPriceOrder',
-                        'object_id' => $event->order->object->id
-                    ]
-                )
-                    ->one()
-                    ->id;
-
-
-                if ($discountFlag === true) {
-                    $oldPrice = $event->price;
-                    $price = $discount->getDiscountPrice($oldPrice);
-                    $discountPrice = $price - $oldPrice;
-
-                    SpecialPriceObject::setObject(
-                        $special_price_list_id,
-                        $event->order->id,
-                        $discountPrice,
-                        $discount->name
-                    );
-
-
-                } else {
-                    SpecialPriceObject::deleteAll(
+                    $special_price_list_id = SpecialPriceList::find()->where(
                         [
-                            'special_price_list_id' =>  $special_price_list_id,
-                            'object_model_id' =>  $event->order->id
+                            'handler' => 'getDiscountPriceOrder',
+                            'object_id' => $event->order->object->id
                         ]
-                    );
-                }
+                    )
+                        ->one()
+                        ->id;
 
+
+                    if ($discountFlag === true) {
+                        $oldPrice = $event->price;
+                        $deliveryPrice = SpecialPriceObject::getSumPrice(
+                            $event->order->id,
+                            SpecialPriceList::TYPE_DELIVERY
+                        );
+                        $price = $discount->getDiscountPrice($oldPrice, $deliveryPrice);
+                        $discountPrice = $price - $oldPrice;
+
+                        SpecialPriceObject::setObject(
+                            $special_price_list_id,
+                            $event->order->id,
+                            $discountPrice,
+                            $discount->name
+                        );
+
+                    } else {
+                        SpecialPriceObject::deleteAll(
+                            [
+                                'special_price_list_id' => $special_price_list_id,
+                                'object_model_id' => $event->order->id
+                            ]
+                        );
+                    }
+                }
             }
 
+        }
+
+    }
+
+    public static function handleSaveDelivery(OrderCalculateEvent $event)
+    {
+        $deliveryInformation = $event->order->orderDeliveryInformation;
+        $special_price_list = SpecialPriceList::find()->where(
+            [
+                'handler' => 'getDeliveryPriceOrder',
+                'object_id' => $event->order->object->id
+            ]
+        )->one();
+
+        if ($deliveryInformation !== null) {
+            SpecialPriceObject::setObject(
+                $special_price_list->id,
+                $event->order->id,
+                $deliveryInformation->shipping_price_total,
+                $event->order->shippingOption->name
+            );
+        } else {
+            SpecialPriceObject::deleteAll(
+                [
+                    'special_price_list_id' => $special_price_list->id,
+                    'object_model_id' => $event->order->id
+                ]
+            );
         }
 
     }

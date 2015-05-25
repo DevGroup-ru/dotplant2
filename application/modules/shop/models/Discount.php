@@ -2,16 +2,10 @@
 
 namespace app\modules\shop\models;
 
-use app\modules\core\events\SpecialEvent;
-use app\modules\shop\components\SpecialPriceOrderInterface;
-use app\modules\shop\components\SpecialPriceProductInterface;
-use app\modules\shop\events\OrderCalculateEvent;
 use Yii;
-use yii\base\Event;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use \devgroup\TagDependencyHelper\ActiveRecordHelper;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%discount}}".
@@ -42,16 +36,32 @@ class Discount extends \yii\db\ActiveRecord
     }
 
 
-    public function getDiscountPrice($price)
+    public function getDiscountPrice($price, $deliveryPrice = 0)
     {
-        if (intval($this->value_in_percent) === 1) {
-            $price *= (100 - $this->value) / 100;
-        } else {
-            $price -= $this->value;
+        $discountPrice = 0;
+
+        switch ($this->appliance) {
+            case 'order_without_delivery':
+                $discountPrice = $price;
+                break;
+            case 'order_with_delivery':
+                $discountPrice = $price + $deliveryPrice;
+                break;
+            case 'delivery':
+                $discountPrice = $deliveryPrice;
+                break;
+            case 'products':
+                $discountPrice = $price;
+                break;
         }
 
-
-        return $price;
+        if (intval($this->value_in_percent) === 1) {
+            $discountPrice *=  $this->value / 100;
+        } else {
+            $discountPrice += $this->value;
+        }
+        $resultPrice = $price - $discountPrice;
+        return $resultPrice > 0 ? $resultPrice : 0;
     }
 
     static public function getTypeObjects()
