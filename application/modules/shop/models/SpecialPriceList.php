@@ -44,7 +44,6 @@ class SpecialPriceList extends \yii\db\ActiveRecord
         $cacheKey = self::className() . $class .$object_id;
 
         if (!$result = Yii::$app->cache->get($cacheKey)) {
-
             $result = self::find()
                 ->where(
                     [
@@ -71,6 +70,60 @@ class SpecialPriceList extends \yii\db\ActiveRecord
 
     }
 
+
+    public static function getModelsByKey($key)
+    {
+        $cacheKey = self::className() . $key;
+
+        if (!$results = Yii::$app->cache->get($cacheKey)) {
+            $results = self::find()
+                ->leftJoin(
+                    SpecialPriceListType::tableName(),
+                    SpecialPriceListType::tableName().'.id = '.self::tableName().'.type_id'
+                )
+                ->where(
+                    [
+                        SpecialPriceListType::tableName().'.key' =>$key
+                    ]
+                )->all();
+
+            Yii::$app->cache->set(
+                $cacheKey,
+                $results,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            ActiveRecordHelper::getCommonTag(static::className())
+                        ]
+                    ]
+                )
+            );
+
+        }
+        return  $results;
+
+    }
+    public function beforeSave($insert)
+    {
+        TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                ActiveRecordHelper::getCommonTag($this->className()),
+                'SpecialPriceList:' . $this->id . ':0'
+            ]
+        );
+
+        TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                ActiveRecordHelper::getCommonTag($this->className()),
+                'SpecialPriceList:' . $this->id . ':1'
+            ]
+        );
+
+        return parent::beforeSave($insert);
+    }
 
     /**
      * @inheritdoc

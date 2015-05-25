@@ -3,6 +3,7 @@
 namespace app\modules\shop\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%special_price_object}}".
@@ -72,11 +73,30 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
             $object->special_price_list_id = $special_price_list_id;
             $object->object_model_id = $object_model_id;
         }
-
-
         $object->price = $price;
         $object->name = $name;
         $object->save();
 
+    }
+
+    public static function getSumPrice($object_model_id, $type)
+    {
+        $sum = 0;
+
+        $objects = self::find()
+            ->select('price')
+            ->where(
+                [
+                    'special_price_list_id' => ArrayHelper::map(SpecialPriceList::getModelsByKey($type), 'id', 'id'),
+                    'object_model_id' => $object_model_id
+                ]
+            )
+            ->all();
+
+        foreach ($objects as $object) {
+            $sum += $object->price;
+        }
+
+        return $sum;
     }
 }

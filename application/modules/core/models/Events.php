@@ -107,7 +107,7 @@ class Events extends \yii\db\ActiveRecord
      */
     public function getHandlers()
     {
-        return $this->hasMany(EventHandlers::className(), ['event_id' => 'id']);
+        return $this->hasMany(EventHandlers::className(), ['event_id' => 'id'])->orderBy(['sort_order' => SORT_ASC]);
     }
 
     /**

@@ -26,13 +26,11 @@ class PriceHelper
                 ]
             );
         if (!$specialPriceList = Yii::$app->cache->get($cacheKey)) {
-
             $specialPriceListQuery = SpecialPriceList::find()
                 ->where(['object_id' => $product->object->id])
                 ->orderBy(['sort_order'=>SORT_ASC]);
 
             if ($type !== null) {
-
                 $type_id = SpecialPriceListType::find()
                     ->where(
                         [
@@ -90,13 +88,11 @@ class PriceHelper
                 ]
             );
         if (!$specialPriceList = Yii::$app->cache->get($cacheKey)) {
-
             $specialPriceListQuery = SpecialPriceList::find()
                 ->where(['object_id' => $order->object->id])
                 ->orderBy(['sort_order'=>SORT_ASC]);
 
             if ($type !== null) {
-
                 $type_id = SpecialPriceListType::find()
                     ->where(
                         [
@@ -131,14 +127,11 @@ class PriceHelper
             );
         }
         foreach ($specialPriceList as $specialPriceRow) {
-            $class = new $specialPriceRow->class;
+            $class = $specialPriceRow->class;
             $handler = $specialPriceRow->handler;
             $price = $class::$handler($order, $specialPriceRow, $price);
-
         }
 
         return round($price, 2);
     }
-
-
 }
