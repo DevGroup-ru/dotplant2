@@ -41,6 +41,9 @@ class Property extends ActiveRecord
     public $as_yml_field;
     public $captcha;
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [

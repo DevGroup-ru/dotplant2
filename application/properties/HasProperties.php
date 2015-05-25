@@ -37,9 +37,9 @@ class HasProperties extends Behavior
     private $table_inheritance_row = null;
     private $propertiesFormName = null;
     public $props;
-    
+
     /**
-     * Get property group id by property id 
+     * Get property group id by property id
      * @param int $id property id
      * @return int property group id
      */
@@ -203,6 +203,17 @@ class HasProperties extends Behavior
         }
     }
 
+    public function removePropertyGroup($property_group_id)
+    {
+        ObjectPropertyGroup::deleteAll(
+            [
+                'object_id' => $this->getObject()->id,
+                'object_model_id' => $this->owner->id,
+                'property_group_id' => $property_group_id,
+            ]
+        );
+    }
+
     public function setPropertiesFormName($name = null)
     {
         $this->propertiesFormName = $name;
@@ -220,6 +231,9 @@ class HasProperties extends Behavior
                 $this->addPropertyGroup($group_id, false);
             }
             $this->updatePropertyGroupsInformation(true);
+        }
+        if (isset($data['RemovePropetryGroup']) && isset($data['RemovePropetryGroup'][$form])) {
+            $this->removePropertyGroup($data['RemovePropetryGroup'][$form]);
         }
         if (isset($data[$formProperties])) {
             $my_data = $data[$formProperties];

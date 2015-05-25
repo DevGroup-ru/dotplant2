@@ -1,4 +1,5 @@
 <?php
+use yii\helpers\Html;
 
 ?>
     <div id="properties-widget-<?=$widget_id?>">
@@ -12,12 +13,25 @@
 
 
             $items[] = [
-                'label' => $opg->group->name,
+                'label' => $opg->group->name . ' ' . Html::tag(
+                        'i',
+                        '',
+                        [
+                            'class' => 'fa fa-times remove-property-group',
+                            'data-pg' => json_encode(
+                                [
+                                    'id' => $opg->group->id,
+                                    'form_name' => $model->formName(),
+                                ]
+                            )
+                        ]
+                    ),
                 'url' => '#pg-' . $opg->group->id,
                 'active' => ($i == 0),
                 'linkOptions' => [
                     'data-toggle' => 'tab',
                 ],
+                'encode' => false,
             ];
 
         }
@@ -106,18 +120,29 @@
         </div>
     </div> <!-- /properties-widget -->
 <?php app\backend\widgets\BackendWidget::end();
-$this->registerJs(
-    "$(function() {
-    $(\"#properties-widget-{$widget_id} .add-property-group\").click(function() {
-        var \$form = $(\"#{$form->id}\"),
-            \$this = $(this);
-        var data = JSON.parse(\$this.attr('data-pg'));
-        var \$hidden = $('<input type=\"hidden\">');
-        \$hidden.attr('name', 'AddPropetryGroup[' + data.form_name + ']').val(data.id);
-        \$form.append(\$hidden);
-        \$form.find(\":submit:first\").mouseup().click();
+$js = <<<'JS'
+$(function() {
+    $("#properties-widget-%1$s .add-property-group").click(function() {
+        var $form = $("#%2$s"),
+            $this = $(this);
+        var data = JSON.parse($this.attr('data-pg'));
+        var $hidden = $('<input type="hidden">');
+        $hidden.attr('name', 'AddPropetryGroup[' + data.form_name + ']').val(data.id);
+        $form.append($hidden);
+        $form.find(":submit:first").mouseup().click();
 
         return false;
     });
-});"
-);
+    $("#properties-widget-%1$s .remove-property-group").click(function() {
+        var $form = $("#%2$s"),
+            $this = $(this);
+        var data = JSON.parse($this.attr('data-pg'));
+        var $hidden = $('<input type="hidden">');
+        $hidden.attr('name', 'RemovePropetryGroup[' + data.form_name + ']').val(data.id);
+        $form.append($hidden);
+        $form.find(":submit:first").mouseup().click();
+    });
+});
+JS;
+
+$this->registerJs(sprintf($js, $widget_id, $form->id));

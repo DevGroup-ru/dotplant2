@@ -94,7 +94,7 @@ class BackendProductController extends BackendController
                         if ($model === null || $model->active === null) {
                             return null;
                         }
-                        if ($model->active === 1) {
+                        if ($model->active === '1') {
                             $label_class = 'label-success';
                             $value = 'Active';
                         } else {
@@ -216,7 +216,7 @@ class BackendProductController extends BackendController
 
 
                     $action = Yii::$app->request->post('action', 'save');
-                    if (Yii::$app->request->post('AddPropetryGroup')) {
+                    if (Yii::$app->request->post('AddPropetryGroup')||Yii::$app->request->post('RemovePropetryGroup')) {
                         $action = 'save';
                     }
                     $returnUrl = Yii::$app->request->get('returnUrl', ['index']);

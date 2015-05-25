@@ -236,6 +236,11 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
   display: block;
 }
 
+/* line 204, ../sass/admin.scss */
+.table-condensed.table > tbody > tr > td.td-no-padding, .table-condensed.table > tbody > tr > th.td-no-padding, .table-condensed.table > tfoot > tr > td.td-no-padding, .table-condensed.table > tfoot > tr > th.td-no-padding, .table-condensed.table > thead > tr > td.td-no-padding, .table-condensed.table > thead > tr > th.td-no-padding {
+  padding: 0 !important;
+}
+
 /* line 2, ../sass/extensions.scss */
 .packages-grid .package {
   background: #fff;
@@ -266,3 +271,24 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
 .packages-search {
   margin-bottom: 8px;
 }
+
+/* line 1, ../sass/filter-sets.scss */
+.table-condensed.table > tbody > tr.psv-tr > td {
+  padding: 0 !important;
+}
+
+/* line 6, ../sass/filter-sets.scss */
+.properties-body .sort-handle, .properties-body .psv-sort-handle {
+  padding: 4px;
+  background: #fff;
+  cursor: move;
+  margin: 2px;
+  display: block;
+  text-align: center;
+}
+/* line 13, ../sass/filter-sets.scss */
+.properties-body .sort-handle:hover, .properties-body .psv-sort-handle:hover {
+  background: #eee;
+}
+
+/*# sourceMappingURL=admin.css.map */

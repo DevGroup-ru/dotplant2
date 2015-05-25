@@ -4,7 +4,6 @@ use app\backend\models\ApiService;
 use app\backend\models\Notification;
 use app\backend\models\OrderChat;
 use app\components\Helper;
-use app\modules\shop\models\Cart;
 use app\modules\shop\models\Category;
 use app\modules\shop\models\CategoryGroup;
 use app\modules\shop\models\CategoryGroupRouteTemplates;
@@ -32,11 +31,11 @@ use app\models\Route;
 use app\modules\shop\models\ShippingOption;
 use app\models\Submission;
 use app\models\SubscribeEmail;
+use app\modules\review\models\Review;
 use app\modules\user\models\User;
 use app\modules\user\models\UserService;
 use app\models\View;
 use app\models\ViewObject;
-use app\modules\review\models\Review;
 use app\widgets\navigation\models\Navigation;
 use yii\db\Migration;
 use yii\helpers\Json;
@@ -484,20 +483,6 @@ class m141023_084857_init extends Migration
                 'name' => 'VARCHAR(50) DEFAULT NULL',
                 'is_active' => 'TINYINT DEFAULT \'0\'',
                 'last_notify' => 'INTEGER DEFAULT \'0\'',
-            ],
-            $tableOptions
-        );
-        $this->createTable(
-            Cart::tableName(),
-            [
-                'id' => 'BIGINT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
-                'user_id' => 'INT UNSIGNED DEFAULT \'0\'',
-                'create_time' => 'TIMESTAMP NULL',
-                'update_time' => 'TIMESTAMP NULL',
-                'items_json' => 'TEXT',
-                'items_count' => 'INT DEFAULT \'0\'',
-                'total_price' => 'DECIMAL(10, 2) DEFAULT \'0\'',
-                'KEY `ix-cart-order_id` (`user_id`)',
             ],
             $tableOptions
         );
@@ -1164,7 +1149,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\text\TextPropertyWidget::className(),
+                    '\app\properties\handlers\text\TextProperty',
                 ],
                 [
                     'Select',
@@ -1172,7 +1157,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\select\SelectPropertyWidget::className(),
+                    '\app\properties\handlers\select\SelectProperty',
                 ],
                 [
                     'Checkbox',
@@ -1180,7 +1165,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\checkbox\CheckboxPropertyWidget::className(),
+                    '\app\properties\handlers\checkbox\CheckboxProperty',
                 ],
                 [
                     'Text area',
@@ -1188,7 +1173,7 @@ class m141023_084857_init extends Migration
                     'frontend-edit',
                     'backend-render',
                     'backend-edit',
-                    \app\properties\handlers\textArea\TextAreaPropertyWidget::className(),
+                    '\app\properties\handlers\textArea\TextAreaProperty',
                 ],
             ]
         );
@@ -2264,7 +2249,6 @@ class m141023_084857_init extends Migration
         $this->dropTable(OrderTransaction::tableName());
         $this->dropTable(OrderItem::tableName());
         $this->dropTable(Order::tableName());
-        $this->dropTable(Cart::tableName());
         $this->dropTable(SubscribeEmail::tableName());
         $this->dropTable(CategoryGroupRouteTemplates::tableName());
         $this->dropTable('{{%product_category}}');
