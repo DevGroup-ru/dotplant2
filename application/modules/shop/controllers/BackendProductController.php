@@ -3,13 +3,8 @@
 namespace app\modules\shop\controllers;
 
 use app\backend\actions\PropertyHandler;
-<<<<<<< HEAD:application/backend/controllers/ProductController.php
-use app\models\Category;
-use app\models\Config;
-=======
 use app\backend\components\BackendController;
 use app\modules\shop\models\Category;
->>>>>>> newOrder:application/modules/shop/controllers/BackendProductController.php
 use app\modules\image\models\Image;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
