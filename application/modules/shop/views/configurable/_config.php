@@ -9,21 +9,23 @@ use kartik\widgets\SwitchInput;
 
 ?>
 
-<div class="row">
+<div>
     <div class="col-md-6 col-sm-12">
+        <?php BackendWidget::begin(['icon' => 'shopping-cart', 'title' => Yii::t('app', 'Main settings'), 'options' => ['class' => 'visible-header']]) ?>
+
         <?= $form->field($model, 'productsPerPage') ?>
 
         <?= $form->field($model, 'searchResultsLimit') ?>
 
-        <?= $form->field($model, 'showProductsOfChildCategories')->checkbox() ?>
-
         <?= $form->field($model, 'maxProductsToCompare') ?>
 
         <?= $form->field($model, 'maxLastViewedProducts') ?>
-    </div>
-    <div class="col-md-6 col-sm-12">
 
-        <?= $form->field($model, 'filterOnlyByParentProduct')->checkbox() ?>
+        <?= $form->field($model, 'showProductsOfChildCategories')->widget(SwitchInput::className()) ?>
+
+        <?= $form->field($model, 'filterOnlyByParentProduct')->widget(SwitchInput::className()) ?>
+
+        <?php BackendWidget::end() ?>
 
     </div>
     <div class="col-md-6 col-sm-12">
