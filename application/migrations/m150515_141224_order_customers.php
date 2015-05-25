@@ -17,7 +17,6 @@ class m150515_141224_order_customers extends Migration
             [
                 'id' => Schema::TYPE_PK,
                 'user_id' => Schema::TYPE_INTEGER . ' DEFAULT 0',
-                'contragent_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'first_name' => Schema::TYPE_STRING,
                 'middle_name' => Schema::TYPE_STRING,
                 'last_name' => Schema::TYPE_STRING,
@@ -28,7 +27,8 @@ class m150515_141224_order_customers extends Migration
         $this->createTable('{{%contragent}}',
             [
                 'id' => Schema::TYPE_PK,
-                'type' => "ENUM('Individual', 'Self-employed', 'Legal entity')",
+                'customer_id' => Schema::TYPE_INTEGER . ' NOT NULL',
+                'type' => "ENUM('Individual', 'Self-employed', 'Legal entity') NOT NULL DEFAULT 'Individual'",
             ], $tableOptions);
 
         $this->createTable('{{%delivery_information}}',
@@ -187,6 +187,25 @@ class m150515_141224_order_customers extends Migration
             'triggering_type' => 'application_trigger',
         ]);
 
+        // Stage PaymentPay
+        $this->insert('{{%events}}', [
+            'owner_class_name' => 'app\modules\shop\ShopModule',
+            'event_name' => 'order_stage_paymentpay',
+            'event_class_name' => 'app\modules\shop\events\StagePaymentPay',
+            'selector_prefix' => '',
+            'event_description' => '',
+            'documentation_link' => '',
+        ]);
+        $eventId = $this->db->lastInsertID;
+        $this->insert('{{%event_handlers}}', [
+            'event_id' => $eventId,
+            'sort_order' => 0,
+            'handler_class_name' => 'app\modules\shop\helpers\BaseOrderStageHandlers',
+            'handler_function_name' => 'handleStagePaymentPay',
+            'is_active' => 1,
+            'non_deletable' => 0,
+            'triggering_type' => 'application_trigger',
+        ]);
 
         // Stage leaf Customer
         $this->insert('{{%events}}', [
@@ -243,6 +262,26 @@ class m150515_141224_order_customers extends Migration
             'sort_order' => 0,
             'handler_class_name' => 'app\modules\shop\helpers\BaseOrderStageHandlers',
             'handler_function_name' => 'handleDelivery',
+            'is_active' => 1,
+            'non_deletable' => 0,
+            'triggering_type' => 'application_trigger',
+        ]);
+
+        // Stage leaf PaymentPay
+        $this->insert('{{%events}}', [
+            'owner_class_name' => 'app\modules\shop\ShopModule',
+            'event_name' => 'order_stageleaf_payment_pay',
+            'event_class_name' => 'app\modules\shop\events\StageLeafPaymentPay',
+            'selector_prefix' => '',
+            'event_description' => '',
+            'documentation_link' => '',
+        ]);
+        $eventId = $this->db->lastInsertID;
+        $this->insert('{{%event_handlers}}', [
+            'event_id' => $eventId,
+            'sort_order' => 0,
+            'handler_class_name' => 'app\modules\shop\helpers\BaseOrderStageHandlers',
+            'handler_function_name' => 'handlePaymentPay',
             'is_active' => 1,
             'non_deletable' => 0,
             'triggering_type' => 'application_trigger',
@@ -306,7 +345,7 @@ class m150515_141224_order_customers extends Migration
 
         $this->insert('{{%order_stage}}', [
             'name' => 'payment',
-            'name_frontend' => 'Оплата',
+            'name_frontend' => 'Выбор метода оплаты',
             'name_short' => 'payment',
             'is_initial' => 0,
             'is_buyer_stage' => 1,
@@ -321,6 +360,24 @@ class m150515_141224_order_customers extends Migration
             'view' => '@app/modules/shop/views/cart/stages/payment.php',
         ]);
         $stagePayment = $this->db->lastInsertID;
+
+        $this->insert('{{%order_stage}}', [
+            'name' => 'payment pay',
+            'name_frontend' => 'Оплата',
+            'name_short' => 'payment pay',
+            'is_initial' => 0,
+            'is_buyer_stage' => 0,
+            'become_non_temporary' => 1,
+            'is_in_cart' => 0,
+            'immutable_by_user' => 0,
+            'immutable_by_manager' => 0,
+            'immutable_by_assigned' => 0,
+            'reach_goal_ym' => '',
+            'reach_goal_ga' => '',
+            'event_name' => '',
+            'view' => '@app/modules/shop/views/cart/stages/pay.php',
+        ]);
+        $stagePaymentPay = $this->db->lastInsertID;
 
         $this->insert('{{%order_stage}}', [
             'name' => 'manager approve',
@@ -366,7 +423,7 @@ class m150515_141224_order_customers extends Migration
 
         $this->insert('{{%order_stage_leaf}}', [
             'stage_from_id' => $stagePayment,
-            'stage_to_id' => $stageManagerApprove,
+            'stage_to_id' => $stagePaymentPay,
             'sort_order' => 0,
             'button_label' => 'Оплатить заказ',
             'button_css_class' => 'btn btn-success',
@@ -375,7 +432,7 @@ class m150515_141224_order_customers extends Migration
             'assign_to_role' => null,
             'notify_new_assigned_user' => 0,
             'role_assignment_policy' => 'random',
-            'event_name' => 'order_stageleaf_payment_choose',
+            'event_name' => 'order_stageleaf_payment_pay',
         ]);
 
     }
@@ -400,7 +457,6 @@ class m150515_141224_order_customers extends Migration
         $this->addColumn('{{%order}}', 'shipping_option_id', 'INT UNSIGNED DEFAULT 0 AFTER `order_stage_id`');
         $this->addColumn('{{%order}}', 'shipping_price', 'FLOAT DEFAULT \'0\' AFTER `total_price`');
         $this->addColumn('{{%order}}', 'total_price_with_shipping', 'FLOAT DEFAULT \'0\' AFTER `shipping_price`');
-
 
         return true;
     }

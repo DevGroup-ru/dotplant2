@@ -49,7 +49,7 @@
     <?= $form->field($model, 'assign_to_user_id'); ?>
     <?= $form->field($model, 'assign_to_role'); ?>
     <?= $form->field($model, 'notify_new_assigned_user')->checkbox(); ?>
-    <?= $form->field($model, 'role_assignment_policy'); ?>
+    <?= $form->field($model, 'role_assignment_policy')->dropDownList(['random' => Yii::t('app', 'Random'), 'fair_distribution' => Yii::t('app', 'Fair distribution'), 'last_picked_from_role' => Yii::t('app', 'Last picked from role')]); ?>
     <?= $form->field($model, 'event_name')->dropDownList($events); ?>
 
 <?php

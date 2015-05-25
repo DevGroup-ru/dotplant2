@@ -13,9 +13,10 @@ use Yii;
  * This is the model class for table "{{%contragent}}".
  *
  * @property integer $id
+ * @property integer $customer_id
  * @property string $type
  * Relations:
- * @property Customer[] $customers
+ * @property Customer $customer
  * @property DeliveryInformation $deliveryInformation
  */
 class Contragent extends \yii\db\ActiveRecord
@@ -36,7 +37,10 @@ class Contragent extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type'], 'string']
+            [['customer_id'], 'integer'],
+            [['type'], 'string'],
+            [['customer_id', 'type'], 'required'],
+            [['type'], 'default', 'value' => 'Individual'],
         ];
     }
 
@@ -63,9 +67,9 @@ class Contragent extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getCustomers()
+    public function getCustomer()
     {
-        return $this->hasMany(Customer::className(), ['contragent_id' => 'id']);
+        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
     }
 
     public function getDeliveryInformation()
@@ -83,9 +87,11 @@ class Contragent extends \yii\db\ActiveRecord
         return $this->propertyGroup;
     }
 
-    public static function createEmptyContragent()
+    public static function createEmptyContragent($customer_id = null)
     {
         $model = new static();
+        $model->customer_id = $customer_id;
+        $model->loadDefaultValues();
 
         $groups = PropertyGroup::getForObjectId($model->getObject()->id, true);
         $group = array_shift($groups);

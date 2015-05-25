@@ -25,20 +25,30 @@ use app\properties\AbstractModel;
             }
         ?>
 
+        <?= \yii\helpers\Html::dropDownList('ContragentId', 0, array_reduce($customer->contragents,
+            function ($result, $item)
+            {
+                /** @var \app\modules\shop\models\Contragent $item */
+                $result[$item->id] = $item->type;
+                return $result;
+            }, [0 => 'Новый контрагент'])
+        ); ?>
+
         <div class="contragent" data-visible="hide">
         <?php
-//            $newContragent = new \app\modules\shop\models\Contragent();
-//            $newContragent->setAbstractModel($contragent_abstract_model);
-//            foreach ($contragent_abstract_model->attributes() as $attr) {
-//                echo $form->field($contragent_abstract_model, $attr);
-//            }
+            $newContragent = \app\modules\shop\models\Contragent::createEmptyContragent($customer->id);
+            echo $form->field($newContragent, 'type')->dropDownList(['Individual' => 'Individual', 'Self-employed' => 'Self-employed', 'Legal entity' => 'Legal entity']);
+            $abstractModel = $newContragent->getAbstractModel();
+            foreach ($abstractModel->attributes() as $attr) {
+                echo $form->field($abstractModel, $attr);
+            }
         ?>
         </div>
 
         <?php
             foreach ($contragents as $contragent) {
                 echo '<div class="contragent" data-visible="hide">';
-                echo $form->field($contragent, 'type');
+                echo \yii\helpers\Html::tag('div', $contragent->type);
                 $abstractModel = $contragent->getAbstractModel();
                 $abstractModel->setArrayMode(false);
                 foreach ($abstractModel->attributes() as $attr) {

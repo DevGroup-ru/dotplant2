@@ -14,7 +14,6 @@ use Yii;
  *
  * @property integer $id
  * @property integer $user_id
- * @property integer $contragent_id
  * @property string $first_name
  * @property string $middle_name
  * @property string $last_name
@@ -42,8 +41,8 @@ class Customer extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'contragent_id'], 'integer'],
-            [['contragent_id', 'user_id', 'first_name'], 'required'],
+            [['user_id'], 'integer'],
+            [['user_id', 'first_name'], 'required'],
             [['first_name', 'middle_name', 'last_name', 'email', 'phone'], 'string', 'max' => 255],
             [['email'], 'email'],
 
@@ -58,7 +57,6 @@ class Customer extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'user_id' => Yii::t('app', 'User ID'),
-            'contragent_id' => Yii::t('app', 'Contragent ID'),
             'first_name' => Yii::t('app', 'First Name'),
             'middle_name' => Yii::t('app', 'Middle Name'),
             'last_name' => Yii::t('app', 'Last Name'),
@@ -81,13 +79,22 @@ class Customer extends \yii\db\ActiveRecord
 
     public function getContragents()
     {
-        return $this->hasMany(Contragent::className(), ['id' => 'contragent_id']);
+        return $this->hasMany(Contragent::className(), ['customer_id' => 'id']);
     }
 
     public function getContragent()
     {
-        return $this->hasOne(Contragent::className(), ['id' => 'contragent_id'])
+        return $this->hasOne(Contragent::className(), ['customer_id' => 'id'])
             ->orderBy(['id' => SORT_ASC]);
+    }
+
+    public function getContragentById($id = null)
+    {
+        if (empty($id)) {
+            return null;
+        }
+
+        return Contragent::findOne(['customer_id' => $this->id, 'id' => $id]);
     }
 
     /**
@@ -99,11 +106,11 @@ class Customer extends \yii\db\ActiveRecord
         return intval($id) > 0 ? static::findOne(['user_id' => $id]) : null;
     }
 
-    public static function createEmptyCustomer($user_id = 0, $contragent_id = null)
+    public static function createEmptyCustomer($user_id = 0)
     {
         $model = new static();
-            $model->user_id = $user_id;
-            $model->contragent_id = $contragent_id;
+        $model->user_id = $user_id;
+        $model->loadDefaultValues();
 
         $groups = PropertyGroup::getForObjectId($model->getObject()->id, true);
         $group = array_shift($groups);

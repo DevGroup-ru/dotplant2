@@ -361,6 +361,10 @@ class Order extends \yii\db\ActiveRecord
             $model = self::create();
             self::$order = $model;
             Yii::$app->session->set('orderId', $model->id);
+
+            $sessionOrders = Yii::$app->session->get('orders', []);
+            $sessionOrders[] = $model->id;
+            Yii::$app->session->set('orders', $sessionOrders);
         }
         Yii::endProfile("GetOrder");
         return self::$order;

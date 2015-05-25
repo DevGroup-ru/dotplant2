@@ -274,7 +274,7 @@ class CartController extends Controller
     public function actionStage()
     {
         $order = $this->loadOrder(false, false);
-        if (empty($order)) {
+        if (empty($order) || empty($order->stage) || 1 === intval($order->stage->immutable_by_user)) {
             return $this->redirect(Url::to(['index']));
         }
 

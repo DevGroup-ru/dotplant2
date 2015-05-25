@@ -18,6 +18,7 @@ use yii\db\Expression;
  * @property float $total_sum
  * @property string $params
  * @property string $result_data
+ * Relations:
  * @property Order $order
  * @property PaymentType $paymentType
  */
@@ -29,6 +30,8 @@ class OrderTransaction extends ActiveRecord
     const TRANSACTION_ROLLBACK = 4;
     const TRANSACTION_SUCCESS = 5;
     const TRANSACTION_ERROR = 6;
+
+    private static $lastByOrder = [];
 
     /**
      * @inheritdoc
@@ -70,11 +73,17 @@ class OrderTransaction extends ActiveRecord
         ];
     }
 
+    /**
+     * @return Order
+     */
     public function getOrder()
     {
         return $this->hasOne(Order::className(), ['id' => 'order_id']);
     }
 
+    /**
+     * @return PaymentType
+     */
     public function getPaymentType()
     {
         return $this->hasOne(PaymentType::className(), ['id' => 'payment_type_id']);
@@ -109,4 +118,36 @@ class OrderTransaction extends ActiveRecord
             $this->order->save(true, ['order_status_id']);
         }
     }
+
+    public static function findLastByOrder(Order $order)
+    {
+        if (isset(static::$lastByOrder[$order->id])) {
+            $model = static::$lastByOrder[$order->id];
+        } else {
+            $model = static::find()->where([
+                'order_id' => $order->id,
+                'payment_type_id' => $order->payment_type_id,
+
+            ])
+                ->andWhere(['not in', 'status', [static::TRANSACTION_ROLLBACK, static::TRANSACTION_ERROR, static::TRANSACTION_SUCCESS]])
+                ->orderBy(['id' => SORT_DESC])->one();
+
+            static::$lastByOrder[$order->id] = $model;
+        }
+
+        return $model;
+    }
+
+    public static function createForOrder(Order $order)
+    {
+        $order->calculate();
+        $model = new static();
+            $model->order_id = $order->id;
+            $model->payment_type_id = $order->payment_type_id;
+            $model->status = static::TRANSACTION_START;
+            $model->total_sum = $order->total_price;
+
+        return $model->save() ? $model : null;
+    }
 }
+?>

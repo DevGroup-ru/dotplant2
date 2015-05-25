@@ -85,6 +85,10 @@ class PaymentType extends ActiveRecord
         ];
     }
 
+    /**
+     * @return AbstractPayment
+     * @throws UnknownClassException
+     */
     public function getPayment()
     {
         if (is_null($this->payment)) {
@@ -101,4 +105,19 @@ class PaymentType extends ActiveRecord
         }
         return $this->payment;
     }
+
+    /**
+     * @param int $isActive
+     * @return PaymentType[]|array
+     */
+    public static function getPaymentTypes($isActive = 1)
+    {
+        $models = static::find()->orderBy(['sort' => SORT_ASC, 'id' => SORT_ASC]);
+        if (null !== $isActive) {
+            $models->andWhere(['active' => $isActive]);
+        }
+
+        return $models->all();
+    }
 }
+?>

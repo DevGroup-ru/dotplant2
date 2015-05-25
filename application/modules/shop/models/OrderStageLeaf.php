@@ -29,8 +29,6 @@ use yii\data\ActiveDataProvider;
  */
 class OrderStageLeaf extends \yii\db\ActiveRecord
 {
-    public $stage_from_id_repeat = null;
-
     /**
      * @inheritdoc
      */
@@ -49,7 +47,6 @@ class OrderStageLeaf extends \yii\db\ActiveRecord
             [['stage_from_id', 'stage_to_id', 'sort_order', 'notify_buyer', 'notify_manager', 'assign_to_user_id', 'notify_new_assigned_user'], 'integer'],
             [['role_assignment_policy'], 'string'],
             [['button_label', 'button_css_class', 'buyer_notification_view', 'manager_notification_view', 'assign_to_role', 'event_name'], 'string', 'max' => 255],
-            [['stage_from_id'], 'compare', 'operator' => '!=', 'message' => 'Значение '.Yii::t('app', 'Stage From ID').' не должно быть равно '.Yii::t('app', 'Stage To ID')],
         ];
     }
 
@@ -97,21 +94,20 @@ class OrderStageLeaf extends \yii\db\ActiveRecord
         return $dataProvider;
     }
 
-    public function beforeValidate()
-    {
-        $this->stage_from_id_repeat = $this->stage_to_id;
-        return parent::beforeValidate();
-    }
-
+    /**
+     * @return OrderStage|null
+     */
     public function getStageFrom()
     {
         return $this->hasOne(OrderStage::className(), ['id' => 'stage_from_id']);
     }
 
+    /**
+     * @return OrderStage|null
+     */
     public function getStageTo()
     {
         return $this->hasOne(OrderStage::className(), ['id' => 'stage_to_id']);
     }
-
 }
 ?>

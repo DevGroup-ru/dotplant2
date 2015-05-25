@@ -73,6 +73,10 @@ class OrderStage extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @param $params
+     * @return ActiveDataProvider
+     */
     public function search($params)
     {
         $query = static::find();
@@ -95,11 +99,18 @@ class OrderStage extends \yii\db\ActiveRecord
         return $dataProvider;
     }
 
+    /**
+     * @return OrderStage|null
+     */
     public static function getInitialStage()
     {
         return static::findOne(['is_initial' => 1]);
     }
 
+    /**
+     * @param bool $insert
+     * @return bool
+     */
     public function beforeSave($insert)
     {
         $result = parent::beforeSave($insert);
@@ -109,12 +120,18 @@ class OrderStage extends \yii\db\ActiveRecord
         return $result;
     }
 
+    /**
+     * @return OrderStageLeaf[]
+     */
     public function getNextLeafs()
     {
         return $this->hasMany(OrderStageLeaf::className(), ['stage_from_id' => 'id'])
             ->addOrderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC]);
     }
 
+    /**
+     * @return OrderStageLeaf[]
+     */
     public function getPrevLeafs()
     {
         return $this->hasMany(OrderStageLeaf::className(), ['stage_to_id' => 'id'])
