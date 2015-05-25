@@ -9,13 +9,15 @@ use yii\bootstrap\Tabs;
 
 ?>
 
-<div class="row">
+<div>
     <div class="col-md-6 col-sm-12">
+        <?php BackendWidget::begin(['title' => Yii::t('app', 'Main settings'), 'options' => ['class' => 'visible-header']]); ?>
         <?=$form->field($model, 'useWatermark')->widget(\kartik\widgets\SwitchInput::className())?>
         <?=$form->field($model, 'defaultThumbnailSize')?>
         <?=$form->field($model, 'noImageSrc')?>
         <?=$form->field($model, 'thumbnailsDirectory')?>
         <?=$form->field($model, 'watermarkDirectory')?>
+        <?php BackendWidget::end() ?>
     </div>
     <div class="col-md-6 col-sm-12" id="fs-config">
         <?php
