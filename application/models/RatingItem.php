@@ -80,12 +80,12 @@ class RatingItem extends \yii\db\ActiveRecord
      * @param bool $fetch
      * @return array|\yii\db\ActiveRecord[]|static
      */
-    public static function getGroupsAll($fetch = true, $as_array = false)
+    public static function getGroupsAll($isFetched = true, $asArray = false)
     {
         $cache_key = 'RatingItem:Groups';
         $cache = Yii::$app->cache->get($cache_key);
-        if (true === $fetch
-            && true === $as_array
+        if (true === $isFetched
+            && true === $asArray
             && false !== $cache) {
             return $cache;
         }
@@ -93,18 +93,15 @@ class RatingItem extends \yii\db\ActiveRecord
         $query = static::find()
             ->distinct()
             ->groupBy('rating_group')
-            ->orderBy(['rating_group' => SORT_ASC]);
+            ->orderBy(['rating_group' => SORT_ASC])
+            ->asArray(boolval($asArray));
 
-        if (true === $as_array) {
-            $query->asArray();
-        }
-
-        if (false === $fetch) {
+        if (false === $isFetched) {
             return $query;
         }
 
         $result = $query->all();
-        if (true === $as_array) {
+        if (true === $asArray) {
             Yii::$app->cache->set(
                 $cache_key,
                 $result,
@@ -143,41 +140,32 @@ class RatingItem extends \yii\db\ActiveRecord
      * @param bool $as_array
      * @return array|null|\yii\db\ActiveQuery|\yii\db\ActiveRecord|\yii\db\ActiveRecord[]
      */
-    public static function getItemsByAttributes($attributes = [], $fetch = true, $as_array = false)
+    public static function getItemsByAttributes($attributes = [], $isFetched = true, $asArray = false)
     {
         if (!is_array($attributes)) {
             return [];
         }
 
-        $attributes_exists = array_intersect(static::attributes(), array_keys($attributes));
-        if (empty($attributes_exists)) {
-            return [];
-        }
-
         $cache_key = 'RatingItem:'.Json::encode($attributes);
         $cache = Yii::$app->cache->get($cache_key);
-        if (true === $fetch
-            && true === $as_array
+        if (true === $isFetched
+            && true === $asArray
             && false !== $cache) {
             return $cache;
         }
 
         $query = static::find();
-        foreach ($attributes_exists as $attr) {
-            $query->andWhere([$attr => $attributes[$attr]]);
+        foreach ($attributes as $attr => $value) {
+            $query->andWhere([$attr => $value]);
         }
-        $query->orderBy(['id' => SORT_ASC]);
+        $query->orderBy(['id' => SORT_ASC])->asArray(boolval($asArray));
 
-        if (true === $as_array) {
-            $query->asArray();
-        }
-
-        if (false === $fetch) {
+        if (false === $isFetched) {
             return $query;
         }
 
         $result = $query->all();
-        if (true === $as_array) {
+        if (true === $asArray) {
             Yii::$app->cache->set(
                 $cache_key,
                 $result,
@@ -199,14 +187,10 @@ class RatingItem extends \yii\db\ActiveRecord
      * @param bool $as_array
      * @return array|null|\yii\db\ActiveQuery|\yii\db\ActiveRecord|\yii\db\ActiveRecord[]
      */
-    public static function getOneItemByAttributes($attributes = [], $as_array = false)
+    public static function getOneItemByAttributes($attributes = [], $asArray = false)
     {
-        $query = static::getItemsByAttributes($attributes, false);
-
-        if (true === $as_array) {
-            $query->asArray();
-        }
-
+        $query = static::getItemsByAttributes($attributes, false, $asArray);
         return $query->one();
     }
 }
+?>
