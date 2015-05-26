@@ -798,14 +798,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         }
 
         $cacheKey = 'ProductsCount:' . implode(
-            '_',
-            [
-                md5($query->createCommand()->getRawSql()),
-                $limit ? '1' : '0',
-                $force_limit ? '1' : '0',
-                $productsPerPage
-            ]
-        ) . $cacheKeyAppend;
+                '_',
+                [
+                    md5($query->createCommand()->getRawSql()),
+                    $limit ? '1' : '0',
+                    $force_limit ? '1' : '0',
+                    $productsPerPage
+                ]
+            ) . $cacheKeyAppend;
 
 
         $pages = null;

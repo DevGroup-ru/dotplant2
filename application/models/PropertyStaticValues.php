@@ -9,6 +9,7 @@ use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "property_static_values".

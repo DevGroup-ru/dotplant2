@@ -15,4 +15,15 @@ class ConfigModule extends BaseModule
     public $controllerMap = [
         'backend' => 'app\modules\config\backend\ConfigController',
     ];
+
+    /**
+     *
+     */
+    public function init()
+    {
+        parent::init();
+        if (Yii::$app instanceof \yii\console\Application) {
+            $this->controllerMap = [];
+        }
+    }
 }

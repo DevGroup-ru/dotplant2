@@ -52,4 +52,18 @@ class BackendModule extends Module implements BootstrapInterface
             }
         );
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'configurableModule' => [
+                'class' => 'app\modules\config\behaviors\ConfigurableModuleBehavior',
+                'configurationView' => '@app/backend/views/configurable/_config',
+                'configurableModel' => 'app\backend\models\ConfigConfigurationModel',
+            ]
+        ];
+    }
 }
