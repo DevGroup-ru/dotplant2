@@ -8,7 +8,9 @@ use app\modules\shop\helpers\PriceHelper;
 use app\modules\shop\events\OrderStageEvent;
 use app\modules\shop\events\OrderStageLeafEvent;
 use app\modules\shop\models\Currency;
+use app\modules\shop\models\DiscountCode;
 use app\modules\shop\models\Order;
+use app\modules\shop\models\OrderCode;
 use app\modules\shop\models\OrderItem;
 use app\modules\shop\models\OrderStage;
 use app\modules\shop\models\OrderStageLeaf;
@@ -262,9 +264,29 @@ class CartController extends Controller
     {
         $model = $this->loadOrder(false, false);
         if (!is_null($model)) {
+            $orderCode = OrderCode::find()
+                ->where(
+                    [
+                        'order_id' => $model->id,
+                        'status' => 1
+                    ]
+                )
+                ->one();
+
+            if ($orderCode === null) {
+                $orderCode = new OrderCode();
+
+                if (Yii::$app->request->isPost) {
+                    $orderCode->load(Yii::$app->request->post());
+                    $orderCode->order_id = $model->id;
+                    if ($orderCode->save()) {
+                        $this->refresh();
+                    }
+                }
+            }
             $model->calculate();
         }
-        return $this->render('index', ['model' => $model]);
+        return $this->render('index', ['model' => $model, 'orderCode' => $orderCode]);
     }
 
     /**

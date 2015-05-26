@@ -158,7 +158,7 @@ class BackendDiscountController extends BackendController
         $discountType = DiscountType::findOne($typeId);
         $class = new $discountType->class;
         /*** @var $class AbstractDiscountType */
-        $class::deleteAll(['id' => $id]);
+        $class::find()->where(['id' => $id])->one()->delete();
         $this->redirect($returnUrl);
     }
 

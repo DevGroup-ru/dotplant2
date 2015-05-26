@@ -22,20 +22,30 @@ class ProductDiscount extends AbstractDiscountType
 
     public function getProduct()
     {
-        return $this->hasOne(Product::className(),['id'=>'product_id']);
+        return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
 
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
-        $result = false;
-        if (intval(self::find()->where(['discount_id'=>$discount->id])->count()) === 0)
-        {
+        $orderAttributes = $order->abstractModel->getAttributes();
+        if (intval(self::find()->where(['discount_id' => $discount->id])->count()) === 0) {
             $result = true;
-        } elseif (intval(self::find()->where(['discount_id'=>$discount->id, 'product_id'=>$product->id])->count()) === 1) {
-            $result = true;
+        } else {
+            $query = self::find()->where(['discount_id' => $discount->id]);
+
+            if (isset($orderAttributes['promocode']) && $orderAttributes['promocode']) {
+                $query->andWhere(
+                    [
+                        'code' => $orderAttributes['promocode']
+                    ]
+                );
+            }
+
+            $result = $query->count() == 1;
         }
         return $result;
     }
+
     /**
      * @inheritdoc
      */
