@@ -1,14 +1,14 @@
 <?php
 
-namespace app\data\components\commerceml;
+namespace app\modules\data\components\commerceml;
 
 use app\components\Helper;
-use app\data\models\CommercemlGuid;
-use app\models\Category;
+use app\modules\data\models\CommercemlGuid;
+use app\modules\shop\models\Category;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\models\Property;
 use app\models\PropertyStaticValues;
 use app\properties\AbstractPropertyEavModel;

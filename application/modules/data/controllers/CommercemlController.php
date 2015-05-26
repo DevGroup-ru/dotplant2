@@ -1,11 +1,11 @@
 <?php
 
-namespace app\data\controllers;
+namespace app\modules\data\controllers;
 
-use app\backend\assets\backend\KoAsset;
+use app\backend\assets\KoAsset;
 use app\backgroundtasks\helpers\BackgroundTasks;
-use app\data\components\commerceml\XmlFileReader;
-use app\data\models\CommercemlGuid;
+use app\modules\data\components\commerceml\XmlFileReader;
+use app\modules\data\models\CommercemlGuid;
 use app\models\PropertyGroup;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
@@ -44,7 +44,7 @@ class CommercemlController extends Controller
             $uploaded = UploadedFile::getInstancesByName('cmlFile');
             $files = [];
             $date = time();
-            $dir = \Yii::$app->getModule('data')->importDir . '/';
+            $dir = \Yii::$app->getModule('data')->importDirPath . '/';
             if (!empty($uploaded)) {
                 foreach ($uploaded as $k => $file) {
                     if ($file->saveAs($dir . "cml{$date}_{$k}.xml")) {

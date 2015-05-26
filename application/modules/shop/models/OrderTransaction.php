@@ -31,6 +31,15 @@ class OrderTransaction extends ActiveRecord
     const TRANSACTION_SUCCESS = 5;
     const TRANSACTION_ERROR = 6;
 
+    private $statusTransaction = [
+        OrderTransaction::TRANSACTION_START => 'Transaction start',
+        OrderTransaction::TRANSACTION_CHECKING => 'Transaction checking',
+        OrderTransaction::TRANSACTION_TIMEOUT => 'Transaction timeout',
+        OrderTransaction::TRANSACTION_ROLLBACK => 'Transaction rollback',
+        OrderTransaction::TRANSACTION_SUCCESS => 'Transaction success',
+        OrderTransaction::TRANSACTION_ERROR => 'Transaction error',
+    ];
+
     private static $lastByOrder = [];
 
     /**
@@ -148,6 +157,12 @@ class OrderTransaction extends ActiveRecord
             $model->total_sum = $order->total_price;
 
         return $model->save() ? $model : null;
+    }
+
+    public function getTransactionStatus($asLiteral = true)
+    {
+        return !isset($this->statusTransaction[$this->status]) ? '' :
+            ($asLiteral ? Yii::t('app', $this->statusTransaction[$this->status]) : $this->status);
     }
 }
 ?>

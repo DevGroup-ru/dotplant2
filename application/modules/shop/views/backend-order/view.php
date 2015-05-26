@@ -312,6 +312,13 @@ if ($sum_transactions < $model->total_price):
                     ],
                     'columns' => [
                         'id',
+                        [
+                            'attribute' => 'status',
+                            'value' => function ($model, $key, $index, $column) {
+                                /** @var \app\modules\shop\models\OrderTransaction $model */
+                                return $model->getTransactionStatus();
+                            },
+                        ],
                         'start_date',
                         'end_date',
                         'total_sum',

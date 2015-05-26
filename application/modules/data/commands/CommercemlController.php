@@ -1,8 +1,8 @@
 <?php
 
-namespace app\data\commands;
+namespace app\modules\data\commands;
 
-use app\data\components\commerceml\XmlFileReader;
+use app\modules\data\components\commerceml\XmlFileReader;
 use yii\base\InvalidParamException;
 use yii\console\Controller;
 use yii\helpers\Json;

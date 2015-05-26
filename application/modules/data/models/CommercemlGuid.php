@@ -1,8 +1,8 @@
 <?php
 
-namespace app\data\models;
+namespace app\modules\data\models;
 
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\models\Property;
 use Yii;
 
@@ -14,6 +14,9 @@ use Yii;
  * @property string $name
  * @property integer $model_id
  * @property string $type
+ * Relations:
+ * @property Property $property
+ * @property Product $product
  */
 class CommercemlGuid extends \yii\db\ActiveRecord
 {
@@ -51,15 +54,20 @@ class CommercemlGuid extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @return Property|null
+     */
     public function getProperty()
     {
         return $this->hasOne(Property::className(), ['id' => 'model_id']);
     }
 
+    /**
+     * @return Product|null
+     */
     public function getProduct()
     {
         return $this->hasOne(Product::className(), ['id' => 'model_id']);
     }
-
 }
 ?>
