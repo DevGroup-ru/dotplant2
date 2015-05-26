@@ -39,6 +39,9 @@ If you used the own template of the ReviewsWidget , change the action of form
 ### Data
 All changes in DB contained in m150512_060716_data_module_move  migrations
 
+### robots.txt
+Save content of robots.txt in DB (/seo/manage/robots).
+
 ### Images
 
 Images subsystem splited to module `Images`. To migrate do this steps:

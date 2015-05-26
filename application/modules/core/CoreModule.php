@@ -63,4 +63,16 @@ class CoreModule extends BaseModule implements BootstrapInterface
             );
         }
     }
+
+    /**
+     *
+     */
+    public function init()
+    {
+        parent::init();
+        if (Yii::$app instanceof \yii\console\Application) {
+            $this->controllerMap = [];
+        }
+    }
 }
+?>

@@ -24,7 +24,7 @@ Therefore personalization core consists of:
 - Personalization backend for each of subsystems:
 	+ Accepts and processes data
 	+ Can inject code and/or javascript into the specified view on event or act as decorator(**Warning! Widgets decorators needed here**)
-	+ Can manipulate core queries through events(for example reranking products on product/list)
+	+ Can manipulate core queries through events(for example reranking products on shop/product/list)
 
 ## Recommendation framework
 

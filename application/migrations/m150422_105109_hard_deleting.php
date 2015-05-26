@@ -1,9 +1,9 @@
 <?php
 
-use app\models\Category;
+use app\modules\shop\models\Category;
 use app\models\Config;
 use app\modules\page\models\Page;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use yii\db\Migration;
 
 class m150422_105109_hard_deleting extends Migration

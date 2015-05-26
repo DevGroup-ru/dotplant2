@@ -3,10 +3,10 @@
 namespace app\modules\seo\controllers;
 
 use app\backend\components\BackendController;
-use app\models\Category;
+use app\modules\shop\models\Category;
 use app\models\Order;
 use app\models\OrderItem;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\modules\seo\models\Config;
 use app\modules\seo\models\Counter;
 use app\modules\seo\models\Meta;

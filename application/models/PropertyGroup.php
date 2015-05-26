@@ -155,10 +155,18 @@ class PropertyGroup extends ActiveRecord
         return $this->hasMany(Property::className(), ['property_group_id' => 'id'])->orderBy('sort_order');
     }
 
+    /**
+     * @param $object_id
+     * @param bool $withProperties
+     * @return PropertyGroup[]
+     */
     public static function getForObjectId($object_id, $withProperties = false)
     {
-        if (!isset(static::$groups_by_object_id[$object_id])) {
+        if (null === $object_id) {
+            return [];
+        }
 
+        if (!isset(static::$groups_by_object_id[$object_id])) {
             $cacheKey = 'PropertyGroup:objectId:'.$object_id;
             static::$groups_by_object_id[$object_id] = Yii::$app->cache->get($cacheKey);
             if (!is_array(static::$groups_by_object_id[$object_id])) {
@@ -186,7 +194,6 @@ class PropertyGroup extends ActiveRecord
                         }
                     }
 
-
                     Yii::$app->cache->set(
                         $cacheKey,
                         static::$groups_by_object_id[$object_id],
@@ -199,8 +206,6 @@ class PropertyGroup extends ActiveRecord
                     );
                 }
             }
-
-
         }
         return static::$groups_by_object_id[$object_id];
     }

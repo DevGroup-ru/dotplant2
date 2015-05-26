@@ -41,7 +41,7 @@ class m150425_105123_event_system extends Migration
                 'owner_class_name' => 'app\modules\shop\ShopModule',
                 'event_name' => 'product_showed_in_list',
                 'event_class_name' => 'app\\modules\\shop\\events\\ProductShowedInList',
-                'event_description' => 'Product is showed in product listing(product/list)',
+                'event_description' => 'Product is showed in product listing(shop/product/list)',
                 'documentation_link' => '',
             ]
         );
@@ -52,7 +52,7 @@ class m150425_105123_event_system extends Migration
                 'owner_class_name' => 'app\modules\shop\ShopModule',
                 'event_name' => 'product_category_listed',
                 'event_class_name' => 'app\\modules\\shop\\events\\ProductCategoryListed',
-                'event_description' => 'Category is listed by product/list as last_category_id.',
+                'event_description' => 'Category is listed by shop/product/list as last_category_id.',
                 'documentation_link' => '',
             ]
         );

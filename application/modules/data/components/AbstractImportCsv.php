@@ -4,7 +4,7 @@ namespace app\modules\data\components;
 
 use app\models\Property;
 use app\models\Object;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use yii\db\Expression;
 use app\models\PropertyStaticValues;
 use app\models\ObjectStaticValues;

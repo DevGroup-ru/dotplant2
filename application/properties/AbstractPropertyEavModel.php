@@ -16,11 +16,6 @@ class AbstractPropertyEavModel extends ActiveRecord
 {
     static private $tableName = null;
 
-    function __destruct()
-    {
-        static::setTableName(null);
-    }
-
     public static function tableName()
     {
         return '{{%'.static::$tableName.'}}';
@@ -53,6 +48,23 @@ class AbstractPropertyEavModel extends ActiveRecord
             [['value'], 'string'],
             [['value'], 'default', 'value' => ''],
         ];
+    }
+
+    public static function findByModelId($model_id = null, $key = null, $property_group = null)
+    {
+        if (null === $model_id) {
+            return [];
+        }
+
+        $query = static::find()->where(['object_model_id' => $model_id]);
+        if (null !== $key) {
+            $query->andWhere(['key' => $key]);
+        }
+        if (null !== $property_group) {
+            $query->andWhere(['property_group_id' => $property_group]);
+        }
+
+        return $query->all();
     }
 }
 ?>

@@ -50,15 +50,15 @@ class DynamicContent extends ActiveRecord
                 ['apply_if_last_category_id'],
                 'required',
                 'when' => function ($model) {
-                    return $model->route === 'product/list';
+                    return $model->route === 'shop/product/list';
                 },
                 'whenClient' => "function (attribute, value) {
-                    return $('#dynamiccontent-route').val() === 'product/list';
+                    return $('#dynamiccontent-route').val() === 'shop/product/list';
                 }"
             ],
             [['content_block_name'], 'string', 'max' => 80],
             [['content_block_name'], 'default', 'value' => 'bottom_text'],
-            [['route'], 'default', 'value' => 'product/list'],
+            [['route'], 'default', 'value' => 'shop/product/list'],
         ];
     }
 

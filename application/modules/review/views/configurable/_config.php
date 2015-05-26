@@ -4,10 +4,13 @@
 /** @var \app\backend\components\ActiveForm $form */
 /** @var \app\modules\review\models\ConfigConfigurationModel $model */
 
+use app\backend\widgets\BackendWidget;
+
 ?>
 
 <div class="row">
     <div class="col-md-6 col-sm-12">
+        <?php BackendWidget::begin(['title' => Yii::t('app', 'Main settings'), 'options' => ['class' => 'visible-header']]); ?>
         <?= $form->field($model, 'email') ?>
         <?=
             $form
@@ -23,5 +26,6 @@
                 ->widget(\kartik\widgets\SwitchInput::className())
         ?>
         <?= $form->field($model, 'emailTemplate[Page]')->label(Yii::t('app', 'Page email notification template')) ?>
+        <?php BackendWidget::end() ?>
     </div>
 </div>

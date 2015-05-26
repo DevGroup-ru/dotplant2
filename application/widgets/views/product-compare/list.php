@@ -14,7 +14,7 @@ if (is_array($prods)) {
         }
         $url = Url::to(
             [
-                'product/show',
+                '/shop/product/show',
                 'model' => $prod,
                 'last_category_id' => $prod->main_category_id,
                 'category_group_id' => $prod->category->category_group_id,

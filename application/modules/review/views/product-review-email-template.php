@@ -1,7 +1,7 @@
 <?php
 /** @var \app\modules\review\models\Review $review */
 
-use app\models\Product;
+use app\modules\shop\models\Product;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -60,7 +60,7 @@ use yii\helpers\Url;
                 'tr',
                 Html::tag('th', 'Продукт', ['style' => 'text-align: left;']) . Html::tag(
                     'td',
-                    Html::a($obj->name, Url::to(['/product/show', 'model' => $obj], true))
+                    Html::a($obj->name, Url::to(['/shop/product/show', 'model' => $obj], true))
                 ),
                 ['style' => 'background: #f5f5f5;']
             );

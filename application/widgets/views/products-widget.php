@@ -11,7 +11,7 @@ use yii\helpers\Url;
                 'product' => $product,
                 'url' => Url::toRoute(
                     [
-                        'product/show',
+                        '/shop/product/show',
                         'model' => $product,
                         'category_group_id' => $category_group_id,
                     ]

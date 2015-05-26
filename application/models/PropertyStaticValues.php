@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use app\traits\SortModels;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
@@ -23,6 +25,11 @@ class PropertyStaticValues extends ActiveRecord
     public static $identity_map_by_property_id = [];
     private static $identity_map = [];
 
+    use SortModels;
+
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -34,7 +41,7 @@ class PropertyStaticValues extends ActiveRecord
                 'value' => 0,
             ],
             [
-                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+                'class' => ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -183,6 +190,14 @@ class PropertyStaticValues extends ActiveRecord
                     'name' => SORT_ASC
                 ]
             )->asArray()->all();
+            $tags = array_reduce($values, function($carry, $item) {
+                $carry[] = ActiveRecordHelper::getObjectTag(PropertyStaticValues::className(), $item['id']);
+            }, [
+                ActiveRecordHelper::getObjectTag(
+                    Property::className(),
+                    $property_id
+                )
+            ]);
             if (null !== $values) {
                 Yii::$app->cache->set(
                     $cacheKey,
@@ -190,12 +205,7 @@ class PropertyStaticValues extends ActiveRecord
                     0,
                     new TagDependency(
                         [
-                            'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(
-                                    Property::className(),
-                                    $property_id
-                                )
-                            ]
+                            'tags' => $tags,
                         ]
                     )
                 );

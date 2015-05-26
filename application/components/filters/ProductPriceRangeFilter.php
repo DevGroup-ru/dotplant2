@@ -3,7 +3,7 @@
 namespace app\components\filters;
 
 use app;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;

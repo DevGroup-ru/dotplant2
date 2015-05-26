@@ -2,7 +2,7 @@
 
 namespace app\backend\widgets;
 
-use app\models\Category;
+use app\modules\shop\models\Category;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
@@ -26,11 +26,11 @@ class JSSelectableTree extends JSTree
         $id = $this->getId();
         $this->plugins = ArrayHelper::merge($this->plugins, ['checkbox']);
         $items =[];
-        if(empty($this->selectedItems)){
+        if (empty($this->selectedItems)) {
             $parent = Category::findById(Yii::$app->request->get('parent_id'));
             do {
                 $this->selectedItems[] = $parent->id;
-            } while(is_object($parent = Category::findById($parent->parent_id)));
+            } while (is_object($parent = Category::findById($parent->parent_id)));
         }
         $this->routes['getTree'] = ArrayHelper::merge(
             $this->routes['getTree'],

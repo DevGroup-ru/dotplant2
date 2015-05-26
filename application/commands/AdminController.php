@@ -66,7 +66,7 @@ class AdminController extends Controller
      */
     public function actionClearTests()
     {
-        Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\models\Cart::tableName())->execute();
+        Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\modules\shop\models\Cart::tableName())->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\models\ErrorLog::tableName())->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\models\ErrorUrl::tableName())->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\backend\models\Notification::tableName())->execute();
