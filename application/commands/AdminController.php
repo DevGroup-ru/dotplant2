@@ -7,7 +7,7 @@ use app\backend\actions\FlushCacheConsoleAction;
 use Yii;
 use yii\console\Controller;
 use app;
-use app\models\Image;
+use app\modules\image\models\Image;
 
 /**
  * Admin commands
@@ -61,7 +61,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Clear test reviews, orders and other information
+     * Clear test review, orders and other information
      * @throws \yii\db\Exception
      */
     public function actionClearTests()

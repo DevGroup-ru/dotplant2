@@ -2,22 +2,25 @@
 
 /** @var \app\modules\config\models\Configurable $configurable */
 /** @var \app\backend\components\ActiveForm $form */
-/** @var \app\modules\user\models\ConfigConfigurableModel $model */
+/** @var \app\modules\user\models\ConfigConfigurationModel $model */
 use \app\modules\user\models\AuthClientConfig;
 use \yii\helpers\Html;
 use \kartik\icons\Icon;
+use app\backend\widgets\BackendWidget;
 
 $authClientConfigModel = new AuthClientConfig();
 
 ?>
 
-<div class="row">
-    <div class="col-md-12">
+<div>
+    <div class="col-md-6">
+        <?php BackendWidget::begin(['title' => Yii::t('app', 'Main settings'), 'options' => ['class' => 'visible-header']]); ?>
         <?= $form->field($model, 'loginSessionDuration') ?>
 
         <?= $form->field($model, 'passwordResetTokenExpire') ?>
 
         <?= $form->field($model, 'postRegistrationLayout') ?>
+        <?php BackendWidget::end() ?>
     </div>
 </div>
 

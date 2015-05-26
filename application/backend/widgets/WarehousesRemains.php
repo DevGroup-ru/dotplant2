@@ -8,6 +8,8 @@ use app;
 use yii\base\InvalidConfigException;
 use yii\base\Widget;
 use yii\caching\TagDependency;
+use app\modules\shop\models\WarehouseProduct;
+use app\modules\shop\models\Warehouse;
 
 
 /**
@@ -32,7 +34,7 @@ class WarehousesRemains extends Widget
 
         $state = $this->model->getWarehousesState();
 
-        $activeWarehousesIds = app\models\Warehouse::activeWarehousesIds();
+        $activeWarehousesIds = Warehouse::activeWarehousesIds();
         $remains = [];
         foreach ($state as $remain) {
             $remains[$remain->warehouse_id] = $remain;
@@ -45,7 +47,7 @@ class WarehousesRemains extends Widget
         if (count($activeWarehousesIds) > 0) {
             foreach ($activeWarehousesIds as $id) {
                 // create new record with default values
-                $remain = new app\models\WarehouseProduct;
+                $remain = new WarehouseProduct();
                 $remain->warehouse_id = $id;
                 $remain->product_id = $this->model->id;
                 $remain->save();

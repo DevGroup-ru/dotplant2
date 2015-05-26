@@ -229,7 +229,7 @@ $editable_formOptions = [
     </div>
 </div>
 <?php ActiveForm::end(); ?>
-<script type="x-tmpl-underscore" id="image-upload-template">
+<section style="display: none" type="x-tmpl-underscore" id="image-upload-template">
     <?php ActiveForm::begin([
         'action' => 'upload-slide',
         'options' => [
@@ -248,17 +248,17 @@ $editable_formOptions = [
         </div>
         <button type="submit" class="btn btn-primary"><?= Icon::show('upload') . ' ' . Yii::t('app', 'Upload') ?></button>
     </form>
-</script>
-<script>
-    $(function(){
-        var template_html = $("#image-upload-template").html();
+</section>
+<?php
+$script = <<< SCRIPT
+
 
         $("#slides-grid").on('click', 'a.btn-change-image', function(){
-            var $this = $(this),
-                model_id = $this.data('modelid'),
-                attribute= $this.data('attribute'),
-                template = _.template(
-                    template_html,
+            var \$this = $(this),
+                model_id = \$this.data('modelid'),
+                attribute= \$this.data('attribute'),
+                compile = _.template($("#image-upload-template").html());
+                template = compile(
                     {
                         'model_id': model_id,
                         'attribute': attribute
@@ -266,7 +266,7 @@ $editable_formOptions = [
                 )
                 ;
 
-            $this.popover({
+            \$this.popover({
                 content: template,
                 html: true,
                 'trigger': 'click'
@@ -274,5 +274,8 @@ $editable_formOptions = [
 
             return false;
         })
-    })
-</script>
+SCRIPT;
+
+$this->registerJs($script, \yii\web\View::POS_READY);
+
+?>

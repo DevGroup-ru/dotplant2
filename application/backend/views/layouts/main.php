@@ -25,7 +25,6 @@ Icon::map($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head(); ?>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 </head>
 <body class="fixed-header fixed-ribbon <?= Yii::$app->request->cookies->getValue('backend_menu', 'normal') ?>">
     <?php $this->beginBody(); ?>

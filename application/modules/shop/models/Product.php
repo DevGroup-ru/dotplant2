@@ -5,13 +5,15 @@ namespace app\modules\shop\models;
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
 use app\components\Helper;
-use app\data\components\ImportableInterface;
-use app\data\components\ExportableInterface;
-use app\models\Image;
+use app\modules\image\models\Image;
 use app\models\Object;
+use app\modules\data\components\ImportableInterface;
+use app\modules\data\components\ExportableInterface;
 use app\properties\HasProperties;
+use app\traits\GetImages;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\base\Exception;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
@@ -40,12 +42,15 @@ use yii\data\Pagination;
  * @property double $old_price
  * @property integer $parent_id
  * @property integer $currency_id
+ * @property integer $measure_id
  * @property Product[] $relatedProducts
+ * @property Measure $measure
  * @property string $sku
  * @property boolean unlimited_count
  */
 class Product extends ActiveRecord implements ImportableInterface, ExportableInterface
 {
+    use GetImages;
     private static $identity_map = [];
     private static $slug_to_id = [];
     private $category_ids = null;
@@ -108,12 +113,12 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             [['slug'], 'string', 'max' => 80],
             [['slug_compiled'], 'string', 'max' => 180],
             [['old_price', 'price',], 'default', 'value' => 0,],
-            [['active','unlimited_count'], 'default', 'value' => true],
+            [['active', 'unlimited_count'], 'default', 'value' => true],
             [['parent_id', 'slug_absolute', 'sort_order'], 'default', 'value' => 0],
-            [['sku','name'], 'default', 'value' => ''],
-            [['unlimited_count','currency_id'], 'default', 'value' => 1],
+            [['sku', 'name'], 'default', 'value' => ''],
+            [['unlimited_count', 'currency_id'], 'default', 'value' => 1],
             [['relatedProductsArray'], 'safe'],
-            [['slug'], 'unique', 'targetAttribute' => ['slug','main_category_id']],
+            [['slug'], 'unique', 'targetAttribute' => ['slug', 'main_category_id']],
 
         ];
     }
@@ -173,15 +178,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     }
 
     /**
-     * Search tasks
+     * Search products
      * @param $params
      * @return ActiveDataProvider
      */
     public function search($params)
     {
         /* @var $query \yii\db\ActiveQuery */
-        $query = self::find()
-            ->where(['parent_id' => 0]);
+        $query = self::find()->where(['parent_id' => 0])->with('images');
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
@@ -214,7 +218,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (!isset(static::$identity_map[$id])) {
             $cacheKey = static::tableName() . ":$id";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
-                $model = static::find()->where(['id' => $id]);
+                $model = static::find()->where(['id' => $id])->with('images');
                 if (null !== $is_active) {
                     $model->andWhere(['active' => $is_active]);
                 }
@@ -224,11 +228,13 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                         $cacheKey,
                         $model,
                         86400,
-                        new TagDependency([
-                            'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                        new TagDependency(
+                            [
+                                'tags' => [
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                                ]
                             ]
-                        ])
+                        )
                     );
                 }
             }
@@ -242,15 +248,18 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (!isset(static::$slug_to_id[$slug])) {
             $cacheKey = static::tableName() . "$slug:$in_category_id";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
-                $model = static::find()->where([
-                    static::tableName() . '.slug' => $slug,
-                    static::tableName() . '.active' => $is_active
-                ]);
+                $model = static::find()->where(
+                    [
+                        static::tableName() . '.slug' => $slug,
+                        static::tableName() . '.active' => $is_active
+                    ]
+                )->with('images');
                 if ($in_category_id !== null) {
                     $model = $model->innerJoin(
                         Object::getForClass(static::className())->categories_table_name . ' ocats',
-                        'ocats.category_id = ' . Yii::$app->db->quoteValue($in_category_id) .
-                        ' AND ocats.object_model_id = ' . static::tableName() . '.id'
+                        'ocats.category_id = ' . Yii::$app->db->quoteValue(
+                            $in_category_id
+                        ) . ' AND ocats.object_model_id = ' . static::tableName() . '.id'
                     );
                 }
                 $model = $model->one();
@@ -306,8 +315,10 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
     public function getRelatedProducts()
     {
-        return $this->hasMany(Product::className(), ['id' => 'related_product_id'])
-            ->viaTable(RelatedProduct::tableName(), ['product_id' => 'id']);
+        return $this->hasMany(Product::className(), ['id' => 'related_product_id'])->viaTable(
+            RelatedProduct::tableName(),
+            ['product_id' => 'id']
+        );
     }
 
     public function getImage()
@@ -316,6 +327,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $object = Object::getForClass($this->className());
         return $result->andWhere(['object_id' => $object->id]);
     }
+
 
     /**
      * Returns remains of this product in all active warehouses.
@@ -334,11 +346,13 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                         ->all();
                 },
                 86400,
-                new TagDependency([
-                    'tags' => [
-                        ActiveRecordHelper::getObjectTag($this->className(), $this->id),
+                new TagDependency(
+                    [
+                        'tags' => [
+                            ActiveRecordHelper::getObjectTag($this->className(), $this->id),
+                        ]
                     ]
-                ])
+                )
             );
         }
 
@@ -363,7 +377,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         \yii\caching\TagDependency::invalidate(
             Yii::$app->cache,
             [
-                'Images:'.$object->id.':'.$this->id
+                'Images:' . $object->id . ':' . $this->id
             ]
         );
 
@@ -431,11 +445,10 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     {
         if ($this->category_ids === null) {
             $object = Object::getForClass(static::className());
-            $this->category_ids = (new Query())->select('category_id')
-                ->from([$object->categories_table_name])
-                ->where('object_model_id = :id', [':id' => $this->id])
-                ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])
-                ->column();
+            $this->category_ids = (new Query())->select('category_id')->from([$object->categories_table_name])->where(
+                'object_model_id = :id',
+                [':id' => $this->id]
+            )->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])->column();
         }
         return $this->category_ids;
     }
@@ -448,10 +461,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     public function processImportBeforeSave(array $fields, $multipleValuesDelimiter, array $additionalFields)
     {
         $_attributes = $this->attributes();
-        foreach ($fields as $key => $value)
-        {
-            if (in_array($key, $_attributes))
-            {
+        foreach ($fields as $key => $value) {
+            if (in_array($key, $_attributes)) {
                 $this->$key = $value;
             }
         }
@@ -497,10 +508,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $this->saveCategoriesBindings($categories);
 
 
-        $images =
-            isset($fields['images']) ? $fields['images'] :
-                (isset($fields['image']) ? $fields['image'] :
-                    false);
+        $images = isset($fields['images']) ? $fields['images'] : (isset($fields['image']) ? $fields['image'] : false);
         if ($images !== false) {
             if (strpos($images, $multipleValuesDelimiter) > 0) {
                 $images = explode($multipleValuesDelimiter, $images);
@@ -531,10 +539,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      */
     private function unpackCategories(array $fields, $multipleValuesDelimiter, array $additionalFields)
     {
-        $categories =
-            isset($fields['categories']) ? $fields['categories'] :
-                (isset($fields['category']) ? $fields['category'] :
-                    false);
+        $categories = isset($fields['categories']) ? $fields['categories'] : (isset($fields['category']) ? $fields['category'] : false);
         if ($categories === false) {
             return $this->getCategoryIds();
 
@@ -587,7 +592,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             // find & add parent category
             // if we need to show products of child categories in products list
             $module = Yii::$app->modules['shop'];
-
             if (is_array($categories) && $module->showProductsOfChildCategories) {
 
                 do {
@@ -666,7 +670,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 foreach ($ids as $id) {
                     $category = Category::findById($id, null, null);
                     if ($category) {
-                        $result['categories'][] = $category->getAttribute($configuration['categories']['processValuesAs']);
+                        $result['categories'][] = $category->getAttribute(
+                            $configuration['categories']['processValuesAs']
+                        );
                     }
                     unset($category);
                 }
@@ -696,16 +702,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      * @param array $additional_filters Array of callables that will apply additional filters to query
      */
     public static function filteredProducts(
-        $category_group_id,
-        array $values_by_property_id = [],
-        $selected_category_id = null,
-        $force_sorting = false,
-        $limit = null,
-        $apply_filterquery = true,
-        $force_limit = false,
-        array $additional_filters = []
-    )
-    {
+        $category_group_id, array $values_by_property_id = [], $selected_category_id = null, $force_sorting = false,
+        $limit = null, $apply_filterquery = true, $force_limit = false, array $additional_filters = []
+    ) {
         Yii::beginProfile("FilteredProducts");
         if (null === $object = Object::getForClass(static::className())) {
             throw new \yii\web\ServerErrorHttpException('Object not found.');
@@ -715,7 +714,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $module = Yii::$app->modules['shop'];
 
         $onlyParents = $module->filterOnlyByParentProduct;
-        $query = static::find();
+        $query = static::find()->with('images');
         if (true === $onlyParents) {
             $query->andWhere([static::tableName() . '.parent_id' => 0, static::tableName() . '.active' => 1]);
         } else {
@@ -741,7 +740,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'ocatt.id = ocats.category_id AND ocatt.category_group_id = :gcatid AND ocatt.active = 1',
             [':gcatid' => $category_group_id]
         );
-        $query->addGroupBy(static::tableName().".id");
+        $query->addGroupBy(static::tableName() . ".id");
 
 
         $userSelectedSortingId = UserPreferences::preferences()->getAttributes()['productListingSortId'];
@@ -750,9 +749,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $allSorts = ProductListingSort::enabledSorts();
             if (isset($allSorts[$userSelectedSortingId])) {
                 $query->addOrderBy(
-                    $allSorts[$userSelectedSortingId]['sort_field'] .
-                    ' ' .
-                    $allSorts[$userSelectedSortingId]['asc_desc']
+                    $allSorts[$userSelectedSortingId]['sort_field'] . ' ' . $allSorts[$userSelectedSortingId]['asc_desc']
                 );
             } else {
                 $query->addOrderBy(static::tableName() . '.sort_order');
@@ -761,7 +758,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $query->addOrderBy($force_sorting);
         }
 
-        $productsPerPage = $limit === null ? UserPreferences::preferences()->getAttributes()['productsPerPage'] : $limit;
+        $productsPerPage = $limit === null ? UserPreferences::preferences()->getAttributes(
+        )['productsPerPage'] : $limit;
 
         \app\properties\PropertiesHelper::appendPropertiesFilters(
             $object,
@@ -790,14 +788,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         }
 
         $cacheKey = 'ProductsCount:' . implode(
-            '_',
-            [
-                md5($query->createCommand()->getRawSql()),
-                $limit ? '1' : '0',
-                $force_limit ? '1' : '0',
-                $productsPerPage
-            ]
-        ) . $cacheKeyAppend;
+                '_',
+                [
+                    md5($query->createCommand()->getRawSql()),
+                    $limit ? '1' : '0',
+                    $force_limit ? '1' : '0',
+                    $productsPerPage
+                ]
+            ) . $cacheKeyAppend;
 
 
         $pages = null;
@@ -954,7 +952,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
         $formatted_string = $currency->format($price);
         if ($schemaOrg == true) {
-            return strtr('
+            return strtr(
+                '
                 <span itemtype="http://schema.org/Offer" itemprop="offers" itemscope>
                     <meta itemprop="priceCurrency" content="%iso_code%">
                     <span itemprop="price" content="%price%">
@@ -966,7 +965,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     '%iso_code%' => $currency->iso_code,
                     '%price%' => $price,
                     '%formatted_string%' => $formatted_string,
-                ]);
+                ]
+            );
         } else {
             return $formatted_string;
         }
@@ -983,5 +983,17 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     {
         $currency = Currency::findById($this->currency_id);
         return $this->formattedPrice($currency, $oldPrice, $schemaOrg);
+    }
+
+    public function getMeasure()
+    {
+        $measure = Measure::findById($this->measure_id);
+        if (is_null($measure)) {
+            $measure = Measure::findById(Yii::$app->getModule('shop')->defaultMeasureId);
+        }
+        if (is_null($measure)) {
+            throw new Exception('Measure not found');
+        }
+        return $measure;
     }
 }

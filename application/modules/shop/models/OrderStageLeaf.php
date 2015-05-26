@@ -3,6 +3,7 @@
 namespace app\modules\shop\models;
 
 use Yii;
+use yii\data\ActiveDataProvider;
 
 /**
  * This is the model class for table "{{%order_stage_leaf}}".
@@ -22,6 +23,9 @@ use Yii;
  * @property integer $notify_new_assigned_user
  * @property string $role_assignment_policy
  * @property string $event_name
+ * Relations:
+ * @property OrderStage $stageFrom
+ * @property OrderStage $stageTo
  */
 class OrderStageLeaf extends \yii\db\ActiveRecord
 {
@@ -42,7 +46,7 @@ class OrderStageLeaf extends \yii\db\ActiveRecord
             [['stage_from_id', 'stage_to_id', 'button_label'], 'required'],
             [['stage_from_id', 'stage_to_id', 'sort_order', 'notify_buyer', 'notify_manager', 'assign_to_user_id', 'notify_new_assigned_user'], 'integer'],
             [['role_assignment_policy'], 'string'],
-            [['button_label', 'button_css_class', 'buyer_notification_view', 'manager_notification_view', 'assign_to_role', 'event_name'], 'string', 'max' => 255]
+            [['button_label', 'button_css_class', 'buyer_notification_view', 'manager_notification_view', 'assign_to_role', 'event_name'], 'string', 'max' => 255],
         ];
     }
 
@@ -69,4 +73,41 @@ class OrderStageLeaf extends \yii\db\ActiveRecord
             'event_name' => Yii::t('app', 'Event Name'),
         ];
     }
+
+    public function search($params)
+    {
+        $query = static::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 25,
+            ],
+        ]);
+
+        if ($this->load($params)) {
+            $query->andFilterWhere([
+                'button_label' => $this->button_label,
+                'event_name' => $this->event_name,
+            ]);
+        }
+
+        return $dataProvider;
+    }
+
+    /**
+     * @return OrderStage|null
+     */
+    public function getStageFrom()
+    {
+        return $this->hasOne(OrderStage::className(), ['id' => 'stage_from_id']);
+    }
+
+    /**
+     * @return OrderStage|null
+     */
+    public function getStageTo()
+    {
+        return $this->hasOne(OrderStage::className(), ['id' => 'stage_to_id']);
+    }
 }
+?>

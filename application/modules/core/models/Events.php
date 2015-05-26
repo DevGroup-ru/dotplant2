@@ -87,6 +87,7 @@ class Events extends \yii\db\ActiveRecord
                 function($db) use ($class_name) {
                     return self::find()
                         ->where(['event_class_name' => $class_name])
+                        ->with('handlers')
                         ->one($db);
                 },
                 86400,
@@ -106,7 +107,7 @@ class Events extends \yii\db\ActiveRecord
      */
     public function getHandlers()
     {
-        return $this->hasMany(EventHandlers::className(), ['event_id' => 'id']);
+        return $this->hasMany(EventHandlers::className(), ['event_id' => 'id'])->orderBy(['sort_order' => SORT_ASC]);
     }
 
     /**
@@ -114,8 +115,12 @@ class Events extends \yii\db\ActiveRecord
      * @param string $name Event name to find
      * @return Events|null
      */
-    public static function findByName($name)
+    public static function findByName($name = null)
     {
+        if (empty($name)) {
+            return null;
+        }
+
         foreach (static::$identity_map_by_classname as $class_name => $model) {
             if ($model->event_name === $name) {
                 return $model;

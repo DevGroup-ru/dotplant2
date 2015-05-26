@@ -15,7 +15,7 @@ use yii\widgets\Breadcrumbs;
         <div class="container">
             <div class="row">
                 <?= $this->render('blocks/sidebar');?>
-                <div class="span9">
+                <div class="col-md-9">
                     <?=
                         Breadcrumbs::widget(
                             [

@@ -53,6 +53,7 @@ class m150507_064204_new_order extends Migration
                 'reach_goal_ym' => 'VARCHAR(255) DEFAULT NULL',
                 'reach_goal_ga' => 'VARCHAR(255) DEFAULT NULL',
                 'event_name' => 'VARCHAR(255) DEFAULT NULL',
+                'view' => 'VARCHAR(255) DEFAULT NULL',
             ],
             $tableOptions
         );

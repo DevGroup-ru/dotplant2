@@ -232,6 +232,63 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
 }
 
 /* line 198, ../sass/admin.scss */
-#meta-form header, #counter-form header, #robots-form header {
+#meta-form header, #counter-form header, #robots-form header, #fs-config header, .jarviswidget.visible-header header {
   display: block;
 }
+
+/* line 204, ../sass/admin.scss */
+.table-condensed.table > tbody > tr > td.td-no-padding, .table-condensed.table > tbody > tr > th.td-no-padding, .table-condensed.table > tfoot > tr > td.td-no-padding, .table-condensed.table > tfoot > tr > th.td-no-padding, .table-condensed.table > thead > tr > td.td-no-padding, .table-condensed.table > thead > tr > th.td-no-padding {
+  padding: 0 !important;
+}
+
+/* line 2, ../sass/extensions.scss */
+.packages-grid .package {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 4px;
+}
+/* line 7, ../sass/extensions.scss */
+.packages-grid .package .package-name {
+  font-size: 120%;
+  font-weight: bold;
+  color: #3e3e3e;
+}
+/* line 12, ../sass/extensions.scss */
+.packages-grid .package .description {
+  height: 120px;
+  overflow: hidden;
+}
+/* line 16, ../sass/extensions.scss */
+.packages-grid .package .repository-url {
+  font-size: 80%;
+  color: #666666;
+  text-decoration: underline;
+  margin: 4px;
+  display: block;
+}
+
+/* line 25, ../sass/extensions.scss */
+.packages-search {
+  margin-bottom: 8px;
+}
+
+/* line 1, ../sass/filter-sets.scss */
+.table-condensed.table > tbody > tr.psv-tr > td {
+  padding: 0 !important;
+}
+
+/* line 6, ../sass/filter-sets.scss */
+.properties-body .sort-handle, .properties-body .psv-sort-handle {
+  padding: 4px;
+  background: #fff;
+  cursor: move;
+  margin: 2px;
+  display: block;
+  text-align: center;
+}
+/* line 13, ../sass/filter-sets.scss */
+.properties-body .sort-handle:hover, .properties-body .psv-sort-handle:hover {
+  background: #eee;
+}
+
+/*# sourceMappingURL=admin.css.map */

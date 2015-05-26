@@ -194,8 +194,21 @@ div#Product-grid, div#reviews-grid {
 .tabs-left>.nav-pills, .tabs-left>.nav-tabs {
   margin-right: 0;
 }
-#meta-form, #counter-form, #robots-form {
+<<<<<<< HEAD
+#meta-form, #counter-form, #robots-form, #fs-config {
+=======
+#meta-form, #counter-form, #robots-form, #fs-config, .jarviswidget.visible-header {
+>>>>>>> newOrder
   header {
     display: block;
   }
 }
+
+.table-condensed.table>tbody>tr>td, .table-condensed.table>tbody>tr>th, .table-condensed.table>tfoot>tr>td, .table-condensed.table>tfoot>tr>th, .table-condensed.table>thead>tr>td, .table-condensed.table>thead>tr>th {
+  &.td-no-padding {
+    padding: 0 !important;
+  }
+}
+
+@import "extensions.scss";
+@import "filter-sets.scss";

@@ -14,6 +14,15 @@ class BackendWidget extends \yii\widgets\ContentDecorator
     public $body = '';
     public $footer = '';
     public $viewFile = '@app/backend/widgets/views/widget.php';
+    public $options = [];
+
+    public function init()
+    {
+        Html::addCssClass($this->options, 'jarviswidget');
+        $this->options['id'] = $this->id;
+        $this->params['options'] = $this->options;
+        parent::init();
+    }
 
     public function run()
     {

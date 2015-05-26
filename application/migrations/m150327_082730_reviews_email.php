@@ -7,6 +7,7 @@ class m150327_082730_reviews_email extends Migration
 {
     public function up()
     {
+        /** @var Config $core */
         $core = Config::findOne(['name' => 'Core']);
         $reviews = new Config;
         $reviews->setAttributes(
@@ -48,7 +49,7 @@ class m150327_082730_reviews_email extends Migration
                 'parent_id' => $page->id,
                 'name' => 'Page review e-mail template',
                 'key' => 'pageReviewEmailTemplate',
-                'value' => '@app/reviews/views/page-review-email-template',
+                'value' => '@app/module/review/views/page-review-email-template',
                 'preload' => 1,
             ]
         );
@@ -81,7 +82,7 @@ class m150327_082730_reviews_email extends Migration
                 'parent_id' => $product->id,
                 'name' => 'Product review e-mail template',
                 'key' => 'productReviewEmailTemplate',
-                'value' => '@app/reviews/views/product-review-email-template',
+                'value' => '@app/module/review/views/product-review-email-template',
                 'preload' => 1,
             ]
         );
@@ -108,6 +109,6 @@ class m150327_082730_reviews_email extends Migration
         $this->delete(Config::tableName(), ['key' => 'pageReviewEmailTemplate']);
         $this->delete(Config::tableName(), ['key' => 'pageReviews']);
         $this->delete(Config::tableName(), ['key' => 'reviewEmail']);
-        $this->delete(Config::tableName(), ['key' => 'reviews']);
+        $this->delete(Config::tableName(), ['key' => 'review']);
     }
 }

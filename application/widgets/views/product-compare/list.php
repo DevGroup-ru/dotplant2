@@ -9,7 +9,7 @@ if (is_array($prods)) {
     echo '<div class="row">';
     $counter = 0;
     foreach ($prods as $prod) {
-        if(isset($limit) && ++$counter > $limit) {
+        if (isset($limit) && ++ $counter > $limit) {
             break;
         }
         $url = Url::to(
@@ -21,28 +21,28 @@ if (is_array($prods)) {
             ]
         );
 
-        $img = app\widgets\ImgSearch::widget(
+        $img = app\modules\image\widgets\ObjectImageWidget::widget(
             [
-                'object_id'=>1,
-                'object_model_id'=>$prod->id,
-                'displayCountPictures'=>1,
+                'model' => $prod,
+                'displayCountPictures' => 1,
                 'viewFile' => 'img-thumbnail-list',
             ]
         );
         echo '<div class="col-md-4">';
-        echo Html::beginForm('/shop/product-compare/remove', 'get');
-            echo Html::hiddenInput('backUrl', Yii::$app->request->url);
-            echo Html::hiddenInput('id', $prod->id);
-            echo '<a href="' . $url . '" alt="' . $prod->name . '" title="' . $prod->name . '">';
-                echo $img;
-            echo '</a>';
-            echo Html::submitButton('',
-                [
-                    'class' => 'btn btn-default',
-                    'style' => 'height:10px;width:10px;padding:0;background-color:red;',
-                    'title' => Yii::t('app', 'Remove')
-                ]
-            );
+        echo Html::beginForm('/product-compare/remove', 'get');
+        echo Html::hiddenInput('backUrl', Yii::$app->request->url);
+        echo Html::hiddenInput('id', $prod->id);
+        echo '<a href="' . $url . '" alt="' . $prod->name . '" title="' . $prod->name . '">';
+        echo $img;
+        echo '</a>';
+        echo Html::submitButton(
+            '',
+            [
+                'class' => 'btn btn-default',
+                'style' => 'height:10px;width:10px;padding:0;background-color:red;',
+                'title' => Yii::t('app', 'Remove')
+            ]
+        );
         echo Html::endForm();
         echo '</div>';
     }
@@ -51,29 +51,31 @@ if (is_array($prods)) {
 ?>
 <div class="row">
     <div class="col-md-8">
-        <?= Html::beginForm('/shop/product-compare/add', 'get') ?>
-        <?= Html::hiddenInput('id', $id) ?>
-        <?= Html::hiddenInput('backUrl', Yii::$app->request->url) ?>
-        <?= Html::button(Yii::t('app', 'Add to compare'),
+        <?=Html::beginForm('/product-compare/add', 'get')?>
+        <?=Html::hiddenInput('id', $id)?>
+        <?=Html::hiddenInput('backUrl', Yii::$app->request->url)?>
+        <?=Html::button(
+            Yii::t('app', 'Add to compare'),
             [
                 'id' => 'addToCompare',
                 'class' => 'btn btn-primary',
                 'style' => 'font-size: 14px;padding: 4px 10px;'
             ]
-        ) ?>
-        <?= Html::endForm() ?>
+        )?>
+        <?=Html::endForm()?>
     </div>
     <?php if (is_array($prods) && count($prods) > 0) { ?>
-    <div class="col-md-8">
-        <?= Html::beginForm($comparePage, 'get')?>
-        <?= Html::button(Yii::t('app', 'Compare'),
-            [
-                'id' => 'do-compare',
-                'class' => 'btn btn-primary',
-                'style' => 'font-size: 14px;padding: 4px 10px;'
-            ]
-        ) ?>
-        <?= Html::endForm() ?>
-    </div>
+        <div class="col-md-8">
+            <?=Html::beginForm($comparePage, 'get')?>
+            <?=Html::button(
+                Yii::t('app', 'Compare'),
+                [
+                    'id' => 'do-compare',
+                    'class' => 'btn btn-primary',
+                    'style' => 'font-size: 14px;padding: 4px 10px;'
+                ]
+            )?>
+            <?=Html::endForm()?>
+        </div>
     <?php } ?>
 </div>

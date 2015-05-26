@@ -1,5 +1,7 @@
 <?php
-
+/***
+ * @var $this \yii\web\View
+ */
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use yii\helpers\Url;
@@ -55,21 +57,22 @@ use yii\helpers\Url;
         <!-- end widget content -->
     </div>
     <!-- end widget div -->
-    <script>
-        $('#propertygroup-id').change(function () {
-            var input = $("<input>").attr("type", "hidden").attr("name", "action").val("save");
-            $(this).parents('form').append($(input));
-            $(this).parents('form').submit();
-        });
-        $('#btn-generate').click(function () {
-            $.ajax({
-                'url': '<?= Url::toRoute(['/backend/product/generate', 'id'=>$model->id]) ?>',
-                'method': 'POST',
-                'data': $('form').serialize()
-            }).done(function () {
-                location.reload();
-            });
-            return false;
-        });
-    </script>
 </div><!-- end widget -->
+<?php $this->beginBlock('optionsJs'); ?>
+    $('#propertygroup-id').change(function () {
+    var input = $("<input>").attr("type", "hidden").attr("name", "action").val("save");
+    $(this).parents('form').append($(input));
+    $(this).parents('form').submit();
+    });
+    $('#btn-generate').click(function () {
+    $.ajax({
+    'url': '<?= Url::toRoute(['/backend/product/generate', 'id'=>$model->id]) ?>',
+    'method': 'POST',
+    'data': $('form').serialize()
+    }).done(function () {
+    location.reload();
+    });
+    return false;
+    });
+<?php $this->endBlock(); ?>
+<?php $this->registerJs($this->blocks['optionsJs'], \yii\web\View::POS_READY); ?>

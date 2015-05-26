@@ -2,8 +2,8 @@
 
 namespace app\models;
 
-use app\data\models\Export;
-use app\data\models\Import;
+use app\modules\data\models\Export;
+use app\modules\data\models\Import;
 use Yii;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;

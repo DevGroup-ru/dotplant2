@@ -32,7 +32,7 @@ class DataRelationsWidget extends Widget
      * @var array, e.g.
      * [
      * [
-     * 'class' => \app\models\Image::className(),
+     * 'class' => \app\modules\image\models\Image::className(),
      * 'relationName' => 'getImages'
      * ],
      * ]

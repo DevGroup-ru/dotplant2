@@ -1,62 +1,34 @@
 <?php
-
-/** @var $this yii\web\View */
-/** @var $cart \app\modules\shop\models\Cart */
-
-use kartik\helpers\Html;
+/**
+ * @var \app\modules\shop\models\Order $model
+ * @var \yii\web\View $this
+ */
 
 $this->title = Yii::t('app', 'Cart');
 
 ?>
 <h1><?= Yii::t('app', 'Cart') ?></h1>
-<?php if (!is_null($cart) && $cart->items_count > 0): ?>
-    <?=
-        $this->render(
-            '_items',
-            [
-                'items' => $cart->toOrderItems(),
-                'immutable' => false,
-                'totalQuantity' => $cart->items_count,
-                'totalPrice' => $cart->total_price,
-            ]
-        );
-    ?>
-    <?=
-        Html::a(
-            Yii::t('app', 'Checkout'),
-            [
-                '/cart/shipping-option',
-            ],
-            [
-                'class' => 'btn btn-primary pull-right',
-            ]
-        )
-    ?>
-    <?=
-        Html::a(
-            Yii::t('app', 'Print'),
-            '#',
-            [
-                'class' => 'btn btn-default',
-                'id' => 'print-page',
-            ]
-        )
-    ?>
+<?php if (!is_null($model) && $model->items_count > 0): ?>
+    <?= $this->render('items', ['model' => $model, 'items' => $model->items]) ?>
+    <?= \yii\helpers\Html::a(Yii::t('app', 'Begin order'), ['/shop/cart/stage'], ['class' => 'btn btn-success']); ?>
 <?php else: ?>
-    <p><?= Yii::t('app', 'Your cart is empty'); ?></p>
+    <p><?= Yii::t('app', 'Your cart is empty') ?></p>
 <?php endif; ?>
-<script>
-
+<?php
+// @todo Move this code to main.js
+$this->beginBlock('cart-js')
+?>
 jQuery('input[data-type=quantity]').blur(function() {
     var $input = jQuery(this);
-    var quantity = parseInt($input.val());
-    if (isNaN(quantity) || quantity < 1) {
-        quantity = 1;
+    var quantity = parseFloat($input.val());
+    var nominal = parseFloat($input.attr('data-nominal'));
+    if (isNaN(quantity) || quantity < nominal) {
+        quantity = nominal;
     }
     Shop.changeAmount($input.data('id'), quantity, function(data) {
         if (data.success) {
-            jQuery('#cart-table .total-price').text(data.totalPrice);
-            jQuery('#cart-table .items-count').text(data.itemsCount);
+            jQuery('#cart-table .total-price, #cart-info-widget .total-price').text(data.totalPrice);
+            jQuery('#cart-table .items-count, #cart-info-widget .items-count').text(data.itemsCount);
             $input.parents('tr').eq(0).find('.item-price').text(data.itemPrice);
             $input.val(quantity);
         }
@@ -65,25 +37,27 @@ jQuery('input[data-type=quantity]').blur(function() {
 jQuery('#cart-table [data-action="change-quantity"]').click(function() {
     var $this = jQuery(this);
     var $input = $this.parents('td').eq(0).find('input[data-type=quantity]');
-    var quantity = parseInt($input.val());
+    var quantity = parseFloat($input.val());
+    var nominal = parseFloat($input.attr('data-nominal'));
     if (isNaN(quantity)) {
-        quantity = 1;
+        quantity = nominal;
     }
     if ($this.hasClass('plus')) {
-        quantity++;
+        quantity += nominal;
     } else {
-        if(quantity > 1) {
-            quantity--;
+        if (quantity > nominal) {
+            quantity -= nominal;
         }
     }
     Shop.changeAmount($input.data('id'), quantity, function(data) {
         if (data.success) {
-            jQuery('#cart-table .total-price').text(data.totalPrice);
-            jQuery('#cart-table .items-count').text(data.itemsCount);
+            jQuery('#cart-table .total-price, #cart-info-widget .total-price').text(data.totalPrice);
+            jQuery('#cart-table .items-count, #cart-info-widget .items-count').text(data.itemsCount);
             $input.parents('tr').eq(0).find('.item-price').text(data.itemPrice);
             $input.val(quantity);
         }
     });
     return false;
 });
-</script>
+<?php $this->endBlock(); ?>
+<?php $this->registerJs($this->blocks['cart-js']);?>

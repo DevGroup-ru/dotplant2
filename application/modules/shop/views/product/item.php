@@ -6,19 +6,18 @@
  * @var $url string
  */
 
-use app\widgets\ImgSearch;
+use app\modules\image\widgets\ObjectImageWidget;
 use kartik\helpers\Html;
 
 ?>
-<li class="span3">
+<div class="col-md-4">
     <div class="thumbnail">
         <a href="<?=$url?>">
             <?=
-            ImgSearch::widget(
+            ObjectImageWidget::widget(
                 [
                     'limit' => 1,
-                    'objectId' => $product->object->id,
-                    'objectModelId' => $product->id,
+                    'model' => $product,
                 ]
             )
             ?>
@@ -36,9 +35,9 @@ use kartik\helpers\Html;
                         'Add to'
                     )?> <i class="fa fa-shopping-cart"></i></a>
                 <button class="btn btn-primary">
-                    <?= $product->formattedPrice(null, false, false) ?>
+                    <?=$product->formattedPrice(null, false, false)?>
                 </button>
             </h4>
         </div>
     </div>
-</li>
+</div>

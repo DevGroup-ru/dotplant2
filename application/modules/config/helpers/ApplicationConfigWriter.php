@@ -26,6 +26,16 @@ class ApplicationConfigWriter extends Component
     public $configuration = null;
 
     /**
+     * @var string Code to append
+     */
+    public $append = '';
+
+    /**
+     * @var bool true if we should load configuration from original file and merge all configuration with it
+     */
+    public $loadExistingConfiguration = true;
+
+    /**
      * @inheritdoc
      * @throws InvalidConfigException
      */
@@ -42,7 +52,11 @@ class ApplicationConfigWriter extends Component
         }
         $filename = Yii::getAlias($this->filename);
         if (is_readable($filename) === true) {
-            $this->configuration = include($filename);
+            if ($this->loadExistingConfiguration === true) {
+                $this->configuration = include($filename);
+            } else {
+                $this->configuration = [];
+            }
             if (is_array($this->configuration) === false) {
                 Yii::trace('Application configuration file is not an array - ' . $filename);
 
@@ -62,6 +76,8 @@ class ApplicationConfigWriter extends Component
                 )
             );
         }
+
+
     }
 
     /**
@@ -88,6 +104,8 @@ class ApplicationConfigWriter extends Component
  * This file is auto-generated.
  * Please don't modify it by-hand or all your changes can be lost.
  */
+
+{$this->append}
 
 return
 EOF;

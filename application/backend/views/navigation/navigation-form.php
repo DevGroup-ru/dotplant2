@@ -1,11 +1,24 @@
 <?php
+
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
+
+\app\backend\assets\NavigationAsset::register($this);
+
 $this->title = Yii::t('app', 'Navigation edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/navigation/index'], 'label' => Yii::t('app', 'Navigation')];
 $this->params['breadcrumbs'][] = $this->title;
+
+$routeParams = empty($model->route_params) ? "{}" : $model->route_params;
+
+$this->registerJs(
+    'var current_params = '. $routeParams .';',
+    \yii\web\View::POS_HEAD
+);
+?>
+
 ?>
 
 <?= app\widgets\Alert::widget([
@@ -101,7 +114,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php ActiveForm::end(); ?>
 
 
-<script type="x-tmpl-underscore" id="parameter-template">
+<section style="display:none;" data-type="x-tmpl-underscore" id="parameter-template">
     <div id="parameter_<%- index %>" class="form-group row parameter" style="margin-bottom:15px;">
         <label class="col-md-2 control-label" for="key_<%- index %>">Key</label>
         <div class="col-md-3"><input type="text" id="key_<%- index %>" class="form-control param-key" value=""></div>
@@ -114,50 +127,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </a>
         </div>
     </div>
-</script>
-<?php
-$routeParams = empty($model->route_params) ? "{}" : $model->route_params;
-$this->registerJS("\$(function () {
-
-        function addProperty(key, value) {
-            var index = \$('.parameter').length;
-            var compiled = _.template(\$(\"#parameter-template\").html());
-
-            var \$property = \$(compiled({'index' : index}));
-
-            \$property.find('#key_' + index).val(key);
-            \$property.find('#value_' + index).val(value);
-
-            \$property.find('.btn-remove').click(function () {
-                $(this).parents('#parameter_' + index).remove();
-                return false;
-            });
-
-            \$(\"#properties\").append(\$property);
-        }
+</section>
 
 
-        \$(\".add-property\").click(function () {
-            addProperty('', '');
-            return false;
-        });
 
-        \$(\"#navigation-form\").submit(function () {
-
-            var serialized = {};
-            \$(\".parameter\").each(function () {
-                var key = \$(this).find('.param-key').val();
-                var value = \$(this).find('.param-val').val();
-                serialized[key] = value;
-            });
-
-            \$(\"#route_params\").val(JSON.stringify(serialized));
-
-            return true;
-        });
-
-        var current_params = $routeParams;
-        for (var c in current_params) {
-        addProperty(c, current_params[c]);
-    }
-});");

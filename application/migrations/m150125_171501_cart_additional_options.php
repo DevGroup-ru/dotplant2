@@ -1,6 +1,6 @@
 <?php
 
-use app\models\OrderItem;
+use app\modules\shop\models\OrderItem;
 use yii\db\Migration;
 
 class m150125_171501_cart_additional_options extends Migration
