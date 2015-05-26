@@ -18,7 +18,7 @@ use yii\helpers\ArrayHelper;
 
 class PriceHandlers
 {
-    private static $_allDiscounts = [];
+    private static $allDiscounts = [];
 
 
     public static function getCurrencyPriceProduct(
@@ -49,8 +49,8 @@ class PriceHandlers
         $price
     ) {
         self::getAllDiscounts();
-        if (isset(self::$_allDiscounts['products'])) {
-            foreach (self::$_allDiscounts['products'] as $discount) {
+        if (isset(self::$allDiscounts['products'])) {
+            foreach (self::$allDiscounts['products'] as $discount) {
                 $discountFlag = false;
                 foreach (Discount::getTypeObjects() as $discountTypeObject) {
                     $discountFlag = $discountTypeObject
@@ -122,16 +122,17 @@ class PriceHandlers
 
     private static function getAllDiscounts()
     {
-        if (!self::$_allDiscounts) {
+        if (self::$allDiscounts === []) {
             $cacheKey = 'getAllDiscounts';
-            if (!self::$_allDiscounts = Yii::$app->cache->get($cacheKey)) {
+            if (!self::$allDiscounts = Yii::$app->cache->get($cacheKey)) {
+                self::$allDiscounts = [];
                 $discounts = Discount::find()->all();
                 foreach ($discounts as $discount) {
-                    self::$_allDiscounts[$discount->appliance][] = $discount;
+                    self::$allDiscounts[$discount->appliance][] = $discount;
                 }
                 Yii::$app->cache->set(
                     $cacheKey,
-                    self::$_allDiscounts,
+                    self::$allDiscounts,
                     86400,
                     new TagDependency(
                         [
@@ -144,16 +145,14 @@ class PriceHandlers
             }
 
         }
-        return self::$_allDiscounts;
+        return self::$allDiscounts;
     }
 
 
     public static function handleSaveDiscounts(OrderCalculateEvent $event)
     {
         self::getAllDiscounts();
-
-
-        foreach (self::$_allDiscounts as $discountTypeName => $discountType) {
+        foreach (self::$allDiscounts as $discountTypeName => $discountType) {
             if (in_array($discountTypeName, ['order_without_delivery', 'order_with_delivery', 'delivery'])) {
                 foreach ($discountType as $discount) {
                     $discountFlag = false;
