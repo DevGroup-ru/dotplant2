@@ -108,7 +108,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                     ],
                     'items_count',
-                    'total_price',
+                    [
+                        'class' => \kartik\grid\DataColumn::className(),
+                        'attribute' => 'total_price',
+                        'format' => 'text',
+                        'value' => function($model){return $model->fullPrice;},
+                    ],
                     [
                         'class' => 'app\backend\components\ActionColumn',
                         'buttons' =>  function($model, $key, $index, $parent) {

@@ -250,7 +250,7 @@ if ($sum_transactions < $model->total_price):
                 <tr>
                     <th colspan="3"><?=Yii::t('app', 'Summary')?></th>
                     <th><?=$model->items_count?></th>
-                    <th colspan="2"><?=Yii::$app->formatter->asDecimal($model->total_price, 2)?></th>
+                    <th colspan="2"><?=Yii::$app->formatter->asDecimal($model->fullPrice, 2)?></th>
                 </tr>
                 </tbody>
             </table>
