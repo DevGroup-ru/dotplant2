@@ -8,7 +8,8 @@ class m150514_114054_alterReview extends Migration
 {
     public function up()
     {
-          $this->createTable(
+        $this->dropTable(Review::tableName());
+        $this->createTable(
             Review::tableName(),
             [
                 'id' => Schema::TYPE_PK,
@@ -30,15 +31,4 @@ class m150514_114054_alterReview extends Migration
     {
         $this->dropTable(Review::tableName());
     }
-    
-    /*
-    // Use safeUp/safeDown to run migration code within a transaction
-    public function safeUp()
-    {
-    }
-    
-    public function safeDown()
-    {
-    }
-    */
 }

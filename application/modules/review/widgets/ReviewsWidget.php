@@ -11,19 +11,48 @@ use yii\data\ArrayDataProvider;
 use Yii;
 use app\models\Object;
 use app\models\PropertyGroup;
+use yii\db\ActiveRecord;
 
 class ReviewsWidget extends Widget
 {
+    /**
+     * @var array
+     */
     public $additionalParams = [];
-    public $model = null;
-    public $viewFile = 'reviews';
-    public $allow_rate = false;
-    public $sort = SORT_ASC;
-    public $registerCanonical = false;
-    public $object_id;
 
+    /**
+     * @var ActiveRecord
+     */
+    public $model = null;
+
+    /**
+     * @var string
+     */
+    public $viewFile = 'reviews';
+
+    /**
+     * @var bool
+     */
+    public $allowRate = false;
+
+    /**
+     * @var int
+     */
+    public $sort = SORT_ASC;
+
+    /**
+     * @var bool
+     */
+    public $registerCanonical = false;
+
+    /**
+     * @var int
+     */
     public $formId = null;
 
+    /**
+     * @var bool
+     */
     public $useCaptcha = false;
 
     /**
@@ -31,10 +60,9 @@ class ReviewsWidget extends Widget
      */
     public function run()
     {
-
         if ((null === $form = Form::findById($this->formId))
             || null === $this->model
-            || null === $object = Object::findById($this->object_id)) {
+            || null === $this->model->object) {
             throw new InvalidParamException;
         }
         if ($this->registerCanonical === true) {
@@ -48,7 +76,7 @@ class ReviewsWidget extends Widget
         }
         $formObject = Object::getForClass(Form::className());
         $groups = PropertyGroup::getForModel($formObject->id, $form->id);
-        $models = Review::getForObjectModel($this->model->id, $object->id, $form->id);
+        $models = Review::getForObjectModel($this->model->id, $this->model->object->id, $form->id);
 
         $review = new Review(['scenario' => 'check']);
         $review->useCaptcha = $this->useCaptcha;
@@ -59,6 +87,8 @@ class ReviewsWidget extends Widget
         if ($pageSize > $maxPerPage) {
             $pageSize = $maxPerPage;
         }
+        $this->additionalParams['review-page'] = Yii::$app->request->get('review-page');
+        $this->additionalParams['review-per-page'] = Yii::$app->request->get('review-per-page');
         return $this->render(
             $this->viewFile,
             [
@@ -68,7 +98,7 @@ class ReviewsWidget extends Widget
                         'allModels' => $models,
                         'pagination' => [
                             'pageSize' => $pageSize,
-                            'params' =>  array_merge($_GET, $this->additionalParams),
+                            'params' =>  $this->additionalParams,
                         ],
                         'sort' => [
                             'attributes' => [
@@ -80,12 +110,12 @@ class ReviewsWidget extends Widget
                         ],
                     ]
                 ),
-                'object_id' => $object->id,
-                'object_model_id' => $this->model->id,
+                'objectId' => $this->model->object->id,
+                'objectModelId' => $this->model->id,
                 'model' => $form,
                 'review' => $review,
                 'groups' => $groups,
-                'allow_rate' => $this->allow_rate,
+                'allowRate' => $this->allowRate,
                 'useCaptcha' => $this->useCaptcha,
                 'additionalParams' => $this->additionalParams,
             ]

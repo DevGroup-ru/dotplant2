@@ -4,8 +4,6 @@ namespace app\modules\review\models;
 
 use app\backgroundtasks\traits\SearchModelTrait;
 use app\models\Object;
-use app\models\Product;
-use app\models\PropertyGroup;
 use app\modules\page\models\Page;
 use app\modules\user\models\User;
 use Yii;
@@ -13,10 +11,7 @@ use app\models\Submission;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use app\properties\HasProperties;
-use yii\helpers\VarDumper;
-use app\models\Property;
-use app\models\Form;
-use yii\db\Query;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "review".
@@ -49,21 +44,24 @@ class Review extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-
     public function rules()
     {
-        return [
+        $rules = [
             [['submission_id','object_id','object_model_id','author_email','review_text'],'required'],
             [['submission_id','object_model_id'],'integer'],
             [['review_text','rating_id','status'],'string'],
             ['author_email', 'email']
         ];
-////        if ($this->useCaptcha) {
-////            $rules[] = [['captcha'], 'captcha', 'captchaAction' => '/default/captcha'];
-////            $rules[] = [['captcha'], 'required'];
-////        }
-//        return $rules;
+        if ($this->useCaptcha) {
+            $rules[] = [['captcha'], 'captcha', 'captchaAction' => '/default/captcha'];
+            $rules[] = [['captcha'], 'required'];
+        }
+        return $rules;
     }
+
+    /**
+     * @inheritdoc
+     */
     public function scenarios()
     {
         return [
@@ -72,6 +70,7 @@ class Review extends \yii\db\ActiveRecord
                 'author_email',
                 'object_model_id',
                 'object_id',
+                'captcha',
             ],
             'default' => [
                 'submission_id',
@@ -81,12 +80,15 @@ class Review extends \yii\db\ActiveRecord
                 'object_id',
             ],
             'search' => [
+                'object_id',
                 'status',
             ]
         ];
     }
 
-
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -108,10 +110,6 @@ class Review extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function getByResourceName()
-    {
-        return VarDumper::dump($_POST, 10,1);
-    }
     /**
      * @inheritdoc
      */
@@ -146,11 +144,13 @@ class Review extends \yii\db\ActiveRecord
         if (false === $models) {
             $models = Review::find()
                 ->with(
-                    ['submission' => function ($query) use ($formId){
-                        $query->andWhere('spam != :spam', [':spam' => Yii::$app->formatter->asBoolean(true)]);
-                        $query->andWhere(['is_deleted' => 0]);
-                        $query->andWhere(['form_id' => $formId]);
-                    }
+                    [
+                        'submission' => function ($query) use ($formId) {
+                            /** @var ActiveQuery $query */
+                            $query->andWhere('spam != :spam', [':spam' => Yii::$app->formatter->asBoolean(true)]);
+                            $query->andWhere(['is_deleted' => 0]);
+                            $query->andWhere(['form_id' => $formId]);
+                        }
                     ]
                 )
                 ->where(
@@ -185,13 +185,13 @@ class Review extends \yii\db\ActiveRecord
         $query = self::find();
         $query->joinWith('submission');
         $dataProvider = new ActiveDataProvider(
-          [
+            [
               'query' => $query,
               'pagination' => [
                   'pageSize' => 10,
               ],
               'sort' => ['defaultOrder' => ['submission_id' => SORT_DESC]]
-          ]
+            ]
         );
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;

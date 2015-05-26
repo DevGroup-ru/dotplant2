@@ -35,7 +35,9 @@ class BackendController extends \app\backend\components\BackendController
         $searchModelConfig = [
             'defaultOrder' => ['id' => SORT_DESC],
             'model' => Review::className(),
-            'relations' => ['submission' => ['submission']],
+            'relations' => [
+                'submission.form' => ['name'],
+            ],
         ];
         $searchModel = new SearchModel($searchModelConfig);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);

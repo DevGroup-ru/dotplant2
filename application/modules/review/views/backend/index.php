@@ -67,16 +67,16 @@ $this->endBlock();
                 'id',
                 'author_email',
                 [
-                    'class' => yii\grid\DataColumn::className(),
-                    'attribute' => 'Form',
+                    'attribute' => 'submission.form.name',
+                    'label' => Yii::t('app', 'Form name'),
+                ],
+                [
+                    'attribute' => 'object_id',
+                    'filter' => \app\components\Helper::getModelMap(\app\models\Object::className(), 'id', 'name'),
+                    'label' => Yii::t('app', 'Object'),
                     'value' => function ($data) {
-                        if (isset($data->submission)) {
-                            /**@var $form \app\models\Form */
-                            $form = \app\models\Form::findById($data->submission->form_id);
-                            if (null !== $form) {
-                                return $form->name;
-                            }
-                        }
+                        $obj = \app\models\Object::findById($data->object_id);
+                        return is_null($obj) ? Yii::t('yii', '(not set)') : $obj->name;
                     },
                 ],
                 [

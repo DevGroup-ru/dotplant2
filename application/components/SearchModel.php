@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * Class SearchModel
@@ -16,6 +17,9 @@ class SearchModel extends Model
 {
     private $attributes;
     private $internalRelations;
+    /**
+     * @var ActiveRecord $model
+     */
     private $model;
     private $modelClassName;
     private $relationAttributes = [];
@@ -139,6 +143,7 @@ class SearchModel extends Model
      */
     public function search($params)
     {
+        /** @var ActiveQuery $query */
         $query = call_user_func([$this->modelClassName, 'find']);
         $dataProvider = new ActiveDataProvider(
             [
