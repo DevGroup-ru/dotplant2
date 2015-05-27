@@ -101,18 +101,13 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             $unnecessary = ArrayHelper::getValue($component, 'unnecessary', []);
             $active = ArrayHelper::remove($necessary, 'active', false);
             ArrayHelper::remove($necessary, 'srcAdapter');
-            if ($active === true || $active === '1') {
+            if ($active === true || $active === '1' || $name == 'fs') {
                 foreach ($unnecessary as $confName => $confVal) {
                     if ($confVal === '') {
                         ArrayHelper::remove($unnecessary, $confName);
                     }
                 }
-                if (ArrayHelper::keyExists('fs', $components)) {
-                    $components[$name] = ArrayHelper::merge($necessary, $unnecessary);
-                } else {
-                    $components['fs'] = ArrayHelper::merge($necessary, $unnecessary);
-                }
-
+                $components[$name] = ArrayHelper::merge($necessary, $unnecessary);
             }
         }
 
