@@ -67,30 +67,47 @@ class Contragent extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @return Customer|null
+     */
     public function getCustomer()
     {
         return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
     }
 
+    /**
+     * @return DeliveryInformation|null
+     */
     public function getDeliveryInformation()
     {
         return $this->hasOne(DeliveryInformation::className(), ['contragent_id' => 'id']);
     }
 
-    public function setPropertyGroup($group)
+    /**
+     * @param PropertyGroup $group
+     */
+    public function setPropertyGroup(PropertyGroup $group)
     {
         $this->propertyGroup = $group;
     }
 
+    /**
+     * @return PropertyGroup|null
+     */
     public function getPropertyGroup()
     {
         return $this->propertyGroup;
     }
 
-    public static function createEmptyContragent($customer_id = null)
+    /**
+     * @param Customer $customer
+     * @param bool $dummyObject
+     * @return Contragent|null
+     */
+    public static function createEmptyContragent(Customer $customer, $dummyObject = true)
     {
         $model = new static();
-        $model->customer_id = $customer_id;
+        $model->customer_id = $customer->id;
         $model->loadDefaultValues();
 
         $groups = PropertyGroup::getForObjectId($model->getObject()->id, true);
@@ -115,6 +132,16 @@ class Contragent extends \yii\db\ActiveRecord
                 }, []));
             $abstractModel->setFormName('ContragentNew');
             $model->setAbstractModel($abstractModel);
+        }
+
+        if (!$dummyObject) {
+            if ($model->save()) {
+                if (!empty($model->getPropertyGroup())) {
+                    $model->getPropertyGroup()->appendToObjectModel($model);
+                }
+            } else {
+                return null;
+            }
         }
 
         return $model;

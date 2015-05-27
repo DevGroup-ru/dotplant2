@@ -109,7 +109,6 @@ class Order extends \yii\db\ActiveRecord
             ],
             [['user_id', 'customer_id', 'contragent_id', 'order_stage_id', 'payment_type_id', 'assigned_id', 'tax_id'], 'integer'],
             [['start_date', 'end_date', 'update_date'], 'safe'],
-            [['start_date', 'end_date', 'update_date'], 'safe'],
             [['total_price', 'items_count', 'total_payed'], 'number'],
             [['external_id'], 'string', 'max' => 38],
             [['is_deleted', 'temporary', 'show_price_changed_notification'], 'boolean'],
@@ -147,6 +146,10 @@ class Order extends \yii\db\ActiveRecord
             'shippingOption' => ['order_stage_id'],
             'paymentType' => ['payment_type_id', 'order_stage_id'],
             'changeManager' => ['manager_id'],
+            'backend' => [
+                'customer_id',
+                'contragent_id',
+            ],
         ];
     }
 
@@ -254,6 +257,9 @@ class Order extends \yii\db\ActiveRecord
         return $fullPrice;
     }
 
+    /**
+     * @return OrderDeliveryInformation|null
+     */
     public function getOrderDeliveryInformation()
     {
         return $this->hasOne(OrderDeliveryInformation::className(), ['order_id' => 'id']);

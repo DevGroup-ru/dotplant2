@@ -36,7 +36,7 @@ use app\properties\AbstractModel;
 
         <div class="contragent" data-visible="hide">
         <?php
-            $newContragent = \app\modules\shop\models\Contragent::createEmptyContragent($customer->id);
+            $newContragent = \app\modules\shop\models\Contragent::createEmptyContragent($customer);
             echo $form->field($newContragent, 'type')->dropDownList(['Individual' => 'Individual', 'Self-employed' => 'Self-employed', 'Legal entity' => 'Legal entity']);
             $abstractModel = $newContragent->getAbstractModel();
             foreach ($abstractModel->attributes() as $attr) {

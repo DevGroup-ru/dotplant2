@@ -46,7 +46,7 @@ class BaseOrderStageHandlers
 
             if (0 === intval(\Yii::$app->request->post('ContragentId', 0))) {
                 /** @var Contragent $contragent */
-                $contragent = Contragent::createEmptyContragent($customer->id);
+                $contragent = Contragent::createEmptyContragent($customer);
                 if ($contragent->load(\Yii::$app->request->post()) && $contragent->save()) {
                     $contragent->addPropertyGroup($contragent->getPropertyGroup()->id);
                     $data[$contragent->getAbstractModel()->formName()] = isset($data['ContragentNew']) ? $data['ContragentNew'] : [];

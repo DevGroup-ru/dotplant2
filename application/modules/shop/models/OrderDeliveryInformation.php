@@ -80,40 +80,59 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @return Order|null
+     */
     public function getOrder()
     {
         return $this->hasOne(Order::className(), ['id' => 'order_id']);
     }
 
+    /**
+     * @return ShippingOption|null
+     */
     public function getShippingOption()
     {
         return $this->hasOne(ShippingOption::className(), ['id' => 'shipping_option_id']);
     }
 
-    public function setPropertyGroup($group)
+    /**
+     * @param PropertyGroup $group
+     */
+    public function setPropertyGroup(PropertyGroup $group)
     {
         $this->propertyGroup = $group;
     }
 
+    /**
+     * @return PropertyGroup
+     */
     public function getPropertyGroup()
     {
         return $this->propertyGroup;
     }
 
+    /**
+     * @param integer|null $id
+     * @return OrderDeliveryInformation|null
+     */
     public static function getByOrderId($id = null)
     {
         return static::findOne(['order_id' => $id]);
     }
 
-    public static function createNewOrderDeliveryInformation(Order $order = null)
+    /**
+     * @param Order $order
+     * @param boolean $dummyObject Empty object, non saved to database
+     * @return OrderDeliveryInformation|null
+     * @throws \Exception
+     */
+    public static function createNewOrderDeliveryInformation(Order $order, $dummyObject = true)
     {
-        if (empty($order)) {
-            return null;
-        }
-
-        /** @var OrderDeliveryInformation|HasProperties $model */
+        /** @var OrderDeliveryInformation $model */
         $model = new static();
         $model->order_id = $order->id;
+        $model->loadDefaultValues();
 
         $groups = PropertyGroup::getForObjectId($model->getObject()->id, true);
         $group = array_shift($groups);
@@ -137,6 +156,17 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
                 }, []));
             $abstractModel->setFormName('OrderDeliveryInformationNew');
             $model->setAbstractModel($abstractModel);
+        }
+
+        if (!$dummyObject) {
+            $model->shipping_option_id = 0;
+            if ($model->save()) {
+                if (!empty($model->getPropertyGroup())) {
+                    $model->getPropertyGroup()->appendToObjectModel($model);
+                }
+            } else {
+                return null;
+            }
         }
 
         return $model;

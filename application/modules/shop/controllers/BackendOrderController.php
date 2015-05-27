@@ -9,6 +9,9 @@ use app\components\Helper;
 use app\components\SearchModel;
 use app\models\Config;
 use app\modules\shop\helpers\PriceHelper;
+use app\modules\shop\models\Contragent;
+use app\modules\shop\models\Customer;
+use app\modules\shop\models\DeliveryInformation;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderDeliveryInformation;
 use app\modules\shop\models\OrderItem;
@@ -137,14 +140,48 @@ class BackendOrderController extends BackendController
     {
         $model = $this->findModel($id);
 
-
         $transactionsDataProvider = new ArrayDataProvider([
             'allModels' => $model->transactions,
         ]);
 
-
         $message = new OrderChat();
         if (Yii::$app->request->isPost) {
+            $model->setScenario('backend');
+            if ($model->load(Yii::$app->request->post())) {
+                $customer = $model->customer;
+                if ($customer->load(Yii::$app->request->post()) && $customer->save()) {
+                    $customer->saveProperties(Yii::$app->request->post());
+                    $model->customer_id = $customer->id;
+                }
+
+                $contragent = !empty($model->contragent) ? $model->contragent : Contragent::createEmptyContragent($customer, false);
+                if ($contragent->load(Yii::$app->request->post()) && $contragent->validate()) {
+                    $_isNewRecord = $contragent->isNewRecord;
+                    $_data = Yii::$app->request->post();
+                    if ($contragent->save()) {
+                        if ($_isNewRecord && !empty($contragent->getPropertyGroup())) {
+                            $contragent->getPropertyGroup()->appendToObjectModel($contragent);
+                            $_data[$contragent->getAbstractModel()->formName()] = isset($_data['ContragentNew']) ? $_data['ContragentNew'] : [];
+                        }
+                        $contragent->saveProperties($_data);
+                        $contragent->refresh();
+                        $model->contragent_id = $contragent->id;
+                    }
+                }
+
+                $deliveryInformation = !empty($contragent->deliveryInformation) ? $contragent->deliveryInformation : DeliveryInformation::createNewDeliveryInformation($contragent, false);
+                if ($deliveryInformation->load(Yii::$app->request->post())) {
+                    $deliveryInformation->save();
+                }
+
+                $orderDeliveryInformation = $model->orderDeliveryInformation;
+                if ($orderDeliveryInformation->load(Yii::$app->request->post()) && $orderDeliveryInformation->save()) {
+                    $orderDeliveryInformation->saveProperties(Yii::$app->request->post());
+                }
+
+                $model->save();
+            }
+
             $message->load(Yii::$app->request->post());
             $message->order_id = $id;
             $message->user_id = Yii::$app->user->id;
@@ -164,8 +201,9 @@ class BackendOrderController extends BackendController
                         'info'
                     );
                 }
-                $this->refresh();
             }
+
+            $this->refresh();
         }
         $lastMessages = OrderChat::find()
             ->where(['order_id' => $id])
@@ -178,7 +216,6 @@ class BackendOrderController extends BackendController
                 'managers' => $this->getManagersList(),
                 'message' => $message,
                 'model' => $model,
-
                 'transactionsDataProvider' => $transactionsDataProvider,
             ]
         );
@@ -482,11 +519,10 @@ class BackendOrderController extends BackendController
     {
         $model = Order::create(false, false);
         if (!is_null($model)) {
-            $orderDeliveryInformation = new OrderDeliveryInformation;
-            $orderDeliveryInformation->attributes = [
-                'order_id' => $model->id,
-            ];
-            $orderDeliveryInformation->save(true, ['order_id']);
+            $customer = !empty(Customer::getCustomerByUserId($model->user_id)) ? Customer::getCustomerByUserId($model->user_id) : Customer::createEmptyCustomer($model->user_id, false);
+            $model->customer_id = $customer->id;
+            OrderDeliveryInformation::createNewOrderDeliveryInformation($model, false);
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             Yii::$app->session->addFlash('error', Yii::t('app', 'Cannot create a new order.'));

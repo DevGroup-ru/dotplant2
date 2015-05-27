@@ -63,8 +63,12 @@ class ObjectPropertyGroup extends ActiveRecord
             ->all();
     }
 
+    /**
+     * @return PropertyGroup|null
+     */
     public function getGroup()
     {
         return $this->hasOne(PropertyGroup::className(), ['id' => 'property_group_id']);
     }
 }
+?>
