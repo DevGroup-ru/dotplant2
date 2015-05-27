@@ -23,7 +23,7 @@ class ReviewsWidget extends Widget
     /**
      * @var ActiveRecord
      */
-    public $model = null;
+    public $model;
 
     /**
      * @var string
@@ -31,9 +31,9 @@ class ReviewsWidget extends Widget
     public $viewFile = 'reviews';
 
     /**
-     * @var bool
+     * @var string
      */
-    public $allowRate = false;
+    public $ratingGroupName;
 
     /**
      * @var int
@@ -48,7 +48,7 @@ class ReviewsWidget extends Widget
     /**
      * @var int
      */
-    public $formId = null;
+    public $formId;
 
     /**
      * @var bool
@@ -110,12 +110,11 @@ class ReviewsWidget extends Widget
                         ],
                     ]
                 ),
-                'objectId' => $this->model->object->id,
-                'objectModelId' => $this->model->id,
+                'objectModel' => $this->model,
                 'model' => $form,
                 'review' => $review,
                 'groups' => $groups,
-                'allowRate' => $this->allowRate,
+                'ratingGroupName' => $this->ratingGroupName,
                 'useCaptcha' => $this->useCaptcha,
                 'additionalParams' => $this->additionalParams,
             ]

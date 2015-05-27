@@ -6,18 +6,20 @@
  * @var $review \app\modules\review\models\Review
  */
 
-use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
 use app\models\Object;
 use app\models\PropertyGroup;
 use app\models\Property;
 use app\models\Form;
-use yii\helpers\Url;
 use kartik\icons\Icon;
 use yii\widgets\ActiveForm;
 use app\modules\review\models\Review;
+
 $this->title = Yii::t('app', 'Review show');
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'] = [
+    ['label' => Yii::t('app', 'Reviews'), 'url' => ['index']],
+    $this->title,
+];
 $formObject = Object::getForClass(Form::className());
 $groups = PropertyGroup::getForModel($formObject->id, $review->submission->form_id);
 $review->submission->getPropertyGroups(true);
@@ -151,7 +153,7 @@ $review->submission->getPropertyGroups(true);
                         <?php $form = ActiveForm::begin(['action' => ['update-status', 'id' => $review->id]], ['id' => 'review-form']); ?>
                         <?= $form->field($review, 'status')->dropDownList(Review::getStatuses())?>
                         <div class="form-group no-margin">
-                            <?php if ($review->submission->spam === Yii::$app->formatter->asBoolean(true)) :?>
+                            <?php if ($review->submission->spam === Yii::$app->formatter->asBoolean(true)): ?>
                                 <?=
                                 Html::a(
                                     Icon::show('check-square-o') . Yii::t('app', 'Not spam'),
@@ -168,7 +170,7 @@ $review->submission->getPropertyGroups(true);
                                 Html::a(
                                     Icon::show('minus-square') . Yii::t('app', 'Mark spam'),
                                     [
-                                        '/review/backend/mark-spam',
+                                        'mark-spam',
                                         'id' => $review->submission_id,
                                     ],
                                     ['class' => 'btn btn-danger']

@@ -5,15 +5,13 @@ namespace app\modules\review\controllers;
 use app\modules\review\models\Review;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
-use yii\helpers\VarDumper;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
 use Yii;
 use yii\web\NotFoundHttpException;
 use app\components\SearchModel;
 use app\models\Submission;
 
-class BackendController extends \app\backend\components\BackendController
+class BackendReviewController extends \app\backend\components\BackendController
 {
     public function behaviors()
     {
@@ -93,13 +91,14 @@ class BackendController extends \app\backend\components\BackendController
             return $this->redirect(
                 Url::toRoute(
                     [
-                        '/review/backend/view',
+                        'view',
                         'id' => $review->id
                     ]
                 )
             );
         }
     }
+
     public function actionMarkSpam($id, $spam = 1)
     {
         if ($spam === 1) {
@@ -107,46 +106,34 @@ class BackendController extends \app\backend\components\BackendController
         } else {
             $message = Yii::t('app', 'Entry successfully marked as not spam');
         }
-
-        $sql = Yii::$app->db->createCommand()
-            ->update(
-                Submission::tableName(),
-                [
-                    'spam' => Yii::$app->formatter->asBoolean($spam),
-                ],
-                [
-                    'id' => $id
-                ]);
-        if ($sql->execute()) {
-            Yii::$app->session->setFlash(
-                'success',
-                $message
-            );
-            return $this->redirect(
-                Url::toRoute(
-                    [
-                        '/review/backend/view',
-                        'id' => $id
-                    ]
-                )
-            );
+        $result = Submission::updateAll(['spam' => Yii::$app->formatter->asBoolean($spam)], ['id' => $id]);
+        if ($result > 0) {
+            Yii::$app->session->setFlash('success', $message);
         }
+        return $this->redirect(
+            Url::toRoute(
+                [
+                    'view',
+                    'id' => $id
+                ]
+            )
+        );
     }
 
     public function actionDelete($id, $returnUrl)
     {
         $model = $this->loadModel($id);
-        if ($model->delete() ) {
+        if ($model->delete()) {
             Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
         }
         return $this->redirect($returnUrl);
     }
 
-    public function actionRemoveAll($returnUrl = '/backend')
+    public function actionRemoveAll($returnUrl = ['index'])
     {
         $items = Yii::$app->request->post('items', []);
         if (!empty($items)) {
-            $items = Review::find()->where(['in', 'id', $items])->all();
+            $items = Review::findAll(['id' => $items]);
             foreach ($items as $item) {
                 $item->delete();
             }
@@ -155,6 +142,12 @@ class BackendController extends \app\backend\components\BackendController
         return $this->redirect($returnUrl);
     }
 
+    /**
+     * Load review model by id
+     * @param $id
+     * @return Review
+     * @throws NotFoundHttpException
+     */
     protected function loadModel($id)
     {
         $model = Review::findOne($id);

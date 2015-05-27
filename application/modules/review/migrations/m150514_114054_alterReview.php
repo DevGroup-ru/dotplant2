@@ -1,34 +1,51 @@
 <?php
 
-use yii\db\Schema;
-use yii\db\Migration;
+use app\backend\models\BackendMenu;
 use app\modules\review\models\Review;
+use yii\db\Migration;
 
 class m150514_114054_alterReview extends Migration
 {
     public function up()
     {
-        $this->dropTable(Review::tableName());
-        $this->createTable(
-            Review::tableName(),
-            [
-                'id' => Schema::TYPE_PK,
-                'submission_id' => Schema::TYPE_INTEGER. ' NOT NULL',
-                'object_id' => Schema::TYPE_INTEGER. ' NOT NULL',
-                'object_model_id' => Schema::TYPE_INTEGER. ' NOT NULL',
-                'author_email' => Schema::TYPE_STRING. ' NOT NULL',
-                'review_text' => Schema::TYPE_TEXT. ' NOT NULL',
-                'rating_id' => Schema::TYPE_INTEGER. ' NOT NULL',
-                'status' => 'enum(\'NEW\',\'APPROVED\',\'NOT APPROVED\') DEFAULT \'NEW\'',
-                'KEY `ix-review-object_id-object_model_id-status` (`submission_id`, `object_model_id`, `status`)',
-            ],
-            'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB'
+        $this->addColumn(Review::tableName(), 'submission_id', 'INT UNSIGNED NOT NULL');
+        $form = new \app\models\Form;
+        $form->name = 'Review';
+        $form->save(true, ['name']);
+        $formId = $this->db->lastInsertID;
+        $reviews = Review::find()->all();
+        foreach ($reviews as $review) {
+            $submission = new \app\models\Submission;
+            $submission->form_id = $formId;
+            $submission->processed_by_user_id = $review->author_user_id;
+            $submission->date_received = $review->date_submitted;
+            $submission->save(true, ['form_id', 'processed_by_user_id', 'date_received']);
+            $review->submission_id = $this->db->lastInsertID;
+            $review->save(true, ['submission_id']);
+        }
+        $this->dropColumn(Review::tableName(), 'date_submitted');
+        $this->dropColumn(Review::tableName(), 'author_user_id');
+        $this->dropColumn(Review::tableName(), 'author_name');
+        $this->dropColumn(Review::tableName(), 'author_phone');
+        $this->dropColumn(Review::tableName(), 'rate');
+        $this->renameColumn(Review::tableName(), 'text', 'review_text');
+        $this->alterColumn(Review::tableName(), 'rating_id', 'CHAR(32)');
+        $this->update(
+            BackendMenu::tableName(),
+            ['route' => 'review/backend-rating/index'],
+            ['route' => 'backend/rating/index']
         );
-
+        $this->update(
+            BackendMenu::tableName(),
+            ['route' => 'review/backend-review/index'],
+            ['name' => 'Reviews']
+        );
+        $this->delete(BackendMenu::tableName(), ['route' => ['review/backend/products', 'review/backend/pages']]);
     }
 
     public function down()
     {
-        $this->dropTable(Review::tableName());
+        echo "You have no way back.\n";
+        return false;
     }
 }

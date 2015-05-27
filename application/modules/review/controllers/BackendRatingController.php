@@ -1,15 +1,15 @@
 <?php
 
-namespace app\backend\controllers;
+namespace app\modules\review\controllers;
 
-use app\models\RatingItem;
+use app\backend\components\BackendController;
+use app\modules\review\models\RatingItem;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
-class RatingController extends Controller
+class BackendRatingController extends BackendController
 {
     public function behaviors()
     {

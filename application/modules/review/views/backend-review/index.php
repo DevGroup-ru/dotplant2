@@ -12,7 +12,7 @@ use yii\helpers\Url;
 use kartik\grid\GridView;
 use app\modules\review\models\Review;
 
-$this->title = Yii::t('app', 'Product reviews');
+$this->title = Yii::t('app', 'Reviews');
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -25,7 +25,7 @@ $this->beginBlock('add-button');
     [
         'url' => Url::toRoute(
             [
-                '/backend/review/remove-all',
+                'remove-all',
                 'returnUrl' => Yii::$app->request->url
             ]
         ),
@@ -131,7 +131,7 @@ $this->endBlock();
                         'placement' => \kartik\popover\PopoverX::ALIGN_LEFT,
                         'data' => Review::getStatuses(),
                         'formOptions' => [
-                            'action' => 'update-status',
+                            'action' => ['update-status'],
                         ],
                     ],
                     'filter' => Review::getStatuses(),

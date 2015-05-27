@@ -1,5 +1,8 @@
 <?php
 
+use app\modules\review\models\RatingItem;
+use app\modules\review\models\RatingValues;
+use app\modules\review\models\Review;
 use yii\db\Schema;
 use yii\db\Migration;
 
@@ -8,7 +11,7 @@ class m150319_143410_ratings extends Migration
     public function up()
     {
         $this->createTable(
-            '{{%rating_item}}',
+            RatingItem::tableName(),
             [
                 'id' => Schema::TYPE_PK,
                 'name' => Schema::TYPE_STRING . ' NOT NULL',
@@ -19,42 +22,28 @@ class m150319_143410_ratings extends Migration
                 'require_review' => Schema::TYPE_BOOLEAN . ' DEFAULT 0',
             ]
         );
-
         $this->createTable(
-            '{{%rating_values}}',
+            RatingValues::tableName(),
             [
                 'id' => Schema::TYPE_PK,
-                'rating_id' => Schema::TYPE_STRING . ' NOT NULL',
+                'rating_id' => 'CHAR(32) NOT NULL',
                 'object_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'object_model_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'rating_item_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'value' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0',
                 'user_id' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0',
                 'date' => Schema::TYPE_DATETIME . ' NOT NULL',
+                'KEY `ix-rating_values-rating_id` (`rating_id`)',
             ]
         );
-
-        $this->addColumn('{{%review}}', 'rating_id', Schema::TYPE_STRING);
+        $this->addColumn(Review::tableName(), 'rating_id', 'CHAR(32) NOT NULL');
     }
 
     public function down()
     {
-        $this->dropTable('{{%rating_item}}');
-        $this->dropTable('{{%rating_values}}');
-
-        $this->dropColumn('{{%review}}', 'rating_id');
-
+        $this->dropTable(RatingItem::tableName());
+        $this->dropTable(RatingValues::tableName());
+        $this->dropColumn(Review::tableName(), 'rating_id');
         return true;
     }
-    
-    /*
-    // Use safeUp/safeDown to run migration code within a transaction
-    public function safeUp()
-    {
-    }
-    
-    public function safeDown()
-    {
-    }
-    */
 }

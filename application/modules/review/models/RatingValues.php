@@ -1,7 +1,8 @@
 <?php
 
-namespace app\models;
+namespace app\modules\review\models;
 
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
@@ -35,7 +36,7 @@ class RatingValues extends \yii\db\ActiveRecord
     {
         return [
             [
-                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+                'class' => ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -51,12 +52,18 @@ class RatingValues extends \yii\db\ActiveRecord
             [['user_id'], 'default', 'value' => 0],
             [['date'], 'safe'],
             [['rating_id'], 'string', 'max' => 255],
-            [['value'], function($attribute, $params){
-                $rating = RatingItem::getOneItemByAttributes(['id' => (isset($this->rating_item_id) ? $this->rating_item_id : null)], true);
+            [['value'], function($attribute, $params) {
+                $rating = RatingItem::getOneItemByAttributes(
+                    ['id' => (isset($this->rating_item_id) ? $this->rating_item_id : null)],
+                    true
+                );
                 $value = intval($this->value);
                 if (!empty($rating)) {
-                    if ($value > $rating['max_value']) $value = $rating['max_value'];
-                    else if ($value < $rating['min_value']) $value = $rating['min_value'];
+                    if ($value > $rating['max_value']) {
+                        $value = $rating['max_value'];
+                    } elseif ($value < $rating['min_value']) {
+                        $value = $rating['min_value'];
+                    }
                 }
                 $this->value = $value;
             }],
@@ -81,29 +88,28 @@ class RatingValues extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param $object_model
+     * @param ActiveRecord $objectModel
      * @return array|mixed|\yii\db\ActiveRecord[]
      */
-    public static function getValuesByObjectModel($object_model)
+    public static function getValuesByObjectModel($objectModel)
     {
-        if (!is_object($object_model) || (!$object_model instanceof ActiveRecord)) {
-            $object_id = \app\models\Object::getForClass($object_model->className());
-            if (null === $object_id) {
-                return [];
-            }
-        } else {
+        if (!is_object($objectModel) || !$objectModel instanceof ActiveRecord || is_null($objectModel->object)) {
             return [];
         }
-
-        $cache_key = "RatingValues:{$object_id->id}:{$object_model->id}";
+        $cache_key = "RatingValues:{$objectModel->object->id}:{$objectModel->id}";
         $result = Yii::$app->cache->get($cache_key);
         if (false === $result) {
             $query = static::find();
             $query->select('value')
-                ->where(['object_id' => $object_id->id, 'object_model_id' => $object_model->id])
-                ->asArray();
-            $result = $query->all();
-
+                ->from(static::tableName() . ' rv')
+                ->where(['rv.object_id' => $objectModel->object->id, 'rv.object_model_id' => $objectModel->id])
+                ->join(
+                    'INNER JOIN',
+                    Review::tableName() . ' r',
+                    'r.rating_id = rv.rating_id AND r.status = :status',
+                    [':status' => Review::STATUS_APPROVED]
+                );
+            $result = $query->column();
             Yii::$app->cache->set(
                 $cache_key,
                 $result,
@@ -111,14 +117,15 @@ class RatingValues extends \yii\db\ActiveRecord
                 new TagDependency(
                     [
                         'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), "{$object_id->id}:{$object_model->id}")
+                            ActiveRecordHelper::getObjectTag(
+                                static::className(),
+                                "{$objectModel->object->id}:{$objectModel->id}"
+                            )
                         ],
                     ]
                 )
             );
         }
-
         return $result;
     }
 }
-?>

@@ -179,3 +179,14 @@ $images = Image::getForModel($model->object->id, $model->id);
             </div>
         </div>
     </div>
+<?=
+\app\modules\review\widgets\ReviewsWidget::widget(
+    [
+        'model' => $model,
+        'formId' => 2,
+        'ratingGroupName' => 'One',
+        'additionalParams' => [
+            'model' => $model,
+        ],
+    ]
+);

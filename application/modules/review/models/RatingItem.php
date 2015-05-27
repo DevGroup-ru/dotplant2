@@ -1,7 +1,8 @@
 <?php
 
-namespace app\models;
+namespace app\modules\review\models;
 
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
 use yii\helpers\Json;
@@ -35,7 +36,7 @@ class RatingItem extends \yii\db\ActiveRecord
     {
         return [
             [
-                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+                'class' => ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -89,17 +90,14 @@ class RatingItem extends \yii\db\ActiveRecord
             && false !== $cache) {
             return $cache;
         }
-
         $query = static::find()
             ->distinct()
             ->groupBy('rating_group')
             ->orderBy(['rating_group' => SORT_ASC])
             ->asArray(boolval($asArray));
-
         if (false === $isFetched) {
             return $query;
         }
-
         $result = $query->all();
         if (true === $asArray) {
             Yii::$app->cache->set(
@@ -109,7 +107,7 @@ class RatingItem extends \yii\db\ActiveRecord
                 new TagDependency(
                     [
                         'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                            ActiveRecordHelper::getCommonTag(static::className())
                         ],
                     ]
                 )
@@ -130,7 +128,6 @@ class RatingItem extends \yii\db\ActiveRecord
             ->groupBy('rating_group')
             ->orderBy(['rating_group' => SORT_ASC])
             ->asArray();
-
         return $query->one();
     }
 
@@ -145,7 +142,6 @@ class RatingItem extends \yii\db\ActiveRecord
         if (!is_array($attributes)) {
             return [];
         }
-
         $cache_key = 'RatingItem:'.Json::encode($attributes);
         $cache = Yii::$app->cache->get($cache_key);
         if (true === $isFetched
@@ -153,17 +149,14 @@ class RatingItem extends \yii\db\ActiveRecord
             && false !== $cache) {
             return $cache;
         }
-
         $query = static::find();
         foreach ($attributes as $attr => $value) {
             $query->andWhere([$attr => $value]);
         }
         $query->orderBy(['id' => SORT_ASC])->asArray(boolval($asArray));
-
         if (false === $isFetched) {
             return $query;
         }
-
         $result = $query->all();
         if (true === $asArray) {
             Yii::$app->cache->set(
@@ -173,7 +166,7 @@ class RatingItem extends \yii\db\ActiveRecord
                 new TagDependency(
                     [
                         'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                            ActiveRecordHelper::getCommonTag(static::className())
                         ],
                     ]
                 )
@@ -193,4 +186,3 @@ class RatingItem extends \yii\db\ActiveRecord
         return $query->one();
     }
 }
-?>

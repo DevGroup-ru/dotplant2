@@ -6,63 +6,29 @@
  * @var $useCaptcha boolean
  * @var $groups \app\models\PropertyGroup[]
  * @var $view \yii\web\View
- * @var $objectId int
- * @var $allowRate bool
- * @var $objectModelId int
+ * @var $objectModel \yii\db\ActiveRecord
+ * @var $ratingGroupName string
  */
 
-use kartik\icons\Icon;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use app\models\Property;
 
+$allowRate = !empty($ratingGroupName);
+
 ?>
 <div class="row">
+    <?php if ($allowRate): ?>
+    <?= \app\modules\review\widgets\rating\RatingShowWidget::widget(['objectModel' => $objectModel]) ?>
+    <?php endif; ?>
     <div class="col-md-6">
         <div class = "widget-reviews">
             <?php \yii\widgets\Pjax::begin() ?>
             <?=
             \yii\widgets\ListView::widget([
                 'dataProvider' => $reviews,
-                'itemView' => function ($model, $key, $index, $widget) use ($groups) {
-                    $itemView = Html::beginTag('div', ['class' => 'row review']);
-                    $itemView .= Html::beginTag('div', ['class' => 'col-md-4']);
-                    $itemView .= Html::beginTag('div', ['class' => 'review-date_submitted label label-default']);
-                    $itemView .= Icon::show('calendar');
-                    $itemView .= date("d.m.Y H:i:s", strtotime($model->submission->date_received));
-                    $itemView .= '</div>';
-                    $itemView .= Html::beginTag('div', ['class' => 'review-author']);
-                    if (null === $model->submission->processed_by_user_id) {
-                        $itemView .= Icon::show('user') . Yii::t('app', 'Guest');
-                    } else {
-                        /** @var \app\modules\user\models\User $user */
-                        $user = \app\modules\user\models\User::findIdentity($model->submission->processed_by_user_id);
-                        $itemView .= Icon::show('user') . Html::encode($user->getDisplayName());
-                    }
-                    $itemView .= '</div>';
-                    $itemView .= '</div>';
-                    $itemView .= Html::beginTag('div', ['class' => 'col-md-8']);
-                    $itemView .= Html::encode($model->review_text);
-                    $itemView .= '</div>';
-                    $model->submission->getPropertyGroups(true);
-                    foreach ($groups as $group) {
-                        $properties = Property::getForGroupId($group->id);
-                        foreach ($properties as $property) {
-                            if ($propertyValues = $model->submission->getPropertyValuesByPropertyId($property->id)) {
-                                $itemView .= Html::beginTag('div', ['class' => 'col-md-8']);
-                                $itemView .= $property->handler(
-                                    'form',
-                                    $model->submission->abstractModel,
-                                    $propertyValues,
-                                    'frontend_render_view'
-                                );
-                                $itemView .= '</div>';
-                            }
-                        }
-                    }
-                    $itemView .= '</div>';
-                    return $itemView;
-                },
+                'itemView' => 'item',
+                'viewParams' => ['allowRate' => $allowRate, 'groups' => $groups],
             ])
             ?>
             <?php \yii\widgets\Pjax::end() ?>
@@ -71,27 +37,15 @@ use app\models\Property;
                 [
                     'action'=>[
                         '/review/process/process',
-                        'object_id' => $objectId,
-                        'object_model_id' => $objectModelId,
+                        'objectId' => $objectModel->object->id,
+                        'objectModelId' => $objectModel->id,
                         'id' => $model->id,
-                        'returnUrl'=>Yii::$app->request->url
+                        'returnUrl' => Yii::$app->request->url,
                     ],
                     'id' => 'review-form'
                 ]
             );
             ?>
-            <?php if ($allowRate): ?>
-                <?=
-                \app\backend\widgets\Rating::widget(
-                    [
-                        'objectId' => $objectId,
-                        'objectModelId' => $objectModelId,
-                        'form' => $form,
-                    ]
-                )
-                ?>
-            <?php endif; ?>
-
             <h2>
                 <?= Yii::t('app', 'Your review') ?>
                 <?php if (Yii::$app->getUser()->isGuest): ?>
@@ -105,6 +59,15 @@ use app\models\Property;
                     <small>[<?= Yii::$app->getUser()->getIdentity()->getDisplayName() ?>]</small>
                 <?php endif; ?>
             </h2>
+            <?php if ($allowRate): ?>
+                <?=
+                \app\modules\review\widgets\rating\RatingWidget::widget(
+                    [
+                        'groupName' => $ratingGroupName,
+                    ]
+                )
+                ?>
+            <?php endif; ?>
             <?php if (Yii::$app->getUser()->isGuest): ?>
                 <?= $form->field($review, 'author_email') ?>
             <?php endif; ?>

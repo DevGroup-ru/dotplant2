@@ -1,6 +1,6 @@
 <?php
 
-namespace app\widgets\rating;
+namespace app\modules\review\widgets\rating;
 
 use yii\web\AssetBundle;
 
@@ -17,4 +17,3 @@ class RatingAsset extends AssetBundle
         'yii\web\JqueryAsset',
     ];
 }
-?>

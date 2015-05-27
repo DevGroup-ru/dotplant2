@@ -3,14 +3,15 @@
 namespace app\modules\review;
 
 use app\components\BaseModule;
+
 /**
  * Base configuration module for DotPlant2 CMS
  * @package app\modules\review
  */
 class ReviewModule extends BaseModule
 {
-    public $maxPerPage = 2;
-    public $pageSize = 2;
+    public $maxPerPage = 10;
+    public $pageSize = 10;
 
     /**
      * @return array the behavior configurations.
