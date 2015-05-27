@@ -39,7 +39,8 @@ class WarehouseOpeninghours extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['warehouse_id'], 'required'],
+            [['sort_order'], 'default', 'value'=> 0],
+            [['warehouse_id', 'sort_order'], 'required'],
             [['warehouse_id', 'sort_order', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'all_day'], 'integer'],
             [['opens', 'closes', 'break_from', 'break_to'], 'string', 'max' => 255]
         ];
