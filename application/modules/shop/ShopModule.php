@@ -4,12 +4,16 @@ namespace app\modules\shop;
 
 use app;
 use app\components\BaseModule;
+use yii\base\Application;
+use yii\base\BootstrapInterface;
+use yii\base\Event;
+use yii\web\UserEvent;
 
 /**
  * Shop module is the base core module of DotPlant2 CMS handling all common e-commerce features
  * @package app\modules\shop
  */
-class ShopModule extends BaseModule
+class ShopModule extends BaseModule implements BootstrapInterface
 {
     /**
      * @inheritdoc
@@ -87,4 +91,27 @@ class ShopModule extends BaseModule
         ];
     }
 
+    /**
+     * Bootstrap method to be called during application bootstrap stage.
+     * @param Application $app the application currently running
+     */
+    public function bootstrap($app)
+    {
+        Event::on(\yii\web\User::className(), \yii\web\User::EVENT_AFTER_LOGIN,
+            function ($event)
+            {
+                /** @var UserEvent $event */
+                $orders = \Yii::$app->session->get('orders', []);
+                foreach ($orders as $k => $id) {
+                    /** @var app\modules\shop\models\Order $order */
+                    $order = app\modules\shop\models\Order::findOne(['id' => $id]);
+                    if (!empty($order) && 0 === intval($order->user_id)) {
+                        $order->user_id = $event->identity->id;
+                        $order->save();
+                    }
+                }
+            }
+        );
+    }
 }
+?>

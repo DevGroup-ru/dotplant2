@@ -408,5 +408,22 @@ class Order extends \yii\db\ActiveRecord
         $this->total_price = PriceHelper::getOrderPrice($this);
         return $callSave ? $this->save(true, ['items_count', 'total_price', 'total_price_with_shipping']) : true;
     }
+
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if (!$insert && !empty($changedAttributes['user_id']) && 0 === intval($changedAttributes['user_id'])) {
+            if (!empty($this->customer)) {
+                $customer = $this->customer;
+                $customer->user_id = 0 === intval($customer->user_id) ? $this->user_id : $customer->user_id;
+                $customer->save();
+            }
+        }
+    }
 }
 ?>
