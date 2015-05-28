@@ -66,7 +66,7 @@ class FloatingPanel extends Widget
                         $items[] = [
                             'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit category'),
                             'url' => [
-                                '/backend/category/edit',
+                                '/shop/backend-category/edit',
                                 'id' => $cat->id,
                                 'parent_id' => $cat->parent_id,
                             ],
@@ -80,7 +80,7 @@ class FloatingPanel extends Widget
                     $items[] = [
                         'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit product'),
                         'url' => [
-                            '/backend/product/edit',
+                            '/shop/backend-product/edit',
                             'id' => intval($_GET['model_id'])
 
                         ],
@@ -88,10 +88,10 @@ class FloatingPanel extends Widget
                 }
                 break;
             
-            case 'page/show':
-            case 'page/list':
+            case '/page/page/show':
+            case '/page/page/list':
                 if (isset($_GET['id'])) {
-                    $page = app\models\Page::findById($_GET['id']);
+                    $page = app\modules\page\models\Page::findById($_GET['id']);
                     $items[] = [
                         'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit page'),
                         'url' => [
