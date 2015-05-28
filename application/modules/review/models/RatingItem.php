@@ -2,6 +2,7 @@
 
 namespace app\modules\review\models;
 
+use app\traits\FindById;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
@@ -18,9 +19,12 @@ use yii\helpers\Json;
  * @property integer $step_value
  * @property integer $require_review
  * @property integer $allow_guest
+ * @method RatingItem getById(integer $id)
  */
 class RatingItem extends \yii\db\ActiveRecord
 {
+    use FindById;
+
     /**
      * @inheritdoc
      */

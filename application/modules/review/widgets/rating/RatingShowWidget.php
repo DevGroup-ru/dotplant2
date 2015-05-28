@@ -2,7 +2,9 @@
 
 namespace app\modules\review\widgets\rating;
 
+use app\modules\review\models\RatingItem;
 use app\modules\review\models\RatingValues;
+use Yii;
 use yii\base\Widget;
 
 class RatingShowWidget extends Widget
@@ -40,15 +42,24 @@ class RatingShowWidget extends Widget
         if (null === $this->objectModel) {
             return '';
         }
-        $items = RatingValues::getValuesByObjectModel($this->objectModel);
-        if (empty($items)) {
-            $items = [0];
+        $groupedRatingValues = RatingValues::getValuesByObjectModel($this->objectModel);
+        if (!empty($groupedRatingValues)) {
+            $groups = [];
+            foreach ($groupedRatingValues as $groupId => $group) {
+                $ratingItem = RatingItem::findById($groupId);
+                $groups[] = [
+                    'name' => !is_null($ratingItem) ? $ratingItem->name : Yii::t('app', 'Unknown rating'),
+                    'rating' => call_user_func($this->calcFunction, $group),
+                    'votes' => count($group),
+                ];
+            }
+        } else {
+            $groups = null;
         }
         return $this->render(
             $this->viewFile,
             [
-                'rating' => call_user_func($this->calcFunction, $items),
-                'votes' => count($items),
+                'groups' => $groups,
             ]
         );
     }

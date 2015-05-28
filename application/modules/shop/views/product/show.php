@@ -184,7 +184,7 @@ $images = Image::getForModel($model->object->id, $model->id);
     [
         'model' => $model,
         'formId' => 2,
-        'ratingGroupName' => 'One',
+        'ratingGroupName' => 'First',
         'additionalParams' => [
             'model' => $model,
         ],

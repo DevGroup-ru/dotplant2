@@ -11,7 +11,7 @@ use kartik\icons\Icon;
 $this->title = Yii::t('app', 'Editing rating group {groupname}', [
     'groupname' => $group['rating_group'],
 ]);
-$this->params['breadcrumbs'][] = ['url' => [\yii\helpers\Url::toRoute('index')], 'label' => Yii::t('app', 'Rating groups')];
+$this->params['breadcrumbs'][] = ['url' => [\yii\helpers\Url::toRoute(['index'])], 'label' => Yii::t('app', 'Rating groups')];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?=
 \yii\helpers\Html::a(
     \kartik\icons\Icon::show('plus') . Yii::t('app', 'Add'),
-    ['/backend/rating/item-edit', 'group' => $group['rating_group'], 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
+    ['item-edit', 'group' => $group['rating_group'], 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
     ['class' => 'btn btn-success']
 )
 ?>
@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?=
     Html::a(
         Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
-        Yii::$app->request->get('returnUrl', ['/backend/rating/index']),
+        Yii::$app->request->get('returnUrl', ['index']),
         ['class' => 'btn btn-danger']
     )
     ?>

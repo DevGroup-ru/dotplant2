@@ -96,11 +96,11 @@ class RatingValues extends \yii\db\ActiveRecord
         if (!is_object($objectModel) || !$objectModel instanceof ActiveRecord || is_null($objectModel->object)) {
             return [];
         }
-        $cache_key = "RatingValues:{$objectModel->object->id}:{$objectModel->id}";
-        $result = Yii::$app->cache->get($cache_key);
+        $cacheKey = "RatingValues:{$objectModel->object->id}:{$objectModel->id}";
+        $result = Yii::$app->cache->get($cacheKey);
         if (false === $result) {
             $query = static::find();
-            $query->select('value')
+            $query->select('rating_item_id, value')
                 ->from(static::tableName() . ' rv')
                 ->where(['rv.object_id' => $objectModel->object->id, 'rv.object_model_id' => $objectModel->id])
                 ->join(
@@ -109,9 +109,17 @@ class RatingValues extends \yii\db\ActiveRecord
                     'r.rating_id = rv.rating_id AND r.status = :status',
                     [':status' => Review::STATUS_APPROVED]
                 );
-            $result = $query->column();
+            $rows = $query->all();
+            $result = [];
+            foreach ($rows as $row) {
+                if (isset($result[$row['rating_item_id']])) {
+                    $result[$row['rating_item_id']][] = $row['value'];
+                } else {
+                    $result[$row['rating_item_id']] = [$row['value']];
+                }
+            }
             Yii::$app->cache->set(
-                $cache_key,
+                $cacheKey,
                 $result,
                 0,
                 new TagDependency(

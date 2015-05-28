@@ -112,24 +112,26 @@ class SubmitFormAction extends Action
         if (!($form->abstractModel->validate() && $submission->save())) {
             return "0";
         }
-        foreach ($post[$form->abstractModel->formName()] as $key => &$value) {
-            if ($file = UploadedFile::getInstance($model, $key)) {
-                $folder = Config::getValue('core.fileUploadPath', 'upload/user-uploads/');
-                $fullPath = "@webroot/{$folder}";
-                if (!file_exists(\Yii::getAlias($fullPath))) {
-                    mkdir(\Yii::getAlias($fullPath), 0755, true);
+        if (isset($post[$form->abstractModel->formName()])) {
+            foreach ($post[$form->abstractModel->formName()] as $key => &$value) {
+                if ($file = UploadedFile::getInstance($model, $key)) {
+                    $folder = Config::getValue('core.fileUploadPath', 'upload/user-uploads/');
+                    $fullPath = "@webroot/{$folder}";
+                    if (!file_exists(\Yii::getAlias($fullPath))) {
+                        mkdir(\Yii::getAlias($fullPath), 0755, true);
+                    }
+                    $value = '/' . $folder . $file->baseName . '.' . $file->extension;
+                    $file->saveAs($folder . $file->baseName . '.' . $file->extension);
                 }
-                $value = '/' . $folder . $file->baseName . '.' . $file->extension;
-                $file->saveAs($folder . $file->baseName . '.' . $file->extension);
             }
+            $data = [
+                'AddPropetryGroup' => [
+                    $submission->formName() => array_keys($form->getPropertyGroups()),
+                ],
+                $submission->abstractModel->formName() => $post[$form->abstractModel->formName()],
+            ];
+            $submission->saveProperties($data);
         }
-        $data = [
-            'AddPropetryGroup' => [
-                $submission->formName() => array_keys($form->getPropertyGroups()),
-            ],
-            $submission->abstractModel->formName() => $post[$form->abstractModel->formName()],
-        ];
-        $submission->saveProperties($data);
         if ($haveSpam === false) {
             if (!empty($form->email_notification_addresses)) {
                 try {

@@ -26,17 +26,16 @@ class m150319_143410_ratings extends Migration
             RatingValues::tableName(),
             [
                 'id' => Schema::TYPE_PK,
-                'rating_id' => 'CHAR(32) NOT NULL',
+                'rating_id' => Schema::TYPE_STRING . ' NOT NULL',
                 'object_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'object_model_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'rating_item_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'value' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0',
                 'user_id' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0',
                 'date' => Schema::TYPE_DATETIME . ' NOT NULL',
-                'KEY `ix-rating_values-rating_id` (`rating_id`)',
             ]
         );
-        $this->addColumn(Review::tableName(), 'rating_id', 'CHAR(32) NOT NULL');
+        $this->addColumn(Review::tableName(), 'rating_id', Schema::TYPE_STRING);
     }
 
     public function down()

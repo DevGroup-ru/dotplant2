@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?=
     Html::a(
         Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
-        Yii::$app->request->get('returnUrl', ['/backend/rating/index']),
+        Yii::$app->request->get('returnUrl', ['index']),
         ['class' => 'btn btn-danger']
     )
     ?>

@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?=
     \yii\helpers\Html::a(
         \kartik\icons\Icon::show('plus') . Yii::t('app', 'Add'),
-        ['/backend/rating/group-create', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
+        ['group-create', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
         ['class' => 'btn btn-success']
     )
 ?>

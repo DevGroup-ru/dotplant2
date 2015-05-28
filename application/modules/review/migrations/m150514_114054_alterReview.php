@@ -1,6 +1,8 @@
 <?php
 
 use app\backend\models\BackendMenu;
+use app\modules\review\models\RatingItem;
+use app\modules\review\models\RatingValues;
 use app\modules\review\models\Review;
 use yii\db\Migration;
 
@@ -41,6 +43,18 @@ class m150514_114054_alterReview extends Migration
             ['name' => 'Reviews']
         );
         $this->delete(BackendMenu::tableName(), ['route' => ['review/backend/products', 'review/backend/pages']]);
+        $this->alterColumn(RatingValues::tableName(), 'rating_id', 'CHAR(32) NOT NULL');
+        $this->alterColumn(RatingValues::tableName(), 'object_id', 'INT UNSIGNED NOT NULL');
+        $this->alterColumn(RatingValues::tableName(), 'object_model_id', 'INT UNSIGNED NOT NULL');
+        $this->alterColumn(RatingValues::tableName(), 'rating_item_id', 'INT UNSIGNED NOT NULL');
+        $this->alterColumn(RatingValues::tableName(), 'user_id', 'INT UNSIGNED NOT NULL');
+        $this->createIndex('ix-rating_values-rating_id', RatingValues::tableName(), 'rating_id');
+        $this->createIndex(
+            'ix-rating_values-object_id-object_model_id',
+            RatingValues::tableName(),
+            ['object_id', 'object_model_id']
+        );
+        $this->createIndex('ix-rating_item-rating_group', RatingItem::tableName(), 'rating_group');
     }
 
     public function down()
