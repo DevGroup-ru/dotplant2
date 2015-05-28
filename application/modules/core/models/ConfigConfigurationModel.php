@@ -60,11 +60,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             'modules' => [
                 'core' => $attributes,
             ],
-            'components' => [
-                'updateHelper' => [
-                    'composerHomeDirectory' => $this->composerHomeDirectory,
-                ]
-            ],
+
         ];
     }
 
@@ -89,7 +85,13 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public function commonApplicationAttributes()
     {
-        return [];
+        return [
+            'components' => [
+                'updateHelper' => [
+                    'composerHomeDirectory' => $this->composerHomeDirectory,
+                ]
+            ],
+        ];
     }
 
     /**
