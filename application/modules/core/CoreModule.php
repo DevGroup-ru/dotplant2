@@ -28,6 +28,11 @@ class CoreModule extends BaseModule implements BootstrapInterface
     ];
 
     /**
+     * @var string Internal encoding. It's used for mbstring functions.
+     */
+    public $internalEncoding = 'UTF-8';
+
+    /**
      * @inheritdoc
      */
     public function behaviors()
@@ -47,6 +52,7 @@ class CoreModule extends BaseModule implements BootstrapInterface
      */
     public function bootstrap($app)
     {
+        mb_internal_encoding($this->internalEncoding);
         if ($app instanceof \yii\web\Application === true) {
             $app->on(
                 Application::EVENT_BEFORE_ACTION,
@@ -65,7 +71,7 @@ class CoreModule extends BaseModule implements BootstrapInterface
     }
 
     /**
-     *
+     * @inheritdoc
      */
     public function init()
     {
@@ -75,4 +81,3 @@ class CoreModule extends BaseModule implements BootstrapInterface
         }
     }
 }
-?>

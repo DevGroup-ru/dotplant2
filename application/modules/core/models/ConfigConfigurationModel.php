@@ -20,14 +20,18 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $composerHomeDirectory = './composer/';
 
     /**
+     * @var string Internal encoding. It's used for mbstring functions.
+     */
+    public $internalEncoding;
+
+    /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
             [
-                'composerHomeDirectory',
-                'string',
+                ['composerHomeDirectory', 'internalEncoding'], 'string',
             ]
         ];
     }
