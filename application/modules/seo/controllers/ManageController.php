@@ -4,8 +4,8 @@ namespace app\modules\seo\controllers;
 
 use app\backend\components\BackendController;
 use app\modules\shop\models\Category;
-use app\models\Order;
-use app\models\OrderItem;
+use app\modules\shop\models\Order;
+use app\modules\shop\models\OrderItem;
 use app\modules\shop\models\Product;
 use app\modules\seo\models\Config;
 use app\modules\seo\models\Counter;
@@ -16,7 +16,6 @@ use devgroup\ace\AceHelper;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\base\Event;
 use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\helpers\Url;
@@ -50,15 +49,9 @@ class ManageController extends BackendController
                     ],
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    //
-                ],
-            ],
             [
               'class' => 'yii\filters\PageCache',
-              'only' => [ 'GetRobots' ],
+              'only' => ['GetRobots'],
               'duration' => 24 * 60 * 60,
               'dependency' => ActiveRecordHelper::getCommonTag(Config::className()),
             ]
@@ -123,12 +116,12 @@ class ManageController extends BackendController
             if ($model->load($_POST) && $model->validate()) {
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                    $returnUrl = Yii::$app->request->get('returnUrl', ['/seo/manage/meta']);
+                    $returnUrl = Yii::$app->request->get('returnUrl', ['meta']);
                     switch (Yii::$app->request->post('action', 'save')) {
                         case 'next':
                             return $this->redirect(
                                 [
-                                    '/seo/manage/create-meta',
+                                    'create-meta',
                                     'returnUrl' => $returnUrl,
                                 ]
                             );
@@ -138,7 +131,7 @@ class ManageController extends BackendController
                             return $this->redirect(
                                 Url::toRoute(
                                     [
-                                        '/seo/manage/update-meta',
+                                        'update-meta',
                                         'id' => $model->getPrimaryKey(),
                                         'returnUrl' => $returnUrl,
                                     ]
@@ -170,12 +163,12 @@ class ManageController extends BackendController
         $model = new Meta();
         if ($model->load($_POST) && $model->save()) {
             Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-            $returnUrl = Yii::$app->request->get('returnUrl', ['/seo/manage/meta']);
+            $returnUrl = Yii::$app->request->get('returnUrl', ['meta']);
             switch (Yii::$app->request->post('action', 'save')) {
                 case 'next':
                     return $this->redirect(
                         [
-                            '/seo/manage/create-meta',
+                            'create-meta',
                             'returnUrl' => $returnUrl,
                         ]
                     );
@@ -185,7 +178,7 @@ class ManageController extends BackendController
                     return $this->redirect(
                         Url::toRoute(
                             [
-                                '/seo/manage/update-meta',
+                                'update-meta',
                                 'id' => $model->id,
                                 'returnUrl' => $returnUrl,
                             ]
@@ -280,12 +273,12 @@ class ManageController extends BackendController
             if ($model->load($_POST) && $model->validate()) {
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                    $returnUrl = Yii::$app->request->get('returnUrl', ['/seo/manage/counter']);
+                    $returnUrl = Yii::$app->request->get('returnUrl', ['counter']);
                     switch (Yii::$app->request->post('action', 'save')) {
                         case 'next':
                             return $this->redirect(
                                 [
-                                    '/seo/manage/create-counter',
+                                    'create-counter',
                                     'returnUrl' => $returnUrl,
                                 ]
                             );
@@ -295,7 +288,7 @@ class ManageController extends BackendController
                             return $this->redirect(
                                 Url::toRoute(
                                     [
-                                        '/seo/manage/update-counter',
+                                        'update-counter',
                                         'id' => $model->id,
                                         'returnUrl' => $returnUrl
                                     ]
@@ -328,9 +321,9 @@ class ManageController extends BackendController
         AceHelper::setAceScript($this);
         if ($model->load($_POST) && $model->save()) {
             Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-            $returnUrl = Yii::$app->request->get('returnUrl', ['/seo/manage/counter']);
+            $returnUrl = Yii::$app->request->get('returnUrl', ['counter']);
             if (Yii::$app->request->post('action', 'back') == 'next') {
-                $route = ['/seo/manage/create-counter', 'returnUrl' => $returnUrl];
+                $route = ['create-counter', 'returnUrl' => $returnUrl];
                 if (!is_null(Yii::$app->request->get('parent_id', null))) {
                     $route['parent_id'] = Yii::$app->request->get('parent_id');
                 }
@@ -442,7 +435,29 @@ class ManageController extends BackendController
     {
         $model = new Redirect(['active' => true]);
         if ($model->load($_POST) && $model->save()) {
-            return $this->redirect(['redirect']);
+            $action = Yii::$app->request->post('action', 'save');
+            $returnUrl = Yii::$app->request->get('returnUrl', ['index']);
+            switch ($action) {
+                case 'next':
+                    return $this->redirect(
+                        [
+                            'create-redirect',
+                            'returnUrl' => $returnUrl,
+                        ]
+                    );
+                case 'back':
+                    return $this->redirect($returnUrl);
+                default:
+                    return $this->redirect(
+                        Url::toRoute(
+                            [
+                                'update-redirect',
+                                'id' => $model->id,
+                                'returnUrl' => $returnUrl,
+                            ]
+                        )
+                    );
+            }
         } else {
             return $this->render(
                 'createRedirect',
@@ -500,12 +515,12 @@ class ManageController extends BackendController
             }
 
             Yii::$app->session->setFlash('success', Yii::t('app', 'Records has been saved'));
-            $returnUrl = Yii::$app->request->get('returnUrl', ['/seo/manage/redirect']);
+            $returnUrl = Yii::$app->request->get('returnUrl', ['/redirect']);
             switch (Yii::$app->request->post('action', 'save')) {
                 case 'next':
                     return $this->redirect(
                         [
-                            '/seo/manage/create-redirects',
+                            'create-redirects',
                             'returnUrl' => $returnUrl,
                         ]
                     );
@@ -515,8 +530,7 @@ class ManageController extends BackendController
                     return $this->redirect(
                         Url::toRoute(
                             [
-                                '/seo/manage/update-redirect',
-                                'id' => $redirect->id,
+                                'redirects',
                                 'returnUrl' => $returnUrl,
                             ]
                         )
@@ -546,15 +560,14 @@ class ManageController extends BackendController
         )->one();
         if ($model !== null) {
             if ($model->load($_POST) && $model->validate()) {
-
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Records has been saved'));
-                    $returnUrl = Yii::$app->request->get('returnUrl', ['/seo/manage/redirect']);
+                    $returnUrl = Yii::$app->request->get('returnUrl', ['redirect']);
                     switch (Yii::$app->request->post('action', 'save')) {
                         case 'next':
                             return $this->redirect(
                                 [
-                                    '/seo/manage/create-redirects',
+                                    'create-redirect',
                                     'returnUrl' => $returnUrl,
                                 ]
                             );
@@ -564,7 +577,7 @@ class ManageController extends BackendController
                             return $this->redirect(
                                 Url::toRoute(
                                     [
-                                        '/seo/manage/update-redirect',
+                                        'update-redirect',
                                         'id' => $model->id,
                                         'returnUrl' => $returnUrl,
                                     ]
@@ -650,7 +663,8 @@ class ManageController extends BackendController
             $yaCounter = !empty($counters['yandex']) ? $counters['yandex'] : $yaCounter;
         }
 
-        return $this->render('ecommerce-counters',
+        return $this->render(
+            'ecommerce-counters',
             [
                 'gaCounter' => $gaCounter,
                 'yaCounter' => $yaCounter
@@ -691,7 +705,7 @@ class ManageController extends BackendController
                 'total' => number_format($order->total_price, 2, '.', ''),
             ];
 
-            echo Yii::$app->view->renderFile(Yii::getAlias('@app/seo/views/manage/_ecommerceCounters.php'), [
+            echo Yii::$app->view->renderFile(Yii::getAlias('@app/modules/seo/views/manage/_ecommerceCounters.php'), [
                 'order' => $order,
                 'products' => $products,
                 'config' => Json::decode($config->value)

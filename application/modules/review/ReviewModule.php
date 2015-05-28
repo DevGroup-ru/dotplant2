@@ -10,7 +10,14 @@ use app\components\BaseModule;
  */
 class ReviewModule extends BaseModule
 {
+    /**
+     * @var int Max reviews on page
+     */
     public $maxPerPage = 10;
+
+    /**
+     * @var int Default number of reviews on page
+     */
     public $pageSize = 10;
 
     /**

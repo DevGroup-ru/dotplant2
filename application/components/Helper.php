@@ -52,7 +52,7 @@ class Helper
 
     public static function createSlug($source)
     {
-        $source = mb_strtolower($source, 'UTF-8');
+        $source = mb_strtolower($source);
         $translateArray = [
             "ый" => "y", "а" => "a", "б" => "b",
             "в" => "v", "г" => "g", "д" => "d", "е" => "e", "ж" => "j",
@@ -80,10 +80,9 @@ class Helper
             return "";
         }
         $length = intval($length);
-        $encoding = 'utf-8';
         $text = trim(strip_tags($text));
-        $pos = mb_strrpos(mb_substr($text, 0, $length, $encoding), ' ', $encoding);
-        $string = mb_substr($text, 0, $pos, $encoding);
+        $pos = mb_strrpos(mb_substr($text, 0, $length), ' ');
+        $string = mb_substr($text, 0, $pos);
         $string .= $dots;
         if (!empty($string)) {
             return $string;
@@ -94,10 +93,10 @@ class Helper
 
     public static function thumbnailOnDemand($filename, $width, $height, $relativePart = '.', $inset = true)
     {
-        $pos = mb_strrpos($filename, '/', null, 'UTF-8');
+        $pos = mb_strrpos($filename, '/', null);
         if ($pos > 0) {
-            $dir = mb_substr($filename, 0, $pos, 'UTF-8');
-            $file = mb_substr($filename, $pos + 1, null, 'UTF-8');
+            $dir = mb_substr($filename, 0, $pos);
+            $file = mb_substr($filename, $pos + 1, null);
         } else {
             $dir = '';
             $file = $filename;

@@ -128,9 +128,9 @@ TPL;
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_name', $row,
                 function($value) use ($ymlConfig)
                 {
-                    if (mb_strlen($value, 'UTF-8') > 120) {
-                        $value = mb_substr($value, 0, 120, 'UTF-8');
-                        $value = mb_substr($value, 0, mb_strrpos($value, ' ', 'UTF-8'), 'UTF-8');
+                    if (mb_strlen($value) > 120) {
+                        $value = mb_substr($value, 0, 120);
+                        $value = mb_substr($value, 0, mb_strrpos($value, ' '));
                     }
                     $value = '<name>'.htmlspecialchars(trim(strip_tags($value))).'</name>'. PHP_EOL;
                     return $value;
@@ -139,9 +139,9 @@ TPL;
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_description', $row,
                 function($value) use ($ymlConfig)
                 {
-                    if (mb_strlen($value, 'UTF-8') > 175) {
-                        $value = mb_substr($value, 0, 175, 'UTF-8');
-                        $value = mb_substr($value, 0, mb_strrpos($value, ' ', 'UTF-8'), 'UTF-8');
+                    if (mb_strlen($value) > 175) {
+                        $value = mb_substr($value, 0, 175);
+                        $value = mb_substr($value, 0, mb_strrpos($value, ' '));
                     }
                     $value = '<description>'.htmlspecialchars(trim(strip_tags($value))).'</description>'. PHP_EOL;
                     return $value;
