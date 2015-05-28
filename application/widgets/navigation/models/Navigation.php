@@ -42,7 +42,18 @@ class Navigation extends \yii\db\ActiveRecord
             [['parent_id', 'name'], 'required', 'except' => ['search']],
             [['parent_id', 'sort_order'], 'integer'],
             [['url', 'route', 'route_params', 'advanced_css_class'], 'string'],
-            [['name'], 'string', 'max' => 80]
+            [['name'], 'string', 'max' => 80],
+            [['route', 'url'], 'required', 'when' => function($model) {
+                return empty($model->route) && empty($model->url);
+            }, 'message' => Yii::t('app', 'Either URL or Route should be set.'), 'whenClient' => "
+            function(attribute, value) {
+                console.log(attribute.id);
+                if (attribute.id === 'navigation-url') {
+                    return \$('#navigation-route').val() === '' && value === '';
+                } else {
+                    return \$('#navigation-url').val() === '' && value === '';
+                }
+            }"],
         ];
     }
 
