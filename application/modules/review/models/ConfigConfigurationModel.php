@@ -13,14 +13,21 @@ use Yii;
  */
 class ConfigConfigurationModel extends BaseConfigurationModel
 {
-    public $email;
-    public $notification = [];
-    public $emailTemplate = [];
+    /**
+     * @var int Max reviews on page
+     */
+    public $maxPerPage = 10;
+
+    /**
+     * @var int Default number of reviews on page
+     */
+    public $pageSize = 10;
 
     public function attributeLabels()
     {
         return [
-            'email' => Yii::t('app', 'E-mail'),
+            'maxPerPage' => Yii::t('app', 'Max per page'),
+            'pageSize' => Yii::t('app', 'Page size'),
         ];
     }
 
@@ -30,9 +37,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public function rules()
     {
         return [
-            [['email'], 'string'],
-            [['notification'], 'each', 'rule' => ['boolean']],
-            [['emailTemplate'], 'each', 'rule' => ['string']],
+            [['maxPerPage', 'pageSize'], 'integer'],
         ];
     }
 
