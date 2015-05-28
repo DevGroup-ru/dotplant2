@@ -9,8 +9,16 @@ use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Symfony\Component\Process\Process;
 use Yii;
 
+/**
+ * Class ExtensionModule is the base module that must use all DotPlant2 extensions
+ *
+ * @package app\components
+ */
 abstract class ExtensionModule extends \yii\base\Module
 {
+    /**
+     * @var string Path to migrations folder inside extension root source directory
+     */
     public $migrationsFolder = 'migrations';
 
     /**
@@ -19,12 +27,19 @@ abstract class ExtensionModule extends \yii\base\Module
      */
     public static $moduleId = 'temporary-module';
 
+    /**
+     * Installs module
+     * @param bool $applyAppMigrations
+     * @param bool $updateComposer
+     * @return mixed
+     */
     public static function installModule($applyAppMigrations = true, $updateComposer = true)
     {
         Yii::$app->setModule(
             static::$moduleId,
             static::className()
         );
+        /** @var ExtensionModule $module */
         $module = Yii::$app->getModule(static::$moduleId);
         return $module->updateModule($applyAppMigrations, $updateComposer, true);
     }
@@ -58,6 +73,10 @@ abstract class ExtensionModule extends \yii\base\Module
         return $process->getExitCode() === 0;
     }
 
+    /**
+     * Uninstalls module
+     * @return bool True if ok
+     */
     public function uninstallModule()
     {
 
@@ -93,6 +112,9 @@ abstract class ExtensionModule extends \yii\base\Module
         );
     }
 
+    /**
+     * @return string Returns name of migration table
+     */
     public function getMigrationTable()
     {
         return 'migrations_' . md5($this->className());

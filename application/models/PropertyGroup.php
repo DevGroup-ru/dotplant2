@@ -261,9 +261,31 @@ class PropertyGroup extends ActiveRecord
         }
         return true;
     }
+
     public function afterDelete()
     {
         ObjectPropertyGroup::deleteAll(['property_group_id' => $this->id]);
         parent::afterDelete();
     }
+
+    /**
+     * @param ActiveRecord $model
+     * @param string $idAttribute
+     * @return bool
+     */
+    public function appendToObjectModel(ActiveRecord $model, $idAttribute = 'id')
+    {
+        $object = Object::getForClass($model::className());
+        if (null === $object || !$model->hasAttribute($idAttribute)) {
+            return false;
+        }
+
+        $link = new ObjectPropertyGroup();
+            $link->object_id = $object->id;
+            $link->object_model_id = $model->$idAttribute;
+            $link->property_group_id = $this->id;
+
+        return $link->save();
+    }
 }
+?>

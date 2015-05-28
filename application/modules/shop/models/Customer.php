@@ -25,6 +25,7 @@ use Yii;
  */
 class Customer extends \yii\db\ActiveRecord
 {
+    protected static $mapUsers = [];
     protected $propertyGroup = null;
 
     /**
@@ -45,7 +46,6 @@ class Customer extends \yii\db\ActiveRecord
             [['user_id', 'first_name'], 'required'],
             [['first_name', 'middle_name', 'last_name', 'email', 'phone'], 'string', 'max' => 255],
             [['email'], 'email'],
-
         ];
     }
 
@@ -77,17 +77,27 @@ class Customer extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @return Contragent[]|null
+     */
     public function getContragents()
     {
         return $this->hasMany(Contragent::className(), ['customer_id' => 'id']);
     }
 
+    /**
+     * @return Contragent|null
+     */
     public function getContragent()
     {
         return $this->hasOne(Contragent::className(), ['customer_id' => 'id'])
             ->orderBy(['id' => SORT_ASC]);
     }
 
+    /**
+     * @param integer|null $id
+     * @return Contragent|null
+     */
     public function getContragentById($id = null)
     {
         if (empty($id)) {
@@ -98,18 +108,30 @@ class Customer extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param null $id
+     * @param integer $id
      * @return Customer|null
      */
-    public static function getCustomerByUserId($id = null)
+    public static function getCustomerByUserId($id = 0)
     {
-        return intval($id) > 0 ? static::findOne(['user_id' => $id]) : null;
+        if (intval($id) <= 0) {
+            return null;
+        } else {
+            if (!isset(static::$mapUsers[$id])) {
+                static::$mapUsers[$id] = static::findOne(['user_id' => $id]);
+            }
+            return static::$mapUsers[$id];
+        }
     }
 
-    public static function createEmptyCustomer($user_id = 0)
+    /**
+     * @param int $user_id
+     * @param bool $dummyObject
+     * @return Customer|null
+     */
+    public static function createEmptyCustomer($user_id = 0, $dummyObject = true)
     {
         $model = new static();
-        $model->user_id = $user_id;
+        $model->user_id = intval($user_id);
         $model->loadDefaultValues();
 
         $groups = PropertyGroup::getForObjectId($model->getObject()->id, true);
@@ -136,14 +158,31 @@ class Customer extends \yii\db\ActiveRecord
             $model->setAbstractModel($abstractModel);
         }
 
+        if (!$dummyObject) {
+            $model->first_name = 'Имя';
+            if ($model->save()) {
+                if (!empty($model->getPropertyGroup())) {
+                    $model->getPropertyGroup()->appendToObjectModel($model);
+                }
+            } else {
+                return null;
+            }
+        }
+
         return $model;
     }
 
-    public function setPropertyGroup($group)
+    /**
+     * @param PropertyGroup $group
+     */
+    public function setPropertyGroup(PropertyGroup $group)
     {
         $this->propertyGroup = $group;
     }
 
+    /**
+     * @return PropertyGroup|null
+     */
     public function getPropertyGroup()
     {
         return $this->propertyGroup;

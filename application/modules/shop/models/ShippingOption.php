@@ -73,4 +73,13 @@ class ShippingOption extends ActiveRecord
             'active' => Yii::t('app', 'Active'),
         ];
     }
+
+    /**
+     * @return ShippingOption|null
+     */
+    public static function findFirstActive()
+    {
+        return static::find()->where(['active' => 1])->orderBy(['sort' => SORT_ASC, 'id' => SORT_ASC])->one();
+    }
 }
+?>

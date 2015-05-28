@@ -8,7 +8,6 @@ use app\modules\shop\helpers\PriceHelper;
 use app\modules\shop\events\OrderStageEvent;
 use app\modules\shop\events\OrderStageLeafEvent;
 use app\modules\shop\models\Currency;
-use app\modules\shop\models\DiscountCode;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderCode;
 use app\modules\shop\models\OrderItem;

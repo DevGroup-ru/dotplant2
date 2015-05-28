@@ -13,6 +13,7 @@ use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Behavior;
 use yii\caching\TagDependency;
+use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
@@ -284,6 +285,7 @@ class HasProperties extends Behavior
             }
 
             $this->abstract_model->updateValues($new_values_for_abstract, $this->getObject()->id, $this->owner->id);
+            $this->owner->trigger(ActiveRecord::EVENT_AFTER_UPDATE);
         }
     }
 

@@ -10,6 +10,7 @@ use kartik\dynagrid\DynaGrid;
  * @var $managers array
  * @var $model \app\modules\shop\models\Order
  * @var $transactionsDataProvider \yii\data\ArrayDataProvider
+ * @var \app\backend\models\OrderChat $message
  */
 
 $this->title = Yii::t('app', 'Order #{id}', ['id' => $model->id]);
@@ -25,8 +26,9 @@ foreach ($model->items as $item) {
 }
 
 ?>
-<h1 class="page-title txt-color-blueDark">
-    <?=Html::encode($this->title)?>
+<?php $this->beginBlock('page-buttons'); ?>
+<div class="row" style="margin-bottom: 10px;">
+    <div class="col-xs-12">
     <a href="#" class="btn btn-default pull-right do-not-print" id="print-button"><?=\kartik\icons\Icon::show(
             'print'
         )?>&nbsp;&nbsp;<?=Yii::t('app', 'Print')?></a>
@@ -36,6 +38,13 @@ foreach ($model->items as $item) {
     )?>" class="btn btn-danger pull-right do-not-print"><?=\kartik\icons\Icon::show(
             'arrow-circle-left'
         )?>&nbsp;&nbsp;<?=Yii::t('app', 'Back')?></a>
+    <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success pull-right']); ?>
+    </div>
+</div>
+<?php $this->endBlock(); ?>
+
+<h1 class="page-title txt-color-blueDark">
+    <?=Html::encode($this->title)?>
 </h1>
 <?php
 $sum_transactions = 0;
@@ -58,156 +67,291 @@ if ($sum_transactions < $model->total_price):
         ?>
     </div>
 <?php endif; ?>
+<?php
+    $form = \kartik\widgets\ActiveForm::begin(
+        [
+            'action' => ['', 'id' => $model->id],
+            'method' => 'post',
+            'type' => \kartik\form\ActiveForm::TYPE_HORIZONTAL,
+            'options' => [
+                'class' => 'form-order-backend',
+            ],
+        ]
+    );
+    echo $this->blocks['page-buttons'];
+?>
 <div class="row">
-    <div class="col-xs-8">
-        <div class="order-view">
-            <?php
+    <div class="col-xs-6">
+        <?php
+        BackendWidget::begin(
+            [
+                'icon' => 'info-circle',
+                'title' => Yii::t('app', 'Order information'),
+            ]
+        );
+        ?>
+        <table class="table table-striped table-bordered">
+            <tbody>
+            <tr>
+                <th><?=$model->getAttributeLabel('user')?></th>
+                <td>
+                    <?=
+                    !is_null($model->user) ? $model->user->username : Html::tag('em', Yii::t('yii', '(not set)'))
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?=$model->getAttributeLabel('manager')?></th>
+                <td>
+                    <?=
+                    Editable::widget(
+                        [
+                            'attribute' => 'manager_id',
+                            'data' => $managers,
+                            'displayValue' => !is_null(
+                                $model->manager
+                            ) ? $model->manager->username : Html::tag('em', Yii::t('yii', '(not set)')),
+                            'formOptions' => [
+                                'action' => ['change-manager', 'id' => $model->id],
+                            ],
+                            'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                            'model' => $model,
+                        ]
+                    )
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?=$model->getAttributeLabel('start_date')?></th>
+                <td><?=$model->start_date?></td>
+            </tr>
+            <tr>
+                <th><?=$model->getAttributeLabel('end_date')?></th>
+                <td><?=$model->end_date?></td>
+            </tr>
+            <tr>
+                <th><?=$model->getAttributeLabel('order_stage_id')?></th>
+                <td>
+                    <?=
+                    Editable::widget(
+                        [
+                            'attribute' => 'order_stage_id',
+                            'data' => \app\components\Helper::getModelMap(
+                                \app\modules\shop\models\OrderStage::className(),
+                                'id',
+                                'name_short'
+                            ),
+                            'displayValue' => $model->stage !== null ? Html::tag(
+                                'span',
+                                $model->stage->name_short
+                            ) : Html::tag('em', Yii::t('yii', '(not set)')),
+                            'formOptions' => [
+                                'action' => ['update-stage', 'id' => $model->id],
+                            ],
+                            'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                            'model' => $model,
+                        ]
+                    )
+                    ?>
+                </td>
+            </tr>
+            <tr>
+                <th><?=$model->getAttributeLabel('payment_type_id')?></th>
+                <td>
+                    <?=
+                    Editable::widget(
+                        [
+                            'attribute' => 'payment_type_id',
+                            'data' => \app\components\Helper::getModelMap(
+                                \app\modules\shop\models\PaymentType::className(),
+                                'id',
+                                'name'
+                            ),
+                            'displayValue' => $model->paymentType !== null ? Html::tag(
+                                'span',
+                                $model->paymentType->name
+                            ) : Html::tag('em', Yii::t('yii', '(not set)')),
+                            'formOptions' => [
+                                'action' => ['update-payment-type', 'id' => $model->id],
+                            ],
+                            'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                            'model' => $model,
+                        ]
+                    )
+                    ?>
+                </td>
+            </tr>
+            <?php foreach ($model->abstractModel->attributes as $name => $attribute): ?>
+                <tr>
+                    <th><?=$model->abstractModel->getAttributeLabel($name)?></th>
+                    <td>
+                        <button data-toggle="modal" data-target="#custom-fields-modal" class="kv-editable-value kv-editable-link">
+                            <?=
+                            !empty($attribute)
+                                ? Html::encode($attribute)
+                                : Html::tag('em', Yii::t('yii', '(not set)'))
+                            ?>
+                        </button>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php BackendWidget::end(); ?>
+
+        <?php
             BackendWidget::begin(
                 [
-                    'icon' => 'info-circle',
-                    'title' => Yii::t('app', 'Order information'),
+                    'icon' => 'user',
+                    'title' => Yii::t('app', 'Customer'),
                 ]
             );
+            /** @var \app\modules\shop\models\Customer $customer */
+            $customer = $model->customer;
+            echo $form->field($customer, 'first_name');
+            echo $form->field($customer, 'middle_name');
+            echo $form->field($customer, 'last_name');
+            echo $form->field($customer, 'email');
+            echo $form->field($customer, 'phone');
+            /** @var \app\properties\AbstractModel $abstractModel */
+            $abstractModel = $customer->getAbstractModel();
+            $abstractModel->setArrayMode(false);
+            foreach ($abstractModel->attributes() as $attr) {
+                echo $form->field($abstractModel, $attr);
+            }
+        ?>
+        <?php BackendWidget::end(); ?>
+
+        <?php
+            BackendWidget::begin(
+                [
+                    'icon' => 'user',
+                    'title' => Yii::t('app', 'Contragent'),
+                ]
+            );
+            $contragents = array_reduce($customer->contragents,
+                function ($result, $item)
+                {
+                    /** @var \app\modules\shop\models\Contragent $item */
+                    $result[$item->id] = $item;
+                    return $result;
+                }, [0 => \app\modules\shop\models\Contragent::createEmptyContragent($customer)]);
+
+            echo $form->field($model, 'contragent_id')->dropDownList(array_reduce($contragents,
+                function ($result, $item)
+                {
+                    /** @var \app\modules\shop\models\Contragent $item */
+                    if ($item->isNewRecord) {
+                        $result[0] = 'Новый Контрагент';
+                    } else {
+                        $result[$item->id] = $item->type;
+                    }
+                    return $result;
+                }, [])
+            , ['class' => 'contragents']);
+        ?>
+        <hr />
+        <div class="contragents_list">
+            <?php
+                foreach ($contragents as $key => $contragent) {
+                    /** @var \app\modules\shop\models\Contragent $contragent */
+                    $_content = $form->field($contragent, 'type')->dropDownList(['Individual' => 'Individual', 'Self-employed' => 'Self-employed', 'Legal entity' => 'Legal entity']);
+                    /** @var \app\properties\AbstractModel $abstractModel */
+                    $abstractModel = $contragent->getAbstractModel();
+                    $abstractModel->setArrayMode(false);
+                    foreach ($abstractModel->attributes() as $attr) {
+                        $_content .= $form->field($abstractModel, $attr);
+                    }
+
+                    $_content .= Html::tag('h5', Yii::t('app', 'Delivery information'));
+                    $deliveryInformation = !empty($contragent->deliveryInformation) ? $contragent->deliveryInformation :
+                        ($contragent->isNewRecord ? \app\modules\shop\models\DeliveryInformation::createNewDeliveryInformation($contragent) : \app\modules\shop\models\DeliveryInformation::createNewDeliveryInformation($contragent, false));
+                    $_content .= $form->field($deliveryInformation, 'country_id')->dropDownList(\app\components\Helper::getModelMap(\app\models\Country::className(), 'id', 'name'));
+                    $_content .= $form->field($deliveryInformation, 'city_id')->dropDownList(\app\components\Helper::getModelMap(\app\models\City::className(), 'id', 'name'));
+                    $_content .= $form->field($deliveryInformation, 'zip_code');
+                    $_content .= $form->field($deliveryInformation, 'address');
+
+                    echo Html::tag('div', $_content, [
+                        'class' => "contragent contragent_$key" . ($key === intval($model->contragent_id) ? '' : ' hide')
+                    ]);
+                }
             ?>
-            <table class="table table-striped table-bordered">
-                <tbody>
-                <tr>
-                    <th><?=$model->getAttributeLabel('user')?></th>
-                    <td>
-                        <?=
-                        !is_null($model->user) ? $model->user->username : Html::tag('em', Yii::t('yii', '(not set)'))
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th><?=$model->getAttributeLabel('manager')?></th>
-                    <td>
-                        <?=
-                        Editable::widget(
-                            [
-                                'attribute' => 'manager_id',
-                                'data' => $managers,
-                                'displayValue' => !is_null(
-                                    $model->manager
-                                ) ? $model->manager->username : Html::tag('em', Yii::t('yii', '(not set)')),
-                                'formOptions' => [
-                                    'action' => ['change-manager', 'id' => $model->id],
-                                ],
-                                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                                'model' => $model,
-                            ]
-                        )
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th><?=$model->getAttributeLabel('start_date')?></th>
-                    <td><?=$model->start_date?></td>
-                </tr>
-                <tr>
-                    <th><?=$model->getAttributeLabel('end_date')?></th>
-                    <td><?=$model->end_date?></td>
-                </tr>
-                <tr>
-                    <th><?=$model->getAttributeLabel('order_stage_id')?></th>
-                    <td>
-                        <?=
-                        Editable::widget(
-                            [
-                                'attribute' => 'order_stage_id',
-                                'data' => \app\components\Helper::getModelMap(
-                                    \app\modules\shop\models\OrderStage::className(),
-                                    'id',
-                                    'name_short'
-                                ),
-                                'displayValue' => $model->stage !== null ? Html::tag(
-                                    'span',
-                                    $model->stage->name_short
-                                ) : Html::tag('em', Yii::t('yii', '(not set)')),
-                                'formOptions' => [
-                                    'action' => ['update-stage', 'id' => $model->id],
-                                ],
-                                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                                'model' => $model,
-                            ]
-                        )
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th><?=$model->getAttributeLabel('shipping_option_id')?></th>
-                    <td>
-                        <?php
-                        if (!is_null($model->orderDeliveryInformation)) {
-                            echo Editable::widget(
-                                [
-                                    'attribute' => 'shipping_option_id',
-                                    'data' => \app\components\Helper::getModelMap(
-                                        \app\modules\shop\models\ShippingOption::className(),
-                                        'id',
-                                        'name'
-                                    ),
-                                    'displayValue' => !is_null($model->shippingOption) ? Html::tag(
-                                        'span',
-                                        $model->shippingOption->name
-                                    ) : Html::tag('em', Yii::t('yii', '(not set)')),
-                                    'formOptions' => [
-                                        'action' => [
-                                            'update-shipping-option',
-                                            'id' => $model->orderDeliveryInformation->id,
-                                        ],
-                                    ],
-                                    'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                                    'model' => $model->orderDeliveryInformation
-                                ]
-                            );
-                        }
-                        ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th><?=$model->getAttributeLabel('payment_type_id')?></th>
-                    <td>
-                        <?=
-                        Editable::widget(
-                            [
-                                'attribute' => 'payment_type_id',
-                                'data' => \app\components\Helper::getModelMap(
-                                    \app\modules\shop\models\PaymentType::className(),
-                                    'id',
-                                    'name'
-                                ),
-                                'displayValue' => $model->paymentType !== null ? Html::tag(
-                                    'span',
-                                    $model->paymentType->name
-                                ) : Html::tag('em', Yii::t('yii', '(not set)')),
-                                'formOptions' => [
-                                    'action' => ['update-payment-type', 'id' => $model->id],
-                                ],
-                                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                                'model' => $model,
-                            ]
-                        )
-                        ?>
-                    </td>
-                </tr>
-                <?php foreach ($model->abstractModel->attributes as $name => $attribute): ?>
-                    <tr>
-                        <th><?=$model->abstractModel->getAttributeLabel($name)?></th>
-                        <td>
-                            <button data-toggle="modal" data-target="#custom-fields-modal" class="kv-editable-value kv-editable-link">
-                                <?=
-                                !empty($attribute)
-                                    ? Html::encode($attribute)
-                                    : Html::tag('em', Yii::t('yii', '(not set)'))
-                                ?>
-                            </button>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
+        </div>
+        <?php BackendWidget::end(); ?>
+
+        <?php
+            BackendWidget::begin(
+                [
+                    'icon' => 'user',
+                    'title' => Yii::t('app', 'Order delivery information'),
+                ]
+            );
+
+            $orderDeliveryInformation = $model->orderDeliveryInformation;
+            echo $form->field($orderDeliveryInformation, 'shipping_option_id')->dropDownList(\app\components\Helper::getModelMap(\app\modules\shop\models\ShippingOption::className(), 'id', 'name'));
+            echo $form->field($orderDeliveryInformation, 'shipping_price');
+            echo $form->field($orderDeliveryInformation, 'shipping_price_total');
+            echo $form->field($orderDeliveryInformation, 'planned_delivery_date');
+            echo $form->field($orderDeliveryInformation, 'planned_delivery_time');
+            echo $form->field($orderDeliveryInformation, 'planned_delivery_time_range');
+            /** @var \app\properties\AbstractModel $abstractModel */
+            $abstractModel = $orderDeliveryInformation->getAbstractModel();
+            $abstractModel->setArrayMode(false);
+            foreach ($abstractModel->attributes() as $attr) {
+                echo $form->field($abstractModel, $attr);
+            }
+        ?>
+        <?php BackendWidget::end(); ?>
+    </div>
+    <div class="col-xs-6 order-chat">
+        <?php
+        BackendWidget::begin(
+            [
+                'icon' => 'comments',
+                'title' => Yii::t('app', 'Managers chat'),
+            ]
+        );
+        ?>
+        <div class="widget-body widget-hide-overflow no-padding">
+            <div id="chat-body" class="chat-body custom-scroll">
+                <ul>
+                    <?php foreach ($lastMessages as $msg): ?>
+                        <li class="message">
+                            <?php if (!is_null($msg->user)): ?>
+                                <img src="<?=$msg->user->gravatar()?>" class="online" alt="">
+                            <?php endif; ?>
+                            <div class="message-text">
+                                <time>
+                                    <?=$msg->date?>
+                                </time>
+                                <a href="javascript:void(0);" class="username"><?=
+                                    !is_null($msg->user) ? $msg->user->username : Yii::t('app', 'Unknown')
+                                    ?></a>
+                                <?=nl2br(Html::encode($msg->message))?>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <div class="chat-footer">
+                <div class="textarea-div">
+                    <div class="typearea">
+                        <?= Html::textarea('order-chat-message', $message->message, ['class' => 'custom-scroll']); ?>
+                    </div>
+                </div>
+                <span class="textarea-controls">
+                    <?=
+                    Html::submitButton(
+                        Yii::t('app', 'Submit'),
+                        ['class' => 'btn btn-sm btn-primary pull-right']
+                    )
+                    ?>
+                </span>
+            </div>
             <?php BackendWidget::end(); ?>
+        </div>
+
+        <div class="order-view">
             <?php
             BackendWidget::begin(
                 [
@@ -252,7 +396,7 @@ if ($sum_transactions < $model->total_price):
                     </div>
                 </div>
                 <div class="row form-inline">
-                    <div class="col-xs-6 form-group">
+                    <div class="col-xs-12 form-group">
                         <?=
                         Html::dropDownList(
                             'parentId',
@@ -341,69 +485,14 @@ if ($sum_transactions < $model->total_price):
                 ]
             );
             ?>
-
-
-            <?php BackendWidget::end(); ?>
-        </div>
-    </div>
-    <div class="col-xs-4 order-chat">
-        <?php
-        BackendWidget::begin(
-            [
-                'icon' => 'comments',
-                'title' => Yii::t('app', 'Managers chat'),
-            ]
-        );
-        ?>
-        <div class="widget-body widget-hide-overflow no-padding">
-            <div id="chat-body" class="chat-body custom-scroll">
-                <ul>
-                    <?php foreach ($lastMessages as $msg): ?>
-                        <li class="message">
-                            <?php if (!is_null($msg->user)): ?>
-                                <img src="<?=$msg->user->gravatar()?>" class="online" alt="">
-                            <?php endif; ?>
-                            <div class="message-text">
-                                <time>
-                                    <?=$msg->date?>
-                                </time>
-                                <a href="javascript:void(0);" class="username"><?=
-                                    !is_null($msg->user) ? $msg->user->username : Yii::t('app', 'Unknown')
-                                    ?></a>
-                                <?=nl2br(Html::encode($msg->message))?>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-            <div class="chat-footer">
-                <?php
-                $form = \kartik\widgets\ActiveForm::begin(
-                    [
-                        'action' => ['/backend/order/view', 'id' => $model->id],
-                        'method' => 'post',
-                    ]
-                );
-                ?>
-                <div class="textarea-div">
-                    <div class="typearea">
-                        <?=$form->field($message, 'message')->textarea(['class' => 'custom-scroll'])?>
-                    </div>
-                </div>
-                        <span class="textarea-controls">
-                            <?=
-                            Html::submitButton(
-                                Yii::t('app', 'Submit'),
-                                ['class' => 'btn btn-sm btn-primary pull-right']
-                            )
-                            ?>
-                        </span>
-                <?php \kartik\widgets\ActiveForm::end(); ?>
-            </div>
             <?php BackendWidget::end(); ?>
         </div>
     </div>
 </div>
+<?php
+echo $this->blocks['page-buttons'];
+    $form->end();
+?>
 
 <?php \yii\bootstrap\Modal::begin(
     ['id' => 'custom-fields-modal', 'header' => Yii::t('app', 'Edit order properties')]
@@ -441,6 +530,13 @@ $js = <<<JS
     jQuery('#add-product-parent').change(function() {
         var parentId = jQuery(this).val();
         jQuery('#add-product').autocomplete('option', 'source', '/shop/backend-order/auto-complete-search?orderId={$model->id}&parentId=' + parentId);
+    });
+    $('select.contragents').change(function(event) {
+        $('.contragents_list .contragent').addClass('hide');
+        $('.contragents_list .contragent_'+$(this).val()).removeClass('hide');
+    });
+    $('form.form-order-backend').submit(function(event) {
+        $('.contragents_list .contragent.hide').remove();
     });
 JS;
 $this->registerJs($js);

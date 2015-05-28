@@ -78,7 +78,7 @@ use yii\helpers\Url;
             formData[$this.attr('name')] = $this.val();
 
             $.ajax({
-                url: "<?= Url::toRoute(['/backend/warehouse/update-remains']) ?>",
+                url: "<?= Url::toRoute(['/shop/backend-warehouse/update-remains']) ?>",
                 data: formData,
                 method: 'POST',
                 success: function(data, textStatus, jqXHR) {

@@ -39,7 +39,7 @@ class DeliveryInformation extends \yii\db\ActiveRecord
             [['contragent_id'], 'required'],
             [['contragent_id', 'country_id', 'city_id'], 'integer'],
             [['address'], 'string'],
-            [['zip_code'], 'string', 'max' => 255]
+            [['zip_code'], 'string', 'max' => 255],
         ];
     }
 
@@ -58,29 +58,43 @@ class DeliveryInformation extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @return Contragent|null
+     */
     public function getContragent()
     {
         return $this->hasOne(Contragent::className(), ['id' => 'contragent_id']);
     }
 
+    /**
+     * @return Country|null
+     */
     public function getCountry()
     {
         return $this->hasOne(Country::className(), ['id' => 'country_id']);
     }
 
+    /**
+     * @return City|null
+     */
     public function getCity()
     {
         return $this->hasOne(City::className(), ['id' => 'city_id']);
     }
 
-    public static function createNewDeliveryInformation(Contragent $contragent = null)
+    /**
+     * @param Contragent $contragent
+     * @return DeliveryInformation|null
+     */
+    public static function createNewDeliveryInformation(Contragent $contragent, $dummyObject = true)
     {
-        if (empty($contragent)) {
-            return null;
-        }
-
         $model = new static();
+        $model->loadDefaultValues();
         $model->contragent_id = $contragent->id;
+
+        if (!$dummyObject) {
+            $model->save();
+        }
 
         return $model;
     }

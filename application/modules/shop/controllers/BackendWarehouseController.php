@@ -1,15 +1,21 @@
 <?php
 
-namespace app\backend\controllers;
+namespace app\modules\shop\controllers;
 
 use app\backend\components\BackendController;
+use app\components\SearchModel;
+use app\modules\shop\models\WarehouseEmail;
+use app\modules\shop\models\WarehouseOpeninghours;
+use app\modules\shop\models\WarehousePhone;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use app\backend\actions\DeleteOne;
 use app\backend\actions\MultipleDelete;
 use app\backend\actions\UpdateEditable;
 use app\modules\shop\models\Warehouse;
 use app\modules\shop\models\WarehouseProduct;
+use yii\helpers\Url;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
@@ -60,9 +66,15 @@ class BackendWarehouseController extends BackendController
 
     public function actionIndex()
     {
-        $searchModel = new Warehouse();
-        $dataProvider = $searchModel->search($_GET);
-
+        ;
+        $searchModel = new SearchModel(
+            [
+                'model' => Warehouse::className(),
+                'partialMatchAttributes' => ['name'],
+                'scenario' => 'default',
+            ]
+        );
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render(
             'index',
             [
@@ -76,41 +88,175 @@ class BackendWarehouseController extends BackendController
     {
         $model = new Warehouse;
         $model->loadDefaultValues();
-        
+
         if ($id !== null) {
             $model = Warehouse::findOne($id);
         }
-        
 
 
-        $post = \Yii::$app->request->post();
-
-        if ($model->load($post) && $model->validate()) {
-
-            $save_result = $model->save();
-            if ($save_result) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                return $this->redirect(['edit', 'id' => $model->id]);
-            } else {
-                \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
+                $returnUrl = Yii::$app->request->get(
+                    'returnUrl',
+                    ['/shop/backend-warehouse/index']
+                );
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
+                            [
+                                '/shop/backend-warehouse/edit',
+                                'returnUrl' => $returnUrl,
+                            ]
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    '/shop/backend-warehouse/edit',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                ]
+                            )
+                        );
+                }
             }
 
 
         }
 
+        $wareHouseOpeningHours = WarehouseOpeninghours::find()->where(['warehouse_id' => $model->id])->one();
+        if ($wareHouseOpeningHours === null) {
+            $wareHouseOpeningHours = new WarehouseOpeninghours();
+        }
+        $wareHouseOpeningHours->loadDefaultValues();
+        if (Yii::$app->request->post('WarehouseOpeninghours') && !$model->isNewRecord) {
+            $wareHouseOpeningHours->load(Yii::$app->request->post());
+            $wareHouseOpeningHours->warehouse_id = $model->id;
+            if ($wareHouseOpeningHours->save()) {
+                $this->refresh();
+            }
+        }
+
+        $warehousePhone = new WarehousePhone();
+
+        if (Yii::$app->request->post('WarehousePhone') && !$model->isNewRecord) {
+            $warehousePhone->loadDefaultValues();
+            $warehousePhone->load(Yii::$app->request->post());
+            $warehousePhone->warehouse_id = $model->id;
+            if ($warehousePhone->save()) {
+                $this->refresh();
+            }
+
+        }
+        $warehousePhoneProvider = new ActiveDataProvider([
+            'query' => $warehousePhone::find()->where(['warehouse_id' => $model->id]),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+
+
+        $warehouseEmail = new WarehouseEmail();
+        if (Yii::$app->request->post('WarehouseEmail') && !$model->isNewRecord) {
+            $warehouseEmail->loadDefaultValues();
+            $warehouseEmail->load(Yii::$app->request->post());
+            $warehouseEmail->warehouse_id = $model->id;
+            if ($warehouseEmail->save()) {
+                $this->refresh();
+            }
+
+        }
+        $warehouseEmailProvider = new ActiveDataProvider([
+            'query' => $warehouseEmail::find()->where(['warehouse_id' => $model->id]),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+
+
         return $this->render(
             'form',
             [
                 'model' => $model,
+                'wareHouseOpeningHours' => $wareHouseOpeningHours,
+                'warehousePhone' => $warehousePhone,
+                'warehousePhoneProvider' => $warehousePhoneProvider,
+                'warehouseEmail' => $warehouseEmail,
+                'warehouseEmailProvider' => $warehouseEmailProvider
             ]
         );
     }
+
+
+    public function actionDelete($id)
+    {
+        if (!$model = Warehouse::findOne($id)) {
+            throw new NotFoundHttpException;
+        }
+
+        if (!$model->delete()) {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object not removed'));
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
+        }
+
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                '/shop/backend-warehouse/index'
+            )
+        );
+    }
+
+
+    public function actionDeletePhone($id)
+    {
+        if (!$model = WarehousePhone::findOne($id)) {
+            throw new NotFoundHttpException;
+        }
+
+        if (!$model->delete()) {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object not removed'));
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
+        }
+
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                '/shop/backend-warehouse/index'
+            )
+        );
+    }
+
+    public function actionDeleteEmail($id)
+    {
+        if (!$model = WarehouseEmail::findOne($id)) {
+            throw new NotFoundHttpException;
+        }
+
+        if (!$model->delete()) {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object not removed'));
+        } else {
+            Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
+        }
+
+        return $this->redirect(
+            Yii::$app->request->get(
+                'returnUrl',
+                '/shop/backend-warehouse/index'
+            )
+        );
+    }
+
 
     public function actionUpdateRemains()
     {
         $post = Yii::$app->request->post('remain', null);
         if (isset($post)) {
-
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             $remainId = current(array_keys($post));
             /** @var WarehouseProduct $model */
@@ -120,7 +266,8 @@ class BackendWarehouseController extends BackendController
             }
 
             $model->setAttributes(current($post));
-            TagDependency::invalidate(Yii::$app->cache, ActiveRecordHelper::getObjectTag(\app\modules\shop\models\Product::className(), $model->product_id));
+            TagDependency::invalidate(Yii::$app->cache,
+                ActiveRecordHelper::getObjectTag(\app\modules\shop\models\Product::className(), $model->product_id));
             return $model->save();
 
 

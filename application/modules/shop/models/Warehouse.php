@@ -82,6 +82,36 @@ class Warehouse extends \yii\db\ActiveRecord
     }
 
 
+    public function afterDelete()
+    {
+        WarehouseEmail::deleteAll(
+            [
+                'warehouse_id' => $this->id
+            ]
+        );
+
+        WarehousePhone::deleteAll(
+            [
+                'warehouse_id' => $this->id
+            ]
+        );
+
+        WarehouseOpeninghours::deleteAll(
+            [
+                'warehouse_id' => $this->id
+            ]
+        );
+        WarehouseProduct::deleteAll(
+            [
+                'warehouse_id' => $this->id
+            ]
+        );
+
+
+        return parent::afterDelete();
+    }
+
+
     /**
      * Returns array of ID of all active warehouses
      * @return integer[]
