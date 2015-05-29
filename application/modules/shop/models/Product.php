@@ -16,6 +16,7 @@ use Yii;
 use yii\base\Exception;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
@@ -243,33 +244,32 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         return static::$identity_map[$id];
     }
 
-    public static function findBySlug($slug, $in_category_id = null, $is_active = 1)
+    /**
+     * Find a product by slug
+     * @param string $slug
+     * @param int $inCategoryId
+     * @param int $isActive
+     * @return Product
+     */
+    public static function findBySlug($slug, $inCategoryId = null, $isActive = 1)
     {
         if (!isset(static::$slug_to_id[$slug])) {
-            $cacheKey = static::tableName() . "$slug:$in_category_id";
+            $cacheKey = static::tableName() . "$slug:$inCategoryId";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
-                $model = static::find()->where(
+                $tags = [];
+                /** @var ActiveQuery $model */
+                $query = static::find()->where(
                     [
-                        static::tableName() . '.slug' => $slug,
-                        static::tableName() . '.active' => $is_active
+                        'slug' => $slug,
+                        'active' => $isActive,
                     ]
                 )->with('images');
-                if ($in_category_id !== null) {
-                    $model = $model->innerJoin(
-                        Object::getForClass(static::className())->categories_table_name . ' ocats',
-                        'ocats.category_id = ' . Yii::$app->db->quoteValue(
-                            $in_category_id
-                        ) . ' AND ocats.object_model_id = ' . static::tableName() . '.id'
-                    );
+                if (!is_null($inCategoryId)) {
+                    $query->andWhere(['main_category_id' => $inCategoryId]);
+                    $tags[] = ActiveRecordHelper::getObjectTag(Category::className(), $inCategoryId);
                 }
-                $model = $model->one();
-                $tags = [
-
-                ];
-                if ($in_category_id !== null) {
-                    $tags[] = ActiveRecordHelper::getObjectTag(Category::className(), $in_category_id);
-                }
-                if ($model === null) {
+                $model = $query->one();
+                if (is_null($model)) {
                     $tags[] = ActiveRecordHelper::getCommonTag(Product::className());
                 } else {
                     $tags[] = ActiveRecordHelper::getObjectTag(Product::className(), $model->id);
@@ -282,7 +282,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                         'tags' => $tags,
                     ])
                 );
-
             }
             if (is_object($model)) {
                 static::$identity_map[$model->id] = $model;
