@@ -2,6 +2,47 @@
 
 ## alpha => beta
 
+### Theme
+
+You should change your theme pathMap routes. It's look like a next example.
+
+Old theme configuration:
+
+```php
+'components' => [
+        'view' => [
+            'theme' => [
+                'pathMap' => [
+                    '@app/views' => '@webroot/theme/views/controllers',
+                    '@app/widgets' => '@webroot/theme/views/widgets',
+                ],
+                'baseUrl' => '@webroot/theme/views/controllers',
+            ],
+        ],
+    ],
+
+```
+
+New theme configuration:
+
+```php
+'components' => [
+    'view' => [
+        'theme' => [
+            'pathMap' => [
+                '@app/views' => '@webroot/theme/views/controllers',
+                '@app/modules/page/views' => '@webroot/theme/views/controllers',
+                '@app/modules/shop/views' => '@webroot/theme/views/controllers',
+                '@app/widgets' => '@webroot/theme/views/widgets',
+            ],
+            'baseUrl' => '@webroot/theme/views/controllers',
+        ],
+    ],
+],
+```
+
+For new projects we advice to use new theme structure which you can create via `./yii admin/theme-create`.  
+
 ### Users
 
 Since users subsystem splited into module the most important thing is to replace your URLs including calls to `yii\helpers\Url`:

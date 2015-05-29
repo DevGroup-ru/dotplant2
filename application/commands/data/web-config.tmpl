@@ -2,13 +2,15 @@
 
 return [
     'components' => [
-    'view' => [
+        'view' => [
             'theme' => [
                 'pathMap' => [
-                    '@app/views' => '@webroot/{%theme-name%}/views/controllers',
+                    '@app/views' => '@webroot/{%theme-name%}/views/modules/basic',
+                    '@app/modules/shop/views' => '@webroot/{%theme-name%}/views/modules/shop',
+                    '@app/modules/page/views' => '@webroot/{%theme-name%}/views/modules/page',
                     '@app/widgets' => '@webroot/{%theme-name%}/views/widgets',
                 ],
-                'baseUrl' => '@webroot/{%theme-name%}/controllers/views',
+                'baseUrl' => '@webroot/{%theme-name%}/views/modules/basic',
             ],
         ],
     ],

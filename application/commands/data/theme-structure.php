@@ -127,44 +127,62 @@ return [
         'type' => 'dir',
         'children' => [
             [
-                'name' => 'controllers',
+                'name' => 'modules',
                 'type' => 'dir',
                 'children' => [
                     [
-                        'name' => 'cart',
-                        'type' => 'dir',
-                    ],
-                    [
-                        'name' => 'default',
-                        'type' => 'dir',
-                    ],
-                    [
-                        'name' => 'layouts',
+                        'name' => 'basic',
                         'type' => 'dir',
                         'children' => [
                             [
-                                'name' => 'main.php',
-                                'content' => file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'layout.tmpl'),
+                                'name' => 'default',
+                                'type' => 'dir',
+                            ],
+                            [
+                                'name' => 'layouts',
+                                'type' => 'dir',
+                                'children' => [
+                                    [
+                                        'name' => 'main.php',
+                                        'content' => file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'layout.tmpl'),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'name' => 'shop',
+                        'type' => 'dir',
+                        'children' => [
+                            [
+                                'name' => 'cart',
+                                'type' => 'dir',
+                            ],
+                            [
+                                'name' => 'product',
+                                'type' => 'dir',
+                            ],
+                            [
+                                'name' => 'product-compare',
+                                'type' => 'dir',
                             ],
                         ],
                     ],
                     [
                         'name' => 'page',
                         'type' => 'dir',
-                    ],
-                    [
-                        'name' => 'product',
-                        'type' => 'dir',
-                    ],
-                    [
-                        'name' => 'product-compare',
-                        'type' => 'dir',
-                    ],
-                    [
-                        'name' => 'templates',
-                        'type' => 'dir',
+                        'children' => [
+                            [
+                                'name' => 'page',
+                                'type' => 'dir',
+                            ],
+                        ],
                     ],
                 ],
+            ],
+            [
+                'name' => 'templates',
+                'type' => 'dir',
             ],
             [
                 'name' => 'widgets',
@@ -175,7 +193,7 @@ return [
                         'type' => 'dir',
                     ],
                     [
-                        'name' => 'navigation ',
+                        'name' => 'navigation',
                         'type' => 'dir',
                     ],
                 ],
