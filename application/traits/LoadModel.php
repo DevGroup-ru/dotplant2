@@ -2,7 +2,9 @@
 
 namespace app\traits;
 
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\caching\TagDependency;
 use yii\web\NotFoundHttpException;
 
 trait LoadModel
@@ -34,7 +36,14 @@ trait LoadModel
             $model = $modelName::findOne($id);
             
             if (is_object($model) && $useCache === true) {
-                Yii::$app->cache->set($modelName::className() . ":" . $id, $model, $cacheLifetime);
+                Yii::$app->cache->set(
+                    $modelName::className() . ":" . $id,
+                    $model,
+                    $cacheLifetime,
+                    new TagDependency([
+                        'tags' => ActiveRecordHelper::getCommonTag($modelName::className()),
+                    ])
+                );
             }
         }
         if (!is_object($model)) {
