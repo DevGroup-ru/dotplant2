@@ -7,7 +7,6 @@ use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;
 use app\models\Property;
 use app\models\PropertyGroup;
-use app\models\PropertyHandler;
 use app\models\PropertyStaticValues;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
@@ -313,6 +312,11 @@ class HasProperties extends Behavior
         $this->abstract_model = $model;
     }
 
+    /**
+     * Get PropertyValue model by key. It consists object property values
+     * @param string $key
+     * @return PropertyValue
+     */
     public function getPropertyValuesByKey($key)
     {
         $this->getPropertyGroups();
@@ -324,6 +328,26 @@ class HasProperties extends Behavior
             }
         }
         return null;
+    }
+
+    /**
+     * Get property values by key.
+     * @param $key
+     * @param bool $asString
+     * @param string $delimiter
+     * @return array|string
+     */
+    public function property($key, $asString = true, $delimiter = ', ')
+    {
+        $values = [];
+        $propertyValue = $this->getPropertyValuesByKey($key);
+        if (is_null($propertyValue)) {
+            return $asString ? '' : [];
+        }
+        foreach ($propertyValue->values as $value) {
+            $values[] = $value['value'];
+        }
+        return $asString ? implode($delimiter, $values) : $values;
     }
 
     public function getPropertyValuesByPropertyId($property_id)
@@ -418,7 +442,7 @@ class HasProperties extends Behavior
                     new TagDependency(
                         [
                             'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($this->owner, $this->owner->id),
+                                ActiveRecordHelper::getObjectTag($this->owner, $this->owner->id),
                             ],
                         ]
                     )
@@ -452,7 +476,7 @@ class HasProperties extends Behavior
                     new TagDependency(
                         [
                             'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($this->getObject(), $this->owner->id),
+                                ActiveRecordHelper::getObjectTag($this->getObject(), $this->owner->id),
                             ],
                         ]
                     )
