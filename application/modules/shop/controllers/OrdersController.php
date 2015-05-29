@@ -4,6 +4,7 @@ namespace app\modules\shop\controllers;
 
 use app\modules\shop\models\Order;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -33,15 +34,24 @@ class OrdersController extends Controller
         ];
     }
 
+    /**
+     * @param null $hash
+     * @return string
+     * @throws NotFoundHttpException
+     */
     public function actionShow($hash = null)
     {
         $order = Order::findOne(['hash' => $hash]);
         if (empty($order)) {
             throw new NotFoundHttpException();
         }
+        Url::remember('', '__shopOrderShowUrl');
         return $this->render('show', ['order' => $order]);
     }
 
+    /**
+     * @return string
+     */
     public function actionList()
     {
         $orders = [];

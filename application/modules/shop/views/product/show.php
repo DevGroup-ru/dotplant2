@@ -179,6 +179,7 @@ $images = Image::getForModel($model->object->id, $model->id);
             </div>
         </div>
     </div>
+    <?php return; ?>
 <?=
 \app\modules\review\widgets\ReviewsWidget::widget(
     [
@@ -190,3 +191,4 @@ $images = Image::getForModel($model->object->id, $model->id);
         ],
     ]
 );
+?>

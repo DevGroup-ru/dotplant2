@@ -61,27 +61,7 @@ foreach ($items as $i => $item) {
                 )
                 ?>
             </td>
-            <td>
-                <?php if ($immutable === true): ?>
-                    <?= $item->quantity ?>
-                <?php else: ?>
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <div class="btn-group">
-                            <input class="form-control" style="float: left; margin-right: -2px; max-width:80px;" placeholder="1" size="16" type="text" data-type="quantity" data-id="<?= $item->id ?>" value="<?= $item->quantity ?>" data-nominal="<?= $item->product->measure->nominal ?>" />
-                                <button class="btn btn-primary minus" type="button" data-action="change-quantity">
-                                    <i class="fa fa-minus"></i></button>
-                                <button class="btn btn-primary plus" type="button" data-action="change-quantity">
-                                    <i class="fa fa-plus"></i></button>
-                                <button class="btn btn-danger" type="button" data-action="delete" data-url="<?= \yii\helpers\Url::toRoute([
-                                    'delete',
-                                    'id' => $item->id
-                                ]) ?>"><i class="fa fa-trash-o"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </td>
+            <td><?= $item->quantity ?></td>
             <td>
                 <span class="item-price">
                     <?php

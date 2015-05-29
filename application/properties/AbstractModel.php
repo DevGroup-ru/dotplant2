@@ -101,6 +101,14 @@ class AbstractModel extends Model
         $this->rules = [];
     }
 
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['readonly'] = [];
+        return $scenarios;
+    }
+
+
     public function attributeLabels()
     {
         $labels = [];

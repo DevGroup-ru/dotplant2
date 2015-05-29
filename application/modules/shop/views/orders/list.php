@@ -2,9 +2,10 @@
 /**
  * @var \yii\web\View $this
  * @var \app\modules\shop\models\Order[] $orders
- * @var integet $currentOrder
+ * @var string $currentOrder
  */
 
+    echo \yii\helpers\Html::tag('p', 'Current order: '.$currentOrder);
     foreach ($orders as $order) {
         echo \yii\helpers\Html::tag(
             'p',

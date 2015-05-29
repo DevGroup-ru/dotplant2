@@ -207,14 +207,14 @@ if ($sum_transactions < $model->total_price):
                 ]
             );
             /** @var \app\modules\shop\models\Customer $customer */
-            $customer = $model->customer;
-            echo $form->field($customer, 'first_name');
-            echo $form->field($customer, 'middle_name');
-            echo $form->field($customer, 'last_name');
-            echo $form->field($customer, 'email');
-            echo $form->field($customer, 'phone');
+            $model = $model->customer;
+            echo $form->field($model, 'first_name');
+            echo $form->field($model, 'middle_name');
+            echo $form->field($model, 'last_name');
+            echo $form->field($model, 'email');
+            echo $form->field($model, 'phone');
             /** @var \app\properties\AbstractModel $abstractModel */
-            $abstractModel = $customer->getAbstractModel();
+            $abstractModel = $model->getAbstractModel();
             $abstractModel->setArrayMode(false);
             foreach ($abstractModel->attributes() as $attr) {
                 echo $form->field($abstractModel, $attr);
@@ -229,13 +229,13 @@ if ($sum_transactions < $model->total_price):
                     'title' => Yii::t('app', 'Contragent'),
                 ]
             );
-            $contragents = array_reduce($customer->contragents,
+            $contragents = array_reduce($model->contragents,
                 function ($result, $item)
                 {
                     /** @var \app\modules\shop\models\Contragent $item */
                     $result[$item->id] = $item;
                     return $result;
-                }, [0 => \app\modules\shop\models\Contragent::createEmptyContragent($customer)]);
+                }, [0 => \app\modules\shop\models\Contragent::createEmptyContragent($model)]);
 
             echo $form->field($model, 'contragent_id')->dropDownList(array_reduce($contragents,
                 function ($result, $item)

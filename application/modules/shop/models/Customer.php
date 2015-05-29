@@ -7,6 +7,7 @@ use app\models\PropertyGroup;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use app\properties\PropertyValue;
+use app\properties\traits\PropertyTrait;
 use Yii;
 
 /**
@@ -26,6 +27,8 @@ use Yii;
  */
 class Customer extends \yii\db\ActiveRecord
 {
+    use PropertyTrait;
+
     protected static $mapUsers = [];
     protected $propertyGroup = null;
 
@@ -76,6 +79,16 @@ class Customer extends \yii\db\ActiveRecord
                 'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['readonly'] = [];
+        return $scenarios;
     }
 
     /**

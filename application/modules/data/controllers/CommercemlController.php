@@ -128,11 +128,5 @@ class CommercemlController extends Controller
             'propsGroups' => $propertiesGroups,
         ]);
     }
-
-    public function actionTest()
-    {
-        $xml = new XmlFileReader('/home/user/WORK/dotplant/import1.xml');
-        $xml->parse();
-    }
 }
 ?>

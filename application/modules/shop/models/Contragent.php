@@ -7,6 +7,7 @@ use app\models\PropertyGroup;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use app\properties\PropertyValue;
+use app\properties\traits\PropertyTrait;
 use Yii;
 
 /**
@@ -22,6 +23,9 @@ use Yii;
  */
 class Contragent extends \yii\db\ActiveRecord
 {
+    use PropertyTrait;
+
+    /** @var PropertyGroup $propertyGroup */
     protected $propertyGroup = null;
 
     /**
@@ -66,6 +70,16 @@ class Contragent extends \yii\db\ActiveRecord
                 'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['readonly'] = [];
+        return $scenarios;
     }
 
     /**

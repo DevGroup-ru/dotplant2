@@ -56,10 +56,20 @@ use yii\db\Expression;
  */
 class Order extends \yii\db\ActiveRecord
 {
+    const IMMUTABLE_NONE = 0;
+    const IMMUTABLE_USER = 1;
+    const IMMUTABLE_MANAGER = 2;
+    const IMMUTABLE_ASSIGNED = 4;
+    const IMMUTABLE_ALL = 128;
+    const ORDER_STATE_FINISH = 0;
+    const ORDER_STATE_IN_PROCESS = 1;
+
     /**
      * @var Order $order
      */
     protected static $order;
+    /** @var OrderStage $orderStage */
+    protected $orderStage = null;
 
     /**
      * @inheritdoc
@@ -193,7 +203,10 @@ class Order extends \yii\db\ActiveRecord
      */
     public function getStage()
     {
-        return $this->hasOne(OrderStage::className(), ['id' => 'order_stage_id']);
+        if (null === $this->orderStage) {
+            $this->orderStage = $this->hasOne(OrderStage::className(), ['id' => 'order_stage_id']);
+        }
+        return $this->orderStage;
     }
 
     public function getShippingOption()
@@ -427,6 +440,31 @@ class Order extends \yii\db\ActiveRecord
                 $customer->save();
             }
         }
+    }
+
+    /**
+     * @param integer|null $checkWith
+     * @return int
+     */
+    public function getImmutability($checkWith = null)
+    {
+        $stage = $this->stage;
+        $checkWith = intval($checkWith);
+        $flag = intval($stage->immutable_by_user)
+            | (intval($stage->immutable_by_manager) << 1)
+            | (intval($stage->immutable_by_assigned) << 2);
+        return $checkWith > 0 ? $checkWith === ($checkWith & $flag) : $flag;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrderState()
+    {
+        $stage = $this->stage;
+        return 1 === ($stage->immutable_by_user & $stage->immutable_by_manager & $stage->immutable_by_assigned)
+            ? Order::ORDER_STATE_FINISH
+            : Order::ORDER_STATE_IN_PROCESS;
     }
 }
 ?>
