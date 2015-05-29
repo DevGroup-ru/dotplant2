@@ -188,6 +188,9 @@ class Order extends \yii\db\ActiveRecord
         return $this->hasMany(OrderItem::className(), ['order_id' => 'id']);
     }
 
+    /**
+     * @return OrderStage|null
+     */
     public function getStage()
     {
         return $this->hasOne(OrderStage::className(), ['id' => 'order_stage_id']);

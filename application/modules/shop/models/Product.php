@@ -48,6 +48,8 @@ use yii\data\Pagination;
  * @property Measure $measure
  * @property string $sku
  * @property boolean unlimited_count
+ * Relations:
+ * @property Category $category
  */
 class Product extends ActiveRecord implements ImportableInterface, ExportableInterface
 {
@@ -214,14 +216,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      * @param int $is_active Return only active
      * @return mixed
      */
-    public static function findById($id, $is_active = 1)
+    public static function findById($id, $isActive = 1)
     {
         if (!isset(static::$identity_map[$id])) {
             $cacheKey = static::tableName() . ":$id";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
                 $model = static::find()->where(['id' => $id])->with('images');
-                if (null !== $is_active) {
-                    $model->andWhere(['active' => $is_active]);
+                if (null !== $isActive) {
+                    $model->andWhere(['active' => $isActive]);
                 }
                 if (null !== $model = $model->one()) {
                     static::$slug_to_id[$model->slug] = $id;
@@ -297,6 +299,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         }
     }
 
+    /**
+     * @return Category|null
+     */
     public function getCategory()
     {
         return $this->hasOne(Category::className(), ['id' => 'main_category_id']);
@@ -1002,4 +1007,47 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         }
         return $measure;
     }
+
+    /**
+     * @param int|Category|null $category
+     * @param bool $asMainCategory
+     * @return bool
+     * @throws \yii\db\Exception
+     */
+    public function linkToCategory($category = null, $asMainCategory = false)
+    {
+        if ($category instanceof Category) {
+            $category = $category->id;
+        } elseif (is_int($category) || is_string($category)) {
+            $category = intval($category);
+        } else {
+            return false;
+        }
+
+        if ($asMainCategory) {
+            $this->main_category_id = $category;
+            return $this->save();
+        } else {
+            $tableName = $this->getObject()->categories_table_name;
+            $query = new Query();
+            $query = $query->select(['id'])
+                ->from($tableName)
+                ->where(['category_id' => $category, 'object_model_id' => $this->id])
+                ->one();
+            if (false === $query) {
+                try {
+                    $result = Yii::$app->db->createCommand()->insert($tableName, [
+                        'category_id' => $category,
+                        'object_model_id' => $this->id
+                    ])->execute();
+                } catch (\yii\db\Exception $e) {
+                    $result = false;
+                }
+                return boolval($result);
+            }
+        }
+
+        return false;
+    }
 }
+?>

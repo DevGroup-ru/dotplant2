@@ -14,6 +14,26 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?= \app\widgets\Alert::widget() ?>
 
+<div class="col-md-12">
+    <div class="row">
+        <?php \app\backend\widgets\BackendWidget::begin([
+            'icon' => 'cogs',
+            'title' => Yii::t('app', 'CommerceML'),
+        ]); ?>
+        <?= \yii\helpers\Html::a(
+                Yii::t('app', 'Import from CommerceML'),
+                \yii\helpers\Url::to(['/data/commerceml']),
+                ['class' => 'btn btn-primary']
+        ); ?>
+        <?= \yii\helpers\Html::a(
+            Yii::t('app', 'Configure CommerceML'),
+            \yii\helpers\Url::to(['/data/commerceml/configure']),
+            ['class' => 'btn btn-primary']
+        ); ?>
+        <?php \app\backend\widgets\BackendWidget::end(); ?>
+    </div>
+</div>
+
 <div class="data-index">
     <?=
     \yii\grid\GridView::widget([

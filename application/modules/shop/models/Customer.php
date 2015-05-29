@@ -22,6 +22,7 @@ use Yii;
  * Relations:
  * @property Contragent[] $contragents
  * @property Contragent $contragent
+ * @property Order[] $orders
  */
 class Customer extends \yii\db\ActiveRecord
 {
@@ -75,6 +76,14 @@ class Customer extends \yii\db\ActiveRecord
                 'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
             ],
         ];
+    }
+
+    /**
+     * @return Order[]|null
+     */
+    public function getOrders()
+    {
+        return $this->hasMany(Order::className(), ['customer_id' => 'id']);
     }
 
     /**

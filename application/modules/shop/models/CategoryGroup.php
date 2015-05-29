@@ -13,6 +13,8 @@ use yii\db\ActiveRecord;
  */
 class CategoryGroup extends ActiveRecord
 {
+    private static $firstModel = null;
+
     /**
      * @inheritdoc
      */
@@ -42,4 +44,25 @@ class CategoryGroup extends ActiveRecord
             'name' => Yii::t('app', 'Name'),
         ];
     }
+
+    /**
+     * @return CategoryGroup|null
+     */
+    public static function getFirstModel($createNotExists = true)
+    {
+        if (null !== static::$firstModel) {
+            return static::$firstModel;
+        }
+        $model = static::find()->orderBy(['id' => SORT_ASC])->one();
+        if ($createNotExists && null === $model) {
+            $model = new static();
+            $model->name = Yii::t('app', 'Shop');
+            if (!$model->save()) {
+                $model = null;
+            }
+        }
+
+        return static::$firstModel = $model;
+    }
 }
+?>

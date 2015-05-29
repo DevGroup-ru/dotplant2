@@ -44,7 +44,7 @@ class CommercemlController extends Controller
             $uploaded = UploadedFile::getInstancesByName('cmlFile');
             $files = [];
             $date = time();
-            $dir = \Yii::$app->getModule('data')->importDirPath . '/';
+            $dir = \Yii::getAlias(\Yii::$app->getModule('data')->importDirPath . '/');
             if (!empty($uploaded)) {
                 foreach ($uploaded as $k => $file) {
                     if ($file->saveAs($dir . "cml{$date}_{$k}.xml")) {
@@ -127,6 +127,12 @@ class CommercemlController extends Controller
             'props' => $properties,
             'propsGroups' => $propertiesGroups,
         ]);
+    }
+
+    public function actionTest()
+    {
+        $xml = new XmlFileReader('/home/user/WORK/dotplant/import1.xml');
+        $xml->parse();
     }
 }
 ?>

@@ -4,6 +4,7 @@ namespace app\modules\shop\models;
 
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
+use app\components\Helper;
 use app\modules\shop\models\FilterSets;
 use app\properties\HasProperties;
 use app\traits\GetImages;
@@ -576,4 +577,54 @@ class Category extends ActiveRecord
         }
         return $this->filterSets;
     }
+
+    /**
+     * @param int $parentId
+     * @param int|null $categoryGroupId
+     * @param string $name
+     * @param bool $dummyObject
+     * @return Category|null
+     */
+    public static function createEmptyCategory($parentId = 0, $categoryGroupId = null, $name = 'Catalog', $dummyObject = false)
+    {
+        $categoryGroupId = null === $categoryGroupId ? CategoryGroup::getFirstModel()->id : intval($categoryGroupId);
+        $parent = static::findById($parentId, null);
+        $parentId = null === $parent ? intval($parentId) : $parent->id;
+
+        $model = new static();
+            $model->loadDefaultValues();
+            $model->parent_id = $parentId;
+            $model->category_group_id = $categoryGroupId;
+            $model->h1 = $model->title = $model->name = $name;
+            $model->slug = Helper::createSlug($model->name);
+
+        if (!$dummyObject) {
+            if (!$model->save()) {
+                return null;
+            }
+            $model->refresh();
+        }
+
+        return $model;
+    }
+
+    /**
+     * @param int|Product|null $product
+     * @param bool $asMainCategory
+     * @return bool
+     */
+    public function linkProduct($product = null, $asMainCategory = false)
+    {
+        if ($product instanceof Product) {
+            return $product->linkToCategory($this->id, $asMainCategory);
+        } elseif (is_int($product) || is_string($product)) {
+            $product = intval($product);
+            if (null !== $product = Product::findById($product, null)) {
+                return $product->linkToCategory($this->id, $asMainCategory);
+            }
+        }
+
+        return false;
+    }
 }
+?>

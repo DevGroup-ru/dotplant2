@@ -8,6 +8,7 @@ use app\modules\shop\models\Category;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;
+use app\modules\shop\models\CategoryGroup;
 use app\modules\shop\models\Product;
 use app\models\Property;
 use app\models\PropertyStaticValues;
@@ -63,16 +64,11 @@ class XmlFileReader
 
                 $rootCategory = Category::findOne(['parent_id' => 0]);
                 if (empty($rootCategory)) {
-                    $rootCategory = new Category();
-                    $rootCategory->loadDefaultValues();
-                        $rootCategory->parent_id = 0;
-                        $rootCategory->category_group_id = 1;
-                        $rootCategory->h1 = $rootCategory->title = $rootCategory->name = 'Каталог';
-                        $rootCategory->slug = Helper::createSlug($rootCategory->name);
-                    if ($rootCategory->save()) {
-                        $rootCategory->refresh();
-                        $this->rootCategoryCache = $rootCategory->id;
+                    if (null === $rootCategory = Category::createEmptyCategory(0, null, 'Каталог')) {
+                        $this->xml->close();
+                        $this->xml = null;
                     }
+                    $this->rootCategoryCache = $rootCategory->id;
                 } else {
                     $this->rootCategoryCache = $rootCategory->id;
                 }
@@ -90,6 +86,9 @@ class XmlFileReader
         }
     }
 
+    /**
+     *
+     */
     function __destruct()
     {
         if (null !== $this->xml) {
@@ -97,6 +96,10 @@ class XmlFileReader
         }
     }
 
+    /**
+     * Try to guess file "structure" for ordering multiple incoming files
+     * @return int|null
+     */
     public function fileType()
     {
         if (null === $this->xml) {
@@ -118,6 +121,9 @@ class XmlFileReader
         return null;
     }
 
+    /**
+     * @return array
+     */
     public function getProperties()
     {
         if (null === $this->xml) {
@@ -137,6 +143,9 @@ class XmlFileReader
         }
     }
 
+    /**
+     * @return array
+     */
     public function parseSvoistva()
     {
         if (null === $this->xml) {
@@ -158,10 +167,9 @@ class XmlFileReader
                         break;
                     } elseif (\XMLReader::ELEMENT === $xml->nodeType && in_array($xml->name, [static::ELEMENT_ID, static::ELEMENT_NAIMENOVANIE])) {
                         $_name = $xml->name;
-                        if (!$xml->isEmptyElement && $xml->read()) {
-                            if (\XMLReader::TEXT === $xml->nodeType) {
-                                $item[$_name] = $xml->value;
-                            }
+                        $_value = $this->getElementText($_name);
+                        if (!empty($_value)) {
+                            $item[$_name] = $_value;
                         }
                     }
                 }
@@ -169,6 +177,9 @@ class XmlFileReader
         }
     }
 
+    /**
+     * @return array|bool
+     */
     public function parseProduct()
     {
         if (null === $this->xml) {
@@ -185,6 +196,9 @@ class XmlFileReader
         }
     }
 
+    /**
+     * @return array
+     */
     public function parseTovar()
     {
         if (null === $this->xml) {
@@ -209,10 +223,9 @@ class XmlFileReader
             // Получаем значения для элементов
             } elseif (\XMLReader::ELEMENT === $xml->nodeType && in_array($xml->name, $subElements) && (1 === ($xml->depth - $depthProduct))) {
                 $_name = $xml->name;
-                if (!$xml->isEmptyElement && $xml->read()) {
-                    if (\XMLReader::TEXT === $xml->nodeType) {
-                        $result[$_name] = $xml->value;
-                    }
+                $_value = $this->getElementText($_name);
+                if (!empty($_value)) {
+                    $result[$_name] = $_value;
                 }
             // Достигли начала блока Свойств
             } elseif(\XMLReader::ELEMENT === $xml->nodeType && static::NODE_ZNACHENIYA_SVOISTV === $xml->name) {
@@ -228,10 +241,8 @@ class XmlFileReader
                         break;
                     } elseif (\XMLReader::ELEMENT === $xml->nodeType && in_array($xml->name, [static::ELEMENT_ID, static::ELEMENT_ZNACHENIE])) {
                         $_name = $xml->name;
-                        if (!$xml->isEmptyElement && $xml->read()) {
-                            if (\XMLReader::TEXT === $xml->nodeType) {
-                                $_temp[$_name] = $xml->value;
-                            }
+                        if (null !== $_value = $this->getElementText($_name)) {
+                            $_temp[$_name] = $_value;
                         }
                     }
                 }
@@ -242,10 +253,8 @@ class XmlFileReader
                     if (\XMLReader::END_ELEMENT === $xml->nodeType && static::NODE_GRUPPY === $xml->name) {
                         break;
                     } elseif (\XMLReader::ELEMENT === $xml->nodeType && static::ELEMENT_ID === $xml->name) {
-                        if (!$xml->isEmptyElement && $xml->read()) {
-                            if (\XMLReader::TEXT === $xml->nodeType) {
-                                $result['categories'][] = $xml->value;
-                            }
+                        if (null !== $_value = $this->getElementText($xml->name)) {
+                            $result['categories'][] = $_value;
                         }
                     }
                 }
@@ -270,7 +279,7 @@ class XmlFileReader
                 return $result;
             } elseif (\XMLReader::ELEMENT === $xml->nodeType && static::NODE_GRUPPY === $xml->name) {
                 if (!empty($item)) {
-                    $lastParent = $this->createCategory($item, $parent);
+                    $result[] = $lastParent = $this->createCategory($item, $parent);
                 }
                 $result = array_merge($result, $this->parseGruppa($lastParent));
             } elseif (\XMLReader::ELEMENT === $xml->nodeType && static::NODE_GRUPPA === $xml->name) {
@@ -278,14 +287,12 @@ class XmlFileReader
                 $lastParent = $parent;
             } elseif (\XMLReader::END_ELEMENT === $xml->nodeType && static::NODE_GRUPPA === $xml->name) {
                 if (!empty($item)) {
-                    $this->createCategory($item, $parent);
+                    $result[] = $this->createCategory($item, $parent);
                 }
             } elseif (\XMLReader::ELEMENT === $xml->nodeType && in_array($xml->name, [static::ELEMENT_ID, static::ELEMENT_NAIMENOVANIE])) {
                 $_name = $xml->name;
-                if (!$xml->isEmptyElement && $xml->read()) {
-                    if (\XMLReader::TEXT === $xml->nodeType) {
-                        $item[$_name] = $xml->value;
-                    }
+                if (null !== $_value = $this->getElementText($_name)) {
+                    $item[$_name] = $_value;
                 }
             }
         }
@@ -320,10 +327,8 @@ class XmlFileReader
                 break;
             } elseif (\XMLReader::ELEMENT === $xml->nodeType && in_array($xml->name, [static::ELEMENT_ID, static::ELEMENT_KOLICHESTVO, static::ELEMENT_NAIMENOVANIE])) {
                 $_name = $xml->name;
-                if (!$xml->isEmptyElement && $xml->read()) {
-                    if (\XMLReader::TEXT === $xml->nodeType) {
-                        $result[$_name] = $xml->value;
-                    }
+                if (null !== $_value = $this->getElementText($_name)) {
+                    $result[$_name] = $_value;
                 }
             } elseif (\XMLReader::ELEMENT === $xml->nodeType && static::ELEMENT_CENY === $xml->name) {
                 $result['price'] = [];
@@ -331,10 +336,9 @@ class XmlFileReader
                     if (\XMLReader::END_ELEMENT === $xml->nodeType && static::ELEMENT_CENY === $xml->name) {
                         break;
                     } elseif (\XMLReader::ELEMENT === $xml->nodeType && static::ELEMENT_CENA_ZA_EDENICU === $xml->name) {
-                        if (!$xml->isEmptyElement && $xml->read()) {
-                            if (\XMLReader::TEXT === $xml->nodeType) {
-                                $result['price'][] = $xml->value;
-                            }
+                        $_name = $xml->name;
+                        if (null !== $_value = $this->getElementText($_name)) {
+                            $result['price'][] = $_value;
                         }
                     }
                 }
@@ -385,12 +389,17 @@ class XmlFileReader
         }
     }
 
-    private function createCategory($item, $parent)
+    /**
+     * @param array $item
+     * @param int $parentId
+     * @return int
+     */
+    private function createCategory($item, $parentId)
     {
         if (empty($item) || empty($item[static::ELEMENT_ID]) || empty($item[static::ELEMENT_NAIMENOVANIE])) {
-            return $parent;
+            return $parentId;
         }
-        $result = $parent;
+        $result = $parentId;
 
         if (isset($this->categoryCache[$item[static::ELEMENT_ID]])) {
             $result = $this->categoryCache[$item[static::ELEMENT_ID]];
@@ -404,15 +413,9 @@ class XmlFileReader
                     $guid->type = 'CATEGORY';
                     $guid->model_id = 1;
 
-                $category = Category::findOne(['slug' => Helper::createSlug($item[static::ELEMENT_NAIMENOVANIE])]);
+                $category = Category::findOne(['slug' => Helper::createSlug($item[static::ELEMENT_NAIMENOVANIE]), 'parent_id' => $parentId]);
                 if (empty($category)) {
-                    $category = new Category();
-                        $category->category_group_id = 1;
-                        $category->parent_id = $parent;
-                        $category->name = $category->title = $category->h1 = $item[static::ELEMENT_NAIMENOVANIE];
-                        $category->slug = Helper::createSlug($category->name);
-                    if ($category->validate() && $category->save()) {
-                        $category->refresh();
+                    if (null !== $category = Category::createEmptyCategory($parentId, null, $item[static::ELEMENT_NAIMENOVANIE])) {
                         $guid->model_id = $category->id;
                     }
                 } else {
@@ -447,6 +450,7 @@ class XmlFileReader
                 $product->content = empty($item[static::ELEMENT_OPISANIE]) ? '' : $item[static::ELEMENT_OPISANIE];
             if ($product->validate() && $product->save()) {
                 $product->refresh();
+                $product->linkToCategory($this->rootCategoryCache);
                 $guid = new CommercemlGuid();
                     $guid->guid = $item[static::ELEMENT_ID];
                     $guid->name = $item[static::ELEMENT_NAIMENOVANIE];
@@ -546,6 +550,32 @@ class XmlFileReader
         }
 
         return false;
+    }
+
+    /**
+     * @param string|null $elementName
+     * @param int $nodeType
+     * @param null $defaultValue
+     * @return string|null
+     */
+    private function getElementText($elementName = null, $nodeType = \XMLReader::TEXT, $defaultValue = null)
+    {
+        if (empty($elementName)) {
+            return $defaultValue;
+        }
+
+        $xml = $this->xml;
+        if (!$xml->isEmptyElement) {
+            while ($xml->read()) {
+                if (\XMLReader::END_ELEMENT === $xml->nodeType && $elementName === $xml->name) {
+                    break;
+                } elseif ($nodeType === $xml->nodeType) {
+                    return $xml->value;
+                }
+            }
+        }
+
+        return $defaultValue;
     }
 }
 ?>
