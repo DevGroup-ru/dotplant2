@@ -4,6 +4,12 @@ use yii\helpers\Html;
 use app\backend\components\ActiveForm;
 use kartik\icons\Icon;
 $this->title = Yii::t('app', 'Configuration');
+$this->params['breadcrumbs'][] = [
+    'url' => [
+        '/config/backend/index',
+    ],
+    'label' => $this->title
+];
 ?>
 
 <div class="row">
