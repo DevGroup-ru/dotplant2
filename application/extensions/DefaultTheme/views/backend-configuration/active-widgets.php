@@ -34,10 +34,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <?= Html::encode($partsRow['name']) ?>
+                        <?php if ($partsRow['multiple_widgets'] === '1'):?>
+                            <small><?= Yii::t('app', 'Multiple widgets') ?></small>
+                        <?php endif; ?>
                     </h3>
                 </div>
                 <div class="panel-body">
                     <ul class="part-active-widgets sortable-list" data-part="<?=$partsRow['id']?>">
+                    <?php $matchedCount = 0; ?>
                     <?php foreach ($models as $activeWidget): ?>
                         <?php if ($activeWidget->part_id !== intval($partsRow['id'])) continue; ?>
                         <li class="well well-sm well-light" activewidget="<?=$activeWidget->id?>">
@@ -52,10 +56,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             )
                             ?>
                             <?= $activeWidget->widget->name ?>
+                            <?php $matchedCount++; ?>
                         </li>
                     <?php endforeach; ?>
                     </ul>
                     <?php
+                    if ($partsRow['multiple_widgets'] === '1' || $matchedCount === 0):
                     $widgets = \yii\helpers\ArrayHelper::map(
                         array_filter(
                             $availableWidgets,
@@ -84,6 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]
                         )
                     ?>
+                    <?php endif; ?>
                 </div>
             </div>
             <?php endforeach; ?>
