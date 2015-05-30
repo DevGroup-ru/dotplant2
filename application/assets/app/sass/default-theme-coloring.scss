@@ -1,0 +1,15 @@
+$primary_color: #2980b9;
+$header_color: $primary_color;
+$subheader_color: darken($header_color, 20%);
+
+$secondary_color: #27ae60;
+$action_color: #d1404a;
+
+$action_text_color: #ecf0f1;
+$content_text_color: #404148;
+$muted_text_color: #bdc3c7;
+
+$link_color: #c0392b;
+
+$header_navigation_color: #ecf0f1;
+$header_navigation_hover: darken($header_color, 10%);

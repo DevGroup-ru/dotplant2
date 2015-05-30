@@ -9,6 +9,7 @@ use yii\base\InvalidConfigException;
 use yii\caching\TagDependency;
 use \devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\helpers\ArrayHelper;
+use yii\data\ActiveDataProvider;
 
 /**
  * This is the model class for table "{{%theme_parts}}".
@@ -208,5 +209,32 @@ class ThemeParts extends \yii\db\ActiveRecord
         return new TagDependency([
             'tags' => static::getCacheTags($attributesRow),
         ]);
+    }
+
+    /**
+     * Search
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function search($params)
+    {
+        /* @var $query \yii\db\ActiveQuery */
+        $query = self::find();
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+            ]
+        );
+        if (!($this->load($params))) {
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['global_visibility' => $this->global_visibility]);
+        $query->andFilterWhere(['is_cacheable' => $this->is_cacheable]);
+        $query->andFilterWhere(['cache_vary_by_session' => $this->cache_vary_by_session]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'key', $this->key]);
+
+        return $dataProvider;
     }
 }

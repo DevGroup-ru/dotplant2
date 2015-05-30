@@ -77,4 +77,9 @@ class ThemeWidgets extends \yii\db\ActiveRecord
             'cache_vary_by_session' => Yii::t('app', 'Cache Vary By Session'),
         ];
     }
+
+    public function getApplying()
+    {
+        return $this->hasMany(ThemeWidgetApplying::className(), ['widget_id' => 'id']);
+    }
 }

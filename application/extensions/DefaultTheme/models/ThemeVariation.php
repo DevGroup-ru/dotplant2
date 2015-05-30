@@ -7,6 +7,7 @@ use app\traits\IdentityMap;
 use Yii;
 use \devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\caching\TagDependency;
+use yii\data\ActiveDataProvider;
 
 
 /**
@@ -121,7 +122,7 @@ class ThemeVariation extends \yii\db\ActiveRecord
             $match = true;
 
             // check by url
-            if (isset($variation['by_url'])) {
+            if (!empty($variation['by_url'])) {
                 $asteriskPosition = mb_strpos($variation['by_url'], '*');
                 if ($asteriskPosition === false) {
                     // direct compare! no *
@@ -139,12 +140,12 @@ class ThemeVariation extends \yii\db\ActiveRecord
             }
 
             // check by route
-            if (isset($variation['by_route'])) {
+            if (!empty($variation['by_route'])) {
                 $match = $match && ($route === $variation['by_route']);
             }
 
             // check by matcher
-            if (isset($variation['matcher_class_name'])) {
+            if (!empty($variation['matcher_class_name'])) {
                 $className = $variation['matcher_class_name'];
                 /** @var VariationMatcher $matcher */
                 $matcher = new $className($variation);
@@ -162,5 +163,32 @@ class ThemeVariation extends \yii\db\ActiveRecord
             }
         }
         return $matched;
+    }
+
+    /**
+     * Search
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function search($params)
+    {
+        /* @var $query \yii\db\ActiveQuery */
+        $query = self::find();
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+            ]
+        );
+        if (!($this->load($params))) {
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['exclusive' => $this->exclusive]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'by_url', $this->by_url]);
+        $query->andFilterWhere(['like', 'by_route', $this->by_route]);
+        $query->andFilterWhere(['like', 'matcher_class_name', $this->matcher_class_name]);
+
+        return $dataProvider;
     }
 }
