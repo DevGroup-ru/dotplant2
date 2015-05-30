@@ -42,8 +42,7 @@ return[
     'components' => [
         'fs' => [
             'class' => 'creocoder\\flysystem\\LocalFilesystem',
-            'path' => '@webroot/files',
-            'replica' => 'ftpFs',
+            'path' => '@webroot/files'
         ],
     ],
 ];
