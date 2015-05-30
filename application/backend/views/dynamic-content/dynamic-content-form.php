@@ -46,48 +46,7 @@ $this->registerJs('
 ); ?>
 
 <?php $this->beginBlock('submit'); ?>
-<div class="form-group no-margin">
-    <?=
-    Html::a(
-        Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
-        Yii::$app->request->get('returnUrl', ['/backend/dynamic-content/index', 'id' => $model->id]),
-        ['class' => 'btn btn-danger']
-    )
-    ?>
-
-    <?php if ($model->isNewRecord): ?>
-        <?=Html::submitButton(
-            Icon::show('save') . Yii::t('app', 'Save & Go next'),
-            [
-                'class' => 'btn btn-success',
-                'name' => 'action',
-                'value' => 'next',
-            ]
-        )?>
-    <?php endif; ?>
-
-    <?=
-    Html::submitButton(
-        Icon::show('save') . Yii::t('app', 'Save & Go back'),
-        [
-            'class' => 'btn btn-warning',
-            'name' => 'action',
-            'value' => 'back',
-        ]
-    )
-    ?>
-
-    <?=
-    Html::submitButton(
-        Icon::show('save') . Yii::t('app', 'Save'),
-        [
-            'class' => 'btn btn-primary',
-            'name' => 'action',
-            'value' => 'save',
-        ]
-    )
-    ?>
-</div>
+<?= \app\backend\components\Helper::saveButtons($model) ?>
 <?php $this->endBlock('submit'); ?>
 
 

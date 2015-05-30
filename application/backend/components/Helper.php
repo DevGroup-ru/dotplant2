@@ -2,7 +2,10 @@
 
 namespace app\backend\components;
 
-use \Yii;
+use Yii;
+use yii\db\ActiveRecord;
+use yii\helpers\Html;
+use kartik\icons\Icon;
 
 class Helper
 {
@@ -29,5 +32,55 @@ class Helper
             }
         }
         return self::$returnUrl;
+    }
+
+    /**
+     * @param ActiveRecord $model Model instance
+     * @param string $indexAction Route path to index action
+     * @return string Rendered save buttons with redurectUrl!
+     */
+    public static function saveButtons(ActiveRecord $model, $indexAction='index')
+    {
+        $result = '<div class="form-group no-margin">';
+        $result .=
+            Html::a(
+                Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+                Yii::$app->request->get('returnUrl', [$indexAction, 'id' => $model->id]),
+                ['class' => 'btn btn-danger']
+            );
+
+        if ($model->isNewRecord) {
+            $result .= Html::submitButton(
+                Icon::show('save') . Yii::t('app', 'Save & Go next'),
+                [
+                    'class' => 'btn btn-success',
+                    'name' => 'action',
+                    'value' => 'next',
+                ]
+            );
+        }
+
+        $result .=
+            Html::submitButton(
+                Icon::show('save') . Yii::t('app', 'Save & Go back'),
+                [
+                    'class' => 'btn btn-warning',
+                    'name' => 'action',
+                    'value' => 'back',
+                ]
+            );
+
+        $result .=
+            Html::submitButton(
+                Icon::show('save') . Yii::t('app', 'Save'),
+                [
+                    'class' => 'btn btn-primary',
+                    'name' => 'action',
+                    'value' => 'save',
+                ]
+            );
+        $result .= '</div>';
+
+        return $result;
     }
 }

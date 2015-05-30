@@ -4,6 +4,7 @@ namespace app\backend\controllers;
 
 use app\backend\actions\DeleteOne;
 use app\backend\actions\MultipleDelete;
+use app\backend\traits\BackendRedirect;
 use app\models\Config;
 use app\models\DynamicContent;
 use app\models\Property;
@@ -18,7 +19,11 @@ use yii\web\Controller;
 
 class DynamicContentController extends Controller
 {
+    use BackendRedirect;
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -34,6 +39,9 @@ class DynamicContentController extends Controller
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function actions()
     {
         return [
@@ -104,32 +112,7 @@ class DynamicContentController extends Controller
 
             $save_result = $model->save();
             if ($save_result) {
-                Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                $returnUrl = Yii::$app->request->get(
-                    'returnUrl',
-                    ['/backend/dynamic-content/index', 'id' => $model->id]
-                );
-                switch (Yii::$app->request->post('action', 'save')) {
-                    case 'next':
-                        return $this->redirect(
-                            [
-                                '/backend/dynamic-content/edit',
-                                'returnUrl' => $returnUrl,
-                            ]
-                        );
-                    case 'back':
-                        return $this->redirect($returnUrl);
-                    default:
-                        return $this->redirect(
-                            Url::toRoute(
-                                [
-                                    '/backend/dynamic-content/edit',
-                                    'id' => $model->id,
-                                    'returnUrl' => $returnUrl,
-                                ]
-                            )
-                        );
-                }
+                return $this->redirectUser($model->id);
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }
