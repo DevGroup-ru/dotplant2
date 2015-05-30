@@ -77,6 +77,9 @@ $config = [
             'class' => '\kartik\grid\Module',
 
         ],
+        'DefaultTheme' => [
+            'class' => 'app\extensions\DefaultTheme\Module',
+        ],
     ],
     'components' => [
         'cache' => [

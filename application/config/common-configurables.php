@@ -103,6 +103,9 @@ return[
             'class' => 'creocoder\\flysystem\\LocalFilesystem',
             'path' => '@webroot/files',
         ],
+        'updateHelper' => [
+            'composerHomeDirectory' => '/Users/bethrezen/.composer/',
+        ],
     ],
 ];
 
