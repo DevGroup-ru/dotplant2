@@ -1,6 +1,6 @@
 <?php
 
-namespace app\widgets\image;
+namespace app\modules\image\widgets;
 
 use app\components\Helper;
 use Yii;
@@ -48,17 +48,15 @@ class UploadAction extends \devgroup\dropzone\UploadAction
         if ($file->hasError) {
             throw new HttpException(500, 'Upload error');
         }
+
         $transliteratedFileName = Helper::createSlug(
             substr(strstr(strtolower($file->name), $file->extension, true), 0, - 1)
         );
         $fileName = $transliteratedFileName . '.' . $file->extension;
-        if (Yii::$app->fs->has($fileName)) {
+        if (Yii::$app->getModule('image')->fsComponent->has($fileName)) {
             $fileName = $transliteratedFileName . '-' . uniqid() . '.' . $file->extension;
         }
-
-        $stream = fopen($file->tempName, 'r+');
-        Yii::$app->fs->writeStream($fileName, $stream);
-        fclose($stream);
+        Yii::$app->getModule('image')->fsComponent->put($fileName, file_get_contents($file->tempName));
         $response = [
             'filename' => $fileName,
         ];

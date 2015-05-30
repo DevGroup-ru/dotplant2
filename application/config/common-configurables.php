@@ -20,8 +20,9 @@ return[
             'defaultThumbnailSize' => '80x80',
             'noImageSrc' => 'http://placehold.it/300&text=Image+not+found',
             'thumbnailsDirectory' => 'thumbnail',
-            'useWatermark' => '0',
+            'useWatermark' => '1',
             'watermarkDirectory' => 'watermark',
+            'defaultComponent' => 'fs',
             'components' => [
                 'fs' => [
                     'necessary' => [
@@ -32,67 +33,7 @@ return[
                     ],
                     'unnecessary' => [
                         'cache' => '',
-                        'replica' => '',
-                    ],
-                ],
-                'ftpFs' => [
-                    'necessary' => [
-                        'class' => 'creocoder\\flysystem\\FtpFilesystem',
-                        'host' => 'ftp.example.com',
-                        'active' => '0',
-                        'srcAdapter' => 'app\\modules\\image\\components\\Ftp',
-                    ],
-                    'unnecessary' => [
-                        'port' => '',
-                        'username' => '',
-                        'password' => '',
-                        'ssl' => '',
-                        'timeout' => '',
-                        'root' => '',
-                        'permPrivate' => '',
-                        'permPublic' => '',
-                        'passive' => '',
-                        'transferMode' => '',
-                        'cache' => '',
-                        'replica' => '',
-                    ],
-                ],
-                'awss3Fs' => [
-                    'necessary' => [
-                        'class' => 'creocoder\\flysystem\\AwsS3Filesystem',
-                        'key' => 'your-key',
-                        'secret' => 'your-secret',
-                        'bucket' => 'your-bucket',
-                        'active' => '0',
-                        'srcAdapter' => 'app\\modules\\image\\components\\Awss3',
-                    ],
-                    'unnecessary' => [
-                        'region' => '',
-                        'baseUrl' => '',
-                        'prefix' => '',
-                        'options' => '',
-                        'cache' => '',
-                        'replica' => '',
-                    ],
-                ],
-                'sftpFs' => [
-                    'necessary' => [
-                        'class' => 'creocoder\\flysystem\\SftpFilesystem',
-                        'host' => 'sftp.example.com',
-                        'username' => 'your-username',
-                        'password' => 'your-password',
-                        'active' => '0',
-                        'srcAdapter' => 'app\\modules\\image\\components\\Ftp',
-                    ],
-                    'unnecessary' => [
-                        'port' => '',
-                        'privateKey' => '',
-                        'timeout' => '',
-                        'root' => '',
-                        'permPrivate' => '',
-                        'permPublic' => '',
-                        'cache' => '',
-                        'replica' => '',
+                        'replica' => 'ftpFs',
                     ],
                 ],
             ],
@@ -101,7 +42,7 @@ return[
     'components' => [
         'fs' => [
             'class' => 'creocoder\\flysystem\\LocalFilesystem',
-            'path' => '@webroot/files',
+            'path' => '@webroot/files'
         ],
     ],
 ];

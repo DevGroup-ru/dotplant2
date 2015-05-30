@@ -56,7 +56,7 @@ class BackendWatermarkController extends \app\backend\components\BackendControll
                 $path = Yii::$app->getModule('image')->watermarkDirectory . '/' . $image->name;
                 $model->watermark_path = $path;
                 $stream = fopen($image->tempName, 'r+');
-                Yii::$app->fs->writeStream($path, $stream);
+                Yii::$app->getModule('image')->fsComponent->writeStream($path, $stream);
                 fclose($stream);
             }
             if ($model->validate() && $model->save()) {

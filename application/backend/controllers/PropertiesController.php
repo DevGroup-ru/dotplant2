@@ -10,7 +10,7 @@ use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
 use app\models\Submission;
 use app\properties\PropertyHandlers;
-use app\widgets\image\SaveInfoAction;
+use app\modules\image\widgets\SaveInfoAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
