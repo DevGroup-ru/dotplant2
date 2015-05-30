@@ -47,7 +47,7 @@ $this->registerJs('
 
 <?php $this->beginBlock('submit'); ?>
 <?= \app\backend\components\Helper::saveButtons($model) ?>
-<?php $this->endBlock('submit'); ?>
+<?php $this->endBlock(); ?>
 
 
 <section id="widget-grid">

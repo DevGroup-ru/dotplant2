@@ -2,6 +2,7 @@
 
 namespace app\backend\controllers;
 
+use app\backend\traits\BackendRedirect;
 use app\models\View;
 use Yii;
 use yii\caching\TagDependency;
@@ -13,6 +14,10 @@ use yii\web\Response;
 
 class ViewController extends Controller
 {
+    use BackendRedirect;
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -28,6 +33,9 @@ class ViewController extends Controller
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function actions()
     {
         return [
@@ -66,30 +74,10 @@ class ViewController extends Controller
 
         $post = \Yii::$app->request->post();
         if ($model->load($post) && $model->validate()) {
-            $model->save();
-            $this->redirect(Url::toRoute(['edit', 'id' => $model->id]));
-            $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/view/index', 'id' => $model->id]);
-            switch (Yii::$app->request->post('action', 'save')) {
-                case 'next':
-                    return $this->redirect(
-                        [
-                            '/backend/view/edit',
-                            'returnUrl' => $returnUrl,
-                        ]
-                    );
-                case 'back':
-                    return $this->redirect($returnUrl);
-                default:
-                    return $this->redirect(
-                        Url::toRoute(
-                            [
-                                '/backend/view/edit',
-                                'id' => $model->id,
-                                'returnUrl' => $returnUrl,
-                            ]
-                        )
-                    );
+            if ($model->save()) {
+                return $this->redirectUser($model->id);
             }
+
         }
         return $this->render(
             'edit',
