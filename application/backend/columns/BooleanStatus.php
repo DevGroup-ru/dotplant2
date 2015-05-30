@@ -5,6 +5,21 @@ namespace app\backend\columns;
 use Yii;
 use yii\grid\DataColumn;
 
+/**
+ * Class BooleanStatus is column that renders label of boolean status(1/0)
+ *
+ * Example usage:
+ * ```
+ * [
+ *     'class' => \app\backend\columns\BooleanStatus::className(),
+ *     'attribute' => 'is_cacheable',
+ *     'header' => Yii::t('app', 'Is cacheable'),
+ * ],
+ *
+ * ```
+ *
+ * @package app\backend\columns
+ */
 class BooleanStatus extends DataColumn
 {
     public $header = 'Status';
