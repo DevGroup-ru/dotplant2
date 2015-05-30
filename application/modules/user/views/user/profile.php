@@ -56,7 +56,8 @@ $form = ActiveForm::begin([
             foreach ($properties as $prop) {
                 $property_values = $model->getPropertyValuesByPropertyId($prop->id);
 
-                echo $prop->handler($form, $model->getAbstractModel(), [], 'frontend_edit_view');
+
+                echo $prop->handler($form, $model->getAbstractModel(), $property_values, 'frontend_edit_view');
 
 
 
