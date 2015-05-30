@@ -19,7 +19,7 @@ $this->registerJs(
 );
 ?>
 
-?>
+
 
 <?= app\widgets\Alert::widget([
     'id' => 'alert',

@@ -15,6 +15,10 @@ abstract class ThemeModule extends ExtensionModule
      */
     public $registerThemeAlias = true;
 
+    /**
+     * @return string Returns class name for theme component that should extend app\components\Theme
+     */
+    abstract public function themeClassName();
 
     /**
      * @inheritdoc

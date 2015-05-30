@@ -76,8 +76,10 @@ $this->title = Yii::t('app', 'Configuration');
 
                         <div class="tabs-left">
                             <ul class="nav nav-tabs tabs-left">
+                                <?php $counter=0; ?>
                                 <?php foreach ($models as $i => $model): ?>
-                                <li class="<?= $i===0 ? 'active' : '' ?>">
+                                <?php if ($model->display_in_config === 0) continue; ?>
+                                <li class="<?= $counter++===0 ? 'active' : '' ?>">
                                     <a href="#tab-configurable-<?=$i?>" data-toggle="tab">
                                         <?= Yii::t('app', $model->section_name) ?>
                                     </a>
@@ -85,8 +87,10 @@ $this->title = Yii::t('app', 'Configuration');
                                 <?php endforeach; ?>
                             </ul>
                             <div class="tab-content">
+                                <?php $counter = 0 ; ?>
                                 <?php foreach ($models as $i => $model): ?>
-                                    <div class="tab-pane <?= $i===0 ? 'active' : '' ?>" id="tab-configurable-<?=$i?>">
+                                <?php if ($model->display_in_config === 0) continue; ?>
+                                    <div class="tab-pane <?= $counter++===0 ? 'active' : '' ?>" id="tab-configurable-<?=$i?>">
 
                                         <?= $this->render($model->getConfigurationView(), [
                                             'configurable' => $model,

@@ -5,10 +5,16 @@
  */
 
 use app\assets\AppAsset;
+use app\assets\DefaultThemeAsset;
 use app\models\Config;
+use \app\extensions\DefaultTheme\models\ThemeParts;
 use kartik\helpers\Html;
 
 AppAsset::register($this);
+DefaultThemeAsset::register($this);
+
+/** @var \app\extensions\DefaultTheme\Module $themeModule */
+$themeModule = Yii::$app->getModule('DefaultTheme');
 
 ?>
 <?php $this->beginPage(); ?>
@@ -31,17 +37,22 @@ AppAsset::register($this);
 </head>
 <body itemscope itemtype="http://schema.org/WebPage">
 <?php $this->beginBody(); ?>
+    <?= ThemeParts::renderPart('header') ?>
 
+    <section class="subheader">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    subnav here
+                </div>
+            </div>
+        </div>
+    </section>
     <div class="container">
         <div class="row">
-            <div class="col-md-2">
-                <a href="/" class="logo">DotPlant<sup>2</sup></a>
-            </div>
+
             <div class="col-md-4">
-                <?php if (!Yii::$app->user->isGuest): ?>
-                    <?= Yii::t('app', 'Hello') ?>
-                    <strong><?= Html::a(Yii::$app->user->identity->username, ['/cabinet']) ?>!</strong>
-                <?php endif; ?>
+
 
                 <?php if (is_array(Yii::$app->session->get('comparisonProductList')) && count(Yii::$app->session->get('comparisonProductList')) > 0): ?>
                     <?=
