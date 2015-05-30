@@ -20,14 +20,18 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $thumbnailsDirectory;
     public $useWatermark;
     public $watermarkDirectory;
+    public $defaultComponents = [];
+    public $defaultComponent;
     public $components = [];
+
+
 
     public function rules()
     {
         return [
             [['noImageSrc', 'defaultThumbnailSize', 'thumbnailsDirectory', 'watermarkDirectory'], 'string'],
             ['useWatermark', 'boolean'],
-            ['components', 'isArray'],
+            [['components', 'defaultComponents'], 'isArray'],
         ];
     }
 
@@ -61,6 +65,9 @@ class ConfigConfigurationModel extends BaseConfigurationModel
         foreach ($attributes as $attribute) {
             $this->{$attribute} = $module->{$attribute};
         }
+        foreach ($this->defaultComponents as $name => $values) {
+            $this->defaultComponents[$name]['name'] = $name;
+        }
     }
 
     /**
@@ -74,6 +81,47 @@ class ConfigConfigurationModel extends BaseConfigurationModel
         return [];
     }
 
+
+    public function getAttributesForStateSaving()
+    {
+        $attributes = $this->getAttributes();
+        if (isset($attributes['components'])) {
+            foreach ($attributes['components'] as $name => $component) {
+                if (isset($component['necessary']) &&
+                    isset($component['necessary']['active']) &&
+                    $component['necessary']['active'] == false
+                ) {
+                    unset($attributes['components'][$name]);
+                }
+            }
+        }
+
+        if (isset($attributes['defaultComponents'])) {
+            foreach ($attributes['defaultComponents'] as $component) {
+                if (isset($component['necessary']) &&
+                    isset($component['necessary']['active']) &&
+                    $component['necessary']['active'] == true &&
+                    !isset($attributes['components'][$component['name']])
+                ) {
+                    $newData = $component;
+                    unset($newData['name']);
+                    $attributes['components'][$component['name']] = $newData;
+                }
+            }
+            unset($attributes['defaultComponents']);
+        }
+
+
+        return $attributes;
+    }
+
+   
+
+
+
+
+
+
     /**
      * Returns array of module configuration that should be stored in application config.
      * Array should be ready to merge in app config.
@@ -85,6 +133,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
         return [];
     }
 
+
     /**
      * Returns array of module configuration that should be stored in application config.
      * Array should be ready to merge in app config.
@@ -93,7 +142,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public function commonApplicationAttributes()
     {
-        $attributes = $this->attributes;
+        $attributes = $this->getAttributesForStateSaving();
 
         $components = [];
         foreach ($this->components as $name => $component) {
@@ -118,6 +167,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             'components' => $components,
         ];
     }
+
 
     /**
      * Returns array of key=>values for configuration.

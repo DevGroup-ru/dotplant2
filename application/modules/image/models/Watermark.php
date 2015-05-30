@@ -109,7 +109,7 @@ class Watermark extends \yii\db\ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        Yii::$app->fs->delete($this->watermark_path);
+        Yii::$app->getModule('image')->fsComponent->delete($this->watermark_path);
         $thumbnailWatermarks = ThumbnailWatermark::findAll(['water_id' => $this->id]);
         foreach($thumbnailWatermarks as $thumbnailWatermark){
             $thumbnailWatermark->delete();

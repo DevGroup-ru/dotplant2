@@ -4,7 +4,7 @@ namespace app\modules\image\models;
 
 use app\behaviors\ImageExist;
 use app\models\Object;
-use app\widgets\image\ImageDropzone;
+use app\modules\image\widgets\ImageDropzone;
 use Yii;
 use yii\base\Exception;
 use yii\caching\TagDependency;
@@ -245,7 +245,7 @@ class Image extends \yii\db\ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        Yii::$app->fs->delete($this->filename);
+        Yii::$app->getModule('image')->fsComponent->delete($this->filename);
         $thumbnails = Thumbnail::findAll(['img_id' => $this->id]);
         foreach($thumbnails as $thumbnail){
             $thumbnail->delete();

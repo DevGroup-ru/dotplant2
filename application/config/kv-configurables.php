@@ -18,5 +18,7 @@ return[
     'kv-review' => [],
     'kv-data' => [],
     'kv-twitterCards' => [],
+    'kv-image' => [],
+    'kv-backend' => [],
 ];
 

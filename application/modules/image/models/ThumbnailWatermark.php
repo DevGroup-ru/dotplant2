@@ -92,8 +92,8 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
     public static function createWatermark($thumb, $water)
     {
         try {
-            $thumbImagine = Imagine::getImagine()->read(Yii::$app->fs->readStream($thumb->thumb_path));
-            $waterImagine = Imagine::getImagine()->read(Yii::$app->fs->readStream($water->watermark_path));
+            $thumbImagine = Imagine::getImagine()->read(Yii::$app->getModule('image')->fsComponent->readStream($thumb->thumb_path));
+            $waterImagine = Imagine::getImagine()->read(Yii::$app->getModule('image')->fsComponent->readStream($water->watermark_path));
             $thumbSize = $thumbImagine->getSize();
             $waterSize = $waterImagine->getSize();
             // Resize watermark if it to large
@@ -152,7 +152,7 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
             $fileName = "{$fileInfo['filename']}-{$watermarkInfo['filename']}.{$fileInfo['extension']}";
             $watermark->save(Yii::getAlias('@runtime/') . $fileName);
             $stream = fopen(Yii::getAlias('@runtime/') . $fileName, 'r+');
-            Yii::$app->fs->putStream("$path/$fileName", $stream);
+            Yii::$app->getModule('image')->fsComponent->putStream("$path/$fileName", $stream);
             fclose($stream);
             unlink($tmpThumbFilePath);
             unlink($tmpWaterFilePath);
@@ -166,6 +166,6 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        Yii::$app->fs->delete($this->compiled_src);
+        Yii::$app->getModule('image')->fsComponent->delete($this->compiled_src);
     }
 }

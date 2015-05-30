@@ -3,6 +3,7 @@
 namespace app\modules\image;
 
 use app\components\BaseModule;
+use Yii;
 
 class ImageModule extends BaseModule
 {
@@ -11,12 +12,28 @@ class ImageModule extends BaseModule
     public $thumbnailsDirectory = 'thumbnail';
     public $useWatermark = 0;
     public $watermarkDirectory = 'watermark';
+    public $defaultComponent = 'fs';
     public $components = [
         'fs' => [
             'necessary' => [
                 'class' => 'creocoder\flysystem\LocalFilesystem',
                 'path' => '@webroot/files',
                 'active' => true,
+                'srcAdapter' => 'app\modules\image\components\Local',
+            ],
+            'unnecessary' => [
+                'cache' => '',
+                'replica' => '',
+            ],
+        ],
+    ];
+
+    public $defaultComponents = [
+        'fs' => [
+            'necessary' => [
+                'class' => 'creocoder\flysystem\LocalFilesystem',
+                'path' => '@webroot/files',
+                'active' => false,
                 'srcAdapter' => 'app\modules\image\components\Local',
             ],
             'unnecessary' => [
@@ -85,6 +102,11 @@ class ImageModule extends BaseModule
             ],
         ],
     ];
+
+    public function getFsComponent()
+    {
+        return Yii::$app->{$this->defaultComponent};
+    }
 
     public function behaviors()
     {

@@ -1,12 +1,12 @@
 <?php
 
-namespace app\widgets\image;
+namespace app\modules\image\widgets;
 
 use yii\web\AssetBundle;
 
 class ImageDropzoneAsset extends AssetBundle
 {
-    public $sourcePath = '@app/widgets/image';
+    public $sourcePath = '@app/modules/image/widgets';
     public $css = [
         'css/theme.css',
     ];

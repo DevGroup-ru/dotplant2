@@ -95,14 +95,14 @@ class Thumbnail extends \yii\db\ActiveRecord
     public static function createThumbnail($image, $size)
     {
         try {
-            $file = Imagine::getImagine()->read(Yii::$app->fs->readStream($image->filename));
+            $file = Imagine::getImagine()->read(Yii::$app->getModule('image')->fsComponent->readStream($image->filename));
             $thumb = $file->thumbnail(new Box($size->width, $size->height));
             $path = Yii::$app->getModule('image')->thumbnailsDirectory;
-            $listContents = Yii::$app->fs->listContents();
+            $listContents = Yii::$app->getModule('image')->fsComponent->listContents();
             $filesInfo = ArrayHelper::index($listContents, 'basename');
             $stream = $thumb->get($filesInfo[$image->filename]['extension']);
             $src = "$path/{$filesInfo[$image->filename]['filename']}-{$size->width}x{$size->height}.{$filesInfo[$image->filename]['extension']}";
-            Yii::$app->fs->put($src, $stream);
+            Yii::$app->getModule('image')->fsComponent->put($src, $stream);
             return $src;
         } catch (Exception $e) {
             return false;
@@ -128,7 +128,7 @@ class Thumbnail extends \yii\db\ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        Yii::$app->fs->delete($this->thumb_path);
+        Yii::$app->getModule('image')->fsComponent->delete($this->thumb_path);
         $thumbnailWatermarks = ThumbnailWatermark::findAll(['thumb_id' => $this->id]);
         foreach ($thumbnailWatermarks as $thumbnailWatermark) {
             $thumbnailWatermark->delete();
