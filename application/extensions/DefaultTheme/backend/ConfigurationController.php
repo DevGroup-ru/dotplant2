@@ -9,7 +9,11 @@ use app\extensions\DefaultTheme\models\ThemeParts;
 use app\extensions\DefaultTheme\models\ThemeVariation;
 use app\extensions\DefaultTheme\models\ThemeWidgets;
 use app\traits\LoadModel;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\web\BadRequestHttpException;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class ConfigurationController extends BackendController
 {
@@ -80,17 +84,34 @@ class ConfigurationController extends BackendController
     public function actionActiveWidgets($id)
     {
         $variation = $this->loadModel(ThemeVariation::className(), $id);
+
+        if (isset($_POST['addWidget'], $_POST['partId'])) {
+            $part = ThemeParts::findById($_POST['partId']);
+            if ($part === null) {
+                throw new NotFoundHttpException;
+            }
+            $widget = ThemeWidgets::findById($_POST['addWidget']);
+            if ($widget === null) {
+                throw new NotFoundHttpException;
+            }
+
+            $binding = new ThemeActiveWidgets();
+            $binding->part_id = $part->id;
+            $binding->variation_id = $variation->id;
+            $binding->widget_id = $widget->id;
+            $binding->save();
+        }
+
         $models = ThemeActiveWidgets::find()
             ->where(['variation_id' => $variation->id])
             ->orderBy(['part_id' => SORT_ASC, 'sort_order' => SORT_ASC])
             ->all();
 
-        // Warning! Element of $allParts is not a model! It's an array(db row)
+        // Warning! Element of $allParts is not a model! It's an array of db rows
         $allParts = ThemeParts::getAllParts();
 
         $availableWidgets = ThemeWidgets::find()
             ->joinWith('applying')
-            ->where(['theme_widget_applying.part_id'=>$variation->id])
             ->all();
 
 
@@ -100,8 +121,48 @@ class ConfigurationController extends BackendController
                 'variation' => $variation,
                 'models' => $models,
                 'availableWidgets' => $availableWidgets,
-                'allVariations' => $allParts,
+                'allParts' => $allParts,
             ]
+        );
+    }
+
+    public function actionDeleteActiveWidget($id)
+    {
+        /** @var ThemeActiveWidgets $widget */
+        $widget = $this->loadModel(ThemeActiveWidgets::className(), $id);
+
+        $widget->delete();
+        return $this->redirect(['active-widgets', 'id'=>$widget->variation_id]);
+    }
+
+    public function actionSaveSorted()
+    {
+        if (Yii::$app->request->isPost === false || !isset($_POST['ids'])) {
+            throw new BadRequestHttpException;
+        }
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $ids = (array) $_POST['ids'];
+
+        $result = ThemeActiveWidgets::sortModels($ids);
+
+        $this->invalidateTags(ThemeActiveWidgets::className(), $ids);
+
+
+        return $result;
+    }
+
+    private function invalidateTags($className, $ids)
+    {
+        $tags = [
+            ActiveRecordHelper::getCommonTag($className),
+        ];
+        foreach ($ids as $id) {
+            $tags[] = ActiveRecordHelper::getObjectTag($className, $id);
+        }
+        \yii\caching\TagDependency::invalidate(
+            Yii::$app->cache,
+            $tags
         );
     }
 }

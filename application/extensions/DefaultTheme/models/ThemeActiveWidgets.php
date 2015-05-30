@@ -3,6 +3,7 @@
 namespace app\extensions\DefaultTheme\models;
 
 use app\traits\IdentityMap;
+use app\traits\SortModels;
 use Yii;
 use \devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\caching\TagDependency;
@@ -20,6 +21,7 @@ use yii\helpers\ArrayHelper;
 class ThemeActiveWidgets extends \yii\db\ActiveRecord
 {
     use IdentityMap;
+    use SortModels;
     /**
      * @inheritdoc
      */

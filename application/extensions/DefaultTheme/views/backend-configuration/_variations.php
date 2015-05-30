@@ -43,6 +43,12 @@ use yii\helpers\Html;
                     'class' => 'btn-default',
                     'label' => Yii::t('app', 'Edit'),
                 ],
+                'active-widgets' => [
+                    'url' => 'active-widgets',
+                    'icon' => 'list',
+                    'class' => 'btn-primary',
+                    'label' => Yii::t('app', 'Show active widgets'),
+                ],
                 'delete-part' => [
                     'url' => 'delete-variation',
                     'icon' => 'trash-o',

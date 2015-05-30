@@ -3,9 +3,9 @@
 namespace app\modules\shop\backend;
 
 use app\backend\components\BackendController;
-use app\models\Category;
+use app\modules\shop\models\Category;
 use app\models\Object;
-use app\models\Product;
+use app\modules\shop\models\Product;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;

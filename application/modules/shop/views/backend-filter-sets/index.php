@@ -10,7 +10,7 @@ use devgroup\JsTreeWidget\ContextMenuHelper;
 
 $this->title = Yii::t('app', 'Filter sets');
 
-/** @var \app\models\Category $selectedCategory */
+/** @var \app\modules\shop\models\Category $selectedCategory */
 /** @var array $propertiesDropdownItems */
 
 $this->params['breadcrumbs'][] = $this->title;
@@ -133,7 +133,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <td>
                                             <?php
                                             if ($filterSet->category_id !== $selectedCategory->id) {
-                                                $cat = \app\models\Category::findById($filterSet->category_id);
+                                                $cat = \app\modules\shop\models\Category::findById($filterSet->category_id);
                                                 echo Html::a(
                                                     $cat->name,
                                                     ['/shop/backend-filter-sets/index', 'category_id'=>$cat->id]

@@ -210,3 +210,13 @@ div#Product-grid, div#reviews-grid {
 
 @import "extensions.scss";
 @import "filter-sets.scss";
+
+.sortable-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.jarviswidget.affix {
+  position: fixed;
+  width: 400px;
+}
