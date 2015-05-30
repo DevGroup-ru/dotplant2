@@ -265,11 +265,6 @@ class m150526_140709_default_theme extends Migration
                 'variation_id' => 1,
             ],
             [
-                'widget_id' => 2,
-                'part_id' => 2,
-                'variation_id' => 2,
-            ],
-            [
                 'widget_id' => 3,
                 'part_id' => 4,
                 'variation_id' => 1,
