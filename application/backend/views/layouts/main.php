@@ -28,6 +28,7 @@ Icon::map($this);
 </head>
 <body class="fixed-header fixed-ribbon <?= Yii::$app->request->cookies->getValue('backend_menu', 'normal') ?>">
     <?php $this->beginBody(); ?>
+    <!-- /.modal -->
     <header id="header">
         <div id="logo-group">
             <span id="logo" style="width: 115px;"> <!-- <img src="/img/logo.png">  -->DotPlant<sup>2</sup> </span>
@@ -200,6 +201,12 @@ Icon::map($this);
         </div>
     </div>
     <?php \yii\bootstrap\Modal::end() ?>
+    <div style="z-index: 99999" class="modal fade" id="newStaticValue"  role="dialog"  aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
     <?php $this->endBody(); ?>
 </body>
 </html>

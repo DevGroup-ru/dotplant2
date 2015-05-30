@@ -24,6 +24,15 @@
     <div class="form-group field-<?= \kartik\helpers\Html::getInputId($model, $property_key) ?>">
         <?= \yii\helpers\Html::activeLabel($model, $property_key, ['class' => 'col-md-2 control-label']); ?>
         <div class="col-md-10">
+            <?php
+            $addUrl = \yii\helpers\Url::to(
+                [
+                    '/backend/properties/add-static-value',
+                    'key' => $property_key,
+                    'returnUrl' => Yii::$app->request->url
+                ]
+            );
+            ?>
             <?=
                 kartik\widgets\Select2::widget(
                     [
@@ -32,8 +41,19 @@
                         'options' => [
                             'multiple' => $multiple ? true : false,
                         ],
+                        'pluginEvents' => [
+                            'select2:selecting' => 'function(data) { console.log(data) }'
+                        ],
                         'pluginOptions' => [
-                            'allowClear' => true,
+                            'allowClear' => false,
+                            'escapeMarkup' => new \yii\web\JsExpression('function (markup) {return markup;}'),
+                            'language' =>  new \yii\web\JsExpression(
+                                '{ noResults:function(){
+                                       var NowValue = encodeURI($(".select2-dropdown--below input.select2-search__field").val());
+                                       return "<a data-toggle=\'modal\' href=\''.$addUrl.'&value="+ NowValue +"\' data-target=\'#newStaticValue\'>Add static value</a>"
+                                     }
+                                 }'
+                            ),
                         ],
                         'value' => is_array($model->$property_key) ? $model->$property_key : explode(', ', $model->$property_key),
                     ]
@@ -41,3 +61,5 @@
             ?>
         </div>
     </div>
+
+

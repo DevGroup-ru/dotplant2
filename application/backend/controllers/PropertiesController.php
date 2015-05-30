@@ -2,6 +2,7 @@
 
 namespace app\backend\controllers;
 
+use app\components\Helper;
 use app\models\Config;
 use app\models\Form;
 use app\models\Object;
@@ -311,6 +312,30 @@ class PropertiesController extends Controller
             ]
         );
     }
+
+
+    public function actionAddStaticValue($key, $value = "", $returnUrl)
+    {
+
+        $model = new PropertyStaticValues();
+        $property = Property::find()->where(['key'=>$key])->one();
+        $model->property_id = $property->id;
+
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                $this->redirect($returnUrl);
+            }
+        } elseif ($value !== "") {
+            $model->name = $value;
+            $model->value = $value;
+            $model->slug = Helper::createSlug($value);
+            $model->sort_order = 0;
+        }
+        return $this->renderAjax('ajax-static-value', ['model'=>$model]);
+
+
+    }
+
 
     public function actionDeleteStaticValue($id, $property_id, $property_group_id)
     {

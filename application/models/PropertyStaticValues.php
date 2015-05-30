@@ -191,14 +191,6 @@ class PropertyStaticValues extends ActiveRecord
                     'name' => SORT_ASC
                 ]
             )->asArray()->all();
-            $tags = array_reduce($values, function($carry, $item) {
-                $carry[] = ActiveRecordHelper::getObjectTag(PropertyStaticValues::className(), $item['id']);
-            }, [
-                ActiveRecordHelper::getObjectTag(
-                    Property::className(),
-                    $property_id
-                )
-            ]);
             if (null !== $values) {
                 Yii::$app->cache->set(
                     $cacheKey,
@@ -206,7 +198,11 @@ class PropertyStaticValues extends ActiveRecord
                     0,
                     new TagDependency(
                         [
-                            'tags' => $tags,
+                            'tags' => [
+                                ActiveRecordHelper::getCommonTag(PropertyStaticValues::className()),
+                                ActiveRecordHelper::getCommonTag(Property::className()),
+                            ]
+
                         ]
                     )
                 );

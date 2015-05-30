@@ -71,38 +71,9 @@ Html::submitButton(
     <div class="row">
         
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Property static value'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
-
-                <?= $form->field($model, 'name')?>
-
-                <?= $form->field($model, 'value', [
-                        'copyFrom' => [
-                            "#propertystaticvalues-name",
-                        ]
-                    ])?>
-
-                <?= $form->field($model, 'slug', [
-                        'makeSlug' => [
-                            "#propertystaticvalues-name",
-                            "#propertystaticvalues-value",
-                        ]
-                    ])?>
-
-                <?= $form->field($model, 'sort_order')?>
-
-                <?= $form->field($model, 'title_append', [
-                        'copyFrom' => [
-                            "#propertystaticvalues-name",
-                            "#propertystaticvalues-value",
-                            "#product-breadcrumbs_label",
-                        ]
-                    ])?>
-                <?= $form->field($model, 'dont_filter')->checkbox() ?>
-
-
+            <?= $this->render('edit-static-value-form', ['model'=>$model, 'form'=>$form]) ?>
             <?php BackendWidget::end(); ?>
-
         </article>
 
         

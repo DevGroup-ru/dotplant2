@@ -123,7 +123,9 @@ a.desc:after { content: /*"\e114"*/"\e152"; }
 // .fixed-header #header > .ajax-dropdown {
 //     z-index: 2002;
 // }
-
+.select2-container--krajee .select2-search--dropdown input.select2-search__field{
+  background: none !important;
+}
 
 .select2-container-multi .select2-choices .select2-search-choice {
     padding: 1px 28px 1px 28px;
