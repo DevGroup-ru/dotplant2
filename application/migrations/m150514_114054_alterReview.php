@@ -25,7 +25,8 @@ class m150514_114054_alterReview extends Migration
         $this->addColumn(Review::tableName(), 'submission_id', 'INT UNSIGNED NOT NULL');
         $form = new \app\models\Form;
         $form->name = 'Review form';
-        $form->save(true, ['name']);
+        $form->email_notification_addresses = '';
+        $form->save(true, ['name', 'email_notification_addresses']);
         $propertyGroup = new PropertyGroup;
         $propertyGroup->attributes = [
             'object_id' => $form->object->id,
@@ -39,18 +40,20 @@ class m150514_114054_alterReview extends Migration
             'name' => 'Name',
             'key' => 'name',
             'property_handler_id' => $propertyHandler->id,
+            'handler_additional_params' => '{}',
             'is_eav' => 1,
         ];
-        $nameProperty->save(true, ['property_group_id', 'name', 'key', 'property_handler_id', 'is_eav']);
+        $nameProperty->save(true, ['property_group_id', 'name', 'key', 'property_handler_id', 'is_eav', 'handler_additional_params']);
         $phoneProperty = new Property;
         $phoneProperty->attributes = [
             'property_group_id' => $propertyGroup->id,
             'name' => 'Phone',
             'key' => 'phone',
             'property_handler_id' => $propertyHandler->id,
+            'handler_additional_params' => '{}',
             'is_eav' => 1,
         ];
-        $phoneProperty->save(true, ['property_group_id', 'name', 'key', 'property_handler_id', 'is_eav']);
+        $phoneProperty->save(true, ['property_group_id', 'name', 'key', 'property_handler_id', 'is_eav', 'handler_additional_params']);
         $objectPropertyGroup = new ObjectPropertyGroup;
         $objectPropertyGroup->attributes = [
             'object_id' => $form->object->id,
