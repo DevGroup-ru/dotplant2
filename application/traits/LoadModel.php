@@ -5,10 +5,21 @@ namespace app\traits;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
+use yii\db\ActiveRecord;
 use yii\web\NotFoundHttpException;
 
 trait LoadModel
 {
+    /**
+     * @param $modelName
+     * @param $id
+     * @param bool $createIfEmptyId
+     * @param bool $useCache
+     * @param int $cacheLifetime
+     * @param bool $throwException
+     * @return ActiveRecord|null
+     * @throws NotFoundHttpException
+     */
     public static function loadModel(
         $modelName,
         $id,
