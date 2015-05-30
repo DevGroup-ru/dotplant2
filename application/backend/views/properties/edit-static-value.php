@@ -127,7 +127,7 @@ Html::submitButton(
                 ) ?>
             </div>
 
-            <?= \app\widgets\image\ImageDropzone::widget([
+            <?= \app\modules\image\widgets\ImageDropzone::widget([
                 'name' => 'file',
                 'url' => ['/backend/product/upload'],
                 'removeUrl' => ['/backend/product/remove'],

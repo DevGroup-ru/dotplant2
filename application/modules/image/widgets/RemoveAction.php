@@ -1,6 +1,6 @@
 <?php
 
-namespace app\widgets\image;
+namespace app\modules\image\widgets;
 
 use app\modules\image\models\Image;
 use yii\base\Action;

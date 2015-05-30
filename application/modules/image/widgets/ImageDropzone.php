@@ -1,6 +1,6 @@
 <?php
 
-namespace app\widgets\image;
+namespace app\modules\image\widgets;
 
 use app\modules\image\models\Image;
 use devgroup\dropzone\DropZone;
@@ -49,7 +49,7 @@ class ImageDropzone extends DropZone
 
             // Create the mock file:
             $this->getView()->registerJs(
-                'var ' . $fhName . ' = { name: "' . $file['name'] . '", size: ' . Yii::$app->fs->getSize(
+                'var ' . $fhName . ' = { name: "' . $file['name'] . '", size: ' . Yii::$app->getModule('image')->fsComponent->getSize(
                     $file['name']
                 ) . ' };'
             );

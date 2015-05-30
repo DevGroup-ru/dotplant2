@@ -66,9 +66,8 @@ class ConfigController extends app\backend\components\BackendController
 
 
         if (Yii::$app->request->isPost === true) {
-
             ConfigurationUpdater::updateConfiguration($models, true);
-
+            $this->redirect(Yii::$app->request->url);
         }
 
         return $this->render(
