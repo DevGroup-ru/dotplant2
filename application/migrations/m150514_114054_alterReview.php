@@ -19,7 +19,7 @@ class m150514_114054_alterReview extends Migration
         /** @var PropertyHandler $propertyHandler */
         $propertyHandler = PropertyHandler::findOne(
             [
-                'handler_class_name' => 'app\properties\handlers\text\TextProperty',
+                'handler_class_name' => '\app\properties\handlers\text\TextProperty',
             ]
         );
         $this->addColumn(Review::tableName(), 'submission_id', 'INT UNSIGNED NOT NULL');
