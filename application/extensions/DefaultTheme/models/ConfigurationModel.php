@@ -3,6 +3,7 @@
 namespace app\extensions\DefaultTheme\models;
 
 use app;
+use app\extensions\DefaultTheme\components\StylesCompiler;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
@@ -164,10 +165,11 @@ class ConfigurationModel extends app\models\BaseThemeConfigurationModel
                         $model->logotypePath = '/upload/' . $fn;
                     }
                 }
-            } else {
-//                var_dump($uploadedFile, $_FILES);
-//                die();
             }
+            //compile theme
+            /** @var StylesCompiler $compiler */
+            $compiler = Yii::createObject(StylesCompiler::className());
+            $compiler->compile();
 
         });
     }
