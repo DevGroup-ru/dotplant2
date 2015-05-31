@@ -11,7 +11,7 @@ class PageRule implements UrlRuleInterface
 {
     public function createUrl($manager, $route, $params)
     {
-        if ($route == 'page/show' || $route == 'page/list') {
+        if ($route == 'page/page/show' || $route == 'page/page/list') {
             if (isset($params['model'])) {
                 $model = $params['model'];
                 unset($params['model']);
