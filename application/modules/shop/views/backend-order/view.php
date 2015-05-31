@@ -24,7 +24,7 @@ foreach ($model->items as $item) {
         $items[$item->parent_id] = [$item];
     }
 }
-
+$orderIsImmutable = $model->getImmutability(\app\modules\shop\models\Order::IMMUTABLE_MANAGER);
 ?>
 <?php $this->beginBlock('page-buttons'); ?>
 <div class="row" style="margin-bottom: 10px;">
@@ -104,20 +104,22 @@ if ($sum_transactions < $model->total_price):
                 <th><?=$model->getAttributeLabel('manager')?></th>
                 <td>
                     <?=
-                    Editable::widget(
-                        [
-                            'attribute' => 'manager_id',
-                            'data' => $managers,
-                            'displayValue' => !is_null(
-                                $model->manager
-                            ) ? $model->manager->username : Html::tag('em', Yii::t('yii', '(not set)')),
-                            'formOptions' => [
-                                'action' => ['change-manager', 'id' => $model->id],
-                            ],
-                            'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                            'model' => $model,
-                        ]
-                    )
+                    $orderIsImmutable
+                        ? (null !== $model->manager ? $model->manager->username : Html::tag('em', Yii::t('yii', '(not set)')))
+                        : Editable::widget(
+                            [
+                                'attribute' => 'manager_id',
+                                'data' => $managers,
+                                'displayValue' => !is_null(
+                                    $model->manager
+                                ) ? $model->manager->username : Html::tag('em', Yii::t('yii', '(not set)')),
+                                'formOptions' => [
+                                    'action' => ['change-manager', 'id' => $model->id],
+                                ],
+                                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                                'model' => $model,
+                            ]
+                        );
                     ?>
                 </td>
             </tr>
@@ -133,25 +135,27 @@ if ($sum_transactions < $model->total_price):
                 <th><?=$model->getAttributeLabel('order_stage_id')?></th>
                 <td>
                     <?=
-                    Editable::widget(
-                        [
-                            'attribute' => 'order_stage_id',
-                            'data' => \app\components\Helper::getModelMap(
-                                \app\modules\shop\models\OrderStage::className(),
-                                'id',
-                                'name_short'
-                            ),
-                            'displayValue' => $model->stage !== null ? Html::tag(
-                                'span',
-                                $model->stage->name_short
-                            ) : Html::tag('em', Yii::t('yii', '(not set)')),
-                            'formOptions' => [
-                                'action' => ['update-stage', 'id' => $model->id],
-                            ],
-                            'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                            'model' => $model,
-                        ]
-                    )
+                    $orderIsImmutable
+                        ? Html::encode($model->stage->name_short)
+                        : Editable::widget(
+                            [
+                                'attribute' => 'order_stage_id',
+                                'data' => \app\components\Helper::getModelMap(
+                                    \app\modules\shop\models\OrderStage::className(),
+                                    'id',
+                                    'name_short'
+                                ),
+                                'displayValue' => $model->stage !== null ? Html::tag(
+                                    'span',
+                                    $model->stage->name_short
+                                ) : Html::tag('em', Yii::t('yii', '(not set)')),
+                                'formOptions' => [
+                                    'action' => ['update-stage', 'id' => $model->id],
+                                ],
+                                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                                'model' => $model,
+                            ]
+                        );
                     ?>
                 </td>
             </tr>
@@ -159,25 +163,27 @@ if ($sum_transactions < $model->total_price):
                 <th><?=$model->getAttributeLabel('payment_type_id')?></th>
                 <td>
                     <?=
-                    Editable::widget(
-                        [
-                            'attribute' => 'payment_type_id',
-                            'data' => \app\components\Helper::getModelMap(
-                                \app\modules\shop\models\PaymentType::className(),
-                                'id',
-                                'name'
-                            ),
-                            'displayValue' => $model->paymentType !== null ? Html::tag(
-                                'span',
-                                $model->paymentType->name
-                            ) : Html::tag('em', Yii::t('yii', '(not set)')),
-                            'formOptions' => [
-                                'action' => ['update-payment-type', 'id' => $model->id],
-                            ],
-                            'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                            'model' => $model,
-                        ]
-                    )
+                    $orderIsImmutable
+                        ? (null !== $model->paymentType ? Html::encode($model->paymentType->name) : Html::tag('em', Yii::t('yii', '(not set)')))
+                        : Editable::widget(
+                            [
+                                'attribute' => 'payment_type_id',
+                                'data' => \app\components\Helper::getModelMap(
+                                    \app\modules\shop\models\PaymentType::className(),
+                                    'id',
+                                    'name'
+                                ),
+                                'displayValue' => $model->paymentType !== null ? Html::tag(
+                                    'span',
+                                    $model->paymentType->name
+                                ) : Html::tag('em', Yii::t('yii', '(not set)')),
+                                'formOptions' => [
+                                    'action' => ['update-payment-type', 'id' => $model->id],
+                                ],
+                                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                                'model' => $model,
+                            ]
+                        );
                     ?>
                 </td>
             </tr>
@@ -206,20 +212,13 @@ if ($sum_transactions < $model->total_price):
                     'title' => Yii::t('app', 'Customer'),
                 ]
             );
-            /** @var \app\modules\shop\models\Customer $customer */
-            $customer = $model->customer;
-            echo $form->field($customer, 'first_name');
-            echo $form->field($customer, 'middle_name');
-            echo $form->field($customer, 'last_name');
-            echo $form->field($customer, 'email');
-            echo $form->field($customer, 'phone');
-            /** @var \app\properties\AbstractModel $abstractModel */
-            $abstractModel = $customer->getAbstractModel();
-            $abstractModel->setArrayMode(false);
-            foreach ($abstractModel->attributes() as $attr) {
-                echo $form->field($abstractModel, $attr);
-            }
         ?>
+        <?= \app\modules\shop\widgets\Customer::widget([
+            'viewFile' => 'customer/backend_form',
+            'model' => $model->customer,
+            'form' => $form,
+            'immutable' => $orderIsImmutable,
+        ]); ?>
         <?php BackendWidget::end(); ?>
 
         <?php
@@ -229,62 +228,17 @@ if ($sum_transactions < $model->total_price):
                     'title' => Yii::t('app', 'Contragent'),
                 ]
             );
-            $contragents = array_reduce($customer->contragents,
-                function ($result, $item) use ($customer)
-                {
-                    /** @var \app\modules\shop\models\Contragent $item */
-                    $result[$item->id] = $item;
-                    return $result;
-                }, [0 => \app\modules\shop\models\Contragent::createEmptyContragent($customer)]
-            );
-
-            echo $form->field($model, 'contragent_id')->dropDownList(array_reduce($contragents,
-                function ($result, $item)
-                {
-                    /** @var \app\modules\shop\models\Contragent $item */
-                    if ($item->isNewRecord) {
-                        $result[0] = 'Новый Контрагент';
-                    } else {
-                        $result[$item->id] = $item->type;
-                    }
-                    return $result;
-                }, [])
-            , ['class' => 'contragents']);
         ?>
-        <hr />
-        <div class="contragents_list">
-            <?php
-                foreach ($contragents as $key => $contragent) {
-                    /** @var \app\modules\shop\models\Contragent $contragent */
-                    $_content = $form->field($contragent, 'type')
-                        ->dropDownList(['Individual' => 'Individual', 'Self-employed' => 'Self-employed', 'Legal entity' => 'Legal entity']);
-                    /** @var \app\properties\AbstractModel $abstractModel */
-                    $abstractModel = $contragent->getAbstractModel();
-                    $abstractModel->setArrayMode(false);
-                    foreach ($abstractModel->attributes() as $attr) {
-                        $_content .= $form->field($abstractModel, $attr);
-                    }
-
-                    $_content .= Html::tag('h5', Yii::t('app', 'Delivery information'));
-                    $deliveryInformation = !empty($contragent->deliveryInformation)
-                        ? $contragent->deliveryInformation
-                        : ($contragent->isNewRecord
-                            ? \app\modules\shop\models\DeliveryInformation::createNewDeliveryInformation($contragent)
-                            : \app\modules\shop\models\DeliveryInformation::createNewDeliveryInformation($contragent, false)
-                        );
-                    $_content .= $form->field($deliveryInformation, 'country_id')
-                        ->dropDownList(\app\components\Helper::getModelMap(\app\models\Country::className(), 'id', 'name'));
-                    $_content .= $form->field($deliveryInformation, 'city_id')
-                        ->dropDownList(\app\components\Helper::getModelMap(\app\models\City::className(), 'id', 'name'));
-                    $_content .= $form->field($deliveryInformation, 'zip_code');
-                    $_content .= $form->field($deliveryInformation, 'address');
-
-                    echo Html::tag('div', $_content, [
-                        'class' => "contragent contragent_$key" . ($key === intval($model->contragent_id) ? '' : ' hide')
-                    ]);
-                }
-            ?>
-        </div>
+        <?= \app\modules\shop\widgets\Contragent::widget([
+            'viewFile' => 'contragent/backend_form',
+            'model' => $model->contragent,
+            'form' => $form,
+            'immutable' => $orderIsImmutable,
+            'additional' => [
+                'order' => $model,
+                'customer' => $model->customer,
+            ]
+        ]); ?>
         <?php BackendWidget::end(); ?>
 
         <?php

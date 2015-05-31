@@ -45,7 +45,7 @@ return[
             'path' => '@webroot/files',
         ],
         'updateHelper' => [
-            'composerHomeDirectory' => '/Users/bethrezen/.composer/',
+            'composerHomeDirectory' => './composer/',
         ],
     ],
 ];

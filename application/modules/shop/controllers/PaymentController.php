@@ -86,6 +86,9 @@ class PaymentController extends Controller
         if (!$transaction->checkHash($othash)) {
             throw new BadRequestHttpException();
         }
+        if ($transaction->order->getImmutability(Order::IMMUTABLE_USER)) {
+            throw new BadRequestHttpException();
+        }
 
         $transaction->delete();
         return $this->redirect(Url::previous('__returnPaymentCancel'));

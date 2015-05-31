@@ -78,6 +78,11 @@ class ShopModule extends BaseModule implements BootstrapInterface
     public $defaultMeasureId = 1;
 
     /**
+     * @var int Final order stage leaf
+     */
+    public $finalOrderStageLeaf = 0;
+
+    /**
      * @inheritdoc
      */
     public function behaviors()

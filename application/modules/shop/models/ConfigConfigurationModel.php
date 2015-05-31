@@ -70,6 +70,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $defaultMeasureId = 1;
 
     /**
+     * @var int Final order stage leaf
+     */
+    public $finalOrderStageLeaf = 0;
+
+    /**
      * @inheritdoc
      */
     public function rules()
@@ -87,6 +92,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             [
                 [
                     'maxLastViewedProducts',
+                    'finalOrderStageLeaf',
                 ],
                 'integer',
             ],

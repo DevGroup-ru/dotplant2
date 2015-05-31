@@ -9,6 +9,7 @@ use app\modules\shop\models\Customer;
 use app\modules\shop\models\DeliveryInformation;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderDeliveryInformation;
+use app\modules\shop\models\OrderStageLeaf;
 use app\modules\shop\models\OrderTransaction;
 use app\modules\shop\models\PaymentType;
 use yii\helpers\Url;
@@ -235,6 +236,15 @@ class BaseOrderStageHandlers
             'orderTransaction' => $orderTransaction,
             'paymentType' => $paymentType,
         ]);
+    }
+
+    public static function handleStageFinal(OrderStageEvent $event)
+    {
+    }
+
+    public static function handleFinal(OrderStageLeafEvent $event)
+    {
+        $event->setStatus(true);
     }
 }
 ?>

@@ -65,3 +65,14 @@ use kartik\widgets\SwitchInput;
     $defaultMeasureId = 1;
     ?>
 </div>
+
+<div>
+    <div class="col-md-6 col-sm-12">
+        <?php BackendWidget::begin(['icon' => 'cogs', 'title' => Yii::t('app', 'Order stage system'), 'options' => ['class' => 'visible-header']]) ?>
+        <?= $form->field($model, 'finalOrderStageLeaf')->dropDownList(\app\components\Helper::getModelMap(
+            \app\modules\shop\models\OrderStageLeaf::className(), 'id', 'button_label'
+        )); ?>
+        <?php BackendWidget::end() ?>
+    </div>
+
+</div>

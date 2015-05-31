@@ -15,6 +15,7 @@ class Contragent extends Widget
     public $formAction = null;
     /** @var ActiveForm $form */
     public $form = null;
+    public $additional = [];
 
     public function run()
     {
@@ -34,6 +35,7 @@ class Contragent extends Widget
             'immutable' => boolval($this->immutable),
             'action' => $this->formAction,
             'form' => $this->form,
+            'additional' => $this->additional,
         ]);
     }
 }
