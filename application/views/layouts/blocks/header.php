@@ -5,7 +5,7 @@
  */
 
 use app\assets\AppAsset;
-use app\assets\DefaultThemeAsset;
+use app\extensions\DefaultTheme\assets\DefaultThemeAsset;
 use app\models\Config;
 use \app\extensions\DefaultTheme\models\ThemeParts;
 use kartik\helpers\Html;

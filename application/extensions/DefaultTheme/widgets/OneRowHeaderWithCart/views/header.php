@@ -6,6 +6,7 @@ use yii\helpers\Html;
  */
 /** @var bool $collapseOnSmallScreen */
 /** @var bool $useFontAwesome */
+/** @var \app\extensions\DefaultTheme\Module $theme */
 
 $mainCurrency = \app\modules\shop\models\Currency::getMainCurrency();
 
@@ -22,7 +23,7 @@ $navStyles = '';
 <header class="header one-row-header-with-cart">
     <div class="container">
         <a href="/" class="pull-left logo">
-            <img src="http://placehold.it/100x60/bada55/fff&text=MyShop" alt="ALT HERE"/>
+            <img src="<?= Html::encode($theme->logotypePath) ?>" alt="<?= Html::encode($theme->siteName) ?>"/>
         </a>
         <?php if ($collapseOnSmallScreen === true): ?>
             <a href="#" rel="nofollow" class="collapsed nav-sm-open" data-toggle="collapse" data-target="#header-navbar-collapse">

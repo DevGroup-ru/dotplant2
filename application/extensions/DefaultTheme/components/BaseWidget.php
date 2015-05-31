@@ -126,6 +126,15 @@ abstract class BaseWidget extends Widget
     public function render($view, $params = [])
     {
         $params['useFontAwesome'] = $this->useFontAwesome;
+        $params['theme'] = $this->getThemeModule();
         return parent::render($view, $params);
+    }
+
+    /**
+     * @return null|\app\extensions\DefaultTheme\Module
+     */
+    protected function getThemeModule()
+    {
+        return Yii::$app->getModule('DefaultTheme');
     }
 }

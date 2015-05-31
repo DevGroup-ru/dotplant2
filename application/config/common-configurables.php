@@ -20,7 +20,7 @@ return[
             'defaultThumbnailSize' => '80x80',
             'noImageSrc' => 'http://placehold.it/300&text=Image+not+found',
             'thumbnailsDirectory' => 'thumbnail',
-            'useWatermark' => '1',
+            'useWatermark' => '0',
             'watermarkDirectory' => 'watermark',
             'defaultComponent' => 'fs',
             'components' => [
@@ -33,7 +33,7 @@ return[
                     ],
                     'unnecessary' => [
                         'cache' => '',
-                        'replica' => 'ftpFs',
+                        'replica' => '',
                     ],
                 ],
             ],
@@ -42,7 +42,7 @@ return[
     'components' => [
         'fs' => [
             'class' => 'creocoder\\flysystem\\LocalFilesystem',
-            'path' => '@webroot/files'
+            'path' => '@webroot/files',
         ],
         'updateHelper' => [
             'composerHomeDirectory' => '/Users/bethrezen/.composer/',
