@@ -17,6 +17,10 @@ class BackendController extends Controller
     public function beforeAction($action)
     {
         Yii::$app->response->is_backend = true;
+        $headers = Yii::$app->response->getHeaders();
+        $headers->set('X-Robots-Tag', 'none');
+        $headers->set('X-Frame-Options', 'SAMEORIGIN');
+        $headers->set('X-Content-Type-Options', 'nosniff');
         return parent::beforeAction($action);
     }
 }
