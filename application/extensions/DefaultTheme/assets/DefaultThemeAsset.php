@@ -22,5 +22,6 @@ class DefaultThemeAsset extends AssetBundle
     ];
     public $depends = [
         'app\assets\AppAsset',
+        'app\extensions\DefaultTheme\assets\BootstrapHoverDropdown',
     ];
 }
