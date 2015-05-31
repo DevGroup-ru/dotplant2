@@ -1,15 +1,20 @@
-$primary_color: #674ea7;
-$header_color: $primary_color;
-$subheader_color: darken($header_color, 20%);
+@import "variables-custom";
+$primary_color: #2980b9 !default;
+$header_color: $primary_color !default;
+$subheader_color: darken($header_color, 20%) !default;
 
-$secondary_color: #27ae60;
-$action_color: #d1404a;
+$secondary_color: #27ae60 !default;
+$action_color: #d1404a !default;
 
-$action_text_color: #ecf0f1;
-$content_text_color: #404148;
-$muted_text_color: #bdc3c7;
+$action_text_color: #ecf0f1 !default;
+$content_text_color: #404148 !default;
+$muted_text_color: #bdc3c7 !default;
 
-$link_color: #c0392b;
+$link_color: #c0392b !default;
 
-$header_navigation_color: #ecf0f1;
-$header_navigation_hover: darken($header_color, 10%);
+$header_navigation_color: #ecf0f1 !default;
+$header_navigation_hover: darken($header_color, 10%) !default;
+
+
+
+
