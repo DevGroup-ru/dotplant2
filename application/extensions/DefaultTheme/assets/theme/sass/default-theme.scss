@@ -5,7 +5,7 @@
 header {
   background-color: $header_color;
   color: $header_navigation_color;
-  a, a:visited, a:active, a:hover {
+  a, a:visited, a:active, a:hover, a:focus {
     color: $header_navigation_color;
   }
 }

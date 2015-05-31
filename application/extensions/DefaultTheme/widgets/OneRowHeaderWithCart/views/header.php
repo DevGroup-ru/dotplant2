@@ -40,7 +40,7 @@ $navStyles = '';
         <nav class="nav<?=$collapseOnSmallScreen?' collapse ':''?>"<?=$collapseOnSmallScreen?' id="header-navbar-collapse"':''?>>
             <?php if ($collapseOnSmallScreen === true): ?>
             <a href="#" rel="nofollow" class="collapsed nav-sm-close" data-toggle="collapse" data-target="#header-navbar-collapse">
-                <span class="sr-only">Close navigation</span>
+                <span class="sr-only"><?= Yii::t('app', 'Close navigation') ?></span>
                 <?php if ($useFontAwesome): ?>
                     <i class="fa fa-times"></i>
                 <?php else: ?>
@@ -68,8 +68,38 @@ $navStyles = '';
             
             <?php else: ?>
                 <?= Yii::t('app', 'Hi') ?>,
-                <a href="<?= \yii\helpers\Url::toRoute(['/shop/cabinet']) ?>" class="link-cabinet"><?= Html::encode(Yii::$app->user->identity->username) ?></a>!
-            
+                <span class="dropdown">
+                    <a href="<?= \yii\helpers\Url::toRoute(['/shop/cabinet']) ?>" class="link-cabinet" data-toggle="dropdown" data-hover="dropdown"><?= Html::encode(Yii::$app->user->identity->username) ?></a>!
+                    <?= \yii\widgets\Menu::widget([
+                        'items' => [
+                            [
+                                'label' => Yii::t('app', 'User profile'),
+                                'url' => ['/user/user/profile'],
+                                [
+                                    'class' => 'user-profile-link',
+                                ]
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Personal cabinet'),
+                                'url' => ['/shop/cabinet'],
+                                [
+                                    'class' => 'shop-cabinet-link',
+                                ]
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Logout'),
+                                'url' => ['/user/user/logout'],
+                                [
+                                    'data-action' => 'post',
+                                    'class' => 'logout-link',
+                                ],
+                            ]
+                        ],
+                        'options' => [
+                            'class' => 'dropdown-menu personal-menu',
+                        ],
+                    ]) ?>
+                </span>
             <?php endif; ?>
             
             <a href="<?= \yii\helpers\Url::toRoute(['/shop/cart']) ?>" class="btn btn-show-cart">
@@ -81,3 +111,13 @@ $navStyles = '';
         </div>
     </div>
 </header>
+
+<?php
+
+if (Yii::$app->user->isGuest === false) {
+    $js = <<<JS
+$('.link-cabinet').dropdownHover();
+JS;
+    $this->registerJs($js);
+
+}

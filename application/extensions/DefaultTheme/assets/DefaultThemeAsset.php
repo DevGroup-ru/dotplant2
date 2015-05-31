@@ -8,7 +8,7 @@ use yii\web\AssetBundle;
  * Default DotPlant2 asset bundle for default theme based on Bootstrap 3.
  * You can use your own, but don't forget to include CMS js and css files.
  *
- * @package app\assets
+ * @package app\extensions\DefaultTheme\assets
  */
 class DefaultThemeAsset extends AssetBundle
 {

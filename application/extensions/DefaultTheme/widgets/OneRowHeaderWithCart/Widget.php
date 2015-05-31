@@ -2,6 +2,7 @@
 
 namespace app\extensions\DefaultTheme\widgets\OneRowHeaderWithCart;
 
+use app\extensions\DefaultTheme\assets\BootstrapHoverDropdown;
 use app\extensions\DefaultTheme\components\BaseWidget;
 use app\modules\shop\models\Order;
 
@@ -15,6 +16,9 @@ class Widget extends BaseWidget
      */
     public function widgetRun()
     {
+        // this header needs this plugin
+        BootstrapHoverDropdown::register($this->view);
+
         $order = Order::getOrder(false);
 
         return $this->render(

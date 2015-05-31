@@ -59,3 +59,16 @@ $panel-height: 50px;
     bottom: 0;
   }
 }
+
+
+@media (max-width: 320px) {
+
+  // hide floating panel on small screens
+  // maybe later we'll make it responsive
+  #dotplant-floating-panel {
+    display: none;
+  }
+  body {
+    padding-top: 0 !important;
+  }
+}

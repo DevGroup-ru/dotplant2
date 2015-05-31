@@ -57,4 +57,18 @@ header.one-row-header-with-cart {
     font-size: 200%;
     float: left;
   }
+  .dropdown-menu {
+    background-color: $header_color;
+  }
+  .dropdown-menu > li > a {
+    color: $header_navigation_color;
+    &:hover {
+      color: $header_navigation_hover;
+    }
+  }
+  .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+    background-color: $subheader_color;
+    color: $header_navigation_color;
+    font-weight: bold;
+  }
 }
