@@ -19,18 +19,20 @@ $this->params['breadcrumbs'] = [
 
 ?>
 <h1><?= $this->title ?></h1>
+<?= \app\widgets\Alert::widget() ?>
 <div class="row">
-    <div class="span4 well">
+    <div class="col-md-4 col-sm-12">
         <?php
             $form = ActiveForm::begin(
                 [
-                    'action' => \yii\helpers\Url::toRoute(['/cabinet/change-password']),
+                    'action' => \yii\helpers\Url::toRoute(['/user/user/change-password']),
                     'id' => 'change-password-form',
                     'type' => ActiveForm::TYPE_VERTICAL,
+                    'method' => 'POST',
                 ]
             );
         ?>
-            <?= $form->field($model, 'password')->passwordInput() ?>
+            <?= $form->field($model, 'password')->passwordInput()->label(Yii::t('app', 'Current password')) ?>
             <?= $form->field($model, 'newPassword')->passwordInput() ?>
             <?= $form->field($model, 'confirmPassword')->passwordInput() ?>
             <div class="form-group">

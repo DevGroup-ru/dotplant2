@@ -23,7 +23,6 @@ $this->params['breadcrumbs'] = [
 $propertyGroups = $model->getPropertyGroups();
 
 ?>
-<h1><?= $this->title ?></h1>
 <?php
 $form = ActiveForm::begin([
     'id' => 'profile-form',
@@ -32,10 +31,18 @@ $form = ActiveForm::begin([
 ?>
 <div class="row">
     <div class="col-md-6 col-sm-12">
-
+        <h1 class="h2"><?= $this->title ?></h1>
         <?= $form->field($model, 'first_name') ?>
         <?= $form->field($model, 'last_name') ?>
         <?= $form->field($model, 'email') ?>
+        <div class="form-group">
+            <?=
+            Html::a(
+                Yii::t('app', 'Change password'),
+                ['/user/user/change-password']
+            )
+            ?>
+        </div>
 
     </div>
     <div class="col-md-6 col-sm-12">
@@ -43,24 +50,25 @@ $form = ActiveForm::begin([
 
             <?php
 
-            $group = \app\models\PropertyGroup::findById($groupId);
-            if (intval($group->hidden_group_title) == 0) {
-                echo Html::tag('h2', $group->name);
-            }
+            if (count($properties) > 0) {
+                $group = \app\models\PropertyGroup::findById($groupId);
+                if (intval($group->hidden_group_title) == 0) {
+                    echo Html::tag('h2', $group->name);
+                }
 
 
-            $model->getAbstractModel()->setArrayMode(true);
+                $model->getAbstractModel()->setArrayMode(true);
 
-            $properties = app\models\Property::getForGroupId($groupId);
+                $properties = app\models\Property::getForGroupId($groupId);
 
-            foreach ($properties as $prop) {
-                $property_values = $model->getPropertyValuesByPropertyId($prop->id);
-
-
-                echo $prop->handler($form, $model->getAbstractModel(), $property_values, 'frontend_edit_view');
+                foreach ($properties as $prop) {
+                    $property_values = $model->getPropertyValuesByPropertyId($prop->id);
 
 
+                    echo $prop->handler($form, $model->getAbstractModel(), $property_values, 'frontend_edit_view');
 
+
+                }
             }
             ?>
 

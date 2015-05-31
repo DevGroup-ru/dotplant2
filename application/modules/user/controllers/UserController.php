@@ -369,7 +369,7 @@ class UserController extends Controller
                 $model->password_hash = $security->generatePasswordHash($model->newPassword);
                 if ($model->save(true, ['password_hash'])) {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Password has been changed'));
-                    $this->refresh();
+                    return $this->refresh();
                 } else {
                     Yii::$app->session->setFlash('error', Yii::t('app', 'Internal error'));
                 }
