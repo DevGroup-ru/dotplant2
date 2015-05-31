@@ -29,6 +29,30 @@ header.one-row-header-with-cart .logo img {
         right: 0;
         top: -4px;
         background: rgba(0, 0, 0, 0.2); }
+  header.one-row-header-with-cart .search-area {
+    padding: 16px 8px; }
+    header.one-row-header-with-cart .search-area input {
+      height: 28px;
+      border-radius: 6px;
+      background: #a35e15;
+      width: 0;
+      transition: all 0.15s ease-out 0.1s;
+      left: 35px;
+      position: relative;
+      padding: 0;
+      border: 0;
+      color: transparent; }
+      header.one-row-header-with-cart .search-area input:focus, header.one-row-header-with-cart .search-area input.active {
+        outline: none;
+        width: 150px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        padding: 0 30px 0 8px;
+        color: #ecf0f1; }
+    header.one-row-header-with-cart .search-area .search-append {
+      background: transparent;
+      color: #ecf0f1;
+      border: 0;
+      cursor: pointer; }
   header.one-row-header-with-cart .nav-sm-open {
     margin: 4px;
     padding: 6px;
@@ -105,7 +129,12 @@ body, .content, #content {
   color: #ecf0f1; }
 
 .btn-primary {
-  background-color: #d1404a; }
+  background-color: #d1404a;
+  border-color: #b32b34; }
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary.focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+  background-color: #b32b34;
+  border-color: #8a2128; }
 
 header .nav .navigation-widget {
   list-style: none;

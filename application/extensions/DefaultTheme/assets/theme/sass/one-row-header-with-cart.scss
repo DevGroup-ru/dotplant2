@@ -51,6 +51,39 @@ header.one-row-header-with-cart {
       }
     }
   }
+  .search-area {
+    padding: 16px 8px;
+    input {
+      height: 28px;
+      border-radius: 6px;
+
+
+      background: $subheader_color;
+
+
+      width: 0;
+      transition: all 0.15s ease-out 0.1s;
+      left: 35px;
+      position: relative;
+      padding: 0;
+      border: 0;
+      color: transparent;
+
+      &:focus, &.active {
+        outline: none;
+        width: 150px;
+        border: 1px solid rgba(0,0,0,0.2);
+        padding: 0 30px 0 8px;
+        color: $header_navigation_color;
+      }
+    }
+    .search-append {
+      background: transparent;
+      color: $header_navigation_color;
+      border: 0;
+      cursor: pointer;
+    }
+  }
   .nav-sm-open {
     margin: 4px;
     @include rounded-border-button(6px);

@@ -109,6 +109,11 @@ $navStyles = '';
                 </span>
             </a>
         </div>
+        <div class="pull-right search-area">
+            <?= \app\extensions\DefaultTheme\widgets\OneRowHeaderWithCart\ExpandableSearchField::widget([
+                'useFontAwesome' => $useFontAwesome,
+            ]) ?>
+        </div>
     </div>
 </header>
 

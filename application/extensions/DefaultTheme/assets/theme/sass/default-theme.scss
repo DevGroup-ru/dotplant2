@@ -24,6 +24,11 @@ body, .content, #content {
 
 .btn-primary {
   background-color: $action_color;
+  border-color: darken($action_color, 10%);
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary.focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+  background-color: darken($action_color, 10%);
+  border-color: darken($action_color, 20%);
 }
 
 header .nav {
