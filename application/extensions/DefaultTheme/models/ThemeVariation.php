@@ -23,6 +23,7 @@ use yii\data\ActiveDataProvider;
 class ThemeVariation extends \yii\db\ActiveRecord
 {
     use IdentityMap;
+    public static $matchedVariations = null;
 
     /**
      * @var array|null Array representation of all ThemeVariation records in db
@@ -113,56 +114,61 @@ class ThemeVariation extends \yii\db\ActiveRecord
      */
     public static function getMatchedVariations()
     {
-        $variations = static::getAllVariations();
-        $route = Yii::$app->requestedRoute;
-        $uri = Yii::$app->request->url;
-        $matched = [];
+        if (static::$matchedVariations === null) {
+            Yii::beginProfile('Get matched variations');
+            $variations = static::getAllVariations();
+            $route = Yii::$app->requestedRoute;
+            $uri = Yii::$app->request->url;
+            static::$matchedVariations = [];
 
-        foreach ($variations as $variation) {
-            $match = true;
 
-            // check by url
-            if (!empty($variation['by_url'])) {
-                $asteriskPosition = mb_strpos($variation['by_url'], '*');
-                if ($asteriskPosition === false) {
-                    // direct compare! no *
-                    $match = $variation['by_url'] === $uri;
-                } elseif ($asteriskPosition===0) {
-                    // all pages
-                    $match = true;
-                } elseif ($asteriskPosition===1) {
-                    // all non-main pages
-                    $match = $uri !== '/';
-                } else {
-                    $startsWith = mb_substr($variation['by_url'], 0, $asteriskPosition);
-                    $match = mb_strpos($uri, $startsWith)===0;
+            foreach ($variations as $variation) {
+                $match = true;
+
+                // check by url
+                if (!empty($variation['by_url'])) {
+                    $asteriskPosition = mb_strpos($variation['by_url'], '*');
+                    if ($asteriskPosition === false) {
+                        // direct compare! no *
+                        $match = $variation['by_url'] === $uri;
+                    } elseif ($asteriskPosition === 0) {
+                        // all pages
+                        $match = true;
+                    } elseif ($asteriskPosition === 1) {
+                        // all non-main pages
+                        $match = $uri !== '/';
+                    } else {
+                        $startsWith = mb_substr($variation['by_url'], 0, $asteriskPosition);
+                        $match = mb_strpos($uri, $startsWith) === 0;
+                    }
+                }
+
+                // check by route
+                if (!empty($variation['by_route'])) {
+                    $match = $match && ($route === $variation['by_route']);
+                }
+
+                // check by matcher
+                if (!empty($variation['matcher_class_name'])) {
+                    $className = $variation['matcher_class_name'];
+                    /** @var VariationMatcher $matcher */
+                    $matcher = new $className($variation);
+                    $match = $match && $matcher->run();
+                }
+
+
+                if ($match === true) {
+                    if ($variation['exclusive'] === '1') {
+                        Yii::endProfile('Get matched variations');
+                        return [$variation];
+                    } else {
+                        static::$matchedVariations[] = $variation;
+                    }
                 }
             }
-
-            // check by route
-            if (!empty($variation['by_route'])) {
-                $match = $match && ($route === $variation['by_route']);
-            }
-
-            // check by matcher
-            if (!empty($variation['matcher_class_name'])) {
-                $className = $variation['matcher_class_name'];
-                /** @var VariationMatcher $matcher */
-                $matcher = new $className($variation);
-                $match = $match && $matcher->run();
-            }
-
-
-
-            if ($match === true) {
-                if ($variation['exclusive'] === '1') {
-                    return [$variation];
-                } else {
-                    $matched[] = $variation;
-                }
-            }
+            Yii::endProfile('Get matched variations');
         }
-        return $matched;
+        return static::$matchedVariations;
     }
 
     /**

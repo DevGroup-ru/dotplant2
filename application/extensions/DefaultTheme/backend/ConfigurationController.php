@@ -20,6 +20,11 @@ class ConfigurationController extends BackendController
     use LoadModel;
     use BackendRedirect;
 
+    /**
+     * Lists theme parts, variations and widgets
+     * @return string
+     * @throws \yii\web\ServerErrorHttpException
+     */
     public function actionIndex()
     {
         $partsSearchModel = new ThemeParts();
@@ -28,6 +33,9 @@ class ConfigurationController extends BackendController
         $variationsSearchModel = new ThemeVariation();
         $variationsDataProvider = $variationsSearchModel->search($_GET);
 
+        $widgetsSearchModel = new ThemeWidgets();
+        $widgetsDataProvider = $widgetsSearchModel->search($_GET);
+
         return $this->render(
             'index',
             [
@@ -35,6 +43,8 @@ class ConfigurationController extends BackendController
                 'partsDataProvider' => $partsDataProvider,
                 'variationsSearchModel' => $variationsSearchModel,
                 'variationsDataProvider' => $variationsDataProvider,
+                'widgetsSearchModel' => $widgetsSearchModel,
+                'widgetsDataProvider' => $widgetsDataProvider,
             ]
         );
     }
@@ -79,6 +89,53 @@ class ConfigurationController extends BackendController
                 'model' => $model,
             ]
         );
+    }
+
+    public function actionEditWidget($id)
+    {
+        $model = $this->loadModel(ThemeWidgets::className(), $id, true);
+        if ($model->isNewRecord === true) {
+            $model->loadDefaultValues();
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->save()) {
+                return $this->redirectUser($model->id, true, 'index', 'edit-widget');
+            }
+        }
+
+        return $this->render(
+            'edit-widget',
+            [
+                'model' => $model,
+            ]
+        );
+    }
+
+    public function actionConfigureJson($id, $returnUrl = '')
+    {
+        $model = $this->loadModel(ThemeActiveWidgets::className(), $id);
+
+        $isAjax = Yii::$app->request->isAjax;
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->save()) {
+                return $this->redirectUser($model->id, true, 'index', 'configure-json');
+            }
+        }
+
+        $data = [
+            'model' => $model,
+            'isAjax' => $isAjax,
+        ];
+
+        if ($isAjax === true) {
+            return $this->renderAjax('configure-json', $data);
+        } else {
+            return $this->render('configure-json', $data);
+        }
+
+
     }
 
     public function actionActiveWidgets($id)

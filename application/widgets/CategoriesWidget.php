@@ -20,7 +20,6 @@ class CategoriesWidget extends Widget
     public $current_selections = [];
     public $omit_root = true;
     public $route = '/shop/product/list';
-    public $title = 'Catalogue';
     public $viewFile = 'categoriesWidget';
     public $recursive = true;
     public $onlyAvailableProducts = false;
@@ -35,7 +34,6 @@ class CategoriesWidget extends Widget
             [
                 'current_selections' => $this->current_selections,
                 'possible_selections' => $this->possible_selections,
-                'title' => $this->title,
                 'route' => $this->route,
                 'category_group_id' => $this->category_group_id,
             ]

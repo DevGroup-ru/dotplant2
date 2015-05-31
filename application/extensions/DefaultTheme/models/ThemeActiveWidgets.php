@@ -17,11 +17,14 @@ use yii\helpers\ArrayHelper;
  * @property integer $widget_id
  * @property integer $variation_id
  * @property integer $sort_order
+ * @property string $configuration_json
  */
 class ThemeActiveWidgets extends \yii\db\ActiveRecord
 {
     use IdentityMap;
     use SortModels;
+
+    public static $activeWidgets = null;
     /**
      * @inheritdoc
      */
@@ -48,7 +51,8 @@ class ThemeActiveWidgets extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['part_id', 'widget_id', 'variation_id', 'sort_order'], 'integer']
+            [['part_id', 'widget_id', 'variation_id', 'sort_order'], 'integer'],
+            [['configuration_json'], 'string'],
         ];
     }
 
@@ -63,6 +67,7 @@ class ThemeActiveWidgets extends \yii\db\ActiveRecord
             'widget_id' => Yii::t('app', 'Widget ID'),
             'variation_id' => Yii::t('app', 'Variation ID'),
             'sort_order' => Yii::t('app', 'Sort Order'),
+            'configuration_json' => Yii::t('app', 'Configuration JSON'),
         ];
     }
 
@@ -81,37 +86,42 @@ class ThemeActiveWidgets extends \yii\db\ActiveRecord
      */
     public static function getActiveWidgets()
     {
-        $variationIds = ArrayHelper::getColumn(
-            ThemeVariation::getMatchedVariations(),
-            'id'
-        );
-        if (count($variationIds) === 0) {
-            Yii::trace("Warning! No active widgets because of no matched variations! Check your variations configuration.");
-            return [];
-        }
-
-        $cacheKey = 'ActiveWidgets:'.implode(',', $variationIds);
-
-        $models = Yii::$app->cache->get($cacheKey);
-        if ($models === false) {
-            $models = ThemeActiveWidgets::find()
-                ->where(['in', 'variation_id', $variationIds])
-                ->with('widget')
-                ->orderBy(['part_id' => SORT_ASC, 'sort_order' => SORT_ASC])
-                ->all();
-
-            Yii::$app->cache->set(
-                $cacheKey,
-                $models,
-                86400,
-                new TagDependency([
-                    'tags' => [
-                        ActiveRecordHelper::getCommonTag(ThemeActiveWidgets::className()),
-                        ActiveRecordHelper::getCommonTag(ThemeWidgets::className()),
-                    ]
-                ])
+        if (static::$activeWidgets === null) {
+            Yii::beginProfile('Get active widgets');
+            $variationIds = ArrayHelper::getColumn(
+                ThemeVariation::getMatchedVariations(),
+                'id'
             );
+            if (count($variationIds) === 0) {
+                Yii::trace("Warning! No active widgets because of no matched variations! Check your variations configuration.");
+                Yii::endProfile('Get active widgets');
+                return [];
+            }
+
+            $cacheKey = 'ActiveWidgets:' . implode(',', $variationIds);
+
+            static::$activeWidgets = Yii::$app->cache->get($cacheKey);
+            if (static::$activeWidgets === false) {
+                static::$activeWidgets = ThemeActiveWidgets::find()
+                    ->where(['in', 'variation_id', $variationIds])
+                    ->with('widget')
+                    ->orderBy(['part_id' => SORT_ASC, 'sort_order' => SORT_ASC])
+                    ->all();
+
+                Yii::$app->cache->set(
+                    $cacheKey,
+                    static::$activeWidgets,
+                    86400,
+                    new TagDependency([
+                        'tags' => [
+                            ActiveRecordHelper::getCommonTag(ThemeActiveWidgets::className()),
+                            ActiveRecordHelper::getCommonTag(ThemeWidgets::className()),
+                        ]
+                    ])
+                );
+            }
+            Yii::endProfile('Get active widgets');
         }
-        return $models;
+        return static::$activeWidgets;
     }
 }

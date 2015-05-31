@@ -2,6 +2,16 @@
 @import "one-row-header-with-cart";
 @import "adaptive";
 
+a {
+  color: $action_color;
+}
+a:hover, a:focus {
+  color: $action_hover_color;
+}
+.breadcrumb {
+  background-color: #fafafa;
+}
+
 header {
   background-color: $header_color;
   color: $header_navigation_color;
@@ -44,4 +54,35 @@ header .nav {
 
 .link-cabinet {
   font-weight: bold;
+}
+.sidebar-widget {
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ddd;
+
+  .widget-header {
+    font-weight: bold;
+    font-size: 120%;
+    border-bottom: 1px solid #eee;
+  }
+}
+.categories-list.sidebar-widget {
+  &>ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  a {
+    color: $sidebar_link_color;
+    font-weight: bold;
+    display: block;
+    &:hover, &:focus{
+      color: $sidebar_link_hover_color;
+    }
+  }
+}
+.sidebar-widget.pages-list-widget {
+  .pages-list {
+    list-style: none;
+    padding-left: 0;
+  }
 }

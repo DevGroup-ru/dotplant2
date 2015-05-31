@@ -10,6 +10,7 @@ use yii\caching\TagDependency;
 use \devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\helpers\ArrayHelper;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Json;
 
 /**
  * This is the model class for table "{{%theme_parts}}".
@@ -89,6 +90,8 @@ class ThemeParts extends \yii\db\ActiveRecord
         if (static::$allParts=== null || $force === true) {
             $cacheKey = 'AllThemeParts';
 
+            Yii::beginProfile('Get all theme parts');
+
             static::$allParts= Yii::$app->cache->get($cacheKey);
             if (static::$allParts=== false) {
                 static::$allParts= ThemeParts::find()
@@ -106,6 +109,7 @@ class ThemeParts extends \yii\db\ActiveRecord
                     ])
                 );
             }
+            Yii::endProfile('Get all theme parts');
         }
         return static::$allParts;
     }
@@ -113,7 +117,7 @@ class ThemeParts extends \yii\db\ActiveRecord
     public static function renderPart($key, $params=[])
     {
         $parts = static::getAllParts();
-
+        Yii::beginProfile('Render theme part:' . $key);
         /** @var ThemeParts $model */
         $model = null;
         foreach ($parts as $part) {
@@ -129,7 +133,8 @@ class ThemeParts extends \yii\db\ActiveRecord
         if (static::shouldCache($model)) {
             $result = Yii::$app->cache->get(static::getCacheKey($model));
             if ($result !== false) {
-                return $result . "<!-- cached -->";
+                Yii::endProfile('Render theme part:' . $key);
+                return $result;
             }
         }
 
@@ -154,8 +159,18 @@ class ThemeParts extends \yii\db\ActiveRecord
                 $widgetModel = $activeWidget->widget;
                 /** @var BaseWidget $widgetClassName */
                 $widgetClassName =  $widgetModel->widget;
-                $config = $params;
+                $widgetConfiguration = Json::decode($widgetModel->configuration_json, true);
+                if (!is_array($widgetConfiguration)) {
+                    $widgetConfiguration = [];
+                }
+                $activeWidgetConfiguration = Json::decode($activeWidget->configuration_json, true);
+                if (!is_array($activeWidgetConfiguration)) {
+                    $activeWidgetConfiguration  = [];
+                }
+                $merged = ArrayHelper::merge($widgetConfiguration, $activeWidgetConfiguration);
+                $config = ArrayHelper::merge($merged, $params);
                 $config['themeWidgetModel'] = $widgetModel;
+                $config['partRow'] = $model;
 
                 $carry .= $widgetClassName::widget($config);
                 return $carry;
@@ -171,8 +186,8 @@ class ThemeParts extends \yii\db\ActiveRecord
                 static::getCacheDependency($model)
             );
         }
-
-        return $result . '<!-- was uncached -->';
+        Yii::endProfile('Render theme part:' . $key);
+        return $result;
     }
 
     /**
@@ -198,6 +213,7 @@ class ThemeParts extends \yii\db\ActiveRecord
     {
         $tags = explode("\n", $attributesRow['cache_tags']);
         $tags[] = ActiveRecordHelper::getObjectTag(ThemeParts::className(), $attributesRow['id']);
+        $tags[] = ActiveRecordHelper::getCommonTag(ThemeActiveWidgets::className());
         return $tags;
     }
 

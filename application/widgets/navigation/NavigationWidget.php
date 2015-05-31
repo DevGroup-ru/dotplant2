@@ -3,12 +3,12 @@
 namespace app\widgets\navigation;
 
 use app\widgets\navigation\models\Navigation;
+use Yii;
 use yii\base\Widget;
 use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
-use yii\helpers\Url;
 use yii\widgets\Menu;
 
 class NavigationWidget extends Widget
@@ -44,6 +44,7 @@ class NavigationWidget extends Widget
 
     public function run()
     {
+        Yii::beginProfile("NavigationWidget for ".$this->rootId);
         $items = null;
         $cacheKey = implode(
             ':',
@@ -81,7 +82,7 @@ class NavigationWidget extends Widget
             }
         }
 
-        return $this->render(
+        $result = $this->render(
             $this->viewFile,
             [
                 'widget' => $this->widget,
@@ -91,6 +92,8 @@ class NavigationWidget extends Widget
                 'submenuTemplate' => $this->submenuTemplate,
             ]
         );
+        Yii::endProfile("NavigationWidget for ".$this->rootId);
+        return $result;
     }
 
     /**

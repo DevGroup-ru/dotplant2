@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+/** @var yii\web\View $this */
 /**
  * @var \app\modules\shop\models\Order $order
  */
@@ -110,9 +111,12 @@ $navStyles = '';
             </a>
         </div>
         <div class="pull-right search-area">
+
             <?= \app\extensions\DefaultTheme\widgets\OneRowHeaderWithCart\ExpandableSearchField::widget([
                 'useFontAwesome' => $useFontAwesome,
             ]) ?>
+
+
         </div>
     </div>
 </header>

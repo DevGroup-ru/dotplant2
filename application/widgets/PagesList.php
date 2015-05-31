@@ -6,6 +6,12 @@ use app\modules\page\models\Page;
 use Yii;
 use yii\base\Widget;
 
+/**
+ * Class PagesList renders pages list
+ *
+ * @deprecated Use PagesWidget from DefaultTheme
+ * @package app\widgets
+ */
 class PagesList extends Widget
 {
     public $limit = 5;

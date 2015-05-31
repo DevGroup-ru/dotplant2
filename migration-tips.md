@@ -1,10 +1,12 @@
 # Migration tips
 
-## alpha => beta
+## alpha => 2.0.0-beta
 
 ### Theme
 
 You should change your theme pathMap routes. It's look like a next example.
+
+> **WARNING** Theme part can be not actual! Someone, please check it.
 
 Old theme configuration:
 
@@ -45,7 +47,7 @@ For new projects we advice to use new theme structure which you can create via `
 
 ### Users
 
-Since users subsystem splited into module the most important thing is to replace your URLs including calls to `yii\helpers\Url`:
+Since users subsystem splitted into module the most important thing is to replace your URLs including calls to `yii\helpers\Url`:
 
 1. `default/(login|logout|...)` changed to `user/user/login`
 2. `cabinet/profile` changed to `user/user/profile`
@@ -63,7 +65,7 @@ Small-passwords migration WARNING:
 
 ### Shop
 
-Shop splited into module 'shop'.
+Shop splitted into module 'shop'.
 
 LastViewedProducts changed it's namespace from `app\components\LastViewedProducts` to `app\modules\shop\helpers\LastViewedProducts`.
 
@@ -87,7 +89,7 @@ Save content of robots.txt in DB (/seo/manage/robots).
 
 ### Images
 
-Images subsystem splited to module `Images`. To migrate do this steps:
+Images subsystem splitted to module `Images`. To migrate do this steps:
 
 1. Update dependencies via composer
 2. Apply migration m150413_094340_thumbnail.php
@@ -98,3 +100,8 @@ Images subsystem splited to module `Images`. To migrate do this steps:
 4. Model `Image` changed namespace from `app\models` to `app\modules\image\models`
 5. Removed columns `image_src` and `thumbnail_src` from table `image`
 6. Image, thumbnail, watermark and thumbnail width watermark src can be received by controller `app\modules\image\controllers\ImageController`
+
+### Templates and views
+
+application/views/layouts/main-page is removed.
+Now DotPlant2 comes with awesome multipurpose theme.

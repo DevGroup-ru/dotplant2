@@ -5,6 +5,9 @@ $subheader_color: darken($header_color, 20%) !default;
 
 $secondary_color: #27ae60 !default;
 $action_color: #d1404a !default;
+$action_hover_color: darken($action_color, 10%) !default;
+$sidebar_link_color: #999 !default;
+$sidebar_link_hover_color: darken($sidebar_link_color, 10%) !default;
 
 $action_text_color: #ecf0f1 !default;
 $content_text_color: #404148 !default;

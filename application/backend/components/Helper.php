@@ -39,17 +39,19 @@ class Helper
      * @param string $indexAction Route path to index action
      * @return string Rendered save buttons with redurectUrl!
      */
-    public static function saveButtons(ActiveRecord $model, $indexAction='index', $buttonClass='btn-sm')
+    public static function saveButtons(ActiveRecord $model, $indexAction='index', $buttonClass='btn-sm', $onlySaveAndBack=false)
     {
         $result = '<div class="form-group no-margin btn-group">';
-        $result .=
-            Html::a(
-                Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
-                Yii::$app->request->get('returnUrl', [$indexAction, 'id' => $model->id]),
-                ['class' => 'btn btn-default '  . $buttonClass]
-            );
+        if ($onlySaveAndBack === false) {
+            $result .=
+                Html::a(
+                    Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+                    Yii::$app->request->get('returnUrl', [$indexAction, 'id' => $model->id]),
+                    ['class' => 'btn btn-default ' . $buttonClass]
+                );
+        }
 
-        if ($model->isNewRecord) {
+        if ($model->isNewRecord && $onlySaveAndBack === false) {
             $result .= Html::submitButton(
                 Icon::show('save') . Yii::t('app', 'Save & Go next'),
                 [
@@ -69,16 +71,17 @@ class Helper
                     'value' => 'back',
                 ]
             );
-
-        $result .=
-            Html::submitButton(
-                Icon::show('save') . Yii::t('app', 'Save'),
-                [
-                    'class' => 'btn btn-primary ' . $buttonClass,
-                    'name' => 'action',
-                    'value' => 'save',
-                ]
-            );
+        if ($onlySaveAndBack === false) {
+            $result .=
+                Html::submitButton(
+                    Icon::show('save') . Yii::t('app', 'Save'),
+                    [
+                        'class' => 'btn btn-primary ' . $buttonClass,
+                        'name' => 'action',
+                        'value' => 'save',
+                    ]
+                );
+        }
         $result .= '</div>';
 
         return $result;

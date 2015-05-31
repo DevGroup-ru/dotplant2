@@ -4,6 +4,8 @@
 /** @var \app\extensions\DefaultTheme\models\ThemeVariation $variationsSearchModel */
 /** @var \yii\data\ActiveDataProvider $partsDataProvider */
 /** @var \app\extensions\DefaultTheme\models\ThemeParts  $partsSearchModel */
+/** @var \yii\data\ActiveDataProvider $widgetsDataProvider */
+/** @var \app\extensions\DefaultTheme\models\ThemeWidgets  $widgetsSearchModel */
 
 use yii\helpers\Html;
 use app\backend\components\ActiveForm;
@@ -38,6 +40,16 @@ $this->params['breadcrumbs'][] = [
                 [
                     'variationsSearchModel' => $variationsSearchModel,
                     'variationsDataProvider'=>$variationsDataProvider
+                ]
+            ),
+        ],
+        [
+            'label' => Yii::t('app', 'All widgets'),
+            'content' => $this->render(
+                '_widgets',
+                [
+                    'widgetsSearchModel' => $widgetsSearchModel,
+                    'widgetsDataProvider'=>$widgetsDataProvider
                 ]
             ),
         ],

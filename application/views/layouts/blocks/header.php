@@ -37,42 +37,42 @@ $themeModule = Yii::$app->getModule('DefaultTheme');
 </head>
 <body itemscope itemtype="http://schema.org/WebPage">
 <?php $this->beginBody(); ?>
-    <?= ThemeParts::renderPart('header') ?>
 
-    <section class="subheader">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    subnav here
-                </div>
-            </div>
-        </div>
-    </section>
-    <div class="container">
-        <div class="row">
+<?= ThemeParts::renderPart('pre-header') ?>
+<?= ThemeParts::renderPart('header') ?>
+<?= ThemeParts::renderPart('post-header') ?>
 
-            <div class="col-md-4">
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-4">
 
 
-                <?php if (is_array(Yii::$app->session->get('comparisonProductList')) && count(Yii::$app->session->get('comparisonProductList')) > 0): ?>
-                    <?=
-                    \kartik\helpers\Html::a(
-                        Yii::t(
-                            'app',
-                            'Compare products [{count}]',
-                            [
-                                'count' => count(Yii::$app->session->get('comparisonProductList')),
-                            ]
-                        ),
+            <?php if (is_array(Yii::$app->session->get('comparisonProductList')) && count(Yii::$app->session->get('comparisonProductList')) > 0): ?>
+                <?=
+                \kartik\helpers\Html::a(
+                    Yii::t(
+                        'app',
+                        'Compare products [{count}]',
                         [
-                            '/shop/product-compare/compare',
-                        ],
-                        [
-                            'class' => 'btn',
+                            'count' => count(Yii::$app->session->get('comparisonProductList')),
                         ]
-                    )
-                    ?>
-                <?php endif; ?>
-            </div>
+                    ),
+                    [
+                        '/shop/product-compare/compare',
+                    ],
+                    [
+                        'class' => 'btn',
+                    ]
+                )
+                ?>
+            <?php endif; ?>
         </div>
     </div>
+</div>
+
+
+
+
+
+

@@ -45,16 +45,31 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php foreach ($models as $activeWidget): ?>
                         <?php if ($activeWidget->part_id !== intval($partsRow['id'])) continue; ?>
                         <li class="well well-sm well-light" activewidget="<?=$activeWidget->id?>">
-                            <?=
-                            Html::a(
-                                Icon::show('trash-o'),
-                                ['delete-active-widget', 'id'=>$activeWidget->id],
-                                [
-                                    'class' => 'btn btn-danger btn-xs pull-right',
-                                    'data-action' => 'post',
-                                ]
-                            )
-                            ?>
+                            <div class="pull-right btn-group">
+                                <?=
+                                Html::a(
+                                    Icon::show('cogs') . Yii::t('app', 'Configure'),
+                                    [
+                                        '/DefaultTheme/backend-configuration/configure-json',
+                                        'id' => $activeWidget->id,
+                                        'returnUrl' => \app\backend\components\Helper::getReturnUrl(),
+                                    ],
+                                    [
+                                        'class' => 'btn btn-success btn-xs configure-active-widget',
+                                    ]
+                                )
+                                ?>
+                                <?=
+                                Html::a(
+                                    Icon::show('trash-o'),
+                                    ['delete-active-widget', 'id'=>$activeWidget->id],
+                                    [
+                                        'class' => 'btn btn-danger btn-xs',
+                                        'data-action' => 'post',
+                                    ]
+                                )
+                                ?>
+                            </div>
                             <?= $activeWidget->widget->name ?>
                             <?php $matchedCount++; ?>
                         </li>
@@ -162,6 +177,21 @@ $(".add-widget").change(function(){
         $('document').append(form);
         form.submit();
     }
-})
+});
+
+$(".configure-active-widget").click(function(){
+    var that = $(this),
+        url = that.attr('href');
+
+    that.dialogAction(
+        url,
+        {
+            title: 'JSON'
+        }
+    );
+
+    return false;
+});
+
 JS;
 $this->registerJs($js);

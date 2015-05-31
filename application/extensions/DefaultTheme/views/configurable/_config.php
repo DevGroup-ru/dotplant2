@@ -5,6 +5,8 @@
 /** @var \app\extensions\DefaultTheme\models\ConfigurationModel $model */
 
 use app\backend\widgets\BackendWidget;
+use yii\helpers\Html;
+use kartik\icons\Icon;
 
 ?>
 
@@ -39,5 +41,14 @@ use app\backend\widgets\BackendWidget;
 
 
         <?php BackendWidget::end() ?>
+    </div>
+    <div class="col-md-1 col-sm-12">
+        <?= Html::a(
+            Icon::show('puzzle-piece') . ' ' . Yii::t('app', 'Widgets and parts'),
+            ['/DefaultTheme/backend-configuration/index'],
+            [
+                'class' => 'btn btn-primary btn-sm',
+            ]
+        ) ?>
     </div>
 </div>

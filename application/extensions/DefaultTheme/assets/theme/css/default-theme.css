@@ -113,6 +113,15 @@ header.one-row-header-with-cart .logo img {
       text-align: center;
       padding: 0px; } }
 
+a {
+  color: #d1404a; }
+
+a:hover, a:focus {
+  color: #b32b34; }
+
+.breadcrumb {
+  background-color: #fafafa; }
+
 header {
   background-color: #e69138;
   color: #ecf0f1; }
@@ -144,3 +153,26 @@ header .nav .navigation-widget {
 
 .link-cabinet {
   font-weight: bold; }
+
+.sidebar-widget {
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ddd; }
+  .sidebar-widget .widget-header {
+    font-weight: bold;
+    font-size: 120%;
+    border-bottom: 1px solid #eee; }
+
+.categories-list.sidebar-widget > ul {
+  list-style: none;
+  padding-left: 0; }
+  .categories-list.sidebar-widget a {
+    color: #999;
+    font-weight: bold;
+    display: block; }
+    .categories-list.sidebar-widget a:hover, .categories-list.sidebar-widget a:focus {
+      color: #808080; }
+
+.sidebar-widget.pages-list-widget .pages-list {
+  list-style: none;
+  padding-left: 0; }

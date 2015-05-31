@@ -4,6 +4,7 @@ namespace app\extensions\DefaultTheme\models;
 
 use app\traits\IdentityMap;
 use Yii;
+use yii\data\ActiveDataProvider;
 use \devgroup\TagDependencyHelper\ActiveRecordHelper;
 
 /**
@@ -20,6 +21,7 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
  * @property integer $cache_lifetime
  * @property string $cache_tags
  * @property integer $cache_vary_by_session
+ * @property ThemeWidgetApplying $applying
  */
 class ThemeWidgets extends \yii\db\ActiveRecord
 {
@@ -67,19 +69,51 @@ class ThemeWidgets extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
             'widget' => Yii::t('app', 'Widget'),
-            'preview_image' => Yii::t('app', 'Preview Image'),
-            'configuration_model' => Yii::t('app', 'Configuration Model'),
-            'configuration_view' => Yii::t('app', 'Configuration View'),
-            'configuration_json' => Yii::t('app', 'Configuration Json'),
-            'is_cacheable' => Yii::t('app', 'Is Cacheable'),
-            'cache_lifetime' => Yii::t('app', 'Cache Lifetime'),
-            'cache_tags' => Yii::t('app', 'Cache Tags'),
-            'cache_vary_by_session' => Yii::t('app', 'Cache Vary By Session'),
+            'preview_image' => Yii::t('app', 'Preview image'),
+            'configuration_model' => Yii::t('app', 'Configuration model'),
+            'configuration_view' => Yii::t('app', 'Configuration view'),
+            'configuration_json' => Yii::t('app', 'Configuration JSON'),
+            'is_cacheable' => Yii::t('app', 'Is cacheable'),
+            'cache_lifetime' => Yii::t('app', 'Cache lifetime'),
+            'cache_tags' => Yii::t('app', 'Cache tags'),
+            'cache_vary_by_session' => Yii::t('app', 'Cache vary by session'),
         ];
     }
 
+    /**
+     * Relation to ThemeWidgetApplying
+     * @return \yii\db\ActiveQuery
+     */
     public function getApplying()
     {
         return $this->hasMany(ThemeWidgetApplying::className(), ['widget_id' => 'id']);
+    }
+
+    /**
+     * Search
+     * @param $params
+     * @return ActiveDataProvider
+     */
+    public function search($params)
+    {
+        /* @var $query \yii\db\ActiveQuery */
+        $query = self::find();
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+            ]
+        );
+        if (!($this->load($params))) {
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['id' => $this->id]);
+        $query->andFilterWhere(['is_cacheable' => $this->is_cacheable]);
+        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'widget', $this->widget]);
+        $query->andFilterWhere(['like', 'cache_tags', $this->cache_tags]);
+        $query->andFilterWhere(['cache_vary_by_session', $this->cache_vary_by_session]);
+        $query->andFilterWhere(['cache_lifetime', $this->cache_lifetime]);
+
+        return $dataProvider;
     }
 }

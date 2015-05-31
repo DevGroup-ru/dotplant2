@@ -19,7 +19,7 @@ class m150514_114054_alterReview extends Migration
         /** @var PropertyHandler $propertyHandler */
         $propertyHandler = PropertyHandler::findOne(
             [
-                'handler_class_name' => '\app\properties\handlers\text\TextProperty',
+                'name'=>'Text'
             ]
         );
         $this->addColumn(Review::tableName(), 'submission_id', 'INT UNSIGNED NOT NULL');
@@ -27,7 +27,7 @@ class m150514_114054_alterReview extends Migration
         $form->name = 'Review form';
         $form->email_notification_addresses = '';
         $form->email_notification_view = '@app/modules/review/views/review-email-template.php';
-        $form->save(true, ['name', 'email_notification_addresses', 'email_notification_view']);
+        $form->save(false, ['name', 'email_notification_addresses', 'email_notification_view']);
         $propertyGroup = new PropertyGroup;
         $propertyGroup->attributes = [
             'object_id' => $form->object->id,
@@ -68,7 +68,7 @@ class m150514_114054_alterReview extends Migration
             $submission->form_id = $form->id;
             $submission->processed_by_user_id = $review->author_user_id;
             $submission->date_received = $review->date_submitted;
-            $submission->save(true, ['form_id', 'processed_by_user_id', 'date_received']);
+            $submission->save(false, ['form_id', 'processed_by_user_id', 'date_received']);
             $review->submission_id = $this->db->lastInsertID;
             $review->save(true, ['submission_id']);
             $this->insert(

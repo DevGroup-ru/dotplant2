@@ -23,6 +23,9 @@ abstract class BaseWidget extends Widget
     /** @var ThemeWidgets model */
     public $themeWidgetModel = null;
 
+    /** @var array ThemePart model as array where we are rendering */
+    public $partRow = null;
+
     /** @var bool Use font-awesome or icon-* icons*/
     public $useFontAwesome = true;
 
@@ -72,7 +75,9 @@ abstract class BaseWidget extends Widget
                 return $cachedResult;
             }
         }
+        Yii::beginProfile('Widget run: '.get_class($this));
         $result = $this->widgetRun();
+        Yii::endProfile('Widget run: '.get_class($this));
         if ($this->shouldCache()) {
             Yii::$app->cache->set(
                 $this->getCacheKey(),
@@ -127,6 +132,8 @@ abstract class BaseWidget extends Widget
     {
         $params['useFontAwesome'] = $this->useFontAwesome;
         $params['theme'] = $this->getThemeModule();
+        $params['partRow'] = $this->partRow;
+        $params['isInSidebar'] = $this->getIsInSidebar();
         return parent::render($view, $params);
     }
 
@@ -136,5 +143,13 @@ abstract class BaseWidget extends Widget
     protected function getThemeModule()
     {
         return Yii::$app->getModule('DefaultTheme');
+    }
+
+    /**
+     * @return bool if we are rendering in sidebar
+     */
+    protected function getIsInSidebar()
+    {
+        return mb_strpos($this->partRow['key'], 'sidebar') !== false;
     }
 }
