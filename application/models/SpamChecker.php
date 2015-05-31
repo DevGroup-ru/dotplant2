@@ -142,6 +142,9 @@ class SpamChecker extends \yii\db\ActiveRecord
         return ArrayHelper::map($config->children, 'id', 'name');
     }
 
+    /**
+     * @return SpamChecker
+     */
     public static function getActive()
     {
         return static::findOne(static::getEnabledApiId());

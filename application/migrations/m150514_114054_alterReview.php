@@ -26,7 +26,8 @@ class m150514_114054_alterReview extends Migration
         $form = new \app\models\Form;
         $form->name = 'Review form';
         $form->email_notification_addresses = '';
-        $form->save(true, ['name', 'email_notification_addresses']);
+        $form->email_notification_view = '@app/modules/review/views/review-email-template.php';
+        $form->save(true, ['name', 'email_notification_addresses', 'email_notification_view']);
         $propertyGroup = new PropertyGroup;
         $propertyGroup->attributes = [
             'object_id' => $form->object->id,

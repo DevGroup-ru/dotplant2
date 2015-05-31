@@ -2,14 +2,10 @@
 
 namespace app\modules\review\models;
 
-use app\backgroundtasks\traits\SearchModelTrait;
-use app\models\Object;
-use app\modules\page\models\Page;
-use app\modules\user\models\User;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use app\models\Submission;
 use yii\caching\TagDependency;
-use yii\data\ActiveDataProvider;
 use app\properties\HasProperties;
 use yii\db\ActiveQuery;
 
@@ -21,11 +17,11 @@ use yii\db\ActiveQuery;
  * @property integer $object_model_id
  * @property integer $status
  * @property string $rating_id
+ * @property string $author_email
+ * @property string $review_text
  */
 class Review extends \yii\db\ActiveRecord
 {
-    use SearchModelTrait;
-
     const STATUS_NEW = 'NEW';
     const STATUS_APPROVED = 'APPROVED';
     const STATUS_NOT_APPROVED = 'NOT APPROVED';
@@ -93,7 +89,7 @@ class Review extends \yii\db\ActiveRecord
     {
         return [
             [
-                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+                'class' => ActiveRecordHelper::className(),
             ],
             [
                 'class' => HasProperties::className(),
@@ -104,9 +100,9 @@ class Review extends \yii\db\ActiveRecord
     public static function getStatuses()
     {
         return [
-            self::STATUS_NEW => 'new',
-            self::STATUS_APPROVED => 'approved',
-            self::STATUS_NOT_APPROVED => 'not approved',
+            self::STATUS_NEW => Yii::t('app', 'New'),
+            self::STATUS_APPROVED => Yii::t('app', 'Approved'),
+            self::STATUS_NOT_APPROVED => Yii::t('app', 'Not approved'),
         ];
     }
 
@@ -116,14 +112,14 @@ class Review extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' =>Yii::t('app', 'ID'),
+            'id' => Yii::t('app', 'ID'),
             'submission_id' => Yii::t('app', 'Submission ID'),
             'object_id' => Yii::t('app', 'Object ID'),
             'object_model_id' => Yii::t('app', 'Object Model ID'),
             'author_email' => Yii::t('app', 'Author email'),
             'review_text' => Yii::t('app', 'Review text'),
             'status' => Yii::t('app', 'Status'),
-            'rating_id' => 'Rating id',
+            'rating_id' => Yii::t('app', 'Rating ID'),
         ];
     }
 
@@ -169,7 +165,7 @@ class Review extends \yii\db\ActiveRecord
                     new TagDependency(
                         [
                             'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(Review::className()),
+                                ActiveRecordHelper::getCommonTag(Review::className()),
                             ],
                         ]
                     )
@@ -177,79 +173,5 @@ class Review extends \yii\db\ActiveRecord
             }
         }
         return $models;
-    }
-
-    public function search($params)
-    {
-        /* @var $query \yii\db\ActiveQuery */
-        $query = self::find();
-        $query->joinWith('submission');
-        $dataProvider = new ActiveDataProvider(
-            [
-              'query' => $query,
-              'pagination' => [
-                  'pageSize' => 10,
-              ],
-              'sort' => ['defaultOrder' => ['submission_id' => SORT_DESC]]
-            ]
-        );
-        if (!($this->load($params) && $this->validate())) {
-            return $dataProvider;
-        }
-        $this->addCondition($query, $this->tableName(), 'author_email');
-        $this->addCondition($query, $this->tableName(), 'review_text');
-        return $dataProvider;
-    }
-
-
-
-    public function ss($params)
-    {
-        /* @var $query \yii\db\ActiveQuery */
-        $query = self::find();
-        $query->joinWith('user');
-        $object = Object::getForClass(Page::className());
-        $query->andWhere(['object_id' => $object->id]);
-        $query->joinWith('page');
-        $dataProvider = new ActiveDataProvider(
-            [
-                'query' => $query,
-                'pagination' => [
-                    'pageSize' => 10,
-                ],
-                'sort'=> ['defaultOrder' => ['id'=>SORT_DESC]]
-            ]
-        );
-        $dataProvider->sort->attributes['username'] = [
-            'asc' => [User::tableName() . '.username' => SORT_ASC],
-            'desc' => [\app\modules\user\models\User::tableName() . '.username' => SORT_DESC],
-        ];
-        $dataProvider->sort->attributes['name'] = [
-            'asc' => [Page::tableName() . '.name' => SORT_ASC],
-            'desc' => [Page::tableName() . '.name' => SORT_DESC],
-        ];
-        $dataProvider->sort->attributes['slug'] = [
-            'asc' => [Page::tableName() . '.slug' => SORT_ASC],
-            'desc' => [Page::tableName() . '.slug' => SORT_DESC],
-        ];
-        $dataProvider->sort->attributes['slug_compiled'] = [
-            'asc' => [Page::tableName() . '.slug_compiled' => SORT_ASC],
-            'desc' => [Page::tableName() . '.slug_compiled' => SORT_DESC],
-        ];
-        if (!($this->load($params) && $this->validate())) {
-            return $dataProvider;
-        }
-        $this->addCondition($query, $this->tableName(), 'object_id');
-        $this->addCondition($query, Page::tableName(), 'name', true);
-        $this->addCondition($query, Page::tableName(), 'slug', true);
-        $this->addCondition($query, Page::tableName(), 'slug_compiled', true);
-        $this->addCondition($query, \app\modules\user\models\User::tableName(), 'username', true);
-        $this->addCondition($query, $this->tableName(), 'author_name', true);
-        $this->addCondition($query, $this->tableName(), 'author_email', true);
-        $this->addCondition($query, $this->tableName(), 'author_phone', true);
-        $this->addCondition($query, $this->tableName(), 'status');
-        $this->addCondition($query, $this->tableName(), 'text', true);
-        $this->addCondition($query, $this->tableName(), 'rate');
-        return $dataProvider;
     }
 }

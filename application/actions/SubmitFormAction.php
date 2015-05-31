@@ -2,7 +2,6 @@
 
 namespace app\actions;
 
-
 use app\behaviors\spamchecker\SpamCheckerBehavior;
 use app\models\Config;
 use app\models\Form;
@@ -135,7 +134,9 @@ class SubmitFormAction extends Action
         if ($haveSpam === false) {
             if (!empty($form->email_notification_addresses)) {
                 try {
-                    $emailView = !empty($form->email_notification_view) ? $form->email_notification_view : '@app/widgets/form/views/email-template.php';
+                    $emailView = !empty($form->email_notification_view)
+                        ? $form->email_notification_view
+                        :'@app/widgets/form/views/email-template.php';
                     Yii::$app->mail->compose(
                         $emailView,
                         [
