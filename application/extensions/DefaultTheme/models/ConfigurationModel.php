@@ -5,10 +5,20 @@ namespace app\extensions\DefaultTheme\models;
 use app;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 
 class ConfigurationModel extends app\models\BaseThemeConfigurationModel
 {
+    public $primary_color = '#2980b9';
+    public $secondary_color = '#27ae60';
+    public $action_color = '#d1404a';
 
+    public $logotypePath = 'http://placehold.it/100x60/bada55/fff&text=MyShop';
+
+    public $logotypeFile = null;
+
+    public $siteName = 'My Awesome DotPlant2 Shop';
+    public $primaryEmail = 'noreply@dotplant.ru';
 
     /**
      * @inheritdoc
@@ -16,7 +26,29 @@ class ConfigurationModel extends app\models\BaseThemeConfigurationModel
     public function rules()
     {
         return [
-
+            [
+                [
+                    'primary_color',
+                    'secondary_color',
+                    'action_color',
+                    'logotypePath',
+                    'siteName',
+                ],
+                'string',
+            ],
+            [
+                [
+                    'primaryEmail',
+                ],
+                'email',
+            ],
+            [
+                [
+                    'logotypeFile',
+                ],
+                'file',
+                'extensions' => ['png', 'jpg', 'gif'],
+            ]
         ];
     }
 
@@ -29,7 +61,7 @@ class ConfigurationModel extends app\models\BaseThemeConfigurationModel
         /** @var app\extensions\DefaultTheme\Module $module */
         $module = Yii::$app->modules['DefaultTheme'];
 
-        $attributes = array_keys($this->getAttributes());
+        $attributes = array_keys($this->getAttributes(null, ['logotypeFile']));
         foreach ($attributes as $attribute) {
             $this->{$attribute} = $module->{$attribute};
         }
@@ -50,7 +82,7 @@ class ConfigurationModel extends app\models\BaseThemeConfigurationModel
                     [
                         'class' => $this->getModuleInstance()->className(),
                     ],
-                    $this->getAttributes()
+                    $this->getAttributes(null, ['logotypeFile'])
                 )
             ]
         ];
@@ -107,5 +139,36 @@ class ConfigurationModel extends app\models\BaseThemeConfigurationModel
 
         return [];
 
+    }
+
+    /**
+     * Override base init function to add event handler that will handle auth clients during configuration editing
+     */
+    public function init()
+    {
+        parent::init();
+        $this->on(self::configurationSaveEvent(), function($event) {
+            /** @var ConfigurationModel $model */
+            $model = $event->configurableModel;
+
+            $uploadedFile= UploadedFile::getInstance($model, 'logotypeFile');
+            if (is_object($uploadedFile)) {
+
+
+                if ($model->validate('logotypeFile')) {
+                    $fn = $uploadedFile->getBaseName() . $uploadedFile->extension;
+                    if ($uploadedFile->saveAs(
+                        Yii::getAlias('@app/web/upload/') . $fn
+                    )
+                    ) {
+                        $model->logotypePath = '/upload/' . $fn;
+                    }
+                }
+            } else {
+//                var_dump($uploadedFile, $_FILES);
+//                die();
+            }
+
+        });
     }
 }

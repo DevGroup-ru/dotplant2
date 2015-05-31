@@ -10,6 +10,13 @@ use app\components\ThemeModule;
  */
 class Module extends ThemeModule
 {
+    public $primary_color = '#2980b9';
+    public $secondary_color = '#27ae60';
+    public $action_color = '#d1404a';
+    public $logotypePath = 'http://placehold.it/100x60/bada55/fff&text=MyShop';
+    public $siteName = 'My Awesome DotPlant2 Shop';
+    public $primaryEmail = 'noreply@dotplant.ru';
+
     public $controllerMap = [
         'backend-configuration' => 'app\extensions\DefaultTheme\backend\ConfigurationController',
     ];
