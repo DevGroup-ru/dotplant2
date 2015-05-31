@@ -23,41 +23,41 @@ class BaseOrderStageHandlers
 
         if (\Yii::$app->request->isPost) {
             $order = Order::getOrder();
-            if (empty($order)) {
+            if (empty($order) || !$order->load(\Yii::$app->request->post())) {
                 return null;
             }
             /** @var Customer $customer */
-            $customer = !empty($order->customer) ? $order->customer :
-                (!empty(Customer::getCustomerByUserId($order->user_id)) ? Customer::getCustomerByUserId($order->user_id) : Customer::createEmptyCustomer($order->user_id));
+            $customer = !empty($order->customer)
+                ? $order->customer
+                : (!empty(Customer::getCustomerByUserId($order->user_id))
+                    ? Customer::getCustomerByUserId($order->user_id)
+                    : Customer::createEmptyCustomer($order->user_id)
+                );
 
             $data = \Yii::$app->request->post();
             $isNewCustomer = $customer->isNewRecord;
             if ($customer->load(\Yii::$app->request->post()) && $customer->save()) {
-                if ($isNewCustomer) {
-                    $customer->refresh();
-                    $customer->addPropertyGroup($customer->getPropertyGroup()->id);
+                if ($isNewCustomer && !empty($customer->getPropertyGroup())) {
+                    $customer->getPropertyGroup()->appendToObjectModel($customer);
                     $data[$customer->getAbstractModel()->formName()] = isset($data['CustomerNew']) ? $data['CustomerNew'] : [];
                 }
-                $customer->saveProperties($data);
-                $customer->invalidateTags();
+                $customer->saveModelWithProperties($data);
             } else {
                 return null;
             }
 
-            if (0 === intval(\Yii::$app->request->post('ContragentId', 0))) {
-                /** @var Contragent $contragent */
-                $contragent = Contragent::createEmptyContragent($customer);
-                if ($contragent->load(\Yii::$app->request->post()) && $contragent->save()) {
-                    $contragent->addPropertyGroup($contragent->getPropertyGroup()->id);
+            /** @var Contragent $contragent */
+            $contragent = !empty($order->contragent)
+                ? $order->contragent
+                : Contragent::createEmptyContragent($customer);
+
+            $isNewContragent = $contragent->isNewRecord;
+            if ($contragent->load(\Yii::$app->request->post()) && $contragent->save()) {
+                if ($isNewContragent && !empty($contragent->getPropertyGroup())) {
+                    $contragent->getPropertyGroup()->appendToObjectModel($contragent);
                     $data[$contragent->getAbstractModel()->formName()] = isset($data['ContragentNew']) ? $data['ContragentNew'] : [];
-                    $contragent->saveProperties($data);
-                    $contragent->invalidateTags();
-                    $contragent->refresh();
-                } else {
-                    return null;
                 }
-            } elseif (!empty($customer->getContragentById(\Yii::$app->request->post('ContragentId')))) {
-                $contragent = $customer->getContragentById(\Yii::$app->request->post('ContragentId'));
+                $contragent->saveModelWithProperties($data);
             } else {
                 return null;
             }
@@ -147,15 +147,26 @@ class BaseOrderStageHandlers
 
     public static function handleStageCustomer(OrderStageEvent $event)
     {
-        $order = Order::getOrder();
+        $order = $event->eventData()['order'];
         /** @var Customer $customer */
-        $customer = !empty($order->customer) ? $order->customer :
-            (!empty(Customer::getCustomerByUserId($order->user_id)) ? Customer::getCustomerByUserId($order->user_id) : Customer::createEmptyCustomer($order->user_id));
+        $customer = !empty($order->customer)
+            ? $order->customer
+            : (!empty(Customer::getCustomerByUserId($order->user_id))
+                ? Customer::getCustomerByUserId($order->user_id)
+                : Customer::createEmptyCustomer($order->user_id)
+            );
 
         /** @var Contragent[] $contragents */
-        $contragents = $customer->contragents;
+        $contragents = array_reduce($customer->contragents,
+            function ($result, $item) use ($customer)
+            {
+                /** @var \app\modules\shop\models\Contragent $item */
+                $result[$item->id] = $item;
+                return $result;
+            }, [0 => \app\modules\shop\models\Contragent::createEmptyContragent($customer)]
+        );
 
-        $event->setEventData([
+        $event->addEventData([
             'user_id' => $order->user_id,
             'customer' => $customer,
             'contragents' => $contragents,
@@ -165,13 +176,13 @@ class BaseOrderStageHandlers
     public static function handleStagePayment(OrderStageEvent $event)
     {
         /** @var Order $order */
-        $order = Order::getOrder();
+        $order = $event->eventData()['order'];
         $order->calculate();
 
         /** @var PaymentType[] $paymentTypes */
         $paymentTypes = PaymentType::getPaymentTypes();
 
-        $event->setEventData([
+        $event->addEventData([
             'paymentTypes' => $paymentTypes,
             'totalPayment' => $order->total_price,
         ]);
@@ -180,17 +191,21 @@ class BaseOrderStageHandlers
     public static function handleStageDelivery(OrderStageEvent $event)
     {
         /** @var Order $order */
-        $order = Order::getOrder();
+        $order = $event->eventData()['order'];
         /** @var Contragent $contragent */
         $contragent = $order->contragent;
 
         /** @var DeliveryInformation $deliveryInformation */
-        $deliveryInformation = !empty($contragent->deliveryInformation) ? $contragent->deliveryInformation : DeliveryInformation::createNewDeliveryInformation($contragent);
+        $deliveryInformation = !empty($contragent->deliveryInformation)
+            ? $contragent->deliveryInformation
+            : DeliveryInformation::createNewDeliveryInformation($contragent);
 
         /** @var OrderDeliveryInformation $orderDeliveryInformation */
-        $orderDeliveryInformation = !empty($order->orderDeliveryInformation) ? $order->orderDeliveryInformation : OrderDeliveryInformation::createNewOrderDeliveryInformation($order);
+        $orderDeliveryInformation = !empty($order->orderDeliveryInformation)
+            ? $order->orderDeliveryInformation
+            : OrderDeliveryInformation::createNewOrderDeliveryInformation($order);
 
-        $event->setEventData([
+        $event->addEventData([
             'deliveryInformation' => $deliveryInformation,
             'orderDeliveryInformation' => $orderDeliveryInformation,
         ]);
@@ -199,13 +214,14 @@ class BaseOrderStageHandlers
     public static function handleStagePaymentPay(OrderStageEvent $event)
     {
         /** @var Order $order */
-        $order = Order::getOrder();
+        $order = $event->eventData()['order'];
 
         $paymentType = !empty($order->paymentType) ? $order->paymentType : null;
-        $orderTransaction = !empty(OrderTransaction::findLastByOrder($order)) ? OrderTransaction::findLastByOrder($order) : OrderTransaction::createForOrder($order);
+        $orderTransaction = !empty(OrderTransaction::findLastByOrder($order))
+            ? OrderTransaction::findLastByOrder($order)
+            : OrderTransaction::createForOrder($order);
 
-        $event->setEventData([
-            'order' => $order,
+        $event->addEventData([
             'orderTransaction' => $orderTransaction,
             'paymentType' => $paymentType,
         ]);

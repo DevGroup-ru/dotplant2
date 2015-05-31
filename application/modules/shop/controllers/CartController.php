@@ -295,13 +295,13 @@ class CartController extends Controller
     public function actionStage()
     {
         $order = $this->loadOrder(false, false);
-        if (empty($order) || empty($order->stage) || 1 === intval($order->stage->immutable_by_user)) {
+        if (empty($order) || $order->getImmutability(Order::IMMUTABLE_USER)) {
             return $this->redirect(Url::to(['index']));
         }
 
         /** @var OrderStage $orderStage */
         $orderStage = $order->stage;
-        $eventData = [];
+        $eventData = ['order' => $order];
 
 //        if (null !== Yii::$app->session->get('OrderStageReach')) {
         /** @var Events $eventClass */
@@ -309,6 +309,7 @@ class CartController extends Controller
         if (!empty($eventClass) && is_subclass_of($eventClass->event_class_name, OrderStageEvent::className())) {
             /** @var OrderStageEvent $event */
             $event = new $eventClass->event_class_name;
+            $event->setEventData($eventData);
             EventTriggeringHelper::triggerSpecialEvent($event);
             $eventData = $event->eventData();
         }
@@ -359,7 +360,9 @@ class CartController extends Controller
                 $event = new $eventClassName->event_class_name;
                 EventTriggeringHelper::triggerSpecialEvent($event);
                 if ($event->getStatus()) {
-                    $order->order_stage_id = $order->order_stage_id == $orderStageLeaf->stage_to_id ? $orderStageLeaf->stage_from_id : $orderStageLeaf->stage_to_id;
+                    $order->order_stage_id = $order->order_stage_id == $orderStageLeaf->stage_to_id
+                        ? $orderStageLeaf->stage_from_id
+                        : $orderStageLeaf->stage_to_id;
                     $order->save();
 
                     Yii::$app->session->set('OrderStageReach', true);

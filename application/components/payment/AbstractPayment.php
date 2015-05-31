@@ -2,34 +2,50 @@
 
 namespace app\components\payment;
 
-use app\models\Order;
-use app\models\OrderTransaction;
+use app\modules\shop\models\Order;
+use app\modules\shop\models\OrderTransaction;
 use yii\base\Widget;
+use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 
 abstract class AbstractPayment extends Widget
 {
+    /** @property Order $order*/
+    public $order;
+    /** @property OrderTransaction $transaction*/
+    public $transaction;
+
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+
+        if (!$this->transaction instanceof OrderTransaction) {
+            $this->transaction = new OrderTransaction();
+        }
+    }
+
     /**
-     * @param Order $order
-     * @param OrderTransaction $transaction
      * @return string
      */
-    abstract public function content($order, $transaction);
+    abstract public function content();
 
-    abstract public function checkResult();
+    /**
+     * @return mixed
+     */
+    abstract public function checkResult($hash = '');
 
     /**
      * @param bool $success
      * @param integer|null $orderId
      */
-    protected function redirect($success, $orderId = null)
-    {
-        $url = ['/cart/payment-' . ($success ? 'success' : 'error')];
-        if (!is_null($orderId)) {
-            $url['id'] = $orderId;
-        }
-        \Yii::$app->response->redirect($url);
-    }
+//    protected function redirect($success, $orderId = null)
+//    {
+//        $url = ['/shop/payment/' . ($success ? 'success' : 'error')];
+//        if (!is_null($orderId)) {
+//            $url['id'] = $orderId;
+//        }
+//        \Yii::$app->response->redirect($url);
+//    }
 
     /**
      * @param integer $id
@@ -38,19 +54,69 @@ abstract class AbstractPayment extends Widget
      */
     protected function loadTransaction($id)
     {
-        $model = OrderTransaction::findOne($id);
-        if (is_null($model)) {
-            throw new NotFoundHttpException;
+        if (null === $model = OrderTransaction::findOne($id)) {
+            throw new NotFoundHttpException();
         }
-        return $model;
+        return $this->transaction = $model;
     }
 
-    public function __construct($params)
+    protected function createResultUrl(array $params = [], $scheme = true)
     {
-        if (is_array($params)) {
-            foreach ($params as $key => $value) {
-                $this->$key = $value;
-            }
-        }
+        $result = [
+            '/shop/payment/result',
+            'othash' => $this->transaction->generateHash(),
+        ];
+        $params = array_merge($result, $params);
+        return Url::toRoute($params, boolval($scheme));
+    }
+
+    protected function createErrorUrl(array $params = [], $scheme = true)
+    {
+        $result = [
+            '/shop/payment/error',
+            'othash' => $this->transaction->generateHash(),
+        ];
+        $params = array_merge($result, $params);
+        return Url::toRoute($params, boolval($scheme));
+
+    }
+
+    protected function createSuccessUrl(array $params = [], $scheme = true)
+    {
+        $result = [
+            '/shop/payment/success',
+            'othash' => $this->transaction->generateHash(),
+        ];
+        $params = array_merge($result, $params);
+        return Url::toRoute($params, boolval($scheme));
+
+    }
+
+    protected function createFailUrl(array $params = [], $scheme = true)
+    {
+        $result = [
+            '/shop/payment/fail',
+            'othash' => $this->transaction->generateHash(),
+        ];
+        $params = array_merge($result, $params);
+        return Url::toRoute($params, boolval($scheme));
+
+    }
+
+    protected function createCancelUrl(array $params = [], $scheme = true)
+    {
+        $result = [
+            '/shop/payment/cancel',
+            'othash' => $this->transaction->generateHash(),
+        ];
+        $params = array_merge($result, $params);
+        return Url::toRoute($params, boolval($scheme));
+
+    }
+
+    protected function redirect($url = '')
+    {
+        return \Yii::$app->response->redirect($url);
     }
 }
+?>

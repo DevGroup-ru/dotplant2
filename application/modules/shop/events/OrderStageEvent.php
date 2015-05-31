@@ -16,9 +16,14 @@ class OrderStageEvent extends SpecialEvent
         return $this->eventData;
     }
 
-    public function setEventData($eventData)
+    public function setEventData(array $eventData)
     {
-        $this->eventData = is_array($eventData) ? $eventData : [$eventData];
+        $this->eventData = $eventData;
+    }
+
+    public function addEventData(array $eventData)
+    {
+        $this->eventData = array_merge($this->eventData, $eventData);
     }
 }
 ?>

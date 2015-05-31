@@ -207,14 +207,14 @@ if ($sum_transactions < $model->total_price):
                 ]
             );
             /** @var \app\modules\shop\models\Customer $customer */
-            $model = $model->customer;
-            echo $form->field($model, 'first_name');
-            echo $form->field($model, 'middle_name');
-            echo $form->field($model, 'last_name');
-            echo $form->field($model, 'email');
-            echo $form->field($model, 'phone');
+            $customer = $model->customer;
+            echo $form->field($customer, 'first_name');
+            echo $form->field($customer, 'middle_name');
+            echo $form->field($customer, 'last_name');
+            echo $form->field($customer, 'email');
+            echo $form->field($customer, 'phone');
             /** @var \app\properties\AbstractModel $abstractModel */
-            $abstractModel = $model->getAbstractModel();
+            $abstractModel = $customer->getAbstractModel();
             $abstractModel->setArrayMode(false);
             foreach ($abstractModel->attributes() as $attr) {
                 echo $form->field($abstractModel, $attr);
@@ -229,13 +229,14 @@ if ($sum_transactions < $model->total_price):
                     'title' => Yii::t('app', 'Contragent'),
                 ]
             );
-            $contragents = array_reduce($model->contragents,
-                function ($result, $item)
+            $contragents = array_reduce($customer->contragents,
+                function ($result, $item) use ($customer)
                 {
                     /** @var \app\modules\shop\models\Contragent $item */
                     $result[$item->id] = $item;
                     return $result;
-                }, [0 => \app\modules\shop\models\Contragent::createEmptyContragent($model)]);
+                }, [0 => \app\modules\shop\models\Contragent::createEmptyContragent($customer)]
+            );
 
             echo $form->field($model, 'contragent_id')->dropDownList(array_reduce($contragents,
                 function ($result, $item)
@@ -255,7 +256,8 @@ if ($sum_transactions < $model->total_price):
             <?php
                 foreach ($contragents as $key => $contragent) {
                     /** @var \app\modules\shop\models\Contragent $contragent */
-                    $_content = $form->field($contragent, 'type')->dropDownList(['Individual' => 'Individual', 'Self-employed' => 'Self-employed', 'Legal entity' => 'Legal entity']);
+                    $_content = $form->field($contragent, 'type')
+                        ->dropDownList(['Individual' => 'Individual', 'Self-employed' => 'Self-employed', 'Legal entity' => 'Legal entity']);
                     /** @var \app\properties\AbstractModel $abstractModel */
                     $abstractModel = $contragent->getAbstractModel();
                     $abstractModel->setArrayMode(false);
@@ -264,10 +266,16 @@ if ($sum_transactions < $model->total_price):
                     }
 
                     $_content .= Html::tag('h5', Yii::t('app', 'Delivery information'));
-                    $deliveryInformation = !empty($contragent->deliveryInformation) ? $contragent->deliveryInformation :
-                        ($contragent->isNewRecord ? \app\modules\shop\models\DeliveryInformation::createNewDeliveryInformation($contragent) : \app\modules\shop\models\DeliveryInformation::createNewDeliveryInformation($contragent, false));
-                    $_content .= $form->field($deliveryInformation, 'country_id')->dropDownList(\app\components\Helper::getModelMap(\app\models\Country::className(), 'id', 'name'));
-                    $_content .= $form->field($deliveryInformation, 'city_id')->dropDownList(\app\components\Helper::getModelMap(\app\models\City::className(), 'id', 'name'));
+                    $deliveryInformation = !empty($contragent->deliveryInformation)
+                        ? $contragent->deliveryInformation
+                        : ($contragent->isNewRecord
+                            ? \app\modules\shop\models\DeliveryInformation::createNewDeliveryInformation($contragent)
+                            : \app\modules\shop\models\DeliveryInformation::createNewDeliveryInformation($contragent, false)
+                        );
+                    $_content .= $form->field($deliveryInformation, 'country_id')
+                        ->dropDownList(\app\components\Helper::getModelMap(\app\models\Country::className(), 'id', 'name'));
+                    $_content .= $form->field($deliveryInformation, 'city_id')
+                        ->dropDownList(\app\components\Helper::getModelMap(\app\models\City::className(), 'id', 'name'));
                     $_content .= $form->field($deliveryInformation, 'zip_code');
                     $_content .= $form->field($deliveryInformation, 'address');
 

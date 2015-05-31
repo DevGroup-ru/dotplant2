@@ -7,6 +7,7 @@ use app\models\PropertyGroup;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use app\properties\PropertyValue;
+use app\properties\traits\PropertyTrait;
 use Yii;
 
 /**
@@ -26,6 +27,8 @@ use Yii;
  */
 class OrderDeliveryInformation extends \yii\db\ActiveRecord
 {
+    use PropertyTrait;
+
     /** @var PropertyGroup $propertyGroup */
     protected $propertyGroup = null;
 

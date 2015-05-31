@@ -443,6 +443,22 @@ class Order extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+
+        $stage = $this->stage;
+        $this->temporary = 1 === intval($stage->become_non_temporary) ? 0 : 1;
+
+        return true;
+    }
+
+    /**
      * @param integer|null $checkWith
      * @return int
      */

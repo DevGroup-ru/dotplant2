@@ -6,7 +6,11 @@
 
 use app\modules\shop\helpers\OrderStageHelper;
 use yii\helpers\Html;
+
+    $this->title = Html::encode($stage->name_frontend);
 ?>
+
+<h1><?= Html::encode($stage->name_frontend); ?></h1>
 
 <?php
     $form = \yii\bootstrap\ActiveForm::begin([

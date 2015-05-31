@@ -91,7 +91,7 @@ class OrderTransaction extends ActiveRecord
     }
 
     /**
-     * @return PaymentType
+     * @return PaymentType|null
      */
     public function getPaymentType()
     {
@@ -115,17 +115,6 @@ class OrderTransaction extends ActiveRecord
         }
         $this->end_date = new Expression('NOW()');
         return true;
-    }
-
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-        if (isset($changedAttributes['status']) && $changedAttributes['status'] == 1
-            && $this->status == self::TRANSACTION_SUCCESS
-        ) {
-            $this->order->order_status_id = 3;
-            $this->order->save(true, ['order_status_id']);
-        }
     }
 
     public static function findLastByOrder(Order $order)
@@ -163,6 +152,20 @@ class OrderTransaction extends ActiveRecord
     {
         return !isset($this->statusTransaction[$this->status]) ? '' :
             ($asLiteral ? Yii::t('app', $this->statusTransaction[$this->status]) : $this->status);
+    }
+
+    public function generateHash()
+    {
+        if (empty($this->order)) {
+            return null;
+        }
+        $hash = md5($this->order->hash . $this->id . $this->payment_type_id);
+        return substr($hash, 0, 8);
+    }
+
+    public function checkHash($hash = '')
+    {
+        return $hash === $this->generateHash();
     }
 }
 ?>

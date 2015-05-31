@@ -12,7 +12,7 @@
     <div class="row">
         <?php
             if (!empty($paymentType)) {
-                echo $paymentType->payment->content($order, $orderTransaction);
+                echo $paymentType->getPayment($order, $orderTransaction)->content();
             }
         ?>
     </div>

@@ -2,7 +2,7 @@
 
 namespace app\components\payment;
 
-use app\models\OrderTransaction;
+use app\modules\shop\models\OrderTransaction;
 use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
@@ -27,7 +27,7 @@ class InterkassaPayment extends AbstractPayment
         return base64_encode(md5(implode(':', $data), true));
     }
 
-    public function content($order, $transaction)
+    public function content()
     {
         return $this->render(
             'interkassa',
@@ -35,35 +35,39 @@ class InterkassaPayment extends AbstractPayment
                 'checkoutId' => $this->checkoutId,
                 'currency' => $this->currency,
                 'locale' => $this->locale,
-                'order' => $order,
-                'transaction' => $transaction,
+                'order' => $this->order,
+                'transaction' => $this->transaction,
+                'ik_suc_u' => $this->createResultUrl([
+                    'id' => $this->order->payment_type_id,
+                    'transactionId' => $this->transaction->id,
+                ]),
+                'ik_fal_u' => $this->createFailUrl([
+                    'id' => $this->order->payment_type_id,
+                ])
             ]
         );
     }
 
-    public function checkResult()
+    public function checkResult($hash = '')
     {
-        if (isset(
-            $_GET['ik_co_id'],
-            $_GET['ik_pm_no'],
-            $_GET['ik_am'],
-            $_GET['ik_cur'],
-            $_GET['ik_act'],
-            $_GET['ik_inv_id'],
-            $_GET['ik_sign']
-        )) {
-            if ($this->getHash($_GET) == $_GET['ik_sign']) {
-                $transaction = $this->loadTransaction($_GET['ik_pm_no']);
-                $transaction->result_data = Json::encode($_GET);
-                $transaction->status = $_GET['ik_inv_st'] == 'success'
-                    ? OrderTransaction::TRANSACTION_SUCCESS
-                    : OrderTransaction::TRANSACTION_ERROR;
-                if (!$transaction->save(true, ['status', 'result_data'])) {
-                    throw new HttpException(500);
-                }
-            }
-        } else {
-            throw new BadRequestHttpException;
+        if (null === \Yii::$app->request->get('ik_sign')) {
+            throw new BadRequestHttpException();
         }
+        if ($this->getHash(\Yii::$app->request->get()) === \Yii::$app->request->get('ik_sign')) {
+            if (null === $transaction = $this->loadTransaction(\Yii::$app->request->get('ik_pm_no'))) {
+                throw new BadRequestHttpException();
+            }
+            $transaction->result_data = Json::encode(\Yii::$app->request->get());
+            $transaction->status = 'success' === \Yii::$app->request->get('ik_inv_st')
+                ? OrderTransaction::TRANSACTION_SUCCESS
+                : OrderTransaction::TRANSACTION_ERROR;
+            if (!$transaction->save(true, ['status', 'result_data'])) {
+                throw new HttpException(500);
+            } else {
+                return ;
+            }
+        }
+        throw new BadRequestHttpException();
     }
 }
+?>

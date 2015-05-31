@@ -22,6 +22,7 @@ use yii\helpers\Json;
  * @property integer $active
  * @property integer $payment_available
  * @property integer $sort
+ * Relations:
  * @property AbstractPayment $payment
  */
 class PaymentType extends ActiveRecord
@@ -89,21 +90,24 @@ class PaymentType extends ActiveRecord
      * @return AbstractPayment
      * @throws UnknownClassException
      */
-    public function getPayment()
+    public function getPayment(Order $order = null, OrderTransaction $transaction = null)
     {
-        if (is_null($this->payment)) {
-            $className = $this->class;
-            if (!class_exists($className)) {
-                throw new UnknownClassException;
-            }
-            try {
-                $params = Json::decode($this->params);
-            } catch (Exception $e) {
-                $params = [];
-            }
-            $this->payment = new $className($params);
+        if (null !== $this->payment) {
+            return $this->payment;
         }
-        return $this->payment;
+
+        $className = $this->class;
+        if (!class_exists($className)) {
+            throw new UnknownClassException();
+        }
+        try {
+            $params = Json::decode($this->params);
+        } catch (Exception $e) {
+            $params = [];
+        }
+        $params['order'] = $order;
+        $params['transaction'] = $transaction;
+        return $this->payment = new $className($params);
     }
 
     /**

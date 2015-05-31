@@ -149,8 +149,8 @@ class BackendOrderController extends BackendController
             $model->setScenario('backend');
             if ($model->load(Yii::$app->request->post())) {
                 $customer = $model->customer;
-                if ($customer->load(Yii::$app->request->post()) && $customer->save()) {
-                    $customer->saveProperties(Yii::$app->request->post());
+                if ($customer->load(Yii::$app->request->post())) {
+                    $customer->saveModelWithProperties(Yii::$app->request->post());
                     $model->customer_id = $customer->id;
                 }
 
@@ -163,20 +163,23 @@ class BackendOrderController extends BackendController
                             $contragent->getPropertyGroup()->appendToObjectModel($contragent);
                             $_data[$contragent->getAbstractModel()->formName()] = isset($_data['ContragentNew']) ? $_data['ContragentNew'] : [];
                         }
-                        $contragent->saveProperties($_data);
-                        $contragent->refresh();
+                        $contragent->saveModelWithProperties($_data);
                         $model->contragent_id = $contragent->id;
                     }
                 }
 
-                $deliveryInformation = !empty($contragent->deliveryInformation) ? $contragent->deliveryInformation : DeliveryInformation::createNewDeliveryInformation($contragent, false);
+                /** @var DeliveryInformation $deliveryInformation */
+                $deliveryInformation = !empty($contragent->deliveryInformation)
+                    ? $contragent->deliveryInformation
+                    : DeliveryInformation::createNewDeliveryInformation($contragent, false);
                 if ($deliveryInformation->load(Yii::$app->request->post())) {
                     $deliveryInformation->save();
                 }
 
+                /** @var OrderDeliveryInformation $orderDeliveryInformation */
                 $orderDeliveryInformation = $model->orderDeliveryInformation;
-                if ($orderDeliveryInformation->load(Yii::$app->request->post()) && $orderDeliveryInformation->save()) {
-                    $orderDeliveryInformation->saveProperties(Yii::$app->request->post());
+                if ($orderDeliveryInformation->load(Yii::$app->request->post())) {
+                    $orderDeliveryInformation->saveModelWithProperties(Yii::$app->request->post());
                 }
 
                 $model->save();

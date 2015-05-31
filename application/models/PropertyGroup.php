@@ -285,7 +285,10 @@ class PropertyGroup extends ActiveRecord
             $link->object_model_id = $model->$idAttribute;
             $link->property_group_id = $this->id;
 
-        return $link->save();
+        $result = $link->save();
+        $model->updatePropertyGroupsInformation();
+
+        return $result;
     }
 }
 ?>

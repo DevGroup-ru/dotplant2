@@ -2,6 +2,8 @@
 
 namespace app\modules\shop\controllers;
 
+use app\modules\shop\models\Contragent;
+use app\modules\shop\models\Customer;
 use app\modules\shop\models\Order;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -48,28 +50,31 @@ class CabinetController extends Controller
         $userId = \Yii::$app->user->isGuest ? 0 : \Yii::$app->user->id;
         $orderId = \Yii::$app->request->post('orderId');
         if (intval($orderId) <= 0) {
-            return $this->redirect(Url::previous('__shopOrderShowUrl'));
+            return $this->redirect(Url::previous('__shopCabinetUpdateReturnUrl'));
         }
         /** @var Order $order */
         if (null === $order = Order::findOne(['user_id' => $userId, 'id' => $orderId])) {
-            return $this->redirect(Url::previous('__shopOrderShowUrl'));
+            return $this->redirect(Url::previous('__shopCabinetUpdateReturnUrl'));
         }
 
-        if (!empty($order->customer)) {
-            $customer = $order->customer;
-            if ($customer->load(\Yii::$app->request->post())) {
-                $customer->saveModelWithProperties(\Yii::$app->request->post());
-            }
-        }
+        $this->updateCustomer($order->customer);
+        $this->updateContragent($order->contragent);
 
-        if (!empty($order->contragent)) {
-            $contragent = $order->contragent;
-            if ($contragent->load(\Yii::$app->request->post())) {
-                $contragent->saveModelWithProperties(\Yii::$app->request->post());
-            }
-        }
+        return $this->redirect(Url::previous('__shopCabinetUpdateReturnUrl'));
+    }
 
-        return $this->redirect(Url::previous('__shopOrderShowUrl'));
+    private function updateCustomer(Customer $customer)
+    {
+        if ($customer->load(\Yii::$app->request->post())) {
+            $customer->saveModelWithProperties(\Yii::$app->request->post());
+        }
+    }
+
+    private function updateContragent(Contragent $contragent)
+    {
+        if ($contragent->load(\Yii::$app->request->post())) {
+            $contragent->saveModelWithProperties(\Yii::$app->request->post());
+        }
     }
 }
 ?>

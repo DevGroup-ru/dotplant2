@@ -2,40 +2,45 @@
 
 namespace app\components\payment;
 
-use app\models\OrderTransaction;
+use app\modules\shop\models\OrderTransaction;
 use yii\helpers\Url;
 
 class CashPayment extends AbstractPayment
 {
-    public function content($order, $transaction)
+    public function content()
     {
-        $url = Url::toRoute(
-            [
-                '/cart/payment-result',
-                'id' => $order->payment_type_id,
-                'orderId' => $order->id,
-                'transactionId' => $transaction->id,
-            ]
-        );
+        $resultUrl = $this->createResultUrl([
+            'id' => $this->order->payment_type_id,
+            'transactionId' => $this->transaction->id,
+        ]);
+
         return $this->render(
             'cash',
             [
-                'order' => $order,
-                'transaction' => $transaction,
-                'url' => $url,
+                'transaction' => $this->transaction,
+                'url' => $resultUrl,
             ]
         );
     }
 
-    public function checkResult()
+    public function checkResult($hash = '')
     {
-        if (!isset($_GET['id'], $_GET['orderId'], $_GET['transactionId'])) {
-            $this->redirect(false);
+        $transactionId = \Yii::$app->request->get('transactionId');
+
+        /** @var OrderTransaction $transaction */
+        if (null === $transaction = $this->loadTransaction($transactionId)) {
+            return $this->redirect($this->createErrorUrl(['id' => $transactionId]));
         }
-        $transaction = $this->loadTransaction($_GET['transactionId']);
-        if (is_null($transaction->paymentType) || $transaction->paymentType->class != $this->className()) {
-            $this->redirect(false, $_GET['orderId']);
+        if (empty($transaction->paymentType) || $transaction->paymentType->class !== $this->className()) {
+            return $this->redirect($this->createErrorUrl(['id' => $transactionId]));
         }
-        $this->redirect($transaction->updateStatus(OrderTransaction::TRANSACTION_SUCCESS), $_GET['orderId']);
+        if (!$transaction->checkHash($hash)) {
+            return $this->redirect($this->createErrorUrl(['id' => $transactionId]));
+        }
+
+        return $transaction->updateStatus(OrderTransaction::TRANSACTION_SUCCESS)
+            ? $this->redirect($this->createSuccessUrl(['id' => $transactionId]))
+            : $this->redirect($this->createErrorUrl(['id' => $transactionId]));
     }
 }
+?>

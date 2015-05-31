@@ -14,13 +14,11 @@ class OrderStageHelper
             function ($result, $item)
             {
                 /** @var OrderStageLeaf $item */
-                if (0 === intval($item->stageTo->immutable_by_user)) {
-                    $result[] = [
-                        'label' => $item->button_label,
-                        'css' => $item->button_css_class,
-                        'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id])
-                    ];
-                }
+                $result[] = [
+                    'label' => $item->button_label,
+                    'css' => $item->button_css_class,
+                    'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id])
+                ];
                 return $result;
             }, []);
     }
@@ -33,7 +31,7 @@ class OrderStageHelper
                 /** @var OrderStageLeaf $item */
                 if (0 === intval($item->stageFrom->immutable_by_user)) {
                     $result[] = [
-                        'label' => $item->button_label,
+                        'label' => 'Вернуться на предыдущий шаг',
                         'css' => $item->button_css_class,
                         'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id, 'previous' => 1])
                     ];
