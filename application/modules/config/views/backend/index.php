@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = [
     </div>
 </div>
 <div class="row">
-    <?php $form = ActiveForm::begin(['id' => 'config-form', 'type'=> ActiveForm::TYPE_VERTICAL]); ?>
+    <?php $form = ActiveForm::begin(['id' => 'config-form', 'type'=> ActiveForm::TYPE_VERTICAL, 'options' => ['enctype' => 'multipart/form-data']]); ?>
     <article class="col-xs-12 col-lg-12">
 
         <div class="jarviswidget well jarviswidget-color-darken" id="wid-id-configurations" data-widget-sortable="false" data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false" role="widget" style="">
