@@ -102,7 +102,9 @@ abstract class BaseWidget extends Widget
      */
     protected function getCacheKey()
     {
-        return "WidgetCache:".$this->themeWidgetModel->id;
+        $guestVary = Yii::$app->user->isGuest ? '1' : '0';
+        $sessionVary = $this->themeWidgetModel->cache_vary_by_session ? ':' . Yii::$app->session->id . ':' . $guestVary : '';
+        return "WidgetCache:".$this->themeWidgetModel->id.$sessionVary;
     }
 
     /**

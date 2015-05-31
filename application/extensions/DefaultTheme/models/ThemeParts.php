@@ -195,7 +195,7 @@ class ThemeParts extends \yii\db\ActiveRecord
      */
     public static function shouldCache($attributesRow)
     {
-        return $attributesRow['is_cacheable']=== 1 && $attributesRow['cache_lifetime']> 0;
+        return intval($attributesRow['is_cacheable'])=== 1 && $attributesRow['cache_lifetime']> 0;
     }
 
     /**
@@ -203,7 +203,10 @@ class ThemeParts extends \yii\db\ActiveRecord
      */
     public static function getCacheKey($attributesRow)
     {
-        return "ThemePartCache:".$attributesRow['id'];
+        $guestVary = Yii::$app->user->isGuest ? '1' : '0';
+        $sessionVary = $attributesRow['cache_vary_by_session'] ? ':' . Yii::$app->session->id . ':' . $guestVary : '';
+        $cacheKey = "ThemePartCache:".$attributesRow['id'] . $sessionVary;
+        return $cacheKey;
     }
 
     /**
