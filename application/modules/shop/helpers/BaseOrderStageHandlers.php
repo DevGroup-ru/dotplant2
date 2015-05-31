@@ -11,6 +11,7 @@ use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderDeliveryInformation;
 use app\modules\shop\models\OrderTransaction;
 use app\modules\shop\models\PaymentType;
+use yii\helpers\Url;
 
 class BaseOrderStageHandlers
 {
@@ -217,9 +218,18 @@ class BaseOrderStageHandlers
         $order = $event->eventData()['order'];
 
         $paymentType = !empty($order->paymentType) ? $order->paymentType : null;
+        /** @var OrderTransaction $orderTransaction */
         $orderTransaction = !empty(OrderTransaction::findLastByOrder($order))
             ? OrderTransaction::findLastByOrder($order)
             : OrderTransaction::createForOrder($order);
+
+        $hasSuccess = OrderTransaction::find()
+            ->where(['order_id' => $order->id])
+            ->andWhere(['!=', 'status', OrderTransaction::TRANSACTION_START])
+            ->one();
+        if (null !== $hasSuccess) {
+            $event->addEventData(['__redirect' => Url::toRoute(['/shop/cart/index'])]);
+        }
 
         $event->addEventData([
             'orderTransaction' => $orderTransaction,

@@ -262,6 +262,7 @@ class CartController extends Controller
     public function actionIndex()
     {
         $model = $this->loadOrder(false, false);
+        $orderCode = null;
         if (!is_null($model)) {
             $orderCode = OrderCode::find()
                 ->where(
@@ -303,6 +304,11 @@ class CartController extends Controller
         $orderStage = $order->stage;
         $eventData = ['order' => $order];
 
+        if (0 === intval($orderStage->is_in_cart)) {
+            Yii::$app->session->remove('orderId');
+        }
+        $order->temporary = 1 === intval($orderStage->become_non_temporary) ? 0 : 1;
+
 //        if (null !== Yii::$app->session->get('OrderStageReach')) {
         /** @var Events $eventClass */
         $eventClass = Events::findByName($orderStage->event_name);
@@ -312,6 +318,10 @@ class CartController extends Controller
             $event->setEventData($eventData);
             EventTriggeringHelper::triggerSpecialEvent($event);
             $eventData = $event->eventData();
+
+            if (!empty($eventData['__redirect'])) {
+                return $this->redirect($eventData['__redirect']);
+            }
         }
         Yii::$app->session->remove('OrderStageReach');
 //        }

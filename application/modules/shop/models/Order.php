@@ -375,7 +375,10 @@ class Order extends \yii\db\ActiveRecord
             self::$order = self::findOne(['id' => Yii::$app->session->get('orderId')]);
         }
         if (is_null(self::$order) && !Yii::$app->user->isGuest) {
-            self::$order = self::findOne(['user_id' => Yii::$app->user->id]);
+            $order = self::findOne(['user_id' => Yii::$app->user->id]);
+            if (1 === intval($order->stage->is_in_cart)) {
+                self::$order = $order;
+            }
         }
         if ((is_null(self::$order) || is_null(self::$order->stage) || self::$order->stage->is_in_cart == 0)
             && $create === true
@@ -440,22 +443,6 @@ class Order extends \yii\db\ActiveRecord
                 $customer->save();
             }
         }
-    }
-
-    /**
-     * @param bool $insert
-     * @return bool
-     */
-    public function beforeSave($insert)
-    {
-        if (!parent::beforeSave($insert)) {
-            return false;
-        }
-
-        $stage = $this->stage;
-        $this->temporary = 1 === intval($stage->become_non_temporary) ? 0 : 1;
-
-        return true;
     }
 
     /**
