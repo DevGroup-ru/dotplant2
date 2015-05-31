@@ -169,6 +169,13 @@ class ConfigurationModel extends app\models\BaseThemeConfigurationModel
             //compile theme
             /** @var StylesCompiler $compiler */
             $compiler = Yii::createObject(StylesCompiler::className());
+
+            $compiler->variables($this->getAttributes([
+                'primary_color',
+                'secondary_color',
+                'action_color',
+            ]));
+
             $compiler->compile();
 
         });

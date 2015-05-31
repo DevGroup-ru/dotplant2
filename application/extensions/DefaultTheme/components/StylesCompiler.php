@@ -21,7 +21,15 @@ class StylesCompiler extends Component
 
     public function variables($variables=[])
     {
-        $current = file_get_contents($this->getImportPath().'');
+        $fn = $this->getImportPath().'variables.scss';
+        $content = file_get_contents($fn);
+        foreach ($variables as $key=>$value) {
+            $scss_key = '$' . $key;
+            $regexp = '#^('.preg_quote($scss_key).': )(.*);$#Umsi';
+            $content = preg_replace($regexp, '$1'.$value.';', $content);
+        }
+        
+        file_put_contents($fn, $content);
     }
 
     public function compile()
