@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?=
 DynaGrid::widget([
     'options' => [
-        'id' => 'properties-grid',
+        'id' => 'backend-chunk-grid',
     ],
     'columns' => [
         [
