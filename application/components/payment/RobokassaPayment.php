@@ -8,10 +8,10 @@ use yii\web\BadRequestHttpException;
 
 class RobokassaPayment extends AbstractPayment
 {
-    protected $merchantLogin;
-    protected $merchantPass1;
-    protected $merchantPass2;
-    protected $merchantUrl;
+    public $merchantLogin;
+    public $merchantPass1;
+    public $merchantPass2;
+    public $merchantUrl;
 
     public function content()
     {

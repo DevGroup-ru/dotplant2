@@ -74,6 +74,12 @@ use kartik\helpers\Html;
         )
     ?>
 
+    <?= \app\modules\shop\widgets\OrderTransaction::widget([
+            'model' => $order,
+            'immutable' => $orderIsImmutable,
+        ]);
+    ?>
+
     <?php
         $form = \yii\bootstrap\ActiveForm::begin([
             'id' => 'order-details-form',
