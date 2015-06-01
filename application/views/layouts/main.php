@@ -12,8 +12,8 @@ use app\extensions\DefaultTheme\models\ThemeParts;
 $leftSidebar = ThemeParts::renderPart('left-sidebar');
 $rightSidebar = ThemeParts::renderPart('right-sidebar');
 $contentLength = 12;
-$leftSidebarLength = 2;
-$rightSidebarLength = 2;
+$leftSidebarLength = 3;
+$rightSidebarLength = 3;
 
 if (empty($leftSidebar) === false) {
     $contentLength -= $leftSidebarLength;
