@@ -182,6 +182,13 @@ jQuery(function() {
                             }, 550, 'linear');
                         imgclone.animate({'width': 0, 'height': 0}, function () {
                             jQuery(this).detach();
+                            $body.trigger({
+                                'type': 'productFlown',
+                                'productId': $this.data('id'),
+                                'quantity': quantity,
+                                'data': data,
+                                'button': $this
+                            });
                         });
                     }
                 }
