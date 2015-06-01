@@ -42,37 +42,5 @@ $themeModule = Yii::$app->getModule('DefaultTheme');
 <?= ThemeParts::renderPart('header') ?>
 <?= ThemeParts::renderPart('post-header') ?>
 
-<div class="container">
-    <div class="row">
-
-        <div class="col-md-4">
-
-
-            <?php if (is_array(Yii::$app->session->get('comparisonProductList')) && count(Yii::$app->session->get('comparisonProductList')) > 0): ?>
-                <?=
-                \kartik\helpers\Html::a(
-                    Yii::t(
-                        'app',
-                        'Compare products [{count}]',
-                        [
-                            'count' => count(Yii::$app->session->get('comparisonProductList')),
-                        ]
-                    ),
-                    [
-                        '/shop/product-compare/compare',
-                    ],
-                    [
-                        'class' => 'btn',
-                    ]
-                )
-                ?>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
-
-
-
-
 
 

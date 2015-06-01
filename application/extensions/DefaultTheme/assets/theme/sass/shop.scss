@@ -39,7 +39,11 @@ $image_margin_bottom: 10px;
     text-align: center;
   }
   .product-announce {
-    background: rgba(0,0,0, 0.1);
+    background: rgba(247,247,247,0.8);
+    font-size: 11px;
+    font-weight: 300;
+    color: rgb(598,58,58);
+    padding: 14px;
     width: 100%;
   }
   &:hover {
@@ -66,6 +70,8 @@ $image_margin_bottom: 10px;
 $big_image_height: 400px;
 
 .product-show {
+  font-size: 13px;
+  line-height: 22px;
   h1 {
     padding-bottom: 15px;
     line-height: 1.2;
@@ -135,5 +141,44 @@ $big_image_height: 400px;
     .old .price {
       text-decoration: line-through;
     }
+  }
+  .cta {
+    text-align: center;
+  }
+}
+
+.btn.btn-add-to-cart,.btn-add-to-cart {
+  //background: $action_color;
+  //border: 1px solid lighten($action_color, 20%);
+  //color: $action_text_color;
+  background: #fff;
+  color: $action_color;
+  border: 2px solid $action_color;
+  transition: all 0.2s ease 0.1s;
+
+  &:hover, &:focus, &:active {
+    color: $action_text_color;
+    background-color: $action_color;
+    //background: darken($action_color, 10%);
+
+  }
+}
+
+.btn-add-to-compare {
+  border-bottom: 1px dashed $action_color;
+  font-size: 12px;
+  &:hover {
+    text-decoration: none;
+    border-bottom-width: 0;
+  }
+}
+
+.btn-compare {
+  @extend .btn-primary;
+}
+
+.product-tabs + .tab-content  {
+  > .tab-pane {
+    padding: 8px;
   }
 }

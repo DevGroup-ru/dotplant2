@@ -1,6 +1,8 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
+use kartik\icons\Icon;
 /** @var yii\web\View $this */
 /**
  * @var \app\modules\shop\models\Order $order
@@ -109,6 +111,11 @@ $navStyles = '';
                     <?= $itemsCount ?>
                 </span>
             </a>
+            <?php if (is_array(Yii::$app->session->get('comparisonProductList')) && count(Yii::$app->session->get('comparisonProductList')) > 0): ?>
+                <a href="<?=Url::to(['/shop/product-compare/compare'])?>" class="btn btn-compare" title="<?=Yii::t('app', 'Compare products')?>">
+                    <?= Icon::show('tags') ?> <?=count(Yii::$app->session->get('comparisonProductList'))?>
+                </a>
+            <?php endif; ?>
         </div>
         <div class="pull-right search-area">
 

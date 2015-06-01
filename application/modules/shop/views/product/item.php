@@ -36,7 +36,7 @@ use kartik\helpers\Html;
                 <?=$product->announce?>
             </div>
             <div class="cta">
-                <a class="btn btn-default btn-add-to-cart" href="#" data-action="add-to-cart" data-id="<?=$product->id?>">
+                <a class="btn btn-add-to-cart" href="#" data-action="add-to-cart" data-id="<?=$product->id?>">
                     <?= Yii::t('app', 'Add to') ?>
                     <i class="fa fa-shopping-cart"></i>
                 </a>

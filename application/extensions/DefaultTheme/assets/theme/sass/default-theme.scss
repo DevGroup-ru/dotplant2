@@ -1,6 +1,7 @@
 @import "variables";
 @import "type";
 @import "shop";
+@import "properties";
 @import "one-row-header-with-cart";
 @import "adaptive";
 
@@ -39,12 +40,21 @@ body, .content, #content {
 }
 
 .btn-primary {
-  background-color: $action_color;
-  border-color: darken($action_color, 10%);
+  //background-color: $action_color;
+  //border-color: darken($action_color, 10%);
+  background: #fff;
+  color: $action_color;
+  border: 2px solid $action_color;
+  transition: all 0.2s ease 0.1s;
 }
+
+
+
 .btn-primary:hover, .btn-primary:focus, .btn-primary.focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
-  background-color: darken($action_color, 10%);
-  border-color: darken($action_color, 20%);
+  //background-color: darken($action_color, 10%);
+  //border-color: darken($action_color, 20%);
+  color: $action_text_color;
+  background-color: $action_color;
 }
 
 header .nav {

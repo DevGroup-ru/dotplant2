@@ -376,7 +376,7 @@ class Order extends \yii\db\ActiveRecord
         }
         if (is_null(self::$order) && !Yii::$app->user->isGuest) {
             $order = self::findOne(['user_id' => Yii::$app->user->id]);
-            if (null !== $order && 1 === intval($order->stage->is_in_cart)) {
+            if (null !== $order->stage && 1 === intval($order->stage->is_in_cart)) {
                 self::$order = $order;
             }
         }
