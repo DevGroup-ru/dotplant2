@@ -43,7 +43,7 @@ $this->registerAssetBundle(\app\backend\assets\KoAsset::className());
 
 <script type="text/html" id="koTplMessage">
     <li class="message">
-        <img class="online" alt="" data-bind="src: gravatar">
+        <img class="online" alt="" data-bind="attr: {src: gravatar}">
         <div class="message-text">
             <time data-bind="text: date"></time>
             <a href="javascript:void(0);" class="username" data-bind="text: user"></a>

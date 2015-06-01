@@ -11,16 +11,18 @@
  */
 
     echo $form->field($orderDeliveryInformation, 'shipping_option_id')
-        ->dropDownList(\app\components\Helper::getModelMap(\app\modules\shop\models\ShippingOption::className(), 'id', 'name'));
-    echo $form->field($orderDeliveryInformation, 'shipping_price');
-    echo $form->field($orderDeliveryInformation, 'shipping_price_total');
-    echo $form->field($orderDeliveryInformation, 'planned_delivery_date');
-    echo $form->field($orderDeliveryInformation, 'planned_delivery_time');
-    echo $form->field($orderDeliveryInformation, 'planned_delivery_time_range');
+        ->dropDownList(\app\components\Helper::getModelMap(\app\modules\shop\models\ShippingOption::className(), 'id', 'name'),
+        ['readonly' => $immutable]
+    );
+    echo $form->field($orderDeliveryInformation, 'shipping_price')->textInput(['readonly' => $immutable]);
+    echo $form->field($orderDeliveryInformation, 'shipping_price_total')->textInput(['readonly' => $immutable]);
+    echo $form->field($orderDeliveryInformation, 'planned_delivery_date')->textInput(['readonly' => $immutable]);
+    echo $form->field($orderDeliveryInformation, 'planned_delivery_time')->textInput(['readonly' => $immutable]);
+    echo $form->field($orderDeliveryInformation, 'planned_delivery_time_range')->textInput(['readonly' => $immutable]);
     /** @var \app\properties\AbstractModel $abstractModel */
     $abstractModel = $orderDeliveryInformation->getAbstractModel();
     $abstractModel->setArrayMode(false);
     foreach ($abstractModel->attributes() as $attr) {
-        echo $form->field($abstractModel, $attr);
+        echo $form->field($abstractModel, $attr)->textInput(['readonly' => $immutable]);
     }
 ?>

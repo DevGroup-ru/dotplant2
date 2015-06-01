@@ -28,6 +28,13 @@ class Delivery extends Widget
             return '';
         }
 
+        if ($this->immutable) {
+            if (null !== $this->orderDeliveryInformation) {
+                $this->orderDeliveryInformation->setScenario('readonly');
+                $this->orderDeliveryInformation->getAbstractModel()->setScenario('readonly');
+            }
+        }
+
         return $this->render($this->viewFile, [
             'deliveryInformation' => $this->deliveryInformation,
             'orderDeliveryInformation' => $this->orderDeliveryInformation,

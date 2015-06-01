@@ -8,8 +8,8 @@
                     <a href="/login"><?= Yii::t('app', 'Login') ?></a>
                     <a href="/signup"><?= Yii::t('app', 'Signup') ?></a>
                 <?php else: ?>
-                    <a href="/cabinet"><?= Yii::t('app', 'Personal cabinet') ?></a>
-                    <a href="/cabinet/orders"><?= Yii::t('app', 'Orders list') ?></a>
+                    <a href="/user/user/profile"><?= Yii::t('app', 'Personal cabinet') ?></a>
+                    <a href="/shop/orders/list"><?= Yii::t('app', 'Orders list') ?></a>
                     <a href="/logout"><?= Yii::t('app', 'Logout') ?></a>
                 <?php endif; ?>
             </div>
