@@ -110,7 +110,7 @@ abstract class BaseWidget extends Widget
     /**
      * @return string[] Array of cache tags
      */
-    protected function getCacheTags()
+    public function getCacheTags()
     {
         $tags = explode("\n", $this->themeWidgetModel->cache_tags);
         $tags[] = ActiveRecordHelper::getObjectTag(ThemeWidgets::className(), $this->themeWidgetModel->id);

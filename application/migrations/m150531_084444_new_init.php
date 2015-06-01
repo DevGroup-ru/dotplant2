@@ -2037,6 +2037,7 @@ class m150531_084444_new_init extends Migration
             [
                 [$lastId, 'Tasks', 'background/manage/index', 'tasks', 'core', 'task manage'],
                 [$lastId, 'Config', 'backend/config/index', 'gear', 'core', 'setting manage'],
+                [$lastId, 'New config', 'config/backend/index', 'gear', 'core', 'setting manage'],
                 [$lastId, 'I18n', 'backend/i18n/index', 'language', 'core', 'setting manage'],
                 [$lastId, 'Spam Form Checker', 'backend/spam-checker/index', 'send-o', 'core', 'setting manage'],
                 [$lastId, 'Backend menu', 'backend/backend-menu/index', 'list-alt', 'core', 'setting manage'],
@@ -2544,113 +2545,6 @@ class m150531_084444_new_init extends Migration
             ]
         );
         $this->insert(
-            Config::tableName(),
-            [
-                'name' => 'ErrorMonitor',
-                'key' => 'errorMonitor',
-                'value' => '1',
-                'path' => 'errorMonitor',
-            ]
-        );
-        $lastInsertId = Yii::$app->db->lastInsertID;
-        $this->batchInsert(
-            Config::tableName(),
-            [
-                'parent_id',
-                'name',
-                'key',
-                'value',
-                'path'
-            ],
-            [
-                [
-                    $lastInsertId,
-                    'Email Notify Enabled',
-                    'emailNotifyEnabled',
-                    '0',
-                    'errorMonitor.emailNotifyEnabled'
-                ],
-                [
-                    $lastInsertId,
-                    'Developers e-mail',
-                    'devmail',
-                    '',
-                    'errorMonitor.devmail'
-                ],
-                [
-                    $lastInsertId,
-                    'Notify Only Http Codes',
-                    'notifyOnlyHttpCodes',
-                    '',
-                    'errorMonitor.notifyOnlyHttpCodes',
-                ],
-                [
-                    $lastInsertId,
-                    'Store number',
-                    'numberElementsToStore',
-                    '5',
-                    'errorMonitor.numberElementsToStore'
-                ],
-                [
-                    $lastInsertId,
-                    'Immediate notice limit per url',
-                    'immediateNoticeLimitPerUrl',
-                    10,
-                    'errorMonitor.immediateNoticeLimitPerUrl',
-                ],
-                [
-                    $lastInsertId,
-                    'Immediate notice',
-                    'immediateNotice',
-                    1,
-                    'errorMonitor.immediateNotice'
-                ],
-                [
-                    $lastInsertId,
-                    'HTTP codes for immediate notify',
-                    'httpCodesForImmediateNotify',
-                    '404,500',
-                    'errorMonitor.httpCodesForImmediateNotify',
-                ],
-            ]
-        );
-        $this->insert(
-            Config::tableName(),
-            [
-                'parent_id' => '0',
-                'name' => 'Email уведомления',
-                'key' => 'newsletter',
-                'path' => 'newsletter'
-            ]
-        );
-        $lastInsertId = $this->db->lastInsertID;
-        $this->batchInsert(
-            Config::tableName(),
-            [
-                'parent_id',
-                'name',
-                'value',
-                'key',
-                'path'
-            ],
-            [
-                [
-                    $lastInsertId,
-                    'Тип уведомлений',
-                    0,
-                    'newsletterNotifyType',
-                    'newsletter.newsletterNotifyType'
-                ],
-                [
-                    $lastInsertId,
-                    'Состояние',
-                    1,
-                    'newsletterEnabled',
-                    'newsletter.newsletterEnabled'
-                ]
-            ]
-        );
-        $this->insert(
             Object::tableName(),
             [
                 'name' => 'User',
@@ -2710,6 +2604,17 @@ class m150531_084444_new_init extends Migration
                     echo "Password does not match the confirm password\n";
                 }
             } while ($password != $confirmPassword);
+            fclose($stdIn);
+        }
+        if (getenv("SERVER_NAME")) {
+            $serverName = getenv("SERVER_NAME");
+        } else {
+            $stdIn = fopen("php://stdin", "r");
+            echo "\nEnter server name (ie. localhost): ";
+            $serverName = trim(fgets($stdIn));
+            if (empty($serverName)) {
+                $serverName = 'localhost';
+            }
             fclose($stdIn);
         }
 
@@ -3736,7 +3641,7 @@ class m150531_084444_new_init extends Migration
                 'immutable_by_assigned' => 0,
                 'reach_goal_ym' => '',
                 'reach_goal_ga' => '',
-                'event_name' => '',
+                'event_name' => 'order_stage_payment_pay',
                 'view' => '@app/modules/shop/views/cart/stages/pay.php',
             ]
         );
@@ -4199,6 +4104,212 @@ class m150531_084444_new_init extends Migration
             'property_group_id' => $propertyGroup->id,
         ];
         $objectPropertyGroup->save(true, ['object_id', 'object_model_id', 'property_group_id']);
+        // Old config
+        $this->insert(
+            Config::tableName(),
+            [
+                'parent_id' => 0,
+                'name' => 'Core',
+                'key' => 'core',
+                'path' => 'core',
+            ]
+        );
+        $id = $this->db->lastInsertID;
+        $this->batchInsert(
+            Config::tableName(),
+            ['parent_id', 'name', 'key', 'value', 'path'],
+            [
+                [$id, 'Admin e-mail', 'adminEmail', '', 'core.adminEmail'],
+                [$id, 'AutoComplete results count', 'autoCompleteResultsCount', '5', 'core.autoCompleteResultsCount'],
+                [$id, 'Path to user uploaded files', 'fileUploadPath', 'upload/user-uploads/', 'core.fileUploadPath'],
+                [$id, 'Server name', 'serverName', $serverName, 'core.serverName'],
+                [$id, 'Login session duration', 'loginSessionDuration', '2592000', 'core.loginSessionDuration'],
+            ]
+        );
+        $this->insert(
+            Config::tableName(),
+            [
+                'parent_id' => 0,
+                'name' => 'E-mail',
+                'key' => 'emailConfig',
+                'path' => 'core.emailConfig',
+            ]
+        );
+        $id1 = $this->db->lastInsertID;
+        $this->batchInsert(
+            Config::tableName(),
+            ['parent_id', 'name', 'key', 'value', 'path'],
+            [
+                [$id1, 'Host', 'emailHost', '', 'core.emailConfig.emailHost'],
+                [$id1, 'Port', 'emailPort', '587', 'core.emailConfig.emailPort'],
+                [$id1, 'Encryption', 'emailEncryption', 'tls', 'core.emailConfig.emailEncryption'],
+                [$id1, 'Username', 'emailUsername', '', 'core.emailConfig.emailUsername'],
+                [$id1, 'Password', 'emailPassword', '', 'core.emailConfig.emailPassword'],
+                [$id1, 'Transport', 'emailTransport', 'Swift_SmtpTransport', 'core.emailConfig.emailTransport'],
+            ]
+        );
+        $this->insert(
+            Config::tableName(),
+            [
+                'parent_id' => 0,
+                'name' => 'Imperavi',
+                'key' => 'imperavi',
+                'path' => 'core.imperavi',
+            ]
+        );
+        $id1 = $this->db->lastInsertID;
+        $this->batchInsert(
+            Config::tableName(),
+            ['parent_id', 'name', 'key', 'value', 'path'],
+            [
+                [$id1, 'Img upload dir', 'uploadDir', '/upload/images', 'core.imperavi.uploadDir'],
+            ]
+        );
+        $this->insert(
+            Config::tableName(),
+            [
+                'parent_id' => 0,
+                'name' => 'Reviews',
+                'key' => 'reviews',
+                'path' => 'core.review',
+            ]
+        );
+        $id1 = $this->db->lastInsertID;
+        $this->batchInsert(
+            Config::tableName(),
+            ['parent_id', 'name', 'key', 'value', 'path'],
+            [
+                [$id1, 'E-mail', 'reviewEmail', '', 'core.reviews.reviewEmail'],
+                [$id1, 'Page reviews', 'pageReviews', '', 'core.reviews.pageReviews'],
+                [$id1, 'Product reviews', 'productReviews', '', 'core.reviews.productReviews'],
+            ]
+        );
+        $this->insert(
+            Config::tableName(),
+            [
+                'parent_id' => 0,
+                'name' => 'Shop',
+                'key' => 'shop',
+                'path' => 'shop',
+            ]
+        );
+        $id = $this->db->lastInsertID;
+        $this->batchInsert(
+            Config::tableName(),
+            ['parent_id', 'name', 'key', 'value', 'path'],
+            [
+                [$id, 'Products per page', 'productsPerPage', '9', 'shop.productsPerPage'],
+                [$id, 'Order e-mail', 'orderEmail', '', 'shop.orderEmail'],
+                [$id, 'Last viewed products store quantity', 'lastViewedProdsStoreQuantity', '10', 'shop.lastViewedProdsStoreQuantity'],
+                [$id, 'Max products quantity to compare', 'maxProductsToCompare', '3', 'shop.maxProductsToCompare'],
+                [$id, 'Show products of child categories', 'showProductsOfChildCategories', '1', 'shop.showProductsOfChildCategories'],
+                [$id, 'Cart counts unique products', 'cartCountsUniqueProducts', '0', 'shop.cartCountsUniqueProducts'],
+                [$id, 'Search results limit', 'searchResultsLimit', '9', 'shop.searchResultsLimit'],
+                [$id, 'Order e-mail template', 'orderEmailTemplate', '@app/views/cart/order-email-template', 'shop.orderEmailTemplate'],
+                [$id, 'Client order e-mail template', 'clientOrderEmailTemplate', '@app/views/cart/client-order-email-template', 'shop.clientOrderEmailTemplate'],
+                [$id, 'Filter only by parent products', 'filterOnlyByParentProduct', '1', 'shop.filterOnlyByParentProduct'],
+                [$id, 'Возможность удалить заказ', 'AbilityDeleteOrders', '0', 'shop.AbilityDeleteOrders'],
+                [$id, 'Show deleted orders', 'showDeletedOrders', '0', 'shop.showDeletedOrders'],
+            ]
+        );
+        //
+        $this->insert(
+            Config::tableName(),
+            [
+                'parent_id' => 0,
+                'name' => 'Spam Checker Config',
+                'key' => 'spamCheckerConfig',
+                'path' => 'spamCheckerConfig',
+            ]
+        );
+        $id = $this->db->lastInsertID;
+        $this->batchInsert(
+            Config::tableName(),
+            ['parent_id', 'name', 'key', 'value', 'path'],
+            [
+                [$id, 'Интерпретация форм', 'interpretFields', '', 'errorMonitor.interpretFields'],
+                [$id, 'Enabled API key', 'enabledApiKey', '', 'errorMonitor.enabledApiKey'],
+            ]
+        );
+        $this->insert(
+            Config::tableName(),
+            [
+                'parent_id' => 0,
+                'name' => 'Error monitoring',
+                'key' => 'errorMonitor',
+                'path' => 'errorMonitor',
+            ]
+        );
+        $id = $this->db->lastInsertID;
+        $this->batchInsert(
+            Config::tableName(),
+            ['parent_id', 'name', 'key', 'value', 'path'],
+            [
+                [$id, 'Email Notify Enabled', 'emailNotifyEnabled', '0', 'errorMonitor.emailNotifyEnabled'],
+                [$id, 'Developers e-mail', 'devmail', '', 'errorMonitor.devmail'],
+                [$id, 'Notify Only Http Codes', 'notifyOnlyHttpCodes', '', 'errorMonitor.notifyOnlyHttpCodes'],
+                [$id, 'Store number', 'numberElementsToStore', '5', 'errorMonitor.numberElementsToStore'],
+                [$id, 'Immediate notice limit per url', 'immediateNoticeLimitPerUrl', '10', 'errorMonitor.immediateNoticeLimitPerUrl'],
+                [$id, 'Immediate notice', 'immediateNotice', '1', 'errorMonitor.immediateNotice'],
+                [$id, 'HTTP codes for immediate notify', 'httpCodesForImmediateNotify', '404,500', 'errorMonitor.httpCodesForImmediateNotify'],
+                [$id, 'Store notify history within days', 'daysToStoreNotify', '28', 'errorMonitor.daysToStoreNotify'],
+            ]
+        );
+        $this->insert(
+            Config::tableName(),
+            [
+                'parent_id' => 0,
+                'name' => 'Email уведомления',
+                'key' => 'newsletter',
+                'path' => 'newsletter',
+            ]
+        );
+        $id = $this->db->lastInsertID;
+        $this->batchInsert(
+            Config::tableName(),
+            ['parent_id', 'name', 'key', 'value', 'path'],
+            [
+                [$id, 'Тип уведомлений', 'newsletterNotifyType', '0', 'newsletter.newsletterNotifyType'],
+                [$id, 'Состояние', 'newsletterEnabled', '1', 'newsletter.newsletterEnabled'],
+            ]
+        );
+        $this->insert(
+            Config::tableName(),
+            [
+                'parent_id' => 0,
+                'name' => 'YML',
+                'key' => 'yml',
+                'path' => 'yml',
+            ]
+        );
+        $id = $this->db->lastInsertID;
+        $this->batchInsert(
+            Config::tableName(),
+            ['parent_id', 'name', 'key', 'value', 'path'],
+            [
+                [$id, 'Главная валюта', 'main_currency', 'RUR', 'yml.main_currency'],
+                [$id, 'Показывать все свойства в YML', 'show_all_properties', '1', 'yml.show_all_properties'],
+                [$id, 'Тип описания по умолчанию', 'default_offer_type', 'simplified', 'yml.default_offer_type'],
+                [$id, 'Общая стоимость доставки для региона', 'local_delivery_cost', '', 'yml.local_delivery_cost'],
+            ]
+        );
+        $this->insert(
+            Config::tableName(),
+            [
+                'parent_id' => 0,
+                'name' => 'Submissions',
+                'key' => 'submissions',
+                'path' => 'submissions',
+            ]
+        );
+        $id = $this->db->lastInsertID;
+        $this->batchInsert(
+            Config::tableName(),
+            ['parent_id', 'name', 'key', 'value', 'path'],
+            [
+                [$id, 'Store deleted submissions within days', 'daysToStoreSubmissions', '28', 'submissions.daysToStoreSubmissions'],
+            ]
+        );
 //        return false;
     }
 

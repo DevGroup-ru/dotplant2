@@ -158,7 +158,7 @@ $review->submission->getPropertyGroups(true);
                                 Html::a(
                                     Icon::show('check-square-o') . Yii::t('app', 'Not spam'),
                                     [
-                                        '/review/backend/mark-spam',
+                                        'mark-spam',
                                         'id' => $review->submission_id,
                                         'spam' => 0
                                     ],

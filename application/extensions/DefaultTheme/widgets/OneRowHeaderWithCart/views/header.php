@@ -12,7 +12,6 @@ use kartik\icons\Icon;
 /** @var \app\extensions\DefaultTheme\Module $theme */
 
 $mainCurrency = \app\modules\shop\models\Currency::getMainCurrency();
-
 if (is_null($order)) {
     $itemsCount = 0;
 } else {

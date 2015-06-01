@@ -32,7 +32,7 @@ class Widget extends BaseWidget
         );
     }
 
-    protected function getCacheTags()
+    public function getCacheTags()
     {
         $tags = ArrayHelper::merge(parent::getCacheTags(), [
             'Cart:'.Yii::$app->session->id,

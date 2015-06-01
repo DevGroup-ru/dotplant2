@@ -110,12 +110,12 @@ class BackendUserController extends BackendController
                 \Yii::$app->getSession()->setFlash('error', implode('<br />', $errors));
             }
             \Yii::$app->session->setFlash('success', \Yii::t('app', 'Record has been saved'));
-            $returnUrl = \Yii::$app->request->get('returnUrl', ['/backend/user/index']);
+            $returnUrl = \Yii::$app->request->get('returnUrl', ['index']);
             switch (\Yii::$app->request->post('action', 'save')) {
                 case 'next':
                     return $this->redirect(
                         [
-                            '/backend/user/update',
+                            'update',
                             'returnUrl' => $returnUrl,
                         ]
                     );
@@ -125,7 +125,7 @@ class BackendUserController extends BackendController
                     return $this->redirect(
                         Url::toRoute(
                             [
-                                '/backend/user/update',
+                                'update',
                                 'id' => $model->id,
                                 'returnUrl' => $returnUrl
                             ]

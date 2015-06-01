@@ -106,8 +106,21 @@ class BackendReviewController extends \app\backend\components\BackendController
         } else {
             $message = Yii::t('app', 'Entry successfully marked as not spam');
         }
-        $result = Submission::updateAll(['spam' => Yii::$app->formatter->asBoolean($spam)], ['id' => $id]);
-        if ($result > 0) {
+        /** @var Submission $submission */
+        $submission = Submission::findOne($id);
+        if (is_null($submission)) {
+            throw new NotFoundHttpException;
+        }
+        $submission->spam = Yii::$app->formatter->asBoolean($spam);
+        if ($spam == 1) {
+            /** @var Review $review */
+            $review = Review::findOne(['submission_id' => $id]);
+            if (!is_null($review)) {
+                $review->status = Review::STATUS_NOT_APPROVED;
+                $review->save(true, ['status']);
+            }
+        }
+        if ($submission->save(true, ['spam'])) {
             Yii::$app->session->setFlash('success', $message);
         }
         return $this->redirect(

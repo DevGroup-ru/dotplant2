@@ -23,6 +23,7 @@ use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yii\caching\TagDependency;
 
 /**
  * Class CartController
@@ -308,6 +309,7 @@ class CartController extends Controller
             Yii::$app->session->remove('orderId');
             $order->in_cart = 0;
             $order->save();
+            Order::clearStaticOrder();
         }
         if (1 === intval($orderStage->become_non_temporary)) {
             $order->temporary = 0;
