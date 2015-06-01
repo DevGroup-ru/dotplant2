@@ -10,7 +10,11 @@ use kartik\helpers\Html;
     $this->params['breadcrumbs'] = [
         [
             'label' => Yii::t('app', 'Personal cabinet'),
-            'url' => '/shop/cabinet/'
+            'url' => ['/shop/cabinet/']
+        ],
+        [
+            'label' => Yii::t('app', 'Orders list'),
+            'url' => ['/shop/orders/list']
         ],
         $this->title,
     ];
@@ -28,17 +32,15 @@ use kartik\helpers\Html;
             <td><?= Html::encode($order->start_date) ?></td>
         </tr>
         <tr>
-            <th><?= $order->getAttributeLabel('order_status_id') ?></th>
+            <th><?= Yii::t('app', 'Status') ?></th>
             <td>
                 <?=
-                isset($order->status)
-                    ? Html::tag('span', Html::encode($order->status->short_title), ['class' => $order->status->label])
-                    : Yii::t('yii', '(not set)')
+                $order->stage->name_frontend
                 ?>
             </td>
         </tr>
         <tr>
-            <th><?= $order->getAttributeLabel('shipping_option_id') ?></th>
+            <th><?= Yii::t('app', 'Shipping method') ?></th>
             <td>
                 <?php
                     $_raw = $order->shippingOption;
@@ -117,7 +119,7 @@ use kartik\helpers\Html;
         ? ''
         : \yii\helpers\Html::tag(
             'div',
-            \yii\helpers\Html::submitButton(Yii::t('app', 'Apply'), ['class' => 'btn btn-primary']),
+            \yii\helpers\Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-primary']),
             ['class' => 'panel-footer']
         );
     ?>

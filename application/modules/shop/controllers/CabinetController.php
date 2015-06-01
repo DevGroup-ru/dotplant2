@@ -75,15 +75,21 @@ class CabinetController extends Controller
         return $this->redirect(Url::previous('__shopCabinetUpdateReturnUrl'));
     }
 
-    private function updateCustomer(Customer $customer)
+    private function updateCustomer($customer)
     {
+        if ($customer === null) {
+            return;
+        }
         if ($customer->load(\Yii::$app->request->post())) {
             $customer->saveModelWithProperties(\Yii::$app->request->post());
         }
     }
 
-    private function updateContragent(Contragent $contragent)
+    private function updateContragent($contragent)
     {
+        if ($contragent === null) {
+            return;
+        }
         if ($contragent->load(\Yii::$app->request->post())) {
             $contragent->saveModelWithProperties(\Yii::$app->request->post());
         }

@@ -33,7 +33,7 @@ use yii\helpers\Html;
             {
                 /** @var \app\modules\shop\models\Contragent $item */
                 if ($item->isNewRecord) {
-                    $result[0] = 'Новый Контрагент';
+                    $result[0] = Yii::t('app', 'New payer');
                 } else {
                     $result[$item->id] = $item->type;
                 }

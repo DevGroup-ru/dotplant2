@@ -2294,14 +2294,14 @@ class m150531_084444_new_init extends Migration
             ['name', 'class', 'params', 'active', 'sort'],
             [
                 [
-                    'Наличные',
+                    Yii::t('app', 'Cash'),
                     app\components\payment\CashPayment::className(),
                     '[]',
                     '1',
                     '1'
                 ],
                 [
-                    'Робокасса (VISA, Webmoney, Яндекс.Деньги и др.)',
+                    'Robokassa',
                     app\components\payment\RobokassaPayment::className(),
                     Json::encode(
                         [
@@ -3570,7 +3570,7 @@ class m150531_084444_new_init extends Migration
             OrderStage::tableName(),
             [
                 'name' => 'customer',
-                'name_frontend' => 'Данные',
+                'name_frontend' => Yii::t('app', 'Your information'),
                 'name_short' => 'customer',
                 'is_initial' => 1,
                 'is_buyer_stage' => 1,
@@ -3590,7 +3590,7 @@ class m150531_084444_new_init extends Migration
             OrderStage::tableName(),
             [
                 'name' => 'delivery',
-                'name_frontend' => 'Доставка',
+                'name_frontend' => Yii::t('app', 'Delivery'),
                 'name_short' => 'delivery',
                 'is_initial' => 0,
                 'is_buyer_stage' => 1,
@@ -3610,7 +3610,7 @@ class m150531_084444_new_init extends Migration
             OrderStage::tableName(),
             [
                 'name' => 'payment',
-                'name_frontend' => 'Выбор метода оплаты',
+                'name_frontend' => Yii::t('app', 'Payment method selection'),
                 'name_short' => 'payment',
                 'is_initial' => 0,
                 'is_buyer_stage' => 1,
@@ -3630,7 +3630,7 @@ class m150531_084444_new_init extends Migration
             OrderStage::tableName(),
             [
                 'name' => 'payment pay',
-                'name_frontend' => 'Оплата',
+                'name_frontend' => Yii::t('app', 'Payment'),
                 'name_short' => 'payment pay',
                 'is_initial' => 0,
                 'is_buyer_stage' => 0,
@@ -3652,7 +3652,7 @@ class m150531_084444_new_init extends Migration
                 'stage_from_id' => $stageCustomer,
                 'stage_to_id' => $stageDelivery,
                 'sort_order' => 0,
-                'button_label' => 'Выбор способа доставки',
+                'button_label' => Yii::t('app', 'Delivery method selection'),
                 'button_css_class' => 'btn btn-primary',
                 'notify_manager' => 0,
                 'notify_new_assigned_user' => 0,
@@ -3666,7 +3666,7 @@ class m150531_084444_new_init extends Migration
                 'stage_from_id' => $stageDelivery,
                 'stage_to_id' => $stagePayment,
                 'sort_order' => 0,
-                'button_label' => 'Выбор способа оплаты',
+                'button_label' => Yii::t('app', 'Payment method selection'),
                 'button_css_class' => 'btn btn-primary',
                 'notify_manager' => 0,
                 'notify_new_assigned_user' => 0,
@@ -3680,7 +3680,7 @@ class m150531_084444_new_init extends Migration
                 'stage_from_id' => $stagePayment,
                 'stage_to_id' => $stagePaymentPay,
                 'sort_order' => 0,
-                'button_label' => 'Оплатить заказ',
+                'button_label' => Yii::t('app', 'Go to payment'),
                 'button_css_class' => 'btn btn-success',
                 'notify_manager' => 1,
                 'assign_to_user_id' => 0,
@@ -4208,7 +4208,7 @@ class m150531_084444_new_init extends Migration
                 [$id, 'Order e-mail template', 'orderEmailTemplate', '@app/views/cart/order-email-template', 'shop.orderEmailTemplate'],
                 [$id, 'Client order e-mail template', 'clientOrderEmailTemplate', '@app/views/cart/client-order-email-template', 'shop.clientOrderEmailTemplate'],
                 [$id, 'Filter only by parent products', 'filterOnlyByParentProduct', '1', 'shop.filterOnlyByParentProduct'],
-                [$id, 'Возможность удалить заказ', 'AbilityDeleteOrders', '0', 'shop.AbilityDeleteOrders'],
+                [$id, 'Ability to delete order', 'AbilityDeleteOrders', '0', 'shop.AbilityDeleteOrders'],
                 [$id, 'Show deleted orders', 'showDeletedOrders', '0', 'shop.showDeletedOrders'],
             ]
         );
@@ -4227,7 +4227,7 @@ class m150531_084444_new_init extends Migration
             Config::tableName(),
             ['parent_id', 'name', 'key', 'value', 'path'],
             [
-                [$id, 'Интерпретация форм', 'interpretFields', '', 'errorMonitor.interpretFields'],
+                [$id, 'Form interpretation', 'interpretFields', '', 'errorMonitor.interpretFields'],
                 [$id, 'Enabled API key', 'enabledApiKey', '', 'errorMonitor.enabledApiKey'],
             ]
         );
@@ -4259,7 +4259,7 @@ class m150531_084444_new_init extends Migration
             Config::tableName(),
             [
                 'parent_id' => 0,
-                'name' => 'Email уведомления',
+                'name' => 'Email notifications',
                 'key' => 'newsletter',
                 'path' => 'newsletter',
             ]
@@ -4269,8 +4269,8 @@ class m150531_084444_new_init extends Migration
             Config::tableName(),
             ['parent_id', 'name', 'key', 'value', 'path'],
             [
-                [$id, 'Тип уведомлений', 'newsletterNotifyType', '0', 'newsletter.newsletterNotifyType'],
-                [$id, 'Состояние', 'newsletterEnabled', '1', 'newsletter.newsletterEnabled'],
+                [$id, 'Notification type', 'newsletterNotifyType', '0', 'newsletter.newsletterNotifyType'],
+                [$id, 'State', 'newsletterEnabled', '1', 'newsletter.newsletterEnabled'],
             ]
         );
         $this->insert(
@@ -4287,10 +4287,10 @@ class m150531_084444_new_init extends Migration
             Config::tableName(),
             ['parent_id', 'name', 'key', 'value', 'path'],
             [
-                [$id, 'Главная валюта', 'main_currency', 'RUR', 'yml.main_currency'],
-                [$id, 'Показывать все свойства в YML', 'show_all_properties', '1', 'yml.show_all_properties'],
-                [$id, 'Тип описания по умолчанию', 'default_offer_type', 'simplified', 'yml.default_offer_type'],
-                [$id, 'Общая стоимость доставки для региона', 'local_delivery_cost', '', 'yml.local_delivery_cost'],
+                [$id, 'Main currency', 'main_currency', 'RUR', 'yml.main_currency'],
+                [$id, 'Sall all properties in YML', 'show_all_properties', '1', 'yml.show_all_properties'],
+                [$id, 'Default offer type', 'default_offer_type', 'simplified', 'yml.default_offer_type'],
+                [$id, 'Local delivery cost', 'local_delivery_cost', '', 'yml.local_delivery_cost'],
             ]
         );
         $this->insert(

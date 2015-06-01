@@ -9,10 +9,10 @@
  */
 ?>
 
-    <h3>Данные о контрагенте</h3>
+    <h3><?= Yii::t('app', 'Payer information') ?></h3>
     <?= $form->field($model, 'type')
         ->dropDownList(
-            ['Individual' => 'Individual', 'Self-employed' => 'Self-employed', 'Legal entity' => 'Legal entity'],
+            ['Individual' => Yii::t('app', 'Individual'), 'Self-employed' => Yii::t('app', 'Self-employed'), 'Legal entity' => Yii::t('app', 'Legal entity')],
             ['readonly' => $immutable]
         ); ?>
     <?php

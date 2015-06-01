@@ -23,50 +23,50 @@ use \kartik\icons\Icon;
                 <th><?= Html::encode($dummy->getAttributeLabel('status'))?></th>
                 <th><?= Html::encode($dummy->getAttributeLabel('start_date'))?></th>
                 <th><?= Html::encode($dummy->getAttributeLabel('end_date'))?></th>
-                <th></th>
+<!--                <th></th>-->
             </tr>
         </thead>
         <tbody>
     <?php
         foreach ($model->transactions as $transaction) {
             echo '<tr>';
-            if ($immutable) {
+//            if ($immutable) {
                 echo Html::tag('td', $transaction->id);
-            } else {
-                echo Html::tag('td',
-                    Html::a(
-                        $transaction->id,
-                        Url::toRoute([
-                            '/shop/payment/transaction',
-                            'id' => $transaction->id,
-                            'othash' => $transaction->generateHash()
-                        ])
-                    ));
-            }
+//            } else {
+//                echo Html::tag('td',
+//                    Html::a(
+//                        $transaction->id,
+//                        Url::toRoute([
+//                            '/shop/payment/transaction',
+//                            'id' => $transaction->id,
+//                            'othash' => $transaction->generateHash()
+//                        ])
+//                    ));
+//            }
             echo Html::tag('td', $transaction->paymentType->name);
             echo Html::tag('td', $transaction->total_sum);
             echo Html::tag('td', $transaction->getTransactionStatus());
             echo Html::tag('td', $transaction->start_date);
             echo Html::tag('td', $transaction->end_date);
-            if (!$immutable) {
-                echo Html::tag('td',
-                    Html::a(
-                        Icon::show('pencil'),
-                        Url::toRoute(['/shop/payment/type', 'id' => $transaction->id, 'othash' => $transaction->generateHash()]),
-                        ['class' => 'btn btn-primary']
-                    )
-                    . Html::a(
-                        Icon::show('trash'),
-                        Url::toRoute(['/shop/payment/cancel', 'id' => $transaction->id, 'othash' => $transaction->generateHash()]),
-                        ['class' => 'btn btn-danger']
-                    )
-                    . Html::a(
-                        Icon::show('refresh'),
-                        Url::toRoute(['/shop/payment/transaction', 'id' => $transaction->id, 'othash' => $transaction->generateHash()]),
-                        ['class' => 'btn btn-primary']
-                    )
-                );
-            }
+//            if (!$immutable && false) {
+//                echo Html::tag('td',
+//                    Html::a(
+//                        Icon::show('pencil'),
+//                        Url::toRoute(['/shop/payment/type', 'id' => $transaction->id, 'othash' => $transaction->generateHash()]),
+//                        ['class' => 'btn btn-primary']
+//                    )
+//                    . Html::a(
+//                        Icon::show('trash'),
+//                        Url::toRoute(['/shop/payment/cancel', 'id' => $transaction->id, 'othash' => $transaction->generateHash()]),
+//                        ['class' => 'btn btn-danger']
+//                    )
+//                    . Html::a(
+//                        Icon::show('refresh'),
+//                        Url::toRoute(['/shop/payment/transaction', 'id' => $transaction->id, 'othash' => $transaction->generateHash()]),
+//                        ['class' => 'btn btn-primary']
+//                    )
+//                );
+//            }
 
             echo '</tr>';
         }

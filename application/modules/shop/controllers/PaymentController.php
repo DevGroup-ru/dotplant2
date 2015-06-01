@@ -8,6 +8,8 @@ use app\modules\shop\models\PaymentType;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
+use Yii;
 
 class PaymentController extends Controller
 {
@@ -130,6 +132,13 @@ class PaymentController extends Controller
         if ($transaction->order->getImmutability(Order::IMMUTABLE_USER)) {
             throw new BadRequestHttpException();
         }
+        if ($transaction->order->user_id === 0) {
+            throw new ForbiddenHttpException;
+        } else {
+            if (Yii::$app->user->id !== $transaction->order->user_id) {
+                throw new ForbiddenHttpException;
+            }
+        }
 
         $transaction->delete();
         return $this->redirect(Url::previous('__returnPaymentCancel'));
@@ -158,6 +167,13 @@ class PaymentController extends Controller
         if ($transaction->order->getImmutability(Order::IMMUTABLE_USER)) {
             throw new BadRequestHttpException();
         }
+        if ($transaction->order->user_id === 0) {
+            throw new ForbiddenHttpException;
+        } else {
+            if (Yii::$app->user->id !== $transaction->order->user_id) {
+                throw new ForbiddenHttpException;
+            }
+        }
 
         if (\Yii::$app->request->isPost && null !== $update) {
             if ($transaction->load(\Yii::$app->request->post())) {
@@ -168,27 +184,27 @@ class PaymentController extends Controller
         return $this->render('type', ['transaction' => $transaction]);
     }
 
-    /**
-     * Open OrderTransaction with rendering payment form
-     * @param null $id
-     * @param null $othash
-     * @return string
-     * @throws BadRequestHttpException
-     */
-    public function actionTransaction($id = null, $othash = null)
-    {
-        if (null === $id) {
-            throw new BadRequestHttpException();
-        }
-        /** @var OrderTransaction $transaction */
-        if (null === $transaction = OrderTransaction::findOne(['id' => $id])) {
-            throw new BadRequestHttpException();
-        }
-        if (!$transaction->checkHash($othash)) {
-            throw new BadRequestHttpException();
-        }
-
-        return $this->render('transaction', ['transaction' => $transaction]);
-    }
+//    /**
+//     * Open OrderTransaction with rendering payment form
+//     * @param null $id
+//     * @param null $othash
+//     * @return string
+//     * @throws BadRequestHttpException
+//     */
+//    public function actionTransaction($id = null, $othash = null)
+//    {
+//        if (null === $id) {
+//            throw new BadRequestHttpException();
+//        }
+//        /** @var OrderTransaction $transaction */
+//        if (null === $transaction = OrderTransaction::findOne(['id' => $id])) {
+//            throw new BadRequestHttpException();
+//        }
+//        if (!$transaction->checkHash($othash)) {
+//            throw new BadRequestHttpException();
+//        }
+//
+//        return $this->render('transaction', ['transaction' => $transaction]);
+//    }
 }
 ?>

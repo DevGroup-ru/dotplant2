@@ -89,6 +89,13 @@ $navStyles = '';
                                 ]
                             ],
                             [
+                                'label' => Yii::t('app', 'Orders list'),
+                                'url' => ['/shop/orders/list'],
+                                [
+                                    'class' => 'shop-orders-list',
+                                ]
+                            ],
+                            [
                                 'label' => Yii::t('app', 'Logout'),
                                 'url' => ['/user/user/logout'],
                                 [

@@ -10,7 +10,7 @@
  */
 ?>
 
-    <h3>Данные о доставке</h3>
+    <h3><?= Yii::t('app', 'Delivery information') ?></h3>
     <?= $form->field($deliveryInformation, 'country_id')
         ->dropDownList(
             \app\components\Helper::getModelMap(\app\models\Country::className(), 'id', 'name'),

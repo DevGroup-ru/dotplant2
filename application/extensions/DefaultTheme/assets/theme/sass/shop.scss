@@ -165,6 +165,7 @@ $big_image_height: 400px;
 }
 
 .btn-add-to-compare {
+  color: $secondary_color;
   border-bottom: 1px dashed $secondary_color;
   font-size: 12px;
   &:hover {
@@ -190,5 +191,11 @@ $big_image_height: 400px;
   input.quantity {
     border-width: 2px;
     height: 36px;
+  }
+}
+
+.cart {
+  .cta {
+    margin-top: 10px;
   }
 }

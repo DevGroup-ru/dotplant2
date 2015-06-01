@@ -36,7 +36,7 @@ foreach ($items as $i => $item) {
     <tbody>
     <?php foreach ($items as $item): ?>
         <tr>
-            <td>
+            <td class="product-image">
                 <?=
                 \app\modules\image\widgets\ObjectImageWidget::widget([
                     'limit' => 1,

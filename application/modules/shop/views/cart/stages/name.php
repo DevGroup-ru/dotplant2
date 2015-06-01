@@ -9,6 +9,9 @@
  */
 
 use app\properties\AbstractModel;
+if ($order->contragent_id === 0 && count($contragents) > 0) {
+    $order->contragent_id = array_slice($contragents, -1)[0]->id;
+}
 
 ?>
 <div class="col-md-6 col-md-offset-3">
@@ -27,13 +30,13 @@ use app\properties\AbstractModel;
             }
         ?>
 
-        <h2>Данные о контрагенте</h2>
+        <h2><?= Yii::t('app', 'Payer information') ?></h2>
         <?= $form->field($order, 'contragent_id')->dropDownList(array_reduce($contragents,
                 function ($result, $item)
                 {
                     /** @var \app\modules\shop\models\Contragent $item */
                     if ($item->isNewRecord) {
-                        $result[0] = 'Новый Контрагент';
+                        $result[0] = Yii::t('app', 'New payer profile');
                     } else {
                         $result[$item->id] = $item->type;
                     }

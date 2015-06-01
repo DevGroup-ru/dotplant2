@@ -8,7 +8,7 @@
  * @var \yii\bootstrap\ActiveForm $form
  */
 ?>
-    <h3>Данные о покупателе</h3>
+    <h3><?= Yii::t('app', 'Buyer information') ?></h3>
     <?= $form->field($model, 'first_name')->textInput(['readonly' => $immutable]); ?>
     <?= $form->field($model, 'middle_name')->textInput(['readonly' => $immutable]); ?>
     <?= $form->field($model, 'last_name')->textInput(['readonly' => $immutable]); ?>
