@@ -143,8 +143,6 @@ class Order extends \yii\db\ActiveRecord
                 'total_price',
                 'hash',
                 'in_cart',
-                'customer_id',
-                'contragent_id',
             ],
             'search' => [
                 'id',
@@ -380,11 +378,15 @@ class Order extends \yii\db\ActiveRecord
         if (is_null(self::$order) && Yii::$app->session->has('orderId')) {
             self::$order = self::find()
                 ->where(['id' => Yii::$app->session->get('orderId')])
+                ->one();
+        }
+        if (is_null(self::$order) && !Yii::$app->user->isGuest) {
+            self::$order = self::find()
+                ->where(['user_id' => Yii::$app->user->id, 'in_cart' => 1])
                 ->orderBy(['start_date' => SORT_DESC, 'id' => SORT_DESC])
                 ->one();
-        } else if (is_null(self::$order) && !Yii::$app->user->isGuest) {
-            self::$order = self::findOne(['user_id' => Yii::$app->user->id, 'in_cart' => 1]);
-        } else if ((is_null(self::$order) || is_null(self::$order->stage) || self::$order->in_cart == 0)
+        }
+        if ((is_null(self::$order) || is_null(self::$order->stage) || self::$order->in_cart == 0)
             && $create === true
         ) {
             $model = self::create();
