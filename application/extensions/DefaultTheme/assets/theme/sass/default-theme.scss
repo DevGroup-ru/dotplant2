@@ -1,5 +1,6 @@
 @import "variables";
 @import "type";
+@import "shop";
 @import "one-row-header-with-cart";
 @import "adaptive";
 
@@ -32,6 +33,9 @@ body, .content, #content {
 
 .btn {
   color: $action_text_color;
+  &.btn-default {
+    color: #3a3a3a;
+  }
 }
 
 .btn-primary {

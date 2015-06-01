@@ -37,51 +37,17 @@ echo app\widgets\filter\FilterWidget::widget(
 $this->endBlock();
 
 ?>
-<small class="pull-right"> <?=Yii::t('app', '{n} products are available', ['n' => $pages->totalCount])?> </small>
-<h1> <?=$this->blocks['h1']?></h1>
-<hr class="soft" />
-<?=$this->blocks['announce']?>
-<hr class="soft" />
-<form class="form-horizontal span6">
-    <div class="control-group">
-        <?=Html::activeLabel(
-            UserPreferences::preferences(),
-            'productListingSortId',
-            ['class' => 'control-label alignL']
-        )?>
-        <?=Html::activeDropDownList(
-            UserPreferences::preferences(),
-            'productListingSortId',
-            \yii\helpers\ArrayHelper::map(\app\modules\shop\models\ProductListingSort::enabledSorts(), 'id', 'name'),
-            [
-                'data-userpreference' => 'productListingSortId',
-            ]
-        )?>
+<h1>
+    <?=$this->blocks['h1']?>
+</h1>
+<?php if (!empty($this->blocks['announce'])): ?>
+    <div class="block-announce">
+        <?= $this->blocks['announce'] ?>
     </div>
-    <div class="control-group">
-        <?=Html::activeLabel(UserPreferences::preferences(), 'productsPerPage', ['class' => 'control-label alignL'])?>
-        <?=Html::activeDropDownList(
-            UserPreferences::preferences(),
-            'productsPerPage',
-            [
-                9 => 9,
-                18 => 18,
-                30 => 30,
-            ],
-            [
-                'data-userpreference' => 'productsPerPage',
-            ]
-        )?>
-    </div>
-</form>
+<?php endif; ?>
 
-<div class="pull-right">
-    <a href="#" data-dotplant-listViewType="listView"><span class="btn btn-large"><i class="fa fa-list"></i></span></a>
-    <a href="#" data-dotplant-listViewType="blockView"><span class="btn btn-large btn-primary"><i class="fa fa-th-large"></i></span></a>
-</div>
-<br class="clr" />
 
-<div id="<?=($listView === 'listView' ? 'listView' : 'blockView')?>">
+<div id="<?=($listView === 'listView' ? 'listView' : 'blockView')?>" class="block-product-list">
     <?php
     if ($listView === 'blockView') {
         echo '<div class="row">';
@@ -107,7 +73,6 @@ $this->endBlock();
     ?>
 </div>
 
-<!--            <a href="compair.html" class="btn btn-large pull-right">Compair Product</a>-->
 
 <div class="pagination">
     <?php
@@ -125,4 +90,21 @@ $this->endBlock();
 <?php if (!isset($_GET['page']) && count($values_by_property_id) === 0): ?>
     <div class="content"><?=$this->blocks['content']?></div>
 <?php endif; ?>
-<br class="clr" />
+
+<?php
+
+$js = <<<JS
+$(".product-item .product-image,.product-item .product-announce").click(function(){
+    var that = $(this),
+        parent = null;
+    if (that.hasClass('product-image')) {
+        parent = that.parent();
+    } else {
+        parent = that.parent().parent();
+    }
+    console.log(parent.find('a.product-name'));
+    document.location = parent.find('a.product-name').attr('href');
+    return false;
+})
+JS;
+$this->registerJs($js);

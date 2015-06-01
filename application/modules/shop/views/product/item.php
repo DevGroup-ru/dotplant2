@@ -10,9 +10,10 @@ use app\modules\image\widgets\ObjectImageWidget;
 use kartik\helpers\Html;
 
 ?>
-<div class="col-md-4">
-    <div class="thumbnail">
-        <a href="<?=$url?>">
+<div class="col-md-6 col-lg-4 col-sm-6 col-xs-12">
+    <div class="product-item">
+
+        <div class="product-image">
             <?=
             ObjectImageWidget::widget(
                 [
@@ -21,23 +22,25 @@ use kartik\helpers\Html;
                 ]
             )
             ?>
-        </a>
-
-        <div class="caption">
-            <h5><a href="<?=$url?>"><?=Html::encode($product->name)?></a></h5>
-
-            <p>
+        </div>
+        <div class="product">
+            <a href="<?=$url?>" class="product-name">
+                <?= Html::encode($product->name) ?>
+            </a>
+            <div class="product-price">
+                <?=$product->formattedPrice(null, false, false)?>
+            </div>
+        </div>
+        <div class="product-info">
+            <div class="product-announce">
                 <?=$product->announce?>
-            </p>
-            <h4 style="text-align:center">
-                <a class="btn" href="#" data-action="add-to-cart" data-id="<?=$product->id?>"><?=Yii::t(
-                        'app',
-                        'Add to'
-                    )?> <i class="fa fa-shopping-cart"></i></a>
-                <button class="btn btn-primary">
-                    <?=$product->formattedPrice(null, false, false)?>
-                </button>
-            </h4>
+            </div>
+            <div class="cta">
+                <a class="btn btn-default btn-add-to-cart" href="#" data-action="add-to-cart" data-id="<?=$product->id?>">
+                    <?= Yii::t('app', 'Add to') ?>
+                    <i class="fa fa-shopping-cart"></i>
+                </a>
+            </div>
         </div>
     </div>
 </div>
