@@ -18,6 +18,8 @@ class Widget extends BaseWidget
     public $order_by = 'date_added';
     public $order = SORT_DESC;
     public $display_header = true;
+    public $display_date = false;
+    public $date_format = 'd.m.Y';
 
     /**
      * Actual run function for all widget classes extending BaseWidget
@@ -49,6 +51,8 @@ class Widget extends BaseWidget
                 'more_pages_label' => $this->more_pages_label,
                 'display_header' => $this->display_header,
                 'header' => $this->header,
+                'display_date' => $this->display_date,
+                'date_format' => $this->date_format,
             ]
         );
     }

@@ -23,17 +23,6 @@ $this->params['breadcrumbs'][] = [
 <?= \yii\bootstrap\Tabs::widget([
     'items' => [
         [
-            'label' => Yii::t('app', 'Theme parts'),
-            'content' => $this->render(
-                '_parts',
-                [
-                    'partsSearchModel' => $partsSearchModel,
-                    'partsDataProvider'=>$partsDataProvider
-                ]
-            ),
-            'active' => true,
-        ],
-        [
             'label' => Yii::t('app', 'Theme variations'),
             'content' => $this->render(
                 '_variations',
@@ -42,6 +31,7 @@ $this->params['breadcrumbs'][] = [
                     'variationsDataProvider'=>$variationsDataProvider
                 ]
             ),
+            'active' => true,
         ],
         [
             'label' => Yii::t('app', 'All widgets'),
@@ -52,6 +42,17 @@ $this->params['breadcrumbs'][] = [
                     'widgetsDataProvider'=>$widgetsDataProvider
                 ]
             ),
+        ],
+        [
+            'label' => Yii::t('app', 'Theme parts'),
+            'content' => $this->render(
+                '_parts',
+                [
+                    'partsSearchModel' => $partsSearchModel,
+                    'partsDataProvider'=>$partsDataProvider
+                ]
+            ),
+
         ],
     ],
 ]) ?>

@@ -3,6 +3,8 @@
 /** @var \app\modules\page\models\Page $pages */
 /** @var boolean $display_header */
 /** @var boolean $isInSidebar */
+/** @var boolean $display_date */
+/** @var string $date_format */
 /** @var string $header */
 use kartik\icons\Icon;
 use yii\helpers\Url;
@@ -22,13 +24,14 @@ if ($display_header === true) {
     <ul class="pages-list">
         <?php foreach ($pages as $model): ?>
             <li>
+                <?php if ($display_date): ?>
+                <div class="page-date_added">
+                    <?= date($date_format, strtotime($model->date_added)); ?>
+                </div>
+                <?php endif; ?>
                 <a href="<?= Url::to(['/page/page/show', 'id'=>$model->id])?>" class="page-title">
                     <?= \yii\helpers\Html::encode($model->name) ?>
                 </a>
-                <div class="page-date_added">
-                    <?= date("d.m.Y H:i:s", strtotime($model->date_added)); ?>
-                </div>
-
                 <div class="page-announce">
                     <?= $model->announce ?>
                 </div>
