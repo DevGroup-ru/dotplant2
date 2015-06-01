@@ -18,13 +18,21 @@ class Delivery extends Widget
     public $formAction = null;
     /** @var ActiveForm $form */
     public $form = null;
+    public $additional = [];
 
     public function run()
     {
         parent::run();
 
-        if (!$this->deliveryInformation instanceof DeliveryInformation || !$this->orderDeliveryInformation instanceof OrderDeliveryInformation) {
+        if (!$this->deliveryInformation instanceof DeliveryInformation && !$this->orderDeliveryInformation instanceof OrderDeliveryInformation) {
             return '';
+        }
+
+        if ($this->immutable) {
+            if (null !== $this->orderDeliveryInformation) {
+                $this->orderDeliveryInformation->setScenario('readonly');
+                $this->orderDeliveryInformation->getAbstractModel()->setScenario('readonly');
+            }
         }
 
         return $this->render($this->viewFile, [
@@ -33,6 +41,7 @@ class Delivery extends Widget
             'immutable' => boolval($this->immutable),
             'action' => $this->formAction,
             'form' => $this->form,
+            'additional' => $this->additional,
         ]);
     }
 }

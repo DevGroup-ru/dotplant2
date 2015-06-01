@@ -69,6 +69,9 @@ Shop splitted into module 'shop'.
 
 LastViewedProducts changed it's namespace from `app\components\LastViewedProducts` to `app\modules\shop\helpers\LastViewedProducts`.
 
+show-proppertiews-widget.php view wrap container attribute changed from id to class.
+
+
 ### Pages
 Pages split to page module.
 All changes in DB contained in m150428_120959_page_move migration

@@ -139,13 +139,13 @@ class BackendOrderController extends BackendController
     public function actionView($id)
     {
         $model = $this->findModel($id);
+        $orderIsImmutable = $model->getImmutability(\app\modules\shop\models\Order::IMMUTABLE_MANAGER);
 
         $transactionsDataProvider = new ArrayDataProvider([
             'allModels' => $model->transactions,
         ]);
 
-        $message = new OrderChat();
-        if (Yii::$app->request->isPost) {
+        if (Yii::$app->request->isPost && !$orderIsImmutable) {
             $model->setScenario('backend');
             if ($model->load(Yii::$app->request->post())) {
                 $customer = $model->customer;
@@ -184,42 +184,19 @@ class BackendOrderController extends BackendController
 
                 $model->save();
             }
-
-            $message->load(Yii::$app->request->post());
-            $message->order_id = $id;
-            $message->user_id = Yii::$app->user->id;
-            if ($message->save()) {
-                if ($model->manager_id != Yii::$app->user->id) {
-                    Notification::addNotification(
-                        $model->manager_id,
-                        Yii::t(
-                            'app',
-                            'Added a new comment to <a href="{orderUrl}" target="_blank">order #{orderId}</a>',
-                            [
-                                'orderUrl' => Url::toRoute(['/backend/order/view', 'id' => $model->id]),
-                                'orderId' => $model->id,
-                            ]
-                        ),
-                        'Order',
-                        'info'
-                    );
-                }
-            }
-
-            $this->refresh();
         }
         $lastMessages = OrderChat::find()
             ->where(['order_id' => $id])
-            ->orderBy('`id` DESC')
+            ->orderBy(['id' => SORT_DESC])
             ->all();
         return $this->render(
             'view',
             [
                 'lastMessages' => $lastMessages,
                 'managers' => $this->getManagersList(),
-                'message' => $message,
                 'model' => $model,
                 'transactionsDataProvider' => $transactionsDataProvider,
+                'orderIsImmutable' => $orderIsImmutable,
             ]
         );
     }
@@ -554,4 +531,56 @@ class BackendOrderController extends BackendController
             'output' => Html::tag('span', $paymentType->name),
         ];
     }
+
+    /**
+     * Add new message to OrderChat
+     * @param $orderId
+     * @return array
+     * @throws BadRequestHttpException
+     */
+    public function actionSendToOrderChat($orderId)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        /** @var Order $order */
+        $order = Order::findOne($orderId);
+        if (null === $order) {
+            throw new BadRequestHttpException();
+        }
+
+        $message = new OrderChat();
+        $message->loadDefaultValues();
+        $message->message = Yii::$app->request->post('message');
+        $message->order_id = $order->id;
+        $message->user_id = Yii::$app->user->id;
+        if ($message->save()) {
+            if ($order->manager_id != Yii::$app->user->id) {
+                Notification::addNotification(
+                    $order->manager_id,
+                    Yii::t(
+                        'app',
+                        'Added a new comment to <a href="{orderUrl}" target="_blank">order #{orderId}</a>',
+                        [
+                            'orderUrl' => Url::toRoute(['/backend/order/view', 'id' => $order->id]),
+                            'orderId' => $order->id,
+                        ]
+                    ),
+                    'Order',
+                    'info'
+                );
+            }
+            $message->refresh();
+            $user = $message->user;
+            return [
+                'status' => 1,
+                'message' => $message->message,
+                'user' => null !== $user ? $user->username : Yii::t('app', 'Unknown'),
+                'gravatar' => null !== $user ? $user->gravatar() : null,
+                'date' => $message->date,
+            ];
+        }
+
+        return ['status' => 0];
+    }
 }
+?>

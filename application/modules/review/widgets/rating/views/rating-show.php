@@ -14,5 +14,5 @@
         </div>
     <?php endforeach; ?>
     <?php else: ?>
-    <p><?= Yii::t('app', 'Element has no votes yet. Be first!') ?></p>
+    <p><?= Yii::t('app', 'There\'s no votes yet. Be first!') ?></p>
 <?php endif; ?>

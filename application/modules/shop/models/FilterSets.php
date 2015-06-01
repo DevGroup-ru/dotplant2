@@ -2,7 +2,6 @@
 
 namespace app\modules\shop\models;
 
-use app\models\Category;
 use app\models\Property;
 use app\traits\SortModels;
 use Yii;

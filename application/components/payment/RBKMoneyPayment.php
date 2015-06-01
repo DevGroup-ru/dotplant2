@@ -13,7 +13,7 @@ class RBKMoneyPayment extends AbstractPayment
     protected $secretKey;
     protected $serviceName;
 
-    public function content($order, $transaction)
+    public function content()
     {
         return $this->render(
             'rbk-money',
@@ -21,14 +21,14 @@ class RBKMoneyPayment extends AbstractPayment
                 'currency' => $this->currency,
                 'eshopId' => $this->eshopId,
                 'language' => $this->language,
-                'order' => $order,
+                'order' => $this->order,
                 'serviceName' => $this->serviceName,
-                'transaction' => $transaction,
+                'transaction' => $this->transaction,
             ]
         );
     }
 
-    public function checkResult()
+    public function checkResult($hash = '')
     {
         if (isset($_GET['eshopId'], $_GET['orderId'], $_GET['serviceName'], $_GET['eshopAccount'],
             $_GET['paymentAmount'], $_GET['paymentCurrency'], $_GET['paymentStatus'], $_GET['userName'],

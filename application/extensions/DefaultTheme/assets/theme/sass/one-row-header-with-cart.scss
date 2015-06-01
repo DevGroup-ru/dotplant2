@@ -104,4 +104,13 @@ header.one-row-header-with-cart {
     color: $header_navigation_color;
     font-weight: bold;
   }
+  .btn-compare {
+    background: transparent;
+    border: 2px solid $action_text_color;
+    color: $action_text_color;
+    &:hover, &:active, &:focus {
+      background: $action_text_color;
+      color: $header_color;
+    }
+  }
 }

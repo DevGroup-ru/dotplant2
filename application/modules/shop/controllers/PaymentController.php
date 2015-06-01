@@ -11,6 +11,15 @@ use yii\web\Controller;
 
 class PaymentController extends Controller
 {
+    /**
+     * Check payment result by PaymentType id
+     * @param null $id
+     * @param null $paymentId
+     * @param string $othash
+     * @return mixed
+     * @throws BadRequestHttpException
+     * @throws \yii\base\UnknownClassException
+     */
     public function actionResult($id = null, $paymentId = null, $othash = '')
     {
         $id = null === $id ? $paymentId : $id;
@@ -23,9 +32,19 @@ class PaymentController extends Controller
             throw new BadRequestHttpException();
         }
 
+        /**
+         * Redirect on one of those methods
+         */
         return $paymentType->getPayment()->checkResult($othash);
     }
 
+    /**
+     * Error message
+     * @param null $id
+     * @param null $othash
+     * @return string
+     * @throws BadRequestHttpException
+     */
     public function actionError($id = null, $othash = null)
     {
         if (null === $id) {
@@ -42,6 +61,13 @@ class PaymentController extends Controller
         return $this->render('error', ['transaction' => $transaction]);
     }
 
+    /**
+     * Success message
+     * @param null $id
+     * @param null $othash
+     * @return string
+     * @throws BadRequestHttpException
+     */
     public function actionSuccess($id = null, $othash = null)
     {
         if (null === $id) {
@@ -58,6 +84,13 @@ class PaymentController extends Controller
         return $this->render('success', ['transaction' => $transaction]);
     }
 
+    /**
+     * Fail message
+     * @param null $id
+     * @param null $othash
+     * @return string
+     * @throws BadRequestHttpException
+     */
     public function actionFail($id = null, $othash = null)
     {
         if (null === $id) {
@@ -74,6 +107,14 @@ class PaymentController extends Controller
         return $this->render('fail', ['transaction' => $transaction]);
     }
 
+    /**
+     * Cancel transaction and delete it
+     * @param null $id
+     * @param null $othash
+     * @return \yii\web\Response
+     * @throws BadRequestHttpException
+     * @throws \Exception
+     */
     public function actionCancel($id = null, $othash = null)
     {
         if (null === $id) {
@@ -94,6 +135,14 @@ class PaymentController extends Controller
         return $this->redirect(Url::previous('__returnPaymentCancel'));
     }
 
+    /**
+     * Change PaymentType for OrderTransaction
+     * @param null $id
+     * @param null $othash
+     * @param null $update
+     * @return string
+     * @throws BadRequestHttpException
+     */
     public function actionType($id = null, $othash = null, $update = null)
     {
         if (null === $id) {
@@ -119,6 +168,13 @@ class PaymentController extends Controller
         return $this->render('type', ['transaction' => $transaction]);
     }
 
+    /**
+     * Open OrderTransaction with rendering payment form
+     * @param null $id
+     * @param null $othash
+     * @return string
+     * @throws BadRequestHttpException
+     */
     public function actionTransaction($id = null, $othash = null)
     {
         if (null === $id) {
@@ -134,6 +190,5 @@ class PaymentController extends Controller
 
         return $this->render('transaction', ['transaction' => $transaction]);
     }
-
 }
 ?>

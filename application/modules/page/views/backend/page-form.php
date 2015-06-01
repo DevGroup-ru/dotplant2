@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?=Html::a(
             Icon::show('eye') . Yii::t('app', 'Preview'),
             [
-                '/page/show',
+                '/page/page/show',
                 'id' => $model->id,
             ],
             [
@@ -225,8 +225,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <?=\app\modules\image\widgets\ImageDropzone::widget(
                 [
                     'name' => 'file',
-                    'url' => ['/backend/product/upload'],
-                    'removeUrl' => ['/backend/product/remove'],
+                    'url' => ['upload'],
+                    'removeUrl' => ['remove'],
                     'uploadDir' => '/theme/resources/product-images',
                     'sortable' => true,
                     'sortableOptions' => [

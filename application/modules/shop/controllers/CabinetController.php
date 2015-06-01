@@ -18,7 +18,7 @@ class CabinetController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index', 'update-order'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -35,31 +35,43 @@ class CabinetController extends Controller
         ];
     }
 
+    /**
+     * @return string
+     */
     public function actionIndex()
     {
         return $this->render('index');
     }
 
+    /**
+     * @return string
+     */
     public function actionProfile()
     {
+        Url::remember('', '__shopCabinetUpdateReturnUrl');
         return $this->render('profile');
     }
 
-    public function actionUpdate()
+    /**
+     * @param string $hash
+     * @return \yii\web\Response
+     */
+    public function actionUpdateOrder($hash = '')
     {
         $userId = \Yii::$app->user->isGuest ? 0 : \Yii::$app->user->id;
-        $orderId = \Yii::$app->request->post('orderId');
-        if (intval($orderId) <= 0) {
-            return $this->redirect(Url::previous('__shopCabinetUpdateReturnUrl'));
-        }
         /** @var Order $order */
-        if (null === $order = Order::findOne(['user_id' => $userId, 'id' => $orderId])) {
-            return $this->redirect(Url::previous('__shopCabinetUpdateReturnUrl'));
+        if (null === $order = Order::findOne(['user_id' => $userId, 'hash' => $hash])) {
+            return $this->redirect(Url::previous('__shopCabinetUpdateGuestReturnUrl'));
         }
 
         $this->updateCustomer($order->customer);
         $this->updateContragent($order->contragent);
 
+        return $this->redirect(Url::previous('__shopCabinetUpdateGuestReturnUrl'));
+    }
+
+    public function actionUpdate()
+    {
         return $this->redirect(Url::previous('__shopCabinetUpdateReturnUrl'));
     }
 

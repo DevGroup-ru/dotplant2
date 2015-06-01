@@ -14,6 +14,11 @@ use yii\helpers\Html;
 <?php
     $customer = $additional['customer'];
     $order = $additional['order'];
+
+    if (empty($order) || empty($customer)) {
+        return '';
+    }
+
     $contragents = array_reduce($customer->contragents,
         function ($result, $item) use ($customer)
         {
@@ -34,7 +39,7 @@ use yii\helpers\Html;
                 }
                 return $result;
             }, [])
-        , ['class' => 'contragents']);
+        , ['class' => 'contragents', 'readonly' => $immutable]);
 ?>
     <hr />
     <div class="contragents_list">
@@ -47,12 +52,14 @@ use yii\helpers\Html;
 
             /** @var \app\modules\shop\models\Contragent $contragent */
             $_content = $form->field($contragent, 'type')
-                ->dropDownList(['Individual' => 'Individual', 'Self-employed' => 'Self-employed', 'Legal entity' => 'Legal entity']);
+                ->dropDownList(['Individual' => 'Individual', 'Self-employed' => 'Self-employed', 'Legal entity' => 'Legal entity'],
+                    ['readonly' => $immutable]
+                );
             /** @var \app\properties\AbstractModel $abstractModel */
             $abstractModel = $contragent->getAbstractModel();
             $abstractModel->setArrayMode(false);
             foreach ($abstractModel->attributes() as $attr) {
-                $_content .= $form->field($abstractModel, $attr);
+                $_content .= $form->field($abstractModel, $attr)->textInput(['readonly' => $immutable]);
             }
 
             $_content .= Html::tag('h5', Yii::t('app', 'Delivery information'));
@@ -63,11 +70,15 @@ use yii\helpers\Html;
                     : \app\modules\shop\models\DeliveryInformation::createNewDeliveryInformation($contragent, false)
                 );
             $_content .= $form->field($deliveryInformation, 'country_id')
-                ->dropDownList(\app\components\Helper::getModelMap(\app\models\Country::className(), 'id', 'name'));
+                ->dropDownList(\app\components\Helper::getModelMap(\app\models\Country::className(), 'id', 'name'),
+                    ['readonly' => $immutable]
+                );
             $_content .= $form->field($deliveryInformation, 'city_id')
-                ->dropDownList(\app\components\Helper::getModelMap(\app\models\City::className(), 'id', 'name'));
-            $_content .= $form->field($deliveryInformation, 'zip_code');
-            $_content .= $form->field($deliveryInformation, 'address');
+                ->dropDownList(\app\components\Helper::getModelMap(\app\models\City::className(), 'id', 'name'),
+                    ['readonly' => $immutable]
+                );
+            $_content .= $form->field($deliveryInformation, 'zip_code')->textInput(['readonly' => $immutable]);
+            $_content .= $form->field($deliveryInformation, 'address')->textInput(['readonly' => $immutable]);
 
             echo Html::tag('div', $_content, [
                 'class' => "contragent contragent_$key" . ($key === intval($order->contragent_id) ? '' : ' hide')

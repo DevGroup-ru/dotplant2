@@ -7,7 +7,7 @@
  */
 ?>
 
-<div id="properties-widget widget-<?= $widget_id ?>" itemprop="propertiesList" itemscope itemtype="http://schema.org/ItemList">
+<div class="properties-widget widget-<?= $widget_id ?>" itemprop="propertiesList" itemscope itemtype="http://schema.org/ItemList">
 
 <?php
     if (!empty($object_property_groups)) {
@@ -32,7 +32,7 @@
             echo "</div>";
         }
     } else {
-        echo 'Empty properties';
+        echo '<!-- Empty properties -->';
     }
 ?>
 

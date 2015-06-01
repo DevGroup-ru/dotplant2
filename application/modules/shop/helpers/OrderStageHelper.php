@@ -17,7 +17,7 @@ class OrderStageHelper
                 $result[] = [
                     'label' => $item->button_label,
                     'css' => $item->button_css_class,
-                    'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id])
+                    'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id], true)
                 ];
                 return $result;
             }, []);
@@ -33,7 +33,7 @@ class OrderStageHelper
                     $result[] = [
                         'label' => 'Вернуться на предыдущий шаг',
                         'css' => $item->button_css_class,
-                        'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id, 'previous' => 1])
+                        'url' => Url::to(['/shop/cart/stage-leaf', 'id' => $item->id, 'previous' => 1], true)
                     ];
                 }
                 return $result;

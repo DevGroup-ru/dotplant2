@@ -1,7 +1,7 @@
 $(function () {
 
     function addProperty(property_id, selected) {
-        console.log($("#parameter-template").html());
+//        console.log($("#parameter-template").html());
 
         var compiled = _.template($("#parameter-template").html());
         var $property = $(compiled({ index: $('#properties .parameter').length  })

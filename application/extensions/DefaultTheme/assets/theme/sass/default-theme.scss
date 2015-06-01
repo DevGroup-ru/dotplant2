@@ -1,5 +1,7 @@
 @import "variables";
 @import "type";
+@import "shop";
+@import "properties";
 @import "one-row-header-with-cart";
 @import "adaptive";
 
@@ -32,15 +34,35 @@ body, .content, #content {
 
 .btn {
   color: $action_text_color;
+  &.btn-default {
+    color: #3a3a3a;
+  }
 }
 
 .btn-primary {
-  background-color: $action_color;
-  border-color: darken($action_color, 10%);
+  //background-color: $action_color;
+  //border-color: darken($action_color, 10%);
+  background: #fff;
+  color: $action_color;
+  border: 2px solid $action_color;
+  transition: all 0.2s ease 0.1s;
 }
+.btn-success {
+  color: $secondary_color;
+  background: transparent;
+  border: 2px solid $secondary_color;
+  &:hover, &:active, &:focus {
+    color: #fff;
+    background: $secondary_color;
+  }
+}
+
+
 .btn-primary:hover, .btn-primary:focus, .btn-primary.focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
-  background-color: darken($action_color, 10%);
-  border-color: darken($action_color, 20%);
+  //background-color: darken($action_color, 10%);
+  //border-color: darken($action_color, 20%);
+  color: $action_text_color;
+  background-color: $action_color;
 }
 
 header .nav {
@@ -95,4 +117,13 @@ header .nav {
     list-style: none;
     padding-left: 0;
   }
+}
+
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+  background-color: $secondary_color;
+  border-color: $secondary_color;
+
+}
+.pagination > li > a, .pagination > li > span {
+  color: $secondary_color;
 }
