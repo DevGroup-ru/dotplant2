@@ -1,10 +1,10 @@
-/* globals jQuery: false */
+/* globals $: false */
 
 "use strict";
 
 var Shop = {
     'addBatchToCart' : function(data, callback) {
-        jQuery.ajax({
+        $.ajax({
             'data' : {'products': data},
             'dataType' : 'json',
             'success' : function(data) {
@@ -31,7 +31,7 @@ var Shop = {
             'id' : orderItemId,
             'quantity' : quantity
         };
-        jQuery.ajax({
+        $.ajax({
             'data' : data,
             'dataType' : 'json',
             'success' : function(data) {
@@ -47,7 +47,7 @@ var Shop = {
 
 var DotPlant = {
     'setPreference' : function(key, value) {
-        jQuery.ajax({
+        $.ajax({
             'data' : {
                 'key': key,
                 'value': value
@@ -109,14 +109,14 @@ var Order = {
 };
 
 
-jQuery(function() {
-    jQuery('#print-page').click(function() {
+$(function() {
+    $('#print-page').click(function() {
         window.print();
         return false;
     });
-    jQuery('[data-action=delete]').click(function() {
-        var $link = jQuery(this);
-        jQuery.ajax({
+    $('[data-action=delete]').click(function() {
+        var $link = $(this);
+        $.ajax({
             'dataType' : 'json',
             'success' : function(data) {
                 if (data['success']) {
@@ -127,8 +127,8 @@ jQuery(function() {
         });
         return false;
     });
-    jQuery('[data-action="add-to-cart"]').click(function() {
-        var $this = jQuery(this);
+    $('[data-action="add-to-cart"]').click(function() {
+        var $this = $(this);
         var quantity = typeof($this.data('quantity')) !== 'undefined' ? parseFloat($this.data('quantity')) : 1;
         if (isNaN(quantity) || quantity < 1) {
             quantity = 1;
@@ -148,7 +148,7 @@ jQuery(function() {
                 'data': data,
                 'button': $this
             });
-            var $widget = jQuery('#cart-info-widget');
+            var $widget = $('#cart-info-widget');
             if ($widget.length === 0) {
                 $widget = $(".btn-show-cart");
             }
@@ -158,7 +158,7 @@ jQuery(function() {
                 $widget.find('.items-count').text(data['itemsCount']);
 
                 if (parseInt($this.data('fly'))==1) {
-                    var imgtofly = jQuery($this.closest('div[itemtype="http://schema.org/Product"]'));
+                    var imgtofly = $($this.closest('div[itemtype="http://schema.org/Product"]'));
                     if (imgtofly.length === 0) {
                         imgtofly = $this;
                     }
@@ -181,7 +181,7 @@ jQuery(function() {
                                 'height': 50
                             }, 550, 'linear');
                         imgclone.animate({'width': 0, 'height': 0}, function () {
-                            jQuery(this).detach();
+                            $(this).detach();
                             $body.trigger({
                                 'type': 'productFlown',
                                 'productId': $this.data('id'),
@@ -200,15 +200,57 @@ jQuery(function() {
         return false;
     });
 
-    jQuery('[data-dotplant-listViewType]').click(function(){
-        var $this = jQuery(this);
+    $('input[data-type=quantity]').blur(function() {
+        var $input = $(this);
+        var quantity = parseFloat($input.val());
+        var nominal = parseFloat($input.attr('data-nominal'));
+        if (isNaN(quantity) || quantity < nominal) {
+            quantity = nominal;
+        }
+        Shop.changeAmount($input.data('id'), quantity, function(data) {
+            if (data.success) {
+                $('#cart-table .total-price, #cart-info-widget .total-price').html(data.totalPrice);
+                $('#cart-table .items-count, #cart-info-widget .items-count').html(data.itemsCount);
+                $input.parents('tr').eq(0).find('.item-price').html(data.itemPrice);
+                $input.val(quantity);
+            }
+        });
+    });
+    $('#cart-table [data-action="change-quantity"]').click(function() {
+        var $this = $(this);
+        var $input = $this.parents('td').eq(0).find('input[data-type=quantity]');
+        var quantity = parseFloat($input.val());
+        var nominal = parseFloat($input.attr('data-nominal'));
+        if (isNaN(quantity)) {
+            quantity = nominal;
+        }
+        if ($this.hasClass('plus')) {
+            quantity += nominal;
+        } else {
+            if (quantity > nominal) {
+                quantity -= nominal;
+            }
+        }
+        Shop.changeAmount($input.data('id'), quantity, function(data) {
+            if (data.success) {
+                $('#cart-table .total-price, #cart-info-widget .total-price').html(data.totalPrice);
+                $('#cart-table .items-count, #cart-info-widget .items-count').html(data.itemsCount);
+                $input.parents('tr').eq(0).find('.item-price').html(data.itemPrice);
+                $input.val(quantity);
+            }
+        });
+        return false;
+    });
+    
+    $('[data-dotplant-listViewType]').click(function(){
+        var $this = $(this);
 
         DotPlant.setPreference('listViewType', $this.data('dotplantListviewtype'));
         return false;
     });
 
-    jQuery('select[data-userpreference]').change(function(){
-        var $this = jQuery(this);
+    $('select[data-userpreference]').change(function(){
+        var $this = $(this);
         DotPlant.setPreference($this.data('userpreference'), $this.val());
         return false;
     });

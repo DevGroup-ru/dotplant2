@@ -137,6 +137,12 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .product-tabs + .tab-content > .tab-pane {
   padding: 8px; }
 
+#cart-table .product-image img {
+  max-height: 100px; }
+  #cart-table input.quantity {
+    border-width: 2px;
+    height: 36px; }
+
 .properties-widget {
   margin: 4px;
   padding: 2px; }
@@ -312,7 +318,12 @@ body, .content, #content {
 
 .btn-primary:hover, .btn-compare:hover, .btn-primary:focus, .btn-compare:focus, .btn-primary.focus, .btn-compare.focus, .btn-primary:active, .btn-compare:active, .btn-primary.active, .btn-compare.active, .open > .dropdown-toggle.btn-primary, .open > .btn-compare.dropdown-toggle {
   color: #ecf0f1;
-  background-color: #6aa84f; }
+  background-color: #6aa84f;
+  outline: none;
+  border-color: #6aa84f; }
+
+.btn-danger {
+  border-width: 2px; }
 
 header .nav .navigation-widget {
   list-style: none;

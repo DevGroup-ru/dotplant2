@@ -36,7 +36,7 @@ foreach ($items as $i => $item) {
     <tbody>
     <?php foreach ($items as $item): ?>
         <tr>
-            <td>
+            <td class="product-image">
                 <?=
                 \app\modules\image\widgets\ObjectImageWidget::widget([
                     'limit' => 1,
@@ -65,10 +65,12 @@ foreach ($items as $i => $item) {
                 <?php if ($immutable === true): ?>
                     <?= $item->quantity ?>
                 <?php else: ?>
+
+
                     <div class="form-inline">
                         <div class="form-group">
                             <div class="btn-group">
-                            <input class="form-control" style="float: left; margin-right: -2px; max-width:80px;" placeholder="1" size="16" type="text" data-type="quantity" data-id="<?= $item->id ?>" value="<?= $item->quantity ?>" data-nominal="<?= $item->product->measure->nominal ?>" />
+                            <input class="form-control quantity" style="float: left; margin-right: -2px; max-width:80px;" placeholder="1" size="16" type="text" data-type="quantity" data-id="<?= $item->id ?>" value="<?= $item->quantity ?>" data-nominal="<?= $item->product->measure->nominal ?>" />
                                 <button class="btn btn-primary minus" type="button" data-action="change-quantity">
                                     <i class="fa fa-minus"></i></button>
                                 <button class="btn btn-primary plus" type="button" data-action="change-quantity">
