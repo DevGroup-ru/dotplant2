@@ -151,14 +151,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php if (!$model->isNewRecord): ?>
     <div class="row">
         <article class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-            <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_INLINE]); ?>
-            <?php /** @var $form ActiveForm */ ?>
-            <?php BackendWidget::begin([
-                'title' => Yii::t('app', 'Warehouse Phone'),
-                'icon' => 'cog',
-                'footer' => $this->blocks['submit']
-            ]); ?>
-
             <?= \app\backend\widgets\GridView::widget(
                 [
                     'dataProvider' => $warehousePhoneProvider,
@@ -169,6 +161,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             'class' => 'app\backend\components\ActionColumn',
                             'buttons' => [
                                 [
+                                    'url' => 'edit-phone',
+                                    'icon' => 'pencil',
+                                    'class' => 'btn-primary',
+                                    'label' => Yii::t('app', 'Edit'),
+                                ],
+                                [
                                     'url' => 'delete-phone',
                                     'icon' => 'trash-o',
                                     'class' => 'btn-danger',
@@ -177,6 +175,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'data-action' => 'delete',
                                     ],
                                 ]
+
                             ],
                         ],
 
@@ -185,27 +184,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             );
             ?>
-            <div class="clearfix"></div>
-            <?= $form->errorSummary($warehousePhone); ?>
-            <div class="pull-right">
-                <?= $form->field($warehousePhone, 'name') ?>
-                <?= $form->field($warehousePhone, 'phone') ?>
-                <?= $form->field($warehousePhone, 'sort_order') ?>
+            <?= $this->render('form_edit_phone', ['warehousePhone' => $warehousePhone]) ?>
 
-            </div>
-            <div class="clearfix"></div>
-            <?php BackendWidget::end(); ?>
-            <?php ActiveForm::end(); ?>
         </article>
         <article class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-            <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_INLINE]); ?>
-            <?php /** @var $form ActiveForm */ ?>
-            <?php BackendWidget::begin([
-                'title' => Yii::t('app', 'Warehouse Email'),
-                'icon' => 'cog',
-                'footer' => $this->blocks['submit']
-            ]); ?>
-
             <?= \app\backend\widgets\GridView::widget(
                 [
                     'dataProvider' => $warehouseEmailProvider,
@@ -215,6 +197,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'class' => 'app\backend\components\ActionColumn',
                             'buttons' => [
+                                [
+                                    'url' => 'edit-email',
+                                    'icon' => 'pencil',
+                                    'class' => 'btn-primary',
+                                    'label' => Yii::t('app', 'Edit'),
+                                ],
                                 [
                                     'url' => 'delete-filters',
                                     'icon' => 'trash-o',
@@ -232,17 +220,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             );
             ?>
-            <div class="clearfix"></div>
-            <?= $form->errorSummary($warehouseEmail); ?>
-            <div class="pull-right">
-                <?= $form->field($warehouseEmail, 'name') ?>
-                <?= $form->field($warehouseEmail, 'email') ?>
-                <?= $form->field($warehouseEmail, 'sort_order') ?>
 
-            </div>
-            <div class="clearfix"></div>
-            <?php BackendWidget::end(); ?>
-            <?php ActiveForm::end(); ?>
+            <?= $this->render('form_edit_email', ['warehouseEmail' => $warehouseEmail]) ?>
         </article>
 
     </div>

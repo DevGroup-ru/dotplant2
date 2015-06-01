@@ -32,50 +32,50 @@ $this->params['breadcrumbs'][] = $this->title;
 
 </div>
 
-<script type="text/javascript">
-    $(function() {
-        $('#deleteRedirects').on('click', function() {
-            $.ajax({
-                'url' : '/seo/manage/delete-redirects',
-                'type': 'post',
-                'data': {
-                    'redirects' : $('.grid-view').yiiGridView('getSelectedRows')
-                },
-                success: function(data) {
-	                if(data)
-	                    location.reload();
-                }
-            });
-        });
-
-        $('#generateButton').on('click', function() {
-            $.ajax({
-                'url' : '/seo/manage/generate-redirect-file',
-                'type': 'post',
-                success: function(data) {
-                    $('#generating').stop(true, true).removeClass('alert-danger').addClass('alert-success').html('<strong>OK!</strong> File generated.').css('display', 'block').fadeOut(1500);
-                },
-                error: function() {
-                    $('#generating').stop(true, true).removeClass('alert-success').addClass('alert-danger').html('<strong>ERROR!</strong> File not generated.').css('display', 'block').fadeOut(1500);
-                }
-            });
-        });
-
-        $('#deleteFileButton').on('click', function() {
-            $.ajax({
-                'url' : '/seo/manage/delete-redirect-file',
-                'type': 'post',
-                success: function(data) {
-                    if(data) {
-                        $('#generating').stop(true, true).removeClass('alert-danger').addClass('alert-success').html('<strong>OK!</strong> File deleted.').css('display', 'block').fadeOut(1500);
-                    } else {
-                        $('#generating').stop(true, true).removeClass('alert-success').addClass('alert-danger').html('<strong>ERROR!</strong> File can not deleted.').css('display', 'block').fadeOut(1500);
-                    }
-                },
-                error: function() {
-                    $('#generating').stop(true, true).removeClass('alert-success').addClass('alert-danger').html('<strong>ERROR!</strong> File can not deleted.').css('display', 'block').fadeOut(1500);
-                }
-            });
-        });
+<?php
+$script = <<<JS
+$('#deleteRedirects').on('click', function() {
+    $.ajax({
+        'url' : '/seo/manage/delete-redirects',
+        'type': 'post',
+        'data': {
+            'redirects' : $('.grid-view').yiiGridView('getSelectedRows')
+        },
+        success: function(data) {
+            if(data)
+                location.reload();
+        }
     });
-</script>
+});
+
+$('#generateButton').on('click', function() {
+    $.ajax({
+        'url' : '/seo/manage/generate-redirect-file',
+        'type': 'post',
+        success: function(data) {
+            $('#generating').stop(true, true).removeClass('alert-danger').addClass('alert-success').html('<strong>OK!</strong> File generated.').css('display', 'block').fadeOut(1500);
+        },
+        error: function() {
+            $('#generating').stop(true, true).removeClass('alert-success').addClass('alert-danger').html('<strong>ERROR!</strong> File not generated.').css('display', 'block').fadeOut(1500);
+        }
+    });
+});
+
+$('#deleteFileButton').on('click', function() {
+    $.ajax({
+        'url' : '/seo/manage/delete-redirect-file',
+        'type': 'post',
+        success: function(data) {
+            if(data) {
+                $('#generating').stop(true, true).removeClass('alert-danger').addClass('alert-success').html('<strong>OK!</strong> File deleted.').css('display', 'block').fadeOut(1500);
+            } else {
+                $('#generating').stop(true, true).removeClass('alert-success').addClass('alert-danger').html('<strong>ERROR!</strong> File can not deleted.').css('display', 'block').fadeOut(1500);
+            }
+        },
+        error: function() {
+            $('#generating').stop(true, true).removeClass('alert-success').addClass('alert-danger').html('<strong>ERROR!</strong> File can not deleted.').css('display', 'block').fadeOut(1500);
+        }
+    });
+});
+JS;
+$this->registerJs($script);

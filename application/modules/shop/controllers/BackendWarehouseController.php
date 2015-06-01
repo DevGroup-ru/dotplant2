@@ -211,6 +211,38 @@ class BackendWarehouseController extends BackendController
         );
     }
 
+    public function actionEditPhone($id, $returnUrl)
+    {
+        $warehousePhone = WarehousePhone::findOne($id);
+
+        if (Yii::$app->request->post('WarehousePhone')) {
+            $warehousePhone->loadDefaultValues();
+            $warehousePhone->load(Yii::$app->request->post());
+            if ($warehousePhone->save()) {
+                $this->redirect($returnUrl);
+            }
+        }
+
+
+
+        return $this->render('form_edit_phone', ['warehousePhone' => $warehousePhone]);
+    }
+
+
+    public function actionEditEmail($id, $returnUrl)
+    {
+        $warehouseEmail = WarehouseEmail::findOne($id);
+
+        if (Yii::$app->request->post('WarehouseEmail')) {
+            $warehouseEmail->loadDefaultValues();
+            $warehouseEmail->load(Yii::$app->request->post());
+            if ($warehouseEmail->save()) {
+                $this->redirect($returnUrl);
+            }
+        }
+
+        return $this->render('form_edit_email', ['warehouseEmail' => $warehouseEmail]);
+    }
 
     public function actionDeletePhone($id)
     {

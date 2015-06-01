@@ -179,7 +179,7 @@ class ManageController extends BackendController
                         Url::toRoute(
                             [
                                 'update-meta',
-                                'id' => $model->id,
+                                'id' => $model->key,
                                 'returnUrl' => $returnUrl,
                             ]
                         )
