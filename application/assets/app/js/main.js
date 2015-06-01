@@ -136,24 +136,42 @@ jQuery(function() {
 
         Shop.addToCart($this.data('id'), quantity, function(data) {
             var $widget = jQuery('#cart-info-widget');
-            $widget.find('.total-price').text(data['totalPrice']);
-            $widget.find('.items-count').text(data['itemsCount']);
+            if ($widget.length === 0) {
+                $widget = $(".btn-show-cart");
+            }
+            if ($widget.length > 0) {
+                $widget.closest('.total-price').text(data['totalPrice']);
+                console.log(data['itemsCount'], $widget, $widget.closest('.items-count'));
+                $widget.closest('.items-count').text(data['itemsCount']);
 
+                if (parseInt($this.data('fly'))==1) {
+                    var imgtofly = jQuery($this.closest('div[itemtype="http://schema.org/Product"]'));
+                    if (imgtofly.length === 0) {
+                        imgtofly = $this;
+                    }
+                    if (imgtofly.length) {
 
-            var imgtofly = jQuery($this.closest('div[itemtype="http://schema.org/Product"]'));
-            if (imgtofly.length) {
-
-                var imgclone = imgtofly.clone()
-                    .offset({ top:imgtofly.offset().top, left:imgtofly.offset().left })
-                    .css({'opacity':'0.2', 'position':'absolute','background':'white','z-index':'1000','transform': 'scale(0.5,0.5)'})
-                    .appendTo($('body'))
-                    .animate({
-                        'top':$widget.offset().top + 10,
-                        'left':$widget.offset().left + 30,
-                        'width':50,
-                        'height':50
-                    }, 1000, 'linear');
-                imgclone.animate({'width':0, 'height':0}, function(){ jQuery(this).detach(); });
+                        var imgclone = imgtofly.clone()
+                            .offset({top: imgtofly.offset().top, left: imgtofly.offset().left})
+                            .css({
+                                'opacity': '0.2',
+                                'position': 'absolute',
+                                'background': 'white',
+                                'z-index': '1000',
+                                'transform': 'scale(0.5,0.5)'
+                            })
+                            .appendTo($('body'))
+                            .animate({
+                                'top': $widget.offset().top + 10,
+                                'left': $widget.offset().left + 30,
+                                'width': 50,
+                                'height': 50
+                            }, 550, 'linear');
+                        imgclone.animate({'width': 0, 'height': 0}, function () {
+                            jQuery(this).detach();
+                        });
+                    }
+                }
             }
             return false;
 

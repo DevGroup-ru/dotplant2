@@ -107,7 +107,7 @@ $navStyles = '';
             
             <a href="<?= \yii\helpers\Url::toRoute(['/shop/cart']) ?>" class="btn btn-show-cart">
                 <i class="fa fa-shopping-cart cart-icon"></i>
-                <span class="badge">
+                <span class="badge items-count">
                     <?= $itemsCount ?>
                 </span>
             </a>
