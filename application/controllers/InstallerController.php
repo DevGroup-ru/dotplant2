@@ -3,7 +3,9 @@
 namespace app\controllers;
 
 use app\models\DbConfig;
+use app\components\InstallerHelper;
 use Yii;
+use yii\base\DynamicModel;
 use yii\web\Controller;
 use app\components\InstallerFilter;
 
@@ -50,6 +52,25 @@ class InstallerController extends Controller
                 return $carry;
             },
             []
+        );
+    }
+
+    public function actionLanguage()
+    {
+        $model = new DynamicModel(['language']);
+        $model->addRule(['language'], 'required');
+        $model->setAttributes(['language' => Yii::$app->session->get('lang', 'en')]);
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            Yii::$app->session->set('lang', $model->language);
+            return $this->redirect(['db-config']);
+        }
+        return $this->render(
+            'language',
+            [
+                'languages' => InstallerHelper::getLanguagesArray(),
+                'model' => $model,
+            ]
         );
     }
 

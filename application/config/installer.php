@@ -31,6 +31,13 @@ return [
             'class' => 'yii\web\AssetManager',
             'linkAssets' => true,
         ],
+        'i18n' => [
+            'translations' => [
+                '*' => [
+                    'class' => 'yii\i18n\PhpMessageSource'
+                ],
+            ],
+        ],
     ],
     'params' => [
         'icon-framework' => 'fa',

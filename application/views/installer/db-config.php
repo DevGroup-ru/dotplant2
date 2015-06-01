@@ -52,7 +52,7 @@ $this->title = Yii::t('app', 'Installer - Database configuration');
 
 
 <div class="installer-controls">
-    <a href="<?= Url::to(['index']) ?>" class="btn btn-info btn-lg pull-left">
+    <a href="<?= Url::to(['language']) ?>" class="btn btn-info btn-lg pull-left">
         <?= Icon::show('arrow-left') ?>
         <?= Yii::t('app', 'Back') ?>
     </a>
