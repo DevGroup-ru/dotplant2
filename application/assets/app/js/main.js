@@ -133,16 +133,29 @@ jQuery(function() {
         if (isNaN(quantity) || quantity < 1) {
             quantity = 1;
         }
-
+        var $body = $('body');
+        $body.trigger({
+            'type': 'addToCartClicked',
+            'productId': $this.data('id'),
+            'quantity': quantity,
+            'button': $this
+        });
         Shop.addToCart($this.data('id'), quantity, function(data) {
+            $body.trigger({
+                'type': 'addToCart',
+                'productId': $this.data('id'),
+                'quantity': quantity,
+                'data': data,
+                'button': $this
+            });
             var $widget = jQuery('#cart-info-widget');
             if ($widget.length === 0) {
                 $widget = $(".btn-show-cart");
             }
             if ($widget.length > 0) {
-                $widget.closest('.total-price').text(data['totalPrice']);
-                console.log(data['itemsCount'], $widget, $widget.closest('.items-count'));
-                $widget.closest('.items-count').text(data['itemsCount']);
+                $widget.find('.total-price').text(data['totalPrice']);
+
+                $widget.find('.items-count').text(data['itemsCount']);
 
                 if (parseInt($this.data('fly'))==1) {
                     var imgtofly = jQuery($this.closest('div[itemtype="http://schema.org/Product"]'));

@@ -47,7 +47,7 @@ class Navigation extends \yii\db\ActiveRecord
                 return empty($model->route) && empty($model->url);
             }, 'message' => Yii::t('app', 'Either URL or Route should be set.'), 'whenClient' => "
             function(attribute, value) {
-                console.log(attribute.id);
+//                console.log(attribute.id);
                 if (attribute.id === 'navigation-url') {
                     return \$('#navigation-route').val() === '' && value === '';
                 } else {
