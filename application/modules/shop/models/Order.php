@@ -351,12 +351,15 @@ class Order extends \yii\db\ActiveRecord
             throw new Exception('Initial order stage not found');
         }
         $model = new static;
-        $model->loadDefaultValues();
+        $model->loadDefaultValues(false);
         $model->user_id = !Yii::$app->user->isGuest && $assignToUser ? Yii::$app->user->id : 0;
         $model->order_stage_id = $initialOrderStage->id;
+        $model->in_cart = 1;
+        $model->customer_id = 0;
+        $model->contragent_id = 0;
         mt_srand();
         $model->hash = md5(mt_rand() . uniqid());
-        if (!$model->save(true, ['user_id', 'temporary', 'hash', 'order_stage_id'])) {
+        if (!$model->save()) {
             if ($throwException) {
                 throw new Exception('Cannot create a new order.');
             } else {
@@ -390,8 +393,6 @@ class Order extends \yii\db\ActiveRecord
             && $create === true
         ) {
             $model = self::create();
-            $model->loadDefaultValues();
-            $model->in_cart = 1;
             self::$order = $model;
             Yii::$app->session->set('orderId', $model->id);
 
