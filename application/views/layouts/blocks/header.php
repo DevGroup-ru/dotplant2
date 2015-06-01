@@ -37,7 +37,6 @@ $themeModule = Yii::$app->getModule('DefaultTheme');
 </head>
 <body itemscope itemtype="http://schema.org/WebPage">
 <?php $this->beginBody(); ?>
-
 <?= ThemeParts::renderPart('pre-header') ?>
 <?= ThemeParts::renderPart('header') ?>
 <?= ThemeParts::renderPart('post-header') ?>

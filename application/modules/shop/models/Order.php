@@ -347,6 +347,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public static function create($throwException = true, $assignToUser = true)
     {
+        TagDependency::invalidate(Yii::$app->cache, ['Cart:'.Yii::$app->session->id]);
         $initialOrderStage = OrderStage::getInitialStage();
         if (is_null($initialOrderStage)) {
             throw new Exception('Initial order stage not found');
@@ -383,6 +384,7 @@ class Order extends \yii\db\ActiveRecord
             self::$order = self::find()
                 ->where(['id' => Yii::$app->session->get('orderId')])
                 ->one();
+
         }
         if (is_null(self::$order) && !Yii::$app->user->isGuest) {
             self::$order = self::find()
@@ -400,9 +402,15 @@ class Order extends \yii\db\ActiveRecord
             $sessionOrders = Yii::$app->session->get('orders', []);
             $sessionOrders[] = $model->id;
             Yii::$app->session->set('orders', $sessionOrders);
+
         }
         Yii::endProfile("GetOrder");
         return self::$order;
+    }
+
+    public static function clearStaticOrder()
+    {
+        self::$order = null;
     }
 
     /**
@@ -445,6 +453,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
+        TagDependency::invalidate(Yii::$app->cache, ['Cart:'.Yii::$app->session->id]);
         parent::afterSave($insert, $changedAttributes);
 
         if (!$insert && !empty($changedAttributes['user_id']) && 0 === intval($changedAttributes['user_id'])) {
@@ -454,7 +463,7 @@ class Order extends \yii\db\ActiveRecord
                 $customer->save();
             }
         }
-        TagDependency::invalidate(Yii::$app->cache, ['Cart:'.Yii::$app->session->id]);
+
     }
 
     /**
