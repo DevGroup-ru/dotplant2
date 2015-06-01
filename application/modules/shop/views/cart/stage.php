@@ -57,17 +57,16 @@ use yii\helpers\Html;
 </div>
 <?php
     $form->end();
-    ob_start();
-?>
-    jQuery(function(){
+    $js = <<<JS
+
         $('form#shop-stage button[type="submit"]').on('click', function(event) {
             event.preventDefault();
             $('form#shop-stage').attr('action', $(this).attr('data-action'));
             $('form#shop-stage').submit();
         });
-    }(jQuery));
-<?php
-    $this->registerJs(ob_get_clean(), \yii\web\View::POS_END);
+
+JS;
+    $this->registerJs($js);
 ?>
 
 <style>
