@@ -41,7 +41,7 @@ class ContentBlockHelper
     {
         self::preloadChunks();
         $matches = [];
-        preg_match_all('%\[\\$[([^\]\[]+)\]\]%ui', $content, $matches);
+        preg_match_all('%\[\[\$([^\]\[]+)\]\]%ui', $content, $matches);
         if (!empty($matches)) {
             foreach ($matches[0] as $k => $rawChunk) {
                 $chunkData = static::sanitizeChunk($rawChunk);
