@@ -142,7 +142,7 @@ $propertiesShowedInAnnounce = false;
                 'content' => \app\modules\review\widgets\ReviewsWidget::widget(
                     [
                         'model' => $model,
-                        'formId' => 2,
+                        'formId' => 1,
                         'ratingGroupName' => 'First',
                         'additionalParams' => [
                             'model' => $model,

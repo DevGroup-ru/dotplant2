@@ -820,7 +820,7 @@ class m150531_084444_new_init extends Migration
                 'author_email' => 'VARCHAR(255) DEFAULT NULL',
                 'review_text' => 'TEXT DEFAULT NULL',
                 'status' => 'enum(\'NEW\',\'APPROVED\',\'NOT APPROVED\') DEFAULT \'NEW\'',
-                'rating_id' => 'char(32) DEFAULT NULL',
+                'rating_id' => 'CHAR(32) CHARACTER SET utf8 DEFAULT NULL',
                 'submission_id' => 'int unsigned NOT NULL',
                 'KEY `ix-review-object_id-object_model_id-status` (`object_id`, `object_model_id`, `status`)',
             ],
@@ -1304,7 +1304,7 @@ class m150531_084444_new_init extends Migration
             RatingValues::tableName(),
             [
                 'id' => Schema::TYPE_PK,
-                'rating_id' => 'CHAR(32) NOT NULL',
+                'rating_id' => 'CHAR(32) CHARACTER SET utf8 NOT NULL',
                 'object_id' => 'INT UNSIGNED NOT NULL',
                 'object_model_id' => 'INT UNSIGNED NOT NULL',
                 'rating_item_id' => 'INT UNSIGNED NOT NULL',
@@ -4154,6 +4154,51 @@ class m150531_084444_new_init extends Migration
                 'triggering_type' => 'application_trigger',
             ]
         );
+        //
+        $propertyHandler = PropertyHandler::findOne(
+            [
+                'name'=>'Text'
+            ]
+        );
+        $form = new \app\models\Form;
+        $form->name = 'Review form';
+        $form->email_notification_addresses = '';
+        $form->email_notification_view = '@app/modules/review/views/review-email-template.php';
+        $form->save(false, ['name', 'email_notification_addresses', 'email_notification_view']);
+        $propertyGroup = new PropertyGroup;
+        $propertyGroup->attributes = [
+            'object_id' => $form->object->id,
+            'name' => 'Review form additional properties',
+            'hidden_group_title' => 1,
+        ];
+        $propertyGroup->save(true, ['object_id', 'name', 'hidden_group_title']);
+        $nameProperty = new Property;
+        $nameProperty->attributes = [
+            'property_group_id' => $propertyGroup->id,
+            'name' => 'Name',
+            'key' => 'name',
+            'property_handler_id' => $propertyHandler->id,
+            'handler_additional_params' => '{}',
+            'is_eav' => 1,
+        ];
+        $nameProperty->save(true, ['property_group_id', 'name', 'key', 'property_handler_id', 'is_eav', 'handler_additional_params']);
+        $phoneProperty = new Property;
+        $phoneProperty->attributes = [
+            'property_group_id' => $propertyGroup->id,
+            'name' => 'Phone',
+            'key' => 'phone',
+            'property_handler_id' => $propertyHandler->id,
+            'handler_additional_params' => '{}',
+            'is_eav' => 1,
+        ];
+        $phoneProperty->save(true, ['property_group_id', 'name', 'key', 'property_handler_id', 'is_eav', 'handler_additional_params']);
+        $objectPropertyGroup = new ObjectPropertyGroup;
+        $objectPropertyGroup->attributes = [
+            'object_id' => $form->object->id,
+            'object_model_id' => $form->id,
+            'property_group_id' => $propertyGroup->id,
+        ];
+        $objectPropertyGroup->save(true, ['object_id', 'object_model_id', 'property_group_id']);
 //        return false;
     }
 

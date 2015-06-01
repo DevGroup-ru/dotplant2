@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?=Html::a(
             Icon::show('eye') . Yii::t('app', 'Preview'),
             [
-                '/page/show',
+                '/page/page/show',
                 'id' => $model->id,
             ],
             [
