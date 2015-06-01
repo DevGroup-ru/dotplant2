@@ -107,7 +107,7 @@ class BaseOrderStageHandlers
      */
     public static function handlePaymentPay(OrderStageLeafEvent $event)
     {
-        $event->setStatus(false);
+        $event->setStatus(true);
     }
 
     /**
