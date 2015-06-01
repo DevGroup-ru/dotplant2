@@ -18,19 +18,19 @@ class Pay2PayPayment extends AbstractPayment
     protected $secretKey;
     protected $testMode;
 
-    public function content($order, $transaction)
+    public function content()
     {
         $data = [
             'version' => '1.2',
             'merchant_id' => $this->merchantId,
             'language' => $this->language,
-            'order_id' => $transaction->id,
-            'amount' => $transaction->total_sum,
+            'order_id' => $this->transaction->id,
+            'amount' => $this->transaction->total_sum,
             'currency' => $this->currency,
-            'description' => 'Order #' . $order->id,
-            'success_url' => Url::toRoute(['/cart/payment-success', 'id' => $order->id], true),
-            'fail_url' => Url::toRoute(['/cart/payment-error', 'id' => $order->id], true),
-            'result_url' => Url::toRoute(['/cart/payment-result', 'id' => $transaction->payment_type_id], true),
+            'description' => 'Order #' . $this->order->id,
+            'success_url' => Url::toRoute(['/cart/payment-success', 'id' => $this->order->id], true),
+            'fail_url' => Url::toRoute(['/cart/payment-error', 'id' => $this->order->id], true),
+            'result_url' => Url::toRoute(['/cart/payment-result', 'id' => $this->transaction->payment_type_id], true),
             'test_mode' => $this->testMode,
         ];
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
@@ -45,15 +45,15 @@ class Pay2PayPayment extends AbstractPayment
         return $this->render(
             'pay2pay',
             [
-                'order' => $order,
+                'order' => $this->order,
                 'signEncode' => $signEncode,
-                'transaction' => $transaction,
+                'transaction' => $this->transaction,
                 'xmlEncode' => $xmlEncode,
             ]
         );
     }
 
-    public function checkResult()
+    public function checkResult($hash = '')
     {
         if (isset($_POST['xml'], $_POST['sign'])) {
             $xml = base64_decode(str_replace(' ', '+', $_POST['xml']));

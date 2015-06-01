@@ -36,17 +36,17 @@ class WalletOnePayment extends AbstractPayment
         }
     }
 
-    public function content($order, $transaction)
+    public function content()
     {
         $formData = [
             'WMI_MERCHANT_ID' => $this->merchantId,
-            'WMI_PAYMENT_AMOUNT' => $transaction->total_sum,
+            'WMI_PAYMENT_AMOUNT' => $this->transaction->total_sum,
             'WMI_CURRENCY_ID' => $this->currency,
-            'WMI_PAYMENT_NO' => $transaction->id,
-            'WMI_DESCRIPTION' => 'BASE64:' . base64_encode('Order #' . $order->id),
+            'WMI_PAYMENT_NO' => $this->transaction->id,
+            'WMI_DESCRIPTION' => 'BASE64:' . base64_encode('Order #' . $this->order->id),
         //        $formData["WMI_EXPIRED_DATE"] = "2019-12-31T23:59:59",
-            'WMI_SUCCESS_URL' => Url::toRoute(['payment-success', 'id' => $order->id], true),
-            'WMI_FAIL_URL' => Url::toRoute(['payment-error', 'id' => $order->id], true),
+            'WMI_SUCCESS_URL' => Url::toRoute(['payment-success', 'id' => $this->order->id], true),
+            'WMI_FAIL_URL' => Url::toRoute(['payment-error', 'id' => $this->order->id], true),
         ];
         if (!\Yii::$app->user->isGuest) {
             $formData['WMI_CUSTOMER_FIRSTNAME'] = \Yii::$app->user->identity->first_name;
@@ -78,13 +78,13 @@ class WalletOnePayment extends AbstractPayment
             'wallet-one',
             [
                 'formData' => $formData,
-                'order' => $order,
-                'transaction' => $transaction,
+                'order' => $this->order,
+                'transaction' => $this->transaction,
             ]
         );
     }
 
-    public function checkResult()
+    public function checkResult($hash = '')
     {
         if (!isset($_POST["WMI_SIGNATURE"], $_POST["WMI_PAYMENT_NO"], $_POST["WMI_ORDER_STATE"])) {
             $this->echoResult("Retry", "Bad request");
