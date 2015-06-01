@@ -18,12 +18,13 @@ class Delivery extends Widget
     public $formAction = null;
     /** @var ActiveForm $form */
     public $form = null;
+    public $additional = [];
 
     public function run()
     {
         parent::run();
 
-        if (!$this->deliveryInformation instanceof DeliveryInformation || !$this->orderDeliveryInformation instanceof OrderDeliveryInformation) {
+        if (!$this->deliveryInformation instanceof DeliveryInformation && !$this->orderDeliveryInformation instanceof OrderDeliveryInformation) {
             return '';
         }
 
@@ -33,6 +34,7 @@ class Delivery extends Widget
             'immutable' => boolval($this->immutable),
             'action' => $this->formAction,
             'form' => $this->form,
+            'additional' => $this->additional,
         ]);
     }
 }

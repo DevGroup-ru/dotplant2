@@ -11,6 +11,7 @@ use kartik\dynagrid\DynaGrid;
  * @var $model \app\modules\shop\models\Order
  * @var $transactionsDataProvider \yii\data\ArrayDataProvider
  * @var \app\backend\models\OrderChat $message
+ * @var boolean $orderIsImmutable
  */
 
 $this->title = Yii::t('app', 'Order #{id}', ['id' => $model->id]);
@@ -24,7 +25,6 @@ foreach ($model->items as $item) {
         $items[$item->parent_id] = [$item];
     }
 }
-$orderIsImmutable = $model->getImmutability(\app\modules\shop\models\Order::IMMUTABLE_MANAGER);
 ?>
 <?php $this->beginBlock('page-buttons'); ?>
 <div class="row" style="margin-bottom: 10px;">
@@ -248,21 +248,13 @@ if ($sum_transactions < $model->total_price):
                     'title' => Yii::t('app', 'Order delivery information'),
                 ]
             );
-
-            $orderDeliveryInformation = $model->orderDeliveryInformation;
-            echo $form->field($orderDeliveryInformation, 'shipping_option_id')->dropDownList(\app\components\Helper::getModelMap(\app\modules\shop\models\ShippingOption::className(), 'id', 'name'));
-            echo $form->field($orderDeliveryInformation, 'shipping_price');
-            echo $form->field($orderDeliveryInformation, 'shipping_price_total');
-            echo $form->field($orderDeliveryInformation, 'planned_delivery_date');
-            echo $form->field($orderDeliveryInformation, 'planned_delivery_time');
-            echo $form->field($orderDeliveryInformation, 'planned_delivery_time_range');
-            /** @var \app\properties\AbstractModel $abstractModel */
-            $abstractModel = $orderDeliveryInformation->getAbstractModel();
-            $abstractModel->setArrayMode(false);
-            foreach ($abstractModel->attributes() as $attr) {
-                echo $form->field($abstractModel, $attr);
-            }
         ?>
+        <?= \app\modules\shop\widgets\Delivery::widget([
+            'viewFile' => 'delivery/backend_form',
+            'orderDeliveryInformation' => $model->orderDeliveryInformation,
+            'form' => $form,
+            'immutable' => $orderIsImmutable,
+        ]); ?>
         <?php BackendWidget::end(); ?>
     </div>
     <div class="col-xs-6 order-chat">
@@ -274,44 +266,11 @@ if ($sum_transactions < $model->total_price):
             ]
         );
         ?>
-        <div class="widget-body widget-hide-overflow no-padding">
-            <div id="chat-body" class="chat-body custom-scroll">
-                <ul>
-                    <?php foreach ($lastMessages as $msg): ?>
-                        <li class="message">
-                            <?php if (!is_null($msg->user)): ?>
-                                <img src="<?=$msg->user->gravatar()?>" class="online" alt="">
-                            <?php endif; ?>
-                            <div class="message-text">
-                                <time>
-                                    <?=$msg->date?>
-                                </time>
-                                <a href="javascript:void(0);" class="username"><?=
-                                    !is_null($msg->user) ? $msg->user->username : Yii::t('app', 'Unknown')
-                                    ?></a>
-                                <?=nl2br(Html::encode($msg->message))?>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-            <div class="chat-footer">
-                <div class="textarea-div">
-                    <div class="typearea">
-                        <?= Html::textarea('order-chat-message', $message->message, ['class' => 'custom-scroll']); ?>
-                    </div>
-                </div>
-                <span class="textarea-controls">
-                    <?=
-                    Html::submitButton(
-                        Yii::t('app', 'Submit'),
-                        ['class' => 'btn btn-sm btn-primary pull-right']
-                    )
-                    ?>
-                </span>
-            </div>
-            <?php BackendWidget::end(); ?>
-        </div>
+        <?= \app\modules\shop\widgets\OrderChat::widget([
+            'list' => $lastMessages,
+            'order' => $model,
+        ]); ?>
+        <?php BackendWidget::end(); ?>
 
         <div class="order-view">
             <?php
