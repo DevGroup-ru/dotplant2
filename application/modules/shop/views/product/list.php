@@ -102,7 +102,7 @@ $(".product-item .product-image,.product-item .product-announce").click(function
     } else {
         parent = that.parent().parent();
     }
-    console.log(parent.find('a.product-name'));
+
     document.location = parent.find('a.product-name').attr('href');
     return false;
 })
