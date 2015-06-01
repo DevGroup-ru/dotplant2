@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "hash": "41a0bdcdf3e7578598ce039112f868fb",
@@ -936,12 +936,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DevGroup-ru/yii2-jstree-widget.git",
-                "reference": "80254e33b0997c027c5d0c4ea91f8288e46ff9ec"
+                "reference": "092627fc6eb9019aee0fbd318ced19bdd1dc2f20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DevGroup-ru/yii2-jstree-widget/zipball/80254e33b0997c027c5d0c4ea91f8288e46ff9ec",
-                "reference": "80254e33b0997c027c5d0c4ea91f8288e46ff9ec",
+                "url": "https://api.github.com/repos/DevGroup-ru/yii2-jstree-widget/zipball/092627fc6eb9019aee0fbd318ced19bdd1dc2f20",
+                "reference": "092627fc6eb9019aee0fbd318ced19bdd1dc2f20",
                 "shasum": ""
             },
             "require": {
@@ -979,7 +979,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-04-24 11:23:36"
+            "time": "2015-06-01 08:06:06"
         },
         {
             "name": "devgroup/yii2-tag-dependency-helper",
@@ -3368,12 +3368,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/leafo/scssphp.git",
-                "reference": "3508eecb88cc587a3630c1bc47b17055c6e82d34"
+                "reference": "a9605222cb4af8f9d3b563de04760b06425df720"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafo/scssphp/zipball/3508eecb88cc587a3630c1bc47b17055c6e82d34",
-                "reference": "3508eecb88cc587a3630c1bc47b17055c6e82d34",
+                "url": "https://api.github.com/repos/leafo/scssphp/zipball/a9605222cb4af8f9d3b563de04760b06425df720",
+                "reference": "a9605222cb4af8f9d3b563de04760b06425df720",
                 "shasum": ""
             },
             "require": {
@@ -3415,7 +3415,7 @@
                 "scss",
                 "stylesheet"
             ],
-            "time": "2015-05-20 16:34:31"
+            "time": "2015-05-31 22:10:43"
         },
         {
             "name": "league/flysystem",
@@ -3936,12 +3936,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "a8498617882b9d2fb2377f176420c667d4eac276"
+                "reference": "1d0214413fe806d9174b4afbc963f625f70b0b3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/a8498617882b9d2fb2377f176420c667d4eac276",
-                "reference": "a8498617882b9d2fb2377f176420c667d4eac276",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/1d0214413fe806d9174b4afbc963f625f70b0b3d",
+                "reference": "1d0214413fe806d9174b4afbc963f625f70b0b3d",
                 "shasum": ""
             },
             "require": {
@@ -4016,7 +4016,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2015-05-31 10:09:16"
+            "time": "2015-05-31 11:17:04"
         },
         {
             "name": "yiisoft/yii2-authclient",
@@ -4024,12 +4024,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-authclient.git",
-                "reference": "152616da0b2286c5e8357dcce4cbb73e5d8111ac"
+                "reference": "c25b04a34ab1b9ae4f2f7a35aeee38033ad3654d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-authclient/zipball/152616da0b2286c5e8357dcce4cbb73e5d8111ac",
-                "reference": "152616da0b2286c5e8357dcce4cbb73e5d8111ac",
+                "url": "https://api.github.com/repos/yiisoft/yii2-authclient/zipball/c25b04a34ab1b9ae4f2f7a35aeee38033ad3654d",
+                "reference": "c25b04a34ab1b9ae4f2f7a35aeee38033ad3654d",
                 "shasum": ""
             },
             "require": {
@@ -4064,7 +4064,7 @@
                 "oauth",
                 "yii2"
             ],
-            "time": "2015-05-25 08:50:06"
+            "time": "2015-05-31 10:44:46"
         },
         {
             "name": "yiisoft/yii2-bootstrap",

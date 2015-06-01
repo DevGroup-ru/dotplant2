@@ -25,61 +25,69 @@ $products = Product::find()->where(['active' => 1])->limit(3)->all();
 $images = Image::getForModel($model->object->id, $model->id);
 
 ?>
-<div class="row" itemscope itemtype="http://schema.org/Product">
-    <div id="gallery" class="span3">
-        <?php if (count($images) > 0): ?>
-            <a href="<?=$images[0]->src?>">
-                <img src="<?=$images[0]->getThumbnail('80x80')?>" alt="<?=$images[0]->image_description?>" />
-            </a>
-        <?php endif; ?>
-        <div id="differentview" class="moreOptopm carousel slide">
-            <div class="carousel-inner">
-                <div class="item active">
-                    <?=
-                    ObjectImageWidget::widget(
-                        [
-                            'limit' => 3,
-                            'offset' => 1,
-                            'model' => $model,
-                        ]
-                    )
-                    ?>
-                </div>
-                <div class="item">
-                    <?=
-                    ObjectImageWidget::widget(
-                        [
-                            'offset' => 4,
-                            'model' => $model,
-                        ]
-                    )
-                    ?>
-                </div>
+<div class="row product-show" itemscope itemtype="http://schema.org/Product">
+    <div class="col-md-6 col-sm-6 col-xs-12 col-lg-4">
+        <div class="product-images">
+            <div class="first-image">
+                <?=
+                ObjectImageWidget::widget(
+                    [
+                        'limit' => 1,
+                        'model' => $model,
+                    ]
+                )
+                ?>
+            </div>
+            <div class="other-images">
+                <?=
+                ObjectImageWidget::widget(
+                    [
+                        'model' => $model,
+                    ]
+                )
+                ?>
             </div>
         </div>
     </div>
-    <div class="span6">
-        <h1 itemprop="name"><?=Html::encode($model->h1)?></h1>
-        <hr class="soft">
-        <form class="form-horizontal qtyFrm">
-            <div class="control-group">
-                <label class="control-label">
+    <div class="col-md-6 col-sm-6 col-xs-12 col-lg-8">
+        <h1 itemprop="name">
+            <?=Html::encode($model->h1)?>
+        </h1>
+
+        <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12 col-lg-8">
+                <div itemprop="description">
+                    <?= $this->blocks['announce'] ?>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12 col-lg-4">
+                <div class="price-block">
                     <?php if ($model->price < $model->old_price): ?>
-                        <small class="text-muted">
-                            <del>
-                                <?=$model->formattedPrice(null, true, false)?>
-                            </del>
-                        </small>
-                        <br>
-                    <?php endif; ?>
-                    <?=$model->formattedPrice()?>
-                    <?php if ($model->currency_id !== \app\modules\shop\models\Currency::getMainCurrency()->id): ?>
-                        <small class="text-muted">
-                            <?=$model->nativeCurrencyPrice(false, false)?>
-                        </small>
+                        <div class="old">
+                            <div class="price-name">
+                                <?= Yii::t('app', 'Old price:') ?>
+                            </div>
+                            <div class="price">
+                                <?=$model->nativeCurrencyPrice(true, false)?>
+                            </div>
+                        </div>
                     <?php endif; ?>
 
-                </label>
+                    <div class="price-name">
+                        <?= Yii::t('app', 'Price:') ?>
+                        <div class="price">
+                            <?=$model->nativeCurrencyPrice(false, true)?>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <form class="form-horizontal qtyFrm">
+            <div class="control-group">
+
 
                 <div class="controls">
                     <div class="pull-right" style="text-align: right;">
@@ -110,9 +118,7 @@ $images = Image::getForModel($model->object->id, $model->id);
         </form>
 
         <hr class="soft">
-        <div itemprop="description">
-            <?=$this->blocks['announce']?>
-        </div>
+
 
         <hr class="soft">
     </div>
@@ -179,8 +185,55 @@ $images = Image::getForModel($model->object->id, $model->id);
             </div>
         </div>
     </div>
-    <?php return; ?>
-<?=
+
+<?php
+app\slider\sliders\slick\SlickAsset::register($this);
+$js = <<<JS
+$('.other-images').slick({
+    speed: 300,
+    variableWidth: true,
+    arrows: true,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    responsive: [
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 3
+          }
+        },
+        {
+          breakpoint: 600,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 2
+          }
+        },
+        {
+          breakpoint: 480,
+          settings: {
+            slidesToShow: 1,
+            slidesToScroll: 1
+          }
+        }
+    ]
+});
+$(".other-images").on('click', '.slick-slide', function(){
+    var that = $(this),
+        img = that.find('img');
+
+    $(".first-image img").attr('src', img.attr('src'));
+
+});
+JS;
+$this->registerJs($js);
+
+?>
+
+
+
+<?php /*
 \app\modules\review\widgets\ReviewsWidget::widget(
     [
         'model' => $model,
@@ -190,5 +243,5 @@ $images = Image::getForModel($model->object->id, $model->id);
             'model' => $model,
         ],
     ]
-);
+);*/
 ?>

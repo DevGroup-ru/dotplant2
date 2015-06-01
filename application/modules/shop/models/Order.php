@@ -39,6 +39,7 @@ use yii\db\Expression;
  * @property bool $is_deleted
  * @property bool $temporary
  * @property bool $show_price_changed_notification
+ * @property bool $in_cart
  * Relations:
  * @property \app\properties\AbstractModel $abstractModel
  * @property OrderItem[] $items
@@ -114,6 +115,7 @@ class Order extends \yii\db\ActiveRecord
                     'order_stage_id',
                     'total_price',
                     'payment_type_id',
+                    'in_cart',
                 ],
                 'required'
             ],
@@ -121,8 +123,8 @@ class Order extends \yii\db\ActiveRecord
             [['start_date', 'end_date', 'update_date'], 'safe'],
             [['total_price', 'items_count', 'total_payed'], 'number'],
             [['external_id'], 'string', 'max' => 38],
-            [['is_deleted', 'temporary', 'show_price_changed_notification'], 'boolean'],
-            [['user_id', 'customer_id', 'contragent_id',], 'default', 'value' => 0],
+            [['is_deleted', 'temporary', 'show_price_changed_notification', 'in_cart'], 'boolean'],
+            [['user_id', 'customer_id', 'contragent_id', 'in_cart'], 'default', 'value' => 0],
             [['temporary'], 'default', 'value' => 1],
         ];
     }
@@ -140,6 +142,7 @@ class Order extends \yii\db\ActiveRecord
                 'items_count',
                 'total_price',
                 'hash',
+                'in_cart',
             ],
             'search' => [
                 'id',
@@ -190,6 +193,7 @@ class Order extends \yii\db\ActiveRecord
             'is_deleted' => Yii::t('app', 'Is deleted'),
             'temporary' => Yii::t('app', 'Temporary'),
             'show_price_changed_notification' => Yii::t('app', 'Show price changed notification'),
+            'in_cart' => Yii::t('app', 'In Cart'),
         ];
     }
 
@@ -372,18 +376,18 @@ class Order extends \yii\db\ActiveRecord
     {
         Yii::beginProfile("GetOrder");
         if (is_null(self::$order) && Yii::$app->session->has('orderId')) {
-            self::$order = self::findOne(['id' => Yii::$app->session->get('orderId')]);
-        }
-        if (is_null(self::$order) && !Yii::$app->user->isGuest) {
-            $order = self::findOne(['user_id' => Yii::$app->user->id]);
-            if (1 === intval($order->stage->is_in_cart)) {
-                self::$order = $order;
-            }
-        }
-        if ((is_null(self::$order) || is_null(self::$order->stage) || self::$order->stage->is_in_cart == 0)
+            self::$order = self::find()
+                ->where(['id' => Yii::$app->session->get('orderId')])
+                ->orderBy(['start_date' => SORT_DESC, 'id' => SORT_DESC])
+                ->one();
+        } else if (is_null(self::$order) && !Yii::$app->user->isGuest) {
+            self::$order = self::findOne(['user_id' => Yii::$app->user->id, 'in_cart' => 1]);
+        } else if ((is_null(self::$order) || is_null(self::$order->stage) || self::$order->in_cart == 0)
             && $create === true
         ) {
             $model = self::create();
+            $model->loadDefaultValues();
+            $model->in_cart = 1;
             self::$order = $model;
             Yii::$app->session->set('orderId', $model->id);
 

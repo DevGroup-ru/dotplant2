@@ -84,6 +84,16 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return array
+     */
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['readonly'] = [];
+        return $scenarios;
+    }
+
+    /**
      * @return Order|null
      */
     public function getOrder()

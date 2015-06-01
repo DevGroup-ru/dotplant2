@@ -14,6 +14,8 @@ use yii\db\ActiveRecord;
  * @property string $user_id
  * @property string $date
  * @property string $message
+ * Relations:
+ * @property User $user
  */
 class OrderChat extends ActiveRecord
 {
@@ -35,6 +37,7 @@ class OrderChat extends ActiveRecord
             [['order_id', 'user_id'], 'integer'],
             [['date'], 'safe'],
             [['message'], 'string'],
+            [['user_id'], 'default', 'value' => \Yii::$app->user->id],
         ];
     }
 
@@ -52,8 +55,25 @@ class OrderChat extends ActiveRecord
         ];
     }
 
+    /**
+     * @return User
+     */
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
+
+    public function beforeSave($insert)
+    {
+        if (false === parent::beforeSave($insert)) {
+            return false;
+        }
+
+        if (empty($this->message)) {
+            return false;
+        }
+
+        return true;
+    }
 }
+?>
