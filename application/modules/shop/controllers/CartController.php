@@ -306,8 +306,13 @@ class CartController extends Controller
 
         if (0 === intval($orderStage->is_in_cart)) {
             Yii::$app->session->remove('orderId');
+            $order->in_cart = 0;
+            $order->save();
         }
-        $order->temporary = 1 === intval($orderStage->become_non_temporary) ? 0 : 1;
+        if (1 === intval($orderStage->become_non_temporary)) {
+            $order->temporary = 0;
+            $order->save();
+        }
 
 //        if (null !== Yii::$app->session->get('OrderStageReach')) {
         /** @var Events $eventClass */
