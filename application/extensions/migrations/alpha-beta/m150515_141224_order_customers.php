@@ -374,7 +374,7 @@ class m150515_141224_order_customers extends Migration
             'immutable_by_assigned' => 0,
             'reach_goal_ym' => '',
             'reach_goal_ga' => '',
-            'event_name' => '',
+            'event_name' => 'order_stage_payment_pay',
             'view' => '@app/modules/shop/views/cart/stages/pay.php',
         ]);
         $stagePaymentPay = $this->db->lastInsertID;
