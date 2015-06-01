@@ -122,13 +122,11 @@ class BackendOrderController extends BackendController
         if (Config::getValue('shop.showDeletedOrders', 0) === 0) {
             $searchModelConfig['additionalConditions'] = [['is_deleted' => 0]];
         }
-        if (intval($this->module->defaultOrderStageFilterBackend) > 0) {
-            $searchModelConfig['additionalConditions'] = array_merge(
-                $searchModelConfig['additionalConditions'],
-                [['order_stage_id' => intval($this->module->defaultOrderStageFilterBackend)]]
-            );
-        }
+        /** @var SearchModel $searchModel */
         $searchModel = new SearchModel($searchModelConfig);
+        if (intval($this->module->defaultOrderStageFilterBackend) > 0) {
+            $searchModel->order_stage_id = intval($this->module->defaultOrderStageFilterBackend);
+        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render(
             'index',

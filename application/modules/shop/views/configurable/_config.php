@@ -42,7 +42,7 @@ use app\components\Helper;
 
         <?= $form->field($model, 'defaultMeasureId')->dropDownList(Helper::getModelMap(\app\modules\shop\models\Measure::className(), 'id', 'name')) ?>
 
-        <?= $form->field($model, 'defaultOrderStageFilterBackend')->dropDownList(Helper::getModelMap(
+        <?= $form->field($model, 'defaultOrderStageFilterBackend')->dropDownList([0 => ''] + Helper::getModelMap(
             \app\modules\shop\models\OrderStage::className(), 'id', 'name_short'
         )); ?>
 

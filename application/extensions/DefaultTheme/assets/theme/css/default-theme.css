@@ -318,9 +318,9 @@ body, .content, #content {
 
 .btn-primary:hover, .btn-compare:hover, .btn-primary:focus, .btn-compare:focus, .btn-primary.focus, .btn-compare.focus, .btn-primary:active, .btn-compare:active, .btn-primary.active, .btn-compare.active, .open > .dropdown-toggle.btn-primary, .open > .btn-compare.dropdown-toggle {
   color: #ecf0f1;
-  background-color: #6aa84f;
+  background-color: #d1404a;
   outline: none;
-  border-color: #6aa84f; }
+  border-color: #d1404a; }
 
 .btn-danger {
   border-width: 2px; }

@@ -3782,7 +3782,7 @@ class m150531_084444_new_init extends Migration
                 'assign_to_role' => null,
                 'notify_new_assigned_user' => 0,
                 'role_assignment_policy' => 'random',
-                'event_name' => 'order_stageleaf_payment_pay',
+                'event_name' => 'order_stageleaf_payment_choose',
             ]
         );
         $this->insert(
