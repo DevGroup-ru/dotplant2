@@ -1904,6 +1904,7 @@ class m150531_084444_new_init extends Migration
                 'icon' => 'shopping-cart',
                 'added_by_ext' => 'core',
                 'rbac_check' => 'shop manage',
+                'route' => '',
             ]
         );
         $lastId = $this->db->lastInsertID;
@@ -1933,6 +1934,7 @@ class m150531_084444_new_init extends Migration
                 'icon' => 'cogs',
                 'added_by_ext' => 'core',
                 'rbac_check' => 'property manage',
+                'route' => '',
             ]
         );
         $lastId = $this->db->lastInsertID;
@@ -1968,6 +1970,7 @@ class m150531_084444_new_init extends Migration
                 'icon' => 'picture-o',
                 'added_by_ext' => 'core',
                 'rbac_check' => 'content manage',
+                'route' => '',
             ]
         );
         $lastId = $this->db->lastInsertID;
@@ -1989,6 +1992,7 @@ class m150531_084444_new_init extends Migration
                 'icon' => 'flash',
                 'added_by_ext' => 'core',
                 'rbac_check' => 'monitoring manage',
+                'route' => '',
             ]
         );
         $lastId = $this->db->lastInsertID;
@@ -2008,6 +2012,7 @@ class m150531_084444_new_init extends Migration
                 'icon' => 'envelope-o',
                 'added_by_ext' => 'core',
                 'rbac_check' => 'newsletter manage',
+                'route' => '',
             ]
         );
         $lastId = $this->db->lastInsertID;
@@ -2028,6 +2033,7 @@ class m150531_084444_new_init extends Migration
                 'icon' => 'gears',
                 'added_by_ext' => 'core',
                 'rbac_check' => 'setting manage',
+                'route' => '',
             ]
         );
         $lastId = $this->db->lastInsertID;
@@ -2622,6 +2628,7 @@ class m150531_084444_new_init extends Migration
         $user->username = $username;
         $user->password = $password;
         $user->email = $email;
+        $user->auth_key = '';
         $user->save(false);
 
         if (getenv("INSTALL_RUSSIAN_TRANSLATIONS")) {
