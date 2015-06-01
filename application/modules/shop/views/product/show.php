@@ -28,7 +28,7 @@ $images = Image::getForModel($model->object->id, $model->id);
 <div class="row" itemscope itemtype="http://schema.org/Product">
     <div id="gallery" class="span3">
         <?php if (count($images) > 0): ?>
-            <a href="<?=$images[0]->src?>">
+            <a href="<?=$images[0]->getOriginalUrl()?>">
                 <img src="<?=$images[0]->getThumbnail('80x80')?>" alt="<?=$images[0]->image_description?>" />
             </a>
         <?php endif; ?>

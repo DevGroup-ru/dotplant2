@@ -31,7 +31,7 @@ $formName = 'YmlSettings';
 <?php
     $yml_relations = [
         'getImage' => \app\modules\image\models\Image::className(),
-        'getCategory' => \app\models\Category::className(),
+        'getCategory' => \app\modules\shop\models\Category::className(),
     ];
 
     $yml_settings = [];

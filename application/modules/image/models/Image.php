@@ -242,6 +242,11 @@ class Image extends \yii\db\ActiveRecord
         return $src;
     }
 
+    public function getOriginalUrl()
+    {
+        return $this->file;
+    }
+
     public function afterDelete()
     {
         parent::afterDelete();
