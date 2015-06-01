@@ -2606,6 +2606,17 @@ class m150531_084444_new_init extends Migration
             } while ($password != $confirmPassword);
             fclose($stdIn);
         }
+        if (getenv("SERVER_NAME")) {
+            $serverName = getenv("SERVER_NAME");
+        } else {
+            $stdIn = fopen("php://stdin", "r");
+            echo "\nEnter server name (ie. localhost): ";
+            $serverName = trim(fgets($stdIn));
+            if (empty($serverName)) {
+                $serverName = 'localhost';
+            }
+            fclose($stdIn);
+        }
 
         $user = new User(['scenario' => 'signup']);
         $user->username = $username;
@@ -4111,7 +4122,7 @@ class m150531_084444_new_init extends Migration
                 [$id, 'Admin e-mail', 'adminEmail', '', 'core.adminEmail'],
                 [$id, 'AutoComplete results count', 'autoCompleteResultsCount', '5', 'core.autoCompleteResultsCount'],
                 [$id, 'Path to user uploaded files', 'fileUploadPath', 'upload/user-uploads/', 'core.fileUploadPath'],
-                [$id, 'Server name', 'serverName', 'dotplnt2.dev', 'core.serverName'],
+                [$id, 'Server name', 'serverName', $serverName, 'core.serverName'],
                 [$id, 'Login session duration', 'loginSessionDuration', '2592000', 'core.loginSessionDuration'],
             ]
         );
