@@ -1,10 +1,11 @@
 jQuery(function() {
-    jQuery('form[data-type=form-widget]').on("click", "[type=submit]", function(e) {
-        var $form = jQuery(this).parents('form:eq(0)');
+    jQuery('form[data-type=form-widget]').on('beforeSubmit', function(e) {
+        e.preventDefault();
+        var $form = jQuery(this);
         var $responseModal = jQuery('#modal-form-info-' + $form.attr('id'));
         var $response = jQuery('#form-info-' + $form.attr('id'));
         var $modal = jQuery('#modal-form-' + $form.attr('id'));
-        var $btn = $(this).attr('disabled', 'disabled');
+        var $btn = $form.find('[type=submit]').attr('disabled', 'disabled');
         var $formData = new FormData($form[0]);
         var dataType = $form.attr('enctype') == 'multipart/form-data' ? 'file' : 'text';
         if(dataType == 'file'){
@@ -13,9 +14,9 @@ jQuery(function() {
             });
         }
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', $form.attr('action'), true);
+        xhr.open('POST', $form.attr('action'), true );
         xhr.send($formData);
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function(response) {
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
                     if (xhr.responseText != '0') {
@@ -35,7 +36,6 @@ jQuery(function() {
                 $btn.removeAttr('disabled');
             }
         };
-        e.preventDefault();
         return false;
     });
 });
