@@ -83,8 +83,7 @@ class OrderCode extends \yii\db\ActiveRecord
                 ['code'],
                 'validateCode'
             ],
-            [['code'], 'safe'],
-            [['order_id'], 'required'],
+            [['order_id', 'code'], 'required'],
             [['order_id', 'discount_code_id', 'status'], 'integer']
         ];
     }

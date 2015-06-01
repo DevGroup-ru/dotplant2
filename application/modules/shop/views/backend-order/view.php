@@ -4,6 +4,7 @@ use app\backend\widgets\BackendWidget;
 use kartik\editable\Editable;
 use yii\helpers\Html;
 use kartik\dynagrid\DynaGrid;
+use \app\modules\shop\helpers\PriceHelper;
 
 /**
  * @var $this yii\web\View
@@ -295,16 +296,18 @@ if ($sum_transactions < $model->total_price):
                 <?php if (isset($items[0])): ?>
                     <?= $this->render('items', ['allItems' => $items, 'items' => $items[0]]) ?>
                 <?php endif; ?>
-                <?php if (isset($model->shippingOption)): ?>
-                    <tr>
-                        <td colspan="3"><?=Html::encode($model->shippingOption->name)?></td>
-                        <td colspan="2"><?=Yii::$app->formatter->asDecimal($model->shippingOption->cost, 2)?></td>
-                    </tr>
-                <?php endif; ?>
+                <?php if ($model->specialPriceObjects): ?>
+                    <?php foreach($model->specialPriceObjects as $specialPriceObject): ?>
+                        <tr>
+                            <td colspan="3"><?=Html::encode($specialPriceObject->name)?></td>
+                            <td colspan="2"><?=Yii::$app->formatter->asDecimal($specialPriceObject->price, 2)?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif?>
                 <tr>
                     <th colspan="2"><?=Yii::t('app', 'Summary')?></th>
                     <th><?=$model->items_count?></th>
-                    <th colspan="2"><?=Yii::$app->formatter->asDecimal($model->total_price, 2)?></th>
+                    <th colspan="2"><?=Yii::$app->formatter->asDecimal(PriceHelper::getOrderPrice($model), 2)?></th>
                 </tr>
                 </tbody>
             </table>
