@@ -23,7 +23,7 @@ class Redirect extends ActiveRecord
 
     private static function getFilename()
     {
-        return \Yii::getAlias('@app/seo/redirects/redirectsArray.php');
+        return \Yii::getAlias('@app/modules/seo/redirects/redirectsArray.php');
     }
 
     public static function getTypes()

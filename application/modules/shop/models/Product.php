@@ -645,9 +645,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'images' => [
                 'label' => Yii::t('app', 'Images'),
                 'processValueAs' => [
-                    'image_src' => Yii::t('app', 'Filename'),
+                    'filename' => Yii::t('app', 'Filename'),
                     'id' => Yii::t('app', 'ID'),
-
                 ]
             ],
         ];

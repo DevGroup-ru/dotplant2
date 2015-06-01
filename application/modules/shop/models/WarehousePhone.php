@@ -30,7 +30,7 @@ class WarehousePhone extends \yii\db\ActiveRecord
     {
         return [
             [['sort_order'], 'default', 'value'=> 0],
-            [['warehouse_id', 'phone', 'sort_order'], 'required'],
+            [['warehouse_id', 'phone'], 'required'],
             [['warehouse_id', 'sort_order'], 'integer'],
             [['phone', 'name'], 'string', 'max' => 255]
         ];

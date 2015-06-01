@@ -30,7 +30,7 @@ class ImagesController extends Controller
         $images = Image::find()->all();
         ErrorImage::deleteAll();
         foreach ($images as $image) {
-            $src = $image->image_src;
+            $src = $image->filename;
             if (Yii::$app->fs->has($src) === false) {
                 $errorImage = new ErrorImage;
                 $errorImage->setAttributes(['img_id' => $image->id, 'class_name' => $image->className()]);
