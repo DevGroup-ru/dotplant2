@@ -45,7 +45,7 @@ class OrdersController extends Controller
         if (empty($order)) {
             throw new NotFoundHttpException();
         }
-        Url::remember('', '__shopCabinetUpdateReturnUrl');
+        Url::remember('', '__shopCabinetUpdateGuestReturnUrl');
         return $this->render('show', ['order' => $order]);
     }
 

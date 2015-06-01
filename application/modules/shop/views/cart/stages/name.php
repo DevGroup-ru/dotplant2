@@ -71,7 +71,7 @@ $js = <<<JS
         $('.contragents_list .contragent').addClass('hide');
         $('.contragents_list .contragent_'+$(this).val()).removeClass('hide');
     });
-    $('form.form-order-backend').submit(function(event) {
+    $('form#shop-stage').submit(function(event) {
         $('.contragents_list .contragent.hide').remove();
     });
 JS;

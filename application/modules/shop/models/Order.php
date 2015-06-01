@@ -143,6 +143,8 @@ class Order extends \yii\db\ActiveRecord
                 'total_price',
                 'hash',
                 'in_cart',
+                'customer_id',
+                'contragent_id',
             ],
             'search' => [
                 'id',
