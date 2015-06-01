@@ -30,7 +30,7 @@ class WarehouseEmail extends \yii\db\ActiveRecord
     {
         return [
             [['sort_order'], 'default', 'value'=> 0],
-            [['warehouse_id', 'email', 'sort_order'], 'required'],
+            [['warehouse_id', 'email'], 'required'],
             [['warehouse_id', 'sort_order'], 'integer'],
             [['email', 'name'], 'string', 'max' => 255]
         ];
