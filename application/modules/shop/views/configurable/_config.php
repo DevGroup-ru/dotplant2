@@ -6,6 +6,7 @@
 
 use app\backend\widgets\BackendWidget;
 use kartik\widgets\SwitchInput;
+use app\components\Helper;
 
 ?>
 
@@ -39,7 +40,11 @@ use kartik\widgets\SwitchInput;
 
         <?= $form->field($model, 'countChildrenProducts')->widget(SwitchInput::className()) ?>
 
-        <?= $form->field($model, 'defaultMeasureId')->dropDownList(\app\components\Helper::getModelMap(\app\modules\shop\models\Measure::className(), 'id', 'name')) ?>
+        <?= $form->field($model, 'defaultMeasureId')->dropDownList(Helper::getModelMap(\app\modules\shop\models\Measure::className(), 'id', 'name')) ?>
+
+        <?= $form->field($model, 'defaultOrderStageFilterBackend')->dropDownList(Helper::getModelMap(
+            \app\modules\shop\models\OrderStage::className(), 'id', 'name_short'
+        )); ?>
 
         <?php BackendWidget::end() ?>
     </div>

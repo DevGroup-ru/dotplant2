@@ -75,6 +75,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $finalOrderStageLeaf = 0;
 
     /**
+     * @var int Default filter for Orders by stage in backend
+     */
+    public $defaultOrderStageFilterBackend = 0;
+
+    /**
      * @inheritdoc
      */
     public function rules()
@@ -93,6 +98,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 [
                     'maxLastViewedProducts',
                     'finalOrderStageLeaf',
+                    'defaultOrderStageFilterBackend',
                 ],
                 'integer',
             ],

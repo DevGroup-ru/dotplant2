@@ -83,6 +83,11 @@ class ShopModule extends BaseModule implements BootstrapInterface
     public $finalOrderStageLeaf = 0;
 
     /**
+     * @var int Default filter for Orders by stage in backend
+     */
+    public $defaultOrderStageFilterBackend = 0;
+
+    /**
      * @inheritdoc
      */
     public function behaviors()

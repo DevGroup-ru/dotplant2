@@ -25,7 +25,11 @@ class BaseOrderStageHandlers
 
         if (\Yii::$app->request->isPost) {
             $order = Order::getOrder();
-            if (empty($order) || !$order->load(\Yii::$app->request->post())) {
+            if (empty($order)) {
+                return null;
+            }
+            $order->setScenario('backend');
+            if (!$order->load(\Yii::$app->request->post())) {
                 return null;
             }
             /** @var Customer $customer */
@@ -119,31 +123,39 @@ class BaseOrderStageHandlers
                 return null;
             }
             /** @var DeliveryInformation $deliveryInformation */
-            $deliveryInformation = empty($order->contragent) ? null :
-                ( empty($order->contragent->deliveryInformation) ? DeliveryInformation::createNewDeliveryInformation($order->contragent) : $order->contragent->deliveryInformation );
+            $deliveryInformation = empty($order->contragent)
+                ? null
+                : (empty($order->contragent->deliveryInformation)
+                    ? DeliveryInformation::createNewDeliveryInformation($order->contragent)
+                    : $order->contragent->deliveryInformation
+                );
             /** @var OrderDeliveryInformation $orderDeliveryInformation */
-            $orderDeliveryInformation = empty($order->orderDeliveryInformation) ? OrderDeliveryInformation::createNewOrderDeliveryInformation($order) : $order->orderDeliveryInformation;
+            $orderDeliveryInformation = empty($order->orderDeliveryInformation)
+                ? OrderDeliveryInformation::createNewOrderDeliveryInformation($order)
+                : $order->orderDeliveryInformation;
             if (empty($deliveryInformation) || empty($orderDeliveryInformation)) {
                 return null;
             }
 
             if ($deliveryInformation->load(\Yii::$app->request->post())) {
-                if ($deliveryInformation->save()) {
-                    $data = \Yii::$app->request->post();
-                    $isNewOrderDeliveryInformation = $orderDeliveryInformation->isNewRecord;
-                    $orderDeliveryInformation->load(\Yii::$app->request->post());
-                    if ($orderDeliveryInformation->save()) {
-                        if ($isNewOrderDeliveryInformation) {
-                            $orderDeliveryInformation->addPropertyGroup($orderDeliveryInformation->getPropertyGroup()->id);
-                            $data[$orderDeliveryInformation->getAbstractModel()->formName()] = isset($data['OrderDeliveryInformationNew']) ? $data['OrderDeliveryInformationNew'] : [];
-                        }
-                        $orderDeliveryInformation->saveProperties($data);
-                        $orderDeliveryInformation->invalidateTags();
-
-                        $event->setStatus(true);
-                    }
+                if (!$deliveryInformation->save()) {
+                    return null;
                 }
             }
+
+            $data = \Yii::$app->request->post();
+            $isNewModel = $orderDeliveryInformation->isNewRecord;
+            if ($orderDeliveryInformation->load(\Yii::$app->request->post()) && $orderDeliveryInformation->save()) {
+                if ($isNewModel && !empty($orderDeliveryInformation->getPropertyGroup())) {
+                    $orderDeliveryInformation->getPropertyGroup()->appendToObjectModel($orderDeliveryInformation);
+                    $data[$orderDeliveryInformation->getAbstractModel()->formName()] = isset($data['OrderDeliveryInformationNew']) ? $data['OrderDeliveryInformationNew'] : [];
+                }
+                $orderDeliveryInformation->saveModelWithProperties($data);
+            } else {
+                return null;
+            }
+
+            $event->setStatus(true);
         }
     }
 
