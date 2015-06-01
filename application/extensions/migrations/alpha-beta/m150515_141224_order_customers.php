@@ -120,8 +120,8 @@ class m150515_141224_order_customers extends Migration
                 'sort_order' => Schema::TYPE_INTEGER,
             ], $tableOptions);
 
-        $this->addColumn('{{%order}}', 'customer_id', Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL');
-        $this->addColumn('{{%order}}', 'contragent_id', Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL');
+        $this->addColumn('{{%order}}', 'customer_id', Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL DEFAULT 0');
+        $this->addColumn('{{%order}}', 'contragent_id', Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL DEFAULT 0');
 
         $this->dropColumn('{{%order}}', 'shipping_option_id');
         $this->dropColumn('{{%order}}', 'shipping_price');
