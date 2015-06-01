@@ -25,9 +25,7 @@
             </div>
             <div id="socialMedia" class="span3 pull-right">
                 <h5><?= Yii::t('app', 'Social media') ?></h5>
-                <a href="#"><img width="60" height="60" src="/demo/images/facebook.png" title="facebook" alt="facebook"/></a>
-                <a href="#"><img width="60" height="60" src="/demo/images/twitter.png" title="twitter" alt="twitter"/></a>
-                <a href="#"><img width="60" height="60" src="/demo/images/youtube.png" title="youtube" alt="youtube"/></a>
+
             </div>
         </div>
         <p class="pull-right">&copy; DotPlant 2014</p>
