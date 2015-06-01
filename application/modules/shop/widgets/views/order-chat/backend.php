@@ -53,7 +53,6 @@ $this->registerAssetBundle(\app\backend\assets\KoAsset::className());
 </script>
 
 <?php ob_start(); ?>
-<script>
     (function(){
         var dataMessages = '<?= \yii\helpers\Json::encode(array_values($list)); ?>';
 
@@ -95,5 +94,4 @@ $this->registerAssetBundle(\app\backend\assets\KoAsset::className());
 
         ko.applyBindings(new OrderChat());
     })();
-</script>
 <?php $this->registerJs(ob_get_clean(), \yii\web\View::POS_END); ?>
