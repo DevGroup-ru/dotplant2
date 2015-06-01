@@ -1,0 +1,35 @@
+/* line 1, ../sass/installer.scss */
+.installer-box {
+  border: 1px solid #ccc;
+  box-shadow: 0 0 5px 0 rgba(50, 50, 50, 0.75);
+  padding: 10px;
+}
+
+/* line 7, ../sass/installer.scss */
+.scrollable {
+  box-shadow: 0 0 2px 0 rgba(50, 50, 50, 0.75);
+  overflow: scroll;
+  height: 400px;
+  padding: 10px;
+  margin: 8px 0;
+}
+
+/* line 15, ../sass/installer.scss */
+.installer-controls {
+  margin-top: 8px;
+  border-top: 1px solid #EEEEEE;
+  padding: 8px 0;
+}
+/* line 19, ../sass/installer.scss */
+.installer-controls:after {
+  content: ' ';
+  clear: both;
+  display: block;
+}
+
+/* line 26, ../sass/installer.scss */
+h1 {
+  border-bottom: 1px solid #f3f3f3;
+}
+
+/*# sourceMappingURL=installer.css.map */

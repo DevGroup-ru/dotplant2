@@ -3775,7 +3775,7 @@ class m150531_084444_new_init extends Migration
                 'name' => Yii::t('app', 'Header'),
                 'key' => 'header',
                 'multiple_widgets' => 0,
-                'cache_lifetime' => $cacheLifetime,
+                'is_cacheable' => 0,
                 'cache_tags' => '\app\widgets\navigation\models\Navigation',
             ],
             [ // 3
@@ -3889,29 +3889,24 @@ class m150531_084444_new_init extends Migration
             [ // 1
                 'name' => Yii::t('app', 'Main page'),
                 'by_url' => '/',
-                'exclusive' => 1,
             ],
             [ // 2
-                'name' => Yii::t('app', 'All pages'),
-                'by_url' => '*',
-            ],
-            [ // 3
                 'name' => Yii::t('app', 'Non main page'),
                 'by_url' => '/*',
             ],
-            [ // 4
+            [ // 3
                 'name' => Yii::t('app', 'Product listing'),
                 'by_route' => 'shop/product/list',
             ],
-            [ // 5
+            [ // 4
                 'name' => Yii::t('app', 'Product page(show)'),
                 'by_route' => 'shop/product/show',
             ],
-            [ // 6
+            [ // 5
                 'name' => Yii::t('app', 'Content page listing'),
                 'by_route' => 'page/page/list',
             ],
-            [ // 7
+            [ // 6
                 'name' => Yii::t('app', 'Content page(show)'),
                 'by_route' => 'page/page/show',
             ],

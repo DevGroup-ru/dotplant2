@@ -5,9 +5,11 @@ Yii::setAlias('config', __DIR__);
 $db = require(__DIR__ . '/db.php');
 $params = require(__DIR__ . '/params.php');
 
-$aliases = require(__DIR__ . '/aliases.php');
-foreach ($aliases as $alias => $path) {
-    Yii::setAlias($alias, $path);
+if (file_exists(__DIR__ . '/aliases.php')) {
+    $aliases = require(__DIR__ . '/aliases.php');
+    foreach ($aliases as $alias => $path) {
+        Yii::setAlias($alias, $path);
+    }
 }
 
 return [
