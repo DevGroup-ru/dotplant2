@@ -101,12 +101,12 @@ class RbacController extends BackendController
                 return $this->redirect(['update', 'id' => $item->name, 'type' => $item->type]);
             } else {
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/rbac/index']);
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/user/rbac/index']);
                 switch (Yii::$app->request->post('action', 'save')) {
                     case 'next':
                         return $this->redirect(
                             [
-                                '/backend/rbac/create',
+                                '/user/rbac/create',
                                 'type' => $type,
                                 'returnUrl' => $returnUrl,
                             ]
@@ -117,7 +117,7 @@ class RbacController extends BackendController
                         return $this->redirect(
                             Url::toRoute(
                                 [
-                                    '/backend/rbac/update',
+                                    '/user/rbac/update',
                                     'id' => $item->name,
                                     'type' => $type,
                                     'returnUrl' => $returnUrl,
@@ -188,12 +188,12 @@ class RbacController extends BackendController
                 \Yii::$app->getSession()->setFlash('error', $model->getErrorMessage());
                 return $this->redirect(['update', 'id' => $item->name, 'type' => $item->type]);
             } else {
-                $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/rbac/index']);
+                $returnUrl = Yii::$app->request->get('returnUrl', ['/user/rbac/index']);
                 switch (Yii::$app->request->post('action', 'save')) {
                     case 'next':
                         return $this->redirect(
                             [
-                                '/backend/rbac/create',
+                                '/user/rbac/create',
                                 'type' => $type,
                                 'returnUrl' => $returnUrl,
                             ]
@@ -204,7 +204,7 @@ class RbacController extends BackendController
                         return $this->redirect(
                             Url::toRoute(
                                 [
-                                    '/backend/rbac/update',
+                                    '/user/rbac/update',
                                     'id' => $item->name,
                                     'type' => $type,
                                     'returnUrl' => $returnUrl,
