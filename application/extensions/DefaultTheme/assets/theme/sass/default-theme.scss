@@ -63,8 +63,12 @@ body, .content, #content {
   //border-color: darken($action_color, 20%);
   color: $action_text_color;
   background-color: $action_color;
+  outline: none;
+  border-color: $action_color;
 }
-
+.btn-danger {
+  border-width: 2px;
+}
 header .nav {
   .navigation-widget {
     list-style: none;

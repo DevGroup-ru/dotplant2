@@ -182,3 +182,13 @@ $big_image_height: 400px;
     padding: 8px;
   }
 }
+
+#cart-table {
+  .product-image img {
+    max-height: 100px;
+  }
+  input.quantity {
+    border-width: 2px;
+    height: 36px;
+  }
+}

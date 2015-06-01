@@ -3290,23 +3290,23 @@ class m150531_084444_new_init extends Migration
         $this->batchInsert(
             DiscountType::tableName(),
             [
-                'name', 'class', 'checking_class'
+                'name', 'class', 'checking_class', 'add_view'
             ],
             [
                 [
-                    'Discount Code', 'app\modules\shop\models\DiscountCode', 'Order'
+                    'Discount Code', 'app\modules\shop\models\DiscountCode', 'Order', '@app/modules/shop/views/backend-discount/_discount_code'
                 ],
                 [
-                    'Category Discount', 'app\modules\shop\models\CategoryDiscount', 'OrderItem'
+                    'Category Discount', 'app\modules\shop\models\CategoryDiscount', 'OrderItem', '@app/modules/shop/views/backend-discount/_category_discount'
                 ],
                 [
-                    'User Discount', 'app\modules\shop\models\UserDiscount', 'Order'
+                    'User Discount', 'app\modules\shop\models\UserDiscount', 'Order', '@app/modules/shop/views/backend-discount/_user_discount'
                 ],
                 [
-                    'Order Discount', 'app\modules\shop\models\OrderDiscount', 'Order'
+                    'Order Discount', 'app\modules\shop\models\OrderDiscount', 'Order', '@app/modules/shop/views/backend-discount/_order_discount'
                 ],
                 [
-                    'Product Discount', 'app\modules\shop\models\ProductDiscount', 'OrderItem'
+                    'Product Discount', 'app\modules\shop\models\ProductDiscount', 'OrderItem', '@app/modules/shop/views/backend-discount/_product_discount'
                 ],
             ]
         );
@@ -3782,7 +3782,7 @@ class m150531_084444_new_init extends Migration
                 'assign_to_role' => null,
                 'notify_new_assigned_user' => 0,
                 'role_assignment_policy' => 'random',
-                'event_name' => 'order_stageleaf_payment_pay',
+                'event_name' => 'order_stageleaf_payment_choose',
             ]
         );
         $this->insert(

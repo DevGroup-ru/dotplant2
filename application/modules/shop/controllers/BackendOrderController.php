@@ -20,6 +20,7 @@ use app\modules\shop\models\PaymentType;
 use app\modules\shop\models\Product;
 use app\modules\shop\models\ShippingOption;
 use app\modules\shop\models\SpecialPriceList;
+use app\modules\shop\ShopModule;
 use app\modules\user\models\User;
 use app\properties\HasProperties;
 use kartik\helpers\Html;
@@ -38,6 +39,10 @@ use yii\web\Response;
  */
 class BackendOrderController extends BackendController
 {
+    /**
+     * @property ShopModule $module
+     */
+
     /**
      * Finds the Order model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -112,11 +117,16 @@ class BackendOrderController extends BackendController
             'model' => Order::className(),
             'relations' => ['user' => ['username']],
             'partialMatchAttributes' => ['start_date', 'end_date', 'user_username'],
+            'additionalConditions' => [],
         ];
         if (Config::getValue('shop.showDeletedOrders', 0) === 0) {
             $searchModelConfig['additionalConditions'] = [['is_deleted' => 0]];
         }
+        /** @var SearchModel $searchModel */
         $searchModel = new SearchModel($searchModelConfig);
+        if (intval($this->module->defaultOrderStageFilterBackend) > 0) {
+            $searchModel->order_stage_id = intval($this->module->defaultOrderStageFilterBackend);
+        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render(
             'index',

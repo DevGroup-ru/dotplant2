@@ -2,9 +2,11 @@
 
 namespace app\extensions\DefaultTheme\widgets\OneRowHeaderWithCart;
 
+use Yii;
 use app\extensions\DefaultTheme\assets\BootstrapHoverDropdown;
 use app\extensions\DefaultTheme\components\BaseWidget;
 use app\modules\shop\models\Order;
+use yii\helpers\ArrayHelper;
 
 class Widget extends BaseWidget
 {
@@ -28,5 +30,13 @@ class Widget extends BaseWidget
                 'collapseOnSmallScreen' => $this->collapseOnSmallScreen,
             ]
         );
+    }
+
+    protected function getCacheTags()
+    {
+        $tags = ArrayHelper::merge(parent::getCacheTags(), [
+            'Cart:'.Yii::$app->session->id,
+        ]);
+        return $tags;
     }
 }

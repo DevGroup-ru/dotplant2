@@ -12,6 +12,7 @@ use app\properties\HasProperties;
 use Yii;
 use yii\base\Exception;
 use yii\behaviors\TimestampBehavior;
+use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\Expression;
 
@@ -434,6 +435,7 @@ class Order extends \yii\db\ActiveRecord
 
         $this->items_count = $itemsCount;
         $this->total_price = PriceHelper::getOrderPrice($this);
+        TagDependency::invalidate(Yii::$app->cache, ['Cart:'.Yii::$app->session->id]);
         return $callSave ? $this->save(true, ['items_count', 'total_price', 'total_price_with_shipping']) : true;
     }
 
@@ -452,6 +454,7 @@ class Order extends \yii\db\ActiveRecord
                 $customer->save();
             }
         }
+        TagDependency::invalidate(Yii::$app->cache, ['Cart:'.Yii::$app->session->id]);
     }
 
     /**
