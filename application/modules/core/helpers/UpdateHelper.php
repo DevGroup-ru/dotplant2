@@ -20,7 +20,7 @@ class UpdateHelper extends Component
     public $composerIdleTimeout = 60;
     public $migrationTimeout = 3600;
     public $migrationIdleTimeout = 60;
-    public $composerHomeDirectory = '~/.composer/';
+    public $composerHomeDirectory = './.composer/';
 
     /**
      * Applies migrations for module.

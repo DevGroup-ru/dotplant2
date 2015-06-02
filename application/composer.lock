@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "hash": "41a0bdcdf3e7578598ce039112f868fb",
@@ -1481,12 +1481,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/bootstrap-fileinput.git",
-                "reference": "c66c2ac8bd11860c3ff41c6c3b52ab69dbb01fd0"
+                "reference": "02a16d87dc4cff5ec94411001d1bae7edec6b8d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/c66c2ac8bd11860c3ff41c6c3b52ab69dbb01fd0",
-                "reference": "c66c2ac8bd11860c3ff41c6c3b52ab69dbb01fd0",
+                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/02a16d87dc4cff5ec94411001d1bae7edec6b8d8",
+                "reference": "02a16d87dc4cff5ec94411001d1bae7edec6b8d8",
                 "shasum": ""
             },
             "type": "library",
@@ -1521,7 +1521,7 @@
                 "progress",
                 "upload"
             ],
-            "time": "2015-05-31 08:03:02"
+            "time": "2015-06-01 17:39:29"
         },
         {
             "name": "kartik-v/bootstrap-popover-x",
@@ -1795,12 +1795,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-datecontrol.git",
-                "reference": "cf12569e79848a08bf690329493dc6e314a641c1"
+                "reference": "36189ef4d99490c665e81bbf8a2ea7abced6f8db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-datecontrol/zipball/cf12569e79848a08bf690329493dc6e314a641c1",
-                "reference": "cf12569e79848a08bf690329493dc6e314a641c1",
+                "url": "https://api.github.com/repos/kartik-v/yii2-datecontrol/zipball/36189ef4d99490c665e81bbf8a2ea7abced6f8db",
+                "reference": "36189ef4d99490c665e81bbf8a2ea7abced6f8db",
                 "shasum": ""
             },
             "require": {
@@ -1815,7 +1815,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD 3-Clause"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
@@ -1834,7 +1834,7 @@
                 "yii",
                 "yii2"
             ],
-            "time": "2015-04-21 15:07:44"
+            "time": "2015-06-02 04:41:43"
         },
         {
             "name": "kartik-v/yii2-dropdown-x",
@@ -3936,12 +3936,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "1d0214413fe806d9174b4afbc963f625f70b0b3d"
+                "reference": "a69d3d6eeb8bb9d7d10be5d1b7021070ecaf6f45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/1d0214413fe806d9174b4afbc963f625f70b0b3d",
-                "reference": "1d0214413fe806d9174b4afbc963f625f70b0b3d",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/a69d3d6eeb8bb9d7d10be5d1b7021070ecaf6f45",
+                "reference": "a69d3d6eeb8bb9d7d10be5d1b7021070ecaf6f45",
                 "shasum": ""
             },
             "require": {
@@ -4016,7 +4016,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2015-05-31 11:17:04"
+            "time": "2015-06-01 19:26:47"
         },
         {
             "name": "yiisoft/yii2-authclient",

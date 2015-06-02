@@ -57,7 +57,7 @@ $this->title = Yii::t('app', 'Installer - Database configuration');
         <?= Yii::t('app', 'Back') ?>
     </a>
     <?php if ($config['connectionOk']): ?>
-    <a href="<?= Url::to(['db-config']) ?>" class="btn btn-primary btn-lg pull-right">
+    <a href="<?= Url::to(['migrate']) ?>" class="btn btn-primary btn-lg pull-right">
         <?= Yii::t('app', 'Next') ?>
         <?= Icon::show('arrow-right') ?>
     </a>

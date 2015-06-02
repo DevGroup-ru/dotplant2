@@ -2,8 +2,10 @@
 
 namespace app\modules\installer\controllers;
 
+use app\modules\core\helpers\UpdateHelper;
 use app\modules\installer\models\DbConfig;
 use app\components\InstallerHelper;
+use app\modules\installer\models\MigrateModel;
 use Yii;
 use yii\base\DynamicModel;
 use yii\web\Controller;
@@ -11,6 +13,7 @@ use app\components\InstallerFilter;
 
 class InstallerController extends Controller
 {
+    // set simple layout
     public $layout = 'installer';
     /**
      * @inheritdoc
@@ -29,29 +32,8 @@ class InstallerController extends Controller
         return $this->render(
             'index',
             [
-                'file_permissions' => $this->checkPermissions(),
+                'file_permissions' => InstallerHelper::checkPermissions(),
             ]
-        );
-    }
-
-    private function checkPermissions()
-    {
-        $files = [
-            '@app/config/db-local.php',
-            '@app/config/web-local.php',
-            '@app/config/common-configurable.php',
-            '@app/config/console-configurable.php',
-            '@app/config/web-configurable.php',
-            '@app/config/kv-configurables.php',
-            '@app/config/aliases.php',
-        ];
-        return array_reduce(
-            $files,
-            function($carry, $item) {
-                $carry[$item] = is_writeable(Yii::getAlias($item));
-                return $carry;
-            },
-            []
         );
     }
 
@@ -111,5 +93,72 @@ class InstallerController extends Controller
                 'model' => $model,
             ]
         );
+    }
+
+    public function actionMigrate()
+    {
+        $model = new MigrateModel();
+        $model->ignore_time_limit_warning = Yii::$app->session->get('ignore_time_limit_warning', false);
+        $model->manual_migration_run = false;
+        $model->composerHomeDirectory = Yii::$app->session->get('composerHomeDirectory', './.composer/');
+        $model->updateComposer = Yii::$app->session->get('updateComposer', true);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->validate();
+            foreach ($model->getAttributes() as $key => $value) {
+                Yii::$app->session->set($key, $value);
+            }
+        }
+
+        /** @var UpdateHelper $helper */
+        $helper = Yii::createObject([
+            'class' => UpdateHelper::className(),
+            'composerHomeDirectory' => $model->composerHomeDirectory,
+        ]);
+        $process = $helper->applyAppMigrations(
+            false
+        );
+
+        $commandToRun = $process->getCommandLine();
+
+        $check = $this->checkTime($model->ignore_time_limit_warning);
+        if (Yii::$app->request->isPost) {
+            if ($check && $model->manual_migration_run === false) {
+                if ($model->updateComposer) {
+                    $composerProcess = $helper->updateComposer();
+                    $composerProcess->run();
+                    if ($composerProcess->getExitCode()!==0) {
+                        $process = $composerProcess;
+                    } else {
+                        $process->run();
+                    }
+                }
+                if ($process->getExitCode()===0) {
+                    Yii::$app->session->setFlash('info', Yii::t('app', 'Migrations completed successfully'));
+                    return $this->redirect(['admin-user']);
+                }
+            }
+            if ($model->manual_migration_run === true) {
+                return $this->redirect(['admin-user']);
+            }
+        }
+        return $this->render(
+            'migrate',
+            [
+                'check' => $check,
+                'commandToRun' => $commandToRun,
+                'process' => $process,
+                'model' => $model,
+            ]
+        );
+    }
+
+    private function checkTime($ignoreTimeLimit=false)
+    {
+        if (InstallerHelper::unlimitTime() === false && $ignoreTimeLimit === false) {
+            Yii::$app->session->setFlash('warning', Yii::t('app', 'Can\'t set time limit to 0. Some operations may not complete.'));
+            return false;
+        } else {
+            return true;
+        }
     }
 }
