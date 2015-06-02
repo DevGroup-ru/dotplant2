@@ -3,6 +3,7 @@
 namespace app\modules\installer\controllers;
 
 use app\modules\core\helpers\UpdateHelper;
+use app\modules\installer\models\AdminUser;
 use app\modules\installer\models\DbConfig;
 use app\components\InstallerHelper;
 use app\modules\installer\models\MigrateModel;
@@ -15,6 +16,7 @@ class InstallerController extends Controller
 {
     // set simple layout
     public $layout = 'installer';
+    private $db = null;
     /**
      * @inheritdoc
      */
@@ -58,16 +60,7 @@ class InstallerController extends Controller
 
     public function actionDbConfig()
     {
-        $config = Yii::$app->session->get('db-config', [
-            'db_host' => 'localhost',
-            'db_name' => 'dotplant2',
-            'username' => 'root',
-            'password' => '',
-            'enableSchemaCache' => true,
-            'schemaCacheDuration' => 86400,
-            'schemaCache' => 'cache',
-            'connectionOk' => false,
-        ]);
+        $config = $this->getDbConfigFromSession();
 
         $model = new DbConfig();
         $model->setAttributes($config);
@@ -93,6 +86,20 @@ class InstallerController extends Controller
                 'model' => $model,
             ]
         );
+    }
+
+    private function getDbConfigFromSession()
+    {
+        return Yii::$app->session->get('db-config', [
+            'db_host' => 'localhost',
+            'db_name' => 'dotplant2',
+            'username' => 'root',
+            'password' => '',
+            'enableSchemaCache' => true,
+            'schemaCacheDuration' => 86400,
+            'schemaCache' => 'cache',
+            'connectionOk' => false,
+        ]);
     }
 
     public function actionMigrate()
@@ -123,20 +130,36 @@ class InstallerController extends Controller
         $check = $this->checkTime($model->ignore_time_limit_warning);
         if (Yii::$app->request->isPost) {
             if ($check && $model->manual_migration_run === false) {
-                if ($model->updateComposer) {
-                    $composerProcess = $helper->updateComposer();
-                    $composerProcess->run();
-                    if ($composerProcess->getExitCode()!==0) {
-                        $process = $composerProcess;
+
+                // create config
+                $config = $this->getDbConfigFromSession();
+
+                $dbConfigModel = new DbConfig();
+                $dbConfigModel->setAttributes($config);
+                $config = InstallerHelper::createDatabaseConfig($dbConfigModel->getAttributes());
+                $configOk = true;
+                if (InstallerHelper::createDatabaseConfigFile($config) === false) {
+                    Yii::$app->session->setFlash('warning', Yii::t('app', 'Unable to create db-local config'));
+                    $configOk = false;
+                }
+
+                if ($configOk === true) {
+                    if ($model->updateComposer) {
+                        $composerProcess = $helper->updateComposer();
+                        $composerProcess->run();
+                        gc_collect_cycles();
+                        if ($composerProcess->getExitCode() !== 0) {
+                            $process = $composerProcess;
+                        } else {
+                            $process->run();
+                        }
                     } else {
                         $process->run();
                     }
-                } else {
-                    $process->run();
-                }
-                if ($process->getExitCode()===0) {
-                    Yii::$app->session->setFlash('info', Yii::t('app', 'Migrations completed successfully'));
-                    return $this->redirect(['admin-user']);
+                    if ($process->getExitCode() === 0) {
+                        Yii::$app->session->setFlash('info', Yii::t('app', 'Migrations completed successfully'));
+                        return $this->redirect(['admin-user']);
+                    }
                 }
             }
             if ($model->manual_migration_run === true) {
@@ -153,6 +176,42 @@ class InstallerController extends Controller
             ]
         );
     }
+
+    public function actionAdminUser()
+    {
+        $model = new AdminUser();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+
+            if (InstallerHelper::createAdminUser($model, $this->db())) {
+                Yii::$app->session->setFlash('info', Yii::t('app', 'Admin user created'));
+            }
+        }
+
+        return $this->render(
+            'admin-user',
+            [
+                'model' => $model,
+            ]
+        );
+    }
+
+    /**
+     * @return \yii\db\Connection
+     * @throws \yii\base\InvalidConfigException
+     */
+    private function db()
+    {
+        if ($this->db === null) {
+            $config = InstallerHelper::createDatabaseConfig($this->getDbConfigFromSession());
+            $dbComponent = Yii::createObject(
+                $config
+            );
+            $dbComponent->open();
+            $this->db = $dbComponent;
+        }
+        return $this->db;
+    }
+
 
     private function checkTime($ignoreTimeLimit=false)
     {

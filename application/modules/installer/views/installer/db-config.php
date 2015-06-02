@@ -41,7 +41,7 @@ $this->title = Yii::t('app', 'Installer - Database configuration');
             Icon::show('check') .' ' . Yii::t('app', 'Test connection'),
             [
                 'class' => 'btn btn-success pull-right ladda-button',
-                'data-style' => 'expand-left',
+                'data-style' => 'expand-right',
             ]
         )
         ?>

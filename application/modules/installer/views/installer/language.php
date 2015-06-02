@@ -60,16 +60,17 @@ $form = ActiveForm::begin([
 
 
 <div class="installer-controls">
-    <a href="<?= Url::to(['index']) ?>" class="btn btn-info btn-lg pull-left">
+    <a href="<?= Url::to(['index']) ?>" class="btn btn-info btn-lg pull-left ladda-button" data-style="expand-right">
         <?= Icon::show('arrow-left') ?>
         <?= Yii::t('app', 'Back') ?>
     </a>
 
     <?=
     Html::submitButton(
-        Icon::show('arrow-right') .' ' . Yii::t('app', 'Next'),
+        Yii::t('app', 'Next') . ' ' .Icon::show('arrow-right'),
         [
-            'class' => 'btn btn-primary btn-lg pull-right',
+            'class' => 'btn btn-primary btn-lg pull-right ladda-button',
+            'data-style' => 'expand-left',
         ]
     )
     ?>

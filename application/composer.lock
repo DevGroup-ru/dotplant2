@@ -1795,12 +1795,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-datecontrol.git",
-                "reference": "36189ef4d99490c665e81bbf8a2ea7abced6f8db"
+                "reference": "16d34bcbebee43f494b0dd5034d45796d3cef826"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-datecontrol/zipball/36189ef4d99490c665e81bbf8a2ea7abced6f8db",
-                "reference": "36189ef4d99490c665e81bbf8a2ea7abced6f8db",
+                "url": "https://api.github.com/repos/kartik-v/yii2-datecontrol/zipball/16d34bcbebee43f494b0dd5034d45796d3cef826",
+                "reference": "16d34bcbebee43f494b0dd5034d45796d3cef826",
                 "shasum": ""
             },
             "require": {
@@ -1834,7 +1834,7 @@
                 "yii",
                 "yii2"
             ],
-            "time": "2015-06-02 04:41:43"
+            "time": "2015-06-02 05:01:07"
         },
         {
             "name": "kartik-v/yii2-dropdown-x",

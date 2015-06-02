@@ -2,8 +2,10 @@
 
 namespace app\components;
 
+use app\modules\installer\models\AdminUser;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\helpers\VarDumper;
 
 class InstallerHelper
 {
@@ -95,6 +97,46 @@ class InstallerHelper
         }
         ArrayHelper::multisort($result, 'translated', SORT_DESC);
         return $result;
+    }
+
+    public static function createDatabaseConfig($config)
+    {
+        $config['dsn'] = 'mysql:host='.$config['db_host'].';dbname='.$config['db_name'];
+        $config['class'] = 'yii\db\Connection';
+        unset($config['db_name'], $config['db_host'], $config['connectionOk']);
+        return $config;
+    }
+
+    public static function createDatabaseConfigFile($config)
+    {
+        $content = "<?php\nreturn " . VarDumper::export($config) . ";\n";
+        return file_put_contents(Yii::getAlias('@app/config/db-local.php'), $content) > 0;
+    }
+
+    public static function createAdminUser(AdminUser $model, \yii\db\Connection $db)
+    {
+        $db->createCommand()
+            ->insert('{{%user}}', [
+                'username' => $model->username,
+                'password_hash' => Yii::$app->security->generatePasswordHash($model->password),
+                'email' => $model->email,
+                'auth_key' => '',
+                'create_time' => time(),
+                'update_time' => time(),
+            ])
+            ->execute();
+        $userId = intval($db->lastInsertID);
+        $assignmentResult = $db->createCommand()
+            ->insert(
+                '{{%auth_assignment}}',
+                [
+                    'item_name' => 'admin',
+                    'user_id' => $userId,
+                ]
+            )
+            ->execute() === 1;
+
+        return ($assignmentResult && $userId > 0);
     }
 
     public static function askForUser()

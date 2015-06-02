@@ -2,6 +2,7 @@
 
 namespace app\modules\installer\models;
 
+use app\components\InstallerHelper;
 use Yii;
 use yii\base\Model;
 
@@ -62,12 +63,12 @@ class DbConfig extends Model
         ];
     }
 
+    /**
+     * @return bool If connection ok?
+     */
     public function testConnection()
     {
-        $config = $this->getAttributes();
-        $config['dsn'] = 'mysql:host='.$config['db_host'].';dbname='.$config['db_name'];
-        $config['class'] = 'yii\db\Connection';
-        unset($config['db_name'], $config['db_host']);
+        $config = InstallerHelper::createDatabaseConfig($this->getAttributes());
 
         $result = false;
 
@@ -81,7 +82,7 @@ class DbConfig extends Model
             $dbComponent->open();
             $result = true;
         } catch (\Exception $e) {
-            Yii::$app->session->setFlash('danger', $e->getMessage());
+            Yii::$app->session->setFlash('danger', Yii::t('app', 'Database connection error:') . ' ' . $e->getMessage());
         }
         return $result;
     }

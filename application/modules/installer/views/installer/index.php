@@ -43,7 +43,7 @@ $permissions_ok = true;
 <?php endif; ?>
 
 <div class="installer-controls">
-    <a href="<?= Url::to(['language']) ?>" class="btn btn-primary btn-lg pull-right">
+    <a href="<?= Url::to(['language']) ?>" class="btn btn-primary btn-lg pull-right ladda-button" data-style="expand-left">
         <?= Yii::t('app', 'Next') ?>
         <?= Icon::show('arrow-right') ?>
     </a>
