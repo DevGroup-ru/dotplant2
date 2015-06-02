@@ -2,6 +2,7 @@
 
 namespace app\modules\shop\controllers;
 
+use app\modules\core\behaviors\DisableRobotIndexBehavior;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderTransaction;
 use app\modules\shop\models\PaymentType;
@@ -13,6 +14,15 @@ use Yii;
 
 class PaymentController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => DisableRobotIndexBehavior::className(),
+            ]
+        ];
+    }
+
     /**
      * Check payment result by PaymentType id
      * @param null $id

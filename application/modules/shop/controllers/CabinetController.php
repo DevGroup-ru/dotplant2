@@ -2,6 +2,7 @@
 
 namespace app\modules\shop\controllers;
 
+use app\modules\core\behaviors\DisableRobotIndexBehavior;
 use app\modules\shop\models\Contragent;
 use app\modules\shop\models\Customer;
 use app\modules\shop\models\Order;
@@ -32,6 +33,9 @@ class CabinetController extends Controller
                     ],
                 ],
             ],
+            [
+                'class' => DisableRobotIndexBehavior::className(),
+            ]
         ];
     }
 

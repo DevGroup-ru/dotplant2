@@ -2,6 +2,7 @@
 
 namespace app\modules\shop\controllers;
 
+use app\modules\core\behaviors\DisableRobotIndexBehavior;
 use app\modules\core\helpers\EventTriggeringHelper;
 use app\modules\core\models\Events;
 use app\modules\shop\helpers\PriceHelper;
@@ -32,6 +33,15 @@ use yii\caching\TagDependency;
  */
 class CartController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => DisableRobotIndexBehavior::className(),
+            ]
+        ];
+    }
+
     /**
      * Get Order.
      * @param bool $create Create order if it does not exist
