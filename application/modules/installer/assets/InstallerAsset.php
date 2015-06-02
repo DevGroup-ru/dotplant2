@@ -1,18 +1,18 @@
 <?php
 
-namespace app\assets;
+namespace app\modules\installer\assets;
 
 use yii\web\AssetBundle;
 
 /**
  * Asset bundle for DotPlant2 installer
  *
- * @package app\assets
+ * @package app\modules\installer\assets
  */
 class InstallerAsset extends AssetBundle
 {
 
-    public $sourcePath = '@app/assets/installer';
+    public $sourcePath = '@app/modules/installer/assets/installer';
     public $css = [
         'css/installer.css'
     ];

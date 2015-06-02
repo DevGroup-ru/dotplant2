@@ -43,7 +43,7 @@ $permissions_ok = true;
 <?php endif; ?>
 
 <div class="installer-controls">
-    <a href="<?= Url::to(['db-config']) ?>" class="btn btn-primary btn-lg pull-right">
+    <a href="<?= Url::to(['language']) ?>" class="btn btn-primary btn-lg pull-right">
         <?= Yii::t('app', 'Next') ?>
         <?= Icon::show('arrow-right') ?>
     </a>

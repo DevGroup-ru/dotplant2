@@ -1,8 +1,8 @@
 <?php
 
-namespace app\controllers;
+namespace app\modules\installer\controllers;
 
-use app\models\DbConfig;
+use app\modules\installer\models\DbConfig;
 use app\components\InstallerHelper;
 use Yii;
 use yii\base\DynamicModel;

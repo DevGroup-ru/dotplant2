@@ -5,7 +5,15 @@ return [
     'basePath' => dirname(__DIR__),
     'extensions' => require(__DIR__ . '/../vendor/yiisoft/extensions.php'),
     'language' => 'en',
-    'defaultRoute' => 'installer/index',
+    'defaultRoute' => 'installer/installer/index',
+    'bootstrap' => [
+        'installer',
+    ],
+    'modules' => [
+        'installer' => [
+            'class' => 'app\modules\installer\Module',
+        ],
+    ],
     'components' => [
         'log' => [
             'traceLevel' => YII_DEBUG ? 6 : 0,

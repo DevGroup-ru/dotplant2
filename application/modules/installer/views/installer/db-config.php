@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 /** @var \yii\web\View $this */
 /** @var array $config */
-/** @var \app\models\DbConfig $model */
+/** @var \app\modules\installer\models\DbConfig $model */
 
 $this->title = Yii::t('app', 'Installer - Database configuration');
 
