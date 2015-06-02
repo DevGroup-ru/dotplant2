@@ -25,7 +25,12 @@ class InstallerHelper
         return array_reduce(
             $files,
             function($carry, $item) {
-                $carry[$item] = is_writeable(Yii::getAlias($item));
+                $fn = Yii::getAlias($item);
+                $result = touch($fn);
+                if ($result) {
+                    unlink($fn);
+                }
+                $carry[$item] = $result;
                 return $carry;
             },
             []
