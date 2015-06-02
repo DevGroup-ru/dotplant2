@@ -2,12 +2,13 @@
 
 namespace app\modules\seo\helpers;
 
+use app\modules\seo\models\OpenGraphObject;
 use Yii;
 
-class OpenGraphHelper
+class HtmlHelper
 {
 
-    public static function registerMeta($title = '', $url = '', $image = '', $description = '', $type = 'website')
+    public static function registerOpenGraph($title = '', $url = '', $image = '', $description = '', $type = 'website')
     {
 
         if (!empty($title)) {
@@ -44,7 +45,6 @@ class OpenGraphHelper
             );
         }
 
-
         if (!empty($description)) {
             Yii::$app->view->registerMetaTag(
                 [
@@ -56,20 +56,9 @@ class OpenGraphHelper
 
     }
 
-    public static function registerMetaByObject($object)
+    public static function registerOpenGraphByModel($model)
     {
-        $title = $object->title;
-        $url = Yii::$app->request->getAbsoluteUrl();
-
-        $imageObject = $object->getImages()->one();
-        if ($imageObject !== null) {
-            $image = $imageObject->getOriginalUrl();
-        } else {
-            $image = '';
-        }
-        $description = strip_tags($object->announce);
-        self::registerMeta($title, $url, $image, $description);
-
+        OpenGraphObject::getDataByModel($model);
     }
 
 

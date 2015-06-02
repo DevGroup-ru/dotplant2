@@ -39,26 +39,39 @@ class Discount extends \yii\db\ActiveRecord
     public function getDiscountPrice($price, $deliveryPrice = 0)
     {
         $discountPrice = 0;
-
-        switch ($this->appliance) {
-            case 'order_without_delivery':
-                $discountPrice = $price;
-                break;
-            case 'order_with_delivery':
-                $discountPrice = $price + $deliveryPrice;
-                break;
-            case 'delivery':
-                $discountPrice = $deliveryPrice;
-                break;
-            case 'products':
-                $discountPrice = $price;
-                break;
-        }
-
         if (intval($this->value_in_percent) === 1) {
-            $discountPrice *=  $this->value / 100;
+            switch ($this->appliance) {
+                case 'order_without_delivery':
+                    $discountPrice = $price;
+                    break;
+                case 'order_with_delivery':
+                    $discountPrice = $price + $deliveryPrice;
+                    break;
+                case 'delivery':
+                    $discountPrice = $deliveryPrice;
+                    break;
+                case 'products':
+                    $discountPrice = $price;
+                    break;
+            }
+
+            $discountPrice *= $this->value / 100;
         } else {
-            $discountPrice += $this->value;
+            switch ($this->appliance) {
+                case 'order_without_delivery':
+                    $discountPrice = $this->value < $price ? $this->value : $price;
+                    break;
+                case 'order_with_delivery':
+                    $discountPrice = $this->value < ($price + $deliveryPrice) ? $this->value : ($price + $deliveryPrice);
+                    break;
+                case 'delivery':
+                    $discountPrice = $this->value < $deliveryPrice ? $this->value : $deliveryPrice;
+                    break;
+                case 'products':
+                    $discountPrice = $this->value <  $price ? $this->value : $price;
+                    break;
+            }
+
         }
         $resultPrice = $price - $discountPrice;
         return $resultPrice > 0 ? $resultPrice : 0;

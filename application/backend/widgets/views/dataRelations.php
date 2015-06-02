@@ -8,6 +8,8 @@
  */
 use kartik\helpers\Html;
 
+\app\backend\assets\DataRelationsAsset::register($this);
+
 ?>
 
 <table id="<?= $widgetId ?>" class="table">
@@ -43,6 +45,7 @@ use kartik\helpers\Html;
         comparisonData.widgetId = '<?=$widgetId?>';
         comparisonData.init();
 <?php $this->endBlock(); ?>
-<?php $this->registerJs($this->blocks['dataRelationsJs']); ?>
+
+<?php $this->registerJs($this->blocks['dataRelationsJs'], \yii\web\View::POS_READY); ?>
 
 

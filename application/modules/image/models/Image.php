@@ -43,6 +43,7 @@ class Image extends \yii\db\ActiveRecord
             'object_model_id' => Yii::t('app', 'Object Model ID'),
             'image_description' => Yii::t('app', 'Image Description'),
             'sort_order' => Yii::t('app', 'Sort Order'),
+            'file' => Yii::t('app', 'File')
         ];
     }
 
