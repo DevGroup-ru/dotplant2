@@ -28,9 +28,10 @@ class JSSelectableTree extends JSTree
         $items =[];
         if (empty($this->selectedItems)) {
             $parent = Category::findById(Yii::$app->request->get('parent_id'));
-            do {
+            while ($parent instanceof Category) {
                 $this->selectedItems[] = $parent->id;
-            } while (is_object($parent = Category::findById($parent->parent_id)));
+                $parent = $parent->parent;
+            }
         }
         $this->routes['getTree'] = ArrayHelper::merge(
             $this->routes['getTree'],

@@ -79,6 +79,8 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public $defaultOrderStageFilterBackend = 0;
 
+    public $showDeletedOrders = 0;
+
     /**
      * @inheritdoc
      */
@@ -125,6 +127,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                     'showProductsOfChildCategories',
                     'deleteOrdersAbility',
                     'filterOnlyByParentProduct',
+                    'showDeletedOrders',
                 ],
                 'boolean',
             ],

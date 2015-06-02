@@ -101,7 +101,7 @@ class JSSelectableTreeGetTree extends Action
             if (in_array($row['id'], $parents)) {
                 $item['state']['opened'] = true;
             }
-            if (in_array($row['id'], $selectedItems)) {
+            if (is_array($selectedItems) && in_array($row['id'], $selectedItems)) {
                 $item['state']['selected'] = true;
             }
 

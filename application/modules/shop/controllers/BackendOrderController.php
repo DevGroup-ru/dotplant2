@@ -7,7 +7,6 @@ use app\backend\models\Notification;
 use app\backend\models\OrderChat;
 use app\components\Helper;
 use app\components\SearchModel;
-use app\models\Config;
 use app\modules\core\helpers\EventSubscribingHelper;
 use app\modules\shop\events\OrderCalculateEvent;
 use app\modules\shop\helpers\PriceHelper;
@@ -28,7 +27,6 @@ use app\modules\user\models\User;
 use app\properties\HasProperties;
 use kartik\helpers\Html;
 use Yii;
-use yii\base\Event;
 use yii\caching\TagDependency;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
@@ -156,6 +154,10 @@ class BackendOrderController extends BackendController
             'partialMatchAttributes' => ['start_date', 'end_date', 'user_username'],
             'additionalConditions' => [],
         ];
+
+        if (intval($this->module->showDeletedOrders) === 0) {
+            $searchModelConfig['additionalConditions'] = [['is_deleted' => 0]];
+        }
 
         /** @var SearchModel $searchModel */
         $searchModel = new SearchModel($searchModelConfig);
@@ -622,4 +624,3 @@ class BackendOrderController extends BackendController
         return ['status' => 0];
     }
 }
-?>

@@ -494,4 +494,3 @@ class Order extends \yii\db\ActiveRecord
             : Order::ORDER_STATE_IN_PROCESS;
     }
 }
-?>

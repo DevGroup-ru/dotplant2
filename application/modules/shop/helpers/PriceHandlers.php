@@ -151,9 +151,10 @@ class PriceHandlers
 
     public static function handleSaveDiscounts(OrderCalculateEvent $event)
     {
-        if ($event->state != OrderCalculateEvent::BEFORE_CALCULATE) {
+        if (OrderCalculateEvent::BEFORE_CALCULATE !== $event->state) {
             return null;
         }
+
         self::getAllDiscounts();
         foreach (self::$allDiscounts as $discountTypeName => $discountType) {
             if (in_array($discountTypeName, ['order_without_delivery', 'order_with_delivery', 'delivery'])) {
@@ -216,9 +217,10 @@ class PriceHandlers
 
     public static function handleSaveDelivery(OrderCalculateEvent $event)
     {
-        if ($event->state != OrderCalculateEvent::BEFORE_CALCULATE) {
+        if (OrderCalculateEvent::BEFORE_CALCULATE !== $event->state) {
             return null;
         }
+
         $deliveryInformation = $event->order->orderDeliveryInformation;
         $special_price_list = SpecialPriceList::find()->where(
             [
@@ -244,6 +246,4 @@ class PriceHandlers
         }
 
     }
-
-
 }

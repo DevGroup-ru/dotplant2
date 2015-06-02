@@ -1,7 +1,6 @@
 <?php
 
 use kartik\dynagrid\DynaGrid;
-use app\models\Config;
 use yii\helpers\Html;
 
 /**
@@ -103,32 +102,117 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->paymentType->name;
                     },
                 ],
-                'items_count',
-                'total_price',
-                [
-                    'class' => 'app\backend\components\ActionColumn',
-                    'buttons' => function ($model, $key, $index, $parent) {
-                        $result = [
-                            [
-                                'url' => 'view',
-                                'icon' => 'eye',
-                                'class' => 'btn-info',
-                                'label' => Yii::t('app', 'View'),
-                            ],
-                        ];
 
-                        $result[] = [
-                            'url' => 'delete',
-                            'icon' => 'trash-o',
-                            'class' => 'btn-danger',
-                            'label' => Yii::t('app', 'Delete'),
-                            'options' => [
-                                'data-action' => 'delete',
-                            ],
-                        ];
+//                'items_count',
+//                'total_price',
+//                [
+//                    'class' => 'app\backend\components\ActionColumn',
+//                    'buttons' => function ($model, $key, $index, $parent) {
+//                        $result = [
+//                            [
+//                                'url' => 'view',
+//                                'icon' => 'eye',
+//                                'class' => 'btn-info',
+//                                'label' => Yii::t('app', 'View'),
+//                            ],
+//                        ];
+//
+//                        $result[] = [
+//                            'url' => 'delete',
+//                            'icon' => 'trash-o',
+//                            'class' => 'btn-danger',
+//                            'label' => Yii::t('app', 'Delete'),
+//                            'options' => [
+//                                'data-action' => 'delete',
+//                            ],
+//                        ];
+//
+//                        return $result;
+//                    },
 
-                        return $result;
-                    },
+                'columns' => [
+                    [
+                        'attribute' => 'id',
+                    ],
+                    [
+                        'attribute' => 'manager_id',
+                        'filter' => $managers,
+                        'value' => function ($model, $key, $index, $column) {
+                            if ($model === null || $model->manager === null) {
+                                return null;
+                            }
+                            return $model->manager->username;
+                        },
+                    ],
+                    [
+                        'attribute' => 'user_username',
+                        'label' => Yii::t('app', 'User'),
+                        'value' => function ($model, $key, $index, $column) {
+                            if ($model === null || $model->user === null) {
+                                return null;
+                            }
+                            return $model->user->username;
+                        },
+                    ],
+                    'start_date',
+                    'end_date',
+                    [
+                        'attribute' => 'order_stage_id',
+                        'filter' => $orderStages,
+                        'value' => function ($model, $key, $index, $column) {
+                            if ($model === null || $model->stage === null) {
+                                return null;
+                            }
+                            return $model->stage->name_short;
+                        },
+                    ],
+                    [
+                        'attribute' => 'shipping_option_id',
+                        'filter' => $shippingOptions,
+                        'value' => function ($model, $key, $index, $column) {
+                            if ($model === null || $model->shippingOption === null) {
+                                return null;
+                            }
+                            return $model->shippingOption->name;
+                        },
+                    ],
+                    [
+                        'attribute' => 'payment_type_id',
+                        'filter' => $paymentTypes,
+                        'value' => function ($model, $key, $index, $column) {
+                            if ($model === null || $model->paymentType === null) {
+                                return null;
+                            }
+                            return $model->paymentType->name;
+                        },
+                    ],
+                    'items_count',
+                    'total_price',
+                    [
+                        'class' => 'app\backend\components\ActionColumn',
+                        'buttons' =>  function($model, $key, $index, $parent) {
+                            $result = [
+                                [
+                                    'url' => 'view',
+                                    'icon' => 'eye',
+                                    'class' => 'btn-info',
+                                    'label' => Yii::t('app','View'),
+                                ],
+                            ];
+                            if (intval(Yii::$app->getModule('shop')->deleteOrdersAbility) === 1 && $model->is_deleted == 0) {
+                                $result[] =  [
+                                    'url' => 'delete',
+                                    'icon' => 'trash-o',
+                                    'class' => 'btn-danger',
+                                    'label' => Yii::t('app', 'Delete'),
+                                    'options' => [
+                                        'data-action' => 'delete',
+                                    ],
+                                ];
+                            }
+                            return $result;
+                        },
+                    ],
                 ],
             ],
         ]

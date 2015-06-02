@@ -25,4 +25,3 @@ class OrderCalculateEvent extends SpecialEvent
         return [];
     }
 }
-?>

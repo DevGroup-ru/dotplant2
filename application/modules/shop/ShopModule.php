@@ -88,6 +88,11 @@ class ShopModule extends BaseModule implements BootstrapInterface
     public $defaultOrderStageFilterBackend = 0;
 
     /**
+     * @var int
+     */
+    public $showDeletedOrders = 0;
+
+    /**
      * @inheritdoc
      */
     public function behaviors()

@@ -108,6 +108,10 @@ class OrderTransaction extends ActiveRecord
         return $this->save(true, ['status']);
     }
 
+    /**
+     * @param bool $insert
+     * @return bool
+     */
     public function beforeSave($insert)
     {
         if (!parent::beforeSave($insert)) {
@@ -117,6 +121,14 @@ class OrderTransaction extends ActiveRecord
         return true;
     }
 
+    /**
+     * @param Order $order
+     * @param null $paymentTypeId
+     * @param bool $useCache
+     * @param bool $exclude
+     * @param null $status
+     * @return OrderTransaction|null
+     */
     public static function findLastByOrder(Order $order, $paymentTypeId = null, $useCache = true, $exclude = true, $status = null)
     {
         if (true === $useCache && isset(static::$lastByOrder[$order->id])) {
@@ -142,6 +154,10 @@ class OrderTransaction extends ActiveRecord
         return $model;
     }
 
+    /**
+     * @param Order $order
+     * @return OrderTransaction|null
+     */
     public static function createForOrder(Order $order)
     {
         $order->calculate();
@@ -154,24 +170,38 @@ class OrderTransaction extends ActiveRecord
         return $model->save() ? $model : null;
     }
 
+    /**
+     * @param bool $asLiteral
+     * @return null|int|string
+     */
     public function getTransactionStatus($asLiteral = true)
     {
-        return !isset($this->statusTransaction[$this->status]) ? '' :
-            ($asLiteral ? Yii::t('app', $this->statusTransaction[$this->status]) : $this->status);
+        return !isset($this->statusTransaction[$this->status])
+            ? null
+            : ($asLiteral
+                ? Yii::t('app', $this->statusTransaction[$this->status])
+                : $this->status
+            );
     }
 
+    /**
+     * @return string
+     */
     public function generateHash()
     {
         if (empty($this->order)) {
-            return null;
+            return '';
         }
         $hash = md5($this->order->hash . $this->id . $this->payment_type_id);
         return substr($hash, 0, 8);
     }
 
+    /**
+     * @param string $hash
+     * @return bool
+     */
     public function checkHash($hash = '')
     {
         return $hash === $this->generateHash();
     }
 }
-?>
