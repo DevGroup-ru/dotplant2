@@ -110,49 +110,13 @@ class PaymentController extends Controller
     }
 
     /**
-     * Cancel transaction and delete it
+     * Open OrderTransaction with rendering payment form
      * @param null $id
      * @param null $othash
-     * @return \yii\web\Response
-     * @throws BadRequestHttpException
-     * @throws \Exception
-     */
-    public function actionCancel($id = null, $othash = null)
-    {
-        if (null === $id) {
-            throw new BadRequestHttpException();
-        }
-        /** @var OrderTransaction $transaction */
-        if (null === $transaction = OrderTransaction::findOne(['id' => $id])) {
-            throw new BadRequestHttpException();
-        }
-        if (!$transaction->checkHash($othash)) {
-            throw new BadRequestHttpException();
-        }
-        if ($transaction->order->getImmutability(Order::IMMUTABLE_USER)) {
-            throw new BadRequestHttpException();
-        }
-        if ($transaction->order->user_id === 0) {
-            throw new ForbiddenHttpException;
-        } else {
-            if (Yii::$app->user->id !== $transaction->order->user_id) {
-                throw new ForbiddenHttpException;
-            }
-        }
-
-        $transaction->delete();
-        return $this->redirect(Url::previous('__returnPaymentCancel'));
-    }
-
-    /**
-     * Change PaymentType for OrderTransaction
-     * @param null $id
-     * @param null $othash
-     * @param null $update
      * @return string
      * @throws BadRequestHttpException
      */
-    public function actionType($id = null, $othash = null, $update = null)
+    public function actionTransaction($id = null, $othash = null)
     {
         if (null === $id) {
             throw new BadRequestHttpException();
@@ -164,47 +128,7 @@ class PaymentController extends Controller
         if (!$transaction->checkHash($othash)) {
             throw new BadRequestHttpException();
         }
-        if ($transaction->order->getImmutability(Order::IMMUTABLE_USER)) {
-            throw new BadRequestHttpException();
-        }
-        if ($transaction->order->user_id === 0) {
-            throw new ForbiddenHttpException;
-        } else {
-            if (Yii::$app->user->id !== $transaction->order->user_id) {
-                throw new ForbiddenHttpException;
-            }
-        }
 
-        if (\Yii::$app->request->isPost && null !== $update) {
-            if ($transaction->load(\Yii::$app->request->post())) {
-                $transaction->save();
-            }
-        }
-
-        return $this->render('type', ['transaction' => $transaction]);
+        return $this->render('transaction', ['transaction' => $transaction]);
     }
-
-//    /**
-//     * Open OrderTransaction with rendering payment form
-//     * @param null $id
-//     * @param null $othash
-//     * @return string
-//     * @throws BadRequestHttpException
-//     */
-//    public function actionTransaction($id = null, $othash = null)
-//    {
-//        if (null === $id) {
-//            throw new BadRequestHttpException();
-//        }
-//        /** @var OrderTransaction $transaction */
-//        if (null === $transaction = OrderTransaction::findOne(['id' => $id])) {
-//            throw new BadRequestHttpException();
-//        }
-//        if (!$transaction->checkHash($othash)) {
-//            throw new BadRequestHttpException();
-//        }
-//
-//        return $this->render('transaction', ['transaction' => $transaction]);
-//    }
 }
-?>
