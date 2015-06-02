@@ -41,7 +41,7 @@ class ContentBlockHelper
     {
         self::preloadChunks();
         $matches = [];
-        preg_match_all('%\[\[\$([^\]\[]+)\]\]%ui', $content, $matches);
+        preg_match_all('%\[\[([^\]\[]+)\]\]%ui', $content, $matches);
         if (!empty($matches)) {
             foreach ($matches[0] as $k => $rawChunk) {
                 $chunkData = static::sanitizeChunk($rawChunk);
@@ -49,7 +49,13 @@ class ContentBlockHelper
                 $replacement = Yii::$app->cache->get($cacheChunkKey);
                 if ($replacement === false) {
                     $chunk = self::fetchChunkByKey($chunkData['key']);
-                    $replacement = static::compileChunk($chunk, $chunkData);
+                    switch ($chunkData['token']) {
+                        case '$':
+                            $replacement = static::compileChunk($chunk, $chunkData);
+                            break;
+                        default:
+                            $replacement = '';
+                    }
                     if (null !== $chunk) {
                         Yii::$app->cache->set(
                             $cacheChunkKey,
@@ -86,8 +92,9 @@ class ContentBlockHelper
     private static function sanitizeChunk($rawChunk)
     {
         $chunk = [];
-        preg_match('%\$([^\s\]]+)[\s\]]%', $rawChunk, $keyMatches);
-        $chunk['key'] = $keyMatches[1];
+        preg_match('%(?P<chunkToken>[^\w\[]?)([^\s\]\[]+)[\s\]]%', $rawChunk, $keyMatches);
+        $chunk['token'] = $keyMatches['chunkToken'];
+        $chunk['key'] = $keyMatches[2];
         $expression = "#\s*(?P<paramName>[\\w\\d]*)=(('(?P<escapedValue>.*[^\\\\])')|(?P<unescapedValue>.*))(\\|(('(?P<escapedDefault>.*[^\\\\])')|(?P<unescapedDefault>.*)))?[\\]\\s]#uUi";
         preg_match_all($expression, $rawChunk, $matches);
         foreach ($matches['paramName'] as $key => $paramName) {
