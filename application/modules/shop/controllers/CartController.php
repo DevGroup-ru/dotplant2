@@ -91,13 +91,6 @@ class CartController extends Controller
                 || is_null($orderItem = OrderItem::findOne(['order_id' => $order->id, 'product_id' => $productModel->id, 'parent_id' => 0]))
             ) {
                 $orderItem = new OrderItem;
-                $totalPriceWithoutDiscount = PriceHelper::getProductPrice(
-                    $productModel,
-                    $order,
-                    $quantity,
-                    SpecialPriceList::TYPE_CORE
-                );
-                $totalPrice = PriceHelper::getProductPrice($productModel, $order, $quantity);
                 $orderItem->attributes = [
                     'parent_id' => $parentId,
                     'order_id' => $order->id,
@@ -109,27 +102,10 @@ class CartController extends Controller
                         1,
                         SpecialPriceList::TYPE_CORE
                     ),
-                    'total_price_without_discount' => $totalPriceWithoutDiscount,
-                    'total_price' =>  $totalPrice,
-                    'discount_amount' => $totalPriceWithoutDiscount - $totalPrice
                 ];
             } else {
                 /** @var OrderItem $orderItem */
                 $orderItem->quantity += $quantity;
-                $totalPriceWithoutDiscount = PriceHelper::getProductPrice(
-                    $productModel,
-                    $order,
-                    $quantity,
-                    SpecialPriceList::TYPE_CORE
-                );
-                $totalPrice = PriceHelper::getProductPrice(
-                    $productModel,
-                    $order,
-                    $quantity
-                );
-                $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
-                $orderItem->total_price = $totalPrice;
-                $orderItem->discount_amount = $totalPriceWithoutDiscount - $totalPrice;
             }
             if (!$orderItem->save()) {
                 $result['errors'][] = Yii::t('app', 'Cannot save order item.');
@@ -201,20 +177,6 @@ class CartController extends Controller
                 SpecialPriceList::TYPE_CORE
             );
         }
-        $totalPriceWithoutDiscount = PriceHelper::getProductPrice(
-            $orderItem->product,
-            $order,
-            $orderItem->product->measure->ceilQuantity($quantity),
-            SpecialPriceList::TYPE_CORE
-        );
-        $totalPrice = PriceHelper::getProductPrice(
-            $orderItem->product,
-            $order,
-            $orderItem->product->measure->ceilQuantity($quantity)
-        );
-        $orderItem->total_price_without_discount = $totalPriceWithoutDiscount;
-        $orderItem->total_price = $totalPrice;
-        $orderItem->discount_amount = $totalPriceWithoutDiscount - $totalPrice;
         $orderItem->save();
         $mainCurrency = Currency::getMainCurrency();
         if ($order->calculate(true)) {

@@ -156,9 +156,7 @@ class BackendOrderController extends BackendController
             'partialMatchAttributes' => ['start_date', 'end_date', 'user_username'],
             'additionalConditions' => [],
         ];
-        if (Config::getValue('shop.showDeletedOrders', 0) === 0) {
-            $searchModelConfig['additionalConditions'] = [['is_deleted' => 0]];
-        }
+
         /** @var SearchModel $searchModel */
         $searchModel = new SearchModel($searchModelConfig);
         if (intval($this->module->defaultOrderStageFilterBackend) > 0) {
@@ -500,13 +498,6 @@ class BackendOrderController extends BackendController
         $product = Product::findById($productId);
         if (is_null($orderItem)) {
             $orderItem = new OrderItem;
-            $totalPriceWithoutDiscount = PriceHelper::getProductPrice(
-                $product,
-                $order,
-                $product->measure->nominal,
-                SpecialPriceList::TYPE_CORE
-            );
-            $totalPrice = PriceHelper::getProductPrice($product, $order, $product->measure->nominal);
             $orderItem->attributes = [
                 'parent_id' => $parentId,
                 'order_id' => $order->id,
@@ -518,9 +509,6 @@ class BackendOrderController extends BackendController
                     1,
                     SpecialPriceList::TYPE_CORE
                 ),
-                'total_price_without_discount' => $totalPriceWithoutDiscount,
-                'total_price' =>  $totalPrice,
-                'discount_amount' => $totalPriceWithoutDiscount - $totalPrice
             ];
         } else {
             $orderItem->quantity++;

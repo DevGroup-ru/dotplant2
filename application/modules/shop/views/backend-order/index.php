@@ -20,118 +20,118 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="order-index">
     <?=
-        DynaGrid::widget(
-            [
-                'options' => [
-                    'id' => 'orders-grid',
+    DynaGrid::widget(
+        [
+            'options' => [
+                'id' => 'orders-grid',
+            ],
+            'theme' => 'panel-default',
+            'gridOptions' => [
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'hover' => true,
+                'panel' => [
+                    'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
+                    'after' => Html::a(
+                        \kartik\icons\Icon::show('plus') . Yii::t('app', 'Add'),
+                        ['create', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
+                        ['class' => 'btn btn-success']
+                    ),
                 ],
-                'theme' => 'panel-default',
-                'gridOptions' => [
-                    'dataProvider' => $dataProvider,
-                    'filterModel' => $searchModel,
-                    'hover' => true,
-                    'panel' => [
-                        'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
-                        'after' => Html::a(
-                            \kartik\icons\Icon::show('plus') . Yii::t('app', 'Add'),
-                            ['create', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
-                            ['class' => 'btn btn-success']
-                        ),
-                    ],
-                    'rowOptions' => function ($model, $key, $index, $grid) {
-                        if ($model->is_deleted) {
-                            return [
-                                'class' => 'danger',
-                            ];
+                'rowOptions' => function ($model, $key, $index, $grid) {
+                    if ($model->is_deleted) {
+                        return [
+                            'class' => 'danger',
+                        ];
+                    }
+                    return [];
+                },
+            ],
+            'columns' => [
+                [
+                    'attribute' => 'id',
+                ],
+                [
+                    'attribute' => 'manager_id',
+                    'filter' => $managers,
+                    'value' => function ($model, $key, $index, $column) {
+                        if ($model === null || $model->manager === null) {
+                            return null;
                         }
-                        return [];
+                        return $model->manager->username;
                     },
                 ],
-                'columns' => [
-                    [
-                        'attribute' => 'id',
-                    ],
-                    [
-                        'attribute' => 'manager_id',
-                        'filter' => $managers,
-                        'value' => function ($model, $key, $index, $column) {
-                            if ($model === null || $model->manager === null) {
-                                return null;
-                            }
-                            return $model->manager->username;
-                        },
-                    ],
-                    [
-                        'attribute' => 'user_username',
-                        'label' => Yii::t('app', 'User'),
-                        'value' => function ($model, $key, $index, $column) {
-                            if ($model === null || $model->user === null) {
-                                return null;
-                            }
-                            return $model->user->username;
-                        },
-                    ],
-                    'start_date',
-                    'end_date',
-                    [
-                        'attribute' => 'order_stage_id',
-                        'filter' => $orderStages,
-                        'value' => function ($model, $key, $index, $column) {
-                            if ($model === null || $model->stage === null) {
-                                return null;
-                            }
-                            return $model->stage->name_short;
-                        },
-                    ],
-                    [
-                        'attribute' => 'shipping_option_id',
-                        'filter' => $shippingOptions,
-                        'value' => function ($model, $key, $index, $column) {
-                            if ($model === null || $model->shippingOption === null) {
-                                return null;
-                            }
-                            return $model->shippingOption->name;
-                        },
-                    ],
-                    [
-                        'attribute' => 'payment_type_id',
-                        'filter' => $paymentTypes,
-                        'value' => function ($model, $key, $index, $column) {
-                            if ($model === null || $model->paymentType === null) {
-                                return null;
-                            }
-                            return $model->paymentType->name;
-                        },
-                    ],
-                    'items_count',
-                    'total_price',
-                    [
-                        'class' => 'app\backend\components\ActionColumn',
-                        'buttons' =>  function($model, $key, $index, $parent) {
-                            $result = [
-                                [
-                                    'url' => 'view',
-                                    'icon' => 'eye',
-                                    'class' => 'btn-info',
-                                    'label' => Yii::t('app','View'),
-                                ],
-                            ];
-                            if (intval(Config::getValue('shop.AbilityDeleteOrders')) === 1 && $model->is_deleted == 0) {
-                                $result[] =  [
-                                    'url' => 'delete',
-                                    'icon' => 'trash-o',
-                                    'class' => 'btn-danger',
-                                    'label' => Yii::t('app', 'Delete'),
-                                    'options' => [
-                                        'data-action' => 'delete',
-                                    ],
-                                ];
-                            }
-                            return $result;
-                        },
-                    ],
+                [
+                    'attribute' => 'user_username',
+                    'label' => Yii::t('app', 'User'),
+                    'value' => function ($model, $key, $index, $column) {
+                        if ($model === null || $model->user === null) {
+                            return null;
+                        }
+                        return $model->user->username;
+                    },
                 ],
-            ]
-        );
+                'start_date',
+                'end_date',
+                [
+                    'attribute' => 'order_stage_id',
+                    'filter' => $orderStages,
+                    'value' => function ($model, $key, $index, $column) {
+                        if ($model === null || $model->stage === null) {
+                            return null;
+                        }
+                        return $model->stage->name_short;
+                    },
+                ],
+                [
+                    'attribute' => 'shipping_option_id',
+                    'filter' => $shippingOptions,
+                    'value' => function ($model, $key, $index, $column) {
+                        if ($model === null || $model->shippingOption === null) {
+                            return null;
+                        }
+                        return $model->shippingOption->name;
+                    },
+                ],
+                [
+                    'attribute' => 'payment_type_id',
+                    'filter' => $paymentTypes,
+                    'value' => function ($model, $key, $index, $column) {
+                        if ($model === null || $model->paymentType === null) {
+                            return null;
+                        }
+                        return $model->paymentType->name;
+                    },
+                ],
+                'items_count',
+                'total_price',
+                [
+                    'class' => 'app\backend\components\ActionColumn',
+                    'buttons' => function ($model, $key, $index, $parent) {
+                        $result = [
+                            [
+                                'url' => 'view',
+                                'icon' => 'eye',
+                                'class' => 'btn-info',
+                                'label' => Yii::t('app', 'View'),
+                            ],
+                        ];
+
+                        $result[] = [
+                            'url' => 'delete',
+                            'icon' => 'trash-o',
+                            'class' => 'btn-danger',
+                            'label' => Yii::t('app', 'Delete'),
+                            'options' => [
+                                'data-action' => 'delete',
+                            ],
+                        ];
+
+                        return $result;
+                    },
+                ],
+            ],
+        ]
+    );
     ?>
 </div>

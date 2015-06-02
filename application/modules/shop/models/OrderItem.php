@@ -3,6 +3,7 @@
 namespace app\modules\shop\models;
 
 use app\behaviors\Tree;
+use app\modules\shop\helpers\PriceHelper;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\db\ActiveRecord;
@@ -57,7 +58,7 @@ class OrderItem extends ActiveRecord
     public function rules()
     {
         return [
-            [['order_id', 'product_id', 'quantity'], 'required'],
+            [['order_id', 'product_id', 'quantity', 'total_price'], 'required'],
             [
                 ['quantity', 'price_per_pcs', 'total_price_without_discount', 'discount_amount', 'total_price'],
                 'number',
@@ -85,6 +86,18 @@ class OrderItem extends ActiveRecord
             'discount_amount' => Yii::t('app', 'Discount amount'),
             'total_price' => Yii::t('app', 'Total price'),
         ];
+    }
+
+    public function beforeValidate()
+    {
+        $this->total_price = PriceHelper::getProductPrice(
+            $this->product,
+            $this->order,
+            $this->quantity
+        );
+        $this->discount_amount = $this->total_price - ($this->quantity * $this->price_per_pcs );
+        $this->total_price_without_discount = $this->total_price - $this->discount_amount;
+        return parent::beforeValidate();
     }
 
     public function getProduct()
