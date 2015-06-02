@@ -3,6 +3,7 @@
 namespace app\modules\core\controllers;
 
 use app\backend\components\BackendController;
+use app\backend\traits\BackendRedirect;
 use yii\filters\AccessControl;
 use app\modules\core\models\ContentBlock;
 use Yii;
@@ -11,6 +12,8 @@ use yii\web\NotFoundHttpException;
 
 class BackendChunkController extends BackendController
 {
+    use BackendRedirect;
+
     public function behaviors()
     {
         return [
@@ -51,28 +54,7 @@ class BackendChunkController extends BackendController
             $save_result = $model->save();
             if ($save_result) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                $returnUrl = Yii::$app->request->get('returnUrl', ['/core/backend-chunk/index']);
-                switch (Yii::$app->request->post('action', 'save')) {
-                    case 'next':
-                        return $this->redirect(
-                            [
-                                '/core/backend-chunk/edit',
-                                'returnUrl' => $returnUrl,
-                            ]
-                        );
-                    case 'back':
-                        return $this->redirect($returnUrl);
-                    default:
-                        return $this->redirect(
-                            Url::toRoute(
-                                [
-                                    '/core/backend-chunk/index',
-                                    'id' => $model->id,
-                                    'returnUrl' => $returnUrl,
-                                ]
-                            )
-                        );
-                }
+                $this->redirectUser($model->id);
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }

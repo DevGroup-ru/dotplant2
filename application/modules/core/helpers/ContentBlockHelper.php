@@ -167,10 +167,15 @@ class ContentBlockHelper
      */
     private static function applyFormatter($value, $format, $params)
     {
-        if (empty($format)) {
+        if (false === method_exists(Yii::$app->formatter, $format) || empty($format)) {
             return $value;
         }
-        $formattedValue = call_user_func_array([Yii::$app->formatter, $format], [$value, $params]);
+        array_unshift($params, $value);
+        try{
+            $formattedValue = call_user_func_array([Yii::$app->formatter, $format], $params);
+        } catch (\Exception $e) {
+            $formattedValue = $value;
+        }
         return $formattedValue;
     }
 
