@@ -71,7 +71,7 @@ class DefaultController extends Controller
             $query->orWhere(['like', $attribute, $term]);
         }
         $query->andWhere(['active'=>1]);
-        $products = $query->limit(Config::getValue('core.autoCompleteResultsCount', 5))->all();
+        $products = $query->limit(Yii::$app->getModule('core')->autoCompleteResultsCount)->all();
         $result = [];
         foreach ($products as $product) {
             $result[] = [

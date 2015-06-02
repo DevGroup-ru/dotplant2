@@ -24,6 +24,15 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public $internalEncoding;
 
+    public $autoCompleteResultsCount = 5;
+
+    public $fileUploadPath = 'upload/user-uploads/';
+
+    public $spamCheckerApiKey = '';
+    public $spamCheckerInterpretFields = '';
+
+    public $serverName = 'localhost';
+
     /**
      * @inheritdoc
      */
@@ -31,8 +40,34 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     {
         return [
             [
-                ['composerHomeDirectory', 'internalEncoding'], 'string',
-            ]
+                [
+                    'composerHomeDirectory',
+                    'internalEncoding',
+                    'fileUploadPath',
+                    'serverName',
+                ],
+                'required',
+            ],
+            [
+                [
+                    'autoCompleteResultsCount',
+                ],
+                'filter',
+                'filter' => 'intval',
+            ],
+            [
+                [
+                    'autoCompleteResultsCount',
+                ],
+                'integer',
+            ],
+            [
+                [
+                    'spamCheckerApiKey',
+                    'spamCheckerInterpretFields',
+                ],
+                'safe',
+            ],
         ];
     }
 

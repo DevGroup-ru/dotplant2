@@ -46,7 +46,6 @@ $form = ActiveForm::begin([
         Yii::t('app', 'Next') .' ' . Icon::show('arrow-right'),
         [
             'class' => 'btn btn-primary btn-lg pull-right',
-            // no ladda button here - on validation fail it will continue spinnning - no time to fix
         ]
     )
     ?>
@@ -55,8 +54,7 @@ $form = ActiveForm::begin([
 <?php
 ActiveForm::end();
 $js = <<<JS
-Ladda.bind( 'input[type=submit]' );
-Ladda.bind( '.btn' );
+
 JS;
 $this->registerJs($js);
 ?>

@@ -35,7 +35,7 @@ class Widget extends BaseWidget
     public function getCacheTags()
     {
         $tags = ArrayHelper::merge(parent::getCacheTags(), [
-            'Cart:'.Yii::$app->session->id,
+            'Session:'.Yii::$app->session->id,
         ]);
         return $tags;
     }

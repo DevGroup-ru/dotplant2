@@ -24,6 +24,9 @@ class UserPreferences extends Model {
 
     public static $_cachedPreferences = null;
 
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return [
@@ -50,7 +53,7 @@ class UserPreferences extends Model {
             [
                 'productsPerPage',
                 'default',
-                'value' => app\models\Config::getValue('shop.productsPerPage', 20)
+                'value' => Yii::$app->getModule('shop')->productsPerPage,
             ],
             [
                 'productsPerPage',
