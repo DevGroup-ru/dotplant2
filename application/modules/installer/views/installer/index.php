@@ -34,7 +34,7 @@ $permissions_ok = true;
 <div class="alert alert-warning">
 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 	<strong>
-        <?= Icon::show('exclamation-riangle') ?>
+        <?= Icon::show('exclamation-triangle') ?>
         <?= Yii::t('app', 'Warning!') ?>
     </strong>
     <?= Yii::t('app', 'Some files are not writeable.') ?>

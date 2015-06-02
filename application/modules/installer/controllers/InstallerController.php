@@ -5,12 +5,14 @@ namespace app\modules\installer\controllers;
 use app\modules\core\helpers\UpdateHelper;
 use app\modules\installer\models\AdminUser;
 use app\modules\installer\models\DbConfig;
-use app\components\InstallerHelper;
+use app\modules\installer\components\InstallerHelper;
+use app\modules\installer\models\FinalStep;
 use app\modules\installer\models\MigrateModel;
 use Yii;
 use yii\base\DynamicModel;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
-use app\components\InstallerFilter;
+use app\modules\installer\components\InstallerFilter;
 
 class InstallerController extends Controller
 {
@@ -43,10 +45,10 @@ class InstallerController extends Controller
     {
         $model = new DynamicModel(['language']);
         $model->addRule(['language'], 'required');
-        $model->setAttributes(['language' => Yii::$app->session->get('lang', 'en')]);
+        $model->setAttributes(['language' => Yii::$app->session->get('language', 'en')]);
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            Yii::$app->session->set('lang', $model->language);
+            Yii::$app->session->set('language', $model->language);
             return $this->redirect(['db-config']);
         }
         return $this->render(
@@ -184,6 +186,7 @@ class InstallerController extends Controller
 
             if (InstallerHelper::createAdminUser($model, $this->db())) {
                 Yii::$app->session->setFlash('info', Yii::t('app', 'Admin user created'));
+                return $this->redirect(['final']);
             }
         }
 
@@ -192,6 +195,42 @@ class InstallerController extends Controller
             [
                 'model' => $model,
             ]
+        );
+    }
+
+    public function actionFinal()
+    {
+        $model = new FinalStep();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+
+            if (InstallerHelper::writeCommonConfig($model)) {
+
+                return $this->redirect(['complete']);
+            } else {
+                Yii::$app->session->setFlash('warning', Yii::t('app', 'Unable to write common-local.php'));
+            }
+        }
+        $cacheClasses = [
+            'yii\caching\FileCache',
+            'yii\caching\MemCache',
+            'yii\caching\XCache',
+            'yii\caching\ZendDataCache',
+            'yii\caching\ApcCache',
+        ];
+
+        return $this->render(
+            'final',
+            [
+                'model' => $model,
+                'cacheClasses' => $cacheClasses,
+            ]
+        );
+    }
+
+    public function actionComplete()
+    {
+        return $this->render(
+            'complete'
         );
     }
 

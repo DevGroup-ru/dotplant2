@@ -14,6 +14,7 @@ use app\modules\seo\behaviors\MetaBehavior;
 use Yii;
 use yii\base\ErrorException;
 use yii\base\InvalidParamException;
+use yii\caching\TagDependency;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
@@ -77,6 +78,7 @@ class UserController extends Controller
      */
     public function actionLogin($returnUrl = null)
     {
+        TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
         if (\Yii::$app->user->isGuest === false) {
             $this->goHome();
         }
@@ -100,6 +102,7 @@ class UserController extends Controller
      */
     public function actionLogout()
     {
+        TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
         Yii::$app->user->logout();
         return $this->goHome();
     }
@@ -111,6 +114,7 @@ class UserController extends Controller
      */
     public function actionSignup()
     {
+        TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
         $model = new RegistrationForm();
         if ($model->load(Yii::$app->request->post())) {
             $user = $model->signup();
@@ -239,7 +243,7 @@ class UserController extends Controller
                 throw new ErrorException(Yii::t('app', 'This service is already binded.'));
             }
         }
-
+        TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
         Yii::$app->user->login($model, 86400);
 
         if ($model->username_is_temporary == 1 || empty($model->email)) {

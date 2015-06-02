@@ -347,7 +347,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public static function create($throwException = true, $assignToUser = true)
     {
-        TagDependency::invalidate(Yii::$app->cache, ['Cart:'.Yii::$app->session->id]);
+        TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
         $initialOrderStage = OrderStage::getInitialStage();
         if (is_null($initialOrderStage)) {
             throw new Exception('Initial order stage not found');
@@ -443,7 +443,7 @@ class Order extends \yii\db\ActiveRecord
 
         $this->items_count = $itemsCount;
         $this->total_price = PriceHelper::getOrderPrice($this);
-        TagDependency::invalidate(Yii::$app->cache, ['Cart:'.Yii::$app->session->id]);
+        TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
         return $callSave ? $this->save(true, ['items_count', 'total_price', 'total_price_with_shipping']) : true;
     }
 
@@ -453,7 +453,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-        TagDependency::invalidate(Yii::$app->cache, ['Cart:'.Yii::$app->session->id]);
+        TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
         parent::afterSave($insert, $changedAttributes);
 
         if (!$insert && !empty($changedAttributes['user_id']) && 0 === intval($changedAttributes['user_id'])) {

@@ -2,7 +2,7 @@
 
 namespace app\modules\installer\models;
 
-use app\components\InstallerHelper;
+use app\modules\installer\components\InstallerHelper;
 use Yii;
 use yii\base\Model;
 

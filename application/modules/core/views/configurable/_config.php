@@ -13,6 +13,8 @@ use app\backend\widgets\BackendWidget;
         <?php BackendWidget::begin(['title' => Yii::t('app', 'Main settings'), 'options' => ['class' => 'visible-header']]); ?>
         <?= $form->field($model, 'composerHomeDirectory') ?>
         <?= $form->field($model, 'internalEncoding') ?>
+        <?= $form->field($model, 'autoCompleteResultsCount') ?>
+        <?= $form->field($model, 'fileUploadPath') ?>
         <?php BackendWidget::end() ?>
     </div>
     <div class="col-md-6 col-sm-12">

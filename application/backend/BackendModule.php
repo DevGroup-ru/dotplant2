@@ -25,6 +25,8 @@ class BackendModule extends Module implements BootstrapInterface
      */
     public $floatingPanel = [];
 
+    public $wysiwygUploadDir = '/upload/images';
+
     /**
      * @inheritdoc
      */
