@@ -28,5 +28,6 @@ class InstallerAsset extends AssetBundle
         'yii\widgets\ActiveFormAsset',
         'yii\jui\JuiAsset',
         '\kartik\icons\FontAwesomeAsset',
+        'app\backend\assets\LaddaAsset',
     ];
 }

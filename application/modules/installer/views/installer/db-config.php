@@ -40,7 +40,8 @@ $this->title = Yii::t('app', 'Installer - Database configuration');
         Html::submitButton(
             Icon::show('check') .' ' . Yii::t('app', 'Test connection'),
             [
-                'class' => 'btn btn-success pull-right',
+                'class' => 'btn btn-success pull-right ladda-button',
+                'data-style' => 'expand-left',
             ]
         )
         ?>
@@ -52,14 +53,21 @@ $this->title = Yii::t('app', 'Installer - Database configuration');
 
 
 <div class="installer-controls">
-    <a href="<?= Url::to(['language']) ?>" class="btn btn-info btn-lg pull-left">
+    <a href="<?= Url::to(['language']) ?>" class="btn btn-info btn-lg pull-left ladda-button" data-style="expand-right">
         <?= Icon::show('arrow-left') ?>
         <?= Yii::t('app', 'Back') ?>
     </a>
     <?php if ($config['connectionOk']): ?>
-    <a href="<?= Url::to(['migrate']) ?>" class="btn btn-primary btn-lg pull-right">
+    <a href="<?= Url::to(['migrate']) ?>" class="btn btn-primary btn-lg pull-right ladda-button" data-style="expand-left">
         <?= Yii::t('app', 'Next') ?>
         <?= Icon::show('arrow-right') ?>
     </a>
     <?php endif; ?>
 </div>
+
+<?php
+$js = <<<JS
+Ladda.bind( 'input[type=submit]' );
+Ladda.bind( '.btn' );
+JS;
+$this->registerJs($js);

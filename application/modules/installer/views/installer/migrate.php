@@ -67,7 +67,8 @@ $form = ActiveForm::begin([
     Html::submitButton(
         Icon::show('arrow-right') .' ' . Yii::t('app', 'Next'),
         [
-            'class' => 'btn btn-primary btn-lg pull-right',
+            'class' => 'btn btn-primary btn-lg pull-right ladda-button',
+            'data-style' => 'expand-left',
         ]
     )
     ?>
@@ -75,4 +76,9 @@ $form = ActiveForm::begin([
 </div>
 <?php
 ActiveForm::end();
+$js = <<<JS
+Ladda.bind( 'input[type=submit]' );
+Ladda.bind( '.btn' );
+JS;
+$this->registerJs($js);
 ?>

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: bethrezen
- * Date: 12.05.15
- * Time: 14:56
- */
 
 namespace app\backend\assets;
 
