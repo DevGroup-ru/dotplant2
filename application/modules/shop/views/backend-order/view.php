@@ -233,11 +233,11 @@ if ($sum_transactions < $model->total_price):
         <?= \app\modules\shop\widgets\Contragent::widget([
             'viewFile' => 'contragent/backend_form',
             'model' => $model->contragent,
+            'customer' => $model->customer,
             'form' => $form,
             'immutable' => $orderIsImmutable,
             'additional' => [
                 'order' => $model,
-                'customer' => $model->customer,
             ]
         ]); ?>
         <?php BackendWidget::end(); ?>
@@ -365,50 +365,14 @@ if ($sum_transactions < $model->total_price):
                 ]
             );
             ?>
-
-            <?=
-            DynaGrid::widget(
-                [
-                    'options' => [
-                        'id' => 'transactions-grid',
-                    ],
-                    'theme' => 'panel-default',
-                    'gridOptions' => [
-                        'dataProvider' => $transactionsDataProvider,
-                        'hover' => true,
-                        'panel' => false
-                    ],
-                    'columns' => [
-                        'id',
-                        [
-                            'attribute' => 'status',
-                            'value' => function ($model, $key, $index, $column) {
-                                /** @var \app\modules\shop\models\OrderTransaction $model */
-                                return $model->getTransactionStatus();
-                            },
-                        ],
-                        'start_date',
-                        'end_date',
-                        'total_sum',
-                        [
-                            'attribute' => 'payment_type_id',
-                            'filter' => \app\components\Helper::getModelMap(
-                                \app\modules\shop\models\PaymentType::className(),
-                                'id',
-                                'name'
-                            ),
-                            'value' => function ($model, $key, $index, $column) {
-                                if ($model === null || $model->paymentType === null) {
-                                    return null;
-                                }
-                                return $model->paymentType->name;
-                            },
-                        ],
-
-                    ],
+            <?= \app\modules\shop\widgets\OrderTransaction::widget([
+                'viewFile' => 'order-transaction/backend',
+                'model' => $model,
+                'immutable' => $orderIsImmutable,
+                'additional' => [
+                    'transactionsDataProvider' => $transactionsDataProvider,
                 ]
-            );
-            ?>
+            ]); ?>
             <?php BackendWidget::end(); ?>
         </div>
     </div>

@@ -117,17 +117,23 @@ class OrderTransaction extends ActiveRecord
         return true;
     }
 
-    public static function findLastByOrder(Order $order)
+    public static function findLastByOrder(Order $order, $paymentTypeId = null, $useCache = true, $exclude = true, $status = null)
     {
-        if (isset(static::$lastByOrder[$order->id])) {
+        if (true === $useCache && isset(static::$lastByOrder[$order->id])) {
             $model = static::$lastByOrder[$order->id];
         } else {
             $model = static::find()->where([
                 'order_id' => $order->id,
-                'payment_type_id' => $order->payment_type_id,
+                'payment_type_id' => null === $paymentTypeId ? $order->payment_type_id : intval($paymentTypeId),
 
             ])
-                ->andWhere(['not in', 'status', [static::TRANSACTION_ROLLBACK, static::TRANSACTION_ERROR, static::TRANSACTION_SUCCESS]])
+                ->andWhere([
+                    true === $exclude ? 'not in' : 'in',
+                    'status',
+                    is_array($status) && !empty($status) ?
+                        $status
+                        : [static::TRANSACTION_ROLLBACK, static::TRANSACTION_ERROR, static::TRANSACTION_SUCCESS]
+                ])
                 ->orderBy(['id' => SORT_DESC])->one();
 
             static::$lastByOrder[$order->id] = $model;

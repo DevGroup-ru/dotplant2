@@ -30,7 +30,7 @@
             ['readonly' => $immutable]
     ); ?>
     <?= $form->field($orderDeliveryInformation, 'planned_delivery_date')->textInput(['readonly' => $immutable]); ?>
-    <?= $form->field($orderDeliveryInformation, 'planned_delivery_time')->textInput(['readonly' => $immutable]); ?>
+    <?php // $form->field($orderDeliveryInformation, 'planned_delivery_time')->textInput(['readonly' => $immutable]); ?>
     <?= $form->field($orderDeliveryInformation, 'planned_delivery_time_range')->textInput(['readonly' => $immutable]); ?>
     <?php
         /** @var \app\properties\AbstractModel $abstractModel */

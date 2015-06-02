@@ -8,6 +8,8 @@ use app\backend\models\OrderChat;
 use app\components\Helper;
 use app\components\SearchModel;
 use app\models\Config;
+use app\modules\core\helpers\EventSubscribingHelper;
+use app\modules\shop\events\OrderCalculateEvent;
 use app\modules\shop\helpers\PriceHelper;
 use app\modules\shop\models\Contragent;
 use app\modules\shop\models\Customer;
@@ -16,6 +18,7 @@ use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderDeliveryInformation;
 use app\modules\shop\models\OrderItem;
 use app\modules\shop\models\OrderStage;
+use app\modules\shop\models\OrderTransaction;
 use app\modules\shop\models\PaymentType;
 use app\modules\shop\models\Product;
 use app\modules\shop\models\ShippingOption;
@@ -25,6 +28,7 @@ use app\modules\user\models\User;
 use app\properties\HasProperties;
 use kartik\helpers\Html;
 use Yii;
+use yii\base\Event;
 use yii\caching\TagDependency;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
@@ -105,6 +109,39 @@ class BackendOrderController extends BackendController
             ],
         ];
     }
+
+    public function beforeAction($action)
+    {
+        if (false === parent::beforeAction($action)) {
+            return false;
+        }
+
+        EventSubscribingHelper::specialEventCallback(OrderCalculateEvent::className(),
+            function (OrderCalculateEvent $event)
+            {
+                if (OrderCalculateEvent::AFTER_CALCULATE !== $event->state) {
+                    return null;
+                }
+
+                /** @var OrderTransaction $transaction */
+                $transaction = OrderTransaction::findLastByOrder(
+                    $event->order,
+                    null,
+                    false,
+                    false,
+                    [OrderTransaction::TRANSACTION_START]
+                );
+
+                if (!empty($transaction)) {
+                    $transaction->total_sum = $event->order->total_price;
+                    $transaction->save();
+                }
+            }
+        );
+
+        return true;
+    }
+
 
     /**
      * Lists all Order models.
@@ -509,9 +546,13 @@ class BackendOrderController extends BackendController
     {
         $model = Order::create(false, false);
         if (!is_null($model)) {
-            $customer = !empty(Customer::getCustomerByUserId($model->user_id)) ? Customer::getCustomerByUserId($model->user_id) : Customer::createEmptyCustomer($model->user_id, false);
+            $customer = !empty(Customer::getCustomerByUserId($model->user_id))
+                ? Customer::getCustomerByUserId($model->user_id)
+                : Customer::createEmptyCustomer($model->user_id, false);
             $model->customer_id = $customer->id;
+
             OrderDeliveryInformation::createNewOrderDeliveryInformation($model, false);
+
             $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {

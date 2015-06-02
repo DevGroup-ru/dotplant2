@@ -443,6 +443,10 @@ class Order extends \yii\db\ActiveRecord
 
         $this->items_count = $itemsCount;
         $this->total_price = PriceHelper::getOrderPrice($this);
+
+        $event->state = OrderCalculateEvent::AFTER_CALCULATE;
+        EventTriggeringHelper::triggerSpecialEvent($event);
+
         TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
         return $callSave ? $this->save(true, ['items_count', 'total_price', 'total_price_with_shipping']) : true;
     }
@@ -463,7 +467,6 @@ class Order extends \yii\db\ActiveRecord
                 $customer->save();
             }
         }
-
     }
 
     /**

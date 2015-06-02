@@ -13,6 +13,10 @@ use app\modules\shop\models\Order;
  */
 class OrderCalculateEvent extends SpecialEvent
 {
+    const BEFORE_CALCULATE = 0;
+    const AFTER_CALCULATE = 0;
+
+    public $state = OrderCalculateEvent::BEFORE_CALCULATE;
     public $order = null;
     public $price = null;
 
@@ -20,5 +24,5 @@ class OrderCalculateEvent extends SpecialEvent
     {
         return [];
     }
-
 }
+?>

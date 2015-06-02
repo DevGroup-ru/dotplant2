@@ -3,6 +3,7 @@
  * Use existent form
  * @var \yii\web\View $this
  * @var \app\modules\shop\models\Contragent $model
+ * @var \app\modules\shop\models\Customer $customer
  * @var boolean $immutable
  * @var string $action
  * @var \yii\bootstrap\ActiveForm $form
@@ -12,7 +13,7 @@ use yii\helpers\Html;
 ?>
 
 <?php
-    $customer = $additional['customer'];
+    /** @var \app\modules\shop\models\Order $order */
     $order = $additional['order'];
 
     if (empty($order) || empty($customer)) {

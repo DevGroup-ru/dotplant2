@@ -3,8 +3,7 @@
  * @var \yii\web\View $this
  * @var \app\modules\shop\models\Order $model
  * @var boolean $immutable
- * @var string $action
- * @var \yii\bootstrap\ActiveForm $form
+ * @var array $additional
  */
 use \yii\helpers\Url;
 use \yii\helpers\Html;

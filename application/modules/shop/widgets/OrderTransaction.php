@@ -14,6 +14,7 @@ class OrderTransaction extends Widget
     public $model = null;
     public $immutable = false;
     public $returnPaymentCancel = null;
+    public $additional = [];
 
     public function run()
     {
@@ -27,6 +28,7 @@ class OrderTransaction extends Widget
         return $this->render($this->viewFile, [
             'model' => $this->model,
             'immutable' => boolval($this->immutable),
+            'additional' => $this->additional,
         ]);
     }
 }
