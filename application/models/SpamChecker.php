@@ -102,14 +102,14 @@ class SpamChecker extends \yii\db\ActiveRecord
 
     public static function getEnabledApiId()
     {
-        $enabled = Config::getValue('spamCheckerConfig.enabledApiKey', null);
+        $enabled = Yii::$app->getModule('core')->spamCheckerApiKey;
         static::$enabledApiId = static::getApiIdByClassName($enabled);
         return static::$enabledApiId;
     }
 
     public static function setEnabledApiId($id)
     {
-        $config = Config::findOne(['key' => 'enabledApiKey']);
+        $config = Yii::$app->getModule('core')->spamCheckerApiKey;
         $model = static::findOne($id);
         if ($model === null) {
             $config->value = '';
@@ -138,7 +138,7 @@ class SpamChecker extends \yii\db\ActiveRecord
 
     public static function getFieldTypesForForm($parentId = 0)
     {
-        $config = Config::findOne(['key' => 'interpretFields']);
+        $config = Yii::$app->getModule('core')->spamCheckerInterpretFields;
         return ArrayHelper::map($config->children, 'id', 'name');
     }
 

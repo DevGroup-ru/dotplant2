@@ -108,3 +108,14 @@ Images subsystem splitted to module `Images`. To migrate do this steps:
 
 application/views/layouts/main-page is removed.
 Now DotPlant2 comes with awesome multipurpose theme.
+
+
+### Config migrations
+Config model is deleted.
+Here's how config keys are replaced:
+
+- core.autoCompleteResultsCount - Core module autoCompleteResultsCount
+- core.fileUploadPath - Core module fileUploadPath
+- core.imperavi.uploadDir - Backend module -> wysiwygUploadDir
+- spamCheckerConfig values - Core module spamCheckerApiKey and spamCheckerInterpretFields
+- ErrorMonitor, Newsletter, YML config values are not fixed yet - this modules will be rewritten

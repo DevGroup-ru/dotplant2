@@ -19,6 +19,8 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public $floatingPanelBottom = false;
 
+    public $wysiwygUploadDir = '/upload/images';
+
     /**
      * @inheritdoc
      */
@@ -38,6 +40,12 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 'filter',
                 'filter' => 'boolval',
             ],
+            [
+                [
+                    'wysiwygUploadDir',
+                ],
+                'required',
+            ]
         ];
     }
 

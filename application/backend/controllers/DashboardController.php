@@ -7,6 +7,7 @@ use app\backend\models\Notification;
 use app\components\Helper;
 use app\models\Config;
 use vova07\imperavi\actions\GetAction;
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -41,19 +42,20 @@ class DashboardController extends Controller
 
     public function actions()
     {
+        $uploadDir = Yii::$app->getModule('backend')->wysiwygUploadDir;
         return [
             'flush-cache' => [
                 'class' => FlushCacheAction::className(),
             ],
             'imperavi-image-upload' => [
                 'class' => 'vova07\imperavi\actions\UploadAction',
-                'url' => Config::getValue('core.imperavi.uploadDir', '/upload/images/'),
-                'path' => '@webroot' . Config::getValue('core.imperavi.uploadDir', '/upload/images'),
+                'url' => $uploadDir,
+                'path' => '@webroot' . $uploadDir,
             ],
             'imperavi-images-get' => [
                 'class' => 'vova07\imperavi\actions\GetAction',
-                'url' => Config::getValue('core.imperavi.uploadDir', '/upload/images/'),
-                'path' => '@webroot' . Config::getValue('core.imperavi.uploadDir', '/upload/images'),
+                'url' => $uploadDir,
+                'path' => '@webroot' . $uploadDir,
                 'type' => GetAction::TYPE_IMAGES,
             ],
         ];

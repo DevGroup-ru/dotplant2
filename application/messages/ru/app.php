@@ -715,7 +715,7 @@ return  [
     'Relation' => 'Связь',
     'Settings for shop section' => 'Настройки для секции Магазин',
     'YML type by default' => 'Тип YML описания по умолчанию',
-    'All data will be lost' => 'Все дынные будут потеряны',
+    'All data will be lost' => 'Все данные будут потеряны',
     'Create category' => 'Создать категорию',
     'Edit category' => 'Редактировать категорию',
     'Create product in this category' => 'Создать продукт в этой категории',

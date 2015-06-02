@@ -142,7 +142,7 @@ $config = [
             ],
         ],
         'errorHandler' => [
-            'class' => 'app\components\DotplantErrorHandler',
+//            'class' => 'app\components\DotplantErrorHandler',
             'errorAction' => 'default/error',
         ],
         'mail' => file_exists(__DIR__ . '/email-config.php') ? require(__DIR__ . '/email-config.php') : [ 'class' => 'yii\swiftmailer\Mailer' ],

@@ -27,6 +27,15 @@ class CoreModule extends BaseModule implements BootstrapInterface
         'backend-extensions' => 'app\modules\core\backend\ExtensionsController',
     ];
 
+    public $autoCompleteResultsCount = 5;
+
+    public $fileUploadPath = 'upload/user-uploads/';
+
+    public $spamCheckerApiKey = '';
+    public $spamCheckerInterpretFields = '';
+
+    public $serverName = 'localhost';
+
     /**
      * @var string Internal encoding. It's used for mbstring functions.
      */

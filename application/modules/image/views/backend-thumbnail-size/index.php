@@ -21,13 +21,13 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php $this->beginBlock('add-button'); ?>
 <?= Html::a(
     Icon::show('plus') . ' ' . Yii::t('app', 'Add'),
-    ['/backend/thumbnail-size/edit', 'returnUrl' => Helper::getReturnUrl()],
+    ['edit', 'returnUrl' => Helper::getReturnUrl()],
     [
         'class' => 'btn btn-success',
     ]
 ) ?>
 <?= RemoveAllButton::widget([
-    'url' => '/backend/thumbnail-size/remove-all',
+    'url' => '/image/backend-thumbnail-size/remove-all',
     'gridSelector' => '.grid-view',
     'htmlOptions' => [
         'class' => 'btn btn-danger pull-right'

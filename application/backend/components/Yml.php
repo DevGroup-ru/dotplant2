@@ -122,7 +122,7 @@ class Yml
         $shop->appendChild($company);
 
         // <url>
-        $urlConf = Config::getValue('core.serverName');
+        $urlConf = Yii::$app->getModule('core')->serverName;
         if (null === $nameConf) {
             throw new InvalidParamException(Yii::t('app', 'It isn\'t set URL shop'));
         }
@@ -218,7 +218,7 @@ class Yml
             $offer->setAttribute('id', $product->id);
 
             // общие для всех типов поля
-            $url = $doc->createElement('url',  htmlentities("http://" . Config::getValue('core.serverName') . Url::to([
+            $url = $doc->createElement('url',  htmlentities("http://" . Yii::$app->getModule('core')->serverName) . Url::to([
                 '/shop/product/show',
                 'model' => $product
             ])));
