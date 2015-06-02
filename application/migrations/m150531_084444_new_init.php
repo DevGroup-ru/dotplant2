@@ -991,9 +991,9 @@ class m150531_084444_new_init extends Migration
             ],
             $tableOptions
         );
-        // @todo Need to use prefix
+
         $this->createTable(
-            'data_import',
+            '{{%data_import}}',
             [
                 'user_id' => Schema::TYPE_INTEGER . ' unsigned NOT NULL',
                 'object_id' => Schema::TYPE_INTEGER . ' unsigned NOT NULL',
@@ -1053,9 +1053,9 @@ class m150531_084444_new_init extends Migration
             ],
             $tableOptions
         );
-        // @todo Need to use prefix
+
         $this->createTable(
-            'data_export',
+            '{{%data_export}}',
             [
                 'user_id' => Schema::TYPE_INTEGER . ' unsigned NOT NULL',
                 'object_id' => Schema::TYPE_INTEGER . ' unsigned NOT NULL',
@@ -2579,79 +2579,7 @@ class m150531_084444_new_init extends Migration
                 'route_params' => '{}',
             ]
         );
-        $username = $email = $password = null;
 
-        if (getenv("ADMIN_USERNAME")) {
-            echo "INFO: Using admin user details provided by ENV variables...\n";
-            $username = getenv("ADMIN_USERNAME");
-            $email = getenv("ADMIN_EMAIL");
-            $password = getenv("ADMIN_PASSWORD");
-
-        } else {
-            $stdIn = fopen("php://stdin", "r");
-            do {
-                echo 'Enter admin username (3 or more chars): ';
-                $username = trim(fgets($stdIn));
-            } while (mb_strlen($username) < 3);
-            do {
-                echo 'Enter admin email: ';
-                $email = trim(fgets($stdIn));
-            } while (preg_match('#^\w[\w\d\.\-_]*@[\w\d\.\-_]+\.\w{2,6}$#i', $email) != 1);
-            do {
-                do {
-                    echo 'Enter admin password (8 or more chars): ';
-                    $password = trim(fgets($stdIn));
-                } while (mb_strlen($password) < 8);
-                do {
-                    echo 'Confirm admin password: ';
-                    $confirmPassword = trim(fgets($stdIn));
-                } while (mb_strlen($confirmPassword) < 8);
-                if ($password != $confirmPassword) {
-                    echo "Password does not match the confirm password\n";
-                }
-            } while ($password != $confirmPassword);
-            fclose($stdIn);
-        }
-        if (getenv("SERVER_NAME")) {
-            $serverName = getenv("SERVER_NAME");
-        } else {
-            $stdIn = fopen("php://stdin", "r");
-            echo "\nEnter server name (ie. localhost): ";
-            $serverName = trim(fgets($stdIn));
-            if (empty($serverName)) {
-                $serverName = 'localhost';
-            }
-            fclose($stdIn);
-        }
-
-        $user = new User(['scenario' => 'signup']);
-        $user->username = $username;
-        $user->password = $password;
-        $user->email = $email;
-        $user->auth_key = '';
-        $user->save(false);
-
-        if (getenv("INSTALL_RUSSIAN_TRANSLATIONS")) {
-            echo "INFO: Using translations details provided by ENV variables...\n";
-            if (trim(strtolower(getenv("INSTALL_RUSSIAN_TRANSLATIONS"))) === 'y') {
-                Yii::$app->language = 'ru-RU';
-            }
-        } else {
-            $f = fopen( 'php://stdin', 'r' );
-            echo "Install Russian translations? [y/N] ";
-            while (true) {
-                $answer = trim(fgets($f));
-
-                if ($answer === 'y' || $answer === 'Y') {
-                    Yii::$app->language = 'ru-RU';
-                    break;
-                } elseif ($answer === 'n' || $answer === 'N') {
-                    break;
-                }
-                echo "Install Russian translations? [y/N]";
-            }
-            fclose($f);
-        }
         $this->batchInsert(
             '{{%auth_item}}',
             ['name', 'type', 'description'],
@@ -2729,13 +2657,7 @@ class m150531_084444_new_init extends Migration
                 ['admin', 'setting manage'],
             ]
         );
-        $this->insert(
-            '{{%auth_assignment}}',
-            [
-                'item_name' => 'admin',
-                'user_id' => $user->id,
-            ]
-        );
+
         // demo data
         //
         //
@@ -4124,7 +4046,6 @@ class m150531_084444_new_init extends Migration
                 [$id, 'Admin e-mail', 'adminEmail', '', 'core.adminEmail'],
                 [$id, 'AutoComplete results count', 'autoCompleteResultsCount', '5', 'core.autoCompleteResultsCount'],
                 [$id, 'Path to user uploaded files', 'fileUploadPath', 'upload/user-uploads/', 'core.fileUploadPath'],
-                [$id, 'Server name', 'serverName', $serverName, 'core.serverName'],
                 [$id, 'Login session duration', 'loginSessionDuration', '2592000', 'core.loginSessionDuration'],
             ]
         );

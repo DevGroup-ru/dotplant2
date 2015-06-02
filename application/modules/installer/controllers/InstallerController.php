@@ -131,6 +131,8 @@ class InstallerController extends Controller
                     } else {
                         $process->run();
                     }
+                } else {
+                    $process->run();
                 }
                 if ($process->getExitCode()===0) {
                     Yii::$app->session->setFlash('info', Yii::t('app', 'Migrations completed successfully'));

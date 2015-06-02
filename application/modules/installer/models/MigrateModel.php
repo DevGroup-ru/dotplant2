@@ -7,7 +7,7 @@ use Yii;
 class MigrateModel extends \yii\base\Model
 {
     public $manual_migration_run = false;
-    public $composerHomeDirectory = './composer/';
+    public $composerHomeDirectory = './.composer/';
     public $ignore_time_limit_warning = false;
     public $updateComposer = true;
 
