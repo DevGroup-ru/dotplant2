@@ -35,6 +35,14 @@ class Discount extends \yii\db\ActiveRecord
         return parent::init();
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+        ];
+    }
 
     public function getDiscountPrice($price, $deliveryPrice = 0)
     {
@@ -68,7 +76,7 @@ class Discount extends \yii\db\ActiveRecord
                     $discountPrice = $this->value < $deliveryPrice ? $this->value : $deliveryPrice;
                     break;
                 case 'products':
-                    $discountPrice = $this->value <  $price ? $this->value : $price;
+                    $discountPrice = $this->value < $price ? $this->value : $price;
                     break;
             }
 
@@ -189,24 +197,4 @@ class Discount extends \yii\db\ActiveRecord
     }
 
 
-    public function beforeSave($insert)
-    {
-        \yii\caching\TagDependency::invalidate(
-            Yii::$app->cache,
-            [
-                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
-                'Discount:' . $this->id . ':0'
-            ]
-        );
-
-        \yii\caching\TagDependency::invalidate(
-            Yii::$app->cache,
-            [
-                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
-                'Discount:' . $this->id . ':1'
-            ]
-        );
-
-        return parent::beforeSave($insert);
-    }
 }
