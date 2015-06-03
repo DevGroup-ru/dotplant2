@@ -2,6 +2,8 @@
 
 namespace app\behaviors\spamchecker;
 
+use Yii;
+
 class YandexSpamChecker implements SpamCheckable
 {
     private $data;
@@ -21,9 +23,7 @@ class YandexSpamChecker implements SpamCheckable
      */
     public function check()
     {
-        if (!isset($this->data['ip']) && isset($_SERVER['REMOTE_ADDR'])) {
-            $this->data['ip'] = $_SERVER['REMOTE_ADDR'];
-        }
+        $this->data['ip'] = Yii::$app->request->userIP;
         $query = http_build_query($this->data);
         $curl = curl_init();
         if ($curl === false) {

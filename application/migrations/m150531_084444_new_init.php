@@ -746,7 +746,7 @@ class m150531_084444_new_init extends Migration
                 'visitor_landing' => 'VARCHAR(255) DEFAULT NULL',
                 'visit_start_date' => 'DATETIME DEFAULT NULL',
                 'form_fill_time' => 'INT DEFAULT NULL',
-                'spam' => 'VARCHAR(25) DEFAULT NULL',
+                'spam' => 'TINYINT(1) UNSIGNED DEFAULT 0',
                 'is_deleted' => 'TINYINT UNSIGNED DEFAULT \'0\'',
                 'KEY `submission-form_id` (`form_id`)',
             ],

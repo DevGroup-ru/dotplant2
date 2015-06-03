@@ -119,7 +119,7 @@ $review->submission->getPropertyGroups(true);
                         <div class="form-group field-page-name">
                             <p class="control-label col-md-2" ><?= Yii::t('app', 'Spam') ?></p>
                             <div class="col-md-10">
-                                <?= $review->submission->spam ?>
+                                <?= Yii::$app->formatter->asBoolean($review->submission->spam) ?>
                             </div>
                             <div class="col-md-offset-2 col-md-10"></div>
                         </div>
@@ -153,7 +153,7 @@ $review->submission->getPropertyGroups(true);
                         <?php $form = ActiveForm::begin(['action' => ['update-status', 'id' => $review->id]], ['id' => 'review-form']); ?>
                         <?= $form->field($review, 'status')->dropDownList(Review::getStatuses())?>
                         <div class="form-group no-margin">
-                            <?php if ($review->submission->spam === Yii::$app->formatter->asBoolean(true)): ?>
+                            <?php if ($review->submission->spam == 1): ?>
                                 <?=
                                 Html::a(
                                     Icon::show('check-square-o') . Yii::t('app', 'Not spam'),

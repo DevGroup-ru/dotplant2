@@ -35,6 +35,8 @@ class CoreModule extends BaseModule implements BootstrapInterface
 
     public $serverName = 'localhost';
 
+    public $daysToStoreSubmissions = 28;
+
     /**
      * @var string Internal encoding. It's used for mbstring functions.
      */

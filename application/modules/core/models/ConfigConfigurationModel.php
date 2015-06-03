@@ -32,6 +32,8 @@ class ConfigConfigurationModel extends BaseConfigurationModel
 
     public $serverName = 'localhost';
 
+    public $daysToStoreSubmissions;
+
     /**
      * @inheritdoc
      */
@@ -57,15 +59,15 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             [
                 [
                     'autoCompleteResultsCount',
+                    'daysToStoreSubmissions',
                 ],
                 'integer',
             ],
             [
                 [
                     'spamCheckerApiKey',
-                    'spamCheckerInterpretFields',
                 ],
-                'safe',
+                'string',
             ],
         ];
     }

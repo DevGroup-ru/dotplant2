@@ -18,6 +18,7 @@ use app\components\Helper;
         <?= $form->field($model, 'internalEncoding') ?>
         <?= $form->field($model, 'autoCompleteResultsCount') ?>
         <?= $form->field($model, 'fileUploadPath') ?>
+        <?= $form->field($model, 'daysToStoreSubmissions') ?>
         <?php BackendWidget::end() ?>
     </div>
     <div class="col-md-6 col-sm-12">

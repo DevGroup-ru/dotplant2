@@ -64,7 +64,9 @@ class SubmitFormAction extends Action
                     continue;
                 }
                 $data[$activeSpamChecker->name]['value'][$activeSpamChecker->{$prop->interpret_as}] =
-                    $post[$form->abstractModel->formName()][$prop->key];
+                    is_array($post[$form->abstractModel->formName()][$prop->key])
+                        ? implode(' ', $post[$form->abstractModel->formName()][$prop->key])
+                        : $post[$form->abstractModel->formName()][$prop->key];
             }
             $model->attachBehavior(
                 'spamChecker',
@@ -91,7 +93,7 @@ class SubmitFormAction extends Action
                 'date_received' => $date->format('Y-m-d H:i:s'),
                 'ip' => Yii::$app->request->userIP,
                 'user_agent' => Yii::$app->request->userAgent,
-                'spam' => Yii::$app->formatter->asBoolean($haveSpam),
+                'spam' => (int) $haveSpam,
             ]
         );
         if (false === Yii::$app->user->isGuest) {
