@@ -2,7 +2,6 @@
 
 namespace app\commands;
 
-use app\backend\models\ErrorMonitorConfig;
 use app\models\ErrorLog;
 use Yii;
 use yii\console\Controller;
@@ -11,15 +10,14 @@ class ErrornotifierController extends Controller
 {
     public function actionNotify()
     {
-        $errorMonitorCondfig = new ErrorMonitorConfig();
 
-        $notifyEnabled = $errorMonitorCondfig->emailNotifyEnabled;
+        $notifyEnabled = Yii::$app->getModule('core')->emailNotifyEnabled;
         if ($notifyEnabled == 0 || null == $notifyEnabled) {
             return;
         }
 
-        $email = $errorMonitorCondfig->devmail;
-        $errorCodes = explode(",", $errorMonitorCondfig->notifyOnlyHttpCodes);
+        $email = Yii::$app->getModule('core')->devmail;
+        $errorCodes = explode(",", Yii::$app->getModule('core')->notifyOnlyHttpCodes);
 
         if (null == $email) {
             return;

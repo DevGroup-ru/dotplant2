@@ -1976,16 +1976,7 @@ class m150531_084444_new_init extends Migration
                 'icon' => 'flash',
                 'added_by_ext' => 'core',
                 'rbac_check' => 'monitoring manage',
-                'route' => '',
-            ]
-        );
-        $lastId = $this->db->lastInsertID;
-        $this->batchInsert(
-            BackendMenu::tableName(),
-            ['parent_id', 'name', 'route', 'icon', 'added_by_ext', 'rbac_check'],
-            [
-                [$lastId, 'Monitor', 'backend/error-monitor/index', 'flash', 'core', 'setting manage'],
-                [$lastId, 'Config', 'backend/error-monitor/config', 'gear', 'core', 'setting manage'],
+                'route' => 'backend/error-monitor/index',
             ]
         );
         $this->insert(

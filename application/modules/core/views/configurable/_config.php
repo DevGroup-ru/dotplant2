@@ -7,6 +7,7 @@
 use app\backend\widgets\BackendWidget;
 use app\models\SpamChecker;
 use app\components\Helper;
+use kartik\widgets\SwitchInput;
 
 ?>
 
@@ -28,6 +29,17 @@ use app\components\Helper;
             ->field($model, 'spamCheckerApiKey')
             ->dropDownList(Helper::getModelMap(SpamChecker::className(), 'behavior', 'name'))
         ?>
+        <?php BackendWidget::end() ?>
+
+        <?php BackendWidget::begin(['title' => Yii::t('app', 'Error monitor'), 'options' => ['class' => 'visible-header']]); ?>
+        <?= $form->field($model, 'errorMonitorEnabled')->widget(SwitchInput::className()) ?>
+        <?= $form->field($model, 'emailNotifyEnabled')->widget(SwitchInput::className()) ?>
+        <?= $form->field($model, 'devmail') ?>
+        <?= $form->field($model, 'notifyOnlyHttpCodes') ?>
+        <?= $form->field($model, 'numberElementsToStore') ?>
+        <?= $form->field($model, 'immediateNotice')->widget(SwitchInput::className()) ?>
+        <?= $form->field($model, 'immediateNoticeLimitPerUrl') ?>
+        <?= $form->field($model, 'httpCodesForImmediateNotify') ?>
         <?php BackendWidget::end() ?>
     </div>
 </div>
