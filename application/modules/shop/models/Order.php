@@ -2,9 +2,7 @@
 
 namespace app\modules\shop\models;
 
-use app\models\Config;
 use app\modules\core\helpers\EventTriggeringHelper;
-use app\modules\core\models\Events;
 use app\modules\shop\events\OrderCalculateEvent;
 use app\modules\shop\helpers\PriceHelper;
 use app\modules\user\models\User;
