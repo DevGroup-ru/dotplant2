@@ -97,7 +97,7 @@ class Property extends ActiveRecord
                 ],
                 'integer'
             ],
-            [['interpret_as'], 'integer'],
+            [['interpret_as'], 'string'],
             [['name', 'handler_additional_params', 'depended_property_values', 'value_type'], 'string'],
             [['key'], 'string', 'max' => 20],
             [['key'], 'match', 'pattern' => '#^[\w]+$#'],

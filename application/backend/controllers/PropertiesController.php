@@ -3,7 +3,6 @@
 namespace app\backend\controllers;
 
 use app\components\Helper;
-use app\models\Config;
 use app\models\Form;
 use app\models\Object;
 use app\models\Property;
@@ -240,15 +239,13 @@ class PropertiesController extends Controller
         $searchModel->property_id = $model->id;
         $dataProvider = $searchModel->search($_GET);
 
-        $spamCheckerConfig = (new Config())->getValue("spamCheckerConfig.configFieldsParentId");
-
         return $this->render(
             'edit-property',
             [
                 'model' => $model,
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
-                'fieldinterpretParentId' => null == $spamCheckerConfig ? 0 : $spamCheckerConfig,
+                'fieldinterpretParentId' => 0,
                 'object' => $object,
             ]
         );

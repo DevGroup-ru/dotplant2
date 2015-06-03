@@ -28,8 +28,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
 
     public $fileUploadPath = 'upload/user-uploads/';
 
-    public $spamCheckerApiKey = '';
-    public $spamCheckerInterpretFields = '';
+    public $spamCheckerApiKey;
 
     public $serverName = 'localhost';
 

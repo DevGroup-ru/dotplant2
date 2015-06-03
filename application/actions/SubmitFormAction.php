@@ -3,7 +3,6 @@
 namespace app\actions;
 
 use app\behaviors\spamchecker\SpamCheckerBehavior;
-use app\models\Config;
 use app\models\Form;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
@@ -50,42 +49,32 @@ class SubmitFormAction extends Action
         )->asArray()->all();
         $propIds = ArrayHelper::getColumn($propGroups, 'property_group_id');
 
-        /** Проверка на спам */
+        // Spam checking
         $activeSpamChecker = SpamChecker::getActive();
         $data = [];
         $spamResult = [];
-        if ($activeSpamChecker !== null) {
-            $apiKey = ArrayHelper::getValue($activeSpamChecker, 'api_key', '');
-            if ($apiKey !== '') {
-                $data[$activeSpamChecker->name]['class'] = $activeSpamChecker->behavior;
-                $data[$activeSpamChecker->name]['value']['key'] = $activeSpamChecker->api_key;
-                /** Интерпретации полей фомы */
-                $properties = Property::getForGroupId($propIds[0]);
-                foreach ($properties as $prop) {
-                    if ($prop->interpret_as == 0) {
-                        continue;
-                    }
-                    $interpreted = Config::findOne($prop->interpret_as);
-                    if ($interpreted->key == 'notinterpret') {
-                        continue;
-                    }
-                    $value = $post[$form->abstractModel->formName()][$prop->key];
-                    $interpretedKey = ArrayHelper::getValue($activeSpamChecker, $interpreted->key, '');
-                    if ($interpretedKey !== '') {
-                        $data[$activeSpamChecker->name]['value'][$interpretedKey] = $value;
-                    }
+        if ($activeSpamChecker !== null && !empty($activeSpamChecker->api_key)) {
+            $data[$activeSpamChecker->name]['class'] = $activeSpamChecker->behavior;
+            $data[$activeSpamChecker->name]['value']['key'] = $activeSpamChecker->api_key;
+            $properties = Property::getForGroupId($propIds[0]);
+            foreach ($properties as $prop) {
+                if (!isset($activeSpamChecker->{$prop->interpret_as})
+                    || empty($activeSpamChecker->{$prop->interpret_as})
+                ) {
+                    continue;
                 }
-                $model->attachBehavior(
-                    'spamChecker',
-                    [
-                        'class' => SpamCheckerBehavior::className(),
-                        'data' => $data
-                    ]
-                );
-                $spamResult = $model->check();
+                $data[$activeSpamChecker->name]['value'][$activeSpamChecker->{$prop->interpret_as}] =
+                    $post[$form->abstractModel->formName()][$prop->key];
             }
+            $model->attachBehavior(
+                'spamChecker',
+                [
+                    'class' => SpamCheckerBehavior::className(),
+                    'data' => $data,
+                ]
+            );
+            $spamResult = $model->check();
         }
-
         $haveSpam = false;
         if (is_array($spamResult) === true) {
             foreach ($spamResult as $result) {

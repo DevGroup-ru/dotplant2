@@ -31,8 +31,7 @@ class CoreModule extends BaseModule implements BootstrapInterface
 
     public $fileUploadPath = 'upload/user-uploads/';
 
-    public $spamCheckerApiKey = '';
-    public $spamCheckerInterpretFields = '';
+    public $spamCheckerApiKey;
 
     public $serverName = 'localhost';
 

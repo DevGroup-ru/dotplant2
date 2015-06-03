@@ -5,10 +5,12 @@
 /** @var \app\modules\core\models\ConfigConfigurationModel $model */
 
 use app\backend\widgets\BackendWidget;
+use app\models\SpamChecker;
+use app\components\Helper;
 
 ?>
 
-<div class="row">
+<div>
     <div class="col-md-6 col-sm-12">
         <?php BackendWidget::begin(['title' => Yii::t('app', 'Main settings'), 'options' => ['class' => 'visible-header']]); ?>
         <?= $form->field($model, 'serverName') ?>
@@ -19,8 +21,13 @@ use app\backend\widgets\BackendWidget;
         <?php BackendWidget::end() ?>
     </div>
     <div class="col-md-6 col-sm-12">
-
-
+        <?php BackendWidget::begin(['title' => Yii::t('app', 'Spam checker'), 'options' => ['class' => 'visible-header']]); ?>
+        <?=
+        $form
+            ->field($model, 'spamCheckerApiKey')
+            ->dropDownList(Helper::getModelMap(SpamChecker::className(), 'behavior', 'name'))
+        ?>
+        <?php BackendWidget::end() ?>
     </div>
 </div>
 
