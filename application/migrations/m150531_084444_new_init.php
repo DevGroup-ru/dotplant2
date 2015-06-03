@@ -3302,7 +3302,7 @@ class m150531_084444_new_init extends Migration
             Events::tableName(),
             [
                 'owner_class_name' => 'app\modules\shop\ShopModule',
-                'event_name' => 'order_stage_paymentpay',
+                'event_name' => 'order_stage_payment_pay',
                 'event_class_name' => 'app\modules\shop\events\StagePaymentPay',
                 'selector_prefix' => '',
                 'event_description' => '',

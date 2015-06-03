@@ -189,11 +189,9 @@ class OrderTransaction extends ActiveRecord
      */
     public function generateHash()
     {
-        if (empty($this->order)) {
-            return '';
-        }
-        $hash = md5($this->order->hash . $this->id . $this->payment_type_id);
-        return substr($hash, 0, 8);
+        return empty($this->order)
+            ? ''
+            : md5($this->order->hash . $this->id . $this->payment_type_id);
     }
 
     /**
