@@ -5,6 +5,10 @@ namespace app\modules\shop\models;
 use Yii;
 
 /**
+ * @TODO: What for this table if we store all this keys in const?
+ */
+
+/**
  * This is the model class for table "{{%special_price_list_type}}".
  *
  * @property integer $id

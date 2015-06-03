@@ -19,10 +19,11 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
  */
 class Discount extends \yii\db\ActiveRecord
 {
+    const DISCOUNT_CHECKING_ORDER = 'Order';
+    const DISCOUNT_CHECKING_ORDER_ITEM = 'OrderItem';
 
     public $options = [];
     public $applianceValues = [];
-
 
     public function init()
     {
@@ -35,6 +36,47 @@ class Discount extends \yii\db\ActiveRecord
         return parent::init();
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return '{{%discount}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['name', 'appliance', 'value'], 'required'],
+            [['appliance'], 'string'],
+            [['appliance'], 'in', 'range' => array_keys($this->applianceValues)],
+            [['value', 'apply_order_price_lg'], 'number'],
+            [['value_in_percent'], 'integer'],
+            [['name'], 'string', 'max' => 255]
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'name' => Yii::t('app', 'Name'),
+            'appliance' => Yii::t('app', 'Appliance'),
+            'value' => Yii::t('app', 'Value'),
+            'value_in_percent' => Yii::t('app', 'Value In Percent'),
+            'apply_order_price_lg' => Yii::t('app', 'Apply Order Price Lg'),
+        ];
+    }
+
+    /**
+     * @return array
+     */
     public function behaviors()
     {
         return [
@@ -44,6 +86,11 @@ class Discount extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @param $price
+     * @param int $deliveryPrice
+     * @return int
+     */
     public function getDiscountPrice($price, $deliveryPrice = 0)
     {
         $discountPrice = 0;
@@ -85,21 +132,39 @@ class Discount extends \yii\db\ActiveRecord
         return $resultPrice > 0 ? $resultPrice : 0;
     }
 
-    static public function getTypeObjects()
+    /**
+     * @param string $checkingClass
+     * @return array
+     */
+    public static function getTypeObjects($checkingClass = null)
     {
-        $cacheKey = 'discountTypeObjects';
+        $checkingClass = (in_array($checkingClass, [static::DISCOUNT_CHECKING_ORDER, static::DISCOUNT_CHECKING_ORDER_ITEM]) ? $checkingClass : null);
+        $cacheKey = 'Discount_TypeObjects'.$checkingClass;
 
-        if (!$result = Yii::$app->cache->get($cacheKey)) {
+        if (false === $result = Yii::$app->cache->get($cacheKey)) {
             $types = DiscountType::find()
+                ->select(['class'])
                 ->where(['active' => 1])
-                ->orderBy(['sort_order' => SORT_ASC])
-                ->all();
-            foreach ($types as $type) {
-                $discountTypeObject = new $type->class;
-                if ($discountTypeObject instanceof AbstractDiscountType) {
-                    $result[] = $discountTypeObject;
-                }
+                ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC]);
+
+            if (null !== $checkingClass) {
+                $types->andWhere(['checking_class' => $checkingClass]);
             }
+
+            $result = array_reduce($types->asArray()->all(),
+                function ($result, $item)
+                {
+                    $className = $item['class'];
+                    if (is_subclass_of($className, '\app\modules\shop\models\AbstractDiscountType')) {
+                        $result[] = new $className();
+                    }
+                    return $result;
+                }, []);
+
+            if (empty($result)) {
+                return $result;
+            }
+
             Yii::$app->cache->set(
                 $cacheKey,
                 $result,
@@ -114,32 +179,8 @@ class Discount extends \yii\db\ActiveRecord
                     ]
                 )
             );
-
         }
         return $result;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return '{{%discount}}';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return [
-            [['name', 'appliance', 'value'], 'required'],
-            [['appliance'], 'string'],
-            [['appliance'], 'in', 'range' => array_keys($this->applianceValues)],
-            [['value', 'apply_order_price_lg'], 'number'],
-            [['value_in_percent'], 'integer'],
-            [['name'], 'string', 'max' => 255]
-        ];
     }
 
     /**
@@ -151,21 +192,6 @@ class Discount extends \yii\db\ActiveRecord
             $typeObject::deleteAll(['discount_id' => $this->id]);
         }
         return parent::afterDelete();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => Yii::t('app', 'ID'),
-            'name' => Yii::t('app', 'Name'),
-            'appliance' => Yii::t('app', 'Appliance'),
-            'value' => Yii::t('app', 'Value'),
-            'value_in_percent' => Yii::t('app', 'Value In Percent'),
-            'apply_order_price_lg' => Yii::t('app', 'Apply Order Price Lg'),
-        ];
     }
 
     /**
@@ -195,6 +221,4 @@ class Discount extends \yii\db\ActiveRecord
 
         return $dataProvider;
     }
-
-
 }

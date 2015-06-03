@@ -20,12 +20,10 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
  */
 class SpecialPriceList extends \yii\db\ActiveRecord
 {
-
     const TYPE_CORE = 'core';
-    const TYPE_DISCOUNT ='discount';
-    const TYPE_DELIVERY ='delivery';
+    const TYPE_DISCOUNT = 'discount';
+    const TYPE_DELIVERY = 'delivery';
     const TYPE_PROJECT = 'project';
-
 
     /**
      * @inheritdoc
@@ -33,96 +31,6 @@ class SpecialPriceList extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return '{{%special_price_list}}';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getModel($class, $object_id)
-    {
-
-        $cacheKey = self::className() . $class .$object_id;
-
-        if (!$result = Yii::$app->cache->get($cacheKey)) {
-            $result = self::find()
-                ->where(
-                    [
-                        'class' => $class,
-                        'object_id'=>$object_id
-                    ]
-                )->one();
-
-            Yii::$app->cache->set(
-                $cacheKey,
-                $result,
-                86400,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(static::className())
-                        ]
-                    ]
-                )
-            );
-
-        }
-        return  $result;
-
-    }
-
-
-    public static function getModelsByKey($key)
-    {
-        $cacheKey = self::className() . $key;
-
-        if (!$results = Yii::$app->cache->get($cacheKey)) {
-            $results = self::find()
-                ->leftJoin(
-                    SpecialPriceListType::tableName(),
-                    SpecialPriceListType::tableName().'.id = '.self::tableName().'.type_id'
-                )
-                ->where(
-                    [
-                        SpecialPriceListType::tableName().'.key' =>$key
-                    ]
-                )->all();
-
-            Yii::$app->cache->set(
-                $cacheKey,
-                $results,
-                86400,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(static::className())
-                        ]
-                    ]
-                )
-            );
-
-        }
-        return  $results;
-
-    }
-    public function beforeSave($insert)
-    {
-        TagDependency::invalidate(
-            Yii::$app->cache,
-            [
-                ActiveRecordHelper::getCommonTag($this->className()),
-                'SpecialPriceList:' . $this->id . ':0'
-            ]
-        );
-
-        TagDependency::invalidate(
-            Yii::$app->cache,
-            [
-                ActiveRecordHelper::getCommonTag($this->className()),
-                'SpecialPriceList:' . $this->id . ':1'
-            ]
-        );
-
-        return parent::beforeSave($insert);
     }
 
     /**
@@ -152,5 +60,86 @@ class SpecialPriceList extends \yii\db\ActiveRecord
             'sort_order' => Yii::t('app', 'Sort Order'),
             'params' => Yii::t('app', 'Params'),
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+        ];
+    }
+
+    /**
+     * @TODO: What this function for? It's query only by 2 non-unique values!
+     * @param $class
+     * @param $object_id
+     * @return SpecialPriceList|null
+     */
+    public static function getModel($class, $object_id)
+    {
+        $cacheKey = static::className() .'_'. $class .'_'. $object_id;
+
+        if (false === $result = Yii::$app->cache->get($cacheKey)) {
+            $result = static::findOne(['class' => $class, 'object_id' => $object_id]);
+            if (null === $result) {
+                return null;
+            }
+
+            Yii::$app->cache->set(
+                $cacheKey,
+                $result,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            ActiveRecordHelper::getCommonTag(static::className())
+                        ]
+                    ]
+                )
+            );
+        }
+        return  $result;
+    }
+
+    /**
+     * @TODO: Why not use ENUM and delete table special_price_list_type?
+     * @param string $key
+     * @return SpecialPriceList[]|array
+     */
+    public static function getModelsByKey($key)
+    {
+        $cacheKey = static::className() .'_'. $key;
+
+        if (false === $results = Yii::$app->cache->get($cacheKey)) {
+            $results = self::find()
+                ->leftJoin(
+                    SpecialPriceListType::tableName(),
+                    SpecialPriceListType::tableName().'.id = '.self::tableName().'.type_id'
+                )
+                ->where(
+                    [
+                        SpecialPriceListType::tableName().'.key' =>$key
+                    ]
+                )->all();
+
+            Yii::$app->cache->set(
+                $cacheKey,
+                $results,
+                86400,
+                new TagDependency(
+                    [
+                        'tags' => [
+                            ActiveRecordHelper::getCommonTag(static::className())
+                        ]
+                    ]
+                )
+            );
+        }
+        return  $results;
     }
 }

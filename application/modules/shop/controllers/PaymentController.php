@@ -3,13 +3,10 @@
 namespace app\modules\shop\controllers;
 
 use app\modules\core\behaviors\DisableRobotIndexBehavior;
-use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderTransaction;
 use app\modules\shop\models\PaymentType;
-use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
-use yii\web\ForbiddenHttpException;
 use Yii;
 
 class PaymentController extends Controller

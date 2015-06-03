@@ -25,6 +25,7 @@ class CoreModule extends BaseModule implements BootstrapInterface
 
     public $controllerMap = [
         'backend-extensions' => 'app\modules\core\backend\ExtensionsController',
+        'backend-routing' => 'app\modules\core\backend\RoutingController',
     ];
 
     public $autoCompleteResultsCount = 5;

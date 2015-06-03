@@ -361,5 +361,10 @@ class CartController extends Controller
 
         return $this->redirect(Url::to(['stage']));
     }
+
+    public function actionTest()
+    {
+        return var_dump(\app\modules\shop\models\Discount::getTypeObjects());
+    }
 }
 ?>

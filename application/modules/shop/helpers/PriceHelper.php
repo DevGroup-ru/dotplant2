@@ -31,15 +31,9 @@ class PriceHelper
                 ->orderBy(['sort_order'=>SORT_ASC]);
 
             if ($type !== null) {
-                $type_id = SpecialPriceListType::find()
-                    ->where(
-                        [
-                            'key' => $type
-                        ]
-                    )
-                    ->one()
-                    ->id;
-
+                /** @var SpecialPriceList $type_id */
+                $type_id = SpecialPriceListType::findOne(['key' => $type]);
+                $type_id = $type_id->id;
 
                 $specialPriceListQuery->andWhere(
                     [
@@ -101,7 +95,6 @@ class PriceHelper
                     )
                     ->one()
                     ->id;
-
 
                 $specialPriceListQuery->andWhere(
                     [
