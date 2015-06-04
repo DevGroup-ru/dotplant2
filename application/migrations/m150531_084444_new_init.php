@@ -2013,7 +2013,7 @@ class m150531_084444_new_init extends Migration
                 [$lastId, 'Spam Form Checker', 'backend/spam-checker/index', 'send-o', 'core', 'setting manage'],
                 [$lastId, 'Backend menu', 'backend/backend-menu/index', 'list-alt', 'core', 'setting manage'],
                 [$lastId, 'Data', 'data/file/index', 'database', 'core', 'data manage'],
-                [$lastId, 'YML', 'backend/yml/settings', 'code', 'core', 'content manage'],
+                [$lastId, 'YML', 'shop/backend-yml/settings', 'code', 'core', 'content manage'],
                 [$lastId, 'Api', 'backend/api/index', 'exchange', 'core', 'api manage'],
             ]
         );

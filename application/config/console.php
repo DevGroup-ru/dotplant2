@@ -25,6 +25,10 @@ $config = [
             'class' => 'app\modules\seo\SeoModule',
             'mainPage' => '', // главная страница
         ],
+        'shop' => [
+            'class' => 'app\modules\shop\ShopModule',
+            'controllerNamespace' => 'app\modules\shop\commands'
+        ],
     ],
     'components' => [
         'cache' => [
@@ -74,7 +78,7 @@ $config = [
                 'search' => 'default/search',
                 'robots.txt' => 'seo/manage/get-robots',
                 [
-                    'class' => 'app\components\PageRule',
+                    'class' => 'app\modules\page\components\PageRule',
                 ],
                 [
                     'class' => 'app\components\ObjectRule',

@@ -7,6 +7,7 @@ class m150603_143456_removing_config extends Migration
 {
     public function up()
     {
+        return true;
         die('Do not apply this migration');
         $errorMonitor = BackendMenu::findOne(['name' => 'Error monitoring']);
         BackendMenu::deleteAll(['parent_id' => $errorMonitor->id]);

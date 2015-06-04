@@ -32,7 +32,6 @@ use yii\helpers\Url;
  * @property string $content
  * @property string $announce
  * @property integer $sort_order
- * @property integer $is_deleted
  * @property boolean $active
  * @property Category[] $children
  * @property Category $parent
@@ -194,7 +193,6 @@ class Category extends ActiveRecord
      * Returns model using indentity map and cache
      * @param string $id
      * @param int|null $is_active
-     * @param int|null $is_deleted
      * @return Category|null
      */
     public static function findById($id, $is_active = 1)
