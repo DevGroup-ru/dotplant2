@@ -1,0 +1,70 @@
+@import "compass";
+
+/*
+    Цвета
+*/
+$twitter-blue: #1ab8e8;
+
+
+@import "utils";
+
+body{
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/*
+        Шапка
+*/
+
+.row.header {
+    padding-top: 25px;
+    padding-bottom: 18px;
+}
+
+a.logo {
+    background: url('/img/logo.png') no-repeat;
+    text-indent: -9999px;
+    width: 158px;
+    height: 31px;
+    display:block;
+}
+
+/*
+    Navbar
+*/
+
+
+#navbar{
+    margin-bottom: 0;
+    border: 0;
+    z-index: 999;
+    background: #1ab8e8;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+
+    .navbar-collapse{
+        padding-left:0;
+
+    }
+    .navbar-nav > li > a{
+        color: #fff;
+        &:hover{
+            background: #4f9aff;
+        }
+    }
+    .navbar-nav > li.active > a{
+        background: #000;
+    }
+
+
+    &.affix {
+        position: fixed;
+        top: 0;
+        width: 100%
+    }
+}
+
+
