@@ -104,7 +104,7 @@ class OrderItem extends ActiveRecord
     {
         SpecialPriceObject::deleteAllByObject($this);
         if (!static::find()->where(['order_id' => $this->order_id])->one()) {
-            SpecialPriceObject::deleteAllByObject($this->order);
+            Order::deleteOrderElements($this->order);
         }
         return parent::afterDelete();
     }

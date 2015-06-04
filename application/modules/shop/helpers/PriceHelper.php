@@ -6,7 +6,6 @@ namespace app\modules\shop\helpers;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\Product;
 use app\modules\shop\models\SpecialPriceList;
-use app\modules\shop\models\SpecialPriceListType;
 use yii\caching\TagDependency;
 use \devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
@@ -31,13 +30,9 @@ class PriceHelper
                 ->orderBy(['sort_order'=>SORT_ASC]);
 
             if ($type !== null) {
-                /** @var SpecialPriceList $type_id */
-                $type_id = SpecialPriceListType::findOne(['key' => $type]);
-                $type_id = $type_id->id;
-
                 $specialPriceListQuery->andWhere(
                     [
-                        'type_id' => $type_id
+                        'type' => $type
                     ]
                 );
             }
@@ -87,18 +82,9 @@ class PriceHelper
                 ->orderBy(['sort_order'=>SORT_ASC]);
 
             if ($type !== null) {
-                $type_id = SpecialPriceListType::find()
-                    ->where(
-                        [
-                            'key' => $type
-                        ]
-                    )
-                    ->one()
-                    ->id;
-
                 $specialPriceListQuery->andWhere(
                     [
-                        'type_id' => $type_id
+                        'type' => $type
                     ]
                 );
             }

@@ -83,7 +83,6 @@ use app\modules\shop\models\ProductListingSort;
 use app\modules\shop\models\RelatedProduct;
 use app\modules\shop\models\ShippingOption;
 use app\modules\shop\models\SpecialPriceList;
-use app\modules\shop\models\SpecialPriceListType;
 use app\modules\shop\models\SpecialPriceObject;
 use app\modules\shop\models\UserDiscount;
 use app\modules\shop\models\Warehouse;
@@ -1685,14 +1684,6 @@ class m150531_084444_new_init extends Migration
             $tableOptions
         );
         $this->createTable(
-            SpecialPriceListType::tableName(),
-            [
-                'id' => Schema::TYPE_PK,
-                'key' => Schema::TYPE_STRING . ' NOT NULL',
-                'description' => Schema::TYPE_STRING . ' DEFAULT NULL'
-            ]
-        );
-        $this->createTable(
             SpecialPriceObject::tableName(),
             [
                 'id' => Schema::TYPE_PK,
@@ -3118,23 +3109,7 @@ class m150531_084444_new_init extends Migration
                 ],
             ]
         );
-        $this->batchInsert(
-            SpecialPriceListType::tableName(),
-            [
-                'key',
-                'description'
-            ],
-            [
-                ['core', 'Core'],
-                ['discount', 'Discount'],
-                ['delivery', 'Delivery'],
-                ['tax', 'Tax'],
-                ['project', 'Project'],
-            ]
-        );
-        $spltCore = SpecialPriceListType::findOne(['key' => 'core']);
-        $spltDiscount = SpecialPriceListType::findOne(['key' => 'discount']);
-        $spltDelivery = SpecialPriceListType::findOne(['key' => 'delivery']);
+
         $this->batchInsert(
             SpecialPriceList::tableName(),
             [
@@ -3149,30 +3124,31 @@ class m150531_084444_new_init extends Migration
                     \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id,
                     'app\modules\shop\helpers\PriceHandlers',
                     5,
-                    $spltCore->id,
+                    'core',
                     'getCurrencyPriceProduct',
+                ],
+                [
+                    \app\models\Object::getForClass(\app\modules\shop\models\Order::className())->id,
+                    'app\modules\shop\helpers\PriceHandlers',
+                    10,
+                    'delivery',
+                    'getDeliveryPriceOrder',
                 ],
                 [
                     \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id,
                     'app\modules\shop\helpers\PriceHandlers',
-                    10,
-                    $spltDiscount->id,
+                    15,
+                    'discount',
                     'getDiscountPriceProduct',
                 ],
                 [
                     \app\models\Object::getForClass(\app\modules\shop\models\Order::className())->id,
                     'app\modules\shop\helpers\PriceHandlers',
-                    15,
-                    $spltDiscount->id,
+                    20,
+                    'discount',
                     'getDiscountPriceOrder',
                 ],
-                [
-                    \app\models\Object::getForClass(\app\modules\shop\models\Order::className())->id,
-                    'app\modules\shop\helpers\PriceHandlers',
-                    12,
-                    $spltDelivery->id,
-                    'getDeliveryPriceOrder',
-                ]
+
             ]
         );
         $this->insert(

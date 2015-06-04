@@ -51,6 +51,7 @@ use yii\db\Expression;
  * @property User $manager
  * @property float $fullPrice
  * @property Contragent $contragent
+ * @property DiscountCode $code
  * @property Customer $customer
  * @property OrderDeliveryInformation $orderDeliveryInformation
  */
@@ -242,6 +243,11 @@ class Order extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    public function getCode()
+    {
+        return $this->hasOne(OrderCode::className(), ['order_id'=>'id']);
     }
 
     /**
@@ -480,11 +486,19 @@ class Order extends \yii\db\ActiveRecord
 
     public function afterDelete()
     {
-        foreach ($this->items as $item) {
+        self::deleteOrderElements($this);
+        return parent::afterDelete();
+    }
+
+    public static function deleteOrderElements(Order $order)
+    {
+        foreach ($order->items as $item) {
             $item->delete();
         }
-        SpecialPriceObject::deleteAllByObject($this);
-        return parent::afterDelete();
+        if ($order->code !== null) {
+            $order->code->delete();
+        }
+        SpecialPriceObject::deleteAllByObject($order);
     }
 
     /**

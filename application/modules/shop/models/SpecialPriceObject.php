@@ -104,6 +104,11 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
             }, 0);
     }
 
+    /**
+     * @param $model
+     * @return null
+     * @throws \Exception
+     */
     public static function deleteAllByObject($model)
     {
         if (!isset($model->object) || empty($model->object)) {

@@ -13,7 +13,7 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
  * @property integer $object_id
  * @property string $class
  * @property integer $active
- * @property string $type_id
+ * @property string $type
  * @property integer $sort_order
  * @property string $params
  * @property string $handler
@@ -23,6 +23,7 @@ class SpecialPriceList extends \yii\db\ActiveRecord
     const TYPE_CORE = 'core';
     const TYPE_DISCOUNT = 'discount';
     const TYPE_DELIVERY = 'delivery';
+    const TYPE_TAX = 'tax';
     const TYPE_PROJECT = 'project';
 
     /**
@@ -75,22 +76,18 @@ class SpecialPriceList extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param string $key
+     * @param string $type
      * @return SpecialPriceList[]|array
      */
-    public static function getModelsByKey($key)
+    public static function getModelsByKey($type)
     {
-        $cacheKey = static::className() .'_'. $key;
+        $cacheKey = static::className() .'_'. $type;
 
         if (false === $results = Yii::$app->cache->get($cacheKey)) {
             $results = self::find()
-                ->leftJoin(
-                    SpecialPriceListType::tableName(),
-                    SpecialPriceListType::tableName().'.id = '.self::tableName().'.type_id'
-                )
                 ->where(
                     [
-                        SpecialPriceListType::tableName().'.key' =>$key
+                        'type' =>$type
                     ]
                 )->all();
 
