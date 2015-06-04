@@ -1970,27 +1970,7 @@ class m150531_084444_new_init extends Migration
                 'route' => 'backend/error-monitor/index',
             ]
         );
-        $this->insert(
-            BackendMenu::tableName(),
-            [
-                'parent_id' => $rootId,
-                'name' => 'Email notify',
-                'icon' => 'envelope-o',
-                'added_by_ext' => 'core',
-                'rbac_check' => 'newsletter manage',
-                'route' => '',
-            ]
-        );
-        $lastId = $this->db->lastInsertID;
-        $this->batchInsert(
-            BackendMenu::tableName(),
-            ['parent_id', 'name', 'route', 'icon', 'added_by_ext', 'rbac_check'],
-            [
-                [$lastId, 'Send now', 'backend/newsletter/newslist', 'send-o', 'core', 'newsletter manage'],
-                [$lastId, 'Email list', 'backend/newsletter/email-list', 'list-alt', 'core', 'newsletter manage'],
-                [$lastId, 'Settings', 'backend/newsletter/config', 'gears', 'core', 'setting manage'],
-            ]
-        );
+
         $this->insert(
             BackendMenu::tableName(),
             [
@@ -2571,7 +2551,6 @@ class m150531_084444_new_init extends Migration
                 ['order status manage', '2', Yii::t('app','Order status management')],
                 ['payment manage', '2', Yii::t('app','Payment type management')],
                 ['shipping manage', '2', Yii::t('app','Shipping option management')],
-                ['newsletter manage', '2', Yii::t('app','Newsletter management')],
                 ['monitoring manage', '2', Yii::t('app','Monitoring management')],
                 ['data manage', '2', Yii::t('app','Data management')],
                 ['setting manage', '2', Yii::t('app','Setting management')],
@@ -2617,7 +2596,6 @@ class m150531_084444_new_init extends Migration
                 ['admin', 'payment manage'],
                 ['admin', 'shipping manage'],
                 ['admin', 'monitoring manage'],
-                ['admin', 'newsletter manage'],
                 ['admin', 'data manage'],
                 ['admin', 'setting manage'],
             ]
