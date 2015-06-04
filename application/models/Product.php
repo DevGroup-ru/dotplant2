@@ -71,6 +71,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     public function rules()
     {
         return [
+            [['sku'], 'filter', 'filter'=>function($value){return (string)$value;}],
             [['main_category_id', 'name', 'slug'], 'required'],
             [
                 [
@@ -118,7 +119,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
         ];
     }
-
     /**
      * @inheritdoc
      */
