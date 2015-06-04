@@ -5,7 +5,6 @@ namespace app\backend\controllers;
 use app\backend\traits\BackendRedirect;
 use app\models\View;
 use Yii;
-use yii\caching\TagDependency;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -15,6 +14,47 @@ use yii\web\Response;
 class ViewController extends Controller
 {
     use BackendRedirect;
+
+    protected function getTree($path = '')
+    {
+        if (is_null($this->view->theme) || !file_exists($this->view->theme->getBaseUrl())) {
+            return [];
+        }
+        $result = [];
+        $basePath = $this->view->theme->getBaseUrl();
+        $dir = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($basePath . $path),
+            \RecursiveIteratorIterator::CATCH_GET_CHILD
+        );
+        /** @var \SplFileInfo $file */
+        foreach ($dir as $file) {
+            if ($file->getBasename() == '.' || $file->getBasename() == '..') {
+                continue;
+            }
+            $id = '#' . preg_replace('#[^\w\d]#', '_', str_replace($basePath, '', $file->getFilename()));
+            if ($file->isDir()) {
+                $result[] = [
+                    'id' => $id,
+                    'children' => $this->getTree($path . DIRECTORY_SEPARATOR . $file->getBasename()),
+                    'text' => $file->getBasename(),
+                    'type' => 'dir',
+                ];
+            } elseif ($file->isFile() && ('.php' === substr($file->getBasename(), -4))) {
+                $result[] = [
+                    'id' => $id,
+                    'text' => $file->getBasename(),
+                    'a_attr' => [
+                        'data-file' => str_replace($basePath, '', $file->getPath()),
+                        'data-toggle' => 'tooltip',
+                        'title' => $file->getBasename()
+                    ],
+                    'type' => 'file',
+                ];
+            }
+        }
+        return $result;
+    }
+
     /**
      * @inheritdoc
      */
@@ -138,87 +178,9 @@ class ViewController extends Controller
         return $this->redirect(['index']);
     }
 
-    /*
-     *
-     */
     public function actionGetViews()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-
-
-        if (is_dir($_dir = $this->view->theme->getBaseUrl())) {
-            $cacheKey = 'ViewDirectoryTree';
-            if (false === $items = Yii::$app->cache->get($cacheKey)) {
-                $rdir = new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($this->view->theme->getBaseUrl()),
-                    \RecursiveIteratorIterator::SELF_FIRST
-                );
-
-                $items = [];
-                /** @var \SplFileInfo $file */
-                foreach ($rdir as $file) {
-                    if (($file->getBasename() === '.') || ($file->getBasename() === '..')) {
-                        continue;
-                    }
-
-                    $_parent = '#';
-                    if ($_dir !== $file->getPath()) {
-                        $arr = explode('/', str_replace($_dir, '', $file->getPath()));
-                        $_parent = '#' . array_pop($arr);
-                    }
-
-                    if ($file->isDir()) {
-                        $_name = $file->getBasename();
-                        $items[] = [
-                            'id' => '#' . $_name,
-                            'parent' => $_parent,
-                            'text' => $_name,
-                            'type' => 'dir',
-                        ];
-                    } elseif ($file->isFile() && ('.php' === substr($file->getBasename(), -4))) {
-                        $_name = $file->getBasename('.php');
-                        $_attr = trim(str_replace($_dir, '', $file->getPath()), '/');
-
-                        $_title = $_name;
-                        if (false !== $_cnt = file_get_contents($file->getRealPath())) {
-                            if (preg_match('#\<\\?(php)?\s*/\*(.+)\*/#siU', $_cnt, $_match)) {
-                                foreach (explode(PHP_EOL, $_match[2]) as $_line) {
-                                    if (preg_match('#@theme-name\s*(.+)$#iU', $_line, $_match)) {
-                                        $_title = trim($_match[1]);
-                                    }
-                                }
-                            }
-                        }
-
-                        $items[] = [
-                            'id' => $_parent . $_name,
-                            'parent' => $_parent,
-                            'text' => $_name,
-                            'a_attr' => [
-                                'data-file' => '/' . $_attr . '/' . $_name,
-                                'data-toggle' => 'tooltip',
-                                'title' => $_title
-                            ],
-                            'type' => 'file',
-                        ];
-                    }
-                }
-
-                Yii::$app->cache->set(
-                    $cacheKey,
-                    $items,
-                    86400,
-                    new TagDependency(
-                        [
-                            'tags' => [\devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(View::className())]
-                        ]
-                    )
-                );
-            }
-
-            return $items;
-        }
-
-        return '';
+        return $this->getTree();
     }
 }
