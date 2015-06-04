@@ -204,5 +204,3 @@ $(".other-images").on('click', '.slick-slide', function(){
 });
 JS;
 $this->registerJs($js);
-
-?>
