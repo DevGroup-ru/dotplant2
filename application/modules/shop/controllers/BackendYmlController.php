@@ -1,16 +1,15 @@
 <?php
 
-namespace app\backend\controllers;
+namespace app\modules\shop\controllers;
 
-use app\backend\models\Yml;
+use app\backend\components\BackendController;
+use app\components\Helper;
+use app\modules\shop\models\Yml;
 use app\backgroundtasks\helpers\BackgroundTasks;
-use app\models\Config;
 use Yii;
 use yii\filters\AccessControl;
-use yii\helpers\Url;
-use yii\web\Controller;
 
-class YmlController extends Controller
+class BackendYmlController extends BackendController
 {
     public function behaviors()
     {
@@ -38,25 +37,20 @@ class YmlController extends Controller
         );
     }
 
+    /**
+     * @return string|\yii\web\Response
+     * @throws \yii\web\ServerErrorHttpException
+     */
     public function actionSettings()
     {
         if (Yii::$app->request->isPost) {
             $model = new Yml();
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $model->saveConfig();
-            } else {
-                $error = implode('<br />',
-                    array_map(
-                        function($i) {
-                            if (is_array($i)) {
-                                return array_pop($i);
-                            }
-                            return $i;
-                        },
-                        $model->errors)
-                );
-                Yii::$app->session->setFlash('error', $error);
+            } elseif ($model->hasErrors()) {
+                Yii::$app->session->setFlash('error', Helper::formatModelErrors($model, '<br />'));
             }
+            return $this->refresh();
         }
 
         $model = new Yml();
@@ -70,15 +64,18 @@ class YmlController extends Controller
         );
     }
 
+    /**
+     * @return \yii\web\Response
+     */
     public function actionCreate()
     {
         BackgroundTasks::addTask(
             [
                 'name' => 'yml_generate',
                 'description' => 'Creating YML file',
-                'action' => 'yml/generate',
+                'action' => 'shop/yml/generate',
                 'params' => '',
-                'init_event' => 'yml',
+                'init_event' => 'shop/yml',
             ],
             [
                 'create_notification' => true,
