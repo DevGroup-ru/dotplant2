@@ -12,6 +12,7 @@ use Yii;
  * @property integer $discount_code_id
  * @property integer $status
  * @property DiscountCode $discountCode
+ * @property Order $order
  */
 class OrderCode extends \yii\db\ActiveRecord
 {
@@ -21,6 +22,11 @@ class OrderCode extends \yii\db\ActiveRecord
     public function getDiscountCode()
     {
         return $this->hasOne(DiscountCode::className(), ['id' => 'discount_code_id']);
+    }
+
+    public function getOrder()
+    {
+        return $this->hasOne(Order::className(), ['id' => 'order_id']);
     }
 
 
@@ -62,6 +68,15 @@ class OrderCode extends \yii\db\ActiveRecord
         }
 
 
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+
+        foreach ($this->order->items as $item) {
+            $item->save();
+        }
+        return parent::afterSave($insert, $changedAttributes);
     }
 
 
