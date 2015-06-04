@@ -5,6 +5,7 @@ namespace app\modules\shop\models;
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
 use app\components\Helper;
+use app\models\Object;
 use app\modules\shop\models\FilterSets;
 use app\properties\HasProperties;
 use app\traits\GetImages;
