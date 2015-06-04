@@ -1573,7 +1573,7 @@ class m150531_084444_new_init extends Migration
                 'active' => Schema::TYPE_BOOLEAN . ' NOT NULL DEFAULT 1',
                 'sort_order' => Schema::TYPE_INTEGER .' NOT NULL DEFAULT 0',
                 'params' => Schema::TYPE_TEXT,
-                'type_id' => 'SMALLINT UNSIGNED DEFAULT NULL',
+                'type' => "ENUM('core', 'discount', 'delivery', 'tax' ,'project') DEFAULT 'project'",
                 'handler' => 'VARCHAR(255) DEFAULT NULL',
             ]
         );
@@ -3116,7 +3116,7 @@ class m150531_084444_new_init extends Migration
                 'object_id',
                 'class',
                 'sort_order',
-                'type_id',
+                'type',
                 'handler',
             ],
             [
