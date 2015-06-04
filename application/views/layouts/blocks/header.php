@@ -33,6 +33,8 @@ $themeModule = Yii::$app->getModule('DefaultTheme');
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <?= !empty($this->blocks['CommonHtmlHead']) ? $this->blocks['CommonHtmlHead'] : ''; ?>
 </head>
 <body itemscope itemtype="http://schema.org/WebPage">
 <?php $this->beginBody(); ?>
