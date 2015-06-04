@@ -308,4 +308,12 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
   width: 400px;
 }
 
-/*# sourceMappingURL=admin.css.map */
+/* line 223, ../sass/admin.scss */
+.scrollable-options-list {
+  max-height: 150px;
+  overflow: scroll;
+}
+/* line 226, ../sass/admin.scss */
+.scrollable-options-list label {
+  display: block;
+}

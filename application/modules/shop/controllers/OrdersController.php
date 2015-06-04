@@ -2,6 +2,7 @@
 
 namespace app\modules\shop\controllers;
 
+use app\modules\core\behaviors\DisableRobotIndexBehavior;
 use app\modules\shop\models\Order;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -32,6 +33,9 @@ class OrdersController extends Controller
                     ],
                 ],
             ],
+            [
+                'class' => DisableRobotIndexBehavior::className(),
+            ]
         ];
     }
 

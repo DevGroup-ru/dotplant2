@@ -87,7 +87,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php if (!$model->isNewRecord): ?>
         <div class="row">
-
             <?php foreach ($model->getTypeObjects() as $key => $object): ?>
                 <?php /** @var \app\modules\shop\models\AbstractDiscountType $object */ ?>
                 <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
@@ -97,7 +96,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'icon' => 'cog',
                         'footer' => $this->blocks['submit']
                     ]); ?>
-
                     <?= \app\backend\widgets\GridView::widget(
                         [
                             'dataProvider' => $object::searchDiscountFilter($model->id),
@@ -118,8 +116,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ],
                                     'url_append' => '&typeId=' . $object->type->id
                                 ],
-
-
                             ]
                         ]
                     );
@@ -136,13 +132,3 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     <?php endif; ?>
 </section>
-
-
-
-
-
-
-
-
-
-

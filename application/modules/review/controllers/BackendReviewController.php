@@ -111,7 +111,7 @@ class BackendReviewController extends \app\backend\components\BackendController
         if (is_null($submission)) {
             throw new NotFoundHttpException;
         }
-        $submission->spam = Yii::$app->formatter->asBoolean($spam);
+        $submission->spam = $spam;
         if ($spam == 1) {
             /** @var Review $review */
             $review = Review::findOne(['submission_id' => $id]);

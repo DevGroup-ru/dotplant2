@@ -22,7 +22,6 @@ use \kartik\icons\Icon;
                 <th><?= Html::encode($dummy->getAttributeLabel('status'))?></th>
                 <th><?= Html::encode($dummy->getAttributeLabel('start_date'))?></th>
                 <th><?= Html::encode($dummy->getAttributeLabel('end_date'))?></th>
-<!--                <th></th>-->
             </tr>
         </thead>
         <tbody>
@@ -47,26 +46,6 @@ use \kartik\icons\Icon;
             echo Html::tag('td', $transaction->getTransactionStatus());
             echo Html::tag('td', $transaction->start_date);
             echo Html::tag('td', $transaction->end_date);
-//            if (!$immutable && false) {
-//                echo Html::tag('td',
-//                    Html::a(
-//                        Icon::show('pencil'),
-//                        Url::toRoute(['/shop/payment/type', 'id' => $transaction->id, 'othash' => $transaction->generateHash()]),
-//                        ['class' => 'btn btn-primary']
-//                    )
-//                    . Html::a(
-//                        Icon::show('trash'),
-//                        Url::toRoute(['/shop/payment/cancel', 'id' => $transaction->id, 'othash' => $transaction->generateHash()]),
-//                        ['class' => 'btn btn-danger']
-//                    )
-//                    . Html::a(
-//                        Icon::show('refresh'),
-//                        Url::toRoute(['/shop/payment/transaction', 'id' => $transaction->id, 'othash' => $transaction->generateHash()]),
-//                        ['class' => 'btn btn-primary']
-//                    )
-//                );
-//            }
-
             echo '</tr>';
         }
     ?>

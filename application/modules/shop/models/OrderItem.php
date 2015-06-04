@@ -58,7 +58,7 @@ class OrderItem extends ActiveRecord
     public function rules()
     {
         return [
-            [['order_id', 'product_id', 'quantity', 'total_price'], 'required'],
+            [['order_id', 'product_id', 'quantity'], 'required'],
             [
                 ['quantity', 'price_per_pcs', 'total_price_without_discount', 'discount_amount', 'total_price'],
                 'number',
@@ -95,10 +95,20 @@ class OrderItem extends ActiveRecord
             $this->order,
             $this->quantity
         );
-        $this->discount_amount = $this->total_price - ($this->quantity * $this->price_per_pcs );
-        $this->total_price_without_discount = $this->total_price - $this->discount_amount;
+        $this->discount_amount = ($this->quantity * $this->price_per_pcs) - $this->total_price;
+        $this->total_price_without_discount = $this->total_price + $this->discount_amount;
         return parent::beforeValidate();
     }
+
+    public function afterDelete()
+    {
+        SpecialPriceObject::deleteAllByObject($this);
+        if (!static::find()->where(['order_id' => $this->order_id])->one()) {
+            Order::deleteOrderElements($this->order);
+        }
+        return parent::afterDelete();
+    }
+
 
     public function getProduct()
     {

@@ -79,7 +79,15 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public $defaultOrderStageFilterBackend = 0;
 
+    /**
+     * @var int Show deleted orders in backend or not
+     */
     public $showDeletedOrders = 0;
+
+    /**
+     * @var array
+     */
+    public $ymlConfig = [];
 
     /**
      * @inheritdoc
@@ -142,6 +150,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             ],
             [['allowToAddSameProduct', 'countUniqueProductsOnly', 'countChildrenProducts'], 'boolean'],
             [['defaultMeasureId'], 'integer'],
+            [['ymlConfig'], function ($attribute, $params) {
+                if (!is_array($this->$attribute)) {
+                    $this->$attribute = [];
+                }
+            }],
         ];
     }
 
@@ -198,7 +211,13 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public function consoleApplicationAttributes()
     {
-        return [];
+        return [
+            'modules' => [
+                'shop' => [
+                    'ymlConfig' => $this->ymlConfig,
+                ]
+            ]
+        ];
     }
 
     /**

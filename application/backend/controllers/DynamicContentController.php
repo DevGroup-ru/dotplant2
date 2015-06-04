@@ -5,16 +5,13 @@ namespace app\backend\controllers;
 use app\backend\actions\DeleteOne;
 use app\backend\actions\MultipleDelete;
 use app\backend\traits\BackendRedirect;
-use app\models\Config;
 use app\models\DynamicContent;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
-use vova07\imperavi\actions\GetAction;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
-use yii\helpers\Url;
 use yii\web\Controller;
 
 class DynamicContentController extends Controller
@@ -86,17 +83,17 @@ class DynamicContentController extends Controller
             }
         }
         $property_groups_ids_for_object = (new Query)->select('id')->from(PropertyGroup::tableName())->where(
-                [
-                    //                'object_id' => $model->object_id,
-                ]
-            )->column();
+            [
+                //                'object_id' => $model->object_id,
+            ]
+        )->column();
 
         $properties = Property::find()->where(
-                [
-                    'has_static_values' => 1,
-                    'has_slugs_in_values' => 1,
-                ]
-            )->andWhere(['in', 'property_group_id', $property_groups_ids_for_object])->all();
+            [
+                'has_static_values' => 1,
+                'has_slugs_in_values' => 1,
+            ]
+        )->andWhere(['in', 'property_group_id', $property_groups_ids_for_object])->all();
         foreach ($properties as $prop) {
             $static_values_properties[$prop->id] = [
                 'property' => $prop,
@@ -109,15 +106,12 @@ class DynamicContentController extends Controller
             $post = $_GET;
         }
         if ($model->load($post) && $model->validate() && !isset($_GET['DynamicContent'])) {
-
             $save_result = $model->save();
             if ($save_result) {
                 return $this->redirectUser($model->id);
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }
-
-
         }
 
         return $this->render(
@@ -128,5 +122,4 @@ class DynamicContentController extends Controller
             ]
         );
     }
-
 }

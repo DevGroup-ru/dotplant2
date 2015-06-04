@@ -3,8 +3,6 @@
 namespace app\modules\page\controllers;
 
 use app\components\Controller;
-use app\models\Config;
-use app\models\Object;
 use app\modules\page\models\Page;
 use app\models\Search;
 use app\modules\seo\behaviors\MetaBehavior;
@@ -14,7 +12,6 @@ use Yii;
 use yii\caching\TagDependency;
 use yii\data\Pagination;
 use yii\db\ActiveQuery;
-use yii\helpers\VarDumper;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;

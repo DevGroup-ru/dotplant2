@@ -2,11 +2,9 @@
 
 namespace app\models;
 
-
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
-
 
 /**
  * This is the model class for table "spam_checker".
@@ -29,7 +27,7 @@ class SpamChecker extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'spam_checker';
+        return '{{%spam_checker}}';
     }
 
     /**
@@ -136,10 +134,13 @@ class SpamChecker extends \yii\db\ActiveRecord
         return $id;
     }
 
-    public static function getFieldTypesForForm($parentId = 0)
+    public static function getFieldTypesForForm()
     {
-        $config = Yii::$app->getModule('core')->spamCheckerInterpretFields;
-        return ArrayHelper::map($config->children, 'id', 'name');
+        return [
+            'notinterpret' => 'Не интерпретировать',
+            'author_field' => 'Имя',
+            'content_field' => 'Контент',
+        ];
     }
 
     /**

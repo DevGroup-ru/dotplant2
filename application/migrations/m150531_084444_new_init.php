@@ -83,7 +83,6 @@ use app\modules\shop\models\ProductListingSort;
 use app\modules\shop\models\RelatedProduct;
 use app\modules\shop\models\ShippingOption;
 use app\modules\shop\models\SpecialPriceList;
-use app\modules\shop\models\SpecialPriceListType;
 use app\modules\shop\models\SpecialPriceObject;
 use app\modules\shop\models\UserDiscount;
 use app\modules\shop\models\Warehouse;
@@ -746,7 +745,7 @@ class m150531_084444_new_init extends Migration
                 'visitor_landing' => 'VARCHAR(255) DEFAULT NULL',
                 'visit_start_date' => 'DATETIME DEFAULT NULL',
                 'form_fill_time' => 'INT DEFAULT NULL',
-                'spam' => 'VARCHAR(25) DEFAULT NULL',
+                'spam' => 'TINYINT(1) UNSIGNED DEFAULT 0',
                 'is_deleted' => 'TINYINT UNSIGNED DEFAULT \'0\'',
                 'KEY `submission-form_id` (`form_id`)',
             ],
@@ -1574,7 +1573,7 @@ class m150531_084444_new_init extends Migration
                 'active' => Schema::TYPE_BOOLEAN . ' NOT NULL DEFAULT 1',
                 'sort_order' => Schema::TYPE_INTEGER .' NOT NULL DEFAULT 0',
                 'params' => Schema::TYPE_TEXT,
-                'type_id' => 'SMALLINT UNSIGNED DEFAULT NULL',
+                'type' => "ENUM('core', 'discount', 'delivery', 'tax' ,'project') DEFAULT 'project'",
                 'handler' => 'VARCHAR(255) DEFAULT NULL',
             ]
         );
@@ -1683,14 +1682,6 @@ class m150531_084444_new_init extends Migration
                 'nominal' => 'FLOAT NOT NULL',
             ],
             $tableOptions
-        );
-        $this->createTable(
-            SpecialPriceListType::tableName(),
-            [
-                'id' => Schema::TYPE_PK,
-                'key' => Schema::TYPE_STRING . ' NOT NULL',
-                'description' => Schema::TYPE_STRING . ' DEFAULT NULL'
-            ]
         );
         $this->createTable(
             SpecialPriceObject::tableName(),
@@ -1976,39 +1967,10 @@ class m150531_084444_new_init extends Migration
                 'icon' => 'flash',
                 'added_by_ext' => 'core',
                 'rbac_check' => 'monitoring manage',
-                'route' => '',
+                'route' => 'backend/error-monitor/index',
             ]
         );
-        $lastId = $this->db->lastInsertID;
-        $this->batchInsert(
-            BackendMenu::tableName(),
-            ['parent_id', 'name', 'route', 'icon', 'added_by_ext', 'rbac_check'],
-            [
-                [$lastId, 'Monitor', 'backend/error-monitor/index', 'flash', 'core', 'setting manage'],
-                [$lastId, 'Config', 'backend/error-monitor/config', 'gear', 'core', 'setting manage'],
-            ]
-        );
-        $this->insert(
-            BackendMenu::tableName(),
-            [
-                'parent_id' => $rootId,
-                'name' => 'Email notify',
-                'icon' => 'envelope-o',
-                'added_by_ext' => 'core',
-                'rbac_check' => 'newsletter manage',
-                'route' => '',
-            ]
-        );
-        $lastId = $this->db->lastInsertID;
-        $this->batchInsert(
-            BackendMenu::tableName(),
-            ['parent_id', 'name', 'route', 'icon', 'added_by_ext', 'rbac_check'],
-            [
-                [$lastId, 'Send now', 'backend/newsletter/newslist', 'send-o', 'core', 'newsletter manage'],
-                [$lastId, 'Email list', 'backend/newsletter/email-list', 'list-alt', 'core', 'newsletter manage'],
-                [$lastId, 'Settings', 'backend/newsletter/config', 'gears', 'core', 'setting manage'],
-            ]
-        );
+
         $this->insert(
             BackendMenu::tableName(),
             [
@@ -2031,7 +1993,7 @@ class m150531_084444_new_init extends Migration
                 [$lastId, 'Spam Form Checker', 'backend/spam-checker/index', 'send-o', 'core', 'setting manage'],
                 [$lastId, 'Backend menu', 'backend/backend-menu/index', 'list-alt', 'core', 'setting manage'],
                 [$lastId, 'Data', 'data/file/index', 'database', 'core', 'data manage'],
-                [$lastId, 'YML', 'backend/yml/settings', 'code', 'core', 'content manage'],
+                [$lastId, 'YML', 'shop/backend-yml/settings', 'code', 'core', 'content manage'],
                 [$lastId, 'Api', 'backend/api/index', 'exchange', 'core', 'api manage'],
             ]
         );
@@ -2589,7 +2551,6 @@ class m150531_084444_new_init extends Migration
                 ['order status manage', '2', Yii::t('app','Order status management')],
                 ['payment manage', '2', Yii::t('app','Payment type management')],
                 ['shipping manage', '2', Yii::t('app','Shipping option management')],
-                ['newsletter manage', '2', Yii::t('app','Newsletter management')],
                 ['monitoring manage', '2', Yii::t('app','Monitoring management')],
                 ['data manage', '2', Yii::t('app','Data management')],
                 ['setting manage', '2', Yii::t('app','Setting management')],
@@ -2635,7 +2596,6 @@ class m150531_084444_new_init extends Migration
                 ['admin', 'payment manage'],
                 ['admin', 'shipping manage'],
                 ['admin', 'monitoring manage'],
-                ['admin', 'newsletter manage'],
                 ['admin', 'data manage'],
                 ['admin', 'setting manage'],
             ]
@@ -3127,30 +3087,14 @@ class m150531_084444_new_init extends Migration
                 ],
             ]
         );
-        $this->batchInsert(
-            SpecialPriceListType::tableName(),
-            [
-                'key',
-                'description'
-            ],
-            [
-                ['core', 'Core'],
-                ['discount', 'Discount'],
-                ['delivery', 'Delivery'],
-                ['tax', 'Tax'],
-                ['project', 'Project'],
-            ]
-        );
-        $spltCore = SpecialPriceListType::findOne(['key' => 'core']);
-        $spltDiscount = SpecialPriceListType::findOne(['key' => 'discount']);
-        $spltDelivery = SpecialPriceListType::findOne(['key' => 'delivery']);
+
         $this->batchInsert(
             SpecialPriceList::tableName(),
             [
                 'object_id',
                 'class',
                 'sort_order',
-                'type_id',
+                'type',
                 'handler',
             ],
             [
@@ -3158,30 +3102,31 @@ class m150531_084444_new_init extends Migration
                     \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id,
                     'app\modules\shop\helpers\PriceHandlers',
                     5,
-                    $spltCore->id,
+                    'core',
                     'getCurrencyPriceProduct',
+                ],
+                [
+                    \app\models\Object::getForClass(\app\modules\shop\models\Order::className())->id,
+                    'app\modules\shop\helpers\PriceHandlers',
+                    10,
+                    'delivery',
+                    'getDeliveryPriceOrder',
                 ],
                 [
                     \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id,
                     'app\modules\shop\helpers\PriceHandlers',
-                    10,
-                    $spltDiscount->id,
+                    15,
+                    'discount',
                     'getDiscountPriceProduct',
                 ],
                 [
                     \app\models\Object::getForClass(\app\modules\shop\models\Order::className())->id,
                     'app\modules\shop\helpers\PriceHandlers',
-                    15,
-                    $spltDiscount->id,
+                    20,
+                    'discount',
                     'getDiscountPriceOrder',
                 ],
-                [
-                    \app\models\Object::getForClass(\app\modules\shop\models\Order::className())->id,
-                    'app\modules\shop\helpers\PriceHandlers',
-                    12,
-                    $spltDelivery->id,
-                    'getDeliveryPriceOrder',
-                ]
+
             ]
         );
         $this->insert(
@@ -3302,7 +3247,7 @@ class m150531_084444_new_init extends Migration
             Events::tableName(),
             [
                 'owner_class_name' => 'app\modules\shop\ShopModule',
-                'event_name' => 'order_stage_paymentpay',
+                'event_name' => 'order_stage_payment_pay',
                 'event_class_name' => 'app\modules\shop\events\StagePaymentPay',
                 'selector_prefix' => '',
                 'event_description' => '',

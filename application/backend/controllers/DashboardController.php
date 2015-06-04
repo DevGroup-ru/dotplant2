@@ -5,7 +5,6 @@ namespace app\backend\controllers;
 use app\backend\actions\FlushCacheAction;
 use app\backend\models\Notification;
 use app\components\Helper;
-use app\models\Config;
 use vova07\imperavi\actions\GetAction;
 use Yii;
 use yii\filters\AccessControl;

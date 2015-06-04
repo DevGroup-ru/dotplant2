@@ -2,12 +2,7 @@
 
 namespace app\modules\shop\models;
 
-
-use app\modules\shop\models\Discount;
-use app\modules\shop\models\Order;
-use app\modules\shop\models\Product;
 use yii\data\ActiveDataProvider;
-use yii\db\Query;
 
 /**
  * Class AbstractDiscountType
@@ -17,22 +12,36 @@ use yii\db\Query;
  */
 abstract class AbstractDiscountType extends \yii\db\ActiveRecord
 {
-
-    static public function getType()
-    {
-        return DiscountType::find()->where(['class'=>self::className()])->one();
-    }
-
-    static public function searchDiscountFilter($discount_id)
-    {
-        return   new ActiveDataProvider([
-            'query' => self::find()->where(['discount_id'=>$discount_id]),
-        ]);
-    }
-
-
+    /**
+     * @return string
+     */
     abstract public function getFullName();
 
+    /**
+     * @param Discount $discount
+     * @param Product $product
+     * @param Order $order
+     * @return boolean
+     */
+    abstract public function checkDiscount(Discount $discount, Product $product = null, Order $order = null);
 
-   abstract public function checkDiscount(Discount $discount, Product $product = null, Order $order = null);
+    /**
+     * @TODO: What this function for?
+     * @return DiscountType|null
+     */
+    static public function getType()
+    {
+        return DiscountType::findOne(['class' => static::className()]);
+    }
+
+    /**
+     * @param integer $discount_id
+     * @return ActiveDataProvider
+     */
+    static public function searchDiscountFilter($discount_id)
+    {
+        return new ActiveDataProvider([
+            'query' => static::find()->where(['discount_id' => $discount_id]),
+        ]);
+    }
 }

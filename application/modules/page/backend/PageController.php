@@ -3,7 +3,6 @@
 namespace app\modules\page\backend;
 
 use app\backend\events\BackendEntityEditEvent;
-use app\models\Config;
 use app\models\Object;
 use app\modules\page\models\Page;
 use app\models\ViewObject;

@@ -6,7 +6,6 @@ use app\backend\traits\BackendRedirect;
 use app\models\SpamChecker;
 use Yii;
 use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -36,13 +35,6 @@ class SpamCheckerController extends Controller
         $searchModel = new SpamChecker;
         $params = Yii::$app->request->get();
         $dataProvider = $searchModel->search($params);
-        $post = Yii::$app->request->post();
-        if (ArrayHelper::keyExists($searchModel->formName(), $post)) {
-            SpamChecker::setEnabledApiId(
-                ArrayHelper::getValue($post, $searchModel->formName() . '.enabledApiId')
-            );
-        }
-
         return $this->render(
             'index',
             [

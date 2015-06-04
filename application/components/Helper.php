@@ -3,6 +3,7 @@
 namespace app\components;
 
 use Yii;
+use yii\base\Model;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
@@ -117,5 +118,22 @@ class Helper
             }
         }
         return $thumbFilename;
+    }
+
+    /**
+     * @param Model $model
+     * @param string $glue
+     * @return string
+     */
+    public static function formatModelErrors(Model $model, $glue = PHP_EOL)
+    {
+        return implode($glue,
+            array_map(
+                function($item) {
+                    return is_array($item) ? array_pop($item) : $item;
+                },
+                $model->getErrors()
+            )
+        );
     }
 }

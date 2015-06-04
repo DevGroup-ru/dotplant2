@@ -2,7 +2,6 @@
 
 namespace app\modules\page\components;
 
-use app\models\Config;
 use app\modules\page\models\Page;
 use Yii;
 use yii\web\UrlRuleInterface;
@@ -11,6 +10,7 @@ class PageRule implements UrlRuleInterface
 {
     public function createUrl($manager, $route, $params)
     {
+        /** @var Page $model */
         if ($route == 'page/page/show' || $route == 'page/page/list') {
             if (isset($params['model'])) {
                 $model = $params['model'];
@@ -33,9 +33,9 @@ class PageRule implements UrlRuleInterface
 
     public function parseRequest($manager, $request)
     {
-        if($request->serverName == Yii::$app->getModule('core')->serverName){
+        if ($request->serverName == Yii::$app->getModule('core')->serverName) {
             $_path = $request->getPathInfo();
-        }else{
+        } else {
             $_path = $request->absoluteUrl;
         }
         $_path = !empty($_path) ? $_path : ':mainpage:';

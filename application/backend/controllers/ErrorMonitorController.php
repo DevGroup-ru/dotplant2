@@ -3,7 +3,6 @@
 namespace app\backend\controllers;
 
 use app\backend\models\ErrorMonitor;
-use app\backend\models\ErrorMonitorConfig;
 use app\components\SearchModel;
 use app\models\ErrorLog;
 use app\models\ErrorUrl;
@@ -74,18 +73,4 @@ class ErrorMonitorController extends Controller
         );
     }
 
-    public function actionConfig()
-    {
-        $model = new ErrorMonitorConfig();
-        if ($model->load($_GET)) {
-            $model->saveConfig();
-        }
-
-        return $this->render(
-            'config',
-            [
-                'model' => $model
-            ]
-        );
-    }
 }

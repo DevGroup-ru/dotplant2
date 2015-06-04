@@ -28,10 +28,20 @@ class ConfigConfigurationModel extends BaseConfigurationModel
 
     public $fileUploadPath = 'upload/user-uploads/';
 
-    public $spamCheckerApiKey = '';
-    public $spamCheckerInterpretFields = '';
+    public $spamCheckerApiKey;
 
     public $serverName = 'localhost';
+
+    public $daysToStoreSubmissions;
+
+    public $errorMonitorEnabled = false;
+    public $emailNotifyEnabled = false;
+    public $devmail = '';
+    public $notifyOnlyHttpCodes = '';
+    public $numberElementsToStore = 5;
+    public $immediateNotice = false;
+    public $immediateNoticeLimitPerUrl = 10;
+    public $httpCodesForImmediateNotify = '404,500';
 
     /**
      * @inheritdoc
@@ -58,15 +68,15 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             [
                 [
                     'autoCompleteResultsCount',
+                    'daysToStoreSubmissions',
                 ],
                 'integer',
             ],
             [
                 [
                     'spamCheckerApiKey',
-                    'spamCheckerInterpretFields',
                 ],
-                'safe',
+                'string',
             ],
         ];
     }

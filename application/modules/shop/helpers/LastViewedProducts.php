@@ -2,7 +2,6 @@
 
 namespace app\modules\shop\helpers;
 
-use app\models\Config;
 use Yii;
 use yii\helpers\ArrayHelper;
 

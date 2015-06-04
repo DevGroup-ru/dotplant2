@@ -190,7 +190,7 @@ class m150515_141224_order_customers extends Migration
         // Stage PaymentPay
         $this->insert('{{%events}}', [
             'owner_class_name' => 'app\modules\shop\ShopModule',
-            'event_name' => 'order_stage_paymentpay',
+            'event_name' => 'order_stage_payment_pay',
             'event_class_name' => 'app\modules\shop\events\StagePaymentPay',
             'selector_prefix' => '',
             'event_description' => '',

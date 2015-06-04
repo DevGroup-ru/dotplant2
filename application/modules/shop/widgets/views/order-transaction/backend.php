@@ -21,7 +21,17 @@
                 'panel' => false
             ],
             'columns' => [
-                'id',
+                [
+                    'attribute' => 'id',
+                    'value' => function ($model, $key, $index, $column) {
+                        /** @var \app\modules\shop\models\OrderTransaction $model */
+                        return \yii\helpers\Html::a($model->id, \yii\helpers\Url::toRoute(
+                            ['/shop/payment/transaction', 'id' => $model->id, 'othash' => $model->generateHash()]
+                        ));
+                    },
+                    'format' => 'raw',
+                    'encodeLabel' => false,
+                ],
                 [
                     'attribute' => 'status',
                     'value' => function ($model, $key, $index, $column) {

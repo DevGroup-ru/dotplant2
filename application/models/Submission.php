@@ -62,7 +62,7 @@ class Submission extends \yii\db\ActiveRecord
                 ],
                 'string'
             ],
-            [['spam'], "string"]
+            [['spam'], 'integer']
         ];
     }
 

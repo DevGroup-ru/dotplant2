@@ -93,6 +93,11 @@ class ShopModule extends BaseModule implements BootstrapInterface
     public $showDeletedOrders = 0;
 
     /**
+     * @var array
+     */
+    public $ymlConfig = [];
+
+    /**
      * @inheritdoc
      */
     public function behaviors()
@@ -112,6 +117,9 @@ class ShopModule extends BaseModule implements BootstrapInterface
      */
     public function bootstrap($app)
     {
+        /**
+         * Move orders/order params from guest to logged/signed user
+         */
         Event::on(
             \yii\web\User::className(),
             \yii\web\User::EVENT_AFTER_LOGIN,
@@ -128,5 +136,16 @@ class ShopModule extends BaseModule implements BootstrapInterface
                 }
             }
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        if (\Yii::$app instanceof \yii\console\Application) {
+            $this->controllerMap = [];
+        }
     }
 }

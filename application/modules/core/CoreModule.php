@@ -25,21 +25,32 @@ class CoreModule extends BaseModule implements BootstrapInterface
 
     public $controllerMap = [
         'backend-extensions' => 'app\modules\core\backend\ExtensionsController',
+        'backend-routing' => 'app\modules\core\backend\RoutingController',
     ];
 
     public $autoCompleteResultsCount = 5;
 
     public $fileUploadPath = 'upload/user-uploads/';
 
-    public $spamCheckerApiKey = '';
-    public $spamCheckerInterpretFields = '';
+    public $spamCheckerApiKey;
 
     public $serverName = 'localhost';
+
+    public $daysToStoreSubmissions = 28;
 
     /**
      * @var string Internal encoding. It's used for mbstring functions.
      */
     public $internalEncoding = 'UTF-8';
+
+    public $errorMonitorEnabled = false;
+    public $emailNotifyEnabled = false;
+    public $devmail = '';
+    public $notifyOnlyHttpCodes = '';
+    public $numberElementsToStore = 5;
+    public $immediateNotice = false;
+    public $immediateNoticeLimitPerUrl = 10;
+    public $httpCodesForImmediateNotify = '404,500';
 
     /**
      * @inheritdoc

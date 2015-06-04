@@ -3,12 +3,22 @@
 namespace app\modules\shop\controllers;
 
 use app\models\Object;
+use app\modules\core\behaviors\DisableRobotIndexBehavior;
 use app\modules\shop\models\Product;
 use Yii;
 use yii\web\Controller;
 
 class ProductCompareController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => DisableRobotIndexBehavior::className(),
+            ]
+        ];
+    }
+
     /**
      * @param $id
      * @param null|string $backUrl

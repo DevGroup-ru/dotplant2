@@ -17,6 +17,41 @@ use yii\helpers\ArrayHelper;
  */
 class DiscountCode extends AbstractDiscountType
 {
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return '{{%discount_code}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['code', 'discount_id'], 'required'],
+            [['discount_id', 'maximum_uses'], 'integer'],
+            [['valid_from', 'valid_till'], 'safe'],
+            [['code'], 'string', 'max' => 255]
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'code' => Yii::t('app', 'Code'),
+            'discount_id' => Yii::t('app', 'Discount ID'),
+            'valid_from' => Yii::t('app', 'Valid From'),
+            'valid_till' => Yii::t('app', 'Valid Till'),
+            'maximum_uses' => Yii::t('app', 'Maximum Uses'),
+        ];
+    }
 
     public function getFullName()
     {
@@ -43,27 +78,6 @@ class DiscountCode extends AbstractDiscountType
         return $result;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return '{{%discount_code}}';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return [
-            [['code', 'discount_id'], 'required'],
-            [['discount_id', 'maximum_uses'], 'integer'],
-            [['valid_from', 'valid_till'], 'safe'],
-            [['code'], 'string', 'max' => 255]
-        ];
-    }
-
     public function beforeDelete()
     {
         OrderCode::updateAll(
@@ -76,20 +90,5 @@ class DiscountCode extends AbstractDiscountType
         );
 
         return parent::beforeDelete();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => Yii::t('app', 'ID'),
-            'code' => Yii::t('app', 'Code'),
-            'discount_id' => Yii::t('app', 'Discount ID'),
-            'valid_from' => Yii::t('app', 'Valid From'),
-            'valid_till' => Yii::t('app', 'Valid Till'),
-            'maximum_uses' => Yii::t('app', 'Maximum Uses'),
-        ];
     }
 }

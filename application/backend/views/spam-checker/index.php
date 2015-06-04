@@ -5,14 +5,12 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  * @var $searchModel app\models\SpamChecker
  */
+
 use app\backend\components\Helper;
-use app\backend\widgets\BackendWidget;
 use app\backend\widgets\RemoveAllButton;
-use app\models\SpamChecker;
 use kartik\dynagrid\DynaGrid;
 use kartik\grid\CheckboxColumn;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Spam Checker Settings');
@@ -85,17 +83,6 @@ $this->endBlock();
                     ]
                 ]
             );?>
-            <?php BackendWidget::begin(['title' => Yii::t('app', 'Spam Checker Settings'), 'icon' => 'list']); ?>
-            <?php $form = ActiveForm::begin(['id' => 'spamchecker-form', 'type' => ActiveForm::TYPE_VERTICAL]); ?>
-
-            <?=$form->field($searchModel, 'enabledApiId')->dropDownList(SpamChecker::getAvailableApis());?>
-
-            <?=Html::submitButton(
-                Icon::show('save') . Yii::t('app', 'Save'),
-                ['class' => 'btn btn-primary']
-            )?>
-            <?php ActiveForm::end(); ?>
-            <?php BackendWidget::end(); ?>
 
         </div>
     </div>

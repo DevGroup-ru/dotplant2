@@ -25,13 +25,6 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
         return '{{%special_price_object}}';
     }
 
-    public function getSpecialPriceList()
-    {
-        return $this->hasOne(SpecialPriceList::className(), ['id'=>'special_price_list_id']);
-    }
-
-
-
     /**
      * @inheritdoc
      */
@@ -57,33 +50,44 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @return SpecialPriceList|null
+     */
+    public function getSpecialPriceList()
+    {
+        return $this->hasOne(SpecialPriceList::className(), ['id' => 'special_price_list_id']);
+    }
+
+    /**
+     * @param integer $special_price_list_id
+     * @param integer $object_model_id
+     * @param float $price
+     * @param string $name
+     */
     public static function setObject($special_price_list_id, $object_model_id, $price, $name)
     {
-        $object = self::find()
-            ->where(
-                [
-                    'special_price_list_id' => $special_price_list_id,
-                    'object_model_id' => $object_model_id
-                ]
-            )
-            ->one();
-
-        if (!$object) {
-            $object = new SpecialPriceObject();
+        $object = static::findOne([
+            'special_price_list_id' => $special_price_list_id,
+            'object_model_id' => $object_model_id
+        ]);
+        if (null === $object) {
+            $object = new static();
             $object->special_price_list_id = $special_price_list_id;
             $object->object_model_id = $object_model_id;
         }
         $object->price = $price;
         $object->name = $name;
         $object->save();
-
     }
 
+    /**
+     * @param integer $object_model_id
+     * @param string $type
+     * @return string
+     */
     public static function getSumPrice($object_model_id, $type)
     {
-        $sum = 0;
-
-        $objects = self::find()
+        $objects = static::find()
             ->select('price')
             ->where(
                 [
@@ -91,12 +95,36 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
                     'object_model_id' => $object_model_id
                 ]
             )
+            ->asArray()
             ->all();
 
-        foreach ($objects as $object) {
-            $sum += $object->price;
+        return array_reduce($objects,
+            function ($result, $item) {
+                return $result += $item['price'];
+            }, 0);
+    }
+
+    /**
+     * @param $model
+     * @return null
+     * @throws \Exception
+     */
+    public static function deleteAllByObject($model)
+    {
+        if (!isset($model->object) || empty($model->object)) {
+            return null;
+        }
+        $modelsFind = static::find()
+            ->joinWith(['specialPriceList'])
+            ->where(
+                [
+                    SpecialPriceList::tableName() . '.object_id' => $model->object->id,
+                    static::tableName() . '.object_model_id' => $model->id
+                ]
+            );
+        foreach ($modelsFind->all() as $objectPrice) {
+            $objectPrice->delete();
         }
 
-        return $sum;
     }
 }

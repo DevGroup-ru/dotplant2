@@ -1,15 +1,22 @@
 <?php
 
-namespace app\backend\models;
+namespace app\modules\shop\models;
 
-use app\models\Config;
+use app\modules\config\components\ConfigurationSaveEvent;
+use app\modules\config\helpers\ConfigurationUpdater;
+use app\modules\config\models\Configurable;
+use app\modules\shop\ShopModule;
 use yii;
 use yii\base\Model;
 
 class Yml extends Model
 {
+    /** @property array $attrStorage */
     private $attrStorage = [];
 
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         $rules = [
@@ -36,6 +43,9 @@ class Yml extends Model
         return $rules;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function attributes()
     {
         return [
@@ -58,6 +68,9 @@ class Yml extends Model
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function attributeLabels()
     {
         return [
@@ -81,11 +94,17 @@ class Yml extends Model
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function scenarios()
     {
         return parent::scenarios();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();
@@ -111,6 +130,9 @@ class Yml extends Model
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function __get($name)
     {
         if (isset($this->attrStorage[$name])) {
@@ -120,6 +142,9 @@ class Yml extends Model
         return parent::__get($name);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function __set($name, $value)
     {
         if (is_array($value)) {
@@ -136,6 +161,9 @@ class Yml extends Model
         return parent::__set($name, $value);
     }
 
+    /**
+     * @return array
+     */
     public function getOfferElements()
     {
         return [
@@ -147,27 +175,52 @@ class Yml extends Model
         ];
     }
 
+    /**
+     * @return bool
+     */
     public function saveConfig()
     {
-        $value = yii\helpers\Json::encode($this->attrStorage);
-        return Config::updateValue('shop.yml.config', $value);
-    }
-
-    public function loadConfig()
-    {
-        $value = Config::getValue('shop.yml.config');
-
-        if (empty($value)) {
+        /** @var ShopModule $module */
+        if (null === $module = Yii::$app->getModule('shop')) {
             return false;
         }
-
-        try {
-            $value = yii\helpers\Json::decode($value);
-            $this->attrStorage = $value;
-        } catch (yii\base\InvalidParamException $e) {
+        /** @var Configurable $configurable */
+        if (null === $configurable = Configurable::findOne(['module' => $module->id])) {
+            return false;
         }
+        /** @var ConfigConfigurationModel $configurableModel */
+        $configurableModel = $configurable->getConfigurableModel();
+        $config = $this->attrStorage;
+
+        yii\base\Event::on(
+            $configurableModel::className(),
+            $configurableModel->configurationSaveEvent(),
+            function (ConfigurationSaveEvent $event) use ($config)
+            {
+                /** @var ConfigConfigurationModel $model */
+                $model = $event->configurableModel;
+                $model->ymlConfig = $config;
+            }
+        );
+
+        $models = [$configurable];
+        return ConfigurationUpdater::updateConfiguration($models, false);
+    }
+
+    /**
+     * @return bool
+     */
+    public function loadConfig()
+    {
+        /** @var ShopModule $module */
+        if (null === $module = Yii::$app->getModule('shop')) {
+            return false;
+        }
+        if (empty($module->ymlConfig)) {
+            return false;
+        }
+        $this->attrStorage = $module->ymlConfig;
 
         return static::validate();
     }
 }
-?>
