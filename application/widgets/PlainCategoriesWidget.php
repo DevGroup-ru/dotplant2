@@ -20,7 +20,7 @@ class PlainCategoriesWidget extends Widget
 
         $cacheKey = "PlainCategoriesWidget:".$this->root_category_id.":".$this->viewFile;
         $result = Yii::$app->cache->get($cacheKey);
-        if (!is_array($result)) {
+        if ($result === false) {
             $categories = Category::getByParentId($this->root_category_id);
             $result = $this->render(
                 $this->viewFile,

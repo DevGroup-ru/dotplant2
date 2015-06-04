@@ -2,7 +2,9 @@
 
 use yii\helpers\Url;
 ?>
-
+<?php
+Yii::beginProfile('Categories-list');
+?>
 <ul class="categories-list">
     <?php foreach ($categories as $category): ?>
         <li>
@@ -12,3 +14,5 @@ use yii\helpers\Url;
         </li>
     <?php endforeach;?>
 </ul>
+<?php
+Yii::endProfile('Categories-list');
