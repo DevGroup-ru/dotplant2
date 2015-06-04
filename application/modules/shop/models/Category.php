@@ -135,6 +135,26 @@ class Category extends ActiveRecord
     /**
      * @inheritdoc
      */
+    public function beforeValidate()
+    {
+        if (empty($this->slug) && !empty($this->name)) {
+            $this->slug = Helper::createSlug($this->name);
+        }
+        if (empty($this->title) && !empty($this->name)) {
+            $this->title = $this->name;
+        }
+        if (empty($this->h1) && !empty($this->title)) {
+            $this->h1 = $this->title;
+        }
+        if (empty($this->breadcrumbs_label) && !empty($this->name)) {
+            $this->breadcrumbs_label = $this->name;
+        }
+        return parent::beforeValidate();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function attributeLabels()
     {
         return [
@@ -588,15 +608,13 @@ class Category extends ActiveRecord
     public static function createEmptyCategory($parentId = 0, $categoryGroupId = null, $name = 'Catalog', $dummyObject = false)
     {
         $categoryGroupId = null === $categoryGroupId ? CategoryGroup::getFirstModel()->id : intval($categoryGroupId);
-        $parent = static::findById($parentId, null);
-        $parentId = null === $parent ? intval($parentId) : $parent->id;
 
         $model = new static();
-            $model->loadDefaultValues();
-            $model->parent_id = $parentId;
-            $model->category_group_id = $categoryGroupId;
-            $model->h1 = $model->title = $model->name = $name;
-            $model->slug = Helper::createSlug($model->name);
+        $model->loadDefaultValues();
+        $model->parent_id = $parentId;
+        $model->category_group_id = $categoryGroupId;
+        $model->h1 = $model->title = $model->name = $name;
+        $model->slug = Helper::createSlug($model->name);
 
         if (!$dummyObject) {
             if (!$model->save()) {
