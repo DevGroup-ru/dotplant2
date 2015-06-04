@@ -4,6 +4,7 @@
  */
 use kartik\helpers\Html;
 use kartik\icons\Icon;
+use kartik\select2\Select2;
 use yii\helpers\Url;
 
 ?>
@@ -33,19 +34,21 @@ use yii\helpers\Url;
                     <label class="col-md-2 control-label"><?=$prop->name?></label>
 
                     <div class="col-md-10">
-                        <?php foreach ($property_values as $property_value) : ?>
-                            <?php
-                            $checked = false;
-                            if (isset($optionGenerate['values'][$prop->id][$property_value['id']])) {
-                                $checked = true;
-                            }
-                            ?>
-                            <?=Html::checkbox(
-                                'GeneratePropertyValue[' . $prop->id . '][' . $property_value['id'] . ']',
-                                $checked,
-                                ['label' => $property_value['name']]
-                            )?>
-                        <?php endforeach; ?>
+                        <div class="scrollable-options-list">
+                            <?php foreach ($property_values as $property_value) : ?>
+                                <?php
+                                $checked = false;
+                                if (isset($optionGenerate['values'][$prop->id][$property_value['id']])) {
+                                    $checked = true;
+                                }
+                                ?>
+                                <?=Html::checkbox(
+                                    'GeneratePropertyValue[' . $prop->id . '][' . $property_value['id'] . ']',
+                                    $checked,
+                                    ['label' => $property_value['name']]
+                                )?>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
             <?php

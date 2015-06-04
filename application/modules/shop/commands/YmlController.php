@@ -1,8 +1,8 @@
 <?php
 
-namespace app\commands;
+namespace app\modules\shop\commands;
 
-use app\backend\models\Yml;
+use app\modules\shop\models\Yml;
 use app\modules\shop\models\Category;
 use app\modules\shop\models\Product;
 use yii\helpers\Url;
@@ -40,14 +40,10 @@ class YmlController extends \yii\console\Controller
             $result = call_user_func($tpl, $result);
         } else {
             $result = htmlspecialchars(trim(strip_tags($result)));
-            $result = sprintf($tpl, $result);
+            $result = empty($result) ? $result : sprintf($tpl, $result);
         }
 
-        if (!empty($result)) {
-            return $result;
-        }
-
-        return '';
+        return $result;
     }
 
     public function actionGenerate()
@@ -77,7 +73,7 @@ class YmlController extends \yii\console\Controller
 TPL;
 
         $section_categories = '';
-        $categories = Category::find()->where(['active' => 1, 'is_deleted' => 0])->asArray();
+        $categories = Category::find()->where(['active' => 1])->asArray();
         /** @var Category $row */
         foreach ($categories->each(500) as $row) {
             $section_categories .= '<category id="'.$row['id'].'" '.(0 != $row['parent_id'] ? 'parentId="'.$row['parent_id'].'"' : '').'>'.htmlspecialchars(trim(strip_tags($row['name']))).'</category>' . PHP_EOL;
@@ -102,7 +98,7 @@ TPL;
 //        $offer_type = ('simplified' === $ymlConfig->general_yml_type) ? '' : 'type="'.$ymlConfig->general_yml_type.'"';
         $offer_type = ''; // временно, пока не будет окончательно дописан механизм для разных типов
 
-        $products = Product::find()->where(['active' => 1, 'is_deleted' => 0]);
+        $products = Product::find()->where(['active' => 1]);
         /** @var Product $row */
         foreach ($products->each(100) as $row) {
             $price = $this->getByYmlParam($ymlConfig, 'offer_price', $row, 0);
@@ -120,6 +116,9 @@ TPL;
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_picture', $row,
                 function($value) use ($ymlConfig)
                 {
+                    if (empty($value)) {
+                        return $value;
+                    }
                     $value = urlencode($value);
                     $value = '<picture>'.rtrim($ymlConfig->shop_url, '/').$value.'</picture>' . PHP_EOL;
                     return $value;
@@ -176,4 +175,3 @@ TPL;
         );
     }
 }
-?>
