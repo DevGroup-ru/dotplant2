@@ -3603,6 +3603,7 @@ class m150531_084444_new_init extends Migration
                 ['backend', '8', 'Backend', '1'],
                 ['review', '9', 'Reviews', '1'],
                 ['data', '10', 'Data import/export', '1'],
+                ['background', 17, 'Background tasks', 1],
             ]
         );
         $this->insert(

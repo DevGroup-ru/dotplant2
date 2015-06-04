@@ -45,7 +45,12 @@ class SeoModule extends BaseModule implements BootstrapInterface
             Application::EVENT_BEFORE_ACTION,
             function () use ($app) {
                 if ('cart' === $app->requestedAction->controller->id && 'payment-success' === $app->requestedAction->id) {
-                    $app->getView()->on(View::EVENT_END_BODY, [ManageController::className(), 'renderEcommerceCounters'], ['orderId' => intval(Yii::$app->request->get('id'))]);
+                    $app->getView()
+                        ->on(
+                            View::EVENT_END_BODY,
+                            [ManageController::className(), 'renderEcommerceCounters'],
+                            ['orderId' => intval(Yii::$app->request->get('id'))]
+                        );
                 }
             }
         );

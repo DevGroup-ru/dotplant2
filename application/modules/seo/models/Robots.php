@@ -2,70 +2,58 @@
 
 namespace app\modules\seo\models;
 
-use yii\caching\TagDependency;
-use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 /**
- * Class Robots
- * @package app\modules\seo\models
- * @property string $key = self::KEY_ROBOTS
- * @property string $value
+ * @inheritdoc
  */
 class Robots extends Config
 {
     const KEY_ROBOTS = 'robots.txt';
 
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();
         $this->key = self::KEY_ROBOTS;
     }
 
+    /**
+     * @return string
+     */
     public static function getRobots()
     {
-        /* @var $robots \app\modules\seo\models\Config|null */
-
-        $cacheKey = Yii::$app->getModule('seo')->cacheConfig['robotsCache']['name'];
-
-        $robots = Yii::$app->getCache()->get($cacheKey);
-        if (!$robots) {
-            $robots = self::findOne(self::KEY_ROBOTS);
-            Yii::$app->getCache()->set(
-                $cacheKey,
-                $robots,
-                Yii::$app->getModule('seo')->cacheConfig['robotsCache']['expire'],
-                new TagDependency([
-                    'tags' => [
-                        ActiveRecordHelper::getCommonTag(Config::className()),
-                    ]
-                ])
-            );
-        }
-        if ($robots === null) {
-            return '';
-        } else {
-            return $robots->value;
-        }
+        /** @var Config $model */
+        $model = self::getModel();
+        return empty($model) ? '' : $model->value;
     }
 
+    /**
+     * @param $text
+     * @return bool
+     */
     public static function setRobots($text)
     {
-        $robots = self::findOne(self::KEY_ROBOTS);
-        if ($robots === null) {
-            $robots = new Config(
-                [
-                    'key' => self::KEY_ROBOTS,
-                ]
-            );
-        }
-        $robots->value = $text;
-        TagDependency::invalidate(
-            Yii::$app->cache,
-            [
-                ActiveRecordHelper::getCommonTag(static::className())
-            ]
-        );
-        return $robots->save();
+        $model = static::getModelByKey(self::KEY_ROBOTS);
+        $model = !empty($model) ?: new static();
+        $model->value = $text;
+        return $model->save();
     }
 
+    /**
+     * @return Config|null
+     */
+    static public function getModel()
+    {
+        return parent::getModelByKey(self::KEY_ROBOTS, Yii::$app->getModule('seo')->cacheConfig['robotsCache']['expire']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    static public function removeCacheByKey($key = null)
+    {
+        return parent::removeCacheByKey(self::KEY_ROBOTS);
+    }
 }

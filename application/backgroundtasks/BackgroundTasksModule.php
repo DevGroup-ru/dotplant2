@@ -23,6 +23,22 @@ class BackgroundTasksModule extends BackendModule
      */
     public $manageRoles = [];
 
+    public $daysToStoreNotify = 28;
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'configurableModule' => [
+                'class' => 'app\modules\config\behaviors\ConfigurableModuleBehavior',
+                'configurationView' => '@app/backgroundtasks/views/configurable/_config',
+                'configurableModel' => 'app\backgroundtasks\models\ConfigConfigurationModel',
+            ]
+        ];
+    }
+
     /**
      * @inheritdoc
      */

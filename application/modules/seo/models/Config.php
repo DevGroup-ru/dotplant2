@@ -14,7 +14,10 @@ use Yii;
  */
 class Config extends \yii\db\ActiveRecord
 {
-    static private $modelMap = [];
+    /**
+     * @property array $modelMap
+     */
+    static protected $modelMap = [];
 
     /**
      * @inheritdoc
@@ -47,51 +50,56 @@ class Config extends \yii\db\ActiveRecord
         ];
     }
 
-    public function beforeSave($insert)
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
     {
-
-        TagDependency::invalidate(
-            Yii::$app->cache,
+        return [
             [
-                ActiveRecordHelper::getCommonTag($this->className())
-            ]
-        );
-
-        TagDependency::invalidate(
-            Yii::$app->cache,
-            [
-                ActiveRecordHelper::getCommonTag($this->className()),
-                'Config:'.$this->key
-            ]
-        );
-
-        return parent::beforeSave($insert);
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+        ];
     }
 
-    static public function getModelByKey($key = null)
+    /**
+     * @param string|null $key
+     * @return Config|null
+     */
+    static public function getModelByKey($key = null, $cacheTime = 0)
     {
         if (empty($key)) {
             return null;
         }
 
         if (!isset(static::$modelMap[$key])) {
-            $cacheKey = static::className() . ':' . $key;
+            $cacheKey = static::tableName() . ':' . $key;
             if (false === $cache = Yii::$app->cache->get($cacheKey)) {
                 $cache = static::findOne(['key' => $key]);
                 if (empty($cache)) {
                     return null;
                 }
 
-                Yii::$app->cache->set($cacheKey, $cache, 0,
+                Yii::$app->cache->set(
+                    $cacheKey,
+                    $cache,
+                    intval($cacheTime),
                     new TagDependency(['tags' => [
-                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::tableName())
                     ]])
                 );
             }
-
             static::$modelMap[$key] = $cache;
         }
-
         return static::$modelMap[$key];
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
+    static public function removeCacheByKey($key = null)
+    {
+        return empty($key) ? false : Yii::$app->cache->delete(static::tableName() . ':' . $key);
     }
 }

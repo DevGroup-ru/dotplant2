@@ -389,14 +389,18 @@ class ManageController extends BackendController
      */
     public function actionRobots()
     {
-        $model = Config::findOne(Robots::KEY_ROBOTS);
+        $model = Robots::getModel();
         if ($model === null) {
             $model = new Robots();
         }
-        if ($model->load($_POST) && $model->validate()) {
-            $model->save();
-            return $this->redirect(['robots']);
+
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                $model->save();
+                return $this->refresh();
+            }
         }
+
         return $this->render('robots', ['model' => $model]);
     }
 
@@ -406,7 +410,7 @@ class ManageController extends BackendController
      */
     public function actionFlushRobotsCache()
     {
-        return \Yii::$app->getCache()->delete(\Yii::$app->getModule('seo')->cacheConfig['robotsCache']['name']);
+        return Robots::removeCacheByKey();
     }
 
     /**

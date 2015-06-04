@@ -30,7 +30,7 @@ class SitemapHelper
     private static function setChanged()
     {
         /* @var $changed Config */
-        $changed = Config::findOne(self::SITEMAP_CHANGED);
+        $changed = Config::getModelByKey(self::SITEMAP_CHANGED);
         if ($changed === null) {
             $changed = new Config(
                 [

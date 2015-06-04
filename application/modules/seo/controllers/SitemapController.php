@@ -43,7 +43,7 @@ class SitemapController extends Controller
             return true;
         } else {
             /* @var $sitemapChanged Config */
-            $sitemapChanged = Config::findOne(SitemapHelper::SITEMAP_CHANGED);
+            $sitemapChanged = Config::getModelByKey(SitemapHelper::SITEMAP_CHANGED);
 
             if ($sitemapChanged !== null
                 && (
