@@ -32,6 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <?=
         TreeWidget::widget([
             'treeDataRoute' => ['/page/backend/getTree', 'selected_id' => $parent_id],
+            'changeParentAction' => '/page/backend/move',
+            'reorderAction' => '/page/backend/reorder',
             'contextMenuItems' => [
                 'edit' => [
                     'label' => 'Edit',
