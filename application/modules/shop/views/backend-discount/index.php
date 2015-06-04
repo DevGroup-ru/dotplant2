@@ -77,9 +77,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'value',
                 ],
                 [
-                    'class' => 'yii\grid\DataColumn',
+                    'class' => \kartik\grid\BooleanColumn::className(),
                     'attribute' => 'value_in_percent',
-                    'value' => function($model, $key, $index, $column){ return $model->value_in_percent == 1 ? '%' : 'sum'; }
                 ],
                 [
                     'class' => 'app\backend\components\ActionColumn',

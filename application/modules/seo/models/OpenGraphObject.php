@@ -17,27 +17,6 @@ use Yii;
 class OpenGraphObject extends \yii\db\ActiveRecord
 {
 
-    public static function getDataByModel($model)
-    {
-        $model = self::find()
-            ->where(
-                [
-                    'object_id'=> Object::getForClass($model::className())
-                ]
-            )->one();
-
-
-        $relationData = json_decode($model->relation_data);
-
-
-        foreach ($relationData as $data) {
-
-        }
-
-
-    }
-
-
     /**
      * @inheritdoc
      */

@@ -2,20 +2,26 @@
 
 namespace app\modules\seo\helpers;
 
-use app\modules\seo\models\OpenGraphObject;
 use Yii;
+use yii\helpers\Html;
 
 class HtmlHelper
 {
 
+    public static $htmlOptions = [];
+
+    public static function registerHtmlOptions()
+    {
+        return implode(' ', static::$htmlOptions);
+    }
+
     public static function registerOpenGraph($title = '', $url = '', $image = '', $description = '', $type = 'website')
     {
-
         if (!empty($title)) {
             Yii::$app->view->registerMetaTag(
                 [
                     'property' => 'og:title',
-                    'content' => $title
+                    'content' => Html::encode($title)
                 ]
             );
         }
@@ -27,7 +33,6 @@ class HtmlHelper
                 ]
             );
         }
-
         if (!empty($url)) {
             Yii::$app->view->registerMetaTag(
                 [
@@ -44,21 +49,16 @@ class HtmlHelper
                 ]
             );
         }
-
         if (!empty($description)) {
             Yii::$app->view->registerMetaTag(
                 [
-                    'property' => 'og:url',
-                    'content' => $description
+                    'property' => 'og:description',
+                    'content' => Html::encode($description)
                 ]
             );
         }
 
-    }
-
-    public static function registerOpenGraphByModel($model)
-    {
-        OpenGraphObject::getDataByModel($model);
+        static::$htmlOptions[] = 'prefix="og: http://ogp.me/ns#"';
     }
 
 

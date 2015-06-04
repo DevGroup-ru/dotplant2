@@ -32,6 +32,7 @@ class DiscountCode extends AbstractDiscountType
     {
         return [
             [['code', 'discount_id'], 'required'],
+            [['code'], 'unique'],
             [['discount_id', 'maximum_uses'], 'integer'],
             [['valid_from', 'valid_till'], 'safe'],
             [['code'], 'string', 'max' => 255]

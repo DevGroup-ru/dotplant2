@@ -114,6 +114,7 @@ class ImageDropzone extends DropZone
             $this->storedFiles[] = [
                 'id' => $file->id,
                 'name' => $file->filename,
+                'file' => $file->file,
                 'thumbnail' => $thumbnail_src,
                 'description' => $file->image_description,
             ];
@@ -133,7 +134,7 @@ class ImageDropzone extends DropZone
                 'acceptedFiles' => 'image/*',
                 'params' => $params,
                 'previewTemplate' => '<div class="file-row">
-                        ' . Html::input('hidden', 'id[]') . '
+                        ' . Html::input('hidden', 'id[]') . Html::input('hidden', 'file') . '
                         <!-- This is used as the file preview template -->
                         <div>
                             <span class="preview"><img style="width: 80px; height: 80px;" data-dz-thumbnail /></span>
