@@ -118,7 +118,18 @@ class Order extends \yii\db\ActiveRecord
                 ],
                 'required'
             ],
-            [['user_id', 'customer_id', 'contragent_id', 'order_stage_id', 'payment_type_id', 'assigned_id', 'tax_id'], 'integer'],
+            [
+                [
+                    'user_id',
+                    'customer_id',
+                    'contragent_id',
+                    'order_stage_id',
+                    'payment_type_id',
+                    'assigned_id',
+                    'tax_id'
+                ],
+                'integer'
+            ],
             [['start_date', 'end_date', 'update_date'], 'safe'],
             [['total_price', 'items_count', 'total_payed'], 'number'],
             [['external_id'], 'string', 'max' => 38],
@@ -345,7 +356,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public static function create($throwException = true, $assignToUser = true)
     {
-        TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
+        TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
         $initialOrderStage = OrderStage::getInitialStage();
         if (is_null($initialOrderStage)) {
             throw new Exception('Initial order stage not found');
@@ -436,7 +447,7 @@ class Order extends \yii\db\ActiveRecord
 
         $event = new OrderCalculateEvent();
         $event->order = $this;
-        $event->price = PriceHelper::getOrderPrice($this,SpecialPriceList::TYPE_CORE);
+        $event->price = PriceHelper::getOrderPrice($this, SpecialPriceList::TYPE_CORE);
         EventTriggeringHelper::triggerSpecialEvent($event);
 
         $this->items_count = $itemsCount;
@@ -445,7 +456,7 @@ class Order extends \yii\db\ActiveRecord
         $event->state = OrderCalculateEvent::AFTER_CALCULATE;
         EventTriggeringHelper::triggerSpecialEvent($event);
 
-        TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
+        TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
         return $callSave ? $this->save(true, ['items_count', 'total_price', 'total_price_with_shipping']) : true;
     }
 
@@ -455,7 +466,7 @@ class Order extends \yii\db\ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-        TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
+        TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
         parent::afterSave($insert, $changedAttributes);
 
         if (!$insert && !empty($changedAttributes['user_id']) && 0 === intval($changedAttributes['user_id'])) {
@@ -465,6 +476,15 @@ class Order extends \yii\db\ActiveRecord
                 $customer->save();
             }
         }
+    }
+
+    public function afterDelete()
+    {
+        foreach ($this->items as $item) {
+            $item->delete();
+        }
+        SpecialPriceObject::deleteAllByObject($this);
+        return parent::afterDelete();
     }
 
     /**

@@ -75,39 +75,6 @@ class SpecialPriceList extends \yii\db\ActiveRecord
     }
 
     /**
-     * @TODO: What this function for? It's query only by 2 non-unique values!
-     * @param $class
-     * @param $object_id
-     * @return SpecialPriceList|null
-     */
-    public static function getModel($class, $object_id)
-    {
-        $cacheKey = static::className() .'_'. $class .'_'. $object_id;
-
-        if (false === $result = Yii::$app->cache->get($cacheKey)) {
-            $result = static::findOne(['class' => $class, 'object_id' => $object_id]);
-            if (null === $result) {
-                return null;
-            }
-
-            Yii::$app->cache->set(
-                $cacheKey,
-                $result,
-                86400,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(static::className())
-                        ]
-                    ]
-                )
-            );
-        }
-        return  $result;
-    }
-
-    /**
-     * @TODO: Why not use ENUM and delete table special_price_list_type?
      * @param string $key
      * @return SpecialPriceList[]|array
      */

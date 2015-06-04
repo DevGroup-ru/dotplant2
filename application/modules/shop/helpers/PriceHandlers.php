@@ -184,7 +184,7 @@ class PriceHandlers
                         ->id;
 
 
-                    if ($discountFlag === true) {
+                    if ($discountFlag === true && $event->price > 0) {
                         $oldPrice = $event->price;
                         $deliveryPrice = SpecialPriceObject::getSumPrice(
                             $event->order->id,

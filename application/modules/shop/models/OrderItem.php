@@ -96,15 +96,15 @@ class OrderItem extends ActiveRecord
             $this->quantity
         );
         $this->discount_amount = ($this->quantity * $this->price_per_pcs) - $this->total_price;
-        $this->total_price_without_discount = $this->total_price - $this->discount_amount;
+        $this->total_price_without_discount = $this->total_price + $this->discount_amount;
         return parent::beforeValidate();
     }
 
     public function afterDelete()
     {
-
-        if (!self::find()->where(['order_id' => $this->order_id])->one()) {
-           /** todo delete SpecialPriceObject */
+        SpecialPriceObject::deleteAllByObject($this);
+        if (!static::find()->where(['order_id' => $this->order_id])->one()) {
+            SpecialPriceObject::deleteAllByObject($this->order);
         }
         return parent::afterDelete();
     }

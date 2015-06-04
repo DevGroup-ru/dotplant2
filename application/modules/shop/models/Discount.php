@@ -202,7 +202,7 @@ class Discount extends \yii\db\ActiveRecord
     public function search($params)
     {
         /* @var $query \yii\db\ActiveQuery */
-        $query = self::find();
+        $query = static::find();
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,

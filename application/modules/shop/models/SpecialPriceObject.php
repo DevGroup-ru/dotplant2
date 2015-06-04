@@ -99,9 +99,27 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
             ->all();
 
         return array_reduce($objects,
-            function($result, $item)
-            {
+            function ($result, $item) {
                 return $result += $item['price'];
             }, 0);
+    }
+
+    public static function deleteAllByObject($model)
+    {
+        if (!isset($model->object) || empty($model->object)) {
+            return null;
+        }
+        $modelsFind = static::find()
+            ->joinWith(['specialPriceList'])
+            ->where(
+                [
+                    SpecialPriceList::tableName() . '.object_id' => $model->object->id,
+                    static::tableName() . '.object_model_id' => $model->id
+                ]
+            );
+        foreach ($modelsFind->all() as $objectPrice) {
+            $objectPrice->delete();
+        }
+
     }
 }
