@@ -2,6 +2,7 @@
 
 namespace app\extensions\DefaultTheme\models;
 
+use app\components\ViewElementsGathener;
 use app\extensions\DefaultTheme\components\BaseWidget;
 use app\traits\IdentityMap;
 use Yii;
@@ -118,6 +119,7 @@ class ThemeParts extends \yii\db\ActiveRecord
     {
         $parts = static::getAllParts();
         Yii::beginProfile('Render theme part:' . $key);
+        Yii::trace('Render theme part:' . $key);
         /** @var ThemeParts $model */
         $model = null;
         foreach ($parts as $part) {
@@ -130,12 +132,24 @@ class ThemeParts extends \yii\db\ActiveRecord
             throw new InvalidConfigException("Can't find part with key $key");
         }
 
+        /** @var ViewElementsGathener $viewElementsGathener */
+        $viewElementsGathener = Yii::$app->viewElementsGathener;
+
+
         if (static::shouldCache($model)) {
             $result = Yii::$app->cache->get(static::getCacheKey($model));
             if ($result !== false) {
                 Yii::endProfile('Render theme part:' . $key);
+                $cachedData = $viewElementsGathener->getCachedData('ThemePart:'.$key);
+                if (is_array($cachedData)) {
+                    $viewElementsGathener->repeatGatheredData(Yii::$app->view, $cachedData);
+                }
                 return $result;
             }
+            $viewElementsGathener->startGathering(
+                'ThemePart:'.$key,
+                static::getCacheDependency($model)
+            );
         }
 
         $model['id'] = intval($model['id']);
@@ -185,6 +199,7 @@ class ThemeParts extends \yii\db\ActiveRecord
                 $model['cache_lifetime'],
                 static::getCacheDependency($model)
             );
+            $viewElementsGathener->endGathering();
         }
         Yii::endProfile('Render theme part:' . $key);
         return $result;

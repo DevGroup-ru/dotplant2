@@ -53,11 +53,11 @@ $this->endCache();
 $js = <<<JS
 $(".search-form input[type=text]").blur(function(){
     $(this).removeClass('active');
-})
+});
 $(".search-form .search-append").click(function(){
     $(".search-form input[type=text]").addClass('active').focus();
     return false;
-})
+});
 JS;
 $this->registerJs($js);
 

@@ -166,6 +166,13 @@ $config = [
         'session' => [
             'timeout' => 2592000, // 30 days
         ],
+        'view' => [
+            'class' => 'app\components\WebView',
+            'viewElementsGathener' => 'viewElementsGathener',
+        ],
+        'viewElementsGathener' => [
+            'class' => 'app\components\ViewElementsGathener',
+        ],
     ],
 ];
 

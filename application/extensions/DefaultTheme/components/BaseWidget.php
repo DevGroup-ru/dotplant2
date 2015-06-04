@@ -2,6 +2,7 @@
 
 namespace app\extensions\DefaultTheme\components;
 
+use app\components\ViewElementsGathener;
 use app\extensions\DefaultTheme\models\ThemeWidgets;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
@@ -29,6 +30,8 @@ abstract class BaseWidget extends Widget
     /** @var bool Use font-awesome or icon-* icons*/
     public $useFontAwesome = true;
 
+    private $fragmentCacheId = '';
+
     /**
      * Initializes widget with configuration stored in corresponding ThemeWidgets record.
      *
@@ -54,6 +57,7 @@ abstract class BaseWidget extends Widget
             Yii::configure($this, $configuration);
         }
 
+        $this->fragmentCacheId = 'BaseWidgetCache:'.$this->themeWidgetModel->id.':'.$this->getId();
     }
 
     /**
@@ -69,16 +73,24 @@ abstract class BaseWidget extends Widget
      */
     public function run()
     {
+        /** @var ViewElementsGathener $viewElementsGathener */
+        $viewElementsGathener = Yii::$app->viewElementsGathener;
         if ($this->shouldCache()) {
             $cachedResult = Yii::$app->cache->get($this->getCacheKey());
             if ($cachedResult !== false) {
+                $cachedData = $viewElementsGathener->getCachedData($this->fragmentCacheId);
+                if (is_array($cachedData)) {
+                    $viewElementsGathener->repeatGatheredData(Yii::$app->view, $cachedData);
+                }
                 return $cachedResult;
             }
+            $viewElementsGathener->startGathering($this->fragmentCacheId);
         }
         Yii::beginProfile('Widget run: '.get_class($this));
         $result = $this->widgetRun();
         Yii::endProfile('Widget run: '.get_class($this));
         if ($this->shouldCache()) {
+            $viewElementsGathener->endGathering();
             Yii::$app->cache->set(
                 $this->getCacheKey(),
                 $result,
