@@ -9,6 +9,20 @@ use yii\web\UploadedFile;
 class FileInputProperty extends \app\properties\handlers\AbstractHandler
 {
     protected $widgetClass = '\app\properties\handlers\fileInput\FileInputPropertyWidget';
+    protected $uploadDir = '@webroot/upload/files/';
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        $this->uploadDir = !empty(\Yii::$app->getModule('core')->fileUploadPath)
+            ? \Yii::$app->getModule('core')->fileUploadPath
+            : $this->uploadDir;
+
+        $this->uploadDir = FileHelper::normalizePath(\Yii::getAlias($this->uploadDir));
+    }
 
     /**
      * @param \app\models\Property $property
@@ -39,12 +53,10 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
             return !empty($v);
         });
 
-        $directory = FileHelper::normalizePath(\Yii::getAlias('@webroot/upload/'));
-
         $files = UploadedFile::getInstancesByName($formProperties.'['.$property->key.']');
         foreach ($files as $file) {
             $fileName = $file->baseName.'.'.$file->extension;
-            if ($file->saveAs($directory.DIRECTORY_SEPARATOR.$fileName)) {
+            if ($file->saveAs($this->uploadDir.DIRECTORY_SEPARATOR.$fileName)) {
                 $values[] = $fileName;
             }
         }
@@ -68,10 +80,10 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
         /** @var \app\models\Object $object */
         $object = $params['object_id'];
 
-        $modelEav = new AbstractPropertyEavModel();
-        $modelEav::setTableName($object->eav_table_name);
+        AbstractPropertyEavModel::setTableName($object->eav_table_name);
 
-        $modelEav = $modelEav->find()
+        /** @var AbstractPropertyEavModel $model */
+        $model = AbstractPropertyEavModel::find()
             ->where([
                 'property_group_id' => $property->property_group_id,
                 'key' => $property->key,
@@ -79,7 +91,16 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
                 'value' => \Yii::$app->request->post('value')
             ])->one();
 
-        return $modelEav->delete();
+        $result = false;
+        if (null !== $model) {
+            if (true === \Yii::$app->getModule('core')->removeUploadedFiles) {
+                @unlink($this->uploadDir.DIRECTORY_SEPARATOR.$model->value);
+            }
+            $result = $model->delete();
+        }
+        AbstractPropertyEavModel::setTableName(null);
+
+        return $result;
     }
 
     /**
@@ -99,8 +120,6 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
 
         $formProperties = 'Properties_'. $modelObject->formName() .'_'. $modelId;
 
-        $directory = FileHelper::normalizePath(\Yii::getAlias('@webroot/upload/'));
-
         $modelEav = new AbstractPropertyEavModel();
         $modelEav::setTableName($object->eav_table_name);
         $modelEav->property_group_id = $property->property_group_id;
@@ -110,16 +129,16 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
         $files = UploadedFile::getInstancesByName($formProperties.'['.$property->key.']');
         foreach ($files as $file) {
             $fileName = $file->baseName.'.'.$file->extension;
-            if (is_file($directory.DIRECTORY_SEPARATOR.$fileName)) {
+            if (is_file($this->uploadDir.DIRECTORY_SEPARATOR.$fileName)) {
                 $fileName = $file->baseName. substr(md5($fileName.microtime()), 0, 6) .'.'.$file->extension;
             }
-            if ($file->saveAs($directory.DIRECTORY_SEPARATOR.$fileName)) {
+            if ($file->saveAs($this->uploadDir.DIRECTORY_SEPARATOR.$fileName)) {
                 $modelEav->isNewRecord = true;
                 $modelEav->value = $fileName;
                 $modelEav->save();
             }
         }
-        unset($modelEav);
+        AbstractPropertyEavModel::setTableName(null);
 
         return 'uploaded';
     }

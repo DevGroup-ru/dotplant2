@@ -4,8 +4,9 @@ namespace app\properties\handlers;
 
 abstract class AbstractHandler
 {
+    /** @var \app\models\PropertyHandler $propertyHandler */
     protected $propertyHandler;
-    /** @var $widgetClass \yii\base\Widget */
+    /** @var \yii\base\Widget $widgetClass */
     protected $widgetClass = null;
 
     /**
@@ -21,6 +22,15 @@ abstract class AbstractHandler
         } else {
             $this->widgetClass = null;
         }
+
+        $this->init();
+    }
+
+    /**
+     * Initialize instance
+     */
+    public function init()
+    {
     }
 
     /**
@@ -60,11 +70,22 @@ abstract class AbstractHandler
         return '';
     }
 
+    /**
+     * @param \app\models\Property $property
+     * @param string $formProperties
+     * @param array $values
+     * @return array
+     */
     public function processValues(\app\models\Property $property, $formProperties = '', $values = [])
     {
         return $values;
     }
 
+    /**
+     * @param string|null $action Method of handler
+     * @param array $params
+     * @return mixed|string
+     */
     public function runAction($action = null, $params = [])
     {
         if (preg_match('#^[a-z0-9\\-_]+$#', $action) && strpos($action, '--') === false && trim($action, '-') === $action) {

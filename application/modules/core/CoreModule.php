@@ -30,7 +30,8 @@ class CoreModule extends BaseModule implements BootstrapInterface
 
     public $autoCompleteResultsCount = 5;
 
-    public $fileUploadPath = 'upload/user-uploads/';
+    public $fileUploadPath = '@webroot/upload/files/';
+    public $removeUploadedFiles = true;
 
     public $spamCheckerApiKey;
 

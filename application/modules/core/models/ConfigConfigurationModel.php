@@ -26,7 +26,8 @@ class ConfigConfigurationModel extends BaseConfigurationModel
 
     public $autoCompleteResultsCount = 5;
 
-    public $fileUploadPath = 'upload/user-uploads/';
+    public $fileUploadPath = '@webroot/upload/files/';
+    public $removeUploadedFiles = true;
 
     public $spamCheckerApiKey;
 
@@ -78,6 +79,41 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 ],
                 'string',
             ],
+            [
+                [
+                    'removeUploadedFiles',
+                ],
+                'boolean'
+            ],
+            [
+                [
+                    'removeUploadedFiles',
+                ],
+                'filter',
+                'filter' => 'boolval',
+            ],
+            [
+                ['fileUploadPath'],
+                function ($attribute, $params)
+                {
+                    $_directory = \yii\helpers\FileHelper::normalizePath(\Yii::getAlias($this->$attribute));
+                    if (!is_dir($_directory)) {
+                        $this->addError($attribute, Yii::t('app', 'Directory {dir} not exists.', ['dir' => $_directory]));
+                    } elseif (!is_writable($_directory)) {
+                        $this->addError($attribute, Yii::t('app', 'Directory {dir} not writable.', ['dir' => $_directory]));
+                    }
+                }
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function attributeLabels()
+    {
+        return [
+            ''
         ];
     }
 

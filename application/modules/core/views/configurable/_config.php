@@ -19,6 +19,7 @@ use kartik\widgets\SwitchInput;
         <?= $form->field($model, 'internalEncoding') ?>
         <?= $form->field($model, 'autoCompleteResultsCount') ?>
         <?= $form->field($model, 'fileUploadPath') ?>
+        <?= $form->field($model, 'removeUploadedFiles')->widget(SwitchInput::className()) ?>
         <?= $form->field($model, 'daysToStoreSubmissions') ?>
         <?php BackendWidget::end() ?>
     </div>
