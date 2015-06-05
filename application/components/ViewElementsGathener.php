@@ -38,10 +38,10 @@ class ViewElementsGathener extends Component
 
     public function gather($elementType, $arguments)
     {
-        Yii::trace("Gather: ".$this->currentStackId." -- ".$elementType);
         if ($this->currentStackId===null) {
             return;
         }
+        Yii::trace("Gather: ".$this->currentStackId." -- ".$elementType);
         $this->gatherToStack($this->currentStackId, $elementType, $arguments);
     }
 

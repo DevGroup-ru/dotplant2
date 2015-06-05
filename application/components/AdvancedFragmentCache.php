@@ -11,6 +11,8 @@ class AdvancedFragmentCache extends FragmentCache
     /** @var null|ViewElementsGathener|string */
     public $viewElementsGathener = null;
 
+    private $cachedData = null;
+
     public function init()
     {
         parent::init();
@@ -25,23 +27,27 @@ class AdvancedFragmentCache extends FragmentCache
 
     public function run()
     {
-        parent::run();
         $this->viewElementsGathener->endGathering();
+        parent::run();
+
     }
 
     public function getCachedContent()
     {
-        $cachedData = $this->viewElementsGathener->getCachedData($this->getId());
+        if ($this->cachedData === null) {
+            $cachedData = $this->viewElementsGathener->getCachedData($this->getId());
 
-        if ($cachedData === false) {
-            return false;
+            if ($cachedData === false) {
+                $this->cachedData = false;
+                return false;
+            }
+
+
+            $this->viewElementsGathener->repeatGatheredData($this->view, $cachedData);
+
+            $this->cachedData = parent::getCachedContent();
+            
         }
-
-
-        $this->viewElementsGathener->repeatGatheredData($this->view, $cachedData);
-
-        $content = parent::getCachedContent();
-
-        return $content;
+        return $this->cachedData;
     }
 }
