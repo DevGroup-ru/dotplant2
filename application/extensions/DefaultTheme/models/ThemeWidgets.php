@@ -4,6 +4,7 @@ namespace app\extensions\DefaultTheme\models;
 
 use app\traits\IdentityMap;
 use Yii;
+use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use \devgroup\TagDependencyHelper\ActiveRecordHelper;
 
@@ -115,5 +116,16 @@ class ThemeWidgets extends \yii\db\ActiveRecord
         $query->andFilterWhere(['cache_lifetime', $this->cache_lifetime]);
 
         return $dataProvider;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                ActiveRecordHelper::getCommonTag(ThemeActiveWidgets::className())
+            ]
+        );
     }
 }

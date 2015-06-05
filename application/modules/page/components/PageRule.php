@@ -8,6 +8,9 @@ use yii\web\UrlRuleInterface;
 
 class PageRule implements UrlRuleInterface
 {
+    /**
+     * @inheritdoc
+     */
     public function createUrl($manager, $route, $params)
     {
         /** @var Page $model */
@@ -31,6 +34,9 @@ class PageRule implements UrlRuleInterface
         return false;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function parseRequest($manager, $request)
     {
         if ($request->serverName == Yii::$app->getModule('core')->serverName) {

@@ -4,6 +4,7 @@ namespace app\properties\url;
 
 use app\models\Property;
 use app\models\PropertyStaticValues;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 
 class PropertyPart extends UrlPart
@@ -28,6 +29,9 @@ class PropertyPart extends UrlPart
         return false;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getNextPart(
         $full_url,
         $next_part,
@@ -38,6 +42,7 @@ class PropertyPart extends UrlPart
             return false;
         }
         if ($property->has_static_values && $property->has_slugs_in_values) {
+            $cacheTags = [];
             $static_values = PropertyStaticValues::getValuesForPropertyId($this->property_id);
             $slugs = explode('/', $next_part);
             foreach ($static_values as $value) {
@@ -50,11 +55,14 @@ class PropertyPart extends UrlPart
                     if (!empty($value['title_append'])) {
                         $this->parameters['title_append'] = [$value['title_append']];
                     }
+                    $cacheTags[] = ActiveRecordHelper::getObjectTag(PropertyStaticValues::className(), $value['id']);
                     $part = new self([
                         'gathered_part' => $value['slug'],
                         'rest_part' => mb_substr($next_part, mb_strlen($value['slug'])),
                         'parameters' => $this->parameters,
+                        'cacheTags' => $cacheTags,
                     ]);
+
                     return $part;
                 }
             }
@@ -64,7 +72,10 @@ class PropertyPart extends UrlPart
         }
     }
 
-    public function appendPart($route, $parameters = [], &$used_params = [])
+    /**
+     * @inheritdoc
+     */
+    public function appendPart($route, $parameters = [], &$used_params = [], &$cacheTags = [])
     {
         if (isset($parameters['properties'])) {
             $used_params[] = 'properties';
@@ -78,6 +89,7 @@ class PropertyPart extends UrlPart
                     }
                 }
                 if (is_array($psv)) {
+                    $cacheTags[] = ActiveRecordHelper::getObjectTag(PropertyStaticValues::className(), $psv['id']);
                     return $psv['slug'];
                 } else {
                     return false;

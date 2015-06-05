@@ -2,11 +2,14 @@
 
 namespace app\properties\url;
 
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 
 class ObjectSlugPart extends UrlPart
 {
-
+    /**
+     * @inheritdoc
+     */
     public function getNextPart(
         $full_url,
         $next_part,
@@ -35,14 +38,19 @@ class ObjectSlugPart extends UrlPart
                 'gathered_part' => $slug,
                 'rest_part' => mb_substr($next_part, mb_strlen($slug)),
                 'parameters' => $this->parameters,
+                'cacheTags' => [
+                    ActiveRecordHelper::getObjectTag($model_class, $this->parameters['model_id']),
+                ],
             ]);
             return $part;
         }
         return false;
 
     }
-
-    public function appendPart($route, $parameters = [])
+    /**
+     * @inheritdoc
+     */
+    public function appendPart($route, $parameters = [], &$used_params = [], &$cacheTags = [])
     {
         if (!is_object($this->object)) {
             return false;

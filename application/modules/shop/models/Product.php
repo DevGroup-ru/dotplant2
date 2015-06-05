@@ -1048,5 +1048,22 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
         return false;
     }
+
+    public function getCacheTags()
+    {
+
+        $tags = [
+            ActiveRecordHelper::getObjectTag(self::className(), $this->id),
+        ];
+        $category = $this->getMainCategory();
+        $tags [] = ActiveRecordHelper::getObjectTag(Category::className(), $category->id);
+        $categoryParentsIds = $category->getParentIds();
+        foreach ($categoryParentsIds as $id) {
+            $tags [] = ActiveRecordHelper::getObjectTag(Category::className(), $id);
+        };
+
+
+        return $tags;
+    }
 }
 ?>

@@ -10,7 +10,7 @@
  * @var $selected_category_id integer
  * @var $selected_category_ids integer[]
  * @var $selections
- * @var $this yii\web\View
+ * @var $this app\components\View
  * @var $title_append string
  * @var $values_by_property_id
  */
@@ -22,19 +22,19 @@ use yii\helpers\Html;
 
 $this->params['breadcrumbs'] = $breadcrumbs;
 $listView = UserPreferences::preferences()->getAttributes()['listViewType'];
-$this->beginBlock('filters');
-echo app\widgets\filter\FilterWidget::widget(
-    [
-        'objectId' => $object->id,
-        'currentSelections' => [
-            'properties' => $values_by_property_id,
-            'last_category_id' => $selected_category_id,
-        ],
-        'categoryGroupId' => $category_group_id,
-        'title' => null,
-    ]
-);
-$this->endBlock();
+//$this->beginBlock('filters');
+//echo app\widgets\filter\FilterWidget::widget(
+//    [
+//        'objectId' => $object->id,
+//        'currentSelections' => [
+//            'properties' => $values_by_property_id,
+//            'last_category_id' => $selected_category_id,
+//        ],
+//        'categoryGroupId' => $category_group_id,
+//        'title' => null,
+//    ]
+//);
+//$this->endBlock();
 
 ?>
 <h1>
@@ -53,19 +53,27 @@ $this->endBlock();
         echo '<div class="row">';
     }
     ?>
-    <?php foreach ($products as $product): ?>
-        <?php
-        $url = Url::to(
-            [
-                '/shop/product/show',
-                'model' => $product,
-                'properties' => $values_by_property_id,
-                'category_group_id' => $category_group_id,
-            ]
-        );
-        ?>
-        <?=$this->render(($listView === 'listView' ? 'item-row' : 'item'), ['product' => $product, 'url' => $url])?>
-    <?php endforeach; ?>
+    <?php foreach ($products as $product) {
+        if ($this->beginCache('Product-item:'.$listView.':'.$product->id, [
+            'duration' => 86400,
+            'dependency' => new \yii\caching\TagDependency([
+                'tags' => $product->getCacheTags(),
+            ])
+        ])) {
+            $url = Url::to(
+                [
+                    '/shop/product/show',
+                    'model' => $product,
+                    'properties' => $values_by_property_id,
+                    'category_group_id' => $category_group_id,
+                ]
+            );
+
+            echo $this->render(($listView === 'listView' ? 'item-row' : 'item'),
+                ['product' => $product, 'url' => $url]);
+            $this->endCache();
+        }
+    } ?>
     <?php
     if ($listView === 'blockView') {
         echo '</div><hr class="soft">';

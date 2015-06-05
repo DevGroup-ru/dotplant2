@@ -33,7 +33,7 @@ class PlainCategoriesWidget extends Widget
                 $result,
                 86400,
                 new \yii\caching\TagDependency([
-                    'tags' => ActiveRecordHelper::getCommonTag(Category::tableName())
+                    'tags' => ActiveRecordHelper::getCommonTag(Category::className())
                 ])
             );
         }

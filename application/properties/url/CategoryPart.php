@@ -3,6 +3,7 @@
 namespace app\properties\url;
 
 use app\modules\shop\models\Category;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 
 abstract class CategoryPart extends UrlPart
@@ -10,23 +11,30 @@ abstract class CategoryPart extends UrlPart
     public $category_group_id = 1;
 
     /**
-     * Должен ли урл включать в себя главную категорию
+     * If URL must include root category
      */
     public $include_root_category = false;
 
+    /**
+     * @inheritdoc
+     */
     public function getNextPart($full_url, $next_part, &$previous_parts)
     {
         $next_parts = explode("/", $next_part);
         $gathered_parts = [];
         $previous_model = null;
+        $cacheTags = [];
 
         $root_id = 0;
         $title_append = "";
-
+        /** @var Category $root_category */
+        $root_category = null;
         if ($this->include_root_category === false) {
+
             $root_category = Category::findRootForCategoryGroup($this->category_group_id);
             if (is_object($root_category)) {
                 $root_id = $root_category->id;
+                $cacheTags[] = ActiveRecordHelper::getObjectTag(Category::className(), $root_id);
             } else {
                 return false;
             }
@@ -46,6 +54,9 @@ abstract class CategoryPart extends UrlPart
                 // выходим из цикла - тут никого нет
                 break;
             }
+
+            $cacheTags[] = ActiveRecordHelper::getObjectTag(Category::className(), $model->id);
+
             if (!empty($model->title_append)) {
                 $title_append = $model->title_append;
             }
@@ -62,6 +73,7 @@ abstract class CategoryPart extends UrlPart
                     'gathered_part' => '',
                     'rest_part' => $next_part,
                     'parameters' => $this->parameters,
+                    'cacheTags' => $cacheTags,
                 ]);
                 
                 return $part;
@@ -88,11 +100,15 @@ abstract class CategoryPart extends UrlPart
             'gathered_part' => $full_categories_url,
             'rest_part' => mb_substr($next_part, mb_strlen($full_categories_url)),
             'parameters' => $this->parameters,
+            'cacheTags' => $cacheTags,
         ]);
         return $part;
     }
 
-    public function appendPart($route, $parameters = [], &$used_params = [])
+    /**
+     * @inheritdoc
+     */
+    public function appendPart($route, $parameters = [], &$used_params = [], &$cacheTags = [])
     {
         $used_params[] = 'categories';
 

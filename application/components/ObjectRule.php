@@ -7,9 +7,11 @@ use app\models\Object;
 use app\models\PrefilteredPages;
 use app\models\Route;
 use app\properties\url\StaticPart;
+use app\properties\url\UrlPart;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\helpers\Url;
@@ -35,9 +37,10 @@ class ObjectRule implements UrlRuleInterface
         $cacheKey = null;
 
         if (isset($params['model'])) {
+            /** @var ActiveRecord $handler_model */
             $handler_model = $params['model'];
 
-            $cacheKey = 'ObjectRule:'.$params['model']->tableName().':' . $params['model']->id;
+            $cacheKey = 'ObjectRule:'.$handler_model->tableName().':' . $handler_model->id;
             $cached = Yii::$app->cache->get($cacheKey);
             if ($cached !== false) {
                 return $cached;
@@ -46,12 +49,18 @@ class ObjectRule implements UrlRuleInterface
             $handler_object = Object::getForClass(get_class($handler_model));
             unset($params['model']);
         }
+
+        $cacheTags = [];
+        if (is_object($handler_model)) {
+            $cacheTags[]=ActiveRecordHelper::getObjectTag($handler_model->className(), $handler_model->id);
+        }
         foreach (ObjectRule::getRoutes() as $model) {
             $used_params = ['categories'];
 
             $break_rule = false;
             if ($route == $model->route) {
                 $url_parts = [];
+                /** @var UrlPart[] $handlers */
                 $handlers = [];
                 foreach ($model->template as $t) {
                     $h = Yii::createObject($t);
@@ -60,7 +69,7 @@ class ObjectRule implements UrlRuleInterface
                     $handlers[] = $h;
                 }
                 foreach ($handlers as $handler) {
-                    $new_part = $handler->appendPart($route, $params, $used_params);
+                    $new_part = $handler->appendPart($route, $params, $used_params, $cacheTags);
                     if ($handler instanceof StaticPart && $new_part === false) {
                         $break_rule = true;
                     }
@@ -87,13 +96,14 @@ class ObjectRule implements UrlRuleInterface
                             $finalUrl,
                             86400,
                             new TagDependency([
-                                'tags' => ActiveRecordHelper::getObjectTag($handler_model->className(), $handler_model->id)
+                                'tags' => $cacheTags,
                             ])
                         );
                     }
 
                     return $finalUrl;
                 }
+                $cacheTags=[];
             }
         }
         return false;  // this rule does not apply
@@ -107,6 +117,13 @@ class ObjectRule implements UrlRuleInterface
         if (empty($url)) {
             Yii::endProfile("ObjectRule::parseRequest");
             return false;
+        }
+
+        $cacheKey = 'ObjectRule:'.$url.':'.Json::encode($request->getQueryParams());
+        $result = Yii::$app->cache->get($cacheKey);
+        if ($result !== false) {
+            Yii::endProfile("ObjectRule::parseRequest");
+            return $result;
         }
 
         $prefilteredPage = PrefilteredPages::getActiveByUrl($url);
@@ -144,14 +161,28 @@ class ObjectRule implements UrlRuleInterface
                 Yii::$app->response->view_id = $prefilteredPage['view_id'];
             }
 
-            return [
+            $result = [
                 'shop/product/list',
                 $params
             ];
+            Yii::$app->cache->set(
+                $cacheKey,
+                $result,
+                86400,
+                new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getObjectTag(PrefilteredPages::className(), $prefilteredPage['id']),
+                        ActiveRecordHelper::getObjectTag(Category::className(), $category->id),
+                    ]
+                ])
+            );
+            return $result;
         }
 
         $routes = ObjectRule::getRoutes();
+        $cacheTags = [];
         foreach ($routes as $model) {
+            /** @var UrlPart[] $handlers */
             $handlers = [];
             $object = Object::findById($model->object_id);
             foreach ($model->template as $t) {
@@ -169,8 +200,9 @@ class ObjectRule implements UrlRuleInterface
                 $result = $handler->getNextPart($url, $next_part, $url_parts);
                 if ($result !== false && is_object($result) === true) {
                     $parameters = ArrayHelper::merge($parameters, $result->parameters);
+                    $cacheTags = ArrayHelper::merge($cacheTags, $result->cacheTags);
                     // удалим leading slash
-                    $next_part = preg_replace("#^/#Us", "", $result->rest_part);
+                    $next_part = ltrim($result->rest_part, '/');
                     $url_parts[] = $result;
                 } elseif ($result === false && $handler->optional===false) {
                     continue;
@@ -179,8 +211,6 @@ class ObjectRule implements UrlRuleInterface
             if (count($url_parts)==0) {
                 continue;
             }
-
-
 
             // в конце удачного парсинга next_part должен остаться пустым
             if (empty($next_part)) {
@@ -211,8 +241,18 @@ class ObjectRule implements UrlRuleInterface
                         }
                     }
                 }
+                $result = [$model->route, $parameters];
 
-                return [$model->route, $parameters];
+                Yii::$app->cache->set(
+                    $cacheKey,
+                    $result,
+                    86400,
+                    new TagDependency([
+                        'tags' => $cacheTags,
+                    ])
+                );
+
+                return $result;
             }
         }
         Yii::endProfile("ObjectRule::parseRequest");

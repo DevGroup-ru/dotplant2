@@ -22,7 +22,7 @@ class AdvancedFragmentCache extends FragmentCache
         if (is_string($this->viewElementsGathener)) {
             $this->viewElementsGathener = Yii::$app->get($this->viewElementsGathener);
         }
-        $this->viewElementsGathener->startGathering($this->getId());
+        $this->viewElementsGathener->startGathering($this->getId(), $this->dependency);
     }
 
     public function run()

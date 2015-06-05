@@ -353,8 +353,12 @@ class Category extends ActiveRecord
                 }
             }
             $slugs = [$this->slug];
+
+            $this->parentIds = [];
+
             $parent_category = $this->parent_id > 0 ? $this->parent : 0;
             while ($parent_category !== null) {
+                $this->parentIds[] = intval($parent_category->id);
                 $slugs[] = $parent_category->slug;
                 $parent_category = $parent_category->parent;
             }
@@ -385,6 +389,7 @@ class Category extends ActiveRecord
     /**
      * Ищет root для группы категорий
      * Использует identity_map
+     * @return Category|null
      */
     public static function findRootForCategoryGroup($category_group_id)
     {
@@ -396,6 +401,12 @@ class Category extends ActiveRecord
         return null;
     }
 
+    /**
+     * @param $category_group_id
+     * @param int $level
+     * @param int $is_active
+     * @return Category[]
+     */
     public static function getByLevel($category_group_id, $level = 0, $is_active = 1)
     {
         $cacheKey = "CategoriesByLevel:$category_group_id:$level";
