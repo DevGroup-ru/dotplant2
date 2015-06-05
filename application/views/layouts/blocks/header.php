@@ -8,18 +8,18 @@ use app\assets\AppAsset;
 use app\extensions\DefaultTheme\assets\DefaultThemeAsset;
 use \app\extensions\DefaultTheme\models\ThemeParts;
 use kartik\helpers\Html;
-use app\modules\seo\helpers\HtmlHelper;
+use \app\modules\seo\helpers\HtmlTagHelper;
 
 AppAsset::register($this);
 DefaultThemeAsset::register($this);
 
 /** @var \app\extensions\DefaultTheme\Module $themeModule */
 $themeModule = Yii::$app->getModule('DefaultTheme');
-HtmlHelper::$htmlOptions[] = 'lang="'. Yii::$app->language.'"';
+HtmlTagHelper::addTagOptions('html', 'lang', Yii::$app->language);
 ?>
 <?php $this->beginPage(); ?>
 <!DOCTYPE html>
-<html <?= HtmlHelper::registerHtmlOptions() ?>>
+<html<?= HtmlTagHelper::registerTagOptions('html')?>>
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
