@@ -4,6 +4,7 @@ namespace app\modules\shop\controllers;
 
 use app\backend\actions\PropertyHandler;
 use app\backend\components\BackendController;
+use app\backend\events\BackendEntityEditEvent;
 use app\modules\shop\models\Category;
 use app\modules\image\models\Image;
 use app\models\Object;
@@ -168,10 +169,15 @@ class BackendProductController extends BackendController
 
         $model->loadRelatedProductsArray();
 
+        $event = new BackendEntityEditEvent($model);
+        $this->trigger('backend-product-edit', $event);
+
         $post = \Yii::$app->request->post();
 
+        if ($event->isValid && $model->load($post)) {
+            $saveStateEvent = new BackendEntityEditEvent($model);
+            $this->trigger('backend-product-edit-save', $saveStateEvent);
 
-        if ($model->load($post)) {
             if ($model->validate()) {
                 if (isset($post['GeneratePropertyValue'])) {
                     $generateValues = $post['GeneratePropertyValue'];

@@ -3,6 +3,7 @@
 namespace app\modules\shop\controllers;
 
 use app\backend\components\BackendController;
+use app\backend\events\BackendEntityEditEvent;
 use app\modules\shop\models\Category;
 use app\models\Object;
 use app\models\ViewObject;
@@ -125,8 +126,14 @@ class BackendCategoryController extends BackendController
             throw new ServerErrorHttpException;
         }
 
+        $event = new BackendEntityEditEvent($model);
+        $this->trigger('backend-category-edit', $event);
+
         $post = \Yii::$app->request->post();
-        if ($model->load($post) && $model->validate()) {
+        if ($event->isValid && $model->load($post) && $model->validate()) {
+            $saveStateEvent = new BackendEntityEditEvent($model);
+            $this->trigger('backend-category-edit-save', $saveStateEvent);
+
             $save_result = $model->save();
             $model->saveProperties($post);
 
