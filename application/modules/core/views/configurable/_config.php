@@ -24,12 +24,30 @@ use kartik\widgets\SwitchInput;
         <?php BackendWidget::end() ?>
     </div>
     <div class="col-md-6 col-sm-12">
-        <?php BackendWidget::begin(['title' => Yii::t('app', 'Spam checker'), 'options' => ['class' => 'visible-header']]); ?>
-        <?=
-        $form
-            ->field($model, 'spamCheckerApiKey')
-            ->dropDownList(Helper::getModelMap(SpamChecker::className(), 'behavior', 'name'))
+        <?php BackendWidget::begin(['title' => Yii::t('app', 'Email configuration'), 'options' => ['class' => 'visible-header']]); ?>
+        <?= $form->field($model, 'spamCheckerApiKey')
+            ->dropDownList(Helper::getModelMap(SpamChecker::className(), 'behavior', 'name'));
         ?>
+        <?= $form->field($model, 'emailConfig[transport]')
+            ->dropDownList([
+                'Swift_MailTransport' => 'Mail',
+                'Swift_SmtpTransport' => 'SMTP',
+                'Swift_SendmailTransport' => 'Sendmail',
+            ])
+            ->label('Mail transport'); ?>
+        <?= $form->field($model, 'emailConfig[host]')->label('Mail server'); ?>
+        <?= $form->field($model, 'emailConfig[username]')->label('Mail username'); ?>
+        <?= $form->field($model, 'emailConfig[password]')->label('Mail password'); ?>
+        <?= $form->field($model, 'emailConfig[port]')->label('Mail server port'); ?>
+        <?= $form->field($model, 'emailConfig[encryption]')
+            ->dropDownList([
+                '' => '',
+                'ssl' => 'Use SSL',
+                'tls' => 'Use TLS'
+            ])
+            ->label('Mail encryption'); ?>
+        <?= $form->field($model, 'emailConfig[mailFrom]')->label('Mail from'); ?>
+        <?= $form->field($model, 'emailConfig[sendMail]')->label('Path to sendmail'); ?>
         <?php BackendWidget::end() ?>
 
         <?php BackendWidget::begin(['title' => Yii::t('app', 'Error monitor'), 'options' => ['class' => 'visible-header']]); ?>

@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\actions\SubmitFormAction;
+use app\modules\core\components\MailComponent;
 use app\modules\shop\models\Product;
 use app\models\Search;
 use app\modules\seo\behaviors\MetaBehavior;

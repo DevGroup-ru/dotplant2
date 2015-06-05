@@ -53,6 +53,17 @@ class CoreModule extends BaseModule implements BootstrapInterface
     public $immediateNoticeLimitPerUrl = 10;
     public $httpCodesForImmediateNotify = '404,500';
 
+    public $emailConfig = [
+        'transport' => 'Swift_MailTransport',
+        'host' => 'localhost',
+        'username' => 'login',
+        'password' => 'password',
+        'port' => '25',
+        'encryption' => '',
+        'mailFrom' => 'login',
+        'sendMail' => '',
+    ];
+
     /**
      * @inheritdoc
      */
