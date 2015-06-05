@@ -25,6 +25,10 @@ use yii\web\ServerErrorHttpException;
 class BackendCategoryController extends BackendController
 {
 
+    const BACKEND_CATEGORY_EDIT = 'backend-category-edit';
+    const BACKEND_CATEGORY_EDIT_SAVE = 'backend-category-edit-save';
+    const BACKEND_CATEGORY_EDIT_FORM = 'backend-category-edit-form';
+
     public function behaviors()
     {
         return [
@@ -127,12 +131,12 @@ class BackendCategoryController extends BackendController
         }
 
         $event = new BackendEntityEditEvent($model);
-        $this->trigger('backend-category-edit', $event);
+        $this->trigger(self::BACKEND_CATEGORY_EDIT, $event);
 
         $post = \Yii::$app->request->post();
         if ($event->isValid && $model->load($post) && $model->validate()) {
             $saveStateEvent = new BackendEntityEditEvent($model);
-            $this->trigger('backend-category-edit-save', $saveStateEvent);
+            $this->trigger(self::BACKEND_CATEGORY_EDIT_SAVE, $saveStateEvent);
 
             $save_result = $model->save();
             $model->saveProperties($post);
