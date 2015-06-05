@@ -28,7 +28,7 @@ if ($this->blocks['h1']) {
                     <?= Icon::show('calendar') ?>
                     <?= date("d.m.Y H:i:s", strtotime($child->date_added)); ?>
                 </div>
-                <a href="<?= Url::to(['/page/show', 'id'=>$child->id])?>" class="page-title">
+                <a href="<?= Url::to(['/page/page/show', 'id'=>$child->id])?>" class="page-title">
                     <?= $child->title ?>
                 </a>
             </h5>
