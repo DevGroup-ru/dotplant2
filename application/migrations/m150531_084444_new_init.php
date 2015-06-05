@@ -2182,7 +2182,7 @@ class m150531_084444_new_init extends Migration
             View::tableName(),
             [
                 'name' => 'Default',
-                'view' => 'show',
+                'view' => 'default',
                 'category' => 'app',
                 'internal_name' => 'default',
             ]
