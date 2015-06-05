@@ -46,7 +46,7 @@ class AdvancedFragmentCache extends FragmentCache
             $this->viewElementsGathener->repeatGatheredData($this->view, $cachedData);
 
             $this->cachedData = parent::getCachedContent();
-            
+
         }
         return $this->cachedData;
     }
