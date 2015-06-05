@@ -7,7 +7,6 @@ use app\components\Helper;
 use app\modules\shop\models\Category;
 use app\modules\shop\models\CategoryGroup;
 use app\modules\shop\models\CategoryGroupRouteTemplates;
-use app\models\Config;
 use app\models\DynamicContent;
 use app\models\ErrorLog;
 use app\models\ErrorUrl;
@@ -64,21 +63,6 @@ class m141023_084857_init extends Migration
                 'id' => 'char(40) NOT NULL PRIMARY KEY',
                 'expire' => 'INT DEFAULT NULL',
                 'data' => 'BLOB',
-            ],
-            $tableOptions
-        );
-        $this->createTable(
-            Config::tableName(),
-            [
-                'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
-                'parent_id' => 'INT UNSIGNED DEFAULT \'0\'',
-                'name' => 'VARCHAR(255) NOT NULL',
-                'key' => 'VARCHAR(50) NOT NULL',
-                'value' => 'VARCHAR(255) DEFAULT NULL',
-                'preload' => 'TINYINT UNSIGNED DEFAULT \'0\'',
-                'path' => 'VARCHAR(255) NOT NULL',
-                'KEY `ix-config-preload` (`preload`)',
-                'UNIQUE KEY `ix-config-path` (`path`)',
             ],
             $tableOptions
         );
@@ -864,175 +848,6 @@ class m141023_084857_init extends Migration
             $tableOptions
         );
         // Data
-        $this->insert(
-            Config::tableName(),
-            [
-                'name' => 'Core',
-                'key' => 'core',
-                'preload' => '1',
-                'path' => 'core',
-            ]
-        );
-        $lastInsertId = Yii::$app->db->lastInsertID;
-        $this->batchInsert(
-            Config::tableName(),
-            ['parent_id', 'name', 'key', 'value', 'preload', 'path'],
-            [
-                [$lastInsertId, 'Admin e-mail', 'adminEmail', 'tehdir@skobeeff.ru', 1, 'core.adminEmail'],
-                [
-                    $lastInsertId,
-                    'AutoComplete results count',
-                    'autoCompleteResultsCount',
-                    5,
-                    1,
-                    'core.autoCompleteResultsCount'
-                ],
-            ]
-        );
-        $this->insert(
-            Config::tableName(),
-            [
-                'parent_id' => $lastInsertId,
-                'name' => 'E-mail config',
-                'key' => 'emailConfig',
-                'value' => '',
-                'preload' => 1,
-                'path' => 'core.emailConfig',
-            ]
-        );
-        $lastInsertId = Yii::$app->db->lastInsertID;
-        $this->batchInsert(
-            Config::tableName(),
-            ['parent_id', 'name', 'key', 'value', 'preload', 'path'],
-            [
-                [$lastInsertId, 'Host', 'host', '', 1, 'core.emailConfig.host'],
-                [$lastInsertId, 'Port', 'port', '587', 1, 'core.emailConfig.port'],
-                [$lastInsertId, 'Encryption', 'encryption', 'tls', 1, 'core.emailConfig.encryption'],
-                [$lastInsertId, 'Username', 'username', '', 1, 'core.emailConfig.username'],
-                [$lastInsertId, 'Password', 'password', '', 1, 'core.emailConfig.password'],
-            ]
-        );
-        $this->insert(
-            Config::tableName(),
-            [
-                'parent_id' => 0,
-                'name' => 'Shop',
-                'key' => 'shop',
-                'value' => '',
-                'preload' => 1,
-                'path' => 'shop',
-            ]
-        );
-        $lastInsertId = Yii::$app->db->lastInsertID;
-        $this->batchInsert(
-            Config::tableName(),
-            ['parent_id', 'name', 'key', 'value', 'preload', 'path'],
-            [
-                [$lastInsertId, 'Products per page', 'productsPerPage', 9, 1, 'shop.productsPerPage'],
-                [$lastInsertId, 'Order e-mail', 'orderEmail', '', 1, 'shop.orderEmail'],
-                [
-                    $lastInsertId,
-                    'Last viewed products store quantity',
-                    'lastViewedProdsStoreQuantity',
-                    10,
-                    1,
-                    'shop.lastViewedProdsStoreQuantity',
-                ],
-                [
-                    $lastInsertId,
-                    'Max products quantity to compare',
-                    'maxProductsToCompare',
-                    3,
-                    1,
-                    'shop.maxProductsToCompare',
-                ],
-            ]
-        );
-        $this->insert(
-            Config::tableName(),
-            [
-                'name' => 'Spam Checker Config',
-                'key' => 'spamCheckerConfig',
-                'path' => 'spamCheckerConfig'
-            ]
-        );
-        $spamCheckerRootId = Yii::$app->db->lastInsertID;
-        $this->insert(
-            Config::tableName(),
-            [
-                'parent_id' => $spamCheckerRootId,
-                'name' => 'Интерпретация форм',
-                'key' => 'interpretFields',
-                'path' => 'spamCheckerConfig.interpretFields'
-            ]
-        );
-        $formInterpretRootId = Yii::$app->db->lastInsertID;
-        $this->batchInsert(
-            Config::tableName(),
-            ['parent_id', 'name', 'key', 'value', 'path'],
-            [
-                [
-                    $formInterpretRootId,
-                    'Не интерпретировать',
-                    'notinterpret',
-                    'Не интерпретировать',
-                    'spamCheckerConfig.interpretFields.notinterpret',
-                ],
-                [
-                    $formInterpretRootId,
-                    'Имя',
-                    'name',
-                    'Имя',
-                    'spamCheckerConfig.interpretFields.name',
-                ],
-                [
-                    $formInterpretRootId,
-                    'Контент',
-                    'content',
-                    'Контент',
-                    'spamCheckerConfig.interpretFields.content',
-                ],
-            ]
-        );
-        $this->insert(
-            Config::tableName(),
-            [
-                'parent_id' => $spamCheckerRootId,
-                'name' => 'API keys',
-                'key' => 'apikeys',
-                'value' => 'API keys',
-                'path' => 'spamCheckerConfig.apikeys',
-            ]
-        );
-        $apiKeysRootId = Yii::$app->db->lastInsertID;
-        $this->batchInsert(
-            Config::tableName(),
-            ['parent_id', 'name', 'key', 'value', 'path'],
-            [
-                [$apiKeysRootId, 'Yandex API key', 'yandexAPIKey', '', 'spamCheckerConfig.apikeys.yandexAPIKey'],
-                [$apiKeysRootId, 'Akismet API key', 'akismetAPIKey', '', 'spamCheckerConfig.apikeys.akismetAPIKey'],
-            ]
-        );
-        $this->batchInsert(
-            Config::tableName(),
-            ['parent_id', 'name', 'key', 'value', 'path'],
-            [
-                [
-                    $spamCheckerRootId,
-                    'Config Fields Parent Id',
-                    'configFieldsParentId',
-                    $formInterpretRootId,
-                    'spamCheckerConfig.configFieldsParentId'
-                ],
-                [
-                    $spamCheckerRootId,
-                    'Enabled API key',
-                    'enabledApiKey',
-                    0,
-                    'spamCheckerConfig.enabledApiKey'
-                ],
-            ]
-        );
         $this->batchInsert(
             Object::tableName(),
             [
@@ -1497,113 +1312,6 @@ class m141023_084857_init extends Migration
                     Yii::$app->db->schema->getRawTableName('{{%submission_category_full_slug}}'),
                     Yii::$app->db->schema->getRawTableName('{{%submission_static_value_full_slug}}'),
                     'slug'
-                ]
-            ]
-        );
-        $this->insert(
-            Config::tableName(),
-            [
-                'name' => 'ErrorMonitor',
-                'key' => 'errorMonitor',
-                'value' => '1',
-                'path' => 'errorMonitor',
-            ]
-        );
-        $lastInsertId = Yii::$app->db->lastInsertID;
-        $this->batchInsert(
-            Config::tableName(),
-            [
-                'parent_id',
-                'name',
-                'key',
-                'value',
-                'path'
-            ],
-            [
-                [
-                    $lastInsertId,
-                    'Email Notify Enabled',
-                    'emailNotifyEnabled',
-                    '0',
-                    'errorMonitor.emailNotifyEnabled'
-                ],
-                [
-                    $lastInsertId,
-                    'Developers e-mail',
-                    'devmail',
-                    '',
-                    'errorMonitor.devmail'
-                ],
-                [
-                    $lastInsertId,
-                    'Notify Only Http Codes',
-                    'notifyOnlyHttpCodes',
-                    '',
-                    'errorMonitor.notifyOnlyHttpCodes',
-                ],
-                [
-                    $lastInsertId,
-                    'Store number',
-                    'numberElementsToStore',
-                    '5',
-                    'errorMonitor.numberElementsToStore'
-                ],
-                [
-                    $lastInsertId,
-                    'Immediate notice limit per url',
-                    'immediateNoticeLimitPerUrl',
-                    10,
-                    'errorMonitor.immediateNoticeLimitPerUrl',
-                ],
-                [
-                    $lastInsertId,
-                    'Immediate notice',
-                    'immediateNotice',
-                    1,
-                    'errorMonitor.immediateNotice'
-                ],
-                [
-                    $lastInsertId,
-                    'HTTP codes for immediate notify',
-                    'httpCodesForImmediateNotify',
-                    '404,500',
-                    'errorMonitor.httpCodesForImmediateNotify',
-                ],
-            ]
-        );
-        $this->insert(
-            Config::tableName(),
-            [
-                'parent_id' => '0',
-                'name' => 'Email уведомления',
-                'key' => 'newsletter',
-                'path' => 'newsletter'
-            ]
-        );
-        $lastInsertId = $this->db->lastInsertID;
-        $this->batchInsert(
-            Config::tableName(),
-            [
-                'parent_id',
-                'name',
-                'value',
-                'key',
-                'path'
-            ],
-            [
-                [
-                    $lastInsertId,
-                    'Тип уведомлений',
-                    0,
-                    'newsletterNotifyType',
-                    'newsletter.newsletterNotifyType'
-                ],
-                [
-                    $lastInsertId,
-                    'Состояние',
-                    1,
-                    'newsletterEnabled',
-                    'newsletter.newsletterEnabled'
                 ]
             ]
         );
@@ -2279,7 +1987,6 @@ class m141023_084857_init extends Migration
         $this->dropTable(DynamicContent::tableName());
         $this->dropTable(Navigation::tableName());
         $this->dropTable(Image::tableName());
-        $this->dropTable(Config::tableName());
         $this->dropTable('{{%session}}');
         $this->dropTable(ApiService::tableName());
     }
