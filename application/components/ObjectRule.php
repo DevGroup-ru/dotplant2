@@ -7,6 +7,7 @@ use app\models\Object;
 use app\models\PrefilteredPages;
 use app\models\Route;
 use app\properties\url\StaticPart;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
@@ -30,8 +31,18 @@ class ObjectRule implements UrlRuleInterface
 
         $handler_model = null;
         $handler_object = null;
+
+        $cacheKey = null;
+
         if (isset($params['model'])) {
             $handler_model = $params['model'];
+
+            $cacheKey = 'ObjectRule:'.$params['model']->tableName().':' . $params['model']->id;
+            $cached = Yii::$app->cache->get($cacheKey);
+            if ($cached !== false) {
+                return $cached;
+            }
+
             $handler_object = Object::getForClass(get_class($handler_model));
             unset($params['model']);
         }
@@ -68,7 +79,20 @@ class ObjectRule implements UrlRuleInterface
                     );
                     $additionalParams = array_intersect_key($params, array_flip($allowed));
                     $additionalParams = (!empty($additionalParams)) ? http_build_query($additionalParams) : '';
-                    return $url.((!empty($additionalParams)) ? "?$additionalParams" : '');
+                    $finalUrl = $url.((!empty($additionalParams)) ? "?$additionalParams" : '');
+
+                    if (isset($cacheKey)) {
+                        Yii::$app->cache->set(
+                            $cacheKey,
+                            $finalUrl,
+                            86400,
+                            new TagDependency([
+                                'tags' => ActiveRecordHelper::getObjectTag($handler_model->className(), $handler_model->id)
+                            ])
+                        );
+                    }
+
+                    return $finalUrl;
                 }
             }
         }
