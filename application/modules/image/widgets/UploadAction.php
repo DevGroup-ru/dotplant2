@@ -5,6 +5,7 @@ namespace app\modules\image\widgets;
 use app\components\Helper;
 use Yii;
 use app\modules\image\models\Image;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\HttpException;
 use yii\web\UploadedFile;
@@ -35,7 +36,7 @@ class UploadAction extends \devgroup\dropzone\UploadAction
             ]
         );
         if ($image->save()) {
-            return $image->toArray();
+            return ArrayHelper::merge($image->toArray(), ['file'=>$image->file]);
         } else {
             return $image->getErrors();
         }

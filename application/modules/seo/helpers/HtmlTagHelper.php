@@ -33,12 +33,11 @@ class HtmlTagHelper
     public static function registerTagOptions($tag)
     {
         $result = '';
-        if (isset(self::$htmlOptions[$tag]))
-        {
+        if (isset(self::$htmlOptions[$tag])) {
             $result .= ' ';
             $resultStringArray = [];
             foreach (self::$htmlOptions[$tag] as $name => $value) {
-                $resultStringArray[] = $name.'="'.$value.'"';
+                $resultStringArray[] = $name . '="' . $value . '"';
             }
             $result .= implode(' ', $resultStringArray);
         }

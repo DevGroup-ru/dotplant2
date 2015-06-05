@@ -63,6 +63,7 @@ class ImageDropzone extends DropZone
             );
             $this->getView()->registerJs(
                 'jQuery(' . $fhName . '.previewElement).find("[name=\"id[]\"]").val(' . $file['id'] . ');
+                jQuery(' . $fhName . '.previewElement).find("[name=\"file[]\"]").val("' . $file['file'] . '");
                 jQuery(' . $fhName . '.previewElement).data("filename", "' . $file['name'] . '");
                 jQuery(' . $fhName . '.previewElement).find(".description textarea").text("' . $file['description'] . '");
                 jQuery(' . $fhName . '.previewElement).find(".description textarea").attr("name", "description[' . $file['id'] . ']")'
@@ -134,7 +135,7 @@ class ImageDropzone extends DropZone
                 'acceptedFiles' => 'image/*',
                 'params' => $params,
                 'previewTemplate' => '<div class="file-row">
-                        ' . Html::input('hidden', 'id[]') . Html::input('hidden', 'file') . '
+                        ' . Html::input('hidden', 'id[]') . Html::input('hidden', 'file[]') . '
                         <!-- This is used as the file preview template -->
                         <div>
                             <span class="preview"><img style="width: 80px; height: 80px;" data-dz-thumbnail /></span>
@@ -186,6 +187,7 @@ class ImageDropzone extends DropZone
                 jQuery(file.previewElement).find("[data-dz-name]").text(response.filename);
                 jQuery(file.previewElement).data("filename", response.filename);
                 jQuery(file.previewElement).find("[name=\"id[]\"]").val(response.afterUpload.id);
+                jQuery(file.previewElement).find("[name=\"file[]\"]").val(response.afterUpload.file);
                 jQuery(file.previewElement).find(".description textarea").attr("name", "description["+response.afterUpload.id+"]");
             }',
             'complete' => 'function(file) {
