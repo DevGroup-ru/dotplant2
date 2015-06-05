@@ -44,6 +44,17 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $immediateNoticeLimitPerUrl = 10;
     public $httpCodesForImmediateNotify = '404,500';
 
+    public $emailConfig = [
+        'transport' => 'Swift_MailTransport',
+        'host' => 'localhost',
+        'username' => 'login',
+        'password' => 'password',
+        'port' => '25',
+        'encryption' => '',
+        'mailFrom' => 'login',
+        'sendMail' => '',
+    ];
+
     /**
      * @inheritdoc
      */
@@ -101,6 +112,25 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                         $this->addError($attribute, Yii::t('app', 'Directory {dir} not exists.', ['dir' => $_directory]));
                     } elseif (!is_writable($_directory)) {
                         $this->addError($attribute, Yii::t('app', 'Directory {dir} not writable.', ['dir' => $_directory]));
+                    }
+                }
+            ],
+            [['emailConfig'], 'each', 'rule' => ['string']],
+            [
+                ['emailConfig'],
+                function ($attribute, $params)
+                {
+                    $value = $this->$attribute;
+                    if (empty($value['transport'])) {
+                        $this->addError($attribute, Yii::t('app', 'Mail transport cannot be empty.'));
+                    } elseif (
+                        'Swift_SmtpTransport' === $value['transport']
+                        && (
+                            empty($value['host']) || empty($value['username']) || empty($value['password'])
+                            || empty($value['port']) || empty($value['mailFrom'])
+                        )
+                    ) {
+                        $this->addError($attribute, Yii::t('app', 'Wrong SMTP parameters.'));
                     }
                 }
             ],
