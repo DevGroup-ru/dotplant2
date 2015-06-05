@@ -1,25 +1,12 @@
 <?php
 
 use app\backgroundtasks\models\Task;
-use app\models\Config;
 use yii\db\Migration;
 
 class m150330_083706_clear_old_notify extends Migration
 {
     public function up()
     {
-        $errorMonitor = Config::findOne(['key' => 'errorMonitor']);
-        $oldNotifyDays = new Config;
-        $oldNotifyDays->setAttributes(
-            [
-                'parent_id' => $errorMonitor->id,
-                'name' => 'Store notify history within days',
-                'key' => 'daysToStoreNotify',
-                'value' => '28',
-                'preload' => 1,
-            ]
-        );
-        $oldNotifyDays->save();
         $crearTask = new Task;
         $crearTask->setAttributes(
             [
@@ -36,7 +23,6 @@ class m150330_083706_clear_old_notify extends Migration
 
     public function down()
     {
-        $this->delete(Config::tableName(), ['key' => 'daysToStoreNotify']);
         $this->delete(Task::tableName(), ['action' => 'background/notification/clear-old-notifications']);
     }
 }
