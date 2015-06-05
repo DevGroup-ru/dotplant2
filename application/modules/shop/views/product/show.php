@@ -98,6 +98,7 @@ $propertiesShowedInAnnounce = false;
                     <a href="#" class="btn btn-add-to-cart" data-action="add-to-cart" data-id="<?=$model->id?>">
                         <?=Yii::t('app', 'Add to')?> <i class="fa fa-shopping-cart"></i>
                     </a>
+                    <br/>
                     <a href="<?=Url::to([
                         '/shop/product-compare/add',
                         'id' => $model->id,

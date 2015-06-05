@@ -18,6 +18,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $variation_id
  * @property integer $sort_order
  * @property string $configuration_json
+ * @property ThemeWidgets $widget
  */
 class ThemeActiveWidgets extends \yii\db\ActiveRecord
 {

@@ -226,6 +226,10 @@ class ProductController extends Controller
      */
     public function actionSearch()
     {
+        $headers = Yii::$app->response->getHeaders();
+        $headers->set('X-Robots-Tag', 'none');
+        $headers->set('X-Frame-Options', 'SAMEORIGIN');
+        $headers->set('X-Content-Type-Options', 'nosniff');
         if (!Yii::$app->request->isAjax) {
             throw new ForbiddenHttpException();
         }

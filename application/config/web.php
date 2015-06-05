@@ -13,6 +13,7 @@ $config = [
         'backend',
         'app\components\UserPreferencesBootstrap',
         'shop',
+        'DefaultTheme',
     ],
     'defaultRoute' => 'default',
     'modules' => [

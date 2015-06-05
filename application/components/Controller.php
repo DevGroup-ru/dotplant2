@@ -32,6 +32,7 @@ class Controller extends \yii\web\Controller
         if (is_null($model)) {
             return $defaultView;
         }
+
         do {
             $view = ViewObject::getViewByModel($model);
             if (!is_null($view)) {
@@ -39,6 +40,7 @@ class Controller extends \yii\web\Controller
             }
             $model = $model->parent;
         } while (!is_null($model));
+
         return $defaultView;
     }
 

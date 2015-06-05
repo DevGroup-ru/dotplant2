@@ -120,7 +120,7 @@ class ThemeParts extends \yii\db\ActiveRecord
         $parts = static::getAllParts();
         Yii::beginProfile('Render theme part:' . $key);
         Yii::trace('Render theme part:' . $key);
-        /** @var ThemeParts $model */
+        /** @var array $model */
         $model = null;
         foreach ($parts as $part) {
             if ($part['key'] === $key) {
@@ -206,6 +206,7 @@ class ThemeParts extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param array $attributesRow
      * @return bool True if we should cache this widget
      */
     public static function shouldCache($attributesRow)
@@ -214,6 +215,7 @@ class ThemeParts extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param array $attributesRow
      * @return string Cache key for this widget
      */
     public static function getCacheKey($attributesRow)
@@ -225,6 +227,7 @@ class ThemeParts extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param array $attributesRow
      * @return string[] Array of cache tags
      */
     public static function getCacheTags($attributesRow)
@@ -236,6 +239,7 @@ class ThemeParts extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param array $attributesRow
      * @return TagDependency TagDependency for cache storing
      */
     public static function getCacheDependency($attributesRow)

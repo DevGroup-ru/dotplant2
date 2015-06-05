@@ -57,7 +57,7 @@ abstract class BaseWidget extends Widget
             Yii::configure($this, $configuration);
         }
 
-        $this->fragmentCacheId = 'BaseWidgetCache:'.$this->themeWidgetModel->id.':'.$this->getId();
+        $this->fragmentCacheId = 'BaseWidgetCache:'.$this->themeWidgetModel->id.':'.$this->partRow['id'];
     }
 
     /**
@@ -80,9 +80,11 @@ abstract class BaseWidget extends Widget
             if ($cachedResult !== false) {
                 $cachedData = $viewElementsGathener->getCachedData($this->fragmentCacheId);
                 if (is_array($cachedData)) {
+
                     $viewElementsGathener->repeatGatheredData(Yii::$app->view, $cachedData);
+                    return $cachedResult;
                 }
-                return $cachedResult;
+
             }
             $viewElementsGathener->startGathering($this->fragmentCacheId);
         }

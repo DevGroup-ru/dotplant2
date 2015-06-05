@@ -9,7 +9,7 @@
 ?>
 <?php if (count($products) > 0): ?>
     <div class="tab-pane  active" id="blockView">
-        <ul class="thumbnails">
+        <div class="row">
             <?php
                 foreach ($products as $product) {
                     $mainCat = $product->getMainCategory();
@@ -38,7 +38,7 @@
                     );
                 }
             ?>
-        </ul>
+        </div>
     </div>
     <?php if ($pages->pageCount > 1): ?>
         <div class="pagination">
@@ -56,3 +56,4 @@
 <?php else: ?>
     <p class="no-results"><?= Yii::t('app', 'No results found') ?></p>
 <?php endif; ?>
+
