@@ -25,7 +25,7 @@ class Controller extends \yii\web\Controller
     {
         if (Yii::$app->response->view_id !== null) {
             $view = \app\models\View::getViewById(Yii::$app->response->view_id);
-            if (!is_null($view)){
+            if (!is_null($view)) {
                 return $view === 'default' ? $defaultView : $view;
             }
         }

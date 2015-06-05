@@ -118,4 +118,5 @@ Here's how config keys are replaced:
 - core.fileUploadPath - Core module fileUploadPath
 - core.imperavi.uploadDir - Backend module -> wysiwygUploadDir
 - spamCheckerConfig values - Core module spamCheckerApiKey and spamCheckerInterpretFields
+- all email config values - Core module `Email configuration`
 - ErrorMonitor, Newsletter config values are not fixed yet - this modules will be rewritten
