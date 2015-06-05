@@ -40,7 +40,7 @@ trait LoadModel
                 }
             }
         }
-        if ($useCache === true) {
+        if ($useCache === true && $model===null) {
             $model = Yii::$app->cache->get($modelName::className() . ":" . $id);
         }
         if (!is_object($model)) {

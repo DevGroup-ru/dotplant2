@@ -49,7 +49,7 @@ class ConfigurationController extends BackendController
         );
     }
 
-    public function actionEditPart($id)
+    public function actionEditPart($id='')
     {
         $model = $this->loadModel(ThemeParts::className(), $id, true);
         if ($model->isNewRecord === true) {
@@ -70,7 +70,7 @@ class ConfigurationController extends BackendController
         );
     }
 
-    public function actionEditVariation($id)
+    public function actionEditVariation($id='')
     {
         $model = $this->loadModel(ThemeVariation::className(), $id, true);
         if ($model->isNewRecord === true) {
@@ -91,7 +91,7 @@ class ConfigurationController extends BackendController
         );
     }
 
-    public function actionEditWidget($id)
+    public function actionEditWidget($id='')
     {
         $model = $this->loadModel(ThemeWidgets::className(), $id, true);
         if ($model->isNewRecord === true) {

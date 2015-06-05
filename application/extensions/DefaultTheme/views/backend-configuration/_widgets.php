@@ -9,7 +9,7 @@ use yii\helpers\Html;
 <?php $this->beginBlock('bottom-buttons-parts'); ?>
 <?= \yii\helpers\Html::a(
     \kartik\icons\Icon::show('plus') . ' ' . Yii::t('app', 'Add'),
-    ['/DefaultTheme/backend-configuration/edit-variation', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
+    ['/DefaultTheme/backend-configuration/edit-widget', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
     [
         'class' => 'btn btn-success',
     ]
