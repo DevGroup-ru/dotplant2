@@ -145,14 +145,6 @@ abstract class BaseConfigurationModel extends Model
                     true
                 );
             }
-        } else {
-            Yii::$app->session->setFlash(
-                'info',
-                Yii::t(
-                    'app',
-                    'You have opcache turned on but opcache_invalidate function is not available. That\'s strange.'
-                )
-            );
         }
 
         return $result;
