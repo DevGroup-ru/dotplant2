@@ -12,6 +12,7 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
  * @property integer $id
  * @property integer $widget_id
  * @property integer $part_id
+ * @part ThemeParts $part
  */
 class ThemeWidgetApplying extends \yii\db\ActiveRecord
 {
@@ -57,5 +58,14 @@ class ThemeWidgetApplying extends \yii\db\ActiveRecord
             'widget_id' => Yii::t('app', 'Widget ID'),
             'part_id' => Yii::t('app', 'Part ID'),
         ];
+    }
+
+    /**
+     * Relation to ThemeParts that we can apply to
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPart()
+    {
+        return $this->hasOne(ThemeParts::className(), ['id' => 'part_id']);
     }
 }

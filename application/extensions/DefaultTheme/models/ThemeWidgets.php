@@ -23,6 +23,7 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
  * @property string $cache_tags
  * @property integer $cache_vary_by_session
  * @property ThemeWidgetApplying $applying
+ * @property ThemeParts $applicableParts
  */
 class ThemeWidgets extends \yii\db\ActiveRecord
 {
@@ -91,6 +92,16 @@ class ThemeWidgets extends \yii\db\ActiveRecord
     }
 
     /**
+     * Relation to ThemeParts that we can apply to
+     * @return \yii\db\ActiveQuery
+     */
+    public function getApplicableParts()
+    {
+        return $this->hasMany(ThemeParts::className(), ['id' => 'part_id'])
+            ->via('applying');
+    }
+
+    /**
      * Search
      * @param $params
      * @return ActiveDataProvider
@@ -118,6 +129,9 @@ class ThemeWidgets extends \yii\db\ActiveRecord
         return $dataProvider;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);

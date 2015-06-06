@@ -93,13 +93,34 @@ class ConfigurationController extends BackendController
 
     public function actionEditWidget($id='')
     {
-        $model = $this->loadModel(ThemeWidgets::className(), $id, true);
+        $model = new ThemeWidgets;
+        if (!empty($id)) {
+            $model = ThemeWidgets::find()
+                ->where(['theme_widgets.id'=>$id])
+                ->joinWith('applying.part')
+                ->one();
+            if ($model === null) {
+                throw new NotFoundHttpException;
+            }
+        }
         if ($model->isNewRecord === true) {
             $model->loadDefaultValues();
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+
             if ($model->save()) {
+
+
+                $newPart = Yii::$app->request->post('new-part', null);
+                if ($newPart !== null) {
+                    /** @var ThemeParts $themePart */
+                    $themePart = ThemeParts::findOne($newPart);
+                    if ($themePart!==null) {
+                        $model->link('applicableParts', $themePart);
+                    }
+                }
+
                 return $this->redirectUser($model->id, true, 'index', 'edit-widget');
             }
         }
@@ -110,6 +131,18 @@ class ConfigurationController extends BackendController
                 'model' => $model,
             ]
         );
+    }
+
+    public function actionRemoveApplying($id, $part_id)
+    {
+        $model = $this->loadModel(ThemeWidgets::className(), $id);
+        /** @var ThemeParts $themePart */
+        $themePart = ThemeParts::findOne($part_id);
+        if ($themePart === null) {
+            throw new NotFoundHttpException;
+        }
+        $model->unlink('applicableParts', $themePart);
+        return $this->redirect(['edit-widget', 'id'=>$model->id]);
     }
 
     public function actionConfigureJson($id, $returnUrl = '')

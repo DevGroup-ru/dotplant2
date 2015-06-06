@@ -5,6 +5,7 @@ use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
 use yii\helpers\Url;
+/** @var \app\extensions\DefaultTheme\models\ThemeWidgets $model */
 /** @var $this \yii\web\View */
 $this->title = Yii::t('app', 'Theme widget edit');
 $this->params['breadcrumbs'][] = ['url' => [Url::toRoute('index')], 'label' => Yii::t('app', 'Default theme configuration')];
@@ -49,6 +50,57 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'cache_tags')->textarea(); ?>
                 <?= $form->field($model, 'cache_vary_by_session')->checkbox(); ?>
                 <?php BackendWidget::end(); ?>
+                <?php BackendWidget::begin(['title'=> Yii::t('app', 'Applicable parts'), 'icon'=>'puzzle-piece', 'footer'=>$this->blocks['submit']]); ?>
+                <fieldset>
+                    <legend>
+                        <?= Yii::t('app', 'Current applicable parts') ?>
+                    </legend>
+                    <table class="table table-condensed table-hover">
+                    	<thead>
+                    		<tr>
+                    			<th>
+                                    <?= Yii::t('app', 'Part') ?>
+                                </th>
+                                <th>
+                                    <?= Yii::t('app', 'Actions') ?>
+                                </th>
+                    		</tr>
+                    	</thead>
+                    	<tbody>
+                        <?php foreach ($model->applying as $widget_applying):?>
+                    		<tr>
+                    			<td>
+                                    <?= Html::encode($widget_applying->part->name) ?>
+                                </td>
+                                <td>
+                                    <?= Html::a(
+                                        Icon::show('trash-o') . ' ' . Yii::t('app', 'Remove'),
+                                        [
+                                            'remove-applying',
+                                            'part_id' => $widget_applying->part->id,
+                                            'id' => $model->id,
+                                        ],
+                                        [
+                                            'class' => 'btn btn-xs btn-danger'
+                                        ]
+                                    ) ?>
+                                </td>
+                    		</tr>
+                        <?php endforeach;?>
+                    	</tbody>
+                    </table>
+                </fieldset>
+                <?=
+                Html::dropDownList(
+                    'new-part',
+                    null,
+                    [ 0 => Yii::t('app', 'Select theme part to add') ]
+                        + \yii\helpers\ArrayHelper::map(\app\extensions\DefaultTheme\models\ThemeParts::getAllParts(), 'id', 'name'),
+                    [
+                        'class' => 'new-part-select',
+                    ]
+                ) ?>
+                <?php BackendWidget::end() ?>
             </article>
 
         </div>
