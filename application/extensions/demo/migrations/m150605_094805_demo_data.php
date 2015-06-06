@@ -1,5 +1,6 @@
 <?php
 
+use app\modules\image\models\Image;
 use app\modules\shop\models\Category;
 use app\modules\shop\models\Product;
 use app\models\PropertyGroup;
@@ -100,7 +101,7 @@ class m150605_094805_demo_data extends Migration
             PropertyGroup::tableName(),
             [
                 'object_id' => $productObject->id,
-                'name' => 'Common group',
+                'name' => 'Общая группа свойств',
             ]
         );
         $commonGroupId = $this->db->lastInsertID;
@@ -108,7 +109,7 @@ class m150605_094805_demo_data extends Migration
             Property::tableName(),
             [
                 'property_group_id' => $commonGroupId,
-                'name' => 'Vendor',
+                'name' => 'Производитель',
                 'key' => 'vendor',
                 'property_handler_id' => $this->selectHandlerId,
                 'handler_additional_params' => '{}',
@@ -225,75 +226,60 @@ class m150605_094805_demo_data extends Migration
                             $this->saveStatic(
                                 $productId,
                                 $this->getKey($property['name']),
-                                str_replace($property['name'], '', $property['value'])
+                                str_replace($property['name'] . ': ', '', $property['value'])
                             );
                         } else {
                             $this->saveEav(
                                 $productId,
                                 $groupId,
                                 $property['name'],
-                                str_replace($property['name'], '', $property['value'])
+                                str_replace($property['name'] . ': ', '', $property['value'])
                             );
                         }
                     }
                 }
                 // images
+                $prodPhotos = [];
                 if (isset($product['photos'])) {
-                    $prodPhotos = [];
                     foreach ($product['photos'] as $photo) {
-                        $name = basename($photo['url']);
                         $prodPhotos[] = [
                             $productObject->id,
                             $productId,
-                            $name,
+                            $photo['name'],
                             $product['name'],
-                            1
                         ];
                     }
-                    $this->batchInsert(\app\modules\image\models\Image::tableName(),
-                        [
-                            'object_id',
-                            'object_model_id',
-                            'filename',
-                            'image_description',
-                            'sort_order'
-                        ],
-                        $prodPhotos
-                    );
                 }
-                if (isset($product['mainPhoto'])) {
-                    $prodPhotos = [];
-                    foreach ($product['mainPhoto'] as $photo) {
-                        $url = !isset($photo['url']) ? $photo : $photo['url'];
-                        $name = basename($url);
-                        $prodPhotos[] = [
-                            $productObject->id,
-                            $productId,
-                            $name,
-                            $product['name'],
-                            0
-                        ];
-                    }
-                    $this->batchInsert(\app\modules\image\models\Image::tableName(),
+                if (isset($product['mainPhoto']['name'])) {
+                    $prodPhotos[] = [
+                        $productObject->id,
+                        $productId,
+                        $product['mainPhoto']['name'],
+                        $product['name'],
+                    ];
+                }
+                if (count($prodPhotos) > 0) {
+                    $this->batchInsert(
+                        Image::tableName(),
                         [
                             'object_id',
                             'object_model_id',
                             'filename',
                             'image_description',
-                            'sort_order'
                         ],
                         $prodPhotos
                     );
                 }
             }
         }
-
-        $_imgUrl = '';
-        $_imagesPath = Yii::getAlias('@webroot/files/');
-        $_imgsFile = $_imagesPath.DIRECTORY_SEPARATOR .'imgs.zip';
-        echo system('/usr/bin/wget -O "'. $_imgsFile .'" "' . $_imgUrl . '"');
-        echo system('/usr/bin/unzip "'. $_imgsFile .'" -d "'. $_imagesPath .'"');
-        echo system('/bin/rm "'. $_imgsFile .'"');
+        srand();
+        $cdnNumber = rand(1, 2);
+        $imgUrl = "http://static-{$cdnNumber}.dotplant.ru/demo-photos.zip";
+        $imagesPath = Yii::getAlias('@webroot/files/');
+        $imgsFile = $imagesPath.DIRECTORY_SEPARATOR .'imgs.zip';
+        echo system('/usr/bin/wget -O "'. $imgsFile .'" "' . $imgUrl . '"');
+        echo system('/usr/bin/unzip "'. $imgsFile .'" -d "'. $imagesPath .'"');
+        echo system('/bin/rm "'. $imgsFile .'"');
     }
 
     public function down()
