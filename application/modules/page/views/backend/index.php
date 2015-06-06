@@ -66,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'action' => new \yii\web\JsExpression(
                         "function(node) {
                             jQuery('#delete-confirmation')
-                                .attr('data-url', '/page/backend./delete?id=' + jQuery(node.reference[0]).data('id'))
+                                .attr('data-url', '/page/backend/delete?id=' + jQuery(node.reference[0]).data('id'))
                                 .attr('data-items', '')
                                 .modal('show');
                             return true;
