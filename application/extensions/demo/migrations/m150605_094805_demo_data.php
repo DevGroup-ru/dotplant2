@@ -239,18 +239,61 @@ class m150605_094805_demo_data extends Migration
                 }
                 // images
                 if (isset($product['photos'])) {
+                    $prodPhotos = [];
                     foreach ($product['photos'] as $photo) {
                         $name = basename($photo['url']);
+                        $prodPhotos[] = [
+                            $productObject->id,
+                            $productId,
+                            $name,
+                            $product['name'],
+                            1
+                        ];
                     }
+                    $this->batchInsert(\app\modules\image\models\Image::tableName(),
+                        [
+                            'object_id',
+                            'object_model_id',
+                            'filename',
+                            'image_description',
+                            'sort_order'
+                        ],
+                        $prodPhotos
+                    );
                 }
                 if (isset($product['mainPhoto'])) {
+                    $prodPhotos = [];
                     foreach ($product['mainPhoto'] as $photo) {
                         $url = !isset($photo['url']) ? $photo : $photo['url'];
                         $name = basename($url);
+                        $prodPhotos[] = [
+                            $productObject->id,
+                            $productId,
+                            $name,
+                            $product['name'],
+                            0
+                        ];
                     }
+                    $this->batchInsert(\app\modules\image\models\Image::tableName(),
+                        [
+                            'object_id',
+                            'object_model_id',
+                            'filename',
+                            'image_description',
+                            'sort_order'
+                        ],
+                        $prodPhotos
+                    );
                 }
             }
         }
+
+        $_imgUrl = '';
+        $_imagesPath = Yii::getAlias('@webroot/files/');
+        $_imgsFile = $_imagesPath.DIRECTORY_SEPARATOR .'imgs.zip';
+        echo system('/usr/bin/wget -O "'. $_imgsFile .'" "' . $_imgUrl . '"');
+        echo system('/usr/bin/unzip "'. $_imgsFile .'" -d "'. $_imagesPath .'"');
+        echo system('/bin/rm "'. $_imgsFile .'"');
     }
 
     public function down()
