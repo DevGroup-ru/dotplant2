@@ -50,7 +50,7 @@ class ShopModule extends BaseModule implements BootstrapInterface
     /**
      * @var bool Filtration works only on parent products but not their children
      */
-    public $filterOnlyByParentProduct = 1;
+    public $filterOnlyByParentProduct = true;
 
     /**
      * @var int How much last viewed products ID's to store in session
