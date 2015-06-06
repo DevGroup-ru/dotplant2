@@ -29,6 +29,9 @@ use yii\helpers\Url;
             ?>
             <?php
             foreach ($properties as $prop) :
+                if ($prop->has_static_values == 0) {
+                    continue;
+                }
                 $property_values = app\models\PropertyStaticValues::getValuesForPropertyId($prop->id); ?>
                 <div class="form-group">
                     <label class="col-md-2 control-label"><?=$prop->name?></label>

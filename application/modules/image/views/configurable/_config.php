@@ -33,7 +33,12 @@ foreach (array_keys($model->components) as $value) {
 
 
         foreach ($model['components'] as $componentName => $componentConf) {
-            BackendWidget::begin(['title' => Yii::t('app', $componentName)]);
+            BackendWidget::begin(
+                [
+                    'title' => Yii::t('app', $componentName),
+                    'options' => ['class' => 'visible-header'],
+                ]
+            );
 
 
             $necessaryContent = "";
@@ -78,7 +83,13 @@ foreach (array_keys($model->components) as $value) {
         <h2><?= Yii::t('app', 'Add new component') ?></h2>
         <?php
         foreach ($model['defaultComponents'] as $componentName => $componentConf) {
-            BackendWidget::begin(['id' => $componentName, 'title' => Yii::t('app', $componentName)]);
+            BackendWidget::begin(
+                [
+                    'id' => $componentName,
+                    'title' => Yii::t('app', $componentName),
+                    'options' => ['class' => 'visible-header'],
+                ]
+            );
 
             $necessaryContent = $form->field(
                 $model,

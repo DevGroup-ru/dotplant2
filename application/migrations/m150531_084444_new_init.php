@@ -560,7 +560,7 @@ class m150531_084444_new_init extends Migration
                 'user_id' => 'INT UNSIGNED NOT NULL',
                 'manager_id' => 'INT UNSIGNED DEFAULT \'0\'',
                 'start_date' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
-                'update_date' => 'TIMESTAMP',
+                'update_date' => 'TIMESTAMP NULL',
                 'end_date' => "TIMESTAMP NULL",
                 'cart_forming_time' => 'INT DEFAULT \'0\'',
                 'order_stage_id' => 'INT UNSIGNED NOT NULL',
