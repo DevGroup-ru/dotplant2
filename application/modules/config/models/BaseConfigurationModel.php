@@ -138,13 +138,13 @@ abstract class BaseConfigurationModel extends Model
         $result =  $writer->commit();
 
         if (ini_get('opcache.enable')) {
-            if (function_exists('opcache_invalidate') === true) {
-                // invalidate opcache of this files!
-                opcache_invalidate(
-                    Yii::getAlias($filename),
-                    true
-                );
-            }
+
+            // invalidate opcache of this files!
+            opcache_invalidate(
+                Yii::getAlias($filename),
+                true
+            );
+
         }
 
         return $result;
