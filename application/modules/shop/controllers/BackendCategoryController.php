@@ -3,6 +3,7 @@
 namespace app\modules\shop\controllers;
 
 use app\backend\components\BackendController;
+use app\backend\events\BackendEntityEditEvent;
 use app\modules\shop\models\Category;
 use app\models\Object;
 use app\models\ViewObject;
@@ -23,6 +24,10 @@ use yii\web\ServerErrorHttpException;
 
 class BackendCategoryController extends BackendController
 {
+
+    const BACKEND_CATEGORY_EDIT = 'backend-category-edit';
+    const BACKEND_CATEGORY_EDIT_SAVE = 'backend-category-edit-save';
+    const BACKEND_CATEGORY_EDIT_FORM = 'backend-category-edit-form';
 
     public function behaviors()
     {
@@ -125,8 +130,14 @@ class BackendCategoryController extends BackendController
             throw new ServerErrorHttpException;
         }
 
+        $event = new BackendEntityEditEvent($model);
+        $this->trigger(self::BACKEND_CATEGORY_EDIT, $event);
+
         $post = \Yii::$app->request->post();
-        if ($model->load($post) && $model->validate()) {
+        if ($event->isValid && $model->load($post) && $model->validate()) {
+            $saveStateEvent = new BackendEntityEditEvent($model);
+            $this->trigger(self::BACKEND_CATEGORY_EDIT_SAVE, $saveStateEvent);
+
             $save_result = $model->save();
             $model->saveProperties($post);
 

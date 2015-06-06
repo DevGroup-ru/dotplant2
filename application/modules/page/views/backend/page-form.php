@@ -2,6 +2,7 @@
 
 use app\backend\widgets\BackendWidget;
 use app\backend\components\ActiveForm;
+use app\modules\page\backend\PageController;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\DateTimePicker;
@@ -314,7 +315,6 @@ $this->params['breadcrumbs'][] = $this->title;
 </section>
 <?php
 $event = new \app\backend\events\BackendEntityEditFormEvent($form, $model);
-
-$this->trigger('backend-page-edit-form', $event);
+$this->trigger(PageController::BACKEND_PAGE_EDIT_FORM, $event);
 ?>
 <?php ActiveForm::end(); ?>

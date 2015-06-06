@@ -98,5 +98,121 @@ class HtmlTagHelper
         static::addTagOptions('html', 'prefix', 'og: http://ogp.me/ns#');
     }
 
+    /**
+     * @param $site
+     * @param $title
+     * @param $description
+     * @param string $image
+     */
+    public static function registerTwitterSummary($site, $title, $description, $image = "")
+    {
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:card',
+                'content' => 'summary'
+            ]
+        );
+
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:site',
+                'content' => Html::encode($site)
+            ]
+        );
+
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:title',
+                'content' => Html::encode($title),
+            ]
+        );
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:description',
+                'content' => Html::encode($description),
+            ]
+        );
+        if (!empty($image)) {
+            Yii::$app->view->registerMetaTag(
+                [
+                    'name' => 'twitter:image',
+                    'content' => Html::encode($image),
+                ]
+            );
+        }
+
+    }
+
+    public static function registerTwitterProductCard(
+        $site,
+        $title,
+        $description,
+        $image,
+        $data1,
+        $label1,
+        $data2,
+        $label2
+    ) {
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:card',
+                'content' => 'product'
+            ]
+        );
+
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:site',
+                'content' => Html::encode($site)
+            ]
+        );
+
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:title',
+                'content' => Html::encode($title),
+            ]
+        );
+
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:description',
+                'content' => Html::encode($description),
+            ]
+        );
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:image',
+                'content' => Html::encode($image),
+            ]
+        );
+
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:data1',
+                'content' => Html::encode($data1),
+            ]
+        );
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:data2',
+                'content' => Html::encode($data2),
+            ]
+        );
+
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:label1',
+                'content' => Html::encode($label1),
+            ]
+        );
+        Yii::$app->view->registerMetaTag(
+            [
+                'name' => 'twitter:label2',
+                'content' => Html::encode($label2),
+            ]
+        );
+    }
+
 
 }

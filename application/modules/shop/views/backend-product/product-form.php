@@ -1,6 +1,7 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
+use app\modules\shop\controllers\BackendProductController;
 use app\modules\shop\models\Product;
 use app\backend\widgets\GridView;
 use kartik\helpers\Html;
@@ -439,5 +440,8 @@ $this->params['breadcrumbs'][] = $this->title;
 </article>
 </div>
 </section>
-
+<?php
+$event = new \app\backend\events\BackendEntityEditFormEvent($form, $model);
+$this->trigger(BackendProductController::EVENT_BACKEND_PRODUCT_EDIT_FORM, $event);
+?>
 <?php ActiveForm::end(); ?>

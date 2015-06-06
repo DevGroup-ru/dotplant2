@@ -1,6 +1,7 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
+use app\modules\shop\controllers\BackendCategoryController;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use app\backend\components\ActiveForm;
@@ -319,5 +320,8 @@ $this->params['breadcrumbs'][] = $this->title;
         </article>
     </div>
 </section>
-
+<?php
+$event = new \app\backend\events\BackendEntityEditFormEvent($form, $model);
+$this->trigger(BackendCategoryController::BACKEND_CATEGORY_EDIT_FORM, $event);
+?>
 <?php ActiveForm::end(); ?>

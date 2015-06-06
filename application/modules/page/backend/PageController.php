@@ -19,6 +19,10 @@ use yii\web\NotFoundHttpException;
 class PageController extends \app\backend\components\BackendController
 {
 
+    const BACKEND_PAGE_EDIT = 'backend-page-edit';
+    const BACKEND_PAGE_EDIT_SAVE = 'backend-page-edit-save';
+    const BACKEND_PAGE_EDIT_FORM = 'backend-page-edit-form';
+
     public function behaviors()
     {
         return [
@@ -92,12 +96,12 @@ class PageController extends \app\backend\components\BackendController
         $model->parent_id = $parent_id;
 
         $event = new BackendEntityEditEvent($model);
-        $this->trigger('backend-page-edit', $event);
+        $this->trigger(self::BACKEND_PAGE_EDIT, $event);
 
         $post = \Yii::$app->request->post();
         if ($event->isValid && $model->load($post)) {
             $saveStateEvent = new BackendEntityEditEvent($model);
-            $this->trigger('backend-page-edit-save', $saveStateEvent);
+            $this->trigger(self::BACKEND_PAGE_EDIT_SAVE, $saveStateEvent);
 
             if ($saveStateEvent->isValid && $model->validate()) {
                 $save_result = $model->save();

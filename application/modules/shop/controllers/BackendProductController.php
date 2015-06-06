@@ -4,6 +4,7 @@ namespace app\modules\shop\controllers;
 
 use app\backend\actions\PropertyHandler;
 use app\backend\components\BackendController;
+use app\backend\events\BackendEntityEditEvent;
 use app\modules\shop\models\Category;
 use app\modules\image\models\Image;
 use app\models\Object;
@@ -30,6 +31,11 @@ use yii\web\ServerErrorHttpException;
 
 class BackendProductController extends BackendController
 {
+    const EVENT_BACKEND_PRODUCT_EDIT = 'backend-product-edit';
+    const EVENT_BACKEND_PRODUCT_EDIT_SAVE = 'backend-product-edit-save';
+    const EVENT_BACKEND_PRODUCT_EDIT_FORM = 'backend-product-edit-form';
+
+
     public function behaviors()
     {
         return [
@@ -168,10 +174,15 @@ class BackendProductController extends BackendController
 
         $model->loadRelatedProductsArray();
 
+        $event = new BackendEntityEditEvent($model);
+        $this->trigger(self::EVENT_BACKEND_PRODUCT_EDIT, $event);
+
         $post = \Yii::$app->request->post();
 
+        if ($event->isValid && $model->load($post)) {
+            $saveStateEvent = new BackendEntityEditEvent($model);
+            $this->trigger(self::EVENT_BACKEND_PRODUCT_EDIT_SAVE, $saveStateEvent);
 
-        if ($model->load($post)) {
             if ($model->validate()) {
                 if (isset($post['GeneratePropertyValue'])) {
                     $generateValues = $post['GeneratePropertyValue'];
@@ -213,7 +224,7 @@ class BackendProductController extends BackendController
 
 
                     $action = Yii::$app->request->post('action', 'save');
-                    if (Yii::$app->request->post('AddPropetryGroup')||Yii::$app->request->post('RemovePropetryGroup')) {
+                    if (Yii::$app->request->post('AddPropetryGroup') || Yii::$app->request->post('RemovePropetryGroup')) {
                         $action = 'save';
                     }
                     $returnUrl = Yii::$app->request->get('returnUrl', ['index']);
@@ -571,7 +582,7 @@ class BackendProductController extends BackendController
         $ids_sorted = $ids;
         sort($ids_sorted);
         foreach ($ids as $id) {
-            $priorities[$id] = $ids_sorted[$start ++];
+            $priorities[$id] = $ids_sorted[$start++];
         }
         $sql = "UPDATE " . $tableName . " SET $field = " . self::generateCase($priorities) . " WHERE id IN(" . implode(
                 ', ',
@@ -599,7 +610,7 @@ class BackendProductController extends BackendController
             foreach ($array[$count] as $value) {
                 $result[] = [$value];
             }
-            $count ++;
+            $count++;
             $arResult = self::generateOptions($array, $result, $count);
         } else {
             if (isset($array[$count])) {
@@ -609,7 +620,7 @@ class BackendProductController extends BackendController
                         $nextResult[] = array_merge($resValue, [$value]);
                     }
                 }
-                $count ++;
+                $count++;
                 $arResult = self::generateOptions($array, $nextResult, $count);
             } else {
                 return $result;
