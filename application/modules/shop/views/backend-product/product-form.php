@@ -166,6 +166,13 @@ $this->params['breadcrumbs'][] = $this->title;
     endif;
     ?>
 
+    <?=
+    $form->field($model, 'measure_id')
+        ->dropDownList(
+            \app\components\Helper::getModelMap(\app\modules\shop\models\Measure::className(), 'id', 'name')
+        );
+    ?>
+
     <?php BackendWidget::end(); ?>
 
     <?php if (!$model->isNewRecord):?>

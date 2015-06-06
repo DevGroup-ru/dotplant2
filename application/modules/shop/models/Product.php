@@ -156,6 +156,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'reserved_count' => Yii::t('app', 'Items reserved'),
             'relatedProductsArray' => Yii::t('app', 'Related products'),
             'currency_id' => Yii::t('app', 'Currency'),
+            'measure_id' => Yii::t('app', 'Measure'),
         ];
     }
 

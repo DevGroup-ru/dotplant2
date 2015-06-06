@@ -161,6 +161,7 @@ class BackendProductController extends BackendController
             if (null !== Product::findById($parent_id)) {
                 $model->parent_id = $parent_id;
             }
+            $model->measure_id = $this->module->defaultMeasureId;
         } else {
             $model = Product::findById($id, null, null);
             if ((null !== $model) && ($model->parent_id > 0)) {
