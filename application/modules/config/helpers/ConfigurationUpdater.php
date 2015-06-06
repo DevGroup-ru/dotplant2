@@ -152,8 +152,6 @@ class ConfigurationUpdater
                         Yii::getAlias($aliasesConfigWriter->filename),
                         true
                     );
-
-
                 } else {
                     Yii::$app->session->setFlash(
                         'info',

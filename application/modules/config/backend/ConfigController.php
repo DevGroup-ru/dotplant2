@@ -64,7 +64,6 @@ class ConfigController extends app\backend\components\BackendController
             $configurableModel->loadState();
         }
 
-
         if (Yii::$app->request->isPost === true) {
             if (ConfigurationUpdater::updateConfiguration($models, true)) {
                 return $this->refresh();

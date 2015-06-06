@@ -135,7 +135,27 @@ abstract class BaseConfigurationModel extends Model
             'filename' => $filename,
         ]);
         $writer->configuration = $this->getAttributesForStateSaving();
-        return $writer->commit();
+        $result =  $writer->commit();
+
+        if (ini_get('opcache.enable')) {
+            if (function_exists('opcache_invalidate') === true) {
+                // invalidate opcache of this files!
+                opcache_invalidate(
+                    Yii::getAlias($filename),
+                    true
+                );
+            }
+        } else {
+            Yii::$app->session->setFlash(
+                'info',
+                Yii::t(
+                    'app',
+                    'You have opcache turned on but opcache_invalidate function is not available. That\'s strange.'
+                )
+            );
+        }
+
+        return $result;
     }
 
     /**
