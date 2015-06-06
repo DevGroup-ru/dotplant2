@@ -15,36 +15,33 @@ class ViewController extends Controller
 {
     use BackendRedirect;
 
-    protected function getTree($path = '')
+    protected function getTree($path = '', $level = 0)
     {
         if (is_null($this->view->theme) || !file_exists($this->view->theme->getBaseUrl())) {
             return [];
         }
         $result = [];
         $basePath = $this->view->theme->getBaseUrl();
-        $dir = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($basePath . $path),
-            \RecursiveIteratorIterator::CATCH_GET_CHILD
-        );
-        /** @var \SplFileInfo $file */
+        $dir = new \DirectoryIterator($basePath . $path);
+        /** @var \DirectoryIterator $file */
         foreach ($dir as $file) {
-            if ($file->getBasename() == '.' || $file->getBasename() == '..') {
+            if ($file->isDot()) {
                 continue;
             }
-            $id = '#' . preg_replace('#[^\w\d]#', '_', str_replace($basePath, '', $file->getFilename()));
+            $id = '#' . preg_replace('#[^\w\d]#', '_', $file->getFilename()) . "_lev{$level}";
             if ($file->isDir()) {
                 $result[] = [
                     'id' => $id,
-                    'children' => $this->getTree($path . DIRECTORY_SEPARATOR . $file->getBasename()),
+                    'children' => $this->getTree($path . DIRECTORY_SEPARATOR . $file->getBasename(), $level + 1),
                     'text' => $file->getBasename(),
                     'type' => 'dir',
                 ];
-            } elseif ($file->isFile() && ('.php' === substr($file->getBasename(), -4))) {
+            } elseif ($file->isFile() && 'php' === $file->getExtension()) {
                 $result[] = [
                     'id' => $id,
                     'text' => $file->getBasename(),
                     'a_attr' => [
-                        'data-file' => str_replace($basePath, '', $file->getPath()),
+                        'data-file' => str_replace($basePath, '', $file->getRealPath()),
                         'data-toggle' => 'tooltip',
                         'title' => $file->getBasename()
                     ],
@@ -96,11 +93,12 @@ class ViewController extends Controller
      */
     public function actionIndex()
     {
+        $model = new View();
         return $this->render(
             'index',
             [
-                'searchModel' => $_model = new View(),
-                'dataProvider' => $_model->search(Yii::$app->request->get()),
+                'searchModel' => $model,
+                'dataProvider' => $model->search(Yii::$app->request->get()),
             ]
         );
     }
@@ -108,17 +106,23 @@ class ViewController extends Controller
     /*
      *
      */
-    public function actionAdd()
+    public function actionAdd($id = null)
     {
         $model = new View();
-
-        $post = \Yii::$app->request->post();
-        if ($model->load($post) && $model->validate()) {
-            if ($model->save()) {
-                return $this->redirectUser($model->id);
+        if (null !== $id) {
+            $id = intval($id);
+            if (null !== View::findOne(['id' => $id])) {
+                return $this->redirect(Url::toRoute(['edit', 'id' => $id]));
             }
-
+            $model->id = $id;
         }
+
+        if ($model->load(\Yii::$app->request->post())) {
+            if ($model->save()) {
+                return $this->redirectUser($model->id, true, 'edit');
+            }
+        }
+
         return $this->render(
             'edit',
             [
@@ -133,13 +137,14 @@ class ViewController extends Controller
     public function actionEdit($id = null)
     {
         if ((null === $id) || (null === $model = View::findOne(['id' => $id]))) {
-            $model = new View();
+            return $this->redirect(Url::toRoute(['add', 'id' => $id]));
         }
 
-        $post = \Yii::$app->request->post();
-
-        if ($model->load($post) && $model->validate()) {
-            $model->save();
+        /** @var View $model */
+        if ($model->load(\Yii::$app->request->post())) {
+            if ($model->save()) {
+                return $this->redirectUser($model->id);
+            }
         }
 
         return $this->render(
@@ -181,6 +186,6 @@ class ViewController extends Controller
     public function actionGetViews()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        return $this->getTree();
+        return $this->getTree('', 0);
     }
 }
