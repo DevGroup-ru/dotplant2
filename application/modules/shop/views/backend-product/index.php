@@ -72,14 +72,14 @@ $this->endBlock();
                     'label' => 'Edit category',
                     'icon' => 'fa fa-pencil',
                     'action' => ContextMenuHelper::actionUrl(
-                        ['edit', 'returnUrl' => Helper::getReturnUrl()]
+                        ['/shop/backend-category/edit', 'returnUrl' => Helper::getReturnUrl()]
                     ),
                 ],
                 'create' => [
                     'label' => 'Create category',
                     'icon' => 'fa fa-plus-circle',
                     'action' => ContextMenuHelper::actionUrl(
-                        ['edit', 'returnUrl' => Helper::getReturnUrl()],
+                        ['/shop/backend-category/edit', 'returnUrl' => Helper::getReturnUrl()],
                         [
                             'parent_id' => 'id',
                         ]
