@@ -47,6 +47,7 @@ class m150605_094805_demo_data extends Migration
                     'has_slugs_in_values' => 0,
                 ]
             );
+            $this->properties[$key] = $this->db->lastInsertID;
         }
         $this->insert(
             '{{%product_eav}}',
