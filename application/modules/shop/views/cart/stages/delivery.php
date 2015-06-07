@@ -18,9 +18,6 @@ use app\properties\AbstractModel;
     <?= $form->field($deliveryInformation, 'address')->textarea(); ?>
 
     <?= $form->field($orderDeliveryInformation, 'shipping_option_id')->dropDownList(\app\components\Helper::getModelMap(\app\modules\shop\models\ShippingOption::className(), 'id', 'name')); ?>
-    <?= $form->field($orderDeliveryInformation, 'planned_delivery_date'); ?>
-    <?= $form->field($orderDeliveryInformation, 'planned_delivery_time'); ?>
-    <?= $form->field($orderDeliveryInformation, 'planned_delivery_time_range'); ?>
     <?php
         $abstractModel = $orderDeliveryInformation->getAbstractModel();
         $abstractModel->setArrayMode(false);

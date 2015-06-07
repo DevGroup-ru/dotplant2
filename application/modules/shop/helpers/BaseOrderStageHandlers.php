@@ -145,7 +145,10 @@ class BaseOrderStageHandlers
 
             $data = \Yii::$app->request->post();
             $isNewModel = $orderDeliveryInformation->isNewRecord;
+            $orderDeliveryInformation->setScenario('shipping_option_select');
+
             if ($orderDeliveryInformation->load(\Yii::$app->request->post()) && $orderDeliveryInformation->save()) {
+
                 if ($isNewModel && !empty($orderDeliveryInformation->getPropertyGroup())) {
                     $orderDeliveryInformation->getPropertyGroup()->appendToObjectModel($orderDeliveryInformation);
                     $data[$orderDeliveryInformation->getAbstractModel()->formName()] = isset($data['OrderDeliveryInformationNew']) ? $data['OrderDeliveryInformationNew'] : [];

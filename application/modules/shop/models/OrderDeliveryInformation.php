@@ -90,6 +90,7 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
     {
         $scenarios = parent::scenarios();
         $scenarios['readonly'] = [];
+        $scenarios['shipping_option_select'] = ['shipping_option_id'];
         return $scenarios;
     }
 
