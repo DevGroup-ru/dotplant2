@@ -3,7 +3,7 @@
 /** @var bool $useFontAwesome */
 use kartik\widgets\ActiveForm;
 use yii\helpers\Html;
-if ($this->beginCache('ExpandableSearchField', ['duration'=>86400])) {
+
 $form = ActiveForm::begin(
     [
         'action' => ['/default/search'],
@@ -42,14 +42,17 @@ $field = $form->field(
 );
 if ($autocomplete === true) {
     echo $field->widget(
-        \app\widgets\AutoCompleteSearch::className()
+        \app\widgets\AutoCompleteSearch::className(),
+        [
+            'id' => 'search-autocomplete-'.uniqid()
+        ]
     );
 } else {
     echo $field;
 }
 ActiveForm::end();
-$this->endCache();
-}
+
+
 $js = <<<JS
 $(".search-form input[type=text]").blur(function(){
     $(this).removeClass('active');

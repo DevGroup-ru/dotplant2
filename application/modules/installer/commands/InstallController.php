@@ -1,6 +1,6 @@
 <?php
 
-namespace app\commands;
+namespace app\modules\installer\commands;
 
 use app\modules\core\helpers\UpdateHelper;
 use app\modules\installer\models\AdminUser;
@@ -86,6 +86,9 @@ class InstallController extends Controller
                 );
             }
         }
+        if (!$this->interactive && getenv('DB_PASS')) {
+            $model->password = getenv('DB_PASS');
+        }
         $config = $model->getAttributes();
         $config['connectionOk'] = false;
 
@@ -143,6 +146,7 @@ class InstallController extends Controller
             $model->password = 'password';
         }
         if ($model->validate()) {
+            InstallerHelper::createAdminUser($model, $this->db());
             return $this->finalStep();
         } else {
             $this->stderr("Error in input data: ".var_export($model->errors, true), Console::FG_RED);
@@ -178,7 +182,22 @@ class InstallController extends Controller
         return 0;
     }
 
-
+    /**
+     * @return \yii\db\Connection
+     * @throws \yii\base\InvalidConfigException
+     */
+    private function db()
+    {
+        if ($this->db === null) {
+            $config = InstallerHelper::createDatabaseConfig($this->getDbConfigFromSession());
+            $dbComponent = Yii::createObject(
+                $config
+            );
+            $dbComponent->open();
+            $this->db = $dbComponent;
+        }
+        return $this->db;
+    }
 
     private function getDbConfigFromSession()
     {

@@ -29,7 +29,7 @@
             \app\components\Helper::getModelMap(\app\modules\shop\models\ShippingOption::className(), 'id', 'name'),
             ['readonly' => $immutable]
     ); ?>
-    
+
     <?php
         /** @var \app\properties\AbstractModel $abstractModel */
         $abstractModel = $orderDeliveryInformation->getAbstractModel();

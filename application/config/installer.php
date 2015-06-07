@@ -108,7 +108,7 @@ if (YII_CONSOLE) {
     echo "installer is running in console\n";
     unset($config['components']['request']);
     $config['defaultRoute'] = 'install/index';
-    $config['controllerNamespace'] = 'app\commands';
+    $config['controllerNamespace'] = 'app\modules\installer\commands';
     $config['components']['session'] = [
         'class' => 'app\modules\installer\components\StaticSession',
     ];
