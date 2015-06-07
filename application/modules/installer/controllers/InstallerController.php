@@ -75,6 +75,9 @@ class InstallerController extends Controller
                 $config['connectionOk'] = true;
 
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Database connection - ok'));
+                if (isset($_POST['next'])) {
+                    return $this->redirect(['migrate']);
+                }
 
             }
 
