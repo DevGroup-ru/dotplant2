@@ -53,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'action' => ContextMenuHelper::actionUrl(
                             ['edit', 'returnUrl' => Helper::getReturnUrl()],
                             [
-                                'parent_id',
+                                'parent_id' => 'id',
                             ]
                         ),
                     ],

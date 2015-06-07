@@ -17,17 +17,17 @@ $this->title = Yii::t('app', 'Installer - Database configuration');
 </h1>
 
 <?= \app\widgets\Alert::widget() ?>
-
+<?php
+$form = ActiveForm::begin([
+    'type' => ActiveForm::TYPE_HORIZONTAL,
+]);
+?>
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
         <h2>
             <?= Yii::t('app', 'Database settings:') ?>
         </h2>
-        <?php
-        $form = ActiveForm::begin([
-            'type' => ActiveForm::TYPE_HORIZONTAL,
-        ]);
-        ?>
+
 
         <?= $form->field($model, 'db_host') ?>
         <?= $form->field($model, 'db_name') ?>
@@ -42,12 +42,11 @@ $this->title = Yii::t('app', 'Installer - Database configuration');
             [
                 'class' => 'btn btn-success pull-right ladda-button',
                 'data-style' => 'expand-right',
+                'name' => 'check-connection',
             ]
         )
         ?>
-        <?php
-        ActiveForm::end();
-        ?>
+
     </div>
 </div>
 
@@ -58,13 +57,21 @@ $this->title = Yii::t('app', 'Installer - Database configuration');
         <?= Yii::t('app', 'Back') ?>
     </a>
     <?php if ($config['connectionOk']): ?>
-    <a href="<?= Url::to(['migrate']) ?>" class="btn btn-primary btn-lg pull-right ladda-button" data-style="expand-left">
-        <?= Yii::t('app', 'Next') ?>
-        <?= Icon::show('arrow-right') ?>
-    </a>
+        <?=
+        Html::submitButton(
+            Yii::t('app', 'Next') . ' ' .Icon::show('arrow-right'),
+            [
+                'class' => 'btn btn-primary btn-lg pull-right ladda-button',
+                'data-style' => 'expand-left',
+                'name' => 'next',
+            ]
+        )
+        ?>
     <?php endif; ?>
 </div>
-
+<?php
+ActiveForm::end();
+?>
 <?php
 $js = <<<JS
 Ladda.bind( 'input[type=submit]' );

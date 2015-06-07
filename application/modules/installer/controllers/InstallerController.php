@@ -5,14 +5,14 @@ namespace app\modules\installer\controllers;
 use app\modules\core\helpers\UpdateHelper;
 use app\modules\installer\models\AdminUser;
 use app\modules\installer\models\DbConfig;
+use app\modules\installer\components\InstallerFilter;
 use app\modules\installer\components\InstallerHelper;
 use app\modules\installer\models\FinalStep;
 use app\modules\installer\models\MigrateModel;
 use Yii;
 use yii\base\DynamicModel;
-use yii\helpers\VarDumper;
 use yii\web\Controller;
-use app\modules\installer\components\InstallerFilter;
+
 
 class InstallerController extends Controller
 {
@@ -75,6 +75,10 @@ class InstallerController extends Controller
                 $config['connectionOk'] = true;
 
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Database connection - ok'));
+                if (isset($_POST['next'])) {
+                    Yii::$app->session->set('db-config', $config);
+                    return $this->redirect(['migrate']);
+                }
 
             }
 
@@ -203,7 +207,7 @@ class InstallerController extends Controller
         $model = new FinalStep();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
 
-            if (InstallerHelper::writeCommonConfig($model)) {
+            if (InstallerHelper::writeCommonConfig($model) && InstallerHelper::updateConfigurables()) {
 
                 return $this->redirect(['complete']);
             } else {
@@ -229,6 +233,7 @@ class InstallerController extends Controller
 
     public function actionComplete()
     {
+        file_put_contents(Yii::getAlias('@app/installed.mark'), '1');
         return $this->render(
             'complete'
         );
