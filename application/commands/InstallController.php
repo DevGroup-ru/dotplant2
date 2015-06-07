@@ -2,8 +2,15 @@
 
 namespace app\commands;
 
+use app\modules\core\helpers\UpdateHelper;
+use app\modules\installer\models\AdminUser;
+use app\modules\installer\models\DbConfig;
 use app\modules\installer\components\InstallerFilter;
 use app\modules\installer\components\InstallerHelper;
+use app\modules\installer\models\FinalStep;
+use app\modules\installer\models\MigrateModel;
+use Yii;
+use yii\base\DynamicModel;
 use yii\console\Controller;
 use yii\helpers\Console;
 
@@ -39,19 +46,151 @@ class InstallController extends Controller
             $this->stdout("\n");
             $ok = $ok && $result;
         }
-        if ($ok) {
+        if (!$ok) {
             if ($this->confirm("\nSome of your files are not accessible.\nContinue at your own risk?", true)) {
-                return $this->dbConfig();
+                return $this->language();
             } else {
                 return 1;
             }
         } else {
-            return $this->dbConfig();
+            return $this->language();
         }
+    }
+
+    private function language()
+    {
+        Yii::$app->session->set('language', $this->prompt('Enter language(ie. ru, zh-CN, en)',[
+            'required' => true,
+            'default' => 'en',
+        ]));
+        return $this->dbConfig();
     }
 
     private function dbConfig()
     {
+        $config = $this->getDbConfigFromSession();
 
+        $model = new DbConfig();
+        $model->setAttributes($config);
+
+        $this->stdout("Enter your database configuration:\n", Console::FG_YELLOW);
+        foreach ($model->attributes() as $attribute) {
+            if ($attribute !== 'enableSchemaCache') {
+                $model->setAttributes(
+                    [
+                        $attribute => $this->prompt("-> $attribute", [
+                            'required' => in_array($attribute, ['db_host', 'db_name', 'username']),
+                            'default' => $model->$attribute,
+                        ]),
+                    ]
+                );
+            }
+        }
+        $config = $model->getAttributes();
+        $config['connectionOk'] = false;
+
+        if ($model->testConnection() === false) {
+            $config['connectionOk'] = true;
+            $this->stderr("Could not connect to databse!\n", Console::FG_RED);
+            $this->dbConfig();
+        }
+        Yii::$app->session->set('db-config', $config);
+        return $this->migration();
+
+    }
+
+    private function migration()
+    {
+        $config = $this->getDbConfigFromSession();
+
+        $dbConfigModel = new DbConfig();
+        $dbConfigModel->setAttributes($config);
+        $config = InstallerHelper::createDatabaseConfig($dbConfigModel->getAttributes());
+        if (InstallerHelper::createDatabaseConfigFile($config) === false) {
+            $this->stderr(Yii::t('app', 'Unable to create db-local config'), Console::FG_RED);
+            return false;
+        }
+        $this->stdout("Running migrations...\n", Console::FG_YELLOW);
+        /** @var UpdateHelper $helper */
+        $helper = Yii::createObject([
+            'class' => UpdateHelper::className(),
+        ]);
+        $process = $helper->applyAppMigrations(
+            false
+        );
+
+        $process->run();
+
+        return $this->adminUser();
+    }
+
+    private function adminUser()
+    {
+        $model = new AdminUser();
+        foreach ($model->attributes() as $attribute) {
+
+            $model->setAttributes(
+                [
+                    $attribute => $this->prompt("-> $attribute", [
+                        'required' => true,
+                        'default' => $model->$attribute,
+                    ]),
+                ]
+            );
+
+        }
+        if (!$this->interactive) {
+            $model->password = 'password';
+        }
+        if ($model->validate()) {
+            return $this->finalStep();
+        } else {
+            $this->stderr("Error in input data: ".var_export($model->errors, true), Console::FG_RED);
+            return $this->adminUser();
+        }
+    }
+
+    private function finalStep()
+    {
+        $model = new FinalStep();
+        Yii::setAlias('@webroot', Yii::getAlias('@app/web/'));
+        foreach ($model->attributes() as $attribute) {
+            if ($attribute !== 'useMemcached') {
+                $model->setAttributes(
+                    [
+                        $attribute => $this->prompt("-> $attribute", [
+                            'required' => true,
+                            'default' => $model->$attribute,
+                        ]),
+                    ]
+                );
+            } else {
+                $model->useMemcached = $this->confirm("Use memcached extension?", false);
+            }
+
+        }
+        if (InstallerHelper::writeCommonConfig($model) && InstallerHelper::updateConfigurables()) {
+            file_put_contents(Yii::getAlias('@app/installed.mark'), '1');
+            $this->stdout("Installation complete!\n", Console::FG_GREEN);
+        } else {
+            $this->stderr("Unable to write configs!\n", Console::FG_RED);
+        }
+        return 0;
+    }
+
+
+
+    private function getDbConfigFromSession()
+    {
+        return Yii::$app->session->get('db-config', [
+            'db_host' => 'localhost',
+            'db_name' => 'dotplant2',
+            'username' => 'root',
+            'password' => '',
+            'enableSchemaCache' => true,
+            'schemaCacheDuration' => 86400,
+            'schemaCache' => 'cache',
+            'connectionOk' => false,
+        ]);
     }
 }

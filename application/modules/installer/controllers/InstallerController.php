@@ -5,14 +5,14 @@ namespace app\modules\installer\controllers;
 use app\modules\core\helpers\UpdateHelper;
 use app\modules\installer\models\AdminUser;
 use app\modules\installer\models\DbConfig;
+use app\modules\installer\components\InstallerFilter;
 use app\modules\installer\components\InstallerHelper;
 use app\modules\installer\models\FinalStep;
 use app\modules\installer\models\MigrateModel;
 use Yii;
 use yii\base\DynamicModel;
-use yii\helpers\VarDumper;
 use yii\web\Controller;
-use app\modules\installer\components\InstallerFilter;
+
 
 class InstallerController extends Controller
 {
@@ -208,7 +208,7 @@ class InstallerController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
 
             if (InstallerHelper::writeCommonConfig($model) && InstallerHelper::updateConfigurables()) {
-                file_put_contents(Yii::getAlias('@app/installed.mark'), '1');
+
                 return $this->redirect(['complete']);
             } else {
                 Yii::$app->session->setFlash('warning', Yii::t('app', 'Unable to write common-local.php'));
@@ -233,6 +233,7 @@ class InstallerController extends Controller
 
     public function actionComplete()
     {
+        file_put_contents(Yii::getAlias('@app/installed.mark'), '1');
         return $this->render(
             'complete'
         );

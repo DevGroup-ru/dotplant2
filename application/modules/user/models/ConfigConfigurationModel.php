@@ -147,7 +147,9 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             /** @var ConfigConfigurationModel $model */
             $model = $event->configurableModel;
 
-
+            if (YII_CONSOLE === true) {
+                return;
+            }
 
             if (
                 intval(Yii::$app->request->post('addAuthClientFlag', 0)) === 1 &&
