@@ -7,6 +7,8 @@ use app\modules\installer\models\FinalStep;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
+use app\modules\config\helpers\ConfigurationUpdater;
+use app\modules\config\models\Configurable;
 
 class InstallerHelper
 {
@@ -170,5 +172,13 @@ class InstallerHelper
             Yii::getAlias('@app/config/common-local.php'),
             "<?php\nreturn ". VarDumper::export($common_config).';'
         ) > 0;
+    }
+
+    public static function updateConfigurables()
+    {
+        Yii::$app->set('db', Yii::createObject(InstallerHelper::createDatabaseConfig(Yii::$app->session->get('db-config'))));
+        Yii::$app->db->open();
+        $conf = Configurable::find()->all();
+        return ConfigurationUpdater::updateConfiguration($conf, false);
     }
 }

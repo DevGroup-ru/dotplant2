@@ -13,8 +13,58 @@ return [
         'installer' => [
             'class' => 'app\modules\installer\Module',
         ],
+        'config' => [
+            'class' => 'app\modules\config\ConfigModule',
+        ],
+        'core' => [
+            'class' => 'app\modules\core\CoreModule',
+        ],
+        'DefaultTheme' => [
+            'class' => 'app\extensions\DefaultTheme\Module',
+        ],
+        'user' => [
+            'class' => 'app\modules\user\UserModule',
+            'loginSessionDuration' => 2592000,
+        ],
+        'shop' => [
+            'class' => 'app\modules\shop\ShopModule',
+        ],
+        'page' => [
+            'class' => 'app\modules\page\PageModule',
+        ],
+        'backend' => [
+            'class' => 'app\backend\BackendModule',
+            'layout' => '@app/backend/views/layouts/main',
+            'administratePermission' => 'administrate',
+        ],
+        'background' => [
+            'class' => 'app\backgroundtasks\BackgroundTasksModule',
+            'layout' => '@app/backend/views/layouts/main',
+            'controllerNamespace' => 'app\backgroundtasks\controllers',
+            'notifyPermissions' => ['task manage'],
+            'manageRoles' => ['admin'],
+        ],
+        'seo' => [
+            'class' => 'app\modules\seo\SeoModule',
+            'include' => [
+                'basic/default',
+                'basic/page',
+            ],
+        ],
+        'review' => [
+            'class' => 'app\modules\review\ReviewModule',
+        ],
+        'image' => [
+            'class' => 'app\modules\image\ImageModule',
+        ],
+        'data' => [
+            'class' => 'app\modules\data\DataModule',
+        ],
     ],
     'components' => [
+        'cache' => [
+            'class' => 'yii\caching\DummyCache',
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 6 : 0,
             'targets' => [

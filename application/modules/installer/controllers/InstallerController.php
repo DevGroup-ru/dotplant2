@@ -207,8 +207,8 @@ class InstallerController extends Controller
         $model = new FinalStep();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
 
-            if (InstallerHelper::writeCommonConfig($model)) {
-
+            if (InstallerHelper::writeCommonConfig($model) && InstallerHelper::updateConfigurables()) {
+                file_put_contents(Yii::getAlias('@app/installed.mark'), 'installation completed');
                 return $this->redirect(['complete']);
             } else {
                 Yii::$app->session->setFlash('warning', Yii::t('app', 'Unable to write common-local.php'));

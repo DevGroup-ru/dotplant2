@@ -22,8 +22,8 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public function rules()
     {
         return [
-            [['cacheConfig'], 'each', 'rule' => ['each', 'rule' => ['string']]],
-            [['mainPage', 'include'], 'string'],
+//            [['cacheConfig'], 'each', 'rule' => ['each', 'rule' => ['string']]],
+            [['mainPage', 'include', 'cacheConfig'], 'safe'],
         ];
     }
 
