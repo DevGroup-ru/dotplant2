@@ -2082,6 +2082,9 @@ class m150531_084444_new_init extends Migration
                             [
                                 "class" => "app\\properties\\url\\StaticPart",
                                 "static_part" => "catalog",
+                                "parameters" => [
+                                    "category_group_id" => 1,
+                                ],
                             ],
                             [
                                 "class" => "app\\properties\\url\\FullCategoryPathPart",
