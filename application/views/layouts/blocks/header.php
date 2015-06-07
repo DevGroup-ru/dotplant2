@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @var $this \yii\web\View
+ * @var $this \app\components\WebView
  */
 
 use app\assets\AppAsset;
@@ -13,8 +13,6 @@ use \app\modules\seo\helpers\HtmlTagHelper;
 AppAsset::register($this);
 DefaultThemeAsset::register($this);
 
-/** @var \app\extensions\DefaultTheme\Module $themeModule */
-$themeModule = Yii::$app->getModule('DefaultTheme');
 HtmlTagHelper::addTagOptions('html', 'lang', Yii::$app->language);
 ?>
 <?php $this->beginPage(); ?>

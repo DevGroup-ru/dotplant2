@@ -12,8 +12,12 @@ use kartik\icons\Icon;
 <footer class="footer">
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
-                here comes the footer
+            <div class="col-md-12 footer">
+                <?=
+                    \app\widgets\navigation\NavigationWidget::widget([
+                        'rootId' => $rootNavigationId,
+                    ])
+                ?>
             </div>
         </div>
     </div>

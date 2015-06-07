@@ -131,3 +131,19 @@ header .nav {
 .pagination > li > a, .pagination > li > span {
   color: $secondary_color;
 }
+
+footer {
+  background: $footer_color;
+  color: $footer_text_color;
+  .footer {
+    padding: 8px 0;
+  }
+  a,a.active,a:active,a:focus,a:visited,a:hover {
+    color: $footer_text_color;
+  }
+
+  .navigation-widget {
+    list-style:none;
+    padding-left: 0;
+  }
+}

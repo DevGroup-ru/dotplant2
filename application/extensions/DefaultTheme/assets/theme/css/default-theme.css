@@ -23,7 +23,8 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   .product-item .product {
     position: absolute;
     transition: left 0.35s ease-in-out 0.15s;
-    left: 0; }
+    left: 0;
+    width: 100%; }
   .product-item .product-announce, .product-item .cta {
     position: absolute;
     top: 0;
@@ -373,3 +374,14 @@ header .nav .navigation-widget {
 
 .pagination > li > a, .pagination > li > span {
   color: #45818e; }
+
+footer {
+  background: #333;
+  color: #eee; }
+  footer .footer {
+    padding: 8px 0; }
+  footer a, footer a.active, footer a:active, footer a:focus, footer a:visited, footer a:hover {
+    color: #eee; }
+  footer .navigation-widget {
+    list-style: none;
+    margin-left: 0; }
