@@ -1,6 +1,6 @@
 <?php
 
-return [
+$config = [
     'id' => 'dotplant2-installer',
     'basePath' => dirname(__DIR__),
     'extensions' => require(__DIR__ . '/../vendor/yiisoft/extensions.php'),
@@ -84,6 +84,7 @@ return [
         ],
         'request' => [
             'cookieValidationKey' => 'INSTALLER_COOKIE',
+            'enableCsrfValidation' => false,
         ],
         'assetManager' => [
             'class' => 'yii\web\AssetManager',
@@ -96,8 +97,21 @@ return [
                 ],
             ],
         ],
+
     ],
     'params' => [
         'icon-framework' => 'fa',
     ],
 ];
+
+if (YII_CONSOLE) {
+    echo "installer is running in console\n";
+    unset($config['components']['request']);
+    $config['defaultRoute'] = 'install/index';
+    $config['controllerNamespace'] = 'app\commands';
+    $config['components']['session'] = [
+        'class' => 'app\modules\installer\components\StaticSession',
+    ];
+}
+
+return $config;
