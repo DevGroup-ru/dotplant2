@@ -277,9 +277,20 @@ class m150605_094805_demo_data extends Migration
         $imgUrl = "http://static-{$cdnNumber}.dotplant.ru/demo-photos.zip";
         $imagesPath = Yii::getAlias('@webroot/files/');
         $imgsFile = $imagesPath.DIRECTORY_SEPARATOR .'imgs.zip';
-        echo system('/usr/bin/wget -O "'. $imgsFile .'" "' . $imgUrl . '"');
-        echo system('/usr/bin/unzip "'. $imgsFile .'" -d "'. $imagesPath .'"');
-        echo system('/bin/rm "'. $imgsFile .'"');
+        $fp = fopen($imgsFile, 'w+');
+        $ch = curl_init($imgUrl);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_exec($ch);
+        curl_close($ch);
+        fclose($fp);
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            echo "\n\nWow! You are running windows! Please unzip $imgsFile to $imagesPath \n\n";
+        } else {
+            passthru('/usr/bin/env unzip "' . $imgsFile . '" -d "' . $imagesPath . '"');
+        }
+
     }
 
     public function down()
