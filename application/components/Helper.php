@@ -3,6 +3,7 @@
 namespace app\components;
 
 use Yii;
+use yii\base\Exception;
 use yii\base\Model;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
@@ -135,5 +136,55 @@ class Helper
                 $model->getErrors()
             )
         );
+    }
+
+    /**
+     * used with backend/widgets/DataRelationsWidget
+     * @param ActiveRecord $model
+     * @param $relationData
+     * @return array
+     */
+    public static function getRelationDataByModel(ActiveRecord $model, $relationData)
+    {
+        $result = [];
+
+        foreach ($relationData as $name => $data) {
+            if ($data['type'] == 'field') {
+                if (isset($model->attributes[$data['key']])) {
+                    $result[$name] = [
+                        'value' => $model->{$data['key']},
+                        'label' => $model->getAttributeLabel($data['key'])
+                    ];
+                }
+            }elseif ($data['type'] == 'property') {
+                try {
+                    $result[$name] = [
+                        'value' => $model->AbstractModel->{$data['key']},
+                        'label' => $model->AbstractModel->getAttributeLabel($data['key'])
+                    ];
+                } catch (Exception $e) {
+                    Yii::warning(
+                        'relation data not found: class: '.
+                        $model::className().'; relation Type'.
+                        $data['type'].'; id '.$model->id
+                    );
+                }
+            } elseif ($data['type'] == 'relation') {
+                try {
+                    $result[$name] = [
+                        'value' => $model->{$data['relationName']}->{$data['key']},
+                        'label' => $model->{$data['relationName']}->getAttributeLabel($data['key'])
+                    ];
+                } catch (Exception $e) {
+                    Yii::warning(
+                        'relation data not found: class: '.
+                        $model::className().'; relation Type'.
+                        $data['type'].'; id '.$model->id
+                    );
+                }
+            }
+        }
+
+        return $result;
     }
 }
