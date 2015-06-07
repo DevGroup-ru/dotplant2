@@ -1,5 +1,5 @@
 <?php
-ini_set('error_reporting', E_ALL);
+
 include_once(__DIR__ . '/../modules/seo/redirects/redirects.php');
 
 // comment out the following two lines when deployed to production
