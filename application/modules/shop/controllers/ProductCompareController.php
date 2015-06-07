@@ -6,10 +6,14 @@ use app\models\Object;
 use app\modules\core\behaviors\DisableRobotIndexBehavior;
 use app\modules\shop\models\Product;
 use Yii;
+use yii\caching\TagDependency;
 use yii\web\Controller;
 
 class ProductCompareController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -47,6 +51,7 @@ class ProductCompareController extends Controller
             );
         }
         Yii::$app->session->set('comparisonProductList', $comparisonProductList);
+        TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
         return null !== $backUrl ? $this->redirect($backUrl, 302) : true;
     }
 
@@ -57,6 +62,7 @@ class ProductCompareController extends Controller
      */
     public function actionRemove($id, $backUrl = null)
     {
+        TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
         if (!$this->isExist($id)) {
             return null !== $backUrl ? $this->redirect($backUrl, 302) : false;
         }
@@ -113,6 +119,7 @@ class ProductCompareController extends Controller
      */
     public function actionRemoveAll($backUrl = null)
     {
+        TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
         Yii::$app->session->remove('comparisonProductList');
         return null !== $backUrl ? $this->redirect($backUrl, 302) : true;
     }
