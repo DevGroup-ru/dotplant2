@@ -173,6 +173,9 @@ class InstallController extends Controller
             }
 
         }
+        if (getenv('DP2_SERVER_NAME')) {
+            $model->serverName = getenv('DP2_SERVER_NAME');
+        }
         if (InstallerHelper::writeCommonConfig($model) && InstallerHelper::updateConfigurables()) {
             file_put_contents(Yii::getAlias('@app/installed.mark'), '1');
             $this->stdout("Installation complete!\n", Console::FG_GREEN);
