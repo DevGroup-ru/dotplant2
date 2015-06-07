@@ -279,7 +279,7 @@ class m150605_094805_demo_data extends Migration
         $imgsFile = $imagesPath.DIRECTORY_SEPARATOR .'imgs.zip';
         $fp = fopen($imgsFile, 'w+');
         $ch = curl_init($imgUrl);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 500);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_exec($ch);
