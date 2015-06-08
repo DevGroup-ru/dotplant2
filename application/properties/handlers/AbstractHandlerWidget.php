@@ -16,6 +16,7 @@ class AbstractHandlerWidget extends Widget
     public $property_id;
     public $label = '';
     public $viewFile = '';
+    public $additional = [];
 
     public function run()
     {
@@ -30,6 +31,7 @@ class AbstractHandlerWidget extends Widget
                 'property_key' => $this->property_key,
                 'property_id' => $this->property_id,
                 'multiple' => $this->multiple,
+                'additional' => $this->additional,
             ]
         );
     }

@@ -9,10 +9,13 @@
  * @var $property_key string
  * @var $this \app\properties\handlers\Handler
  * @var $values array
+ * @var $additional array
  */
 use \yii\helpers\Url;
-?>
-<?php
+
+$uploadDir = !empty($additional['uploadDir']) ? $additional['uploadDir'] : '/';
+$uploadDir = str_replace(Yii::getAlias('@webroot'), '', Yii::getAlias($uploadDir));
+$uploadDir = Url::to(rtrim($uploadDir, '/').'/', true);
 
 $prop = $multiple ? $property_key.'[]' : $property_key;
 
@@ -32,7 +35,7 @@ $layoutTemplates = [
 ];
 foreach ($model->$property_key as $file) {
     $initialPreview[] =
-        \yii\helpers\Html::img("/upload/".$file, ['class' => 'file-preview-image', 'alt' => $file, 'title' => $file])
+        \yii\helpers\Html::img($uploadDir.$file, ['class' => 'file-preview-image', 'alt' => $file, 'title' => $file])
         . \yii\helpers\Html::hiddenInput($model->formName().'['.$property_key.'][]', $file);
     $initialPreviewConfig[] = [
         'caption' => $file,

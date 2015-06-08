@@ -22,6 +22,7 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
             : $this->uploadDir;
 
         $this->uploadDir = FileHelper::normalizePath(\Yii::getAlias($this->uploadDir));
+        $this->additionalRenderData['uploadDir'] = $this->uploadDir;
     }
 
     /**

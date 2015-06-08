@@ -8,6 +8,7 @@ abstract class AbstractHandler
     protected $propertyHandler;
     /** @var \yii\base\Widget $widgetClass */
     protected $widgetClass = null;
+    protected $additionalRenderData = [];
 
     /**
      * @param \app\models\PropertyHandler $propertyHandler
@@ -64,6 +65,7 @@ abstract class AbstractHandler
                 'label' => $property->name,
                 'multiple' => $property->multiple,
                 'viewFile' => $renderType,
+                'additional' => $this->additionalRenderData,
             ]);
         }
 
