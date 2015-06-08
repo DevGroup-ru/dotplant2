@@ -15,6 +15,7 @@ class PageRule implements UrlRuleInterface
     {
         /** @var Page $model */
         if ($route == 'page/page/show' || $route == 'page/page/list') {
+            $model=null;
             if (isset($params['model'])) {
                 $model = $params['model'];
                 unset($params['model']);
