@@ -44,6 +44,7 @@ class PropertiesHelper
             // values может быть просто строкой(одно значение), а может уже прийти массивом
             $values = (array) $values;
             $property = Property::findById($property_id);
+            if ($property===null) continue;
             if ($property->is_eav) {
                 $by_storage['eav'][] = [
                     'property' => $property,

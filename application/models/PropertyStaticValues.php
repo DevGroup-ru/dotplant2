@@ -20,6 +20,7 @@ use yii\helpers\ArrayHelper;
  * @property string $slug
  * @property integer $sort_order
  * @property Property $property
+ * @property integer $dont_filter
  */
 class PropertyStaticValues extends ActiveRecord
 {
