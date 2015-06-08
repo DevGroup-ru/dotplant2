@@ -220,7 +220,7 @@ class BackendProductController extends BackendController
 
                     $model->saveCategoriesBindings($categories);
 
-                    $this->runAction('save-info');
+                    $this->runAction('save-info', ['model_id'=>$model->id]);
                     $model->invalidateTags();
 
 

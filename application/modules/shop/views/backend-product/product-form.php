@@ -145,7 +145,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'language' => Yii::$app->language,
                 'data' => $data,
                 'options' => [
-                    'placeholder' => 'Поиск продуктов ...',
+                    'placeholder' => Yii::t('app', 'Search for products...'),
                     'multiple' => true,
                 ],
                 'pluginOptions' => [
@@ -175,50 +175,50 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php BackendWidget::end(); ?>
 
-    <?php if (!$model->isNewRecord):?>
 
-        <?php
-        BackendWidget::begin(
+
+    <?php
+    BackendWidget::begin(
+        [
+            'title'=> Yii::t('app', 'Images'),
+            'icon'=>'image',
+            'footer'=>$this->blocks['submit']
+        ]
+    ); ?>
+
+    <div id="actions">
+        <?=
+        \yii\helpers\Html::tag(
+            'span',
+            Icon::show('plus') . Yii::t('app', 'Add files..'),
             [
-                'title'=> Yii::t('app', 'Images'),
-                'icon'=>'image',
-                'footer'=>$this->blocks['submit']
+                'class' => 'btn btn-success fileinput-button'
             ]
-        ); ?>
+        ) ?>
+    </div>
 
-        <div id="actions">
-            <?=
-            \yii\helpers\Html::tag(
-                'span',
-                Icon::show('plus') . Yii::t('app', 'Add files..'),
-                [
-                    'class' => 'btn btn-success fileinput-button'
-                ]
-            ) ?>
-        </div>
+    <?= \app\modules\image\widgets\ImageDropzone::widget([
+        'name' => 'file',
+        'url' => ['upload'],
+        'removeUrl' => ['remove'],
+        'uploadDir' => '/theme/resources/product-images',
+        'sortable' => true,
+        'sortableOptions' => [
+            'items' => '.dz-image-preview',
+        ],
+        'objectId' => $object->id,
+        'modelId' => $model->id,
+        'htmlOptions' => [
+            'class' => 'table table-striped files',
+            'id' => 'previews',
+        ],
+        'options' => [
+            'clickable' => ".fileinput-button",
+        ],
+    ]); ?>
 
-        <?= \app\modules\image\widgets\ImageDropzone::widget([
-            'name' => 'file',
-            'url' => ['upload'],
-            'removeUrl' => ['remove'],
-            'uploadDir' => '/theme/resources/product-images',
-            'sortable' => true,
-            'sortableOptions' => [
-                'items' => '.dz-image-preview',
-            ],
-            'objectId' => $object->id,
-            'modelId' => $model->id,
-            'htmlOptions' => [
-                'class' => 'table table-striped files',
-                'id' => 'previews',
-            ],
-            'options' => [
-                'clickable' => ".fileinput-button",
-            ],
-        ]); ?>
+    <?php BackendWidget::end(); ?>
 
-        <?php BackendWidget::end(); ?>
-    <?php endif; ?>
 
     <?php BackendWidget::begin(['title'=> Yii::t('app', 'SEO'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
 

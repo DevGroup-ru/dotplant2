@@ -157,7 +157,7 @@ class BackendCategoryController extends BackendController
             }
 
             if ($save_result) {
-                $this->runAction('save-info');
+                $this->runAction('save-info', ['model_id'=>$model->id]);
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
                 $returnUrl = Yii::$app->request->get('returnUrl', ['index']);
                 switch (Yii::$app->request->post('action', 'save')) {
