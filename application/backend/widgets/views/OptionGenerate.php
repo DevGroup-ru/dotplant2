@@ -72,7 +72,7 @@ use yii\helpers\Url;
     });
     $('#btn-generate').click(function () {
     $.ajax({
-    'url': '<?= Url::toRoute(['/backend/product/generate', 'id'=>$model->id]) ?>',
+    'url': '<?= Url::toRoute(['/shop/backend-product/generate', 'id'=>$model->id]) ?>',
     'method': 'POST',
     'data': $('form').serialize()
     }).done(function () {

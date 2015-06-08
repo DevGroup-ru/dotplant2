@@ -36,7 +36,7 @@ class OptionGenerate extends Widget
         $owner_id = $this->model->id;
         $this->addButton = Html::a(
             Icon::show('plus') . Yii::t('app', 'Add'),
-            Url::toRoute(['/backend/product/edit',
+            Url::toRoute(['/shop/backend-product/edit',
                 'parent_id' => $parent_id,
                 'owner_id' => $owner_id,
                 'returnUrl' => \app\backend\components\Helper::getReturnUrl(),
