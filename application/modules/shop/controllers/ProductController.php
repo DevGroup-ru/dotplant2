@@ -316,7 +316,7 @@ class ProductController extends Controller
         }
         Yii::$app->response->format = Response::FORMAT_JSON;
         return [
-            'view' => $this->renderPartial(
+            'view' => $this->renderAjax(
                 'search',
                 [
                     'model' => $model,
