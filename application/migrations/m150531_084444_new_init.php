@@ -2691,10 +2691,9 @@ class m150531_084444_new_init extends Migration
                 'link',
             ],
             [
-                [1, 1, '/demo/images/carousel/1.png', '#1'],
-                [1, 2, '/demo/images/carousel/2.png', '#2'],
-                [1, 3, '/demo/images/carousel/3.png', '#3'],
-                [1, 4, '/demo/images/carousel/4.png', '#4'],
+                [1, 1, 'http://st-1.dotplant.ru/img/dotplant-slider-demo/slide-1.jpg', '#1'],
+                [1, 2, 'http://st-1.dotplant.ru/img/dotplant-slider-demo/slide-2.jpg', '#2'],
+                [1, 3, 'http://st-1.dotplant.ru/img/dotplant-slider-demo/slide-3.jpg', '#3'],
             ]
         );
         $this->insert(
@@ -2718,6 +2717,7 @@ class m150531_084444_new_init extends Migration
                 'iso_code' => 'RUB',
                 'is_main' => 1,
                 'format_string' => '# руб.',
+                'intl_formatting' => 0,
             ]
         );
         $this->insert(

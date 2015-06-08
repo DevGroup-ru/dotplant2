@@ -3,6 +3,7 @@
 /** @var array $slider_params */
 /** @var string $slide_viewFile */
 /** @var string $css_class */
+/** @var \app\components\WebView $this */
 $slides = $slider->getSlides(true);
 ?>
 
@@ -51,3 +52,13 @@ if(count($slider_params)>0) {
         \yii\web\View::POS_READY
     );
 }
+$height = $slider->image_height.'px';
+$this->registerCss(
+    <<<CSS
+#$id, #$id .item {
+    max-height: $height;
+}
+
+CSS
+
+);

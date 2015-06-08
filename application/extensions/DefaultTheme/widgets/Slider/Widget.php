@@ -4,10 +4,13 @@ namespace app\extensions\DefaultTheme\widgets\Slider;
 
 
 use app\extensions\DefaultTheme\components\BaseWidget;
+use app\slider\SliderWidget;
+use yii\helpers\Html;
 
 class Widget extends BaseWidget
 {
-
+    public $sliderId = 1;
+    public $inContainer = true;
     /**
      * Actual run function for all widget classes extending BaseWidget
      *
@@ -15,6 +18,14 @@ class Widget extends BaseWidget
      */
     public function widgetRun()
     {
-        return '<h1>slider here TBD</h1>';
+        $slider = SliderWidget::widget([
+            'slider_id' => $this->sliderId,
+        ]);
+
+        if ($this->inContainer) {
+//            $content = Html::tag('div', $slider, ['class'=>])
+        }
+
+        return $slider;
     }
 }
