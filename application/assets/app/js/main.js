@@ -255,3 +255,73 @@ $(function() {
         return false;
     });
 });
+
+(function($){
+    "use strict";
+
+    $.fn.dotPlantSmartFilters = function() {
+        var thatFilters = $(this),
+            datId = '#'+thatFilters.attr('id'),
+            catchTimeout = false;
+
+        var doFiltration = function() {
+            if (catchTimeout !== false) {
+                clearTimeout(catchTimeout);
+            }
+            var block = $("#product-list-block"),
+                form = thatFilters.find('form');
+            block.css('height', block.height()+'px');
+
+            block.empty().html('Loading...');
+
+            $.ajax({
+                url: form.attr('action'),
+                method: 'POST',
+                data: form.serialize(),
+                dataType: 'json',
+                success: function(data) {
+                    var elem = $(data.content);
+                    block.empty().css('height', 'auto').append(elem);
+                    document.title = data.title;
+                    if (history) {
+                        if (history.pushState) {
+                            history.pushState(
+                                null,
+                                data.title,
+                                data.url
+                            );
+                        }
+                    }
+                }
+            })
+        };
+
+        $('.filter-sets-widget').on('click', datId + ' .filter-link', function(){
+            if (catchTimeout !== false) {
+                clearTimeout(catchTimeout);
+            }
+            var that = $(this),
+                selectionId = that.data('selectionId'),
+                checkbox = $('#filter-check-'+selectionId),
+                propertyId = checkbox.data('propertyId');
+
+
+            checkbox.prop('checked', !checkbox.prop('checked'));
+
+            catchTimeout = setTimeout(doFiltration, 1000);
+
+            return false;
+        });
+        thatFilters.find('.filter-check').change(function(){
+            if (catchTimeout !== false) {
+                clearTimeout(catchTimeout);
+            }
+            catchTimeout = setTimeout(doFiltration, 1000);
+            return true;
+        });
+        thatFilters.find('form').submit(function(){
+            doFiltration();
+            return false;
+        });
+    }
+}(jQuery));

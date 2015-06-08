@@ -228,3 +228,7 @@ div#Product-grid, div#reviews-grid {
     display: block;
   }
 }
+.dropdown-submenu:hover>.dropdown-menu {
+  max-height: 400px;
+  overflow-y: scroll;
+}

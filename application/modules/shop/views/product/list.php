@@ -10,7 +10,7 @@
  * @var $selected_category_id integer
  * @var $selected_category_ids integer[]
  * @var $selections
- * @var $this app\components\View
+ * @var $this app\components\WebView
  * @var $title_append string
  * @var $values_by_property_id
  */
@@ -22,21 +22,10 @@ use yii\helpers\Html;
 
 $this->params['breadcrumbs'] = $breadcrumbs;
 $listView = UserPreferences::preferences()->getAttributes()['listViewType'];
-//$this->beginBlock('filters');
-//echo app\widgets\filter\FilterWidget::widget(
-//    [
-//        'objectId' => $object->id,
-//        'currentSelections' => [
-//            'properties' => $values_by_property_id,
-//            'last_category_id' => $selected_category_id,
-//        ],
-//        'categoryGroupId' => $category_group_id,
-//        'title' => null,
-//    ]
-//);
-//$this->endBlock();
+
 
 ?>
+<div id="product-list-block">
 <h1>
     <?=$this->blocks['h1']?>
 </h1>
@@ -98,11 +87,11 @@ $listView = UserPreferences::preferences()->getAttributes()['listViewType'];
 <?php if (!isset($_GET['page']) && count($values_by_property_id) === 0): ?>
     <div class="content"><?=$this->blocks['content']?></div>
 <?php endif; ?>
-
+</div>
 <?php
 
 $js = <<<JS
-$(".product-item .product-image,.product-item .product-announce").click(function(){
+$(".product-item .product-image,.product-item .product-announce").click(function() {
     var that = $(this),
         parent = null;
     if (that.hasClass('product-image')) {
@@ -113,6 +102,6 @@ $(".product-item .product-image,.product-item .product-announce").click(function
 
     document.location = parent.find('a.product-name').attr('href');
     return false;
-})
+});
 JS;
 $this->registerJs($js);

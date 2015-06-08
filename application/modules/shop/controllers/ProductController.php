@@ -15,6 +15,7 @@ use Yii;
 use yii\caching\TagDependency;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -56,6 +57,13 @@ class ProductController extends Controller
         $values_by_property_id = $request->get('properties', []);
         if (!is_array($values_by_property_id)) {
             $values_by_property_id = [$values_by_property_id];
+        }
+
+        if (Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            $values_by_property_id = ArrayHelper::merge(
+                $values_by_property_id,
+                (array) Yii::$app->request->post('properties', [])
+            );
         }
 
         $selected_category_ids = $request->get('categories', []);
@@ -110,24 +118,41 @@ class ProductController extends Controller
 
         $this->loadDynamicContent($object->id, 'shop/product/list', $request->get());
 
-        return $this->render(
-            $this->computeViewFile($selected_category, 'list'),
-            [
-                'model' => $selected_category,
-                'selected_category' => $selected_category,
-                'selected_category_id' => $selected_category_id,
-                'selected_category_ids' => $selected_category_ids,
-                'values_by_property_id' => $values_by_property_id,
-                'products' => $products,
-                'object' => $object,
-                'category_group_id' => $category_group_id,
-                'pages' => $pages,
-                'title_append' => $title_append,
-                'selections' => $request->get(),
-                'breadcrumbs' => $this->buildBreadcrumbsArray($selected_category),
-                'allSorts' => $allSorts,
-            ]
-        );
+        $params = [
+            'model' => $selected_category,
+            'selected_category' => $selected_category,
+            'selected_category_id' => $selected_category_id,
+            'selected_category_ids' => $selected_category_ids,
+            'values_by_property_id' => $values_by_property_id,
+            'products' => $products,
+            'object' => $object,
+            'category_group_id' => $category_group_id,
+            'pages' => $pages,
+            'title_append' => $title_append,
+            'selections' => $request->get(),
+            'breadcrumbs' => $this->buildBreadcrumbsArray($selected_category),
+            'allSorts' => $allSorts,
+        ];
+        $viewFile = $this->computeViewFile($selected_category, 'list');
+
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+
+            $content = $this->renderAjax(
+                $viewFile,
+                $params
+            );
+            return [
+                'content' => $content,
+                'title' => $this->view->title,
+                'url' => Url::to(['/shop/product/list', 'last_category_id'=>$selected_category_id, 'properties'=>$values_by_property_id]),
+            ];
+        } else {
+            return $this->render(
+                $viewFile,
+                $params
+            );
+        }
     }
 
     /**

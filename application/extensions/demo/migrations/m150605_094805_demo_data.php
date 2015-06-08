@@ -63,6 +63,7 @@ class m150605_094805_demo_data extends Migration
     protected function saveStatic($id, $key, $value)
     {
         if (!isset($this->values[$value])) {
+            $value = trim($value, '/ ');
             $this->insert(
                 PropertyStaticValues::tableName(),
                 [
@@ -133,6 +134,8 @@ class m150605_094805_demo_data extends Migration
             'Тип экрана',
             'Тип видеоадаптера',
         ];
+
+
         foreach ($data as $category) {
             $this->insert(
                 Category::tableName(),
@@ -143,7 +146,7 @@ class m150605_094805_demo_data extends Migration
                     'h1' => $category['name'],
                     'title' => $category['name'] . ' с доставкой в любой город России и СНГ',
                     'breadcrumbs_label' => $category['name'],
-                    'slug' => $this->getKey($category['name']),
+                    'slug' => Helper::createSlug($category['name']),
                     'announce' => $category['content'],
                     'content' => $category['content'],
                 ]
@@ -159,7 +162,7 @@ class m150605_094805_demo_data extends Migration
             $groupId = $this->db->lastInsertID;
             foreach ($category['products'] as $product) {
                 // product
-                $slug = $this->getKey($product['name'], 80, '-');
+                $slug = Helper::createSlug($product['name']);
                 if (isset($this->products[$slug])) {
                     $slug = mb_substr($slug, 0, 66) . '-' . uniqid();
                 }
@@ -172,6 +175,7 @@ class m150605_094805_demo_data extends Migration
                         'sku' => $product['id'],
                         'main_category_id' => $categoryId,
                         'name' => $product['name'],
+                        'title' => $product['name'],
                         'breadcrumbs_label' => $product['name'],
                         'h1' => $product['name'],
                         'slug' => $slug,
@@ -201,12 +205,14 @@ class m150605_094805_demo_data extends Migration
                         [$productObject->id, $productId, $groupId],
                     ]
                 );
+
                 // properties
                 if (isset($product['vendor'])) {
                     $this->saveStatic($productId, 'vendor', $product['vendor']);
                 }
                 foreach ($product['details']['modelDetails'] as $group) {
                     foreach ($group['params'] as $property) {
+                        $property['name'] = trim($property['name'], '/ ');
                         if (in_array($property['name'], $staticProperties)) {
                             $key = $this->getKey($property['name']);
                             if (!isset($this->properties[$key])) {
@@ -281,7 +287,7 @@ class m150605_094805_demo_data extends Migration
         if (file_exists($imgsFile) === false) {
             $fp = fopen($imgsFile, 'w+');
             $ch = curl_init($imgUrl);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 500);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 600);
             curl_setopt($ch, CURLOPT_FILE, $fp);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             curl_exec($ch);
@@ -291,7 +297,7 @@ class m150605_094805_demo_data extends Migration
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             echo "\n\nWow! You are running windows! Please unzip $imgsFile to $imagesPath \n\n";
         } else {
-            passthru('/usr/bin/env unzip "' . $imgsFile . '" -d "' . $imagesPath . '"');
+            passthru('/usr/bin/env unzip -n "' . $imgsFile . '" -d "' . $imagesPath . '"');
         }
 
     }

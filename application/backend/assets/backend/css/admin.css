@@ -317,3 +317,11 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
 .scrollable-options-list label {
   display: block;
 }
+
+/* line 231, ../sass/admin.scss */
+.dropdown-submenu:hover > .dropdown-menu {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+/*# sourceMappingURL=admin.css.map */

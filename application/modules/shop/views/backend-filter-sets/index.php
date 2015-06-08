@@ -20,7 +20,14 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= app\widgets\Alert::widget([
     'id' => 'alert',
 ]); ?>
-
+<h1>
+    <?php if (is_object($selectedCategory)): ?>
+    <?= Yii::t('app', 'Current category:') ?>
+    <?= Html::encode($selectedCategory->name) ?>
+    <?php else: ?>
+    <?= Yii::t('app', 'Select category first') ?>
+    <?php endif;?>
+</h1>
 <div class="row">
     <div class="col-md-4">
         <?=

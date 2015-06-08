@@ -36,6 +36,7 @@ class BackendModule extends Module implements BootstrapInterface
             Application::EVENT_BEFORE_ACTION,
             function () use ($app) {
                 if (
+                    Yii::$app->request->isAjax === false &&
                     Yii::$app->requestedAction->controller->module instanceof BackendModule === false &&
                     Yii::$app->requestedAction->controller instanceof BackendController === false
                 ) {
