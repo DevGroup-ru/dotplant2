@@ -14,7 +14,7 @@ class ConfigurationModel extends app\models\BaseThemeConfigurationModel
     public $secondary_color = '#27ae60';
     public $action_color = '#d1404a';
 
-    public $logotypePath = 'http://placehold.it/100x60/bada55/fff&text=MyShop';
+    public $logotypePath = 'http://st-3.dotplant.ru/img/sample-logo.png';
 
     public $logotypeFile = null;
 

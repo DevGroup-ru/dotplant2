@@ -2679,7 +2679,7 @@ class m150531_084444_new_init extends Migration
                 'image_height',
             ],
             [
-                ['Example carousel', 1, 1170, 480],
+                ['Example carousel', 1, 900, 350],
             ]
         );
         $this->batchInsert(
