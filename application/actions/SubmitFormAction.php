@@ -135,7 +135,7 @@ class SubmitFormAction extends Action
                             'submission' => $submission,
                         ]
                     )->setTo(explode(',', $form->email_notification_addresses))->setFrom(
-                        Yii::$app->mail->transport->getUsername()
+                        Yii::$app->mail->getMailFrom()
                     )->setSubject($form->name . ' #' . $submission->id)->send();
                 } catch (\Exception $e) {
                     // do nothing

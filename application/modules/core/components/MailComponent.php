@@ -7,6 +7,8 @@ use yii\swiftmailer\Mailer;
 
 class MailComponent extends Mailer
 {
+    private $componentConfig = [];
+
     /**
      * @inheritdoc
      */
@@ -14,8 +16,12 @@ class MailComponent extends Mailer
     {
         parent::__construct($config);
 
-        $mailConfig = \Yii::$app->getModule('core')->emailConfig;
-        $_config = ['class' => $mailConfig['transport']];
+        $this->componentConfig = $mailConfig = \Yii::$app->getModule('core')->emailConfig;
+
+        $_config = [
+            'class' => $mailConfig['transport'],
+        ];
+
         if ('Swift_SmtpTransport' === $mailConfig['transport']) {
             $_config['host'] = $mailConfig['host'];
             $_config['username'] = $mailConfig['username'];
@@ -25,6 +31,14 @@ class MailComponent extends Mailer
         } elseif ('Swift_SendmailTransport' === $mailConfig['transport']) {
             $_config['command'] = $mailConfig['sendMail'];
         }
+
         $this->setTransport($_config);
+    }
+
+    public function getMailFrom()
+    {
+        return !empty($this->componentConfig['mailFrom'])
+            ? $this->componentConfig['mailFrom']
+            : '';
     }
 }
