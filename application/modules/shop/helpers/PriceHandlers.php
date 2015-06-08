@@ -222,6 +222,7 @@ class PriceHandlers
         }
 
         $deliveryInformation = $event->order->orderDeliveryInformation;
+        $shippingOption = $event->order->shippingOption;
         $special_price_list = SpecialPriceList::find()->where(
             [
                 'handler' => 'getDeliveryPriceOrder',
@@ -229,12 +230,12 @@ class PriceHandlers
             ]
         )->one();
 
-        if ($deliveryInformation !== null) {
+        if (null !== $deliveryInformation && null !== $shippingOption) {
             SpecialPriceObject::setObject(
                 $special_price_list->id,
                 $event->order->id,
                 $deliveryInformation->shipping_price_total,
-                $event->order->shippingOption->name
+                $shippingOption->name
             );
         } else {
             SpecialPriceObject::deleteAll(
