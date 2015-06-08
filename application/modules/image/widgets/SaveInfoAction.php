@@ -26,19 +26,21 @@ class SaveInfoAction extends Action
         if (count($sortOrder)>0) {
             $priorities = [];
             $start = 0;
+            $ids = [];
             foreach ($sortOrder as $tid) {
                 $priorities[intval($tid)] = $start++;
+                $ids [] = intval($tid);
             }
             $case = 'CASE `id`';
             foreach ($priorities as $k => $v) {
-                $case .= ' when "' . intval($k) . '" then "' . intval($v) . '"';
+                $case .= ' when "' . $k . '" then "' . $v . '"';
             }
             $case .= ' END';
             $sql = "UPDATE "
                 . Image::tableName()
                 . " SET sort_order = "
                 . $case
-                . " WHERE id IN(" . implode(', ', $sortOrder)
+                . " WHERE id IN(" . implode(', ', $ids)
                 . ")";
             \Yii::$app->db->createCommand($sql)->execute();
         }
