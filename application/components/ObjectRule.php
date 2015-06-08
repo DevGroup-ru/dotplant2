@@ -112,7 +112,7 @@ class ObjectRule implements UrlRuleInterface
     public function parseRequest($manager, $request)
     {
         Yii::beginProfile("ObjectRule::parseRequest");
-        
+
         $url = $request->getPathInfo();
         if (empty($url)) {
             Yii::endProfile("ObjectRule::parseRequest");
@@ -214,6 +214,7 @@ class ObjectRule implements UrlRuleInterface
 
             // в конце удачного парсинга next_part должен остаться пустым
             if (empty($next_part)) {
+                $resultForCache = [$model->route, $parameters];
                 if (isset($_POST['properties'], $parameters['properties'])) {
 
                     foreach ($_POST['properties'] as $key=>$value) {
@@ -245,7 +246,7 @@ class ObjectRule implements UrlRuleInterface
 
                 Yii::$app->cache->set(
                     $cacheKey,
-                    $result,
+                    $resultForCache,
                     86400,
                     new TagDependency([
                         'tags' => $cacheTags,

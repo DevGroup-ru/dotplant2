@@ -109,13 +109,14 @@ echo '</div>';
 $checkedIds = [];
 foreach ($urlParams['properties'] as $propertyId => $values) {
     $values = (array) $values;
-    foreach ($values as $id) {
-        $checkedIds[] = '#filter-check-'.$id;
+    foreach ($values as $selectionId) {
+        $checkedIds[] = '#filter-check-'.$selectionId;
     }
 }
 $checkedIds = implode(',', $checkedIds);
 $js = <<<JS
-$('#$id').dotPlantSmartFilters();
 $('$checkedIds').prop('checked', true);
+$('#$id').dotPlantSmartFilters();
+
 JS;
 $this->registerJs($js);
