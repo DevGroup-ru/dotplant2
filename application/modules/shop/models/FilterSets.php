@@ -67,6 +67,7 @@ class FilterSets extends \yii\db\ActiveRecord
 
     public static function getForCategoryId($categoryId)
     {
+        Yii::beginProfile('FilterSets.GetForCategory '.$categoryId);
         $category = Category::findById($categoryId);
         if ($category === null) {
             return false;
@@ -80,7 +81,7 @@ class FilterSets extends \yii\db\ActiveRecord
             ->orWhere(['category_id' => $category->id])
             ->orderBy(['sort_order' => SORT_ASC])
             ->all();
-
+        Yii::endProfile('FilterSets.GetForCategory '.$categoryId);
         return $filter_sets;
     }
 
