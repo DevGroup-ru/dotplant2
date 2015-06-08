@@ -6,7 +6,6 @@ $config = [
     'id' => 'dotplant2',
     'basePath' => dirname(__DIR__),
     'extensions' => require(__DIR__ . '/../vendor/yiisoft/extensions.php'),
-    'language' => 'ru',
     'bootstrap' => [
         'core',
         'seo',

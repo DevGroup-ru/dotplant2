@@ -8,7 +8,6 @@ Yii::setAlias('@webroot', dirname(__DIR__) . '/web');
 $config = [
     'id' => 'basic-console',
     'basePath' => dirname(__DIR__),
-    'language' => 'ru',
     'bootstrap' => [],
     'controllerNamespace' => 'app\commands',
     'extensions' => require(__DIR__ . '/../vendor/yiisoft/extensions.php'),
