@@ -10,7 +10,7 @@ class SaveInfoAction extends Action
     public function run()
     {
         $descriptions = \Yii::$app->request->post('description', []);
-        $sortOrder = \Yii::$app->request->post('id', []);
+        $sortOrder = (array) \Yii::$app->request->post('id', []);
         foreach ($descriptions as $id => $description) {
             Image::updateAll(
                 [
@@ -22,15 +22,16 @@ class SaveInfoAction extends Action
                 ]
             );
         }
-        if (!empty($sortOrder)) {
+
+        if (count($sortOrder)>0) {
             $priorities = [];
             $start = 0;
             foreach ($sortOrder as $tid) {
-                $priorities[$tid] = $start++;
+                $priorities[intval($tid)] = $start++;
             }
             $case = 'CASE `id`';
             foreach ($priorities as $k => $v) {
-                $case .= ' when "' . $k . '" then "' . $v . '"';
+                $case .= ' when "' . intval($k) . '" then "' . intval($v) . '"';
             }
             $case .= ' END';
             $sql = "UPDATE "
