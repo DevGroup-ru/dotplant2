@@ -10,7 +10,7 @@ DotPlant2 - open-source E-Commerce CMS based on Yii Framework 2(yii2).
 
 ## Minimal system requirements:
 
-- PHP 5.5.9 (can also run on 5.4.x as yii framework 2 but not well-tested)
+- PHP 5.5 or higher
 - *nix-based server(well tested on Ubuntu 14.10)
 - MySQL 5.5+
 - Memcached server or APC for caching purposes is highly recommended
