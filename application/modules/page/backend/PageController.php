@@ -2,6 +2,7 @@
 
 namespace app\modules\page\backend;
 
+use app\backend\actions\PropertyHandler;
 use app\backend\events\BackendEntityEditEvent;
 use app\models\Object;
 use app\modules\page\models\Page;
@@ -57,6 +58,10 @@ class PageController extends \app\backend\components\BackendController
             'save-info' => [
                 'class' => SaveInfoAction::className(),
             ],
+            'property-handler' => [
+                'class' => PropertyHandler::className(),
+                'modelName' => Page::className()
+            ]
         ];
     }
 
