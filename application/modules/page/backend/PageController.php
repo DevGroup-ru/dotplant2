@@ -123,7 +123,7 @@ class PageController extends \app\backend\components\BackendController
                 }
 
                 if ($save_result) {
-                    $this->runAction('save-info');
+                    $this->runAction('save-info', ['model_id'=>$model->id]);
                     Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
                     $returnUrl = Yii::$app->request->get('returnUrl', ['/page/backend/index']);
                     switch (Yii::$app->request->post('action', 'save')) {

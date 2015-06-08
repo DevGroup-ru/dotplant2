@@ -26,6 +26,15 @@ class UploadAction extends \devgroup\dropzone\UploadAction
 
     public function afterUpload($data)
     {
+        if (isset($data['params']) === false) {
+            return ['error' => 'bad request'];
+        }
+        if (isset($data['params']['objectId'], $data['filename'], $data['params']['modelId']) === false) {
+            return ['error' => 'bad request'];
+        }
+        if ($data['params']['modelId'] === 'null') {
+            $data['params']['modelId']=0;
+        }
         $image = new Image(
             [
                 'object_id' => $data['params']['objectId'],

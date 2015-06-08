@@ -7,15 +7,20 @@ use yii\base\Action;
 
 class SaveInfoAction extends Action
 {
-    public function run()
+    public function run($model_id=null)
     {
         $descriptions = \Yii::$app->request->post('description', []);
         $sortOrder = (array) \Yii::$app->request->post('id', []);
+
         foreach ($descriptions as $id => $description) {
+            $values = [
+                'image_description' => $description,
+            ];
+            if ($model_id !== null) {
+                $values['object_model_id'] = $model_id;
+            }
             Image::updateAll(
-                [
-                    'image_description' => $description,
-                ],
+                $values,
                 'id = :id',
                 [
                     ':id' => $id,
