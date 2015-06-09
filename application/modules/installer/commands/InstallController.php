@@ -86,6 +86,9 @@ class InstallController extends Controller
                 );
             }
         }
+        if (!$this->interactive && getenv('DB_USER')) {
+            $model->username = getenv('DB_USER');
+        }
         if (!$this->interactive && getenv('DB_PASS')) {
             $model->password = getenv('DB_PASS');
         }
