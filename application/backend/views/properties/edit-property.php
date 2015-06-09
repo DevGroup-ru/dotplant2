@@ -5,7 +5,7 @@ use app\models\SpamChecker;
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use app\backend\components\ActiveForm;
 use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Property edit');
@@ -149,7 +149,7 @@ $this->endBlock();
                 ) ?>
             </div>
 
-            <?= \app\widgets\image\ImageDropzone::widget([
+            <?= \app\modules\image\widgets\ImageDropzone::widget([
                 'name' => 'file',
                 'url' => ['/backend/product/upload'],
                 'removeUrl' => ['/backend/product/remove'],
@@ -177,14 +177,20 @@ $this->endBlock();
 </section>
 
 <?php ActiveForm::end(); ?>
-<script>
-jQuery('input[data-group]').change(function() {
-    var $this = jQuery(this);
-    if ($this.prop('checked')) {
-        jQuery('input[data-group="' + $this.data('group') + '"]').not('[name="' + $this.attr('name') + '"]').prop('checked', false);
-    }
-});
-</script>
+
+<?php
+$js = <<<JS
+    "use strict";
+    $('input[data-group]').change(function() {
+        var object = jQuery(this);
+        if (object.prop('checked')) {
+            $('input[data-group="' + object.data('group') + '"]').not('[name="' + object.attr('name') + '"]').prop('checked', false);
+        }
+    });
+JS;
+$this->registerJs($js);
+?>
+
 <?php if ($model->has_static_values): ?>
     <?=
     DynaGrid::widget([

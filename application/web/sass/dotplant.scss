@@ -38,8 +38,12 @@ a.logo {
     margin-bottom: 0;
     border: 0;
     z-index: 999;
-    background: $twitter-blue;
-    @include border-radius(0);
+    background: #1ab8e8;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
 
     .navbar-collapse{
         padding-left:0;

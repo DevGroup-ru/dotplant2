@@ -2,8 +2,9 @@
 
 namespace app\properties\handlers\textArea;
 
-use app\properties\handlers\Handler;
+use app;
 
-class TextAreaProperty extends Handler
+class TextAreaProperty extends app\properties\handlers\AbstractHandler
 {
 }
+?>

@@ -1,0 +1,27 @@
+@import "variables-custom";
+$primary_color: #2980b9 !default;
+$header_color: $primary_color !default;
+$subheader_color: darken($header_color, 20%) !default;
+
+$secondary_color: #27ae60 !default;
+$action_color: #d1404a !default;
+$action_hover_color: darken($action_color, 10%) !default;
+
+$text_header_color: #3a3a3a !default;
+
+$sidebar_link_color: #3a3a3a !default;
+$sidebar_link_hover_color: $action_hover_color !default;
+
+$action_text_color: #ecf0f1 !default;
+$content_text_color: #404148 !default;
+$muted_text_color: #bdc3c7 !default;
+
+$link_color: #c0392b !default;
+
+$header_navigation_color: #ecf0f1 !default;
+$header_navigation_hover: darken($header_color, 10%) !default;
+
+
+$footer_color: #333333 !default;
+$footer_text_color: #eeeeee !default;
+

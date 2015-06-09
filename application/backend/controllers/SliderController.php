@@ -2,6 +2,7 @@
 
 namespace app\backend\controllers;
 
+use app\backend\traits\BackendRedirect;
 use app\models\Slide;
 use app\slider\BaseSliderEditModel;
 use Imagine\Image\ManipulatorInterface;
@@ -23,6 +24,7 @@ use yii\helpers\Url;
  */
 class SliderController extends Controller
 {
+    use BackendRedirect;
     /**
      * @inheritdoc
      */
@@ -101,29 +103,7 @@ class SliderController extends Controller
             if ($abstractModel->validate()) {
                 $model->params = $abstractModel->serialize();
                 if ($model->save()) {
-                    Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                    $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/slider/index']);
-                    switch (Yii::$app->request->post('action', 'save')) {
-                        case 'next':
-                            return $this->redirect(
-                                [
-                                    '/backend/slider/update',
-                                    'returnUrl' => $returnUrl,
-                                ]
-                            );
-                        case 'back':
-                            return $this->redirect($returnUrl);
-                        default:
-                            return $this->redirect(
-                                Url::toRoute(
-                                    [
-                                        '/backend/slider/update',
-                                        'id' => $model->id,
-                                        'returnUrl' => $returnUrl
-                                    ]
-                                )
-                            );
-                    }
+                    return $this->redirectUser($model->id, true, 'index', 'update');
 
                 } else {
                     Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));

@@ -9,6 +9,7 @@ trait FindById
 {
     /**
      * @param integer $id
+     * @return \yii\db\ActiveRecord
      */
     public static function findById($id)
     {

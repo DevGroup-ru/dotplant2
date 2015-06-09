@@ -1,9 +1,11 @@
 <?php
 
+/** @var $remains \app\modules\shop\models\WarehouseProduct[] */
+/** @var $model app\modules\shop\models\Product */
+/** @var $this \yii\web\View */
+
 use kartik\helpers\Html;
 use yii\helpers\Url;
-/** @var $remains app\models\WarehouseProduct[] */
-/** @var $model app\models\Product */
 
 ?>
 
@@ -68,8 +70,7 @@ use yii\helpers\Url;
     </tbody>
 </table>
 
-<script>
-    $(function(){
+<?php $this->beginBlock('warehousesWidget'); ?>
         $('.warehouse-remain-input').change(function(){
             var formData = {},
                 $this = $(this);
@@ -77,7 +78,7 @@ use yii\helpers\Url;
             formData[$this.attr('name')] = $this.val();
 
             $.ajax({
-                url: "<?= Url::toRoute(['/backend/warehouse/update-remains']) ?>",
+                url: "<?= Url::toRoute(['/shop/backend-warehouse/update-remains']) ?>",
                 data: formData,
                 method: 'POST',
                 success: function(data, textStatus, jqXHR) {
@@ -89,5 +90,5 @@ use yii\helpers\Url;
             });
             return true;
         })
-    })
-</script>
+<?php $this->endBlock(); ?>
+<?php $this->registerJs($this->blocks['warehousesWidget'], \yii\web\View::POS_READY); ?>

@@ -2,7 +2,6 @@
 
 namespace app\components;
 
-use app\backend\models\ErrorMonitorConfig;
 use app\models\ErrorLog;
 use app\models\ErrorUrl;
 use Yii;
@@ -27,8 +26,7 @@ class DotplantErrorHandler extends ErrorHandler
 
     protected function saveErrorInfo($exception, $status_code)
     {
-        $errorMonitorConfig = new ErrorMonitorConfig();
-        $errorLogEnabled = $errorMonitorConfig->errorMonitorEnabled;
+        $errorLogEnabled = Yii::$app->getModule('core')->errorMonitorEnabled;
         if (null !== $errorLogEnabled && $errorLogEnabled == 1) {
             $errorUrl = ErrorUrl::find()->where(['url' => $_SERVER['REQUEST_URI']])->one();
             if (is_null($errorUrl)) {
@@ -50,25 +48,25 @@ class DotplantErrorHandler extends ErrorHandler
                 true
             );
             $errorLog->save();
-            $this->sendImmediateNotify($errorMonitorConfig, $errorLog, $status_code);
+            $this->sendImmediateNotify($errorLog, $status_code);
         }
     }
 
-    protected function sendImmediateNotify($errorMonitorConfig, $errorLog, $status_code)
+    protected function sendImmediateNotify($errorLog, $status_code)
     {
-        $immediateNotifyEnabled = $errorMonitorConfig->immediateNotice;
+        $immediateNotifyEnabled = Yii::$app->getModule('core')->immediateNotice;
         if ($immediateNotifyEnabled == 1) {
-            $httpCodesForNotify = explode(",", $errorMonitorConfig->httpCodesForImmediateNotify);
+            $httpCodesForNotify = explode(",", Yii::$app->getModule('core')->httpCodesForImmediateNotify);
             if (strlen($httpCodesForNotify[0]) > 0) {
                 if (!in_array($status_code, $httpCodesForNotify)) {
                     return;
                 }
             }
-            $notifyEmail = $errorMonitorConfig->devmail;
+            $notifyEmail = Yii::$app->getModule('core')->devmail;
             $validator = new EmailValidator();
             if ($validator->validate($notifyEmail)) {
                 $errorUrl = $errorLog->getErrorUrl()->one();
-                if ($errorUrl->immediate_notify_count < $errorMonitorConfig->immediateNoticeLimitPerUrl) {
+                if ($errorUrl->immediate_notify_count < Yii::$app->getModule('core')->immediateNoticeLimitPerUrl) {
                     $errorUrl->immediate_notify_count++;
                     $errorUrl->update();
                     $info = [

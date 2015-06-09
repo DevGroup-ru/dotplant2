@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\backend\models\ErrorMonitorConfig;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -81,8 +80,8 @@ class ErrorLog extends ActiveRecord
         if (!parent::beforeSave($insert)) {
             return false;
         }
-        $errorMonitorConfig = new ErrorMonitorConfig();
-        $numberElementsToStore = $errorMonitorConfig->numberElementsToStore - 1;
+
+        $numberElementsToStore = Yii::$app->getModule('core')->numberElementsToStore - 1;
         $ids = static::find()->select('`id`')->where(['url_id' => $this->url_id])->orderBy('`id` DESC')
             ->offset($numberElementsToStore)->column();
         if (count($ids) > 0) {

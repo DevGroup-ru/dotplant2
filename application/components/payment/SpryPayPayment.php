@@ -14,21 +14,21 @@ class SpryPayPayment extends AbstractPayment
     protected $secretKey;
     protected $shopId;
 
-    public function content($order, $transaction)
+    public function content()
     {
         return $this->render(
             'sprypay',
             [
                 'currency' => $this->currency,
                 'language' => $this->language,
-                'order' => $order,
+                'order' => $this->order,
                 'shopId' => $this->shopId,
-                'transaction' => $transaction,
+                'transaction' => $this->transaction,
             ]
         );
     }
 
-    public function checkResult()
+    public function checkResult($hash = '')
     {
         $spQueryFields = [
             'spPaymentId', 'spShopId', 'spShopPaymentId', 'spBalanceAmount', 'spAmount', 'spCurrency',

@@ -2,11 +2,13 @@
 
 namespace app\models;
 
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
+use yii\db\Query;
 
 /**
  * This is the model class for table "property_group".
@@ -23,6 +25,9 @@ class PropertyGroup extends ActiveRecord
     private static $identity_map = [];
     private static $groups_by_object_id = [];
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -73,9 +78,12 @@ class PropertyGroup extends ActiveRecord
         ];
     }
 
+    /**
+     * Relation to \app\models\Object
+     * @return \yii\db\ActiveQuery
+     */
     public function getObject()
     {
-        // Order has_one Customer via Customer.id -> customer_id
         return $this->hasOne(Object::className(), ['id' => 'object_id']);
     }
 
@@ -147,10 +155,18 @@ class PropertyGroup extends ActiveRecord
         return $this->hasMany(Property::className(), ['property_group_id' => 'id'])->orderBy('sort_order');
     }
 
+    /**
+     * @param $object_id
+     * @param bool $withProperties
+     * @return PropertyGroup[]
+     */
     public static function getForObjectId($object_id, $withProperties = false)
     {
-        if (!isset(static::$groups_by_object_id[$object_id])) {
+        if (null === $object_id) {
+            return [];
+        }
 
+        if (!isset(static::$groups_by_object_id[$object_id])) {
             $cacheKey = 'PropertyGroup:objectId:'.$object_id;
             static::$groups_by_object_id[$object_id] = Yii::$app->cache->get($cacheKey);
             if (!is_array(static::$groups_by_object_id[$object_id])) {
@@ -178,7 +194,6 @@ class PropertyGroup extends ActiveRecord
                         }
                     }
 
-
                     Yii::$app->cache->set(
                         $cacheKey,
                         static::$groups_by_object_id[$object_id],
@@ -191,8 +206,6 @@ class PropertyGroup extends ActiveRecord
                     );
                 }
             }
-
-
         }
         return static::$groups_by_object_id[$object_id];
     }
@@ -248,9 +261,34 @@ class PropertyGroup extends ActiveRecord
         }
         return true;
     }
+
     public function afterDelete()
     {
         ObjectPropertyGroup::deleteAll(['property_group_id' => $this->id]);
         parent::afterDelete();
     }
+
+    /**
+     * @param ActiveRecord $model
+     * @param string $idAttribute
+     * @return bool
+     */
+    public function appendToObjectModel(ActiveRecord $model, $idAttribute = 'id')
+    {
+        $object = Object::getForClass($model::className());
+        if (null === $object || !$model->hasAttribute($idAttribute)) {
+            return false;
+        }
+
+        $link = new ObjectPropertyGroup();
+            $link->object_id = $object->id;
+            $link->object_model_id = $model->$idAttribute;
+            $link->property_group_id = $this->id;
+
+        $result = $link->save();
+        $model->updatePropertyGroupsInformation();
+
+        return $result;
+    }
 }
+?>

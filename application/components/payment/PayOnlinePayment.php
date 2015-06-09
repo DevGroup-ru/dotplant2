@@ -2,11 +2,12 @@
 
 namespace app\components\payment;
 
-use app\models\OrderTransaction;
+use app\modules\shop\models\OrderTransaction;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
+use yii\web\ServerErrorHttpException;
 
 class PayOnlinePayment extends AbstractPayment
 {
@@ -15,56 +16,59 @@ class PayOnlinePayment extends AbstractPayment
     protected $merchantId;
     protected $privateKey;
 
-    public function content($order, $transaction)
+    public function content()
     {
         $params = 'MerchantId='. $this->merchantId;
-        $params .= '&OrderId=' . $transaction->id;
-        $params .= '&Amount=' . $transaction->total_sum;
+        $params .= '&OrderId=' . $this->transaction->id;
+        $params .= '&Amount=' . $this->transaction->total_sum;
         $params .= '&Currency=' . $this->currency;
-        $params .= '&OrderDescription=Order #' . $order->id;
+        $params .= '&OrderDescription=Order #' . $this->order->id;
         $params .= '&PrivateSecurityKey=' . $this->privateKey;
         $hash = md5($params);
         $url = "https://secure.payonlinesystem.com/" . $this->language . "/payment/?MerchantId=" . $this->merchantId
-            . "&OrderId=" . urlencode($transaction->id) . "&Amount=" . $transaction->total_sum
-            . "&Currency=" . $this->currency . "&OrderDescription=" . urlencode('Order #' . $order->id)
+            . "&OrderId=" . urlencode($this->transaction->id) . "&Amount=" . $this->transaction->total_sum
+            . "&Currency=" . $this->currency . "&OrderDescription=" . urlencode('Order #' . $this->order->id)
             . "&ReturnUrl="
-            . urlencode(Url::toRoute(['/cart/payment-result', 'id' => $transaction->payment_type_id], true))
+            . urlencode($this->createResultUrl([
+                'id' => $this->order->payment_type_id,
+                'transactionId' => $this->transaction->id,
+            ]))
             . "&FailUrl="
-            . urlencode(Url::toRoute(['/cart/payment-error', 'id' => $order->id], true))
+            . urlencode($this->createFailUrl(['id' => $this->transaction->id]))
             . "&SecurityKey=" . $hash;
         return $this->render(
             'payonline',
             [
-                'order' => $order,
-                'transaction' => $transaction,
+                'order' => $this->order,
+                'transaction' => $this->transaction,
                 'url' => $url,
             ]
         );
     }
 
-    public function checkResult()
+    public function checkResult($hash = '')
     {
-        if (!isset($_POST['SecurityKey'], $_POST['TransactionID'], $_POST['OrderId'], $_POST['Amount'],
-            $_POST['Currency'], $_POST['DateTime'])
-        ) {
-            throw new BadRequestHttpException;
-        }
-        $transaction = $this->loadTransaction($_POST['OrderId']);
-        $transaction->result_data = Json::encode($_POST);
-        $queryString = 'DateTime=' . $_POST['DateTime'] . '&TransactionID=' . $_POST['TransactionID']
-            . '&OrderId=' . $_POST['OrderId'] . '&Amount=' . $_POST['Amount'] . '&Currency=' . $_POST['Currency']
+        $queryString = 'DateTime=' . \Yii::$app->request->post('DateTime')
+            . '&TransactionID=' . \Yii::$app->request->post('TransactionID')
+            . '&OrderId=' . \Yii::$app->request->post('OrderId')
+            . '&Amount=' . \Yii::$app->request->post('Amount')
+            . '&Currency=' . \Yii::$app->request->post('Currency')
             . '&PrivateSecurityKey='. $this->privateKey;
-        if (md5($queryString) != $_POST['SecurityKey']) {
-            $transaction->status = OrderTransaction::TRANSACTION_ERROR;
-            if ($transaction->save(true, ['status', 'result_data'])) {
-                throw new HttpException(500);
-            }
-            throw new BadRequestHttpException;
+
+        if (\Yii::$app->request->post('SecurityKey') !== md5($queryString)) {
+            throw new BadRequestHttpException();
         }
+        if (null === $transaction = $this->loadTransaction(\Yii::$app->request->post('OrderId'))) {
+            throw new BadRequestHttpException();
+        }
+        $transaction->result_data = Json::encode(\Yii::$app->request->post());
         $transaction->status = OrderTransaction::TRANSACTION_SUCCESS;
-        if ($transaction->save(true, ['status', 'result_data'])) {
-            throw new HttpException(500);
+        if (!$transaction->save(true, ['status', 'result_data'])) {
+            throw new ServerErrorHttpException();
         }
-        $this->redirect(true, $transaction->order_id);
+        return $this->redirect($this->createSuccessUrl([
+            'id' => $transaction->id,
+        ]));
     }
 }
+?>

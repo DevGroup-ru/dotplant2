@@ -24,7 +24,7 @@ class FloatingPanel extends Widget
         ];
 
         switch (Yii::$app->requestedRoute) {
-            case 'product/list':
+            case 'shop/product/list':
                 if (isset($_GET['properties'])) {
                     $apply_if_params = [];
                     foreach ($_GET['properties'] as $property_id => $values) {
@@ -49,8 +49,8 @@ class FloatingPanel extends Widget
                                     'DynamicContent' => [
                                         'apply_if_params' => Json::encode($apply_if_params),
                                         'apply_if_last_category_id' => $_GET['last_category_id'],
-                                        'object_id' => app\models\Object::getForClass(app\models\Product::className())->id,
-                                        'route' => 'product/list',
+                                        'object_id' => app\models\Object::getForClass(app\modules\shop\models\Product::className())->id,
+                                        'route' => 'shop/product/list',
                                     ]
                                 ],
                             ];
@@ -62,11 +62,11 @@ class FloatingPanel extends Widget
                     // no properties selected - go to category edit page
 
                     if (isset($_GET['last_category_id'])) {
-                        $cat = app\models\Category::findById($_GET['last_category_id']);
+                        $cat = app\modules\shop\models\Category::findById($_GET['last_category_id']);
                         $items[] = [
                             'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit category'),
                             'url' => [
-                                '/backend/category/edit',
+                                '/shop/backend-category/edit',
                                 'id' => $cat->id,
                                 'parent_id' => $cat->parent_id,
                             ],
@@ -75,12 +75,12 @@ class FloatingPanel extends Widget
                 }
 
                 break;
-            case 'product/show':
+            case 'shop/product/show':
                 if (isset($_GET['model_id'])) {
                     $items[] = [
                         'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit product'),
                         'url' => [
-                            '/backend/product/edit',
+                            '/shop/backend-product/edit',
                             'id' => intval($_GET['model_id'])
 
                         ],
@@ -88,14 +88,14 @@ class FloatingPanel extends Widget
                 }
                 break;
             
-            case 'page/show':
-            case 'page/list':
+            case '/page/page/show':
+            case '/page/page/list':
                 if (isset($_GET['id'])) {
-                    $page = app\models\Page::findById($_GET['id']);
+                    $page = app\modules\page\models\Page::findById($_GET['id']);
                     $items[] = [
                         'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit page'),
                         'url' => [
-                            '/backend/page/edit',
+                            '/page/backend/edit',
                             'id' => $page->id,
                             'parent_id' =>$page->parent_id,
 

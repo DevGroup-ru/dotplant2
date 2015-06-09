@@ -2,14 +2,14 @@
 
 namespace app\widgets;
 
-use app\models\Product;
+use app\modules\shop\models\Product;
 use Yii;
 use yii\base\Widget;
 use yii\web\NotFoundHttpException;
 
 class ProductCompareListWidget extends Widget
 {
-    public $comparePage = '/product-compare/compare';
+    public $comparePage = '/shop/product-compare/compare';
     public $limit = 3;
 
     public function run()

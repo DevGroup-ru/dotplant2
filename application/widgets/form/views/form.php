@@ -14,7 +14,7 @@ use kartik\widgets\ActiveForm;
 <?php
     $form = ActiveForm::begin([
         'id' => $id,
-        'action' => [$this->context->route, 'id' => $this->context->formId],
+        'action' => ['/default/submit-form', 'id' => $this->context->formId],
         'options' => $options,
     ]);
 ?>

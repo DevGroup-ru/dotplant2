@@ -2,9 +2,7 @@
 
 namespace app\actions;
 
-
 use app\behaviors\spamchecker\SpamCheckerBehavior;
-use app\models\Config;
 use app\models\Form;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
@@ -51,42 +49,34 @@ class SubmitFormAction extends Action
         )->asArray()->all();
         $propIds = ArrayHelper::getColumn($propGroups, 'property_group_id');
 
-        /** Проверка на спам */
+        // Spam checking
         $activeSpamChecker = SpamChecker::getActive();
         $data = [];
         $spamResult = [];
-        if ($activeSpamChecker !== null) {
-            $apiKey = ArrayHelper::getValue($activeSpamChecker, 'api_key', '');
-            if ($apiKey !== '') {
-                $data[$activeSpamChecker->name]['class'] = $activeSpamChecker->behavior;
-                $data[$activeSpamChecker->name]['value']['key'] = $activeSpamChecker->api_key;
-                /** Интерпретации полей фомы */
-                $properties = Property::getForGroupId($propIds[0]);
-                foreach ($properties as $prop) {
-                    if ($prop->interpret_as == 0) {
-                        continue;
-                    }
-                    $interpreted = Config::findOne($prop->interpret_as);
-                    if ($interpreted->key == 'notinterpret') {
-                        continue;
-                    }
-                    $value = $post[$form->abstractModel->formName()][$prop->key];
-                    $interpretedKey = ArrayHelper::getValue($activeSpamChecker, $interpreted->key, '');
-                    if ($interpretedKey !== '') {
-                        $data[$activeSpamChecker->name]['value'][$interpretedKey] = $value;
-                    }
+        if ($activeSpamChecker !== null && !empty($activeSpamChecker->api_key)) {
+            $data[$activeSpamChecker->name]['class'] = $activeSpamChecker->behavior;
+            $data[$activeSpamChecker->name]['value']['key'] = $activeSpamChecker->api_key;
+            $properties = Property::getForGroupId($propIds[0]);
+            foreach ($properties as $prop) {
+                if (!isset($activeSpamChecker->{$prop->interpret_as})
+                    || empty($activeSpamChecker->{$prop->interpret_as})
+                ) {
+                    continue;
                 }
-                $model->attachBehavior(
-                    'spamChecker',
-                    [
-                        'class' => SpamCheckerBehavior::className(),
-                        'data' => $data
-                    ]
-                );
-                $spamResult = $model->check();
+                $data[$activeSpamChecker->name]['value'][$activeSpamChecker->{$prop->interpret_as}] =
+                    is_array($post[$form->abstractModel->formName()][$prop->key])
+                        ? implode(' ', $post[$form->abstractModel->formName()][$prop->key])
+                        : $post[$form->abstractModel->formName()][$prop->key];
             }
+            $model->attachBehavior(
+                'spamChecker',
+                [
+                    'class' => SpamCheckerBehavior::className(),
+                    'data' => $data,
+                ]
+            );
+            $spamResult = $model->check();
         }
-
         $haveSpam = false;
         if (is_array($spamResult) === true) {
             foreach ($spamResult as $result) {
@@ -103,34 +93,41 @@ class SubmitFormAction extends Action
                 'date_received' => $date->format('Y-m-d H:i:s'),
                 'ip' => Yii::$app->request->userIP,
                 'user_agent' => Yii::$app->request->userAgent,
-                'spam' => Yii::$app->formatter->asBoolean($haveSpam),
+                'spam' => (int) $haveSpam,
             ]
         );
+        if (false === Yii::$app->user->isGuest) {
+            $submission->processed_by_user_id = Yii::$app->user->identity->getId();
+        }
         if (!($form->abstractModel->validate() && $submission->save())) {
             return "0";
         }
-        foreach ($post[$form->abstractModel->formName()] as $key => &$value) {
-            if ($file = UploadedFile::getInstance($model, $key)) {
-                $folder = Config::getValue('core.fileUploadPath', 'upload/user-uploads/');
-                $fullPath = "@webroot/{$folder}";
-                if (!file_exists(\Yii::getAlias($fullPath))) {
-                    mkdir(\Yii::getAlias($fullPath), 0755, true);
+        if (isset($post[$form->abstractModel->formName()])) {
+            foreach ($post[$form->abstractModel->formName()] as $key => &$value) {
+                if ($file = UploadedFile::getInstance($model, $key)) {
+                    $folder = Yii::$app->getModule('core')->fileUploadPath;
+                    $fullPath = "@webroot/{$folder}";
+                    if (!file_exists(\Yii::getAlias($fullPath))) {
+                        mkdir(\Yii::getAlias($fullPath), 0755, true);
+                    }
+                    $value = '/' . $folder . $file->baseName . '.' . $file->extension;
+                    $file->saveAs($folder . $file->baseName . '.' . $file->extension);
                 }
-                $value = '/' . $folder . $file->baseName . '.' . $file->extension;
-                $file->saveAs($folder . $file->baseName . '.' . $file->extension);
             }
+            $data = [
+                'AddPropetryGroup' => [
+                    $submission->formName() => array_keys($form->getPropertyGroups()),
+                ],
+                $submission->abstractModel->formName() => $post[$form->abstractModel->formName()],
+            ];
+            $submission->saveProperties($data);
         }
-        $data = [
-            'AddPropetryGroup' => [
-                $submission->formName() => array_keys($form->getPropertyGroups()),
-            ],
-            $submission->abstractModel->formName() => $post[$form->abstractModel->formName()],
-        ];
-        $submission->saveProperties($data);
         if ($haveSpam === false) {
             if (!empty($form->email_notification_addresses)) {
                 try {
-                    $emailView = !empty($form->email_notification_view) ? $form->email_notification_view : '@app/widgets/form/views/email-template.php';
+                    $emailView = !empty($form->email_notification_view)
+                        ? $form->email_notification_view
+                        :'@app/widgets/form/views/email-template.php';
                     Yii::$app->mail->compose(
                         $emailView,
                         [
@@ -138,13 +135,13 @@ class SubmitFormAction extends Action
                             'submission' => $submission,
                         ]
                     )->setTo(explode(',', $form->email_notification_addresses))->setFrom(
-                        Yii::$app->mail->transport->getUsername()
+                        Yii::$app->mail->getMailFrom()
                     )->setSubject($form->name . ' #' . $submission->id)->send();
                 } catch (\Exception $e) {
                     // do nothing
                 }
             }
         }
-        return "1";
+        return $submission->id;
     }
 }

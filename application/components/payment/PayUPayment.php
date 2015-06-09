@@ -100,21 +100,21 @@ class PayUPayment extends AbstractPayment
         return hash_hmac("md5", $result, $this->secretKey);
     }
 
-    public function content($order, $transaction)
+    public function content()
     {
         $url = 'https://secure.payu.ru/order/lu.php';
         return $this->render(
             'payu',
             [
-                'data' => $this->getFormData($order, $transaction),
-                'order' => $order,
-                'transaction' => $transaction,
+                'data' => $this->getFormData($this->order, $this->transaction),
+                'order' => $this->order,
+                'transaction' => $this->transaction,
                 'url' => $url,
             ]
         );
     }
 
-    public function checkResult()
+    public function checkResult($hash = '')
     {
         if (isset($_GET['result'])) {
             if (in_array($_GET['result'], [-1, 0])) {

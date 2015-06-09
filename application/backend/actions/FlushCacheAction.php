@@ -72,8 +72,10 @@ class FlushCacheAction extends Action
         foreach ($files as $file) {
             if (!in_array($file->getRealPath(), $except)) {
                 try {
-                    if ($file->isDir()) {
+                    if ($file->isDir() && $file->isLink() === false) {
                         rmdir($file->getRealPath());
+                    } elseif ($file->isLink() === true) {
+                        unlink($file->getPath() . DIRECTORY_SEPARATOR . $file->getFilename());
                     } else {
                         unlink($file->getRealPath());
                     }

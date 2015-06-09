@@ -2,12 +2,16 @@
 
 namespace app\properties\url;
 
-use app\models\Category;
+use app\modules\shop\models\Category;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 
 class PartialCategoryPathPart extends CategoryPart
 {
-    public function appendPart($route, $parameters = [], &$used_params = [])
+    /**
+     * @inheritdoc
+     */
+    public function appendPart($route, $parameters = [], &$used_params = [], &$cacheTags = [])
     {
         /*
             В parameters должен храниться last_category_id
@@ -29,6 +33,11 @@ class PartialCategoryPathPart extends CategoryPart
 
         $category = Category::findById($category_id);
         if (is_object($category) === true) {
+            $parentIds = $category->getParentIds();
+            foreach ($parentIds as $id) {
+                $cacheTags[] = ActiveRecordHelper::getObjectTag(Category::className(), $id);
+            }
+            $cacheTags[] = ActiveRecordHelper::getObjectTag(Category::className(), $category_id);
             return $category->getUrlPath($this->include_root_category);
         } else {
             return false;

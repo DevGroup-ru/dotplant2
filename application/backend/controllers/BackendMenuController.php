@@ -2,13 +2,14 @@
 
 namespace app\backend\controllers;
 
-use app\backend\actions\JSTreeGetTrees;
 use app\backend\models\BackendMenu;
+use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use Yii;
-use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Controller;
+use yii\web\Cookie;
+use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 
@@ -34,10 +35,9 @@ class BackendMenuController extends Controller
     {
         return [
             'getTree' => [
-                'class' => JSTreeGetTrees::className(),
-                'modelName' => BackendMenu::className(),
-                'label_attribute' => 'name',
-                'vary_by_type_attribute' => null,
+                'class' => AdjacencyFullTreeDataAction::className(),
+                'class_name' => BackendMenu::className(),
+                'model_label_attribute' => 'name',
             ],
         ];
     }
@@ -161,5 +161,24 @@ class BackendMenuController extends Controller
         }
 
         return $this->redirect(['index', 'parent_id' => $parent_id]);
+    }
+
+
+    public function actionAjaxToggle($status)
+    {
+        if (!Yii::$app->request->isAjax) {
+             throw new HttpException(403);
+        }
+        $currentStatus = Yii::$app->request->cookies->getValue('backend_menu', 'normal');
+        $cookieData =[
+            'name' => 'backend_menu',
+            'value' => 'normal',
+            'expire' => time() + 86400 * 365,
+        ];
+        if ($status !== $currentStatus) {
+            $cookieData['value'] = $status;
+        }
+        Yii::$app->response->cookies->add(new Cookie($cookieData));
+
     }
 }

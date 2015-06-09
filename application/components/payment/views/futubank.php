@@ -1,8 +1,8 @@
 <?php
 /**
  * @var string[] $formData
- * @var \app\models\Order $order
- * @var \app\models\OrderTransaction $transaction
+ * @var \app\modules\shop\models\Order $order
+ * @var \app\modules\shop\models\OrderTransaction $transaction
  */
 ?>
 <form action="https://secure.futubank.com/pay" method="post" xmlns="http://www.w3.org/1999/html">

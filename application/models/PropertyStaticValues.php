@@ -2,15 +2,17 @@
 
 namespace app\models;
 
+use app\traits\SortModels;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "property_static_values".
- *
  * @property integer $id
  * @property integer $property_id
  * @property string $name
@@ -18,12 +20,18 @@ use yii\db\ActiveRecord;
  * @property string $slug
  * @property integer $sort_order
  * @property Property $property
+ * @property integer $dont_filter
  */
 class PropertyStaticValues extends ActiveRecord
 {
     public static $identity_map_by_property_id = [];
     private static $identity_map = [];
 
+    use SortModels;
+
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -35,7 +43,7 @@ class PropertyStaticValues extends ActiveRecord
                 'value' => 0,
             ],
             [
-                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+                'class' => ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -82,8 +90,7 @@ class PropertyStaticValues extends ActiveRecord
      */
     public function search($params)
     {
-        $query = static::find()
-            ->where(['property_id'=>$this->property_id]);
+        $query = static::find()->where(['property_id' => $this->property_id]);
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
@@ -109,7 +116,6 @@ class PropertyStaticValues extends ActiveRecord
 
     /**
      * Возвращает Массив! по ID с использованием IdentityMap
-     *
      * @param int $id
      * @return null|PropertyStaticValues
      */
@@ -127,7 +133,10 @@ class PropertyStaticValues extends ActiveRecord
                         new TagDependency(
                             [
                                 'tags' => [
-                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id),
+                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(
+                                        static::className(),
+                                        $id
+                                    ),
                                 ],
                             ]
                         )
@@ -148,8 +157,7 @@ class PropertyStaticValues extends ActiveRecord
     public static function getValuesForPropertyId($property_id)
     {
         if (!isset(static::$identity_map_by_property_id[$property_id])) {
-            static::$identity_map_by_property_id[$property_id] =
-                static::arrayOfValuesForPropertyId($property_id);
+            static::$identity_map_by_property_id[$property_id] = static::arrayOfValuesForPropertyId($property_id);
             foreach (static::$identity_map_by_property_id[$property_id] as $psv) {
                 static::$identity_map[$psv['id']] = $psv;
             }
@@ -170,7 +178,6 @@ class PropertyStaticValues extends ActiveRecord
     /**
      * Аналогично getValuesForPropertyId
      * Но identity_map не используется
-     *
      * @param int $property_id
      * @return array|mixed|\yii\db\ActiveRecord[]
      */
@@ -179,24 +186,26 @@ class PropertyStaticValues extends ActiveRecord
         $cacheKey = "ValuesForProperty:$property_id";
 
         if (false === $values = Yii::$app->cache->get($cacheKey)) {
-            $values = static::find()
-                ->where(['property_id'=>$property_id])
-                ->orderBy([
+            $values = static::find()->where(['property_id' => $property_id])->orderBy(
+                [
                     'sort_order' => SORT_ASC,
                     'name' => SORT_ASC
-                ])
-                ->asArray()
-                ->all();
+                ]
+            )->asArray()->all();
             if (null !== $values) {
                 Yii::$app->cache->set(
                     $cacheKey,
                     $values,
                     0,
-                    new TagDependency([
-                        'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(Property::className(), $property_id)
+                    new TagDependency(
+                        [
+                            'tags' => [
+                                ActiveRecordHelper::getCommonTag(PropertyStaticValues::className()),
+                                ActiveRecordHelper::getCommonTag(Property::className()),
+                            ]
+
                         ]
-                    ])
+                    )
                 );
             }
         }

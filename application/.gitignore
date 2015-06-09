@@ -2,4 +2,6 @@ web/.sass-cache
 web/css/.sass-cache
 web/theme
 web/theme/*
-seo/redirects/redirectsArray.php
+web/favicon.ico
+modules/seo/redirects/redirectsArray.php
+jolici.phar

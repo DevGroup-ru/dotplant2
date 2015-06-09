@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use app\modules\page\models\Page;
+use app\modules\shop\models\Product;
 use Yii;
 use yii\base\Model;
 use yii\db\Query;

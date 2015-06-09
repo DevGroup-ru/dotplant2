@@ -1,7 +1,10 @@
 <?php
+/**
+ * @var \yii\web\View $this
+ */
 
 use app\backend\widgets\BackendWidget;
-use app\backend\widgets\Select2;
+use kartik\widgets\Select2;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\ActiveForm;
@@ -17,7 +20,20 @@ $this->params['breadcrumbs'][] = [
 ];
 $this->params['breadcrumbs'][] = $this->title;
 $action = isset($model->id) ? 'edit?id=' . $model->id : 'edit';
+
+
+$this->registerJs('
+     var static_values_properties = '. Json::encode($static_values_properties) .';
+     var current_selections = '.( empty($model->apply_if_params)?"{}":$model->apply_if_params ).';
+     var current_field_id= "apply_if_params"',
+    \yii\web\View::POS_HEAD,
+    'propertyData'
+);
+\app\backend\assets\PropertyAsset::register($this);
+
+
 ?>
+
 
 <?=app\widgets\Alert::widget(
     [
@@ -30,49 +46,8 @@ $action = isset($model->id) ? 'edit?id=' . $model->id : 'edit';
 ); ?>
 
 <?php $this->beginBlock('submit'); ?>
-<div class="form-group no-margin">
-    <?=
-    Html::a(
-        Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
-        Yii::$app->request->get('returnUrl', ['/backend/dynamic-content/index', 'id' => $model->id]),
-        ['class' => 'btn btn-danger']
-    )
-    ?>
-
-    <?php if ($model->isNewRecord): ?>
-        <?=Html::submitButton(
-            Icon::show('save') . Yii::t('app', 'Save & Go next'),
-            [
-                'class' => 'btn btn-success',
-                'name' => 'action',
-                'value' => 'next',
-            ]
-        )?>
-    <?php endif; ?>
-
-    <?=
-    Html::submitButton(
-        Icon::show('save') . Yii::t('app', 'Save & Go back'),
-        [
-            'class' => 'btn btn-warning',
-            'name' => 'action',
-            'value' => 'back',
-        ]
-    )
-    ?>
-
-    <?=
-    Html::submitButton(
-        Icon::show('save') . Yii::t('app', 'Save'),
-        [
-            'class' => 'btn btn-primary',
-            'name' => 'action',
-            'value' => 'save',
-        ]
-    )
-    ?>
-</div>
-<?php $this->endBlock('submit'); ?>
+<?= \app\backend\components\Helper::saveButtons($model) ?>
+<?php $this->endBlock(); ?>
 
 
 <section id="widget-grid">
@@ -142,18 +117,10 @@ $action = isset($model->id) ? 'edit?id=' . $model->id : 'edit';
 ); ?>
 <div id="properties">
     <?php
-    $url = Url::to(['/backend/category/autocomplete']);
-    $initScript = <<< SCRIPT
-    function (element, callback) {
-        var id=$(element).val();
-        if (id !== "") {
-            $.ajax("{$url}?id=" + id, {
-                dataType: "json"
-            }).done(function(data) { callback(data.results);});
-        }
-    }
-SCRIPT;
-
+    $url = Url::to(['/shop/backend-category/autocomplete']);
+    $category = $model->apply_if_last_category_id > 0
+        ? \app\modules\shop\models\Category::findById($model->apply_if_last_category_id)
+        : null;
     ?>
     <?=$form->field($model, 'apply_if_last_category_id')->widget(
         Select2::classname(),
@@ -167,8 +134,8 @@ SCRIPT;
                     'data' => new JsExpression('function(term,page) { return {search:term}; }'),
                     'results' => new JsExpression('function(data,page) { return {results:data.results}; }'),
                 ],
-                'initSelection' => new JsExpression($initScript)
             ],
+            'initValueText' => !is_null($category) ? $category->name : '',
         ]
     );
     ?>
@@ -185,10 +152,12 @@ SCRIPT;
 </div>
 <?php BackendWidget::end(); ?>
 <?php ActiveForm::end(); ?>
-<script type="x-tmpl-underscore" id="parameter-template">
+
+
+<section style="display: none" data-type="x-tmpl-underscore" id="parameter-template">
     <div class="row form-group parameter">
         <label class="col-md-2 control-label" for="PropertyValue_<%- index %>">
-            <select class="property_id">
+            <select class="property_id form-control">
                 <option value="0">- <?=Yii::t('app', 'select')?> -</option>
                 <?php foreach ($static_values_properties as $prop) {
         echo "<option value=\"" . $prop['property']->id . "\">" . Html::encode($prop['property']->name) . "</option>";
@@ -210,76 +179,4 @@ SCRIPT;
         </div>
     </div>
 
-</script>
-<script>
-    $(function () {
-        var static_values_properties = <?= Json::encode($static_values_properties) ?>;
-
-        function addProperty(property_id, selected) {
-            var $property = $(
-                _.template(
-                    $("#parameter-template").html(),
-                    {
-                        index: $('.add-property .parameter').length
-                    }
-                )
-            );
-
-            $property.find('.property_id').change(function () {
-                var $select = $(this).parent().parent().find('.select');
-                $select.empty();
-                var property_id = $(this).val();
-                if (property_id > 0) {
-                    var static_values = static_values_properties[property_id]['static_values_select'];
-                    for (var i in static_values) {
-                        var $option = $('<option>');
-                        $option
-                            .val(i)
-                            .html(static_values[i]);
-                        $select.append($option);
-                    }
-                }
-            });
-            $property.find('.btn-remove').click(function () {
-                $(this).parent().parent().parent().parent().remove();
-                return false;
-            });
-            if (property_id > 0 && selected > 0) {
-                $property.find('.property_id').val(property_id).change();
-                $property.find('.select').val(selected);
-            }
-
-
-            $("#properties").append($property);
-        }
-
-
-        $(".add-property").click(function () {
-            addProperty(0, 0);
-            return false;
-        });
-
-        $("#dynamic-content-form").submit(function () {
-            var $input = $("#apply_if_params");
-            $input.val();
-
-            var serialized = {};
-            $("#properties .parameter").each(function () {
-                var key = $(this).find('.property_id').val();
-                var value = $(this).find('.select').val();
-                serialized[key] = value;
-            });
-
-            $("#apply_if_params").val(JSON.stringify(serialized));
-
-            return true;
-        });
-
-        var current_selections = <?= empty($model->apply_if_params)?"{}":$model->apply_if_params ?>;
-        for (var c in current_selections) {
-            addProperty(c, current_selections[c]);
-        }
-    });
-
-
-</script>
+</section>

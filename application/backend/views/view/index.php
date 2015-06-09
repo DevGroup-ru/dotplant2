@@ -66,22 +66,6 @@ $this->params['breadcrumbs'][] = $this->title = Yii::t('app', 'Views');
                     'options' => [
                         'width' => '95px',
                     ],
-                    'buttons' => [
-                        [
-                            'url' => 'edit',
-                            'icon' => 'pencil',
-                            'class' => 'btn-primary',
-                            'label' => 'Edit',
-
-                        ],
-                        [
-                            'url' => 'delete',
-                            'icon' => 'trash-o',
-                            'class' => 'btn-danger',
-                            'label' => 'Delete',
-                        ],
-                    ],
-
                 ],
             ],
             'theme' => 'panel-default',

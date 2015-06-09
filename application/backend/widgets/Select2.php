@@ -8,7 +8,7 @@ class Select2 extends \kartik\widgets\Select2
     {
         $view = $this->getView();
         if (!empty($this->language) && $this->language != 'en' && $this->language != 'en_US') {
-            Select2Asset::register($view)->js[] = 'select2_locale_' . $this->language . '.js';
+            Select2Asset::register($view)->js[] = 'js/i18n/' . $this->language . '.js';
         } else {
             Select2Asset::register($view);
         }
@@ -21,7 +21,7 @@ class Select2 extends \kartik\widgets\Select2
             $el = "\$('#{$id}')";
             $callback = <<< JS
 function(){
-    var \$container = {$el}.select2('container');
+    var \$container = {$el}.select2('open');
     {$el}.removeClass('kv-hide');
     \$container.removeClass('kv-hide');
     {$loading}.remove();

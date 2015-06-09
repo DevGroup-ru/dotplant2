@@ -1,7 +1,10 @@
 <?php
-
+/***
+ * @var $this \yii\web\View
+ */
 use kartik\helpers\Html;
 use kartik\icons\Icon;
+use kartik\select2\Select2;
 use yii\helpers\Url;
 
 ?>
@@ -26,24 +29,29 @@ use yii\helpers\Url;
             ?>
             <?php
             foreach ($properties as $prop) :
+                if ($prop->has_static_values == 0) {
+                    continue;
+                }
                 $property_values = app\models\PropertyStaticValues::getValuesForPropertyId($prop->id); ?>
                 <div class="form-group">
                     <label class="col-md-2 control-label"><?=$prop->name?></label>
 
                     <div class="col-md-10">
-                        <?php foreach ($property_values as $property_value) : ?>
-                            <?php
-                            $checked = false;
-                            if (isset($optionGenerate['values'][$prop->id][$property_value['id']])) {
-                                $checked = true;
-                            }
-                            ?>
-                            <?=Html::checkbox(
-                                'GeneratePropertyValue[' . $prop->id . '][' . $property_value['id'] . ']',
-                                $checked,
-                                ['label' => $property_value['name']]
-                            )?>
-                        <?php endforeach; ?>
+                        <div class="scrollable-options-list">
+                            <?php foreach ($property_values as $property_value) : ?>
+                                <?php
+                                $checked = false;
+                                if (isset($optionGenerate['values'][$prop->id][$property_value['id']])) {
+                                    $checked = true;
+                                }
+                                ?>
+                                <?=Html::checkbox(
+                                    'GeneratePropertyValue[' . $prop->id . '][' . $property_value['id'] . ']',
+                                    $checked,
+                                    ['label' => $property_value['name']]
+                                )?>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
             <?php
@@ -55,21 +63,22 @@ use yii\helpers\Url;
         <!-- end widget content -->
     </div>
     <!-- end widget div -->
-    <script>
-        $('#propertygroup-id').change(function () {
-            var input = $("<input>").attr("type", "hidden").attr("name", "action").val("save");
-            $(this).parents('form').append($(input));
-            $(this).parents('form').submit();
-        });
-        $('#btn-generate').click(function () {
-            $.ajax({
-                'url': '<?= Url::toRoute(['/backend/product/generate', 'id'=>$model->id]) ?>',
-                'method': 'POST',
-                'data': $('form').serialize()
-            }).done(function () {
-                location.reload();
-            });
-            return false;
-        });
-    </script>
 </div><!-- end widget -->
+<?php $this->beginBlock('optionsJs'); ?>
+    $('#propertygroup-id').change(function () {
+    var input = $("<input>").attr("type", "hidden").attr("name", "action").val("save");
+    $(this).parents('form').append($(input));
+    $(this).parents('form').submit();
+    });
+    $('#btn-generate').click(function () {
+    $.ajax({
+    'url': '<?= Url::toRoute(['/shop/backend-product/generate', 'id'=>$model->id]) ?>',
+    'method': 'POST',
+    'data': $('form').serialize()
+    }).done(function () {
+    location.reload();
+    });
+    return false;
+    });
+<?php $this->endBlock(); ?>
+<?php $this->registerJs($this->blocks['optionsJs'], \yii\web\View::POS_READY); ?>

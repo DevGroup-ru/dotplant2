@@ -13,4 +13,4 @@
  */
 
 ?>
-<?= $form->field($model, $property_key);
+<?= $form->field($model, $property_key.'[0]');

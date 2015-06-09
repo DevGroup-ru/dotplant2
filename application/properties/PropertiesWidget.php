@@ -6,6 +6,7 @@ use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\Property;
 use app\models\PropertyGroup;
+use app\models\PropertyStaticValues;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Widget;
@@ -34,6 +35,9 @@ class PropertiesWidget extends Widget
     public $model;
     public $viewFile = 'properties-widget';
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
         $this->object = Object::getForClass(get_class($this->model));

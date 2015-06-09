@@ -1,9 +1,17 @@
 <?php
 /**
  * @var string $url
- * @var \app\models\Order $order
- * @var \app\models\OrderTransaction $transaction
+ * @var \app\modules\shop\models\OrderTransaction $transaction
  */
 ?>
-<a href='<?= $url ?>'><?= Yii::t('app', 'Continue') ?></a>
-<script>window.location='<?= $url ?>';</script>
+<div class="col-md-12">
+    <div class="row">
+        <?= \yii\helpers\Html::a(
+            Yii::t('app', 'Pay'),
+            $url,
+            [
+                'class' => 'btn btn-success'
+            ]
+        ); ?>
+    </div>
+</div>

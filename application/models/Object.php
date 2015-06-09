@@ -2,8 +2,8 @@
 
 namespace app\models;
 
-use app\data\models\Export;
-use app\data\models\Import;
+use app\modules\data\models\Export;
+use app\modules\data\models\Import;
 use Yii;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
@@ -29,6 +29,9 @@ class Object extends ActiveRecord
     private static $ids_for_class_name = [];
     private static $select_array_cache = null;
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [

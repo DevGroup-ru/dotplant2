@@ -7,7 +7,7 @@ use app\backend\actions\FlushCacheConsoleAction;
 use Yii;
 use yii\console\Controller;
 use app;
-use app\models\Image;
+use app\modules\image\models\Image;
 
 /**
  * Admin commands
@@ -33,7 +33,6 @@ class AdminController extends Controller
      */
     public function actionThumbnails($updateThumbnailSrc = false, $deleteIfNotExists = false)
     {
-        mb_internal_encoding('UTF-8');
         $images = Image::find()->all();
         /** @var $images Image[] */
         foreach ($images as $image) {
@@ -54,30 +53,30 @@ class AdminController extends Controller
             );
             $img->save(\Yii::getAlias($dir . 'small-' . $image->filename));
             if ($updateThumbnailSrc) {
-                $image->thumbnail_src = mb_substr($image->image_src, 0, mb_strrpos($image->image_src, '/')) . '/small-' . $image->filename;
+                $image->thumbnail_src = mb_substr($image->image_src, 0, mb_strrpos($image->image_src, '/'))
+                    . '/small-' . $image->filename;
                 $image->save(true, ['thumbnail_src']);
             }
         }
     }
 
     /**
-     * Clear test reviews, orders and other information
+     * Clear test review, orders and other information
      * @throws \yii\db\Exception
      */
     public function actionClearTests()
     {
-        Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\models\Cart::tableName())->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\models\ErrorLog::tableName())->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\models\ErrorUrl::tableName())->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\backend\models\Notification::tableName())->execute();
-        Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\models\Order::tableName())->execute();
-        Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\models\OrderItem::tableName())->execute();
-        Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\models\OrderTransaction::tableName())->execute();
+        Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\modules\shop\models\Order::tableName())->execute();
+        Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\modules\shop\models\OrderItem::tableName())->execute();
+        Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\modules\shop\models\OrderTransaction::tableName())->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\backend\models\OrderChat::tableName())->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE {{%order_category}}')->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE {{%order_eav}}')->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE {{%order_property}}')->execute();
-        Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\reviews\models\Review::tableName())->execute();
+//        Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\reviews\models\Review::tableName())->execute(); @todo need to implement correct reviews deleting
         Yii::$app->db->createCommand('TRUNCATE TABLE ' . app\models\Submission::tableName())->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE {{%submission_category}}')->execute();
         Yii::$app->db->createCommand('TRUNCATE TABLE {{%submission_eav}}')->execute();

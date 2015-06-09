@@ -58,21 +58,24 @@ abstract class UrlPart extends Object
      */
     public $model = null;
 
+    /** @var array Cache tags to append */
+    public $cacheTags = [];
+
     /**
-     * Забирает из урла следующую часть.
+     * Gathers next url part
      * @param $full_url
      * @param $next_part
      * @param $previous_parts
-     * @return false, если следующая часть - не от этого типа части или возвращает UrlPart если часть наша
+     * @return false|UrlPart UrlPart instance if url part matched, false if not
      */
     abstract public function getNextPart($full_url, $next_part, &$previous_parts);
 
     /**
      * Добавить к урлу эту инстанцию UrlPart
-     * @param $route Route ссылка на Route
+     * @param string $route Route ссылка на Route
      * @param $parameters array Параметры, применимые к урлу(например фильтры),
      * может содержать модели(например продукт или категорию)
-     * @return string если надо добавить, или false если не надо
+     * @return string|false если надо добавить, или false если не надо
      */
-    abstract public function appendPart($route, $parameters = []);
+    abstract public function appendPart($route, $parameters = [], &$used_params = [], &$cacheTags = []);
 }

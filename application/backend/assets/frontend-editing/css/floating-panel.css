@@ -64,3 +64,17 @@
   top: auto;
   bottom: 0;
 }
+
+@media (max-width: 320px) {
+  /* line 68, ../sass/floating-panel.scss */
+  #dotplant-floating-panel {
+    display: none;
+  }
+
+  /* line 71, ../sass/floating-panel.scss */
+  body {
+    padding-top: 0 !important;
+  }
+}
+
+/*# sourceMappingURL=floating-panel.css.map */

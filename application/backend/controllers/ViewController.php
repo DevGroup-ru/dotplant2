@@ -2,9 +2,9 @@
 
 namespace app\backend\controllers;
 
+use app\backend\traits\BackendRedirect;
 use app\models\View;
 use Yii;
-use yii\caching\TagDependency;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -13,6 +13,48 @@ use yii\web\Response;
 
 class ViewController extends Controller
 {
+    use BackendRedirect;
+
+    protected function getTree($path = '', $level = 0)
+    {
+        if (is_null($this->view->theme) || !file_exists($this->view->theme->getBaseUrl())) {
+            return [];
+        }
+        $result = [];
+        $basePath = $this->view->theme->getBaseUrl();
+        $dir = new \DirectoryIterator($basePath . $path);
+        /** @var \DirectoryIterator $file */
+        foreach ($dir as $file) {
+            if ($file->isDot()) {
+                continue;
+            }
+            $id = '#' . preg_replace('#[^\w\d]#', '_', $file->getFilename()) . "_lev{$level}";
+            if ($file->isDir()) {
+                $result[] = [
+                    'id' => $id,
+                    'children' => $this->getTree($path . DIRECTORY_SEPARATOR . $file->getBasename(), $level + 1),
+                    'text' => $file->getBasename(),
+                    'type' => 'dir',
+                ];
+            } elseif ($file->isFile() && 'php' === $file->getExtension()) {
+                $result[] = [
+                    'id' => $id,
+                    'text' => $file->getBasename(),
+                    'a_attr' => [
+                        'data-file' => str_replace($basePath, '', $file->getRealPath()),
+                        'data-toggle' => 'tooltip',
+                        'title' => $file->getBasename()
+                    ],
+                    'type' => 'file',
+                ];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -28,6 +70,9 @@ class ViewController extends Controller
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function actions()
     {
         return [
@@ -48,11 +93,12 @@ class ViewController extends Controller
      */
     public function actionIndex()
     {
+        $model = new View();
         return $this->render(
             'index',
             [
-                'searchModel' => $_model = new View(),
-                'dataProvider' => $_model->search(Yii::$app->request->get()),
+                'searchModel' => $model,
+                'dataProvider' => $model->search(Yii::$app->request->get()),
             ]
         );
     }
@@ -60,37 +106,23 @@ class ViewController extends Controller
     /*
      *
      */
-    public function actionAdd()
+    public function actionAdd($id = null)
     {
         $model = new View();
+        if (null !== $id) {
+            $id = intval($id);
+            if (null !== View::findOne(['id' => $id])) {
+                return $this->redirect(Url::toRoute(['edit', 'id' => $id]));
+            }
+            $model->id = $id;
+        }
 
-        $post = \Yii::$app->request->post();
-        if ($model->load($post) && $model->validate()) {
-            $model->save();
-            $this->redirect(Url::toRoute(['edit', 'id' => $model->id]));
-            $returnUrl = Yii::$app->request->get('returnUrl', ['/backend/view/index', 'id' => $model->id]);
-            switch (Yii::$app->request->post('action', 'save')) {
-                case 'next':
-                    return $this->redirect(
-                        [
-                            '/backend/view/edit',
-                            'returnUrl' => $returnUrl,
-                        ]
-                    );
-                case 'back':
-                    return $this->redirect($returnUrl);
-                default:
-                    return $this->redirect(
-                        Url::toRoute(
-                            [
-                                '/backend/view/edit',
-                                'id' => $model->id,
-                                'returnUrl' => $returnUrl,
-                            ]
-                        )
-                    );
+        if ($model->load(\Yii::$app->request->post())) {
+            if ($model->save()) {
+                return $this->redirectUser($model->id, true, 'edit');
             }
         }
+
         return $this->render(
             'edit',
             [
@@ -105,13 +137,14 @@ class ViewController extends Controller
     public function actionEdit($id = null)
     {
         if ((null === $id) || (null === $model = View::findOne(['id' => $id]))) {
-            $model = new View();
+            return $this->redirect(Url::toRoute(['add', 'id' => $id]));
         }
 
-        $post = \Yii::$app->request->post();
-
-        if ($model->load($post) && $model->validate()) {
-            $model->save();
+        /** @var View $model */
+        if ($model->load(\Yii::$app->request->post())) {
+            if ($model->save()) {
+                return $this->redirectUser($model->id);
+            }
         }
 
         return $this->render(
@@ -150,87 +183,9 @@ class ViewController extends Controller
         return $this->redirect(['index']);
     }
 
-    /*
-     *
-     */
     public function actionGetViews()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-
-
-        if (is_dir($_dir = $this->view->theme->getBaseUrl())) {
-            $cacheKey = 'ViewDirectoryTree';
-            if (false === $items = Yii::$app->cache->get($cacheKey)) {
-                $rdir = new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($this->view->theme->getBaseUrl()),
-                    \RecursiveIteratorIterator::SELF_FIRST
-                );
-
-                $items = [];
-                /** @var \SplFileInfo $file */
-                foreach ($rdir as $file) {
-                    if (($file->getBasename() === '.') || ($file->getBasename() === '..')) {
-                        continue;
-                    }
-
-                    $_parent = '#';
-                    if ($_dir !== $file->getPath()) {
-                        $arr = explode('/', str_replace($_dir, '', $file->getPath()));
-                        $_parent = '#' . array_pop($arr);
-                    }
-
-                    if ($file->isDir()) {
-                        $_name = $file->getBasename();
-                        $items[] = [
-                            'id' => '#' . $_name,
-                            'parent' => $_parent,
-                            'text' => $_name,
-                            'type' => 'dir',
-                        ];
-                    } elseif ($file->isFile() && ('.php' === substr($file->getBasename(), -4))) {
-                        $_name = $file->getBasename('.php');
-                        $_attr = trim(str_replace($_dir, '', $file->getPath()), '/');
-
-                        $_title = $_name;
-                        if (false !== $_cnt = file_get_contents($file->getRealPath())) {
-                            if (preg_match('#\<\\?(php)?\s*/\*(.+)\*/#siU', $_cnt, $_match)) {
-                                foreach (explode(PHP_EOL, $_match[2]) as $_line) {
-                                    if (preg_match('#@theme-name\s*(.+)$#iU', $_line, $_match)) {
-                                        $_title = trim($_match[1]);
-                                    }
-                                }
-                            }
-                        }
-
-                        $items[] = [
-                            'id' => $_parent . $_name,
-                            'parent' => $_parent,
-                            'text' => $_name,
-                            'a_attr' => [
-                                'data-file' => '/' . $_attr . '/' . $_name,
-                                'data-toggle' => 'tooltip',
-                                'title' => $_title
-                            ],
-                            'type' => 'file',
-                        ];
-                    }
-                }
-
-                Yii::$app->cache->set(
-                    $cacheKey,
-                    $items,
-                    86400,
-                    new TagDependency(
-                        [
-                            'tags' => [\devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(View::className())]
-                        ]
-                    )
-                );
-            }
-
-            return $items;
-        }
-
-        return '';
+        return $this->getTree('', 0);
     }
 }

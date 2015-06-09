@@ -2,15 +2,19 @@
 
 namespace app\backend\controllers;
 
+use app\backend\traits\BackendRedirect;
 use app\models\SpamChecker;
 use Yii;
 use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 class SpamCheckerController extends Controller
 {
+    use BackendRedirect;
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -31,13 +35,6 @@ class SpamCheckerController extends Controller
         $searchModel = new SpamChecker;
         $params = Yii::$app->request->get();
         $dataProvider = $searchModel->search($params);
-        $post = Yii::$app->request->post();
-        if (ArrayHelper::keyExists($searchModel->formName(), $post)) {
-            SpamChecker::setEnabledApiId(
-                ArrayHelper::getValue($post, $searchModel->formName() . '.enabledApiId')
-            );
-        }
-
         return $this->render(
             'index',
             [
@@ -60,27 +57,7 @@ class SpamCheckerController extends Controller
         $post = Yii::$app->request->post();
         if ($model->load($post) && $model->validate()) {
             if ($model->save()) {
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
-                $returnUrl = Yii::$app->request->get('returnUrl', ['index']);
-                switch (Yii::$app->request->post('action', 'save')) {
-                    case 'next':
-                        return $this->redirect(
-                            [
-                                'edit',
-                                'returnUrl' => $returnUrl,
-                            ]
-                        );
-                    case 'back':
-                        return $this->redirect($returnUrl);
-                    default:
-                        return $this->redirect(
-                            [
-                                'edit',
-                                'id' => $model->id,
-                                'returnUrl' => $returnUrl,
-                            ]
-                        );
-                }
+                return $this->redirectUser($model->id);
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot save data'));
             }

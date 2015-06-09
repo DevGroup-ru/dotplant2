@@ -3,13 +3,16 @@
 /**
  * @var yii\web\View $this
  * @var yii\data\ActiveDataProvider $dataProvider
- * @var app\seo\models\Redirect $searchModel
+ * @var app\modules\seo\models\Redirect $searchModel
  */
 
 use kartik\helpers\Html;
 use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
 use yii\helpers\Url;
+use devgroup\JsTreeWidget\TreeWidget;
+use devgroup\JsTreeWidget\ContextMenuHelper;
+use app\backend\components\Helper;
 
 $this->title = Yii::t('app', 'Backend menu items');
 if (is_object($model)) {
@@ -29,16 +32,55 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="row">
     <div class="col-md-4">
         <?=
-            app\backend\widgets\JSTree::widget([
-                'model' => new app\backend\models\BackendMenu,
-                'routes' => [
-                    'getTree' => ['/backend/backend-menu/getTree', 'selected_id' => $parent_id],
-                    'open' => ['/backend/backend-menu/index'],
-                    'edit' => ['/backend/backend-menu/edit'],
-                    'delete' => ['/backend/backend-menu/delete'],
-                    'create' => ['/backend/backend-menu/edit'],
+        TreeWidget::widget([
+            'treeDataRoute' => ['/backend/backend-menu/getTree'],
+            'contextMenuItems' => [
+                'edit' => [
+                    'label' => 'Edit',
+                    'icon' => 'fa fa-pencil',
+                    'action' => ContextMenuHelper::actionUrl(
+                        ['/backend/backend-menu/edit', 'returnUrl' => Helper::getReturnUrl()],
+                        [
+                            'parent_id' => 'parent_id',
+                            'id' => 'id'
+                        ]
+                    ),
                 ],
-            ]);
+                'open' => [
+                    'label' => 'Open',
+                    'icon' => 'fa fa-folder-open',
+                    'action' => ContextMenuHelper::actionUrl(
+                        ['/backend/backend-menu/index'],
+                        [
+                            'parent_id' => 'id',
+                        ]
+                    ),
+                ],
+                'create' => [
+                    'label' => 'Create',
+                    'icon' => 'fa fa-plus-circle',
+                    'action' => ContextMenuHelper::actionUrl(
+                        ['/backend/backend-menu/edit', 'returnUrl' => Helper::getReturnUrl()],
+                        [
+                            'parent_id' => 'id',
+                        ]
+                    ),
+                ],
+                'delete' => [
+                    'label' => 'Delete',
+                    'icon' => 'fa fa-trash-o',
+                    'action' => new \yii\web\JsExpression(
+                        "function(node) {
+                                jQuery('#delete-confirmation')
+                                    .attr('data-url', '/backend/backend-menu/delete?id=' + jQuery(node.reference[0]).data('id'))
+                                    .attr('data-items', '')
+                                    .modal('show');
+                                return true;
+                            }"
+                    ),
+                ],
+            ],
+        ]);
         ?>
     </div>
     <div class="col-md-8" id="jstree-more">
@@ -97,20 +139,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'options' => [
                             'width' => '95px',
                         ],
-                        'buttons' => [
-                                [
-                                    'url' => 'edit',
-                                    'icon' => 'pencil',
-                                    'class' => 'btn-primary',
-                                    'label' => 'Edit',
-                                ],
-                                [
-                                    'url' => 'delete',
-                                    'icon' => 'trash-o',
-                                    'class' => 'btn-danger',
-                                    'label' => 'Delete',
-                                ],
-                            ],
                         'url_append' => '&parent_id='.(is_object($model)?$model->id:0),
                     ],
                 ],

@@ -8,13 +8,20 @@ use app\models\ObjectStaticValues;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Behavior;
 use yii\caching\TagDependency;
+use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
+/**
+ * Class HasProperties
+ * @property \yii\db\ActiveRecord $owner
+ * @package app\properties
+ */
 class HasProperties extends Behavior
 {
     /**
@@ -28,12 +35,13 @@ class HasProperties extends Behavior
     private $property_id_to_group_id = [];
     private $static_values = null;
     private $table_inheritance_row = null;
+    private $propertiesFormName = null;
     public $props;
-    
+
     /**
-     * Get property group id by property id 
-     * @param $id property id
-     * @return int|string property group id
+     * Get property group id by property id
+     * @param int $id property id
+     * @return int property group id
      */
     private function getGroupIdBypropertyId($id)
     {
@@ -48,7 +56,7 @@ class HasProperties extends Behavior
         } else {
             $this->property_id_to_group_id[$property->property_group_id][] = $id;
         }
-        return $property->property_group_id;
+        return intval($property->property_group_id);
     }
 
     public function getObject()
@@ -62,11 +70,39 @@ class HasProperties extends Behavior
         return $this->object;
     }
 
-    public function getPropertyGroups($force = false, $getByObjectId = false)
+    public function getPropertyGroups($force = false, $getByObjectId = false, $createAbstractModel = false)
     {
+        $message = "getPropertyGroups ". $this->owner->className() . ':'.$this->owner->id.
+            " force:".($force?'true':'false').
+            " getByObjectId:".($getByObjectId?'true':'false') .
+            " createAbstractModel:".($createAbstractModel?'true':'false');
+        Yii::trace(
+            $message,
+            'properties'
+        );
+        $cacheKey = $message;
+
+
+        if ($this->properties === null && $force === false) {
+            // try to get from cache
+            $data = Yii::$app->cache->get($message);
+            if ($data !== false) {
+                Yii::trace("Properties from cache", 'properties');
+                $this->abstract_model = isset($data['abstract_model'])?$data['abstract_model']:[];
+                $this->properties = $data['properties'];
+                $this->property_key_to_id = $data['property_key_to_id'];
+                $this->property_id_to_group_id = $data['property_id_to_group_id'];
+            }
+        }
+
+        if ($createAbstractModel === true && is_null($this->abstract_model)) {
+            // force creating abstract model if it is null and needed
+            $force = true;
+        }
+
         if ($this->properties === null || $force === true) {
             $this->properties = [];
-            if ($getByObjectId) {
+            if ($getByObjectId === true) {
                 $groups = PropertyGroup::getForObjectId($this->getObject()->id);
             } else {
                 $groups = PropertyGroup::getForModel($this->getObject()->id, $this->owner->id);
@@ -81,57 +117,130 @@ class HasProperties extends Behavior
                 foreach ($props as $p) {
                     $values = $this->getPropertyValues($p);
                     $this->properties[$group->id][$p->key] = $values;
-                    $values_for_abstract[$p->key] = $values;
-                    $properties_models[] = $p;
+
+                    if ($createAbstractModel === true) {
+                        $values_for_abstract[$p->key] = $values;
+                    }
+
+                    $properties_models[$p->key] = $p;
                     $this->property_key_to_id[$p->key] = $p->id;
                     if (!isset($this->property_id_to_group_id[$group->id])) {
                         $this->property_id_to_group_id[$group->id] = [$p->key];
                     } else {
                         $this->property_id_to_group_id[$group->id][] = $p->key;
                     }
-                    $handlerAdditionalParams = Json::decode($p->handler_additional_params);
-                    if (isset($handlerAdditionalParams['rules']) && is_array($handlerAdditionalParams['rules'])) {
-                        foreach ($handlerAdditionalParams['rules'] as $rule) {
-                            if (is_array($rule)) {
-                                $rules[] = ArrayHelper::merge([$p->key], $rule);
-                            } else {
-                                $rules[] = [$p->key, $rule];
+
+                    if ($createAbstractModel === true) {
+                        $handlerAdditionalParams = Json::decode($p->handler_additional_params);
+                        if (isset($handlerAdditionalParams['rules']) && is_array($handlerAdditionalParams['rules'])) {
+                            foreach ($handlerAdditionalParams['rules'] as $rule) {
+                                if (is_array($rule)) {
+                                    $rules[] = ArrayHelper::merge([$p->key], $rule);
+                                } else {
+                                    $rules[] = [$p->key, $rule];
+                                }
                             }
                         }
                     }
                 }
             }
-            $this->abstract_model = new AbstractModel();
-            $this->abstract_model->setPropertiesModels($properties_models);
-            $this->abstract_model->setAttributes($values_for_abstract);
-            $this->abstract_model->setFormName('Properties_' . $this->owner->formName()  .'_' . $this->owner->id);
-            $this->abstract_model->addRules($rules);
+
+            if ($createAbstractModel === true) {
+                $this->abstract_model = new AbstractModel([], $this->owner);
+                $this->abstract_model->setPropertiesModels($properties_models);
+                $this->abstract_model->setAttributes($values_for_abstract);
+                $this->abstract_model->setFormName('Properties_' . $this->owner->formName() . '_' . $this->owner->id);
+                $this->abstract_model->addRules($rules);
+            }
+
+            $res = Yii::$app->cache->set(
+                $cacheKey,
+                [
+                    'properties' => $this->properties,
+                    'abstract_model' => $this->abstract_model,
+                    'property_id_to_group_id' => $this->property_id_to_group_id,
+                    'property_key_to_id' => $this->property_key_to_id,
+                ],
+                86400,
+                new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getObjectTag($this->owner->className(), $this->owner->id),
+                    ]
+                ])
+            );
+            Yii::trace('putting props to cache: ' . ($res?'true':'false') . ' key:' . $cacheKey, 'properties');
         }
         return $this->properties;
     }
 
+    /**
+     * Adds property group to object instance
+     *
+     * @param int|string $property_group_id Id of Property Group
+     * @param bool $refreshProperties
+     * @throws \Exception
+     * @throws \yii\db\Exception
+     */
+    public function addPropertyGroup($property_group_id, $refreshProperties = true, $createAbstractModel = false)
+    {
+        $params = [];
+        $sql = Yii::$app->db->queryBuilder->insert(
+            ObjectPropertyGroup::tableName(),
+            [
+                'object_id' => $this->getObject()->id,
+                'object_model_id' => $this->owner->id,
+                'property_group_id' => $property_group_id,
+            ],
+            $params
+        );
+
+        Yii::$app->db->createCommand(
+            $sql,
+            $params
+        )->execute();
+        if ($refreshProperties === true) {
+            $this->updatePropertyGroupsInformation($createAbstractModel);
+        }
+    }
+
+    public function removePropertyGroup($property_group_id)
+    {
+        ObjectPropertyGroup::deleteAll(
+            [
+                'object_id' => $this->getObject()->id,
+                'object_model_id' => $this->owner->id,
+                'property_group_id' => $property_group_id,
+            ]
+        );
+    }
+
+    public function setPropertiesFormName($name = null)
+    {
+        $this->propertiesFormName = $name;
+    }
+
     public function saveProperties($data)
     {
+        $form = $this->owner->formName();
+        $formProperties = empty($this->propertiesFormName)
+            ? 'Properties_'.$form.'_'.$this->owner->id
+            : $this->propertiesFormName;
+
         $this->getPropertyGroups();
-        $should_update = false;
-        if (isset($data['AddPropetryGroup'])) {
-            if (isset($data['AddPropetryGroup'][$this->owner->formName()])) {
-                $groups_to_add = (array) $data['AddPropetryGroup'][$this->owner->formName()];
-                foreach ($groups_to_add as $group_id) {
-                    $model = new ObjectPropertyGroup();
-                    $model->object_id = $this->getObject()->id;
-                    $model->object_model_id = $this->owner->id;
-                    $model->property_group_id = $group_id;
-                    $model->save();
-                }
-                $should_update = true;
+        if (isset($data['AddPropetryGroup']) && isset($data['AddPropetryGroup'][$form])) {
+            $groups_to_add = is_array($data['AddPropetryGroup'][$form])
+                ? $data['AddPropetryGroup'][$form]
+                : [$data['AddPropetryGroup'][$form]];
+            foreach ($groups_to_add as $group_id) {
+                $this->addPropertyGroup($group_id, false);
             }
+            $this->updatePropertyGroupsInformation(true);
         }
-        if ($should_update) {
-            $this->updatePropertyGroupsInformation();
+        if (isset($data['RemovePropetryGroup']) && isset($data['RemovePropetryGroup'][$form])) {
+            $this->removePropertyGroup($data['RemovePropetryGroup'][$form]);
         }
-        if (isset($data['Properties_'.$this->owner->formName().'_'.$this->owner->id])) {
-            $my_data = $data['Properties_'.$this->owner->formName().'_'.$this->owner->id];
+        if (isset($data[$formProperties])) {
+            $my_data = $data[$formProperties];
 
             if (isset($data['AddProperty'])) {
                 // admin clicked add property button for multiple properties
@@ -139,14 +248,27 @@ class HasProperties extends Behavior
                     $my_data[$data['AddProperty']] = [];
                 }
                 $my_data[$data['AddProperty']][] = '';
-
             }
+
+            $propertiesModels = $this->getAbstractModel()->getPropertiesModels();
+
             $new_values_for_abstract = [];
             foreach ($my_data as $property_key => $values) {
                 if (isset($this->property_key_to_id[$property_key])) {
                     $vals = [];
                     $property_id = $this->property_key_to_id[$property_key];
-                    $values = (array) $values;
+                    $values = is_array($values) ? $values : [$values];
+
+                    if (isset($propertiesModels[$property_key])) {
+                        $_property = $propertiesModels[$property_key];
+                        $propertyHandler = PropertyHandlers::getHandlerById($_property->property_handler_id);
+                        if (null === $propertyHandler) {
+                            $propertyHandler = PropertyHandlers::createHandler($_property->handler);
+                        }
+
+                        $values = $propertyHandler->processValues($_property, $formProperties, $values);
+                    }
+
                     foreach ($values as $val) {
                         $vals[] = ['value' => $val, 'property_id' => $property_id];
                     }
@@ -160,11 +282,13 @@ class HasProperties extends Behavior
                     $new_values_for_abstract[$property_key] = $val;
                 }
             }
+
             $this->abstract_model->updateValues($new_values_for_abstract, $this->getObject()->id, $this->owner->id);
+            $this->owner->trigger(ActiveRecord::EVENT_AFTER_UPDATE);
         }
     }
 
-    public function updatePropertyGroupsInformation()
+    public function updatePropertyGroupsInformation($createAbstractModel = false)
     {
         $this->owner->invalidateTags();
         $this->table_inheritance_row = null;
@@ -172,15 +296,27 @@ class HasProperties extends Behavior
         $this->static_values = null;
         $this->abstract_model = null;
         $this->property_key_to_id = [];
-        $this->getPropertyGroups(true);
+        $this->getPropertyGroups(true, false, $createAbstractModel);
     }
 
     public function getAbstractModel()
     {
-        $this->getPropertyGroups();
+        if (empty($this->abstract_model)) {
+            $this->getPropertyGroups(!is_object($this->abstract_model), false, true);
+        }
         return $this->abstract_model;
     }
 
+    public function setAbstractModel(AbstractModel $model)
+    {
+        $this->abstract_model = $model;
+    }
+
+    /**
+     * Get PropertyValue model by key. It consists object property values
+     * @param string $key
+     * @return PropertyValue
+     */
     public function getPropertyValuesByKey($key)
     {
         $this->getPropertyGroups();
@@ -192,6 +328,26 @@ class HasProperties extends Behavior
             }
         }
         return null;
+    }
+
+    /**
+     * Get property values by key.
+     * @param $key
+     * @param bool $asString
+     * @param string $delimiter
+     * @return array|string
+     */
+    public function property($key, $asString = true, $delimiter = ', ')
+    {
+        $values = [];
+        $propertyValue = $this->getPropertyValuesByKey($key);
+        if (is_null($propertyValue)) {
+            return $asString ? '' : [];
+        }
+        foreach ($propertyValue->values as $value) {
+            $values[] = $value['value'];
+        }
+        return $asString ? implode($delimiter, $values) : $values;
     }
 
     public function getPropertyValuesByPropertyId($property_id)
@@ -237,12 +393,30 @@ class HasProperties extends Behavior
     private function getEavRows()
     {
         if ($this->eav_rows === null) {
-            $this->eav_rows = (new Query())
-                ->select('`key`, value, sort_order, id as eav_id')
-                ->from($this->getObject()->eav_table_name)
-                ->where(['object_model_id' => $this->owner->id])
-                ->orderBy('sort_order')
-                ->all();
+            $cacheKey = md5("EAV_ROWS:".$this->getObject()->eav_table_name.":".$this->owner->id);
+
+            $this->eav_rows = Yii::$app->cache->get($cacheKey);
+
+            if ($this->eav_rows === false) {
+                $this->eav_rows =
+                    (new Query())
+                        ->select('`key`, value, sort_order, id as eav_id')
+                        ->from($this->getObject()->eav_table_name)
+                        ->where(['object_model_id' => $this->owner->id])
+                        ->orderBy('sort_order')
+                        ->all();
+
+                Yii::$app->cache->set(
+                    $cacheKey,
+                    $this->eav_rows,
+                    86400,
+                    new TagDependency([
+                        'tags' => [
+                            ActiveRecordHelper::getObjectTag($this->owner->className(), $this->owner->id)
+                        ]
+                    ])
+                );
+            }
         }
         return $this->eav_rows;
     }
@@ -268,7 +442,7 @@ class HasProperties extends Behavior
                     new TagDependency(
                         [
                             'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($this->owner, $this->owner->id),
+                                ActiveRecordHelper::getObjectTag($this->owner, $this->owner->id),
                             ],
                         ]
                     )
@@ -302,7 +476,7 @@ class HasProperties extends Behavior
                     new TagDependency(
                         [
                             'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($this->getObject(), $this->owner->id),
+                                ActiveRecordHelper::getObjectTag($this->getObject(), $this->owner->id),
                             ],
                         ]
                     )

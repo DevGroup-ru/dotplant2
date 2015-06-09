@@ -2,11 +2,13 @@
 
 namespace app\components\payment;
 
-use app\models\OrderTransaction;
+use app\modules\shop\models\OrderTransaction;
+use yii\base\InvalidParamException;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
+use yii\web\ServerErrorHttpException;
 
 class LiqPayPayment extends AbstractPayment
 {
@@ -39,16 +41,20 @@ class LiqPayPayment extends AbstractPayment
         return base64_encode(sha1($this->privateKey . $str . $this->privateKey, 1));
     }
 
-    public function content($order, $transaction)
+    public function content()
     {
         $params = [
             'version' => 3,
-            'amount' => $transaction->total_sum,
+            'amount' => $this->transaction->total_sum,
             'currency' => $this->currency,
-            'description' => "Order #" . $order->id,
-            'order_id' => $transaction->id,
-            'result_url' => Url::toRoute(['/cart/payment-success', 'id' => $order->id], true),
-            'server_url' => Url::toRoute(['/cart/payment-result', 'id' => $transaction->payment_type_id], true),
+            'description' => "Order #" . $this->order->id,
+            'order_id' => $this->transaction->id,
+            'result_url' => $this->createSuccessUrl([
+                'id' => $this->transaction->id,
+            ]),
+            'server_url' => $this->createResultUrl([
+                'id' => $this->transaction->payment_type_id
+            ]),
             'type' => 'buy',
             'language' => $this->language,
             'sandbox' => $this->testMode,
@@ -61,26 +67,38 @@ class LiqPayPayment extends AbstractPayment
                     'data' => $data,
                     'signature' => $this->getSignature($data),
                 ],
-                'order' => $order,
-                'transaction' => $transaction,
+                'order' => $this->order,
+                'transaction' => $this->transaction,
             ]
         );
     }
 
-    public function checkResult()
+    public function checkResult($hash = '')
     {
-        if (!isset($_POST['data'], $_POST['signature'])) {
-            throw new BadRequestHttpException;
+        try {
+            $data = Json::decode(base64_decode(\Yii::$app->request->post('data', '')));
+        } catch (InvalidParamException $e) {
+            $data = ['status' => ''];
         }
-        $data = Json::decode(base64_decode($_POST['data']));
-        $transaction = $this->loadTransaction($data['order_id']);
-        $transaction->result_data = Json::encode($_POST);
-        $signature = $this->getSignature($_POST['data']);
-        $transaction->status = ($_POST['signature'] == $signature && $data['status'] == 'success')
+        $signature = \Yii::$app->request->post('signature');
+        $calcSignature = $this->getSignature(\Yii::$app->request->post('data'));
+        if ($signature !== $calcSignature) {
+            throw new BadRequestHttpException();
+        }
+
+        if (null === $transaction = $this->loadTransaction($data['order_id'])) {
+            throw new BadRequestHttpException();
+        }
+
+        $transaction->status = 'success' === $data['status']
             ? OrderTransaction::TRANSACTION_SUCCESS
             : OrderTransaction::TRANSACTION_ERROR;
+        $transaction->result_data = Json::encode(\Yii::$app->request->post());
         if (!$transaction->save(true, ['status', 'result_data'])) {
-            throw new HttpException(500);
+            throw new ServerErrorHttpException();
+        } else {
+            return ;
         }
     }
 }
+?>

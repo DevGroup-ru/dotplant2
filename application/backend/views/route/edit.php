@@ -110,7 +110,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $(function(){
     var current_settings = <?= $model->url_template ?>;
     var settings_by_class = <?= Json::encode($settings_by_class) ?>;
-    console.log(settings_by_class, current_settings);
+//    console.log(settings_by_class, current_settings);
 
     var part_template = $("#part-template").html(),
         field_template = $("#field-template").html(),
@@ -145,7 +145,7 @@ $(function(){
     }
 
     function group_for_part(part, part_id) {
-        console.log('group_for_part', part, part_id);
+//        console.log('group_for_part', part, part_id);
         var $group = $(_.template(
             part_template,
             {

@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * Class SearchModel
@@ -16,17 +17,21 @@ class SearchModel extends Model
 {
     private $attributes;
     private $internalRelations;
+    /**
+     * @var ActiveRecord $model
+     */
     private $model;
     private $modelClassName;
     private $relationAttributes = [];
     private $rules;
     private $scenarios;
+    public $additionalConditions;
     public $defaultOrder;
     public $groupBy;
     public $pageSize = 20;
     public $partialMatchAttributes = [];
     public $relations = [];
-    
+
     /**
      * @param ActiveQuery $query
      * @param string $attribute
@@ -138,6 +143,7 @@ class SearchModel extends Model
      */
     public function search($params)
     {
+        /** @var ActiveQuery $query */
         $query = call_user_func([$this->modelClassName, 'find']);
         $dataProvider = new ActiveDataProvider(
             [
@@ -199,6 +205,11 @@ class SearchModel extends Model
         $this->load($params);
         foreach ($this->attributes as $name => $value) {
             $this->addCondition($query, $name, in_array($name, $this->partialMatchAttributes));
+        }
+        if (!is_null($this->additionalConditions)) {
+            foreach ((array) $this->additionalConditions as $condition) {
+                $query->andWhere($condition);
+            }
         }
         return $dataProvider;
     }

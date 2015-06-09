@@ -1,3 +1,5 @@
 *
 !.gitignore
 !images/
+!files/
+!user-uploads/

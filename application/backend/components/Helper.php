@@ -2,7 +2,10 @@
 
 namespace app\backend\components;
 
-use \Yii;
+use Yii;
+use yii\db\ActiveRecord;
+use yii\helpers\Html;
+use kartik\icons\Icon;
 
 class Helper
 {
@@ -29,5 +32,58 @@ class Helper
             }
         }
         return self::$returnUrl;
+    }
+
+    /**
+     * @param ActiveRecord $model Model instance
+     * @param string $indexAction Route path to index action
+     * @return string Rendered save buttons with redurectUrl!
+     */
+    public static function saveButtons(ActiveRecord $model, $indexAction='index', $buttonClass='btn-sm', $onlySaveAndBack=false)
+    {
+        $result = '<div class="form-group no-margin btn-group">';
+        if ($onlySaveAndBack === false) {
+            $result .=
+                Html::a(
+                    Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
+                    Yii::$app->request->get('returnUrl', [$indexAction, 'id' => $model->id]),
+                    ['class' => 'btn btn-default ' . $buttonClass]
+                );
+        }
+
+        if ($model->isNewRecord && $onlySaveAndBack === false) {
+            $result .= Html::submitButton(
+                Icon::show('save') . Yii::t('app', 'Save & Go next'),
+                [
+                    'class' => 'btn btn-success ' . $buttonClass,
+                    'name' => 'action',
+                    'value' => 'next',
+                ]
+            );
+        }
+
+        $result .=
+            Html::submitButton(
+                Icon::show('save') . Yii::t('app', 'Save & Go back'),
+                [
+                    'class' => 'btn btn-warning ' . $buttonClass,
+                    'name' => 'action',
+                    'value' => 'back',
+                ]
+            );
+        if ($onlySaveAndBack === false) {
+            $result .=
+                Html::submitButton(
+                    Icon::show('save') . Yii::t('app', 'Save'),
+                    [
+                        'class' => 'btn btn-primary ' . $buttonClass,
+                        'name' => 'action',
+                        'value' => 'save',
+                    ]
+                );
+        }
+        $result .= '</div>';
+
+        return $result;
     }
 }

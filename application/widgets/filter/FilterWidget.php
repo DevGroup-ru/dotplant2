@@ -16,17 +16,17 @@ use yii\helpers\Json;
 
 class FilterWidget extends Widget
 {
-    private $possibleSelections = null;
+    protected $possibleSelections = null;
     public $categoryGroupId = 0;
     public $currentSelections = [];
     public $goBackAlignment = 'left';
     public $objectId = null;
     public $onlyAvailableFilters = true;
     public $disableInsteadOfHide = false;
-    public $route = '/product/list';
+    public $route = '/shop/product/list';
     public $title = 'Filter';
     public $viewFile = 'filterWidget';
-    private $disabled_ids = [];
+    protected $disabled_ids = [];
     public $render_dynamic = true;
 
     /**

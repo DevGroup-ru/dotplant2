@@ -2,14 +2,15 @@
 
 namespace app\backend\controllers;
 
-use app\models\Config;
+use app\components\Helper;
 use app\models\Form;
 use app\models\Object;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
 use app\models\Submission;
-use app\widgets\image\SaveInfoAction;
+use app\properties\PropertyHandlers;
+use app\modules\image\widgets\SaveInfoAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -137,55 +138,58 @@ class PropertiesController extends Controller
         $model->property_group_id = $property_group_id;
 
         if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
-            if ($model->is_column_type_stored) {
-                if ($model->isNewRecord) {
-                    $object = Object::findById($model->group->object_id);
-                    Yii::$app->db->createCommand()
-                        ->addColumn($object->column_properties_table_name, $model->key, "TINYTEXT")
-                        ->execute();
-                    if ($object->object_class == Form::className()) {
-                        $submissionObject = Object::getForClass(Submission::className());
-                        $col_type = $this->getColumnType($model->value_type);
-                        Yii::$app->db->createCommand()
-                            ->addColumn($submissionObject->column_properties_table_name, $model->key, $col_type)
-                            ->execute();
-                    }
-                } else {
-                    if ($model->key != $model->getOldAttribute('key')) {
+            $propertyHandler = PropertyHandlers::createHandler($model->handler);
+            if (!$propertyHandler->changePropertyType($model)) {
+                if ($model->is_column_type_stored) {
+                    if ($model->isNewRecord) {
                         $object = Object::findById($model->group->object_id);
                         Yii::$app->db->createCommand()
-                            ->renameColumn(
-                                $object->column_properties_table_name,
-                                $model->getOldAttribute('key'),
-                                $model->key
-                            )->execute();
+                            ->addColumn($object->column_properties_table_name, $model->key, "TINYTEXT")
+                            ->execute();
                         if ($object->object_class == Form::className()) {
                             $submissionObject = Object::getForClass(Submission::className());
+                            $col_type = $this->getColumnType($model->value_type);
+                            Yii::$app->db->createCommand()
+                                ->addColumn($submissionObject->column_properties_table_name, $model->key, $col_type)
+                                ->execute();
+                        }
+                    } else {
+                        if ($model->key != $model->getOldAttribute('key')) {
+                            $object = Object::findById($model->group->object_id);
                             Yii::$app->db->createCommand()
                                 ->renameColumn(
-                                    $submissionObject->column_properties_table_name,
+                                    $object->column_properties_table_name,
                                     $model->getOldAttribute('key'),
                                     $model->key
                                 )->execute();
+                            if ($object->object_class == Form::className()) {
+                                $submissionObject = Object::getForClass(Submission::className());
+                                Yii::$app->db->createCommand()
+                                    ->renameColumn(
+                                        $submissionObject->column_properties_table_name,
+                                        $model->getOldAttribute('key'),
+                                        $model->key
+                                    )->execute();
+                            }
                         }
-                    }
-                    if ($model->value_type != $model->getOldAttribute('value_type')) {
-                        $object = Object::findById($model->group->object_id);
-                        $new_type = $this->getColumnType($model->value_type);
-                        Yii::$app->db->createCommand()
-                            ->alterColumn(
-                                $object->column_properties_table_name,
-                                $model->getOldAttribute('key'),
-                                $new_type
-                            )->execute();
-                        if ($object->object_class == Form::className()) {
-                            $submissionObject = Object::getForClass(Submission::className());
+                        if ($model->value_type != $model->getOldAttribute('value_type')) {
+                            $object = Object::findById($model->group->object_id);
+                            $new_type = $this->getColumnType($model->value_type);
                             Yii::$app->db->createCommand()
-                                ->renameColumn(
-                                    $submissionObject->column_properties_table_name,
+                                ->alterColumn(
+                                    $object->column_properties_table_name,
                                     $model->getOldAttribute('key'),
                                     $new_type
                                 )->execute();
+                            if ($object->object_class == Form::className()) {
+                                $submissionObject = Object::getForClass(Submission::className());
+                                Yii::$app->db->createCommand()
+                                    ->renameColumn(
+                                        $submissionObject->column_properties_table_name,
+                                        $model->getOldAttribute('key'),
+                                        $new_type
+                                    )->execute();
+                            }
                         }
                     }
                 }
@@ -235,15 +239,13 @@ class PropertiesController extends Controller
         $searchModel->property_id = $model->id;
         $dataProvider = $searchModel->search($_GET);
 
-        $spamCheckerConfig = (new Config())->getValue("spamCheckerConfig.configFieldsParentId");
-
         return $this->render(
             'edit-property',
             [
                 'model' => $model,
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
-                'fieldinterpretParentId' => null == $spamCheckerConfig ? 0 : $spamCheckerConfig,
+                'fieldinterpretParentId' => 0,
                 'object' => $object,
             ]
         );
@@ -307,6 +309,30 @@ class PropertiesController extends Controller
             ]
         );
     }
+
+
+    public function actionAddStaticValue($key, $value = "", $returnUrl)
+    {
+
+        $model = new PropertyStaticValues();
+        $property = Property::find()->where(['key'=>$key])->one();
+        $model->property_id = $property->id;
+
+        if (Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                $this->redirect($returnUrl);
+            }
+        } elseif ($value !== "") {
+            $model->name = $value;
+            $model->value = $value;
+            $model->slug = Helper::createSlug($value);
+            $model->sort_order = 0;
+        }
+        return $this->renderAjax('ajax-static-value', ['model'=>$model]);
+
+
+    }
+
 
     public function actionDeleteStaticValue($id, $property_id, $property_group_id)
     {

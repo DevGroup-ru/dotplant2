@@ -4,21 +4,23 @@ namespace app\backend\controllers;
 
 use app\backend\actions\DeleteOne;
 use app\backend\actions\MultipleDelete;
-use app\models\Config;
+use app\backend\traits\BackendRedirect;
 use app\models\DynamicContent;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
-use vova07\imperavi\actions\GetAction;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
-use yii\helpers\Url;
 use yii\web\Controller;
 
 class DynamicContentController extends Controller
 {
+    use BackendRedirect;
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -34,6 +36,9 @@ class DynamicContentController extends Controller
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function actions()
     {
         return [
@@ -78,17 +83,17 @@ class DynamicContentController extends Controller
             }
         }
         $property_groups_ids_for_object = (new Query)->select('id')->from(PropertyGroup::tableName())->where(
-                [
-                    //                'object_id' => $model->object_id,
-                ]
-            )->column();
+            [
+                //                'object_id' => $model->object_id,
+            ]
+        )->column();
 
         $properties = Property::find()->where(
-                [
-                    'has_static_values' => 1,
-                    'has_slugs_in_values' => 1,
-                ]
-            )->andWhere(['in', 'property_group_id', $property_groups_ids_for_object])->all();
+            [
+                'has_static_values' => 1,
+                'has_slugs_in_values' => 1,
+            ]
+        )->andWhere(['in', 'property_group_id', $property_groups_ids_for_object])->all();
         foreach ($properties as $prop) {
             $static_values_properties[$prop->id] = [
                 'property' => $prop,
@@ -101,40 +106,12 @@ class DynamicContentController extends Controller
             $post = $_GET;
         }
         if ($model->load($post) && $model->validate() && !isset($_GET['DynamicContent'])) {
-
             $save_result = $model->save();
             if ($save_result) {
-                Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
-                $returnUrl = Yii::$app->request->get(
-                    'returnUrl',
-                    ['/backend/dynamic-content/index', 'id' => $model->id]
-                );
-                switch (Yii::$app->request->post('action', 'save')) {
-                    case 'next':
-                        return $this->redirect(
-                            [
-                                '/backend/dynamic-content/edit',
-                                'returnUrl' => $returnUrl,
-                            ]
-                        );
-                    case 'back':
-                        return $this->redirect($returnUrl);
-                    default:
-                        return $this->redirect(
-                            Url::toRoute(
-                                [
-                                    '/backend/dynamic-content/edit',
-                                    'id' => $model->id,
-                                    'returnUrl' => $returnUrl,
-                                ]
-                            )
-                        );
-                }
+                return $this->redirectUser($model->id);
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }
-
-
         }
 
         return $this->render(
@@ -145,5 +122,4 @@ class DynamicContentController extends Controller
             ]
         );
     }
-
 }

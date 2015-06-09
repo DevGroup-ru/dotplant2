@@ -1,8 +1,8 @@
 <?php
 /**
  * @var string[] $formData
- * @var \app\models\Order $order
- * @var \app\models\OrderTransaction $transaction
+ * @var \app\modules\shop\models\Order $order
+ * @var \app\modules\shop\models\OrderTransaction $transaction
  */
 ?>
 <form method="POST" action="https://www.liqpay.com/api/pay" accept-charset="utf-8" id="liqpay-form">
@@ -11,6 +11,3 @@
     <?php endforeach; ?>
     <input type="submit" value="<?= Yii::t('app', 'Pay') ?>" class="btn btn-primary" />
 </form>
-<script>
-jQuery('#liqpay-form').submit();
-</script>

@@ -1,0 +1,116 @@
+@import "variables";
+
+@mixin rounded-border-button($padding) {
+  padding: $padding;
+  border: 1px solid transparent;
+  border-radius: $padding;
+  &:hover {
+    border-color: lighten($action_text_color, 20%);
+    color: lighten($action_text_color, 20%);
+  }
+}
+
+header.one-row-header-with-cart {
+  .logo img {
+    max-height: 60px;
+  }
+  .nav {
+    float: left;
+    padding-top: 14px;
+
+    .navigation-widget {
+      padding-left: 20px;
+    }
+
+    li > a {
+      display: block;
+      padding: 6px 4px;
+      &:hover {
+        text-decoration: none;
+        background-color: $header_navigation_hover;
+      }
+    }
+  }
+  .personal-area {
+    padding: 8px 0;
+
+    .btn-show-cart {
+      @include rounded-border-button(6px);
+
+      color: $action_text_color;
+
+      .cart-icon {
+        font-size: 200%;
+
+      }
+      .badge {
+
+        right: 0;
+        top: -4px;
+        background: rgba(0,0,0, 0.2);
+      }
+    }
+  }
+  .search-area {
+    padding: 16px 8px;
+    input {
+      height: 28px;
+      border-radius: 6px;
+
+
+      background: $subheader_color;
+
+
+      width: 0;
+      transition: all 0.15s ease-out 0.1s;
+      left: 35px;
+      position: relative;
+      padding: 0;
+      border: 0;
+      color: transparent;
+
+      &:focus, &.active {
+        outline: none;
+        width: 150px;
+        border: 1px solid rgba(0,0,0,0.2);
+        padding: 0 30px 0 8px;
+        color: $header_navigation_color;
+      }
+    }
+    .search-append {
+      background: transparent;
+      color: $header_navigation_color;
+      border: 0;
+      cursor: pointer;
+    }
+  }
+  .nav-sm-open {
+    margin: 4px;
+    @include rounded-border-button(6px);
+    font-size: 200%;
+    float: left;
+  }
+  .dropdown-menu {
+    background-color: $header_color;
+  }
+  .dropdown-menu > li > a {
+    color: $header_navigation_color;
+    &:hover {
+      color: $header_navigation_hover;
+    }
+  }
+  .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+    background-color: $subheader_color;
+    color: $header_navigation_color;
+    font-weight: bold;
+  }
+  .btn-compare {
+    background: transparent;
+    border: 2px solid $action_text_color;
+    color: $action_text_color;
+    &:hover, &:active, &:focus {
+      background: $action_text_color;
+      color: $header_color;
+    }
+  }
+}

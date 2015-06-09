@@ -2,6 +2,8 @@
 
 namespace app\properties\url;
 
+use app\modules\shop\models\Category;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 
 class StaticPart extends UrlPart
@@ -13,23 +15,26 @@ class StaticPart extends UrlPart
         'category_group_id' => null,
     ];
 
+    /**
+     * @inheritdoc
+     */
     public function getNextPart($full_url, $next_part, &$previous_parts)
     {
         if (mb_strpos($next_part, $this->static_part) === 0) {
-            // наша подстрока всегда начинается с нуля
-            // тот, кто забивает правила урлов
-            // должен сам беспокоиться о trailing slash и его необходимости
-
-            // заполним parameters
             if (count($this->parameters) === 0) {
                 $this->parameters = ['static_part' => $this->static_part,];
             }
+            $cacheTags = [];
 
-            // создадим объект части урла
+            if (isset($this->parameters['last_category_id']) && $this->parameters['last_category_id'] !== null) {
+                $cacheTags[] = ActiveRecordHelper::getObjectTag(Category::className(), $this->parameters['last_category_id']);
+            }
+
             $part = new self([
                 'gathered_part' => $this->static_part,
                 'rest_part' => mb_substr($next_part, mb_strlen($this->static_part)),
                 'parameters' => $this->parameters,
+                'cacheTags' => $cacheTags,
             ]);
 
             return $part;
@@ -37,8 +42,10 @@ class StaticPart extends UrlPart
             return false;
         }
     }
-
-    public function appendPart($route, $parameters = [], &$used_params = [])
+    /**
+     * @inheritdoc
+     */
+    public function appendPart($route, $parameters = [], &$used_params = [], &$cacheTags = [])
     {
         if (isset($this->parameters['category_group_id'], $parameters['category_group_id'])) {
             $used_params[] = 'category_group_id';

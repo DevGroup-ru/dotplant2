@@ -66,7 +66,7 @@ class ViewObject extends ActiveRecord
 
         $cacheKey = "View:Object:ModelId" . $object->id . ":" . $model->id;
         $viewObject = Yii::$app->cache->get($cacheKey);
-        if (!is_object($viewObject)) {
+        if ($viewObject === false) {
 
             $viewObject = static::find()
                 ->where(

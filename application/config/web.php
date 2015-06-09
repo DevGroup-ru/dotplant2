@@ -3,17 +3,29 @@
 use yii\helpers\ArrayHelper;
 
 $config = [
-    'id' => 'basic',
+    'id' => 'dotplant2',
     'basePath' => dirname(__DIR__),
     'extensions' => require(__DIR__ . '/../vendor/yiisoft/extensions.php'),
-    'language' => 'ru',
     'bootstrap' => [
+        'core',
         'seo',
         'backend',
         'app\components\UserPreferencesBootstrap',
+        'shop',
+        'DefaultTheme',
     ],
     'defaultRoute' => 'default',
     'modules' => [
+        'user' => [
+            'class' => 'app\modules\user\UserModule',
+            'loginSessionDuration' => 2592000,
+        ],
+        'shop' => [
+            'class' => 'app\modules\shop\ShopModule',
+        ],
+        'page' => [
+            'class' => 'app\modules\page\PageModule',
+        ],
         'backend' => [
             'class' => 'app\backend\BackendModule',
             'layout' => '@app/backend/views/layouts/main',
@@ -27,12 +39,17 @@ $config = [
             'manageRoles' => ['admin'],
         ],
         'seo' => [
-            'class' => 'app\seo\SeoModule',
+            'class' => 'app\modules\seo\SeoModule',
             'include' => [
                 'basic/default',
                 'basic/page',
             ],
-            'layout' => '@app/backend/views/layouts/main',
+        ],
+        'review' => [
+            'class' => 'app\modules\review\ReviewModule',
+        ],
+        'data' => [
+            'class' => 'app\modules\data\DataModule',
         ],
         'dynagrid' =>  [
             'class' => '\kartik\dynagrid\Module',
@@ -49,12 +66,19 @@ $config = [
                         '{dynagrid}',
                         '{toggleData}',
                         //'{export}',
-                    ]
-                ]
+                    ],
+                    'export' => false,
+
+                ],
             ],
+
         ],
         'gridview' =>  [
-            'class' => '\kartik\grid\Module'
+            'class' => '\kartik\grid\Module',
+
+        ],
+        'DefaultTheme' => [
+            'class' => 'app\extensions\DefaultTheme\Module',
         ],
     ],
     'components' => [
@@ -72,66 +96,39 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'login/<service:google_oauth|facebook|etc>' => 'default/login',
-                'login' => 'default/login',
-                'logout' => 'default/logout',
-                'signup' => 'default/signup',
+                'login/<service:google_oauth|facebook|etc>' => 'user/user/login',
+                'login' => 'user/user/login',
+                'logout' => 'user/user/logout',
+                'signup' => 'user/user/signup',
                 'cart/payment-result/<id:.+>' => 'cart/payment-result',
                 'search' => 'default/search',
                 'robots.txt' => 'seo/manage/get-robots',
                 [
-                    'class' => 'app\components\PageRule',
+                    'class' => 'app\modules\page\components\PageRule',
                 ],
                 [
                     'class' => 'app\components\ObjectRule',
                 ],
+                'events-beacon' => 'core/events-beacon/index',
             ],
         ],
         'assetManager' => [
             'class' => 'yii\web\AssetManager',
-            'bundles' => [
-                'yii\web\JqueryAsset' => [
-                    'sourcePath' => null,
-                    'jsOptions' => [
-                        'position' => \yii\web\View::POS_HEAD,
-                    ],
-                    'js' => [
-                        '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js',
-                    ]
-                ],
-            ],
+            'bundles' => require(__DIR__ . '/' . (YII_DEBUG ? 'assets-prod.php' : 'assets-dev.php')),
+            'linkAssets' => YII_DEBUG,
         ],
         'user' => [
             'class' => '\yii\web\User',
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\modules\user\models\User',
             'enableAutoLogin' => true,
             'loginUrl' => ['/login'],
         ],
         'authManager' => [
-            'class'=>'yii\\rbac\\DbManager',
+            'class'=>'app\components\CachedDbRbacManager',
             'cache' => 'cache',
         ],
         'authClientCollection' => [
             'class' => 'yii\authclient\Collection',
-            'clients' => [
-                'google' => [
-                    'class' => 'yii\authclient\clients\GoogleOpenId'
-                ],
-                'yandex' => [
-                    'class' => 'yii\authclient\clients\YandexOpenId'
-                ],
-                'facebook' => [
-                    // register your app here: https://developers.facebook.com/apps/
-                    'class' => 'yii\authclient\clients\Facebook',
-                    'clientId' => '547268812035683',
-                    'clientSecret' => '478d1f1024ee3b3c90cc976eb2ee6ff5',
-                ],
-                'vk' => [
-                    'class' => '\app\components\VK',
-                    'clientId' => '4119510',
-                    'clientSecret' => 'UeyicFQWAhca5fKqPd0U',
-                ],
-            ],
         ],
         'apiServiceClientCollection' => [
             'class' => 'yii\authclient\Collection',
@@ -145,12 +142,14 @@ $config = [
             ],
         ],
         'errorHandler' => [
-            'class' => 'app\components\DotplantErrorHandler',
+//            'class' => 'app\components\DotplantErrorHandler',
             'errorAction' => 'default/error',
         ],
-        'mail' => file_exists(__DIR__ . '/email-config.php') ? require(__DIR__ . '/email-config.php') : [ 'class' => 'yii\swiftmailer\Mailer' ],
+        'mail' => [
+            'class' => '\app\modules\core\components\MailComponent',
+        ],
         'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'traceLevel' => YII_DEBUG ? 6 : 0,
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
@@ -169,6 +168,13 @@ $config = [
         'session' => [
             'timeout' => 2592000, // 30 days
         ],
+        'view' => [
+            'class' => 'app\components\WebView',
+            'viewElementsGathener' => 'viewElementsGathener',
+        ],
+        'viewElementsGathener' => [
+            'class' => 'app\components\ViewElementsGathener',
+        ],
     ],
 ];
 
@@ -176,24 +182,32 @@ $allConfig = ArrayHelper::merge(
     file_exists(__DIR__ . '/common.php') ? require(__DIR__ . '/common.php') : [],
     $config,
     file_exists(__DIR__ . '/../web/theme/module/config/common.php')
-    ? require(__DIR__ . '/../web/theme/module/config/common.php')
-    : [],
+        ? require(__DIR__ . '/../web/theme/module/config/common.php')
+        : [],
+
+    file_exists(__DIR__ . '/common-configurables.php')
+        ? require(__DIR__ . '/common-configurables.php')
+        : [],
+
     file_exists(__DIR__ . '/../web/theme/module/config/web.php')
-    ? require(__DIR__ . '/../web/theme/module/config/web.php')
-    : [],
+        ? require(__DIR__ . '/../web/theme/module/config/web.php')
+        : [],
+
+    file_exists(__DIR__ . '/web-configurables.php')
+        ? require(__DIR__ . '/web-configurables.php')
+        : [],
+
+
     file_exists(__DIR__ . '/common-local.php') ? require(__DIR__ . '/common-local.php') : [],
     file_exists(__DIR__ . '/web-local.php') ? require(__DIR__ . '/web-local.php') : []
 );
 
-if (YII_ENV_DEV) {
+if (YII_DEBUG) {
     // configuration adjustments for 'dev' environment
     $allConfig['bootstrap'][] = 'debug';
     $allConfig['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         'panels' => [
-            'holmes' => [
-                'class' => 'app\panels\holmes\HolmesPanel',
-            ],
         ],
     ];
     $allConfig['modules']['gii'] = 'yii\gii\Module';

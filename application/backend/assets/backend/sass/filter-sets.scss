@@ -1,0 +1,17 @@
+.table-condensed.table>tbody>tr.psv-tr>td {
+  padding: 0 !important;
+}
+
+.properties-body {
+  .sort-handle,.psv-sort-handle {
+    padding: 4px;
+    background: #fff;
+    cursor: move;
+    margin: 2px;
+    display: block;
+    text-align: center;
+    &:hover {
+      background: #eee;
+    }
+  }
+}

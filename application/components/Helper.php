@@ -3,6 +3,8 @@
 namespace app\components;
 
 use Yii;
+use yii\base\Exception;
+use yii\base\Model;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
@@ -52,7 +54,7 @@ class Helper
 
     public static function createSlug($source)
     {
-        $source = mb_strtolower($source, 'UTF-8');
+        $source = mb_strtolower($source);
         $translateArray = [
             "ый" => "y", "а" => "a", "б" => "b",
             "в" => "v", "г" => "g", "д" => "d", "е" => "e", "ж" => "j",
@@ -80,10 +82,9 @@ class Helper
             return "";
         }
         $length = intval($length);
-        $encoding = 'utf-8';
         $text = trim(strip_tags($text));
-        $pos = mb_strrpos(mb_substr($text, 0, $length, $encoding), ' ', $encoding);
-        $string = mb_substr($text, 0, $pos, $encoding);
+        $pos = mb_strrpos(mb_substr($text, 0, $length), ' ');
+        $string = mb_substr($text, 0, $pos);
         $string .= $dots;
         if (!empty($string)) {
             return $string;
@@ -94,10 +95,10 @@ class Helper
 
     public static function thumbnailOnDemand($filename, $width, $height, $relativePart = '.', $inset = true)
     {
-        $pos = mb_strrpos($filename, '/', null, 'UTF-8');
+        $pos = mb_strrpos($filename, '/', null);
         if ($pos > 0) {
-            $dir = mb_substr($filename, 0, $pos, 'UTF-8');
-            $file = mb_substr($filename, $pos + 1, null, 'UTF-8');
+            $dir = mb_substr($filename, 0, $pos);
+            $file = mb_substr($filename, $pos + 1, null);
         } else {
             $dir = '';
             $file = $filename;
@@ -118,5 +119,72 @@ class Helper
             }
         }
         return $thumbFilename;
+    }
+
+    /**
+     * @param Model $model
+     * @param string $glue
+     * @return string
+     */
+    public static function formatModelErrors(Model $model, $glue = PHP_EOL)
+    {
+        return implode($glue,
+            array_map(
+                function($item) {
+                    return is_array($item) ? array_pop($item) : $item;
+                },
+                $model->getErrors()
+            )
+        );
+    }
+
+    /**
+     * used with backend/widgets/DataRelationsWidget
+     * @param ActiveRecord $model
+     * @param $relationData
+     * @return array
+     */
+    public static function getRelationDataByModel(ActiveRecord $model, $relationData)
+    {
+        $result = [];
+
+        foreach ($relationData as $name => $data) {
+            if ($data['type'] == 'field') {
+                if (isset($model->attributes[$data['key']])) {
+                    $result[$name] = [
+                        'value' => $model->{$data['key']},
+                        'label' => $model->getAttributeLabel($data['key'])
+                    ];
+                }
+            }elseif ($data['type'] == 'property') {
+                try {
+                    $result[$name] = [
+                        'value' => $model->AbstractModel->{$data['key']},
+                        'label' => $model->AbstractModel->getAttributeLabel($data['key'])
+                    ];
+                } catch (Exception $e) {
+                    Yii::warning(
+                        'relation data not found: class: '.
+                        $model::className().'; relation Type'.
+                        $data['type'].'; id '.$model->id
+                    );
+                }
+            } elseif ($data['type'] == 'relation') {
+                try {
+                    $result[$name] = [
+                        'value' => $model->{$data['relationName']}->{$data['key']},
+                        'label' => $model->{$data['relationName']}->getAttributeLabel($data['key'])
+                    ];
+                } catch (Exception $e) {
+                    Yii::warning(
+                        'relation data not found: class: '.
+                        $model::className().'; relation Type'.
+                        $data['type'].'; id '.$model->id
+                    );
+                }
+            }
+        }
+
+        return $result;
     }
 }

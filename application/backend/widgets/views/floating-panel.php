@@ -1,7 +1,10 @@
 <?php
-/** @var $bottom bool  */
+/** @var $bottom bool
+ * @var $this \yii\web\View
+ */
 use yii\helpers\Html;
 use kartik\icons\Icon;
+
 
 ?>
 
@@ -30,10 +33,11 @@ use kartik\icons\Icon;
     </div>
 
 </nav>
-<?php if (!$bottom) :?>
-<script>
-    $(function(){
-        $('body').css('padding-top', parseInt($('body').css('padding-top'))+51);
-    })
-</script>
-<?php endif; ?>
+<?php if (!$bottom) {
+    $this->registerJs("$('body').css('padding-top', parseInt($('body').css('padding-top'))+51);",
+        \yii\web\View::POS_READY);
+}
+?>
+
+
+

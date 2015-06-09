@@ -34,7 +34,7 @@ class Route extends ActiveRecord
     public function rules()
     {
         return [
-            [['route'], 'required'],
+            [['route', 'url_template'], 'required'],
             [['route', 'name'], 'string']
         ];
     }
@@ -48,6 +48,8 @@ class Route extends ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'route' => Yii::t('app', 'Route'),
             'name' => Yii::t('app', 'Name'),
+            'url_template' => Yii::t('app', 'Url Template'),
+            'object_id' => Yii::t('app', 'Object Id'),
         ];
     }
 

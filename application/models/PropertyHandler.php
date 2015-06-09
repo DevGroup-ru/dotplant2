@@ -22,8 +22,8 @@ use yii\helpers\ArrayHelper;
 class PropertyHandler extends ActiveRecord
 {
     private static $identity_map = [];
-
     private static $select_array_cache = null;
+    private static $map_name_to_id = [];
 
     public function behaviors()
     {
@@ -136,5 +136,41 @@ class PropertyHandler extends ActiveRecord
             }
         }
         return static::$select_array_cache;
+    }
+
+    /**
+     * @param $name
+     * @return null|int
+     */
+    public static function findByName($name)
+    {
+        if (empty(static::$map_name_to_id)) {
+            $cache_key = 'PropertyHandler:MapToId';
+            static::$map_name_to_id = Yii::$app->cache->get($cache_key);
+            if (false === static::$map_name_to_id) {
+                $query = static::find()->asArray()->all();
+                foreach ($query as $row) {
+                    static::$map_name_to_id[$row['name']] = intval($row['id']);
+                }
+                Yii::$app->cache->set(
+                    $cache_key,
+                    static::$map_name_to_id,
+                    0,
+                    new TagDependency(
+                        [
+                            'tags' => [
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className()),
+                            ]
+                        ]
+                    )
+                );
+            }
+        }
+
+        if (isset(static::$map_name_to_id[$name])) {
+            return static::$map_name_to_id[$name];
+        }
+
+        return null;
     }
 }

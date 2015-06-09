@@ -8,8 +8,7 @@ use kartik\helpers\Html;
     <?= Html::label($selectLabel, $id . '-select', $selectLabelOptions); ?>
     <?= Html::activeDropDownList($model, $flagFieldName, [], $selectOptions); ?>
 </div>
-<script>
-$(function(){
+<?php ob_start(); ?>
     $("#<?= $id; ?>-jstree").jstree(<?= $options ?>).parents('form').eq(0).submit(function() {
         $('#<?= $id; ?> input[type=hidden]').remove();
         var ids = $("#<?= $id; ?>-jstree").jstree('get_selected');
@@ -49,5 +48,7 @@ $(function(){
                 break;
         }
     });
-});
-</script>
+<?php
+    $treeScript = ob_get_clean();
+    $this->registerJs($treeScript, \yii\web\View::POS_READY);
+?>

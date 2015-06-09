@@ -1,0 +1,4 @@
+/* globals $: false */
+
+"use strict";
+

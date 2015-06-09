@@ -3,7 +3,7 @@
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use app\backend\components\ActiveForm;
 
 $this->title = Yii::t('app', 'Property static value edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/properties/index'], 'label' => Yii::t('app', 'Property groups')];
@@ -71,53 +71,9 @@ Html::submitButton(
     <div class="row">
         
         <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Property static value'), 'icon'=>'cogs', 'footer'=>$this->blocks['submit']]); ?>
-
-                <?= $form->field($model, 'name')?>
-
-                <?= $form->field($model, 'value', [
-                        'addon' => [
-                            'append' => [
-                                'content' => Html::button(
-                                    Icon::show('copy'),
-                                    ['class'=>'btn btn-primary', 'id'=>'copy-value']
-                                ),
-                                'asButton' => true,
-                            ]
-                        ]
-                    ])?>
-
-                <?= $form->field($model, 'slug', [
-                        'addon' => [
-                            'append' => [
-                                'content' => Html::button(
-                                    Icon::show('code'),
-                                    ['class'=>'btn btn-primary', 'id'=>'translit-slug']
-                                ),
-                                'asButton' => true,
-                            ]
-                        ]
-                    ])?>
-
-                <?= $form->field($model, 'sort_order')?>
-
-                <?= $form->field($model, 'title_append', [
-                        'addon' => [
-                            'append' => [
-                                'content' => Html::button(
-                                    Icon::show('copy'),
-                                    ['class'=>'btn btn-primary', 'id'=>'copy-title-append']
-                                ),
-                                'asButton' => true,
-                            ]
-                        ]
-                    ])?>
-                <?= $form->field($model, 'dont_filter')->checkbox() ?>
-
-
+            <?= $this->render('edit-static-value-form', ['model'=>$model, 'form'=>$form]) ?>
             <?php BackendWidget::end(); ?>
-
         </article>
 
         
@@ -142,7 +98,7 @@ Html::submitButton(
                 ) ?>
             </div>
 
-            <?= \app\widgets\image\ImageDropzone::widget([
+            <?= \app\modules\image\widgets\ImageDropzone::widget([
                 'name' => 'file',
                 'url' => ['/backend/product/upload'],
                 'removeUrl' => ['/backend/product/remove'],
@@ -169,40 +125,4 @@ Html::submitButton(
 </section>
 
 <?php ActiveForm::end();  ?>
-<script>
-    $(function(){
-        $("#translit-slug").click(function () {
-            Admin.makeSlug(
-                [
-                    "#propertystaticvalues-name", 
-                    "#propertystaticvalues-value", 
-                ], 
-                "#propertystaticvalues-slug"
-            );
-            return false;
-        });
 
-        $("#copy-title-append").click(function () {
-            Admin.copyFrom(
-                [
-                    "#propertystaticvalues-name", 
-                    "#propertystaticvalues-value", 
-                    "#product-breadcrumbs_label"
-                ], 
-                "#propertystaticvalues-title_append"
-            );
-            return false;
-        });
-
-        $("#copy-value").click(function () {
-            Admin.copyFrom(
-                [
-                    "#propertystaticvalues-name"
-                ], 
-                "#propertystaticvalues-value"
-            );
-            return false;
-        });
-
-    });
-</script>

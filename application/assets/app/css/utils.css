@@ -1,0 +1,30 @@
+/* line 3, ../sass/utils.scss */
+.block-with-loader {
+  position: relative;
+  display: block;
+}
+
+/* line 8, ../sass/utils.scss */
+.block-loader {
+  z-index: 1000;
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  cursor: wait;
+  background: rgba(0, 0, 0, 0.05);
+  background-image: -webkit-repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255, 255, 255, 0.5) 15px, rgba(255, 255, 255, 0.5) 30px);
+  background-image: -moz-repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255, 255, 255, 0.5) 15px, rgba(255, 255, 255, 0.5) 30px);
+  background-image: -ms-repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255, 255, 255, 0.5) 15px, rgba(255, 255, 255, 0.5) 30px);
+  background-image: -o-repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255, 255, 255, 0.5) 15px, rgba(255, 255, 255, 0.5) 30px);
+  background-image: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255, 255, 255, 0.5) 15px, rgba(255, 255, 255, 0.5) 30px);
+  position: absolute;
+  text-align: center;
+  display: none;
+  vertical-align: middle;
+}
+
+/*# sourceMappingURL=utils.css.map */

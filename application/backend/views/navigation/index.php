@@ -8,6 +8,10 @@
 
 use kartik\dynagrid\DynaGrid;
 use kartik\icons\Icon;
+use devgroup\JsTreeWidget\TreeWidget;
+use devgroup\JsTreeWidget\ContextMenuHelper;
+use app\backend\components\Helper;
+
 
 $this->title = Yii::t('app', 'Navigations');
 if (is_object($model)) {
@@ -27,17 +31,57 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="row">
     <div class="col-md-4">
         <?=
-            app\backend\widgets\JSTree::widget([
-                'model' => new \app\widgets\navigation\models\Navigation(),
-                'routes' => [
-                    'getTree' => ['/backend/navigation/getTree', 'selected_id' => $parent_id],
-                    'open' => ['/backend/navigation/index'],
-                    'edit' => ['/backend/navigation/edit'],
-                    'delete' => ['/backend/navigation/delete'],
-                    'create' => ['/backend/navigation/edit'],
+        TreeWidget::widget([
+            'treeDataRoute' => ['/backend/navigation/getTree'],
+            'contextMenuItems' => [
+                'edit' => [
+                    'label' => 'Edit',
+                    'icon' => 'fa fa-pencil',
+                    'action' => ContextMenuHelper::actionUrl(
+                        ['/backend/navigation/edit', 'returnUrl' => Helper::getReturnUrl()],
+                        [
+                            'parent_id' => 'parent_id',
+                            'id' => 'id'
+                        ]
+                    ),
                 ],
-            ]);
+                'open' => [
+                    'label' => 'Open',
+                    'icon' => 'fa fa-folder-open',
+                    'action' => ContextMenuHelper::actionUrl(
+                        ['/backend/navigation/index'],
+                        [
+                            'parent_id' => 'id',
+                        ]
+                    ),
+                ],
+                'create' => [
+                    'label' => 'Create',
+                    'icon' => 'fa fa-plus-circle',
+                    'action' => ContextMenuHelper::actionUrl(
+                        ['/backend/navigation/edit', 'returnUrl' => Helper::getReturnUrl()],
+                        [
+                            'parent_id' => 'id',
+                        ]
+                    ),
+                ],
+                'delete' => [
+                    'label' => 'Delete',
+                    'icon' => 'fa fa-trash-o',
+                    'action' => new \yii\web\JsExpression(
+                        "function(node) {
+                                jQuery('#delete-confirmation')
+                                    .attr('data-url', '/backend/navigation/delete?id=' + jQuery(node.reference[0]).data('id'))
+                                    .attr('data-items', '')
+                                    .modal('show');
+                                return true;
+                            }"
+                    ),
+                ],
+            ],
+        ]);
         ?>
+
     </div>
     <div class="col-md-8">
         <?php
@@ -85,20 +129,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'route_params',
                     [
                         'class' => 'app\backend\components\ActionColumn',
-                        'buttons' => [
-                            [
-                                'url' => 'edit',
-                                'icon' => 'pencil',
-                                'class' => 'btn-primary',
-                                'label' => 'Edit',
-                            ],
-                            [
-                                'url' => 'delete',
-                                'icon' => 'trash-o',
-                                'class' => 'btn-danger',
-                                'label' => 'Delete',
-                            ],
-                        ],
                         'url_append' => "&parent_id={$parent_id}",
                     ],
                 ],
