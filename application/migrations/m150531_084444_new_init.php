@@ -2966,17 +2966,6 @@ class m150531_084444_new_init extends Migration
         $defaultSize = new ThumbnailSize;
         $defaultSize->setAttributes(['width' => 80, 'height' => 80]);
         $defaultSize->save();
-        $query = new Query;
-        $query->select('*')->from('image');
-        $images = $query->all();
-        foreach ($images as $image) {
-            if (file_exists(Yii::getAlias("@webroot{$image['image_src']}")) === true) {
-                $stream = fopen(Yii::getAlias("@webroot{$image['image_src']}"), 'r+');
-                Yii::$app->fs->putStream($image['filename'], $stream);
-            } else {
-                $this->delete(Image::tableName(), ['id' => $image['id']]);
-            }
-        }
         $this->insert(
             Task::tableName(),
             [

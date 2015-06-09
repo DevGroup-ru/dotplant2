@@ -525,7 +525,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $input_array = [];
             foreach ($images as $image_src) {
                 $input_array[] = [
-                    'image_src' => $image_src,
+                    'filename' => $image_src,
                 ];
             }
             if (count($input_array) > 0) {

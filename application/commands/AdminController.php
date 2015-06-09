@@ -36,7 +36,7 @@ class AdminController extends Controller
         $images = Image::find()->all();
         /** @var $images Image[] */
         foreach ($images as $image) {
-            $dir = '@webroot' . mb_substr($image->image_src, 0, mb_strrpos($image->image_src, '/')) . '/';
+            $dir = '@webroot' . mb_substr($image->filename, 0, mb_strrpos($image->filename, '/')) . '/';
             $filename = \Yii::getAlias($dir . $image->filename);
             if (!file_exists($filename)) {
                 echo "File not found: " . $filename . "\n";
@@ -53,7 +53,7 @@ class AdminController extends Controller
             );
             $img->save(\Yii::getAlias($dir . 'small-' . $image->filename));
             if ($updateThumbnailSrc) {
-                $image->thumbnail_src = mb_substr($image->image_src, 0, mb_strrpos($image->image_src, '/'))
+                $image->thumbnail_src = mb_substr($image->filename, 0, mb_strrpos($image->filename, '/'))
                     . '/small-' . $image->filename;
                 $image->save(true, ['thumbnail_src']);
             }

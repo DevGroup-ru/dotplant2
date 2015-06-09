@@ -387,15 +387,8 @@ class BackendProductController extends BackendController
                         $add
                     )->execute();
                 }
-                $query = new Query();
-                $params = $query->select(
-                    ['object_id', 'filename', 'image_src', 'image_description', 'sort_order']
-                )->from(Image::tableName())->where(
-                    [
-                        'object_id' => $model->object->id,
-                        'object_model_id' => $parent->id
-                    ]
-                )->all();
+                
+                $params = $parent->images;
                 if (!empty($params)) {
                     $rows = [];
                     foreach ($params as $param) {
@@ -403,23 +396,23 @@ class BackendProductController extends BackendController
                             $param['object_id'],
                             $model->id,
                             $param['filename'],
-                            $param['image_src'],
                             $param['image_description'],
                             $param['sort_order'],
                         ];
                     }
+
                     Yii::$app->db->createCommand()->batchInsert(
                         Image::tableName(),
                         [
                             'object_id',
                             'object_model_id',
                             'filename',
-                            'image_src',
                             'image_description',
                             'sort_order',
                         ],
                         $rows
                     )->execute();
+
                 }
             }
 
@@ -477,7 +470,7 @@ class BackendProductController extends BackendController
 
             // save images bindings
             $params = $query->select(
-                ['object_id', 'filename', 'image_src', 'image_description', 'sort_order']
+                ['object_id', 'filename', 'image_description', 'sort_order']
             )->from(Image::tableName())->where(
                 [
                     'object_id' => $object->id,
@@ -491,7 +484,6 @@ class BackendProductController extends BackendController
                         $param['object_id'],
                         $newModel->id,
                         $param['filename'],
-                        $param['image_src'],
                         $param['image_description'],
                         $param['sort_order'],
                     ];
@@ -502,7 +494,6 @@ class BackendProductController extends BackendController
                         'object_id',
                         'object_model_id',
                         'filename',
-                        'image_src',
                         'image_description',
                         'sort_order',
                     ],
@@ -535,7 +526,7 @@ class BackendProductController extends BackendController
                 ]
             );
             Yii::$app->session->setFlash('success', Yii::t('app', 'Product has been cloned successfully.'));
-            $this->redirect(['/backend/product/edit', 'id' => $newModel->id]);
+            $this->redirect(['/shop/backend-product/edit', 'id' => $newModel->id]);
         }
     }
 

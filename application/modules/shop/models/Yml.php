@@ -124,7 +124,7 @@ class Yml extends Model
             'offer_name' => ['type' => 'field', 'key' => 'name'],
             'offer_price' => ['type' => 'field', 'key' => 'price'],
             'offer_category' => ['type' => 'field', 'key' => 'main_category_id'],
-            'offer_picture' => ['type' => 'relation', 'key' => 'getImage', 'value' => 'image_src'],
+            'offer_picture' => ['type' => 'relation', 'key' => 'getImage', 'value' => 'filename'],
             'offer_description' => ['type' => 'field', 'key' => 'content'],
             'offer_param' => 0,
         ];

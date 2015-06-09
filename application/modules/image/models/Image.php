@@ -123,11 +123,11 @@ class Image extends \yii\db\ActiveRecord
      * $images array format:
      * [
      *      0 => [
-     *          'image_src' => 'something.png',
+     *          'filename' => 'something.png',
      *          'image_description' => 'desc',
      *      ],
      *      1 => [
-     *          'image_src' => 'another-image.jpg',
+     *          'filename' => 'another-image.jpg',
      *          'image_description' => 'alt for image',
      *      ],
      * ]
@@ -145,7 +145,7 @@ class Image extends \yii\db\ActiveRecord
             foreach ($current_images as $current) {
                 $found = false;
                 foreach ($images as $key => $new) {
-                    if ($new['image_src'] === $current->image_src && !empty($new['image_src'])) {
+                    if ($new['filename'] === $current->filename && !empty($new['filename'])) {
                         $found = true;
                         $current->setAttributes($new);
                         $current->sort_order = $key;
@@ -164,43 +164,34 @@ class Image extends \yii\db\ActiveRecord
             $dir = '/theme/resources/product-images/';
             // insert new images
             foreach ($images as $key => $new) {
-                if (isset($new['image_src'])) {
-                    if (!empty($new['image_src'])) {
-                        $new['image_src'] = urldecode(preg_replace("~[\\?#].*$~Usi", "", $new['image_src']));
+                if (isset($new['filename'])) {
+                    if (!empty($new['filename'])) {
+                        $new['filename'] = urldecode(preg_replace("~[\\?#].*$~Usi", "", $new['filename']));
                         $image_model = new Image;
                         $image_model->object_id = $object->id;
                         $image_model->object_model_id = $model->id;
-                        $image_model->filename = basename($new['image_src']);
-                        if (preg_match("#^https?://#Us", $new['image_src'])) {
+                        $image_model->filename = basename($new['filename']);
+                        if (preg_match("#^https?://#Us", $new['filename'])) {
                             $image_model->filename = basename(
                                 preg_replace(
                                     "#^https?://[^/]#Us",
                                     "",
-                                    $new['image_src']
+                                    $new['filename']
                                 )
                             );
                             try {
-                                file_put_contents(
-                                    Yii::getAlias('@webroot') . $dir . $image_model->filename,
-                                    file_get_contents($new['image_src'])
-                                );
+                                $stream = fopen($new['filename'], 'r+');
+                                Yii::$app->getModule('image')->fsComponent->putStream($image_model->filename, $stream);
+
                             } catch (\Exception $e) {
                                 // whoops :-(
                             }
-                            $image_model->image_src = $dir . $image_model->filename;
+                            $image_model->filename = $dir . $image_model->filename;
 
                         } else {
-                            $image_model->image_src = $new['image_src'];
+                            $image_model->filename = $new['filename'];
                         }
-                        try {
-                            //@todo rewrite
-                            $image_model->thumbnail_src = $dir . ImageDropzone::saveThumbnail(
-                                    '@webroot' . $dir,
-                                    $image_model->filename
-                                );
-                        } catch (\Exception $e) {
-                            // error here :-(
-                        }
+
 
 
                         $image_model->image_description = isset($new['image_description']) ? $new['image_description'] : '';
