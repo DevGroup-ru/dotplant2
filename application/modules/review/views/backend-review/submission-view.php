@@ -140,7 +140,7 @@ $review->submission->getPropertyGroups(true);
                             <?php foreach ($properties as $property) :?>
                                 <?php if ($propertyValues = $review->submission->getPropertyValuesByPropertyId($property->id)): ?>
                                     <?= Html::beginTag('div', ['class' => 'col-md-8']) ?>
-                                    <?= $property->handler('form', $review->submission->abstractMOdel, $propertyValues, 'backend_render_view')?>
+                                    <?= $property->handler('form', $review->submission->abstractModel, $propertyValues, 'backend_render_view')?>
                                     <?= Html::endTag('div') ?>
                                 <?php endif; ?>
                             <?php endforeach; ?>

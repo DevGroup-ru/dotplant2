@@ -29,6 +29,7 @@ use yii\data\ActiveDataProvider;
  * @property integer $is_deleted
  * @property bool $spam
  * @property AbstractModel $abstractModel
+ * @property Form $form
  */
 class Submission extends \yii\db\ActiveRecord
 {
