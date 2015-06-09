@@ -109,7 +109,10 @@ TPL;
 
             $offer = '<offer id="'.$row->id.'" '.$offer_type.' available="true">' . PHP_EOL;
 
-            $offer .= '<url>'.Url::to(['/shop/product/show', 'model' => $row, 'category_group_id' => 1], true).'</url>' . PHP_EOL;
+            /** @var Category $category */
+            $category = $row->category;
+            $category = empty($category) ? 1 : $category->category_group_id;
+            $offer .= '<url>'.Url::to(['/shop/product/show', 'model' => $row, 'category_group_id' => $category], true).'</url>' . PHP_EOL;
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_price', $row, '<price>%s</price>'. PHP_EOL);
             $offer .= '<currencyId>'.$ymlConfig->currency_id.'</currencyId>' . PHP_EOL;
             $offer .= $this->wrapByYmlParam($ymlConfig, 'offer_category', $row, '<categoryId>%s</categoryId>' . PHP_EOL);
