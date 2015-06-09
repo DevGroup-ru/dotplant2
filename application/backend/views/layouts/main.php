@@ -184,7 +184,7 @@ Icon::map($this);
                         'data-dismiss' => 'modal',
                     ]
                 ),
-            'header' => Yii::t('app', 'Вы действительно хотите удалить данную категорию?'),
+            'header' => Yii::t('app', 'Are you sure you want to delete a selected category?'),
         ]
     )
     ?>
