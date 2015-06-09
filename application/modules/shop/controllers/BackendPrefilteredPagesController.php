@@ -65,10 +65,12 @@ class BackendPrefilteredPagesController extends BackendController
 
         $properties = Property::find()->andWhere(['in', 'property_group_id', $property_groups_ids_for_object])->all();
         foreach ($properties as $prop) {
+            /** @var Property $prop */
             $static_values_properties[$prop->id] = [
                 'property' => $prop,
                 'static_values_select' => PropertyStaticValues::getSelectForPropertyId($prop->id),
                 'has_static_values' => $prop->has_static_values === 1,
+
             ];
         }
 

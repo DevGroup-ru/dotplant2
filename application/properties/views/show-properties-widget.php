@@ -12,6 +12,7 @@
 <?php
     if (!empty($object_property_groups)) {
         foreach ($object_property_groups as $i => $opg) {
+            if ($opg->group->is_internal) continue;
             $options = [
                 'id' => 'pg-' . $opg->group->id,
                 'class' => 'object-property-group',

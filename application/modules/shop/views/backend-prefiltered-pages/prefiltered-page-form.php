@@ -189,7 +189,7 @@ $this->registerJs('
 <section style="display: none" data-type="x-tmpl-underscore" id="parameter-template">
     <div class="row form-group parameter">
         <label class="col-md-2 control-label" for="PropertyValue_<%- index %>">
-            <select class="property_id form-control">
+            <select class="property_id property-select form-control">
                 <option value="0">- <?= Yii::t('app', 'select') ?> -</option>
                 <?php foreach ($static_values_properties as $prop) {
                     echo "<option value=\"".$prop['property']->id."\">" .
@@ -198,11 +198,13 @@ $this->registerJs('
                 }
                 ?>
             </select>
+
         </label>
         <div class="col-md-10">
             <div class="input-group">
                 <select id="PropertyValue_<%- index %>" class="form-control select">
                 </select>
+                <input type="text" class="property-value-input">
                 <span class="input-group-btn">
                     <a class="btn btn-danger btn-remove">
                         <?= Icon::show('thrash-o') ?>
