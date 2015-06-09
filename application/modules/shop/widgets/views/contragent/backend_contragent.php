@@ -9,9 +9,6 @@
  */
 ?>
 
-    <?php if (empty($additional['hideHeader'])): ?>
-    <h3><?= Yii::t('app', 'Payer information') ?></h3>
-    <?php endif; ?>
     <?= $form->field($model, 'type')
         ->dropDownList(
             ['Individual' => Yii::t('app', 'Individual'), 'Self-employed' => Yii::t('app', 'Self-employed'), 'Legal entity' => Yii::t('app', 'Legal entity')],
@@ -25,3 +22,19 @@
             echo $form->field($abstractModel, $attr)->textInput(['readonly' => $immutable]);
         }
     ?>
+
+    <?php if (!empty($model->deliveryInformation)): ?>
+    <h3><?= Yii::t('app', 'Delivery information') ?></h3>
+    <?= $form->field($model->deliveryInformation, 'country_id')
+        ->dropDownList(
+            \app\components\Helper::getModelMap(\app\models\Country::className(), 'id', 'name'),
+            ['readonly' => $immutable]
+        ); ?>
+    <?= $form->field($model->deliveryInformation, 'city_id')
+        ->dropDownList(
+            \app\components\Helper::getModelMap(\app\models\City::className(), 'id', 'name'),
+            ['readonly' => $immutable]
+        ); ?>
+    <?= $form->field($model->deliveryInformation, 'zip_code')->textInput(['readonly' => $immutable]); ?>
+    <?= $form->field($model->deliveryInformation, 'address')->textarea(['readonly' => $immutable]); ?>
+    <?php endif; ?>

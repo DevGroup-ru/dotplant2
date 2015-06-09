@@ -1,158 +1,78 @@
 <?php
+
+use app\backend\widgets\BackendWidget;
+use app\components\Helper;
+use yii\helpers\Html;
+
 /**
  * @var \yii\web\View $this
- * @var \app\modules\shop\models\Customer $model
+ * @var \app\modules\shop\models\Contragent $model
  */
 
-use \app\backend\widgets\BackendWidget;
-use yii\helpers\Html;
-use app\components\Helper;
-
-    $this->title = Yii::t('app', 'Customer edit');
-    $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Customers'), 'url' => ['index']];
+    $this->title = Yii::t('app', 'Contragent edit');
+    $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Contragents'), 'url' => ['index']];
     $this->params['breadcrumbs'][] = $this->title;
-?>
 
-    <div class="col-md-12" style="margin: 15px 0;">
-        <div class="row">
-            <?= Html::a('All customer orders', '#orders', ['class' => 'btn btn-default']); ?>
-            <?= Html::a('All customer contragents', '#contragents', ['class' => 'btn btn-default']); ?>
-        </div>
-    </div>
+$this->beginBlock('buttons_primary');
+    echo \yii\helpers\Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']);
+    echo empty($model->customer) ? '' : Html::a(
+        Yii::t('app', 'View customer'),
+        \yii\helpers\Url::toRoute(['/shop/backend-customer/edit', 'id' => $model->customer_id]),
+        ['class' => 'btn btn-default']
+    );
+$this->endBlock();
 
-    <div class="col-md-12">
-        <div class="row">
-<?php
     $form = \yii\bootstrap\ActiveForm::begin([
-        'id' => 'customer-form',
+        'id' => 'contragent-form',
         'action' => \yii\helpers\Url::toRoute(['edit', 'id' => $model->id]),
         'layout' => 'horizontal',
     ]);
-
     BackendWidget::begin([
         'icon' => 'user',
-        'title' => Yii::t('app', 'Customer edit'),
-        'footer' => \yii\helpers\Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']),
+        'title' => Yii::t('app', 'Contragent edit'),
+        'footer' => $this->blocks['buttons_primary'],
     ]);
 
     $_jsTemplateResultFunc = <<< 'JSCODE'
 function (data) {
     if (data.loading) return data.text;
-    var tpl = '<div class="s2customer-result">' +
-        '<strong>' + (data.username || '') + '</strong>' +
-        '<div>' + (data.first_name || '') + ' (' + (data.email || '') + ')</div>' +
+    var tpl = '<div class="s2contragent-result">' +
+        '<strong>' + (data.first_name || '') + ' ' + (data.middle_name || '') + ' ' + (data.last_name || '') + ' ' + '</strong>' +
+        '<div>' + (data.email || '') + ' (' + (data.phone || '') + ')</div>' +
         '</div>';
     return tpl;
 }
 JSCODE;
 
     echo \app\backend\widgets\Select2Ajax::widget([
-        'initialData' => [$model->user_id => null !== $model->user ? $model->user->username : 'Guest'],
+        'initialData' => [$model->customer_id => null !== $model->customer ? $model->customer->first_name : 'Guest'],
         'model' => $model,
-        'modelAttribute' => 'user_id',
+        'modelAttribute' => 'customer_id',
         'form' => $form,
         'multiple' => false,
-        'searchUrl' => \yii\helpers\Url::toRoute(['ajax-user']),
+        'searchUrl' => \yii\helpers\Url::toRoute(['ajax-customer']),
         'pluginOptions' => [
             'allowClear' => false,
             'escapeMarkup' => new \yii\web\JsExpression('function (markup) {return markup;}'),
             'templateResult' => new \yii\web\JsExpression($_jsTemplateResultFunc),
-            'templateSelection' => new \yii\web\JsExpression('function (data) {return data.username || data.text;}'),
+            'templateSelection' => new \yii\web\JsExpression('function (data) {return data.first_name || data.text;}'),
         ]
     ]);
-    echo \app\modules\shop\widgets\Customer::widget([
-        'viewFile' => 'customer/inherit_form',
-        'form' => $form,
+    echo \app\modules\shop\widgets\Contragent::widget([
+        'viewFile' => 'contragent/backend_contragent',
         'model' => $model,
-        'additional' => [
-            'hideHeader' => true,
-        ],
+        'form' => $form,
     ]);
+
     BackendWidget::end();
     $form->end();
 
-    /*******  CONTRAGENTS LIST  *******/
-    echo Html::a('', '#', ['name' => 'contragents']);
-    $searchModelConfig = [
-        'model' => \app\modules\shop\models\Contragent::className(),
-        'additionalConditions' => [
-            ['customer_id' => $model->id],
-        ],
-    ];
-    /** @var \app\components\SearchModel $searchModel */
-    $searchModel = new \app\components\SearchModel($searchModelConfig);
-    $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-    echo \kartik\dynagrid\DynaGrid::widget([
-        'options' => [
-            'id' => 'contragents-index-grid',
-        ],
-        'theme' => 'panel-default',
-        'gridOptions' => [
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'hover' => true,
-            'panel' => [
-                'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
-                'after' => Html::a(
-                    \kartik\icons\Icon::show('plus') . Yii::t('app', 'Add'),
-                    ['/shop/backend-contragent/create', 'customer' => $model->id, 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
-                    ['class' => 'btn btn-success']
-                ),
-            ],
-            'rowOptions' => function ($model, $key, $index, $grid) {
-                /** @var \app\modules\shop\models\Contragent $model */
-                if (null === $model->customer) {
-                    return [
-                        'class' => 'danger',
-                    ];
-                }
-                return [];
-            },
-        ],
-        'columns' => [
-            'id',
-            'type',
-            [
-                'label' => Yii::t('app', 'Additional information'),
-                'value' => function ($model, $key, $index, $column) {
-                    /** @var \app\modules\shop\models\Contragent $contragent */
-                    /** @var \app\properties\AbstractModel $abstractModel */
-                    $abstractModel = $model->getAbstractModel();
-                    $abstractModel->setArrayMode(false);
-                    $props = '';
-                    foreach ($abstractModel->attributes() as $attr) {
-                        $props .= '<li>' . $abstractModel->getAttributeLabel($attr) . ': ' . $abstractModel->$attr .'</li>';
-                    }
-
-                    return !empty($props) ? '<ul class="additional_information">'.$props.'</ul>' : '';
-                },
-                'format' => 'raw',
-            ],
-            [
-                'class' => 'app\backend\components\ActionColumn',
-                'buttons' =>  function($model, $key, $index, $parent) {
-                    $result = [
-                        [
-                            'url' => '/shop/backend-contragent/edit',
-                            'icon' => 'eye',
-                            'class' => 'btn-info',
-                            'label' => Yii::t('app','View'),
-                        ],
-                    ];
-                    return $result;
-                },
-            ],
-        ],
-    ]);
-
-    /*******  ORDERS TABLE  *******/
-    echo Html::a('', '#', ['name' => 'orders']);
     $searchModelConfig = [
         'defaultOrder' => ['id' => SORT_DESC],
         'model' => \app\modules\shop\models\Order::className(),
         'partialMatchAttributes' => ['start_date', 'end_date', 'user_username'],
         'additionalConditions' => [
-            ['customer_id' => $model->id],
+            ['contragent_id' => $model->id],
         ],
     ];
     /** @var \app\components\SearchModel $searchModel */
@@ -169,7 +89,7 @@ JSCODE;
                 'filterModel' => $searchModel,
                 'hover' => true,
                 'panel' => [
-                    'heading' => Html::tag('h3', 'Customer orders', ['class' => 'panel-title']),
+                    'heading' => Html::tag('h3', 'Contragent orders', ['class' => 'panel-title']),
                 ],
                 'rowOptions' => function ($model, $key, $index, $grid) {
                     if ($model->is_deleted) {
@@ -245,6 +165,3 @@ JSCODE;
             ],
         ]
     );
-?>
-        </div>
-    </div>

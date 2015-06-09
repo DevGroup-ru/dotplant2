@@ -18,6 +18,7 @@ class Select2Ajax extends Widget
     /** @var bool $multiple */
     public $multiple = true;
     public $searchUrl = '';
+    public $pluginOptions = [];
     public $additional = [];
 
     public function run()
@@ -31,6 +32,7 @@ class Select2Ajax extends Widget
             'initialData' => $this->initialData,
             'multiple' => $this->multiple,
             'searchUrl' => $this->searchUrl,
+            'pluginOptions' => $this->pluginOptions,
             'additional' => $this->additional,
         ]);
     }

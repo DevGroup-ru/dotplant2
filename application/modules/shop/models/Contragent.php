@@ -79,6 +79,9 @@ class Contragent extends \yii\db\ActiveRecord
     {
         $scenarios = parent::scenarios();
         $scenarios['readonly'] = [];
+        $scenarios['search'] = [
+            'type',
+        ];
         return $scenarios;
     }
 

@@ -10,6 +10,7 @@ use kartik\helpers\Html;
 
 ?>
 <?php foreach ($items as $item): ?>
+    <?php if (empty($item->product)) continue; ?>
     <tr>
         <td><?=$item->product->name?></td>
         <td><?=$item->product->convertedPrice()?></td>

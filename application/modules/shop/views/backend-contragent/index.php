@@ -6,15 +6,16 @@
  */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
-    $this->title = Yii::t('app', 'Customers');
+    $this->title = Yii::t('app', 'Contragents');
     $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="customers-index">
-<?=
+<div class="contragent-index">
+    <?=
     \kartik\dynagrid\DynaGrid::widget([
         'options' => [
-            'id' => 'customers-index-grid',
+            'id' => 'contragents-index-grid',
         ],
         'theme' => 'panel-default',
         'gridOptions' => [
@@ -30,10 +31,10 @@ use yii\helpers\Html;
                 ),
             ],
             'rowOptions' => function ($model, $key, $index, $grid) {
-                /** @var \app\modules\shop\models\Customer $model */
-                if (intval($model->user_id) <= 0) {
+                /** @var \app\modules\shop\models\Contragent $model */
+                if (null === $model->customer) {
                     return [
-                        'class' => 'warning',
+                        'class' => 'danger',
                     ];
                 }
                 return [];
@@ -45,28 +46,39 @@ use yii\helpers\Html;
                 'attribute' => 'orders',
                 'label' => Yii::t('app', 'Orders count'),
                 'value' => function ($model, $key, $index, $column) {
-                    /** @var \app\modules\shop\models\Customer $model */
+                    /** @var \app\modules\shop\models\Contragent $model */
                     return count($model->orders);
                 }
             ],
             [
-                'attribute' => 'user',
-                'label' => Yii::t('app', 'User'),
+                'attribute' => 'customer_id',
+                'label' => Yii::t('app', 'Customer'),
                 'value' => function ($model, $key, $index, $column) {
-                    /** @var \app\modules\shop\models\Customer $model */
-                    /** @var \app\modules\user\models\User $user */
-                    $user = $model->user;
-
-                    return null === $user ?
-                        Yii::t('app', 'Guest')
-                        : $user->username;
-                }
+                    /** @var \app\modules\shop\models\Contragent $model */
+                    $customer = $model->customer;
+                    return null === $customer
+                        ? Yii::t('app', 'Guest')
+                        : Html::a($customer->first_name, Url::toRoute(['/shop/backend-customer/edit', 'id' => $customer->id]));
+                },
+                'format' => 'raw',
             ],
-            'first_name',
-            'middle_name',
-            'last_name',
-            'email',
-            'phone',
+            'type',
+            [
+                'label' => Yii::t('app', 'Additional information'),
+                'value' => function ($model, $key, $index, $column) {
+                    /** @var \app\modules\shop\models\Contragent $model */
+                    /** @var \app\properties\AbstractModel $abstractModel */
+                    $abstractModel = $model->getAbstractModel();
+                    $abstractModel->setArrayMode(false);
+                    $props = '';
+                    foreach ($abstractModel->attributes() as $attr) {
+                        $props .= '<li>' . $abstractModel->getAttributeLabel($attr) . ': ' . $abstractModel->$attr .'</li>';
+                    }
+
+                    return !empty($props) ? '<ul class="additional_information">'.$props.'</ul>' : '';
+                },
+                'format' => 'raw',
+            ],
             [
                 'class' => 'app\backend\components\ActionColumn',
                 'buttons' =>  function($model, $key, $index, $parent) {
@@ -83,5 +95,5 @@ use yii\helpers\Html;
             ],
         ],
     ]);
-?>
+    ?>
 </div>

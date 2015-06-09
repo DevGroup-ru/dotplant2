@@ -7,8 +7,21 @@
  * @var array $initialData
  * @var bool $multiple
  * @var string $searchUrl
+ * @var array $pluginOptions
  * @var array $additional
  */
+
+$defaultOptions = [
+    'multiple' => $multiple,
+    'allowClear' => true,
+    'minimumInputLength' => 3,
+    'ajax' => [
+        'url' => $searchUrl,
+        'dataType' => 'json',
+        'data' => new \yii\web\JsExpression('function(term,page) { return {search:term}; }'),
+        'results' => new \yii\web\JsExpression('function(data,page) { return {results:data.results}; }'),
+    ],
+];
 
 echo $form->field($model, $modelAttribute)
     ->widget(
@@ -17,19 +30,9 @@ echo $form->field($model, $modelAttribute)
             'language' => Yii::$app->language,
             'data' => $initialData,
             'options' => [
-                'placeholder' => isset($additional['placeholder']) ? $additional['placeholder'] : '',
+                'placeholder' => isset($additional['placeholder']) ? $additional['placeholder'] : Yii::t('app', 'Type for search ...'),
                 'multiple' => $multiple,
             ],
-            'pluginOptions' => [
-                'multiple' => $multiple,
-                'allowClear' => isset($additional['allowClear']) ? boolval($additional['allowClear']) : true,
-                'minimumInputLength' => 3,
-                'ajax' => [
-                    'url' => $searchUrl,
-                    'dataType' => 'json',
-                    'data' => new \yii\web\JsExpression('function(term,page) { return {search:term}; }'),
-                    'results' => new \yii\web\JsExpression('function(data,page) { return {results:data.results}; }'),
-                ],
-            ],
+            'pluginOptions' => array_replace_recursive($defaultOptions, $pluginOptions),
         ]
     );
