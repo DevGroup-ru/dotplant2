@@ -3,14 +3,14 @@
 /** @var string $header  */
 /** @var integer $root_category_id */
 /** @var integer $category_group_id */
-/** @var boolean $display_header */
+/** @var boolean $displayHeader */
 /** @var boolean $isInSidebar */
 
 use yii\helpers\Html;
 $sidebarClass = $isInSidebar ? 'sidebar-widget' : '';
 echo '<div class="categories-list ' . $sidebarClass . '">';
 
-if ($display_header === true) {
+if ($displayHeader === true) {
     ?>
     <div class="widget-header">
         <?= $header ?>

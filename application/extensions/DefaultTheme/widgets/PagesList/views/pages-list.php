@@ -1,7 +1,7 @@
 <?php
 /** @var \yii\web\View $this */
 /** @var \app\modules\page\models\Page $pages */
-/** @var boolean $display_header */
+/** @var boolean $displayHeader */
 /** @var boolean $isInSidebar */
 /** @var boolean $display_date */
 /** @var string $date_format */
@@ -13,7 +13,7 @@ $sidebarClass = $isInSidebar ? 'sidebar-widget' : '';
 ?>
 <div class="pages-list-widget <?= $sidebarClass ?>">
 <?php
-if ($display_header === true) {
+if ($displayHeader === true) {
     ?>
     <div class="widget-header">
         <?= $header ?>

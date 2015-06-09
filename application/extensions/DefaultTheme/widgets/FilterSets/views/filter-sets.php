@@ -2,7 +2,7 @@
 /** @var app\components\WebView $this */
 /** @var boolean $isInSidebar */
 /** @var \app\modules\shop\models\FilterSets[] $filterSets */
-/** @var boolean $display_header */
+/** @var boolean $displayHeader */
 /** @var string $header  */
 /** @var string $id */
 
@@ -11,7 +11,7 @@ use yii\helpers\Url;
 
 $sidebarClass = $isInSidebar ? 'sidebar-widget' : '';
 echo '<div class="filter-sets-widget ' . $sidebarClass . '">';
-if ($display_header === true) {
+if ($displayHeader === true) {
     ?>
     <div class="widget-header">
         <?= $header ?>

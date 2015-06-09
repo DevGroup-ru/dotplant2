@@ -392,6 +392,9 @@ footer {
     list-style: none;
     padding-left: 0; }
 
+.carousel-control.right, .carousel-control.left {
+  background-image: none; }
+
 .container.rows-margin-top-bottom-20 .row {
   margin-top: 20px;
   margin-bottom: 20px; }

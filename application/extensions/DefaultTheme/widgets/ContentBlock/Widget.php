@@ -10,8 +10,6 @@ class Widget extends BaseWidget
 {
     public $key = '';
     public $arguments = [];
-    public $header = '';
-    public $display_header = true;
     /**
      * Actual run function for all widget classes extending BaseWidget
      *
@@ -28,8 +26,6 @@ class Widget extends BaseWidget
             'content-block',
             [
                 'content' => $contentBlock,
-                'header' => $this->header,
-                'display_header' => $this->display_header,
             ]
         );
     }

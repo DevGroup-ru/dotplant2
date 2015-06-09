@@ -148,6 +148,10 @@ footer {
   }
 }
 
+.carousel-control.right, .carousel-control.left {
+  background-image: none;
+}
+
 // paddings & margins
 .container.rows-margin-top-bottom-20 .row {
   margin-top: 20px;
