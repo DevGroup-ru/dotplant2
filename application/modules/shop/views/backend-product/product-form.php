@@ -137,31 +137,19 @@ $this->params['breadcrumbs'][] = $this->title;
     if (!$model->isNewRecord && is_array($model->relatedProductsArray)):
         $data = \yii\helpers\ArrayHelper::map($model->relatedProducts, 'id', 'name');
     ?>
-    <?=
-    $form->field($model, 'relatedProductsArray')
-        ->widget(
-            Select2::className(),
-            [
-                'language' => Yii::$app->language,
-                'data' => $data,
-                'options' => [
-                    'placeholder' => Yii::t('app', 'Search for products...'),
-                    'multiple' => true,
+        <?=
+            \app\backend\widgets\Select2Ajax::widget([
+                'initialData' => $data,
+                'form' => $form,
+                'model' => $model,
+                'modelAttribute' => 'relatedProductsArray',
+                'multiple' => true,
+                'searchUrl' => '/shop/backend-product/ajax-related-product',
+                'additional' => [
+                    'placeholder' => 'Поиск продуктов ...',
                 ],
-                'pluginOptions' => [
-                    'multiple' => true,
-                    'allowClear' => true,
-                    'minimumInputLength' => 3,
-                    'ajax' => [
-                        'url' => '/shop/backend-product/ajax-related-product',
-                        'dataType' => 'json',
-                        'data' => new \yii\web\JsExpression('function(term,page) { return {search:term}; }'),
-                        'results' => new \yii\web\JsExpression('function(data,page) { return {results:data.results}; }'),
-                    ],
-                ],
-            ]
-        );
-    ?>
+            ]);
+        ?>
     <?php
     endif;
     ?>
