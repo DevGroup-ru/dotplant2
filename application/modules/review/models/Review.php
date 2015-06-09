@@ -143,7 +143,7 @@ class Review extends \yii\db\ActiveRecord
                     [
                         'submission' => function ($query) use ($formId) {
                             /** @var ActiveQuery $query */
-                            $query->andWhere('spam != :spam', [':spam' => Yii::$app->formatter->asBoolean(true)]);
+                            $query->andWhere('spam != :spam', [':spam' => 1]);
                             $query->andWhere(['is_deleted' => 0]);
                             $query->andWhere(['form_id' => $formId]);
                         }
