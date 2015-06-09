@@ -33,6 +33,13 @@ $this->params['breadcrumbs'][] = $this->title;
         <?=
         TreeWidget::widget([
             'treeDataRoute' => ['/backend/navigation/getTree'],
+            'doubleClickAction' => ContextMenuHelper::actionUrl(
+                ['edit', 'returnUrl' => Helper::getReturnUrl()],
+                [
+                    'parent_id' => 'id',
+                    'id' => 'id'
+                ]
+            ),
             'contextMenuItems' => [
                 'edit' => [
                     'label' => 'Edit',

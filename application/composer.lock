@@ -696,12 +696,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DevGroup-ru/DotPlant.git",
-                "reference": "c49c56b03a00ffb61b679289c0f62c010795de93"
+                "reference": "e8abf91b2c1009ff90cb899ea3d39489466e5ccc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DevGroup-ru/DotPlant/zipball/c49c56b03a00ffb61b679289c0f62c010795de93",
-                "reference": "c49c56b03a00ffb61b679289c0f62c010795de93",
+                "url": "https://api.github.com/repos/DevGroup-ru/DotPlant/zipball/e8abf91b2c1009ff90cb899ea3d39489466e5ccc",
+                "reference": "e8abf91b2c1009ff90cb899ea3d39489466e5ccc",
                 "shasum": ""
             },
             "require": {
@@ -732,7 +732,7 @@
                 "knplabs/packagist-api": "1.*@dev",
                 "leafo/scssphp": "dev-master",
                 "league/flysystem-replicate-adapter": "~1.0",
-                "php": ">=5.5.9",
+                "php": ">=5.5",
                 "phpoffice/phpexcel": "1.8.0",
                 "symfony/process": "3.0.*@dev",
                 "vova07/yii2-imperavi-widget": "~1.2.2",
@@ -767,7 +767,7 @@
                 "yii2 e-commerce",
                 "yii2 shop"
             ],
-            "time": "2015-06-07 12:27:23"
+            "time": "2015-06-08 09:19:45"
         },
         {
             "name": "devgroup/yii2-ace-widget",
@@ -936,12 +936,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DevGroup-ru/yii2-jstree-widget.git",
-                "reference": "092627fc6eb9019aee0fbd318ced19bdd1dc2f20"
+                "reference": "15f8963461711492a4986406512160affc290ac3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DevGroup-ru/yii2-jstree-widget/zipball/092627fc6eb9019aee0fbd318ced19bdd1dc2f20",
-                "reference": "092627fc6eb9019aee0fbd318ced19bdd1dc2f20",
+                "url": "https://api.github.com/repos/DevGroup-ru/yii2-jstree-widget/zipball/15f8963461711492a4986406512160affc290ac3",
+                "reference": "15f8963461711492a4986406512160affc290ac3",
                 "shasum": ""
             },
             "require": {
@@ -979,7 +979,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-06-01 08:06:06"
+            "time": "2015-06-09 08:23:29"
         },
         {
             "name": "devgroup/yii2-tag-dependency-helper",
@@ -1226,12 +1226,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/florianv/swap.git",
-                "reference": "8e7168ebb0e3507e9ead309998845bcd4f6cd0b7"
+                "reference": "7cffb309b8022889ddcdd66652b35aa8d4cebd81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/florianv/swap/zipball/8e7168ebb0e3507e9ead309998845bcd4f6cd0b7",
-                "reference": "8e7168ebb0e3507e9ead309998845bcd4f6cd0b7",
+                "url": "https://api.github.com/repos/florianv/swap/zipball/7cffb309b8022889ddcdd66652b35aa8d4cebd81",
+                "reference": "7cffb309b8022889ddcdd66652b35aa8d4cebd81",
                 "shasum": ""
             },
             "require": {
@@ -1273,7 +1273,7 @@
                 "exchange rates",
                 "money"
             ],
-            "time": "2015-05-28 10:22:52"
+            "time": "2015-06-08 23:26:09"
         },
         {
             "name": "fortawesome/font-awesome",
@@ -3368,12 +3368,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/leafo/scssphp.git",
-                "reference": "747fc9b20b36818fccda72bf995e03496a3c31f6"
+                "reference": "fa939819f7ac3d46a3e378444f11e283008ba6fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafo/scssphp/zipball/747fc9b20b36818fccda72bf995e03496a3c31f6",
-                "reference": "747fc9b20b36818fccda72bf995e03496a3c31f6",
+                "url": "https://api.github.com/repos/leafo/scssphp/zipball/fa939819f7ac3d46a3e378444f11e283008ba6fd",
+                "reference": "fa939819f7ac3d46a3e378444f11e283008ba6fd",
                 "shasum": ""
             },
             "require": {
@@ -3415,7 +3415,7 @@
                 "scss",
                 "stylesheet"
             ],
-            "time": "2015-06-07 12:03:49"
+            "time": "2015-06-08 20:48:45"
         },
         {
             "name": "league/flysystem",
@@ -3423,12 +3423,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "56862959b45131ad33e5a7727a25db19f2cf090b"
+                "reference": "3b1077f6f4dd04b974fc9479660f6681942db687"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/56862959b45131ad33e5a7727a25db19f2cf090b",
-                "reference": "56862959b45131ad33e5a7727a25db19f2cf090b",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/3b1077f6f4dd04b974fc9479660f6681942db687",
+                "reference": "3b1077f6f4dd04b974fc9479660f6681942db687",
                 "shasum": ""
             },
             "require": {
@@ -3499,7 +3499,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2015-06-07 21:27:37"
+            "time": "2015-06-08 21:31:19"
         },
         {
             "name": "league/flysystem-replicate-adapter",
@@ -3937,12 +3937,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "cf16f53e424c5f8ca286e68438a19a70f0f7b56f"
+                "reference": "b1baf9cf2c2f2a24383285222407fed6dc9a961f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/cf16f53e424c5f8ca286e68438a19a70f0f7b56f",
-                "reference": "cf16f53e424c5f8ca286e68438a19a70f0f7b56f",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/b1baf9cf2c2f2a24383285222407fed6dc9a961f",
+                "reference": "b1baf9cf2c2f2a24383285222407fed6dc9a961f",
                 "shasum": ""
             },
             "require": {
@@ -4017,7 +4017,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2015-06-08 02:04:07"
+            "time": "2015-06-09 00:13:14"
         },
         {
             "name": "yiisoft/yii2-authclient",
@@ -4472,12 +4472,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-debug.git",
-                "reference": "16ff3853e992a40266b8b9154f99107ca9597531"
+                "reference": "09454f3cd0614f1e6ddf23f92ef227d87a33853e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/16ff3853e992a40266b8b9154f99107ca9597531",
-                "reference": "16ff3853e992a40266b8b9154f99107ca9597531",
+                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/09454f3cd0614f1e6ddf23f92ef227d87a33853e",
+                "reference": "09454f3cd0614f1e6ddf23f92ef227d87a33853e",
                 "shasum": ""
             },
             "require": {
@@ -4511,7 +4511,7 @@
                 "debugger",
                 "yii2"
             ],
-            "time": "2015-06-02 09:55:26"
+            "time": "2015-06-08 08:58:10"
         },
         {
             "name": "yiisoft/yii2-gii",
