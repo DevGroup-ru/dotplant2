@@ -6,9 +6,12 @@
  * @var boolean $immutable
  * @var string $action
  * @var \yii\bootstrap\ActiveForm $form
+ * @var array $additional
  */
 ?>
+    <?php if (empty($additional['hideHeader'])): ?>
     <h3><?= Yii::t('app', 'Buyer information') ?></h3>
+    <?php endif; ?>
     <?= $form->field($model, 'first_name')->textInput(['readonly' => $immutable]); ?>
     <?= $form->field($model, 'middle_name')->textInput(['readonly' => $immutable]); ?>
     <?= $form->field($model, 'last_name')->textInput(['readonly' => $immutable]); ?>

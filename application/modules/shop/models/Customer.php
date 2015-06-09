@@ -4,6 +4,7 @@ namespace app\modules\shop\models;
 
 use app\models\Property;
 use app\models\PropertyGroup;
+use app\modules\user\models\User;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use app\properties\PropertyValue;
@@ -24,6 +25,7 @@ use Yii;
  * @property Contragent[] $contragents
  * @property Contragent $contragent
  * @property Order[] $orders
+ * @property User $user
  */
 class Customer extends \yii\db\ActiveRecord
 {
@@ -88,6 +90,13 @@ class Customer extends \yii\db\ActiveRecord
     {
         $scenarios = parent::scenarios();
         $scenarios['readonly'] = [];
+        $scenarios['search'] = [
+            'first_name',
+            'middle_name',
+            'last_name',
+            'email',
+            'phone',
+        ];
         return $scenarios;
     }
 
@@ -97,6 +106,14 @@ class Customer extends \yii\db\ActiveRecord
     public function getOrders()
     {
         return $this->hasMany(Order::className(), ['customer_id' => 'id']);
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
     /**
