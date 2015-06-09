@@ -88,7 +88,7 @@ Go to http://YOUR_HOSTNAME/catalog
 
 ## Vagrant
 
-**WARNING** This box currently uses 2.0.0-beta branch of dotplant2.
+This box currently uses master branch of dotplant2.
 
 How to use:
 
