@@ -147,3 +147,13 @@ footer {
     padding-left: 0;
   }
 }
+
+// paddings & margins
+.container.rows-margin-top-bottom-20 .row {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.container.rows-padding-top-bottom-20 .row {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
