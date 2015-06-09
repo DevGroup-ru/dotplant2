@@ -47,6 +47,12 @@ $this->endBlock();
         <?=
         TreeWidget::widget([
             'treeDataRoute' => ['getTree'],
+            'doubleClickAction' => ContextMenuHelper::actionUrl(
+                ['index', 'returnUrl' => Helper::getReturnUrl()],
+                [
+                    'parent_id' => 'id',
+                ]
+            ),
             'contextMenuItems' => [
                 'show' => [
                     'label' => 'Show products in category',

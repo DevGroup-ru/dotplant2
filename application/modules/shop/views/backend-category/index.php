@@ -29,6 +29,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'treeDataRoute' => ['getTree', 'selected_id' => $parent_id],
                 'changeParentAction' => 'move',
                 'reorderAction' => 'reorder',
+                'doubleClickAction' => ContextMenuHelper::actionUrl(
+                    ['edit', 'returnUrl' => Helper::getReturnUrl()]
+                ),
                 'contextMenuItems' => [
                     'edit' => [
                         'label' => 'Edit',
