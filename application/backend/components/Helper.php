@@ -86,4 +86,9 @@ class Helper
 
         return $result;
     }
+
+    public static function toString($value)
+    {
+        return (string) $value;
+    }
 }
