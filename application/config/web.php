@@ -114,8 +114,8 @@ $config = [
         ],
         'assetManager' => [
             'class' => 'yii\web\AssetManager',
-            'bundles' => require(__DIR__ . '/' . (YII_ENV_PROD ? 'assets-prod.php' : 'assets-dev.php')),
-            'linkAssets' => YII_ENV_DEV,
+            'bundles' => require(__DIR__ . '/' . (YII_DEBUG ? 'assets-prod.php' : 'assets-dev.php')),
+            'linkAssets' => YII_DEBUG,
         ],
         'user' => [
             'class' => '\yii\web\User',
@@ -202,7 +202,7 @@ $allConfig = ArrayHelper::merge(
     file_exists(__DIR__ . '/web-local.php') ? require(__DIR__ . '/web-local.php') : []
 );
 
-if (YII_ENV_DEV) {
+if (YII_DEBUG) {
     // configuration adjustments for 'dev' environment
     $allConfig['bootstrap'][] = 'debug';
     $allConfig['modules']['debug'] = [
