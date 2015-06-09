@@ -114,7 +114,7 @@ $config = [
         ],
         'assetManager' => [
             'class' => 'yii\web\AssetManager',
-            'bundles' => require(__DIR__ . '/' . (YII_DEBUG ? 'assets-prod.php' : 'assets-dev.php')),
+            'bundles' => require(__DIR__ . '/' . (!YII_DEBUG ? 'assets-prod.php' : 'assets-dev.php')),
             'linkAssets' => YII_DEBUG,
         ],
         'user' => [

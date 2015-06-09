@@ -913,6 +913,7 @@ return [
     'Slug' => 'Урл',
     'Slug Absolute' => 'Абсолютный УРЛ',
     'Slug Compiled' => 'Cкомпилированный УРЛ',
+    'Some assets are not flushed' => 'Некоторые файлы не были очищены',
     'Some files are not writeable.' => '',
     'Sorry, we are unable to reset password for email provided.' => '',
     'Sort' => 'Сортировка',
@@ -1115,6 +1116,6 @@ return [
     'select' => 'выбрать',
     'static' => 'Статичный',
     'unnecessary' => 'необязательные',
-    '{currentModuleName} {componentName} is flushed' => '',
+    '{currentModuleName} {componentName} is flushed' => '{currentModuleName} {componentName} очишен',
     'Вы действительно хотите удалить данную категорию?' => '',
 ];
