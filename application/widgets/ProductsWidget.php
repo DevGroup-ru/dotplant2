@@ -22,7 +22,7 @@ class ProductsWidget extends Widget
     public $additional_filters = [];
 
 
-    public $itemView = '@app/views/product/item';
+    public $itemView = '@app/modules/shop/views/product/item';
     public $viewFile = 'products-widget';
 
 
