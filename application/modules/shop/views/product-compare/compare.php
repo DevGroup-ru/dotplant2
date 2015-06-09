@@ -4,12 +4,11 @@
  * @var $error integer
  * @var $message string
  * @var $object \app\models\Object
- * @var $products \app\modules\shop\models\Product
+ * @var $products \app\modules\shop\models\Product[]
  * @var $this \yii\web\View
  */
 
 $this->title = Yii::t('app', 'Products comparison');
-
 ?>
 <?php if (isset($error) && $error): ?>
     <?=$message?>
@@ -31,7 +30,7 @@ $this->title = Yii::t('app', 'Products comparison');
     </div>
     <div class="row center-block">
         <?php
-        foreach ($products as $product):
+        foreach ($products as $key => $product):
             $url = \yii\helpers\Url::to(
                 [
                     'product/show',

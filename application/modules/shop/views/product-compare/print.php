@@ -16,7 +16,7 @@
         <tr>
             <?php
             $counter = 1;
-            foreach ($products as $product):
+            foreach ($products as $key => $product):
                 ?>
                 <?php
                 $url = \yii\helpers\Url::to(

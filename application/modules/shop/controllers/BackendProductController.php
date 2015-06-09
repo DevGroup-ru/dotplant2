@@ -35,7 +35,6 @@ class BackendProductController extends BackendController
     const EVENT_BACKEND_PRODUCT_EDIT_SAVE = 'backend-product-edit-save';
     const EVENT_BACKEND_PRODUCT_EDIT_FORM = 'backend-product-edit-form';
 
-
     public function behaviors()
     {
         return [
@@ -118,9 +117,12 @@ class BackendProductController extends BackendController
         ];
     }
 
+    /**
+     * @return string
+     * @throws ServerErrorHttpException
+     */
     public function actionIndex()
     {
-
         $searchModel = new Product();
         $params = Yii::$app->request->get();
         /** @var ActiveDataProvider $dataProvider */
@@ -140,7 +142,14 @@ class BackendProductController extends BackendController
         );
     }
 
-
+    /**
+     * @param null $id
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
+     * @throws ServerErrorHttpException
+     * @throws \Exception
+     * @throws \yii\base\InvalidRouteException
+     */
     public function actionEdit($id = null)
     {
         /*
@@ -157,20 +166,20 @@ class BackendProductController extends BackendController
         if (null === $id) {
             $model = new Product();
             $model->loadDefaultValues();
-            $parent_id = Yii::$app->request->get('owner_id');
-            if (null !== Product::findById($parent_id)) {
+            $parent_id = Yii::$app->request->get('owner_id', 0);
+            if (0 !== intval($parent_id) && null !== Product::findById($parent_id)) {
                 $model->parent_id = $parent_id;
             }
             $model->measure_id = $this->module->defaultMeasureId;
         } else {
-            $model = Product::findById($id, null, null);
+            $model = Product::findById($id, null);
             if ((null !== $model) && ($model->parent_id > 0)) {
-                $parent = Product::findById($model->parent_id, null, null);
+                $parent = Product::findById($model->parent_id, null);
             }
         }
 
         if (null === $model) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
 
         $model->loadRelatedProductsArray();
@@ -283,11 +292,11 @@ class BackendProductController extends BackendController
     {
         $post = \Yii::$app->request->post();
         if (!isset($post['GeneratePropertyValue'])) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
-        $parent = Product::findById($id, null, null);
+        $parent = Product::findById($id, null);
         if ($parent === null) {
-            throw new NotFoundHttpException;
+            throw new NotFoundHttpException();
         }
 
         $object = Object::getForClass(Product::className());
@@ -630,28 +639,6 @@ class BackendProductController extends BackendController
         return $result . ' END';
     }
 
-    public function actionRestore($id = null)
-    {
-        if (null === $id) {
-            new NotFoundHttpException();
-        }
-
-        if (null === $model = Product::findOne(['id' => $id])) {
-            new NotFoundHttpException();
-        }
-
-        $model->restoreFromTrash();
-
-        Yii::$app->session->setFlash('success', Yii::t('app', 'Object successfully restored'));
-
-        return $this->redirect(
-            Yii::$app->request->get(
-                'returnUrl',
-                Url::toRoute(['edit', 'id' => $id])
-            )
-        );
-    }
-
     public function actionAjaxRelatedProduct()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -670,17 +657,7 @@ class BackendProductController extends BackendController
             $data = $command->queryAll();
 
             $result['results'] = array_values($data);
-        }/* elseif ($id > 0) {
-            if (null !== $model = Product::findById($id)) {
-                foreach ($model->relatedProducts as $row) {
-                    $result['results'][] = ['id' => $row->id, 'text' => $row->name];
-                }
-            } else {
-                $result['results'] = ['id' => 0, 'text' => 'Ничего не найдено.'];
-            }
-        } else {
-            $result['results'] = ['id' => 0, 'text' => 'Ничего не найдено.'];
-        }*/
+        }
 
         return $result;
     }

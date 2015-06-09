@@ -4,6 +4,7 @@ namespace app\modules\shop\controllers;
 
 use app\models\Object;
 use app\modules\core\behaviors\DisableRobotIndexBehavior;
+use app\modules\shop\helpers\ProductCompareHelper;
 use app\modules\shop\models\Product;
 use Yii;
 use yii\caching\TagDependency;
@@ -30,28 +31,7 @@ class ProductCompareController extends Controller
      */
     public function actionAdd($id, $backUrl = null)
     {
-        $comparisonProductList = null;
-        if ($this->isExist($id)) {
-            return null !== $backUrl ? $this->redirect($backUrl, 302) : false;
-        }
-        $comparisonProductList = Yii::$app->session->get('comparisonProductList');
-        if (null == $comparisonProductList || !is_array($comparisonProductList)) {
-            $comparisonProductList = [];
-        }
-        /** @var \app\modules\shop\ShopModule $module */
-        $module = Yii::$app->modules['shop'];
-
-        $maxProductsToCompare = $module->maxProductsToCompare;
-        $comparisonProductList[] = $id;
-        if (count($comparisonProductList) > $maxProductsToCompare) {
-            $comparisonProductList = array_slice(
-                $comparisonProductList,
-                count($comparisonProductList) - $maxProductsToCompare,
-                $maxProductsToCompare
-            );
-        }
-        Yii::$app->session->set('comparisonProductList', $comparisonProductList);
-        TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
+        ProductCompareHelper::addProductToList($id);
         return null !== $backUrl ? $this->redirect($backUrl, 302) : true;
     }
 
@@ -62,17 +42,7 @@ class ProductCompareController extends Controller
      */
     public function actionRemove($id, $backUrl = null)
     {
-        TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
-        if (!$this->isExist($id)) {
-            return null !== $backUrl ? $this->redirect($backUrl, 302) : false;
-        }
-        $comparisonProductList = Yii::$app->session->get('comparisonProductList');
-        if (null == $comparisonProductList || !is_array($comparisonProductList)) {
-            return false;
-        }
-        $removeArrayKey = array_search($id, $comparisonProductList);
-        unset($comparisonProductList[$removeArrayKey]);
-        Yii::$app->session->set('comparisonProductList', $comparisonProductList);
+        ProductCompareHelper::removeProductFromList($id);
         return null !== $backUrl ? $this->redirect($backUrl, 302) : true;
     }
 
@@ -81,12 +51,12 @@ class ProductCompareController extends Controller
      */
     public function actionCompare()
     {
-        $products = $this->getProductsFromSession();
+        $products = ProductCompareHelper::getProductsList(true);
         $object = Object::getForClass(Product::className());
         return $this->render(
             'compare',
             [
-                'error' => count($products) == 0 || is_null($object),
+                'error' => empty($products) || null === $object,
                 'message' => Yii::t('app', 'No products for comparing'),
                 'object' => $object,
                 'products' => $products,
@@ -100,12 +70,12 @@ class ProductCompareController extends Controller
     public function actionPrint()
     {
         $this->layout = 'print';
-        $products = $this->getProductsFromSession();
+        $products = ProductCompareHelper::getProductsList(true);
         $object = Object::getForClass(Product::className());
         return $this->render(
             'print',
             [
-                'error' => count($products) == 0 || is_null($object),
+                'error' => empty($products) || null === $object,
                 'message' => Yii::t('app', 'No products for comparing'),
                 'object' => $object,
                 'products' => $products,
@@ -119,40 +89,7 @@ class ProductCompareController extends Controller
      */
     public function actionRemoveAll($backUrl = null)
     {
-        TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
-        Yii::$app->session->remove('comparisonProductList');
+        ProductCompareHelper::clearProductList();
         return null !== $backUrl ? $this->redirect($backUrl, 302) : true;
-    }
-
-    /**
-     * @return array
-     */
-    private function getProductsFromSession()
-    {
-        $prodElements = Yii::$app->session->get('comparisonProductList');
-        if (null == $prodElements || !is_array($prodElements)) {
-            return [];
-        }
-        $prods = [];
-        foreach ($prodElements as $prodId) {
-            $prod = Product::findById($prodId);
-            if (null !== $prod) {
-                $prods[] = $prod;
-            }
-        }
-        return $prods;
-    }
-
-    /**
-     * @param integer $id
-     * @return bool
-     */
-    private function isExist($id)
-    {
-        $prodElement = Yii::$app->session->get('comparisonProductList');
-        if (null == $prodElement || !is_array($prodElement)) {
-            return false;
-        }
-        return in_array($id, $prodElement);
     }
 }
