@@ -109,6 +109,25 @@ class ObjectRule implements UrlRuleInterface
         return false;  // this rule does not apply
     }
 
+    private function defineBlocksTitleAndView($data)
+    {
+        if (isset($data['blocks'])) {
+            foreach ($data['blocks'] as $block_name=>$block_value) {
+                Yii::$app->response->blocks[$block_name] = $block_value;
+            }
+        }
+        if (isset($data['title'])) {
+            Yii::$app->response->title = $data['title'];
+        }
+        if (isset($data['viewId'])) {
+            Yii::$app->response->view_id = $data['viewId'];
+        }
+        if (isset($data['is_prefiltered_page'])) {
+            Yii::$app->response->is_prefiltered_page = true;
+            Yii::$app->response->blocks['announce'] = '';
+        }
+    }
+
     public function parseRequest($manager, $request)
     {
         Yii::beginProfile("ObjectRule::parseRequest");
@@ -123,7 +142,8 @@ class ObjectRule implements UrlRuleInterface
         $result = Yii::$app->cache->get($cacheKey);
         if ($result !== false) {
             Yii::endProfile("ObjectRule::parseRequest");
-            return $result;
+            $this->defineBlocksTitleAndView($result);
+            return $result['result'];
         }
 
         $prefilteredPage = PrefilteredPages::getActiveByUrl($url);
@@ -138,9 +158,9 @@ class ObjectRule implements UrlRuleInterface
             }
             $params['category_group_id'] = $category->category_group_id;
             $params['last_category_id'] = $category->id;
-
+            $data = ['blocks'=>[]];
             if (!empty($prefilteredPage['title'])) {
-                Yii::$app->response->title = $prefilteredPage['title'];
+                $data['title'] = $prefilteredPage['title'];
             }
             $blocks = [
                 'content',
@@ -152,22 +172,23 @@ class ObjectRule implements UrlRuleInterface
             foreach ($blocks as $block_name) {
 
                 if (!empty($prefilteredPage[$block_name])) {
-                    Yii::$app->response->blocks[$block_name] = $prefilteredPage[$block_name];
+                    $data['blocks'][$block_name] = $prefilteredPage[$block_name];
                 }
             }
-            Yii::$app->response->is_prefiltered_page = true;
+            $data['is_prefiltered_page'] = true;
 
             if ($prefilteredPage['view_id']>0) {
-                Yii::$app->response->view_id = $prefilteredPage['view_id'];
+                $data['viewId'] = $prefilteredPage['view_id'];
             }
 
-            $result = [
+            $data['result'] = [
                 'shop/product/list',
                 $params
             ];
+            $this->defineBlocksTitleAndView($data);
             Yii::$app->cache->set(
                 $cacheKey,
-                $result,
+                $data,
                 86400,
                 new TagDependency([
                     'tags' => [
@@ -176,7 +197,7 @@ class ObjectRule implements UrlRuleInterface
                     ]
                 ])
             );
-            return $result;
+            return $data['result'];
         }
 
         $routes = ObjectRule::getRoutes();
@@ -214,7 +235,7 @@ class ObjectRule implements UrlRuleInterface
 
             // в конце удачного парсинга next_part должен остаться пустым
             if (empty($next_part)) {
-                $resultForCache = [$model->route, $parameters];
+                $resultForCache = ['result'=>[$model->route, $parameters]];
                 if (isset($_POST['properties'], $parameters['properties'])) {
 
                     foreach ($_POST['properties'] as $key=>$value) {

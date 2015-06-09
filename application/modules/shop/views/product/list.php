@@ -84,7 +84,7 @@ $listView = UserPreferences::preferences()->getAttributes()['listViewType'];
     <?php endif; ?>
 </div>
 
-<?php if (!isset($_GET['page']) && count($values_by_property_id) === 0): ?>
+<?php if (!isset($_GET['page']) && (count($values_by_property_id) === 0 || Yii::$app->response->is_prefiltered_page)): ?>
     <div class="content"><?=$this->blocks['content']?></div>
 <?php endif; ?>
 </div>
