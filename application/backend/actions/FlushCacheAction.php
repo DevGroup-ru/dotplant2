@@ -21,11 +21,9 @@ class FlushCacheAction extends Action
     protected function flushCache(Module $current = null)
     {
         $message = '';
-
         if ($current === null) {
             $current = \Yii::$app;
         }
-
         $modules = $current->getModules();
         foreach ($modules as $moduleName => $module) {
             if (is_array($module)) {
@@ -35,7 +33,6 @@ class FlushCacheAction extends Action
                 $message .= $this->flushCache($module);
             }
         }
-
         $components = $current->getComponents();
         foreach ($components as $componentName => $component) {
             if (is_array($component)) {
@@ -69,22 +66,24 @@ class FlushCacheAction extends Action
         $it = new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS);
         /* @var RecursiveDirectoryIterator[] $files */
         $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::CHILD_FIRST);
+        $hasErrors = false;
         foreach ($files as $file) {
             if (!in_array($file->getRealPath(), $except)) {
-                try {
-                    if ($file->isDir() && $file->isLink() === false) {
-                        rmdir($file->getRealPath());
-                    } elseif ($file->isLink() === true) {
-                        unlink($file->getPath() . DIRECTORY_SEPARATOR . $file->getFilename());
-                    } else {
-                        unlink($file->getRealPath());
-                    }
-                } catch (Exception $ex) {
-                    $message .= '<p>'.$ex->getMessage().'</p>';
+                if ($file->isDir() && $file->isLink() === false) {
+                    $result = @rmdir($file->getRealPath());
+                } elseif ($file->isLink() === true) {
+                    $result = @unlink($file->getPath() . DIRECTORY_SEPARATOR . $file->getFilename());
+                } else {
+                    $result = @unlink($file->getRealPath());
+                }
+                if (!$result) {
+                    $hasErrors = true;
                 }
             }
         }
-        $message .= '<p>' . \Yii::t('app', 'Assets are flushed') . '</p>';
+        $message .= $hasErrors
+            ? '<p>' . \Yii::t('app', 'Some assets are not flushed') . '</p>'
+            : '<p>' . \Yii::t('app', 'Assets are flushed') . '</p>';
         return $message;
     }
 
