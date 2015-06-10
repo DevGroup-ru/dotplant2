@@ -53,17 +53,35 @@ header.one-row-header-with-cart {
   }
   .search-area {
     padding: 16px 8px;
-    input {
+    .twitter-typeahead {
+      left: 35px;
+      .tt-dropdown-menu {
+        color: $action_color;
+        .empty-search {
+          padding: 8px;
+        }
+        a {
+          color: $action_color;
+          display: block;
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+    }
+    .twitter-typeahead .tt-input, .has-error .twitter-typeahead .tt-input {
       height: 28px;
       border-radius: 6px;
-
+      &.loading {
+        background: inherit !important;
+      }
 
       background: $subheader_color;
 
 
       width: 0;
       transition: all 0.15s ease-out 0.1s;
-      left: 35px;
+
       position: relative;
       padding: 0;
       border: 0;
@@ -82,6 +100,8 @@ header.one-row-header-with-cart {
       color: $header_navigation_color;
       border: 0;
       cursor: pointer;
+      z-index: 2;
+      position: relative;
     }
   }
   .nav-sm-open {

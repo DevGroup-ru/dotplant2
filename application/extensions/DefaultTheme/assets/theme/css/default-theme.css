@@ -198,18 +198,30 @@ header.one-row-header-with-cart .logo img {
         background: rgba(0, 0, 0, 0.2); }
   header.one-row-header-with-cart .search-area {
     padding: 16px 8px; }
-    header.one-row-header-with-cart .search-area input {
+    header.one-row-header-with-cart .search-area .twitter-typeahead {
+      left: 35px; }
+      header.one-row-header-with-cart .search-area .twitter-typeahead .tt-dropdown-menu {
+        color: #d1404a; }
+        header.one-row-header-with-cart .search-area .twitter-typeahead .tt-dropdown-menu .empty-search {
+          padding: 8px; }
+        header.one-row-header-with-cart .search-area .twitter-typeahead .tt-dropdown-menu a {
+          color: #d1404a;
+          display: block; }
+          header.one-row-header-with-cart .search-area .twitter-typeahead .tt-dropdown-menu a:hover {
+            text-decoration: none; }
+    header.one-row-header-with-cart .search-area .twitter-typeahead .tt-input, header.one-row-header-with-cart .search-area .has-error .twitter-typeahead .tt-input {
       height: 28px;
       border-radius: 6px;
       background: #164666;
       width: 0;
       transition: all 0.15s ease-out 0.1s;
-      left: 35px;
       position: relative;
       padding: 0;
       border: 0;
       color: transparent; }
-      header.one-row-header-with-cart .search-area input:focus, header.one-row-header-with-cart .search-area input.active {
+      header.one-row-header-with-cart .search-area .twitter-typeahead .tt-input.loading, header.one-row-header-with-cart .search-area .has-error .twitter-typeahead .tt-input.loading {
+        background: inherit !important; }
+      header.one-row-header-with-cart .search-area .twitter-typeahead .tt-input:focus, header.one-row-header-with-cart .search-area .has-error .twitter-typeahead .tt-input:focus, header.one-row-header-with-cart .search-area .twitter-typeahead .tt-input.active, header.one-row-header-with-cart .search-area .has-error .twitter-typeahead .tt-input.active {
         outline: none;
         width: 150px;
         border: 1px solid rgba(0, 0, 0, 0.2);
@@ -219,7 +231,9 @@ header.one-row-header-with-cart .logo img {
       background: transparent;
       color: #ecf0f1;
       border: 0;
-      cursor: pointer; }
+      cursor: pointer;
+      z-index: 2;
+      position: relative; }
   header.one-row-header-with-cart .nav-sm-open {
     margin: 4px;
     padding: 6px;
