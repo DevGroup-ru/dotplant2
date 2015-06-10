@@ -4,76 +4,24 @@
  * @var $error integer
  * @var $message string
  * @var $object \app\models\Object
- * @var $products \app\modules\shop\models\Product
+ * @var $products \app\modules\shop\models\Product[]
  * @var $this \yii\web\View
  */
 
+$this->title = Yii::t('app', 'Products comparison');
+
+/** @var \app\extensions\DefaultTheme\Module $defaultTheme */
+$defaultTheme = Yii::$app->getModule('DefaultTheme');
+echo null !== $defaultTheme
+    ? \yii\helpers\Html::tag('h3', $defaultTheme->siteName)
+    : '';
+echo \yii\helpers\Html::tag('p', \yii\helpers\Url::to('/', true));
+
+if (isset($error) && $error) {
+    echo $message;
+} else {
+    echo \app\modules\shop\widgets\ProductCompare::widget([
+        'viewFile' => 'product-compare/list-print',
+    ]);
+}
 ?>
-<?php if (isset($error) && $error): ?>
-    <?=$message?>
-<?php else: ?>
-    <table style="margin: 25px auto;">
-        <tr>
-            <?php
-            $counter = 1;
-            foreach ($products as $key => $product):
-                ?>
-                <?php
-                $url = \yii\helpers\Url::to(
-                    [
-                        'product/show',
-                        'model' => $product,
-                        'last_category_id' => $product->main_category_id,
-                        'category_group_id' => $product->category->category_group_id,
-                    ]
-                );
-                $img = app\modules\image\widgets\ObjectImageWidget::widget(
-                    [
-                        'model' => $product,
-                        'limit' => 1,
-                    ]
-                );
-                ?>
-                <td style="padding: 15px">
-                    <table>
-                        <tr>
-                            <td><b><?=$product->name?></b></td>
-                        </tr>
-                        <tr>
-                            <td><?=$img?></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <?=Yii::t('app', 'Price')?>:
-                            <span style="color:green;font-weight:bold; font-size:20px;"><?=Yii::$app->formatter->asDecimal(
-                                    $product->price,
-                                    2
-                                )?>
-                                <?=Yii::$app->params['currency']?>
-                            </span>
-                            <td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <?=
-                                \app\properties\PropertiesWidget::widget(
-                                    [
-                                        'model' => $product,
-                                        'form' => null,
-                                        'viewFile' => 'show-properties-widget',
-                                    ]
-                                );
-                                ?>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-                <?php
-                if ((($counter ++ % 3) == 0)) {
-                    echo '</tr><tr>';
-                }
-                ?>
-            <?php endforeach; ?>
-        </tr>
-    </table>
-<?php endif; ?>

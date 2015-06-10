@@ -43,10 +43,11 @@ class ObjectImageWidget extends Widget
      * @var bool
      */
     public $useWatermark = false;
+    /** @var array $additional Additional data passed to view */
+    public $additional = [];
 
     public function run()
     {
-
         $cacheKey = "ObjectImageWidget:" . implode(
                 "_",
                 [
@@ -76,6 +77,7 @@ class ObjectImageWidget extends Widget
                     'thumbnailWidth' => $this->thumbnailWidth,
                     'thumbnailHeight' => $this->thumbnailHeight,
                     'useWatermark' => $this->useWatermark,
+                    'additional' => $this->additional,
                 ]
             );
             Yii::$app->cache->set(
@@ -89,7 +91,6 @@ class ObjectImageWidget extends Widget
                 )
             );
         }
-
 
         return $result;
     }

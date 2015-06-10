@@ -25,22 +25,6 @@ use kartik\icons\Icon;
     $compares = [];
 ?>
 
-<div class="row">
-    <div class="span9">
-        <?=
-        \yii\helpers\Html::a(
-            Yii::t('app', 'Print version'),
-            [
-                '/shop/product-compare/print',
-            ],
-            [
-                'class' => 'btn pull-right'
-            ]
-        )
-        ?>
-    </div>
-</div>
-
 <div class="compare-products">
         <?php
             foreach ($products as $key => $item) {
@@ -73,25 +57,8 @@ use kartik\icons\Icon;
                                     'blank' => 'http://placehold.it/180x180?text=No+image',
                                 ]
                             ]);
-                            $html .= Html::a($item->name, Url::to([
-                                    'product/show',
-                                    'model' => $item,
-                                    'last_category_id' => $item->main_category_id,
-                                    'category_group_id' => $item->category->category_group_id,
-                                ])
-                            );
+                            $html .= Html::tag('p', $item->name);
                             $html .= Html::tag('div', \Yii::t('app', 'Price') . ': ' . $item->nativeCurrencyPrice(false, false));
-                            $html .= Html::tag('div',
-                                Html::a(Yii::t('app', Icon::show('shopping-cart')), '#', [
-                                    'data-action' => "add-to-cart",
-                                    'data-id' => $item->id
-                                ])
-                                . Html::a(Yii::t('app', Icon::show('trash')), Url::toRoute([
-                                    '/shop/product-compare/remove', 'id' => $item->id,
-                                    'backUrl' => Yii::$app->request->url,
-                                ])),
-                                ['class' => 'controls']
-                            );
                             $result .= Html::tag('th', $html) . PHP_EOL;
                             return $result;
                         },
@@ -116,23 +83,6 @@ use kartik\icons\Icon;
             ?>
             </tbody>
         </table>
-</div>
-
-<div class="row">
-    <div class="span9">
-        <?=
-        \kartik\helpers\Html::a(
-            Yii::t('app', 'Remove all'),
-            [
-                '/shop/product-compare/remove-all',
-                'backUrl' => Yii::$app->request->url,
-            ],
-            [
-                'class' => 'btn btn-danger',
-            ]
-        )
-        ?>
-    </div>
 </div>
 
 <style>

@@ -71,6 +71,7 @@ LastViewedProducts changed it's namespace from `app\components\LastViewedProduct
 
 show-proppertiews-widget.php view wrap container attribute changed from id to class.
 
+`\app\widgets\ProductCompareListWidget` was replaced by `\app\modules\shop\widgets\ProductCompare` and has several changes in parameters
 
 ### Pages
 Pages split to page module.
