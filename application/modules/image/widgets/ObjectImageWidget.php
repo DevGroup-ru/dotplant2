@@ -2,6 +2,7 @@
 
 namespace app\modules\image\widgets;
 
+use app\modules\image\models\Image;
 use Yii;
 use yii\base\Widget;
 
@@ -43,6 +44,13 @@ class ObjectImageWidget extends Widget
      * @var bool
      */
     public $useWatermark = false;
+
+    /**
+     * @var bool if true and images array empty show "No image"
+     */
+
+    public $noImageOnEmptyImages = false;
+
     /** @var array $additional Additional data passed to view */
     public $additional = [];
 
@@ -68,6 +76,11 @@ class ObjectImageWidget extends Widget
                 $images = $this->model->getImages()->limit($this->limit)->offset($this->offset)->all();
             } else {
                 $images = $this->model->images;
+            }
+            if ($this->noImageOnEmptyImages === true && count($images) === 0) {
+                $no_image = new Image();
+                $no_image->filename = Yii::$app->getModule('image')->noImageSrc;
+                $images[] = $no_image;
             }
             $result = $this->render(
                 $this->viewFile,
