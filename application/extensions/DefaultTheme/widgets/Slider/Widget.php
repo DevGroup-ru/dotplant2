@@ -23,7 +23,7 @@ class Widget extends BaseWidget
         ]);
 
         if ($this->inContainer) {
-//            $content = Html::tag('div', $slider, ['class'=>])
+            $slider = "<div class=\"container\"><div class=\"row\"><div class=\"col-md-12\">$slider</div></div></div>";
         }
 
         return $slider;

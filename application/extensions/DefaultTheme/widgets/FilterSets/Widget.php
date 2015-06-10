@@ -9,8 +9,6 @@ use app\extensions\DefaultTheme\components\BaseWidget;
 class Widget extends BaseWidget
 {
     public $viewFile = 'filter-sets';
-    public $header = '';
-    public $display_header = true;
 
     /**
      * Actual run function for all widget classes extending BaseWidget
@@ -36,8 +34,6 @@ class Widget extends BaseWidget
             $this->viewFile,
             [
                 'filterSets' => $filterSets,
-                'header' => $this->header,
-                'display_header' => $this->display_header,
                 'id' => 'filter-set-'.$this->getId(),
             ]
         );

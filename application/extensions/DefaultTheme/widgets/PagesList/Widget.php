@@ -13,11 +13,9 @@ class Widget extends BaseWidget
 
     public $more_pages_label = '';
     public $parent_id = null;
-    public $header = '';
     public $view_file = 'pages-list';
     public $order_by = 'date_added';
     public $order = SORT_DESC;
-    public $display_header = true;
     public $display_date = false;
     public $date_format = 'd.m.Y';
 
@@ -49,8 +47,6 @@ class Widget extends BaseWidget
             [
                 'pages' => $pages,
                 'more_pages_label' => $this->more_pages_label,
-                'display_header' => $this->display_header,
-                'header' => $this->header,
                 'display_date' => $this->display_date,
                 'date_format' => $this->date_format,
             ]

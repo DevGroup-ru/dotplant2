@@ -32,6 +32,11 @@ abstract class BaseWidget extends Widget
 
     private $fragmentCacheId = '';
 
+    /** @var string Header of widget */
+    public $header = '';
+    /** @var bool Should we display header */
+    public $displayHeader = true;
+
     /**
      * Initializes widget with configuration stored in corresponding ThemeWidgets record.
      *
@@ -150,6 +155,10 @@ abstract class BaseWidget extends Widget
         $params['theme'] = $this->getThemeModule();
         $params['partRow'] = $this->partRow;
         $params['isInSidebar'] = $this->getIsInSidebar();
+
+        $params['header'] = $this->header;
+        $params['displayHeader'] = $this->displayHeader;
+
         return parent::render($view, $params);
     }
 
