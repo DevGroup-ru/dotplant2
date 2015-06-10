@@ -56,9 +56,6 @@ $form = ActiveForm::begin([
                     echo Html::tag('h2', $group->name);
                 }
 
-
-                $model->getAbstractModel()->setArrayMode(true);
-
                 $properties = app\models\Property::getForGroupId($groupId);
 
                 foreach ($properties as $prop) {
