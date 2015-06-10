@@ -2,8 +2,11 @@
 
 namespace app\widgets;
 
+use Yii;
+use yii\base\InvalidConfigException;
+use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\widgets\InputWidget;
+use yii\web\JsExpression;
 
 /**
  * Class AutoCompleteSearch
@@ -11,17 +14,8 @@ use yii\widgets\InputWidget;
  * Example:
  *
  */
-class AutoCompleteSearch extends InputWidget
+class AutoCompleteSearch extends \kartik\widgets\Typeahead
 {
-    private $widgetParams;
-    /**
-     * @var array of options list for jui.autocomplete
-     */
-    public $clientOptions;
-    /**
-     * @var string the result ul class name
-     */
-    public $listClass;
     /**
      * @var string|array the route to search action
      */
@@ -29,30 +23,39 @@ class AutoCompleteSearch extends InputWidget
 
     public function init()
     {
-        parent::init();
-        $this->options['id'] = $this->id;
-        $this->widgetParams = [
-            'attribute' => $this->attribute,
-            'clientOptions' => is_array($this->clientOptions) ? $this->clientOptions : [],
-            'model' => $this->model,
-            'name' => $this->name,
-            'options' => $this->options,
-            'value' => $this->value,
+        $template = '<a href="{{url}}">{{name}}</a>';
+        $this->dataset = [
+            [
+                'remote' => [
+                    'url' => Url::to([$this->route, 'term' => 'QUERY']),
+                    'wildcard'=> 'QUERY',
+                ],
+                'templates' => [
+                    'empty' => Html::tag('span', Yii::t('app', 'Hit enter to search'), ['class'=>'empty-search']),
+                    'suggestion' => new JsExpression("Handlebars.compile('$template')")
+                ]
+
+            ],
         ];
-        if (!is_null($this->route)) {
-            $this->widgetParams['clientOptions']['source'] = Url::to($this->route);
-        }
+
+        $this->pluginOptions = [
+            'hint' => false,
+        ];
+        parent::init();
     }
 
     public function run()
     {
-        parent::run();
-        return $this->render(
-            'auto-complete-search',
-            [
-                'listClass' => $this->listClass,
-                'widgetParams' => $this->widgetParams,
-            ]
-        );
+        if (empty($this->dataset) || !is_array($this->dataset)) {
+            throw new InvalidConfigException("You must define the 'dataset' property for Typeahead which must be an array.");
+        }
+        if (!is_array(current($this->dataset))) {
+            throw new InvalidConfigException("The 'dataset' array must contain an array of datums. Invalid data found.");
+        }
+        $this->validateConfig();
+        $this->initDataset();
+        $this->registerAssets();
+        $this->initOptions();
+        echo $this->getInput('textInput');
     }
 }

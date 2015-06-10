@@ -8,6 +8,7 @@ use app\modules\shop\models\Product;
 use app\models\Search;
 use app\modules\seo\behaviors\MetaBehavior;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -66,21 +67,27 @@ class DefaultController extends Controller
     public function actionAutoCompleteSearch($term)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $query = Product::find()->orderBy('sort_order');
+        $query = Product::find()
+            ->select(['id', 'name', 'main_category_id'])
+            ->orderBy('sort_order');
         foreach (['name', 'content'] as $attribute) {
             $query->orWhere(['like', $attribute, $term]);
         }
         $query->andWhere(['active'=>1]);
         $products = $query->limit(Yii::$app->getModule('core')->autoCompleteResultsCount)->all();
         $result = [];
+
+        $serverName = 'http://'.Yii::$app->getModule('core')->serverName;
+
         foreach ($products as $product) {
             $result[] = [
-                'template' => $this->renderPartial(
-                    'auto-complete-item-template',
-                    [
-                        'product' => $product,
-                    ]
-                ),
+                'id' => $product->id,
+                'name' => $product->name,
+                'url' => $serverName . Url::to([
+                    '/shop/product/show',
+                    'model' => $product,
+                    'category_group_id' => $product->getMainCategory()->category_group_id,
+                ]),
             ];
         }
         return $result;
