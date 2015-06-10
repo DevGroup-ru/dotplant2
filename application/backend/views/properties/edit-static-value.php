@@ -100,8 +100,8 @@ Html::submitButton(
 
             <?= \app\modules\image\widgets\ImageDropzone::widget([
                 'name' => 'file',
-                'url' => ['/backend/product/upload'],
-                'removeUrl' => ['/backend/product/remove'],
+                'url' => ['/shop/backend-product/upload'],
+                'removeUrl' => ['/shop/backend-product/remove'],
                 'uploadDir' => '/theme/resources/product-images',
                 'sortable' => true,
                 'sortableOptions' => [
