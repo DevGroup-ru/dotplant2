@@ -23,7 +23,7 @@ $defaultOptions = [
     ],
 ];
 
-echo $form->field($model, $modelAttribute)
+echo $form->field($model, $modelAttribute, !empty($additional['fieldOptions'])?$additional['fieldOptions']:[])
     ->widget(
         \kartik\widgets\Select2::className(),
         [

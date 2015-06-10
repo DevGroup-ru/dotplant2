@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),
                     'after' => Html::a(
                         \kartik\icons\Icon::show('plus') . Yii::t('app', 'Add'),
-                        ['create', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()],
+                        ['create'],
                         ['class' => 'btn btn-success']
                     ),
                 ],

@@ -1,6 +1,7 @@
 <?php
 /**
  * @var \yii\web\View $this
+ * @var \app\modules\shop\models\Customer $model
  */
 
 use \app\backend\widgets\BackendWidget;
@@ -8,8 +9,6 @@ use \app\backend\widgets\BackendWidget;
     $this->title = Yii::t('app', 'Customer edit');
     $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Customers'), 'url' => ['index']];
     $this->params['breadcrumbs'][] = $this->title;
-
-    $model = \app\modules\shop\models\Customer::createEmptyCustomer();
 
     $form = \yii\bootstrap\ActiveForm::begin([
         'id' => 'customer-form',

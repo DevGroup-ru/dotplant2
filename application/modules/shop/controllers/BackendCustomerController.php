@@ -84,10 +84,14 @@ class BackendCustomerController extends BackendController
      * @return string|\yii\web\Response
      * @throws \yii\web\ServerErrorHttpException
      */
-    public function actionCreate()
+    public function actionCreate($user = null)
     {
+        $user = User::USER_GUEST !== intval($user)
+            ? User::findOne(['id' => intval($user)])
+            : null;
+        $customer = Customer::createEmptyCustomer(null === $user ? 0 : $user->id);
+
         if (true === \Yii::$app->request->isPost) {
-            $customer = Customer::createEmptyCustomer();
             $data = \Yii::$app->request->post();
             if ($customer->load($data) && $customer->save()) {
                 if (!empty($customer->getPropertyGroup())) {
@@ -100,7 +104,9 @@ class BackendCustomerController extends BackendController
             }
         }
 
-        return $this->render('create');
+        return $this->render('create', [
+            'model' => $customer,
+        ]);
     }
 
     /**

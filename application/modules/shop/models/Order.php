@@ -171,6 +171,7 @@ class Order extends \yii\db\ActiveRecord
             'paymentType' => ['payment_type_id', 'order_stage_id'],
             'changeManager' => ['manager_id'],
             'backend' => [
+                'user_id',
                 'customer_id',
                 'contragent_id',
             ],
@@ -360,7 +361,7 @@ class Order extends \yii\db\ActiveRecord
      * @return Order
      * @throws Exception
      */
-    public static function create($throwException = true, $assignToUser = true)
+    public static function create($throwException = true, $assignToUser = true, $dummyObject = false)
     {
         TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
         $initialOrderStage = OrderStage::getInitialStage();
@@ -376,11 +377,13 @@ class Order extends \yii\db\ActiveRecord
         $model->contragent_id = 0;
         mt_srand();
         $model->hash = md5(mt_rand() . uniqid());
-        if (!$model->save()) {
-            if ($throwException) {
-                throw new Exception('Cannot create a new order.');
-            } else {
-                return null;
+        if (false === $dummyObject) {
+            if (!$model->save()) {
+                if ($throwException) {
+                    throw new Exception('Cannot create a new order.');
+                } else {
+                    return null;
+                }
             }
         }
         return $model;

@@ -29,6 +29,7 @@ use kartik\helpers\Html;
 use Yii;
 use yii\caching\TagDependency;
 use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -532,25 +533,76 @@ class BackendOrderController extends BackendController
         return $this->redirect(['view', 'id' => $id]);
     }
 
-    public function actionCreate($returnUrl = ['index'])
+    /**
+     * @return string|Response
+     * @throws \yii\base\Exception
+     * @throws \yii\web\ServerErrorHttpException
+     */
+    public function actionCreate()
     {
-        $model = Order::create(false, false);
-        if (!is_null($model)) {
-            $customer = !empty(Customer::getCustomerByUserId($model->user_id))
-                ? Customer::getCustomerByUserId($model->user_id)
-                : Customer::createEmptyCustomer($model->user_id, false);
-            $model->customer_id = $customer->id;
+        $model = Order::create(false, false, true);
+        $model->setScenario('backend');
 
-            OrderDeliveryInformation::createNewOrderDeliveryInformation($model, false);
+        if (Yii::$app->request->isPost) {
+            $data = Yii::$app->request->post();
+            if ($model->load($data) && $model->validate()) {
+                if (User::USER_GUEST === intval($model->user_id)) {
+                    $model->customer_id = 0;
+                } elseif (null === Customer::findOne(['user_id' => intval($model->user_id), 'id' => intval($model->customer_id)])) {
+                    $model->customer_id = 0;
+                }
 
-            $model->save();
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            Yii::$app->session->addFlash('error', Yii::t('app', 'Cannot create a new order.'));
-            return $this->redirect($returnUrl);
+                if (0 === intval($model->customer_id)) {
+                    $customer = Customer::createEmptyCustomer(intval($model->user_id));
+                    if ($customer->load($data) && $customer->save()) {
+                        if (!empty($customer->getPropertyGroup())) {
+                            $customer->getPropertyGroup()->appendToObjectModel($customer);
+                            $data[$customer->getAbstractModel()->formName()] = isset($data['CustomerNew']) ? $data['CustomerNew'] : [];
+                        }
+                        $customer->saveModelWithProperties($data);
+                        $customer->refresh();
+                        $model->customer_id = $customer->id;
+                    }
+                } else {
+                    $customer = Customer::findOne(['id' => $model->customer_id]);
+                }
+
+                if (0 === $model->contragent_id || null === Contragent::findOne(['id' => $model->contragent_id, 'customer_id' => $model->customer_id])) {
+                    $contragent = Contragent::createEmptyContragent($customer);
+                    if ($contragent->load($data) && $contragent->save()) {
+                        if (!empty($contragent->getPropertyGroup())) {
+                            $contragent->getPropertyGroup()->appendToObjectModel($contragent);
+                            $data[$contragent->getAbstractModel()->formName()] = isset($data['ContragentNew']) ? $data['ContragentNew'] : [];
+                        }
+                        $contragent->saveModelWithProperties($data);
+                        $contragent->refresh();
+                        $model->contragent_id = $contragent->id;
+                    }
+                } else {
+                    $contragent = Contragent::findOne(['id' => $model->contragent_id]);
+                }
+
+                if ($model->save()) {
+                    OrderDeliveryInformation::createNewOrderDeliveryInformation($model, false);
+                    DeliveryInformation::createNewDeliveryInformation($contragent, false);
+                    return $this->redirect(Url::toRoute([
+                        'view', 'id' => $model->id
+                    ]));
+                }
+            }
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
+    /**
+     * @param $id
+     * @return array
+     * @throws BadRequestHttpException
+     * @throws NotFoundHttpException
+     */
     public function actionUpdatePaymentType($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -622,5 +674,87 @@ class BackendOrderController extends BackendController
         }
 
         return ['status' => 0];
+    }
+
+    /**
+     * @return array
+     */
+    public function actionAjaxUser()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $result = [
+            'more' => false,
+            'results' => []
+        ];
+        $search = \Yii::$app->request->get('search', []);
+        if (!empty($search['term'])) {
+            $query = User::find()
+                ->select('id, username, first_name, last_name, email')
+                ->where(['like', 'username', trim($search['term'])])
+                ->orWhere(['like', 'email', trim($search['term'])])
+                ->orWhere(['like', 'first_name', trim($search['term'])])
+                ->orWhere(['like', 'last_name', trim($search['term'])])
+                ->asArray();
+
+            $result['results'] = array_values($query->all());
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function actionAjaxCustomer()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $result = [
+            'more' => false,
+            'results' => []
+        ];
+        $search = \Yii::$app->request->get('search', []);
+        $user_id = isset($search['user']) && User::USER_GUEST !== intval($search['user']) ? intval($search['user']) : User::USER_GUEST;
+        if (!empty($search['term'])) {
+            $query = Customer::find()
+                ->select('id, first_name, middle_name, last_name, email, phone')
+                ->where(['user_id' => $user_id])
+                ->andWhere('first_name LIKE :term1 OR middle_name LIKE :term2 OR last_name LIKE :term3 OR email LIKE :term4 OR phone LIKE :term5', [
+                    ':term1' => '%'.trim($search['term']).'%',
+                    ':term2' => '%'.trim($search['term']).'%',
+                    ':term3' => '%'.trim($search['term']).'%',
+                    ':term4' => '%'.trim($search['term']).'%',
+                    ':term5' => '%'.trim($search['term']).'%',
+                ])
+                ->asArray();
+
+            $result['results'] = array_values($query->all());
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function actionAjaxContragent()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $result = [
+            'more' => false,
+            'results' => [
+                0 => Yii::t('app', 'New contragent'),
+            ]
+        ];
+        $search = \Yii::$app->request->get('search', []);
+        $customer_id = isset($search['customer']) ? intval($search['customer']) : 0;
+        $query = Contragent::find()
+            ->select('id, type')
+            ->where(['customer_id' => $customer_id])
+            ->asArray();
+        $result['results'] = array_merge($result['results'], array_values($query->all()));
+
+        return $result;
     }
 }
