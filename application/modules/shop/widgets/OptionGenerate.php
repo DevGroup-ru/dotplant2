@@ -1,6 +1,6 @@
 <?php
 
-namespace app\backend\widgets;
+namespace app\modules\shop\widgets;
 
 use app\models\Object;
 use app\models\Property;

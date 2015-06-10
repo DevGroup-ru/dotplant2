@@ -378,7 +378,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php if ($model->parent_id == 0) : ?>
 
-        <?= \app\backend\widgets\OptionGenerate::widget([
+        <?= \app\modules\shop\widgets\OptionGenerate::widget([
             'model' => $model,
             'form' => $form,
             'footer' => $this->blocks['submit'],

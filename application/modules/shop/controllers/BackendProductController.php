@@ -355,6 +355,7 @@ class BackendProductController extends BackendController
                 }
             }
 
+            $model->measure_id = $parent->measure_id;
             $model->name = $parent->name . ' (' . implode(', ', $nameAppend) . ')';
             $model->slug = $parent->slug . '-' . implode('-', $slugAppend);
             $save_model = $model->save();
@@ -535,7 +536,7 @@ class BackendProductController extends BackendController
                 ]
             );
             Yii::$app->session->setFlash('success', Yii::t('app', 'Product has been cloned successfully.'));
-            $this->redirect(['/shop/backend-product/edit', 'id' => $newModel->id]);
+            $this->redirect(['edit', 'id' => $newModel->id]);
         }
     }
 

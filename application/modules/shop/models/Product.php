@@ -215,7 +215,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      * Returns model instance by ID using per-request Identity Map and cache
      * @param $id
      * @param int $is_active Return only active
-     * @return mixed
+     * @return Product
      */
     public static function findById($id, $isActive = 1)
     {
