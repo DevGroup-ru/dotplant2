@@ -157,41 +157,39 @@ $(function() {
 
                 $widget.find('.items-count').text(data['itemsCount']);
 
-                if (parseInt($this.data('fly'))==1) {
-                    var imgtofly = $($this.closest('div[itemtype="http://schema.org/Product"]'));
-                    if (imgtofly.length === 0) {
-                        imgtofly = $this;
-                    }
-                    if (imgtofly.length) {
 
-                        var imgclone = imgtofly.clone()
-                            .offset({top: imgtofly.offset().top, left: imgtofly.offset().left})
-                            .css({
-                                'opacity': '0.2',
-                                'position': 'absolute',
-                                'background': 'white',
-                                'z-index': '1000',
-                                'transform': 'scale(0.5,0.5)'
-                            })
-                            .appendTo($('body'))
-                            .animate({
-                                'top': $widget.offset().top + 10,
-                                'left': $widget.offset().left + 30,
-                                'width': 50,
-                                'height': 50
-                            }, 550, 'linear');
-                        imgclone.animate({'width': 0, 'height': 0}, function () {
-                            $(this).detach();
-                            $body.trigger({
-                                'type': 'productFlown',
-                                'productId': $this.data('id'),
-                                'quantity': quantity,
-                                'data': data,
-                                'button': $this
-                            });
-                        });
-                    }
+                var imgtofly = $this.hasClass('fly-out') ? $this : $($this.closest('.fly-out'));
+                if (imgtofly.length === 0) {
+                    imgtofly = $this;
                 }
+                if (imgtofly.length) {
+
+                    var imgclone = imgtofly.clone()
+                        .offset({top: imgtofly.offset().top, left: imgtofly.offset().left})
+                        .css({
+                            'opacity': '0.2',
+                            'position': 'absolute',
+                            'background': 'white',
+                            'z-index': '1000',
+                            'transform': 'scale(0.5,0.5)'
+                        })
+                        .appendTo($('body'))
+                        .animate({
+                            'top': $widget.offset().top + 10,
+                            'left': $widget.offset().left + 30
+                        }, 550, 'linear');
+                    imgclone.animate({'width': 0, 'height': 0}, function () {
+                        $(this).detach();
+                        $body.trigger({
+                            'type': 'productFlown',
+                            'productId': $this.data('id'),
+                            'quantity': quantity,
+                            'data': data,
+                            'button': $this
+                        });
+                    });
+                }
+
             }
             return false;
 

@@ -9,7 +9,6 @@ use app\modules\core\helpers\ContentBlockHelper;
 class Widget extends BaseWidget
 {
     public $key = '';
-    public $arguments = [];
     /**
      * Actual run function for all widget classes extending BaseWidget
      *

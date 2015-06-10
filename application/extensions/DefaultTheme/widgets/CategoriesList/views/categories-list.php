@@ -1,8 +1,8 @@
 <?php
 /** @var string $type */
 /** @var string $header  */
-/** @var integer $root_category_id */
-/** @var integer $category_group_id */
+/** @var integer $rootCategoryId */
+/** @var integer $categoryGroupId */
 /** @var boolean $displayHeader */
 /** @var boolean $isInSidebar */
 
@@ -20,12 +20,12 @@ if ($displayHeader === true) {
 
 if ($type === 'plain') {
     echo \app\widgets\PlainCategoriesWidget::widget([
-        'root_category_id' => $root_category_id,
+        'root_category_id' => $rootCategoryId,
     ]);
 } elseif ($type === 'tree') {
     echo \app\widgets\CategoriesWidget::widget([
         'omit_root' => true,
-        'category_group_id' => $category_group_id,
+        'category_group_id' => $categoryGroupId,
     ]);
 }
 

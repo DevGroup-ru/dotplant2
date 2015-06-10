@@ -8,8 +8,8 @@ use app\extensions\DefaultTheme\components\BaseWidget;
 class Widget extends BaseWidget
 {
     public $type = 'plain';
-    public $root_category_id = 1;
-    public $category_group_id = 1;
+    public $rootCategoryId = 1;
+    public $categoryGroupId = 1;
 
     /**
      * Actual run function for all widget classes extending BaseWidget
@@ -26,8 +26,8 @@ class Widget extends BaseWidget
             'categories-list',
             [
                 'type' => $this->type,
-                'root_category_id' => $this->root_category_id,
-                'category_group_id' => $this->category_group_id,
+                'rootCategoryId' => $this->rootCategoryId,
+                'categoryGroupId' => $this->categoryGroupId,
             ]
         );
     }

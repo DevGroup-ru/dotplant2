@@ -4,13 +4,17 @@ namespace app\extensions\DefaultTheme\backend;
 
 use app\backend\components\BackendController;
 use app\backend\traits\BackendRedirect;
+use app\extensions\DefaultTheme\models\BaseWidgetConfigurationModel;
 use app\extensions\DefaultTheme\models\ThemeActiveWidgets;
 use app\extensions\DefaultTheme\models\ThemeParts;
 use app\extensions\DefaultTheme\models\ThemeVariation;
 use app\extensions\DefaultTheme\models\ThemeWidgets;
+use app\extensions\DefaultTheme\models\WidgetConfigurationModel;
 use app\traits\LoadModel;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\base\DynamicModel;
+use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -147,19 +151,56 @@ class ConfigurationController extends BackendController
 
     public function actionConfigureJson($id, $returnUrl = '')
     {
+        /** @var ThemeActiveWidgets $model */
         $model = $this->loadModel(ThemeActiveWidgets::className(), $id);
+        /** @var ThemeWidgets $widget */
+        $widget = ThemeWidgets::findById($model->widget_id);
+
+        /** @var WidgetConfigurationModel|null|BaseWidgetConfigurationModel $configurationModel */
+        $configurationModel = null;
+        if (!empty($widget->configuration_model) && !empty($widget->configuration_view)) {
+            $className = $widget->configuration_model;
+
+            $configurationModel = new $className;
+            $configurationModel->setAttributes(Json::decode($model->configuration_json));
+        } else {
+            $configurationModel = new BaseWidgetConfigurationModel();
+            $configurationModel->loadState(Json::decode($widget->configuration_json));
+        }
+
 
         $isAjax = Yii::$app->request->isAjax;
+        $isValid = true;
+        if ($model->load(Yii::$app->request->post())) {
+            $isValid = $model->validate();
+        }
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($model->save()) {
-                return $this->redirectUser($model->id, true, 'index', 'configure-json');
+        if ($isValid && $configurationModel !== null) {
+
+            $configurationModel->load(Yii::$app->request->post());
+
+            if ($configurationModel->validate()) {
+                if ($configurationModel instanceof BaseWidgetConfigurationModel) {
+                    $json = Json::decode($configurationModel->configurationJson);
+                    $json['header'] = $configurationModel->header;
+                    $json['displayHeader'] = $configurationModel->displayHeader;
+                    $model->configuration_json = Json::encode($json);
+                } else {
+                    $model->configuration_json = Json::encode($configurationModel->getAttributes());
+                }
+            } else {
+                $isValid = false;
             }
+        }
+        if (Yii::$app->request->isPost && $isValid && $model->save()) {
+            return $this->redirectUser($model->id, true, 'index', 'configure-json');
         }
 
         $data = [
             'model' => $model,
             'isAjax' => $isAjax,
+            'widget' => $widget,
+            'configurationModel' => $configurationModel,
         ];
 
         if ($isAjax === true) {
