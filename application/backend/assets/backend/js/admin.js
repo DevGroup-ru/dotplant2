@@ -198,7 +198,7 @@ $(function(){
                 .attr('name', $('meta[name="csrf-param"]').attr('content'))
                 .attr('value', $('meta[name="csrf-token"]').attr('content'));
         $form.append($hidden);
-        $('document').append($form);
+        $('body').append($form);
         $form.submit();
 
         return false;
