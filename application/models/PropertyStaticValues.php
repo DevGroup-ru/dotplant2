@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use app\properties\HasProperties;
+use app\traits\GetImages;
 use app\traits\SortModels;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
@@ -9,7 +11,6 @@ use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
-use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "property_static_values".
@@ -24,6 +25,8 @@ use yii\helpers\ArrayHelper;
  */
 class PropertyStaticValues extends ActiveRecord
 {
+    use GetImages;
+
     public static $identity_map_by_property_id = [];
     private static $identity_map = [];
 
@@ -44,6 +47,9 @@ class PropertyStaticValues extends ActiveRecord
             ],
             [
                 'class' => ActiveRecordHelper::className(),
+            ],
+            [
+                'class' => HasProperties::className(),
             ],
         ];
     }

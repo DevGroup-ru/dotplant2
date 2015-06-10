@@ -1,7 +1,9 @@
 <?php
 namespace app\models;
 
+use app\properties\HasProperties;
 use app\properties\PropertyHandlers;
+use app\traits\GetImages;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
@@ -33,6 +35,8 @@ use yii\helpers\Json;
  */
 class Property extends ActiveRecord
 {
+    use GetImages;
+
     public static $identity_map = [];
     public static $group_id_to_property_ids = [];
     private $handlerAdditionalParams = [];
@@ -56,6 +60,9 @@ class Property extends ActiveRecord
             ],
             [
                 'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+            [
+                'class' => HasProperties::className(),
             ],
         ];
     }
@@ -368,6 +375,7 @@ class Property extends ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
+        // @todo clear table schema
         $this->invalidateModelCache();
         parent::afterSave($insert, $changedAttributes);
     }
