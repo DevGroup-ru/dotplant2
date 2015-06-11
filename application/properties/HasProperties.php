@@ -101,6 +101,7 @@ class HasProperties extends Behavior
         }
 
         if ($this->properties === null || $force === true) {
+            $tags = [ActiveRecordHelper::getObjectTag($this->owner->className(), $this->owner->id)];
             $this->properties = [];
             if ($getByObjectId === true) {
                 $groups = PropertyGroup::getForObjectId($this->getObject()->id);
@@ -112,6 +113,7 @@ class HasProperties extends Behavior
             $rules = [];
             /** @var PropertyGroup $group */
             foreach ($groups as $group) {
+                $tags[] = ActiveRecordHelper::getObjectTag(PropertyGroup::className(), $group->id);
                 $this->properties[$group->id] = [];
                 $props = Property::getForGroupId($group->id);
                 foreach ($props as $p) {
@@ -163,9 +165,7 @@ class HasProperties extends Behavior
                 ],
                 86400,
                 new TagDependency([
-                    'tags' => [
-                        ActiveRecordHelper::getObjectTag($this->owner->className(), $this->owner->id),
-                    ]
+                    'tags' => $tags,
                 ])
             );
             Yii::trace('putting props to cache: ' . ($res?'true':'false') . ' key:' . $cacheKey, 'properties');
