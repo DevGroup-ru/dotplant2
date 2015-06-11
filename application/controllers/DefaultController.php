@@ -64,12 +64,16 @@ class DefaultController extends Controller
         );
     }
 
+    /**
+     * @param $term
+     * @return string JSON
+     */
     public function actionAutoCompleteSearch($term)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $query = Product::find()
             ->select(['id', 'name', 'main_category_id'])
-            ->orderBy('sort_order');
+            ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_DESC]);
         foreach (['name', 'content'] as $attribute) {
             $query->orWhere(['like', $attribute, $term]);
         }
@@ -77,17 +81,17 @@ class DefaultController extends Controller
         $products = $query->limit(Yii::$app->getModule('core')->autoCompleteResultsCount)->all();
         $result = [];
 
-        $serverName = 'http://'.Yii::$app->getModule('core')->serverName;
-
         foreach ($products as $product) {
+            /** @var Product $product */
             $result[] = [
                 'id' => $product->id,
                 'name' => $product->name,
-                'url' => $serverName . Url::to([
+                'url' => Url::toRoute([
                     '/shop/product/show',
                     'model' => $product,
                     'category_group_id' => $product->getMainCategory()->category_group_id,
-                ]),
+                ]
+                , true),
             ];
         }
         return $result;

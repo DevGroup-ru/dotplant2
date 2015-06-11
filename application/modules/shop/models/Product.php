@@ -883,7 +883,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      */
     public function getMainCategory()
     {
-        return Category::findById($this->main_category_id, null, null);
+        return Category::findById($this->main_category_id, null);
     }
 
     public function loadRelatedProductsArray()
