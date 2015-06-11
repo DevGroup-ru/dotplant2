@@ -38,24 +38,20 @@ class PropertyHandler extends Action
      * @param null $property_id
      * @param null $handler_action
      * @param null $model_id
-     * @return string JSON
+     * @return mixed
      */
     public function run($property_id = null, $handler_action = null, $model_id = null)
     {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        $result = ['errorCode' => 1];
-
         if (null === $handler_action
             || null === $property_id
             || null === $model_id)
         {
-            return $result;
+            return '';
         }
 
         $property = Property::findById($property_id);
         if (null === $property) {
-            return $result;
+            return '';
         }
 
         $actionParams = [
@@ -65,9 +61,7 @@ class PropertyHandler extends Action
             'property' => $property,
         ];
         $propertyHandler = PropertyHandlers::createHandler($property->handler);
-        $result['result'] = $propertyHandler->runAction($handler_action, $actionParams);
-
-        return $result;
+        return $propertyHandler->runAction($handler_action, $actionParams);
     }
 }
 ?>

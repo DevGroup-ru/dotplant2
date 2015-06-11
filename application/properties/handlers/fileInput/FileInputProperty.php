@@ -5,6 +5,8 @@ namespace app\properties\handlers\fileInput;
 use app\properties\AbstractPropertyEavModel;
 use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
+use yii\helpers\Url;
+use yii\helpers\Html;
 
 class FileInputProperty extends \app\properties\handlers\AbstractHandler
 {
@@ -110,6 +112,8 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
      */
     public function actionUpload($params = [])
     {
+        $result = [];
+
         /** @var \app\models\Property $property */
         $property = $params['property'];
         /** @var \yii\db\ActiveRecord $modelObject */
@@ -141,7 +145,9 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
         }
         AbstractPropertyEavModel::setTableName(null);
 
-        return 'uploaded';
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        return $result;
     }
 }
 ?>

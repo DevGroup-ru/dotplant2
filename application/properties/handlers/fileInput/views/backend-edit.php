@@ -11,13 +11,18 @@
  * @var $values array
  * @var $additional array
  */
+
 use \yii\helpers\Url;
+use yii\helpers\Html;
 
 $uploadDir = !empty($additional['uploadDir']) ? $additional['uploadDir'] : '/';
 $uploadDir = str_replace(Yii::getAlias('@webroot'), '', Yii::getAlias($uploadDir));
 $uploadDir = Url::to(rtrim($uploadDir, '/').'/', true);
 
 $prop = $multiple ? $property_key.'[]' : $property_key;
+
+$urlDelete = Url::to(['property-handler', 'handler_action' => 'delete', 'property_id' => $property_id, 'model_id' => $model->getOwnerModel()->id]);
+$urlUpload = Url::to(['property-handler', 'handler_action' => 'upload', 'property_id' => $property_id, 'model_id' => $model->getOwnerModel()->id]);
 
 $tplFooter = <<< 'TPL'
 <div class="file-thumbnail-footer">
@@ -34,12 +39,14 @@ $layoutTemplates = [
     'footer' => $tplFooter
 ];
 foreach ($model->$property_key as $file) {
-    $initialPreview[] =
-        \yii\helpers\Html::img($uploadDir.$file, ['class' => 'file-preview-image', 'alt' => $file, 'title' => $file])
-        . \yii\helpers\Html::hiddenInput($model->formName().'['.$property_key.'][]', $file);
+    $_preview = \yii\helpers\FileHelper::getMimeType(Yii::getAlias($additional['uploadDir']) . '/' . $file);
+    $_preview =  false !== strpos(strval($_preview), 'image/')
+        ? Html::img($uploadDir.$file, ['class' => 'file-preview-image', 'alt' => $file, 'title' => $file])
+        : \kartik\icons\Icon::show('file', ['style' => 'font-size: 42px']);
+    $initialPreview[] = $_preview . Html::hiddenInput($model->formName().'['.$property_key.'][]', $file);
     $initialPreviewConfig[] = [
         'caption' => $file,
-        'url' => Url::to(['property-handler', 'handler_action' => 'delete', 'property_id' => $property_id, 'model_id' => $model->getOwnerModel()->id]),
+        'url' => $urlDelete,
         'key' => $property_key,
         'extra' => ['value' => $file],
     ];
@@ -56,7 +63,7 @@ $modelArrayMode = $model->setArrayMode(false);
                 'multiple' => $multiple,
             ],
             'pluginOptions' => [
-                'uploadUrl' => Url::to(['property-handler', 'handler_action' => 'upload', 'property_id' => $property_id, 'model_id' => $model->getOwnerModel()->id]),
+                'uploadUrl' => $urlUpload,
                 'multiple' => $multiple,
                 'initialPreview' => $initialPreview,
                 'initialPreviewConfig' => $initialPreviewConfig,
@@ -69,18 +76,13 @@ $modelArrayMode = $model->setArrayMode(false);
                 'overwriteInitial' => false,
                 'uploadAsync' => true,
                 'layoutTemplates' => $layoutTemplates,
+                'allowedPreviewTypes' => ['image'],
             ],
             'pluginEvents' => [
                 'fileuploaded' => 'function(event, data, previewId, index) {
-                    var $form = jQuery(event.target).parents("form").eq(0);
-                    jQuery("<input />").attr("name", event.target.name).val(data.files[index]["name"]).appendTo($form);
-                }',
-                'filesuccessremove' => 'function(event, id) {
-                    // console.log("---------------");
-                    // jQuery("#" + id);
-                    // console.log(event);
-                    // console.log(id);
-                    // jQuery("input[data-preview-id=" + key + "]").remove();
+                    var name = data.files[index]["name"];
+                    var i = $(\'form div[title="\'+name+\'"] input[value="\'+name+\'"]\')[0];
+                    $(\'<input type="hidden" />\').attr("name", event.target.name).val(name).after(i);
                 }',
             ],
         ]
