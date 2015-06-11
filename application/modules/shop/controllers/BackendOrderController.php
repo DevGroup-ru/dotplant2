@@ -449,16 +449,16 @@ class BackendOrderController extends BackendController
         }
         $products = $query->limit(20)->all();
         $result = [];
+        /** @var Product $product */
         foreach ($products as $product) {
             $result[] = [
-                'template' => $this->renderPartial(
-                    'auto-complete-item-template',
-                    [
-                        'orderId' => $orderId,
-                        'product' => $product,
-                        'parentId' => $parentId,
-                    ]
-                ),
+                'name' => $product->name,
+                'url' => Url::toRoute([
+                    'add-product',
+                    'orderId' => $orderId,
+                    'productId' => $product->id,
+                    'parentId' => $parentId,
+                ]),
             ];
         }
         return $result;

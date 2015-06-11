@@ -504,12 +504,13 @@ JSCODE;
                         <?=
                         \app\widgets\AutoCompleteSearch::widget(
                             [
+                                'template' => '<p><a href="{{url}}">{{name}}</a></p>',
                                 'options' => [
-                                    'class' => 'form-control col-xs-3',
+                                    'class' => 'form-control col-xs-9',
                                 ],
                                 'id' => 'add-product',
                                 'name' => 'add-product',
-                                'route' => ['auto-complete-search', 'orderId' => $model->id],
+                                'route' => ['auto-complete-search', 'orderId' => $model->id, 'term' => 'QUERY'],
                             ]
                         )
                         ?>
@@ -576,10 +577,11 @@ $js = <<<JS
         window.print();
         return false;
     });
-    jQuery('#add-product-parent').change(function() {
-        var parentId = jQuery(this).val();
+/*    $('#add-product-parent').change(function() {
+        var parentId = $(this).val();
+        console.log(parentId);
         jQuery('#add-product').autocomplete('option', 'source', '/shop/backend-order/auto-complete-search?orderId={$model->id}&parentId=' + parentId);
-    });
+    });*/
     $('a[href="#clear"]').on('click', function(event) {
         event.preventDefault();
         $('select#' + $(this).data('sel')).val(0).trigger('change');

@@ -20,19 +20,22 @@ class AutoCompleteSearch extends \kartik\widgets\Typeahead
      * @var string|array the route to search action
      */
     public $route = '/default/auto-complete-search';
+    public $template = '<a href="{{url}}">{{name}}</a>';
 
     public function init()
     {
-        $template = '<a href="{{url}}">{{name}}</a>';
+        $url = is_array($this->route)
+            ? Url::to($this->route)
+            : Url::to([$this->route, 'term' => 'QUERY']);
         $this->dataset = [
             [
                 'remote' => [
-                    'url' => Url::to([$this->route, 'term' => 'QUERY']),
+                    'url' => $url,
                     'wildcard'=> 'QUERY',
                 ],
                 'templates' => [
                     'empty' => Html::tag('span', Yii::t('app', 'Hit enter to search'), ['class'=>'empty-search']),
-                    'suggestion' => new JsExpression("Handlebars.compile('$template')")
+                    'suggestion' => new JsExpression("Handlebars.compile('{$this->template}')")
                 ]
 
             ],
