@@ -50,7 +50,8 @@ $modelArrayMode = $model->setArrayMode(false);
 <div class="file_input_preview">
 <?=
     $form->field($model, $prop)->widget(
-        \kartik\widgets\FileInput::classname(), [
+        \kartik\widgets\FileInput::classname(),
+        [
             'options' => [
                 'multiple' => $multiple,
             ],
@@ -68,8 +69,22 @@ $modelArrayMode = $model->setArrayMode(false);
                 'overwriteInitial' => false,
                 'uploadAsync' => true,
                 'layoutTemplates' => $layoutTemplates,
-            ]
-        ]);
+            ],
+            'pluginEvents' => [
+                'fileuploaded' => 'function(event, data, previewId, index) {
+                    var $form = jQuery(event.target).parents("form").eq(0);
+                    jQuery("<input />").attr("name", event.target.name).val(data.files[index]["name"]).appendTo($form);
+                }',
+                'filesuccessremove' => 'function(event, id) {
+                    // console.log("---------------");
+                    // jQuery("#" + id);
+                    // console.log(event);
+                    // console.log(id);
+                    // jQuery("input[data-preview-id=" + key + "]").remove();
+                }',
+            ],
+        ]
+    );
 ?>
 </div>
 <?php $model->setArrayMode($modelArrayMode); ?>
