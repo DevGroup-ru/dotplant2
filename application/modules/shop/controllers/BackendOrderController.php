@@ -196,34 +196,6 @@ class BackendOrderController extends BackendController
         if (Yii::$app->request->isPost && !$orderIsImmutable) {
             $model->setScenario('backend');
             if ($model->load(Yii::$app->request->post())) {
-                $customer = $model->customer;
-                if ($customer->load(Yii::$app->request->post())) {
-                    $customer->saveModelWithProperties(Yii::$app->request->post());
-                    $model->customer_id = $customer->id;
-                }
-
-                $contragent = !empty($model->contragent) ? $model->contragent : Contragent::createEmptyContragent($customer, false);
-                if ($contragent->load(Yii::$app->request->post()) && $contragent->validate()) {
-                    $_isNewRecord = $contragent->isNewRecord;
-                    $_data = Yii::$app->request->post();
-                    if ($contragent->save()) {
-                        if ($_isNewRecord && !empty($contragent->getPropertyGroup())) {
-                            $contragent->getPropertyGroup()->appendToObjectModel($contragent);
-                            $_data[$contragent->getAbstractModel()->formName()] = isset($_data['ContragentNew']) ? $_data['ContragentNew'] : [];
-                        }
-                        $contragent->saveModelWithProperties($_data);
-                        $model->contragent_id = $contragent->id;
-                    }
-                }
-
-                /** @var DeliveryInformation $deliveryInformation */
-                $deliveryInformation = !empty($contragent->deliveryInformation)
-                    ? $contragent->deliveryInformation
-                    : DeliveryInformation::createNewDeliveryInformation($contragent, false);
-                if ($deliveryInformation->load(Yii::$app->request->post())) {
-                    $deliveryInformation->save();
-                }
-
                 /** @var OrderDeliveryInformation $orderDeliveryInformation */
                 $orderDeliveryInformation = $model->orderDeliveryInformation;
                 if ($orderDeliveryInformation->load(Yii::$app->request->post())) {
@@ -706,7 +678,7 @@ class BackendOrderController extends BackendController
     /**
      * @return array
      */
-    public function actionAjaxCustomer()
+    public function actionAjaxCustomer($template = null)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
@@ -732,20 +704,31 @@ class BackendOrderController extends BackendController
             $result['results'] = array_values($query->all());
         }
 
+        if (!empty($result['results']) && 'simple' === $template) {
+            $result['cards'] = array_reduce($result['results'],
+                function ($result, $item)
+                {
+                    /** @var array $item */
+                    $result[$item['id']] = \app\modules\shop\widgets\Customer::widget([
+                        'viewFile' => 'customer/backend_list',
+                        'model' => Customer::findOne(['id' => $item['id']]),
+                    ]);
+                    return $result;
+                }, []);
+        }
+
         return $result;
     }
 
     /**
      * @return array
      */
-    public function actionAjaxContragent()
+    public function actionAjaxContragent($template = null)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $result = [
             'more' => false,
-            'results' => [
-                0 => Yii::t('app', 'New contragent'),
-            ]
+            'results' => [[0 => Yii::t('app', 'New contragent')]]
         ];
         $search = \Yii::$app->request->get('search', []);
         $customer_id = isset($search['customer']) ? intval($search['customer']) : 0;
@@ -753,7 +736,22 @@ class BackendOrderController extends BackendController
             ->select('id, type')
             ->where(['customer_id' => $customer_id])
             ->asArray();
-        $result['results'] = array_merge($result['results'], array_values($query->all()));
+        $result['results'] = array_merge(array_values($query->all()), $result['results']);
+
+        if (!empty($result['results']) && 'simple' === $template) {
+            $result['cards'] = array_reduce($result['results'],
+                function ($result, $item)
+                {
+                    /** @var array $item */
+                    if (!empty($item['id'])) {
+                        $result[$item['id']] = \app\modules\shop\widgets\Contragent::widget([
+                            'viewFile' => 'contragent/backend_list',
+                            'model' => Contragent::findOne(['id' => $item['id']]),
+                        ]);
+                    }
+                    return $result;
+                }, []);
+        }
 
         return $result;
     }

@@ -3,8 +3,8 @@
 use app\backend\widgets\BackendWidget;
 use kartik\editable\Editable;
 use yii\helpers\Html;
-use kartik\dynagrid\DynaGrid;
 use \app\modules\shop\helpers\PriceHelper;
+use yii\helpers\Url;
 
 /**
  * @var $this yii\web\View
@@ -94,10 +94,40 @@ if ($sum_transactions < $model->total_price):
         <table class="table table-striped table-bordered">
             <tbody>
             <tr>
-                <th><?=$model->getAttributeLabel('user')?></th>
-                <td>
-                    <?=
-                    !is_null($model->user) ? $model->user->username : Html::tag('em', Yii::t('yii', '(not set)'))
+                <td colspan="2">
+                    <?php
+                    $_jsTemplateResultFunc = <<< 'JSCODE'
+function (data) {
+    if (data.loading) return data.text;
+    var tpl = '<div class="s2customer-result">' +
+        '<strong>' + (data.username || '') + '</strong>' +
+        '<div>' + (data.first_name || '') + ' ' + (data.last_name || '') + ' (' + (data.email || '') + ')</div>' +
+        '</div>';
+    return tpl;
+}
+JSCODE;
+                    echo \app\backend\widgets\Select2Ajax::widget([
+                        'form' => $form,
+                        'model' => $model,
+                        'modelAttribute' => 'user_id',
+                        'initialData' => array_replace([0 => Yii::t('app', 'Guest')],
+                            [$model->user_id => null !== $model->user ? $model->user->username : Yii::t('app', 'Guest')]),
+                        'multiple' => false,
+                        'searchUrl' => \yii\helpers\Url::toRoute(['ajax-user']),
+                        'pluginOptions' => [
+                            'allowClear' => false,
+                            'escapeMarkup' => new \yii\web\JsExpression('function (markup) {return markup;}'),
+                            'templateResult' => new \yii\web\JsExpression($_jsTemplateResultFunc),
+                            'templateSelection' => new \yii\web\JsExpression('function (data) {return data.username || data.text;}'),
+                        ],
+                    ]);
+                    echo Html::tag('div',
+                        Html::a(
+                            Yii::t('app', Yii::t('app', 'Guest')),
+                            '#clear',
+                            ['data-sel' => 'order-user_id', 'class' => 'btn btn-xs btn-info col-md-offset-2']
+                        )
+                    );
                     ?>
                 </td>
             </tr>
@@ -214,12 +244,84 @@ if ($sum_transactions < $model->total_price):
                 ]
             );
         ?>
-        <?= \app\modules\shop\widgets\Customer::widget([
-            'viewFile' => 'customer/backend_form',
-            'model' => $model->customer,
+        <?php
+        $_jsTemplateResultFunc = <<< 'JSCODE'
+function (data) {
+    if (data.loading) return data.text;
+    var tpl = '<div class="s2customer-result">' +
+        '<strong>' + (data.username || '') + '</strong>' +
+        '<div>' + (data.first_name || '') + ' (' + (data.email || '') + ')</div>' +
+        '</div>';
+    return tpl;
+}
+JSCODE;
+        $_jsDataFunc = <<< 'JSCODE'
+function (term, page) {
+    return {
+        search: { term: term.term, user: $('select#order-user_id').val() }
+    };
+}
+JSCODE;
+        $_jsSelectionFunc = <<< 'JSCODE'
+function (data) {
+    if (data.card) {
+        $('div#div_customer').html(data.card);
+    }
+    if (data.id) {
+        $('a.edit_customer').attr('href', '/shop/backend-customer/edit?id=' + data.id);
+    }
+    return data.first_name || data.text;
+}
+JSCODE;
+        $_jsProcessResultsFunc = <<< 'JSCODE'
+function (data, page) {
+    return {results: $.map(data.results, function(e, i) {
+        if (data.cards[e.id]) {
+            e.card = data.cards[e.id];
+        }
+        return e;
+    })};
+}
+JSCODE;
+        echo \app\backend\widgets\Select2Ajax::widget([
+            'initialData' => [$model->customer_id => null !== $model->customer ? $model->customer->first_name : 'New customer'],
+            'model' => $model,
+            'modelAttribute' => 'customer_id',
             'form' => $form,
-            'immutable' => $orderIsImmutable,
+            'multiple' => false,
+            'searchUrl' => \yii\helpers\Url::toRoute(['ajax-customer', 'template' => 'simple']),
+            'pluginOptions' => [
+                'allowClear' => false,
+                'escapeMarkup' => new \yii\web\JsExpression('function (markup) {return markup;}'),
+                'templateResult' => new \yii\web\JsExpression($_jsTemplateResultFunc),
+                'templateSelection' => new \yii\web\JsExpression($_jsSelectionFunc),
+                'ajax' => [
+                    'data' => new \yii\web\JsExpression($_jsDataFunc),
+                    'processResults' => new \yii\web\JsExpression($_jsProcessResultsFunc),
+                ]
+            ]
+        ]);
+        ?>
+        <?= Html::tag('div',
+            Html::a(
+                Yii::t('app', 'Create customer'),
+                Url::toRoute(['/shop/backend-customer/create']),
+                ['target' => '_blank', 'class' => 'btn btn-xs btn-info new_customer']
+            ) .
+            Html::a(
+                Yii::t('app', 'Edit customer'),
+                Url::toRoute(['/shop/backend-customer/index']),
+                ['target' => '_blank', 'class' => 'btn btn-xs btn-info edit_customer']
+            ),
+            ['class' => 'btn-group col-md-offset-2']
+        ); ?>
+        <hr />
+        <div id="div_customer">
+        <?= \app\modules\shop\widgets\Customer::widget([
+            'viewFile' => 'customer/backend_list',
+            'model' => $model->customer,
         ]); ?>
+        </div>
         <?php BackendWidget::end(); ?>
 
         <?php
@@ -230,16 +332,75 @@ if ($sum_transactions < $model->total_price):
                 ]
             );
         ?>
-        <?= \app\modules\shop\widgets\Contragent::widget([
-            'viewFile' => 'contragent/backend_form',
-            'model' => $model->contragent,
-            'customer' => $model->customer,
+        <?php
+        $_jsTemplateResultFunc = <<< 'JSCODE'
+function (data) {
+    if (data.loading) return data.text;
+    var tpl = '<div class="s2contragent-result">' +
+        '<strong>' + (data.type || '') + '</strong>' +
+        '</div>';
+    return tpl;
+}
+JSCODE;
+        $_jsSelectionFunc = <<< 'JSCODE'
+function (data) {
+    if (data.card) {
+        $('div#div_contragent').html(data.card);
+    }
+    if (data.id) {
+        $('a.edit_contragent').attr('href', '/shop/backend-contragent/edit?id=' + data.id);
+    }
+    return data.type || data.text;
+}
+JSCODE;
+        $_jsDataFunc = <<< 'JSCODE'
+function (term, page) {
+    return {
+        search: {customer:$('select#order-customer_id').val()}
+    };
+}
+JSCODE;
+        echo \app\backend\widgets\Select2Ajax::widget([
+            'initialData' => [$model->contragent_id => null !== $model->contragent ? $model->contragent->type : 'New contragent'],
+            'model' => $model,
+            'modelAttribute' => 'contragent_id',
             'form' => $form,
-            'immutable' => $orderIsImmutable,
-            'additional' => [
-                'order' => $model,
+            'multiple' => false,
+            'searchUrl' => \yii\helpers\Url::toRoute(['ajax-contragent', 'template' => 'simple']),
+            'pluginOptions' => [
+                'minimumInputLength' => null,
+                'allowClear' => false,
+                'escapeMarkup' => new \yii\web\JsExpression('function (markup) {return markup;}'),
+                'templateResult' => new \yii\web\JsExpression($_jsTemplateResultFunc),
+                'templateSelection' => new \yii\web\JsExpression($_jsSelectionFunc),
+                'ajax' => [
+                    'data' => new \yii\web\JsExpression($_jsDataFunc),
+                    'processResults' => new \yii\web\JsExpression($_jsProcessResultsFunc),
+                    'cache' => true,
+                ]
             ]
+        ]);
+        ?>
+        <?= Html::tag('div',
+            Html::a(
+                Yii::t('app', 'Create contragent'),
+                Url::toRoute(['/shop/backend-contragent/create']),
+                ['target' => '_blank', 'class' => 'btn btn-xs btn-info new_contragent']
+            ) .
+            Html::a(
+                Yii::t('app', 'Edit contragent'),
+                Url::toRoute(['/shop/backend-contragent/index']),
+                ['target' => '_blank', 'class' => 'btn btn-xs btn-info edit_contragent']
+            ),
+            ['class' => 'btn-group col-md-offset-2']
+        ); ?>
+        <hr />
+        <div id="div_contragent">
+        <?= \app\modules\shop\widgets\Contragent::widget([
+            'viewFile' => 'contragent/backend_list',
+            'model' => $model->contragent,
         ]); ?>
+        </div>
         <?php BackendWidget::end(); ?>
 
         <?php
@@ -419,12 +580,16 @@ $js = <<<JS
         var parentId = jQuery(this).val();
         jQuery('#add-product').autocomplete('option', 'source', '/shop/backend-order/auto-complete-search?orderId={$model->id}&parentId=' + parentId);
     });
-    $('select.contragents').change(function(event) {
-        $('.contragents_list .contragent').addClass('hide');
-        $('.contragents_list .contragent_'+$(this).val()).removeClass('hide');
+    $('a[href="#clear"]').on('click', function(event) {
+        event.preventDefault();
+        $('select#' + $(this).data('sel')).val(0).trigger('change');
+        return false;
     });
-    $('form.form-order-backend').submit(function(event) {
-        $('.contragents_list .contragent.hide').remove();
+    $('a.new_customer').on('click', function(event) {
+        $(this).attr('href', '/shop/backend-customer/create?user=' + $('select#order-user_id').val());
+    });
+    $('a.new_contragent').on('click', function(event) {
+        $(this).attr('href', '/shop/backend-contragent/create?customer=' + $('select#order-customer_id').val());
     });
 JS;
 $this->registerJs($js);

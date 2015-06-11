@@ -20,6 +20,7 @@ $defaultOptions = [
         'dataType' => 'json',
         'data' => new \yii\web\JsExpression('function(term,page) { return {search:term}; }'),
         'results' => new \yii\web\JsExpression('function(data,page) { return {results:data.results}; }'),
+        'cache' => false,
     ],
 ];
 
