@@ -63,6 +63,7 @@ class NavigationWidget extends Widget
             $root = Navigation::find()
                 ->where(['id' => $this->rootId])
                 ->with('children')
+                ->orderBy(['sort_order' => SORT_ASC])
                 ->one();
             $items = [];
             foreach ($root->children as $child) {

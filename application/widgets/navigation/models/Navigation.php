@@ -4,6 +4,7 @@ namespace app\widgets\navigation\models;
 
 use app\backgroundtasks\traits\SearchModelTrait;
 use app\behaviors\Tree;
+use app\traits\FindById;
 use Yii;
 use yii\data\ActiveDataProvider;
 
@@ -24,6 +25,7 @@ use yii\data\ActiveDataProvider;
 class Navigation extends \yii\db\ActiveRecord
 {
     use SearchModelTrait;
+    use FindById;
 
     /**
      * @inheritdoc
@@ -47,7 +49,6 @@ class Navigation extends \yii\db\ActiveRecord
                 return empty($model->route) && empty($model->url);
             }, 'message' => Yii::t('app', 'Either URL or Route should be set.'), 'whenClient' => "
             function(attribute, value) {
-//                console.log(attribute.id);
                 if (attribute.id === 'navigation-url') {
                     return \$('#navigation-route').val() === '' && value === '';
                 } else {
@@ -118,6 +119,6 @@ class Navigation extends \yii\db\ActiveRecord
 
     public function getChildren()
     {
-        return $this->hasMany(Navigation::className(), ['parent_id'=>'id']);
+        return $this->hasMany(Navigation::className(), ['parent_id'=>'id'])->orderBy(['sort_order'=>SORT_ASC]);
     }
 }

@@ -4,6 +4,8 @@ namespace app\backend\controllers;
 
 use app\widgets\navigation\models\Navigation;
 use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
+use devgroup\JsTreeWidget\TreeNodeMoveAction;
+use devgroup\JsTreeWidget\TreeNodesReorderAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -33,6 +35,14 @@ class NavigationController extends Controller
                 'class' => AdjacencyFullTreeDataAction::className(),
                 'class_name' => Navigation::className(),
                 'model_label_attribute' => 'name',
+            ],
+            'move' => [
+                'class' => TreeNodeMoveAction::className(),
+                'className' => Navigation::className(),
+            ],
+            'reorder' => [
+                'class' => TreeNodesReorderAction::className(),
+                'className' => Navigation::className(),
             ],
         ];
     }
