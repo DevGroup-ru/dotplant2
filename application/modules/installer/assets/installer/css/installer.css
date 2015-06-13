@@ -32,4 +32,10 @@ h1 {
   border-bottom: 1px solid #f3f3f3;
 }
 
+/* line 30, ../sass/installer.scss */
+.logo img {
+  width: 158px;
+  height: 45px;
+}
+
 /*# sourceMappingURL=installer.css.map */

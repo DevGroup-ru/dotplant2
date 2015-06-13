@@ -25,7 +25,9 @@ InstallerAsset::register($this);
     <div class="container">
         <div class="row">
             <div class="col-md-3">
-                DotPlant2
+                <a href="http://dotplant.ru/?utm_source=dotplant&utm_medium=cms&utm_term=logo&utm_campaign=installer" class="logo" target="_blank">
+                    <img src="http://dotplant.ru/theme/img/logo.png" alt="DotPlant2 CMS"/>
+                </a>
             </div>
         </div>
     </div>
