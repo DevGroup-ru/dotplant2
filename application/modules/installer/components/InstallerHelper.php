@@ -90,10 +90,10 @@ class InstallerHelper
             'zh-TW',
 
             // default!
-            'en',
+            'en-US',
         ];
         $dotPlantLanguages = [
-            'en',
+            'en-US',
             'ru',
             'zh-CN',
         ];

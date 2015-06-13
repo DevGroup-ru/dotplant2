@@ -1223,7 +1223,7 @@
         },
         {
             "name": "florianv/swap",
-            "version": "dev-master",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/florianv/swap.git",
@@ -1487,12 +1487,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/bootstrap-fileinput.git",
-                "reference": "74a797692973a7d41820a94799629425d88b9eff"
+                "reference": "3103fba5ba7a02dcb3227b9ee40a4d50e53d5c66"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/74a797692973a7d41820a94799629425d88b9eff",
-                "reference": "74a797692973a7d41820a94799629425d88b9eff",
+                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/3103fba5ba7a02dcb3227b9ee40a4d50e53d5c66",
+                "reference": "3103fba5ba7a02dcb3227b9ee40a4d50e53d5c66",
                 "shasum": ""
             },
             "type": "library",
@@ -1527,7 +1527,7 @@
                 "progress",
                 "upload"
             ],
-            "time": "2015-06-05 03:05:49"
+            "time": "2015-06-11 09:08:12"
         },
         {
             "name": "kartik-v/bootstrap-popover-x",
@@ -1579,12 +1579,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/bootstrap-star-rating.git",
-                "reference": "8ae690a192a18d2cab46c2d8aa3455b18092f6ed"
+                "reference": "01e448fc61d47672c45b6b88c0d5ea653d021ebf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/bootstrap-star-rating/zipball/8ae690a192a18d2cab46c2d8aa3455b18092f6ed",
-                "reference": "8ae690a192a18d2cab46c2d8aa3455b18092f6ed",
+                "url": "https://api.github.com/repos/kartik-v/bootstrap-star-rating/zipball/01e448fc61d47672c45b6b88c0d5ea653d021ebf",
+                "reference": "01e448fc61d47672c45b6b88c0d5ea653d021ebf",
                 "shasum": ""
             },
             "type": "library",
@@ -1612,7 +1612,7 @@
                 "jquery",
                 "star"
             ],
-            "time": "2015-05-10 19:28:14"
+            "time": "2015-06-12 20:37:15"
         },
         {
             "name": "kartik-v/dependent-dropdown",
@@ -3374,19 +3374,20 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/leafo/scssphp.git",
-                "reference": "ffc3398c10ecc45e33e582b438a7627d11c12a9e"
+                "reference": "8dc6700ea0ca7ac481e2ffb5f8dc689a6a0ef679"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafo/scssphp/zipball/ffc3398c10ecc45e33e582b438a7627d11c12a9e",
-                "reference": "ffc3398c10ecc45e33e582b438a7627d11c12a9e",
+                "url": "https://api.github.com/repos/leafo/scssphp/zipball/8dc6700ea0ca7ac481e2ffb5f8dc689a6a0ef679",
+                "reference": "8dc6700ea0ca7ac481e2ffb5f8dc689a6a0ef679",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "3.7.*"
+                "phpunit/phpunit": "3.7.*",
+                "squizlabs/php_codesniffer": "~2.3"
             },
             "bin": [
                 "bin/pscss"
@@ -3421,7 +3422,7 @@
                 "scss",
                 "stylesheet"
             ],
-            "time": "2015-06-10 05:39:04"
+            "time": "2015-06-13 00:32:13"
         },
         {
             "name": "league/flysystem",
@@ -3429,12 +3430,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "c0cb27f829faab1a611cf75e8ee2ebf33b184ec7"
+                "reference": "8b8199214f13c83bd22c7612fecb693112bd81fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/c0cb27f829faab1a611cf75e8ee2ebf33b184ec7",
-                "reference": "c0cb27f829faab1a611cf75e8ee2ebf33b184ec7",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/8b8199214f13c83bd22c7612fecb693112bd81fa",
+                "reference": "8b8199214f13c83bd22c7612fecb693112bd81fa",
                 "shasum": ""
             },
             "require": {
@@ -3443,13 +3444,10 @@
             },
             "require-dev": {
                 "ext-fileinfo": "*",
-                "league/phpunit-coverage-listener": "~1.1",
                 "mockery/mockery": "~0.9",
                 "phpspec/phpspec": "~2.0",
                 "phpspec/prophecy-phpunit": "~1.0",
-                "phpunit/phpunit": "~4.1",
-                "predis/predis": "~1.0",
-                "tedivm/stash": "~0.12.0"
+                "phpunit/phpunit": "~4.1"
             },
             "suggest": {
                 "ext-fileinfo": "Required for MimeType",
@@ -3463,8 +3461,7 @@
                 "league/flysystem-rackspace": "Allows you to use Rackspace Cloud Files",
                 "league/flysystem-sftp": "Allows you to use SFTP server storage via phpseclib",
                 "league/flysystem-webdav": "Allows you to use WebDAV storage",
-                "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter",
-                "predis/predis": "Allows you to use Predis for caching"
+                "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter"
             },
             "type": "library",
             "extra": {
@@ -3487,10 +3484,11 @@
                     "email": "info@frenky.net"
                 }
             ],
-            "description": "Many filesystems, one API.",
+            "description": "Filesystem abstraction: Many filesystems, one API.",
             "keywords": [
                 "Cloud Files",
                 "WebDAV",
+                "abstraction",
                 "aws",
                 "cloud",
                 "copy.com",
@@ -3498,6 +3496,7 @@
                 "file systems",
                 "files",
                 "filesystem",
+                "filesystems",
                 "ftp",
                 "rackspace",
                 "remote",
@@ -3505,7 +3504,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2015-06-09 15:42:02"
+            "time": "2015-06-11 11:34:43"
         },
         {
             "name": "league/flysystem-replicate-adapter",
@@ -3774,12 +3773,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "8766cebf28beac9a45b511d7dba053da9d35eb9f"
+                "reference": "d91fb729673cc8587d0471bab5be02c77d608e77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/8766cebf28beac9a45b511d7dba053da9d35eb9f",
-                "reference": "8766cebf28beac9a45b511d7dba053da9d35eb9f",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/d91fb729673cc8587d0471bab5be02c77d608e77",
+                "reference": "d91fb729673cc8587d0471bab5be02c77d608e77",
                 "shasum": ""
             },
             "require": {
@@ -3824,7 +3823,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2015-05-12 15:16:46"
+            "time": "2015-06-11 17:27:52"
         },
         {
             "name": "symfony/process",
@@ -3877,16 +3876,16 @@
         },
         {
             "name": "vova07/yii2-imperavi-widget",
-            "version": "1.2.5",
+            "version": "1.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vova07/yii2-imperavi-widget.git",
-                "reference": "2da775f1d1c51b5bd91fff1aa54c5e0cbf883455"
+                "reference": "a1322fce49ec6875b287704079c51cda4e4ae1c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vova07/yii2-imperavi-widget/zipball/2da775f1d1c51b5bd91fff1aa54c5e0cbf883455",
-                "reference": "2da775f1d1c51b5bd91fff1aa54c5e0cbf883455",
+                "url": "https://api.github.com/repos/vova07/yii2-imperavi-widget/zipball/a1322fce49ec6875b287704079c51cda4e4ae1c5",
+                "reference": "a1322fce49ec6875b287704079c51cda4e4ae1c5",
                 "shasum": ""
             },
             "require": {
@@ -3935,7 +3934,7 @@
                 "yii 2",
                 "yii2"
             ],
-            "time": "2015-05-29 19:44:49"
+            "time": "2015-06-11 14:29:25"
         },
         {
             "name": "yiisoft/yii2",
@@ -3943,12 +3942,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "da3b668c53ce2d7c90a3759e5241044d836f82bc"
+                "reference": "a0772d118275c9edfba90010fb750e0ad45777f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/da3b668c53ce2d7c90a3759e5241044d836f82bc",
-                "reference": "da3b668c53ce2d7c90a3759e5241044d836f82bc",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/a0772d118275c9edfba90010fb750e0ad45777f5",
+                "reference": "a0772d118275c9edfba90010fb750e0ad45777f5",
                 "shasum": ""
             },
             "require": {
@@ -4023,7 +4022,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2015-06-09 21:23:55"
+            "time": "2015-06-11 22:55:12"
         },
         {
             "name": "yiisoft/yii2-authclient",
@@ -4129,16 +4128,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-composer.git",
-                "reference": "c7f59a6db76ae12aef4ddd244b0d02ab76b8a0b8"
+                "reference": "6b2a2b3bb83d4b3dd791f76e64c48973ce01bac6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-composer/zipball/c7f59a6db76ae12aef4ddd244b0d02ab76b8a0b8",
-                "reference": "c7f59a6db76ae12aef4ddd244b0d02ab76b8a0b8",
+                "url": "https://api.github.com/repos/yiisoft/yii2-composer/zipball/6b2a2b3bb83d4b3dd791f76e64c48973ce01bac6",
+                "reference": "6b2a2b3bb83d4b3dd791f76e64c48973ce01bac6",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "1.0.0"
+                "composer-plugin-api": "^1.0"
             },
             "type": "composer-plugin",
             "extra": {
@@ -4168,7 +4167,7 @@
                 "extension installer",
                 "yii2"
             ],
-            "time": "2015-04-29 09:00:02"
+            "time": "2015-06-11 19:55:58"
         },
         {
             "name": "yiisoft/yii2-imagine",
@@ -4478,12 +4477,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-debug.git",
-                "reference": "09454f3cd0614f1e6ddf23f92ef227d87a33853e"
+                "reference": "b9bbead8f827a0eae1dad69e52ad322450a9381b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/09454f3cd0614f1e6ddf23f92ef227d87a33853e",
-                "reference": "09454f3cd0614f1e6ddf23f92ef227d87a33853e",
+                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/b9bbead8f827a0eae1dad69e52ad322450a9381b",
+                "reference": "b9bbead8f827a0eae1dad69e52ad322450a9381b",
                 "shasum": ""
             },
             "require": {
@@ -4517,7 +4516,7 @@
                 "debugger",
                 "yii2"
             ],
-            "time": "2015-06-08 08:58:10"
+            "time": "2015-06-11 09:39:28"
         },
         {
             "name": "yiisoft/yii2-gii",
