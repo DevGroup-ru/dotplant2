@@ -6,9 +6,10 @@
 
 use app\assets\AppAsset;
 use app\extensions\DefaultTheme\assets\DefaultThemeAsset;
-use \app\extensions\DefaultTheme\models\ThemeParts;
-use kartik\helpers\Html;
-use \app\modules\seo\helpers\HtmlTagHelper;
+use app\extensions\DefaultTheme\models\ThemeParts;
+use app\modules\seo\helpers\HtmlTagHelper;
+use yii\helpers\Html;
+
 
 AppAsset::register($this);
 DefaultThemeAsset::register($this);
