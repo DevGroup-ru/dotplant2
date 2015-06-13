@@ -2,28 +2,100 @@
 
 /**
  * @var $content string
- * @var $this \yii\web\View
+ * @var $this \app\components\WebView
  */
 
+use app\extensions\DefaultTheme\assets\DefaultThemeAsset;
+use app\extensions\DefaultTheme\models\ThemeParts;
 use app\web\{%theme-name%}\module\assets\ThemeAsset;
-use kartik\helpers\Html;
+use app\modules\seo\helpers\HtmlTagHelper;
+use yii\helpers\Html;
 
+DefaultThemeAsset::register($this);
 ThemeAsset::register($this);
-
+HtmlTagHelper::addTagOptions('html', 'lang', Yii::$app->language);
 ?>
 <?php $this->beginPage(); ?>
 <!DOCTYPE html>
-<html lang="en">
+<html<?= HtmlTagHelper::registerTagOptions('html')?>>
 <head>
 	<meta charset="<?= Yii::$app->charset ?>">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<base href="http://<?=Yii::$app->getModule('core')->serverName?>">
 	<title><?= Html::encode($this->title) ?></title>
 	<?= Html::csrfMetaTags() ?>
     <?php $this->head(); ?>
 </head>
-<body>
+<body class="perila" itemscope itemtype="http://schema.org/WebPage">
 <?php $this->beginBody(); ?>
-<?= $content ?>
+
+<?= ThemeParts::renderPart('pre-header') ?>
+<?= ThemeParts::renderPart('header') ?>
+<?= ThemeParts::renderPart('post-header') ?>
+<?php
+
+use app\widgets\Alert;
+use yii\widgets\Breadcrumbs;
+
+
+$leftSidebar = ThemeParts::renderPart('left-sidebar');
+$rightSidebar = ThemeParts::renderPart('right-sidebar');
+$contentLength = 12;
+$leftSidebarLength = 3;
+$rightSidebarLength = 3;
+
+if (empty($leftSidebar) === false) {
+	$contentLength -= $leftSidebarLength;
+}
+if (empty($rightSidebar) === false) {
+	$contentLength -= $rightSidebarLength;
+}
+
+?>
+
+<div class="content-block">
+	<?= ThemeParts::renderPart('before-content') ?>
+	<div class="container">
+		<div class="row">
+			<?php
+
+			if (!empty($leftSidebar)) {
+				echo '<div class="left-sidebar col-md-'.$leftSidebarLength.' col-xs-12">' . $leftSidebar . '</div>';
+			}
+
+			?>
+			<div class="content-part col-md-<?=$contentLength?> col-xs-12">
+				<?=
+				Breadcrumbs::widget(
+					[
+						'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+						'options' => [
+							'itemprop' => "breadcrumb",
+							'class' => 'breadcrumb',
+						]
+					]
+				)
+				?>
+				<?= Alert::widget() ?>
+				<?= $content ?>
+			</div> <!-- content-part end -->
+
+			<?php
+
+			if (!empty($rightSidebar)) {
+				echo '<div class="right-sidebar col-md-'.$rightSidebarLength.' col-xs-12">' . $rightSidebar . '</div>';
+			}
+			?>
+		</div> <!-- /row -->
+	</div> <!-- /container -->
+</div>
+
+
+
+<?= ThemeParts::renderPart('pre-footer') ?>
+<?= ThemeParts::renderPart('footer') ?>
+<?= ThemeParts::renderPart('post-footer') ?>
 <?php $this->endBody(); ?>
 </body>
 </html>
-<?php $this->endPage(); ?>

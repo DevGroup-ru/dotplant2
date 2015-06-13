@@ -115,6 +115,13 @@ class ThemeParts extends \yii\db\ActiveRecord
         return static::$allParts;
     }
 
+    /**
+     * Renders specified theme part with all it's widget corresponding current theme variation
+     * @param string $key Theme part key(ie. header or pre-footer)
+     * @param array $params
+     * @return string
+     * @throws InvalidConfigException
+     */
     public static function renderPart($key, $params=[])
     {
         $parts = static::getAllParts();
