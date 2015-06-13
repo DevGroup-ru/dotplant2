@@ -82,12 +82,19 @@ class NavigationWidget extends Widget
                 );
             }
         }
+        $items = ArrayHelper::merge((array) $this->prependItems, $items, (array) $this->appendItems);
+        $currentUri = Yii::$app->request->url;
+        array_walk($items, function(&$item) use ($currentUri) {
+            if ($item['url'] === $currentUri) {
+                $item['active'] = true;
+            }
+        });
 
         $result = $this->render(
             $this->viewFile,
             [
                 'widget' => $this->widget,
-                'items' => ArrayHelper::merge((array) $this->prependItems, $items, (array) $this->appendItems),
+                'items' => $items,
                 'options' => $this->options,
                 'linkTemplate' => $this->linkTemplate,
                 'submenuTemplate' => $this->submenuTemplate,
