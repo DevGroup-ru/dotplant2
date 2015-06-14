@@ -97,6 +97,9 @@ class PageController extends \app\backend\components\BackendController
         $model->published = 1;
         if ($id !== null) {
             $model = Page::findOne($id);
+            if ($model===null) {
+                throw new NotFoundHttpException;
+            }
         }
         $model->parent_id = $parent_id;
 
