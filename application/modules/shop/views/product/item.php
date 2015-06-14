@@ -2,7 +2,7 @@
 
 /**
  * @var $product \app\modules\shop\models\Product
- * @var $this \yii\web\View
+ * @var $this \app\components\WebView
  * @var $url string
  */
 

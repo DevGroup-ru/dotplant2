@@ -208,7 +208,7 @@ return [
     'Confirm Password' => 'Подтвердите пароль',
     'Content' => 'Контент',
     'Content Block Name' => 'Название контентного блока',
-    'Content Blocks' => 'Контентный блок',
+    'Content Blocks' => 'Контентные блоки',
     'Content Field' => 'Поле контент',
     'Content block' => 'Блок контента',
     'Content management' => 'Управление контентом',

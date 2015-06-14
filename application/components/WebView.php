@@ -33,6 +33,7 @@ class WebView extends View
             $this->endCache();
             return false;
         } else {
+            $cache->startGathering();
             return true;
         }
     }

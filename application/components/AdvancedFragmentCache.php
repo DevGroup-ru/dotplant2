@@ -13,6 +13,8 @@ class AdvancedFragmentCache extends FragmentCache
 
     private $cachedData = null;
 
+    private $startedGathering = false;
+
     public function init()
     {
         parent::init();
@@ -22,12 +24,20 @@ class AdvancedFragmentCache extends FragmentCache
         if (is_string($this->viewElementsGathener)) {
             $this->viewElementsGathener = Yii::$app->get($this->viewElementsGathener);
         }
+
+    }
+
+    public function startGathering()
+    {
+        $this->startedGathering = true;
         $this->viewElementsGathener->startGathering($this->getId(), $this->dependency);
     }
 
     public function run()
     {
-        $this->viewElementsGathener->endGathering();
+        if ($this->startedGathering === true) {
+            $this->viewElementsGathener->endGathering();
+        }
         parent::run();
 
     }
