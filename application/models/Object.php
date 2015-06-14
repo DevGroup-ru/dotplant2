@@ -121,7 +121,7 @@ class Object extends ActiveRecord
 
     /**
      * @param string $class_name
-     * @return null|Object
+     * @return null|\app\models\Object
      */
     public static function getForClass($class_name)
     {

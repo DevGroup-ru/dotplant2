@@ -174,7 +174,7 @@ $(".add-widget").change(function(){
         form.append(csrf);
         form.append(addWidgetHidden);
         form.append(partIdHidden);
-        $('document').append(form);
+        $('body').append(form);
         form.submit();
     }
 });
