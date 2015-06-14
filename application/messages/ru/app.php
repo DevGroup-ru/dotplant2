@@ -169,7 +169,7 @@ return [
     'Checking Class' => 'Класс проверки',
     'Checkout' => 'Оформить заказ',
     'Children' => 'Дочерние элементы',
-    'Choose' => 'Выберите',
+    'Choose' => 'Выбрать',
     'Choose item' => 'Выберите элемент',
     'City ID' => 'Город',
     'Class' => 'Класс',

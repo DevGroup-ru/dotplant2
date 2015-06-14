@@ -41,7 +41,7 @@ class ViewController extends Controller
                     'id' => $id,
                     'text' => $file->getBasename(),
                     'a_attr' => [
-                        'data-file' => str_replace($basePath, '', $file->getRealPath()),
+                        'data-file' => '@webroot/theme/views'.str_replace($basePath, '', $file->getRealPath()),
                         'data-toggle' => 'tooltip',
                         'title' => $file->getBasename()
                     ],
