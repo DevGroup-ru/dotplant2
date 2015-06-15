@@ -3,11 +3,8 @@
 namespace app\modules\image\controllers;
 
 use app\backgroundtasks\helpers\BackgroundTasks;
-use app\models\Config;
-use app\modules\image\models\Image;
 use Yii;
 use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
 
 class BackendThumbnailController extends \app\backend\components\BackendController
 {
@@ -31,27 +28,19 @@ class BackendThumbnailController extends \app\backend\components\BackendControll
         return $this->render('index', []);
     }
 
-    public function actionRecreate($param)
+    public function actionRecreate()
     {
-        $images = Image::find()->select('id');
-        if ($param === 'config') {
-            $ids = Config::getValue('images.IdsToRecreate', '');
-            $images = $images->where(['id' => explode(',', $ids)]);
-        }
-        $param = ArrayHelper::getColumn($images->asArray()->all(), 'id');
-        if (empty($param) === false) {
-            BackgroundTasks::addTask(
-                [
-                    'action' => 'images/recreate-thumbnails',
-                    'name' => 'Recreate images',
-                    'description' => 'Creating YML file',
-                    'params' => implode(',', $param),
-                    'init_event' => 'yml',
-                ],
-                ['create_notification' => false]
-            );
-            Yii::$app->session->setFlash('info', Yii::t('app', 'Background task created'));
-        }
+        BackgroundTasks::addTask(
+            [
+                'action' => 'images/recreate-thumbnails',
+                'name' => 'Recreate images',
+                'description' => 'Creating YML file',
+                'params' => null,
+                'init_event' => 'yml',
+            ],
+            ['create_notification' => false]
+        );
+        Yii::$app->session->setFlash('info', Yii::t('app', 'Background task created'));
         $this->redirect('index');
     }
 }
