@@ -129,7 +129,7 @@ $(function() {
         var $hidden = $('<input type="hidden">');
         $hidden.attr('name', 'AddPropetryGroup[' + data.form_name + ']').val(data.id);
         $form.append($hidden);
-        $form.find(":submit:first").mouseup().click();
+        $form.find(".btn-primary:submit:first").mouseup().click();
 
         return false;
     });
@@ -140,7 +140,7 @@ $(function() {
         var $hidden = $('<input type="hidden">');
         $hidden.attr('name', 'RemovePropetryGroup[' + data.form_name + ']').val(data.id);
         $form.append($hidden);
-        $form.find(":submit:first").mouseup().click();
+        $form.find(".btn-primary:submit:first").mouseup().click();
     });
 });
 JS;

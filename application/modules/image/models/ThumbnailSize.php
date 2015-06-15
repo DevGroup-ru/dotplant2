@@ -96,6 +96,7 @@ class ThumbnailSize extends ActiveRecord
         if ($size === null) {
             $size = new ThumbnailSize;
             $size->setAttributes(['width' => $sizes[0], 'height' => $sizes[1]]);
+            $size->resize_mode = ManipulatorInterface::THUMBNAIL_INSET;
             $size->save();
         }
         return $size;
