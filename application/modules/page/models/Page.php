@@ -4,6 +4,7 @@ namespace app\modules\page\models;
 
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
+use app\modules\image\models\Image;
 use app\properties\HasProperties;
 use app\traits\GetImages;
 use Yii;
@@ -32,6 +33,7 @@ use app\models\Config;
  * @property string $date_modified
  * @property string $show_type
  * @property string $name
+ * @property Image $images
  */
 class Page extends ActiveRecord
 {
