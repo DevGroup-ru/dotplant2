@@ -65,15 +65,18 @@ class FilterSets extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @param $categoryId
+     * @return FilterSets[]
+     */
     public static function getForCategoryId($categoryId)
     {
         Yii::beginProfile('FilterSets.GetForCategory '.$categoryId);
         $category = Category::findById($categoryId);
         if ($category === null) {
-            return false;
+            return [];
         }
         $categoryIds = $category->getParentIds();
-
 
         $filter_sets = FilterSets::find()
             ->where(['in', 'category_id', $categoryIds])

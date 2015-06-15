@@ -73,6 +73,15 @@ show-proppertiews-widget.php view wrap container attribute changed from id to cl
 
 `\app\widgets\ProductCompareListWidget` was replaced by `\app\modules\shop\widgets\ProductCompare` and has several changes in parameters
 
+`\app\widgets\CategoriesWidget` was replaced by `\app\modules\shop\widgets\CategoriesList` and has some changes in parameters:
+* `viewFile` = view file
+* `rootCategory` = id of category wich root for others
+* `depth` = how deep menu is (null = all levels)
+* `includeRoot` = include `rootCategory` or not
+* `fetchModels` = put category models into view or not (default is false)
+* `excludedCategories` = array of categories id`s for exclude
+
+
 ### Pages
 Pages split to page module.
 All changes in DB contained in m150428_120959_page_move migration

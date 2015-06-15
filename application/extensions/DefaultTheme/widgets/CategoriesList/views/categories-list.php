@@ -23,9 +23,8 @@ if ($type === 'plain') {
         'root_category_id' => $rootCategoryId,
     ]);
 } elseif ($type === 'tree') {
-    echo \app\widgets\CategoriesWidget::widget([
-        'omit_root' => true,
-        'category_group_id' => $categoryGroupId,
+    echo \app\modules\shop\widgets\CategoriesList::widget([
+        'rootCategory' => $rootCategoryId,
     ]);
 }
 

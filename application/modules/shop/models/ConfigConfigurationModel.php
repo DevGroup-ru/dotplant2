@@ -250,6 +250,8 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     {
         return [
             '@shop' => dirname(__FILE__) . '/../',
+            '@category' => '/shop/product/list',
+            '@product' => '/shop/product/show',
         ];
     }
 }
