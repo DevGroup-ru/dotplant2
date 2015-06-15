@@ -2,6 +2,11 @@
 
 ## alpha => 2.0.0-beta
 
+### Database migrations
+
+First you need to run migrations from a-to-b
+`./yii migrate --migrationPath="@app/extensions/migrations/alpha-beta/"`
+
 ### Theme
 
 You should change your theme pathMap routes. It's look like a next example.
@@ -105,14 +110,23 @@ Save content of robots.txt in DB (/seo/manage/robots).
 Images subsystem splitted to module `Images`. To migrate do this steps:
 
 1. Update dependencies via composer
-2. Apply migration m150413_094340_thumbnail.php
-3. Widget ImgSearch.php changed it's name, namespace and parameters:
+2. insert into theme console config
+```
+        'components' => [
+            'fs' => [
+                'class' => '\creocoder\flysystem\LocalFilesystem',
+                'path' => '@webroot/files',
+            ],
+        ],
+```
+3. Apply migration m150413_094340_thumbnail.php
+4. Widget ImgSearch.php changed it's name, namespace and parameters:
     * name from `ImgSearch.php` to `ObjectImageWidget.php`
     * namespace from `app\widgets` to `app\modules\image\widgets`
     * parameters `model` instead of `objectId` and `objectModelId`; added bool `useWatermark`
-4. Model `Image` changed namespace from `app\models` to `app\modules\image\models`
-5. Removed columns `image_src` and `thumbnail_src` from table `image`
-6. Image, thumbnail, watermark and thumbnail width watermark src can be received by controller `app\modules\image\controllers\ImageController`
+5. Model `Image` changed namespace from `app\models` to `app\modules\image\models`
+6. Removed columns `image_src` and `thumbnail_src` from table `image`
+7. Image, thumbnail, watermark and thumbnail width watermark src can be received by controller `app\modules\image\controllers\ImageController`
 
 ### Templates and views
 
