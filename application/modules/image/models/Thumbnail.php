@@ -4,15 +4,15 @@ namespace app\modules\image\models;
 
 use app\behaviors\ImageExist;
 use Imagine\Image\Box;
+use Imagine\Image\ImageInterface;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\imagine\Image as Imagine;
 use yii\web\BadRequestHttpException;
 
-
 /**
- * This is the model class for table "thumbnail".
+ * This is the model class for table "{{%thumbnail}}".
  * @property integer $id
  * @property integer $img_id
  * @property string $thumb_path
@@ -95,8 +95,10 @@ class Thumbnail extends \yii\db\ActiveRecord
     public static function createThumbnail($image, $size)
     {
         try {
-            $file = Imagine::getImagine()->read(Yii::$app->getModule('image')->fsComponent->readStream($image->filename));
-            $thumb = $file->thumbnail(new Box($size->width, $size->height));
+            $file = Imagine::getImagine()
+                ->read(Yii::$app->getModule('image')->fsComponent->readStream($image->filename));
+            /** @var ImageInterface $thumb */
+            $thumb = $file->thumbnail(new Box($size->width, $size->height), $size->resize_mode);
             $path = Yii::$app->getModule('image')->thumbnailsDirectory;
             $listContents = Yii::$app->getModule('image')->fsComponent->listContents();
             $filesInfo = ArrayHelper::index($listContents, 'basename');
@@ -113,6 +115,7 @@ class Thumbnail extends \yii\db\ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
         if (Yii::$app->getModule('image')->useWatermark == 1) {
+            /** @var ThumbnailSize $size */
             $size = ThumbnailSize::findOne(ArrayHelper::getValue($this, 'size_id', 0));
             if ($size !== null) {
                 $watermark = Watermark::findOne($size->default_watermark_id);

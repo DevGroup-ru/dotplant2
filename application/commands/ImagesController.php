@@ -11,12 +11,19 @@ use yii\console\Controller;
 
 class ImagesController extends Controller
 {
-    public function actionRecreateThumbnails($idList)
+    public function actionRecreateThumbnails($idList = null)
     {
-        $ids = explode(',', $idList);
+        /** @var ThumbnailSize[] $sizes */
         $sizes = ThumbnailSize::find()->all();
-        foreach ($ids as $imageId) {
-            $image = Image::findOne($imageId);
+        /** @var Image[] $images */
+        if (is_null($idList)) {
+            $images = Image::find()->all();
+        } else {
+            $ids = explode(',', $idList);
+            $images = Image::findAll(['id' => $ids]);
+        }
+        foreach ($images as $image) {
+            echo "Image: {$image->id}\n";
             if ($image !== null) {
                 foreach ($sizes as $size) {
                     Thumbnail::createThumbnail($image, $size);
@@ -27,6 +34,7 @@ class ImagesController extends Controller
 
     public function actionCheckBroken()
     {
+        /** @var Image[] $images */
         $images = Image::find()->all();
         ErrorImage::deleteAll();
         foreach ($images as $image) {
