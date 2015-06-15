@@ -11,6 +11,6 @@
     $configurationModel,
     'rootNavigationId'
 ) ?>
-
-
+<?= $form->field($configurationModel, 'submenuTemplate') ?>
+<?= $form->field($configurationModel, 'options')->widget(\devgroup\jsoneditor\Jsoneditor::className()) ?>
 

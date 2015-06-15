@@ -10,10 +10,13 @@ namespace app\extensions\DefaultTheme\widgets\Navigation;
 
 use Yii;
 use app\extensions\DefaultTheme\components\BaseWidget;
+use yii\helpers\Json;
 
 class Widget extends BaseWidget
 {
     public $rootNavigationId = 1;
+    public $options = '{}';
+    public $submenuTemplate = "\n<ul>\n{items}\n</ul>\n";
     /**
      * Actual run function for all widget classes extending BaseWidget
      *
@@ -25,6 +28,8 @@ class Widget extends BaseWidget
             'navigation',
             [
                 'rootNavigationId' => $this->rootNavigationId,
+                'options' => Json::decode($this->options),
+                'submenuTemplate' => $this->submenuTemplate,
             ]
         );
     }

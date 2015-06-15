@@ -11,6 +11,8 @@ use kartik\icons\Icon;
 /** @var string $header  */
 /** @var boolean $displayHeader */
 /** @var boolean $isInSidebar */
+/** @var string $submenuTemplate */
+/** @var array $options */
 
 $sidebarClass = $isInSidebar ? 'sidebar-widget' : '';
 echo '<div class="navigation-list ' . $sidebarClass . '">';
@@ -25,6 +27,8 @@ if ($displayHeader === true) {
 
 echo \app\widgets\navigation\NavigationWidget::widget([
     'rootId' => $rootNavigationId,
+    'options' => $options,
+    'submenuTemplate' => $submenuTemplate,
 ]);
 
 echo '</div>';

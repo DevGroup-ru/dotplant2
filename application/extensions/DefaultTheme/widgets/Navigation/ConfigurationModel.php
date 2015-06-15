@@ -7,7 +7,8 @@ use app\extensions\DefaultTheme\models\WidgetConfigurationModel;
 class ConfigurationModel extends WidgetConfigurationModel
 {
     public $rootNavigationId = 1;
-
+    public $options = '{}';
+    public $submenuTemplate = "\n<ul>\n{items}\n</ul>\n";
 
     /**
      * @inheritdoc
@@ -20,6 +21,13 @@ class ConfigurationModel extends WidgetConfigurationModel
                     'rootNavigationId',
                 ],
                 'integer',
+            ],
+            [
+                [
+                    'options',
+                    'submenuTemplate',
+                ],
+                'string',
             ],
             [
                 [
