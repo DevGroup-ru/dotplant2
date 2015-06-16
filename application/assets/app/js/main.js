@@ -57,7 +57,7 @@ var DotPlant = {
                 location.reload(true);
                 return false;
             },
-            'url' : '/user-preferences/set'
+            'url' : '/shop/user-preferences/set'
         });
         return false;
     },

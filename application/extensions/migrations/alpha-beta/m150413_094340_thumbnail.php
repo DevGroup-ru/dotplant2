@@ -67,17 +67,20 @@ class m150413_094340_thumbnail extends Migration
         $query->select('*')->from('image');
         $images = $query->all();
         foreach ($images as $image) {
-            if (file_exists(Yii::getAlias("@webroot{$image['image_src']}")) === true) {
-                $stream = fopen(Yii::getAlias("@webroot{$image['image_src']}"), 'r+');
-                Yii::$app->fs->putStream($image['filename'], $stream);
-            } else {
-                $this->delete(Image::tableName(), ['id' => $image['id']]);
+            try {
+                if (file_exists(Yii::getAlias("@webroot{$image['image_src']}")) === true) {
+                    $stream = fopen(Yii::getAlias("@webroot{$image['image_src']}"), 'r+');
+                    Yii::$app->getModule('image')->fsComponent->putStream($image['filename'], $stream);
+                } else {
+                    $this->delete(Image::tableName(), ['id' => $image['id']]);
+                }
+            } catch (\Exception $e) {
+                echo sprintf('[%s] %s || %s'. PHP_EOL, $e->getMessage(), $image['image_src'], $image['filename']);
             }
         }
 
         $this->dropColumn(Image::tableName(), 'thumbnail_src');
         $this->dropColumn(Image::tableName(), 'image_src');
-
 
         $this->insert(
             BackendMenu::tableName(),
