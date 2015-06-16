@@ -48,27 +48,55 @@ class ContentBlockHelper
                 $cacheChunkKey = $chunkData['key'] . $content_key;
                 $replacement = Yii::$app->cache->get($cacheChunkKey);
                 if ($replacement === false) {
-                    $chunk = self::fetchChunkByKey($chunkData['key']);
+
+
                     switch ($chunkData['token']) {
                         case '$':
+                            $chunk = self::fetchChunkByKey($chunkData['key']);
                             $replacement = static::compileChunk($chunk, $chunkData);
+                            if (null !== $chunk) {
+                                Yii::$app->cache->set(
+                                    $cacheChunkKey,
+                                    $replacement,
+                                    84600,
+                                    $dependency
+                                );
+                            }
+                            break;
+                        case '%':
+                            $replacement = static::replaceForms($chunkData);
                             break;
                         default:
                             $replacement = '';
                     }
-                    if (null !== $chunk) {
-                        Yii::$app->cache->set(
-                            $cacheChunkKey,
-                            $replacement,
-                            84600,
-                            $dependency
-                        );
-                    }
+
                 }
                 $content = str_replace($matches[0][$k], $replacement, $content);
             }
         }
         return $content;
+    }
+
+    public static function replaceForms($chunkData)
+    {
+        $regexp = '/(?P<formId>\d+)(#(?P<id>[\w\d\-_]+))?(;(?P<isModal>isModal))?/Usi';
+        return preg_replace_callback(
+            $regexp,
+            function($matches) {
+                if (isset($matches['formId'])) {
+                    $params = ['formId' => intval($matches['formId'])];
+                    if (isset($matches['id'])) {
+                        $params['id'] = $matches['id'];
+                    }
+                    if (isset($matches['isModal'])) {
+                        $params['isModal'] = true;
+                    }
+                    return app\widgets\form\Form::widget($params);
+                }
+                return '';
+            },
+            $chunkData['key']
+        );
     }
 
     /**
