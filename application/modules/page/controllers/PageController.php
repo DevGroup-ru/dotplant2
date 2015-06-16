@@ -30,6 +30,12 @@ class PageController extends Controller
         ];
     }
 
+    /**
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
+     * @throws \yii\web\ServerErrorHttpException
+     */
     public function actionShow($id)
     {
         if (null === $model = Page::findById($id)) {
@@ -45,7 +51,6 @@ class PageController extends Controller
                 'meta_description'
             );
         }
-
 
         $this->view->title = $model->title;
         if (!empty($model->h1)) {
@@ -63,6 +68,12 @@ class PageController extends Controller
         );
     }
 
+    /**
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
+     * @throws \yii\web\ServerErrorHttpException
+     */
     public function actionList($id)
     {
         if (null === $model = Page::findById($id)) {
@@ -119,6 +130,10 @@ class PageController extends Controller
         );
     }
 
+    /**
+     * @return array
+     * @throws ForbiddenHttpException
+     */
     public function actionSearch()
     {
         /**

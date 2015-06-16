@@ -9,7 +9,7 @@ use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
-use yii\widgets\Menu;
+use app\components\Menu;
 
 class NavigationWidget extends Widget
 {

@@ -51,7 +51,7 @@ $listView = UserPreferences::preferences()->getAttributes()['listViewType'];
         ])) {
             $url = Url::to(
                 [
-                    '/shop/product/show',
+                    '@product',
                     'model' => $product,
                     'properties' => $values_by_property_id,
                     'category_group_id' => $category_group_id,

@@ -12,6 +12,8 @@ use app\modules\image\widgets\RemoveAction;
 use app\modules\image\widgets\SaveInfoAction;
 use app\modules\image\widgets\UploadAction;
 use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
+use devgroup\JsTreeWidget\TreeNodeMoveAction;
+use devgroup\JsTreeWidget\TreeNodesReorderAction;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
@@ -61,7 +63,15 @@ class PageController extends \app\backend\components\BackendController
             'property-handler' => [
                 'class' => PropertyHandler::className(),
                 'modelName' => Page::className()
-            ]
+            ],
+            'move' => [
+                'class' => TreeNodeMoveAction::className(),
+                'className' => Page::className(),
+            ],
+            'reorder' => [
+                'class' => TreeNodesReorderAction::className(),
+                'className' => Page::className(),
+            ],
         ];
     }
 

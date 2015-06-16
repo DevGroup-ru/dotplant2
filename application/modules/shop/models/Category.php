@@ -44,6 +44,9 @@ class Category extends ActiveRecord
     const DELETE_MODE_SINGLE_CATEGORY = 1;
     const DELETE_MODE_ALL = 2;
     const DELETE_MODE_MAIN_CATEGORY = 3;
+    const CATEGORY_PARENT = 0;
+    const CATEGORY_ACTIVE = 1;
+    const CATEGORY_INACTIVE = 0;
 
     /**
      * Category identity map
@@ -212,18 +215,18 @@ class Category extends ActiveRecord
 
     /**
      * Returns model using indentity map and cache
-     * @param string $id
-     * @param int|null $is_active
+     * @param int $id
+     * @param int|null $isActive
      * @return Category|null
      */
-    public static function findById($id, $is_active = 1)
+    public static function findById($id, $isActive = 1)
     {
         if (!isset(static::$identity_map[$id])) {
             $cacheKey = static::tableName() . ":$id";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
                 $model = static::find()->where(['id' => $id])->with('images');
-                if (null !== $is_active) {
-                    $model->andWhere(['active' => $is_active]);
+                if (null !== $isActive) {
+                    $model->andWhere(['active' => $isActive]);
                 }
                 if (null !== $model = $model->one()) {
                     Yii::$app->cache->set(
@@ -391,14 +394,20 @@ class Category extends ActiveRecord
      * Использует identity_map
      * @return Category|null
      */
-    public static function findRootForCategoryGroup($category_group_id)
+    public static function findRootForCategoryGroup($id = null)
     {
-        $models = static::getByLevel($category_group_id, 0);
-
-        if (is_array($models)) {
-            return array_shift($models);
+        if (null === $id) {
+            return null;
         }
-        return null;
+
+        return static::find()
+            ->where([
+                'category_group_id' => $id,
+                'parent_id' => static::CATEGORY_PARENT,
+                'active' => static::CATEGORY_ACTIVE,
+            ])
+            ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])
+            ->one();
     }
 
     /**
@@ -556,12 +565,12 @@ class Category extends ActiveRecord
      * @param null|integer $depth
      * @return array
      */
-    public static function getMenuItems($parentId = 0, $depth = null)
+    public static function getMenuItems($parentId = 0, $depth = null, $fetchModels = false)
     {
         if ($depth === 0) {
             return [];
         }
-        $cacheKey = 'CategoryMenuItems:' . $parentId . ':' . $depth;
+        $cacheKey = 'CategoryMenuItems:' . $parentId . ':' . $depth . ':' . intval($fetchModels);
         $items = Yii::$app->cache->get($cacheKey);
         if ($items !== false) {
             return $items;
@@ -570,19 +579,24 @@ class Category extends ActiveRecord
         $categories = static::find()->select(['id', 'name', 'category_group_id'])->where(
             ['parent_id' => $parentId, 'active' => 1]
         )->orderBy('sort_order')->with('images')->all();
-        $cache_tags = [];
+        $cache_tags = [
+            ActiveRecordHelper::getCommonTag(static::className()),
+        ];
 
+        /** @var Category $category */
         foreach ($categories as $category) {
             $items[] = [
                 'label' => $category->name,
                 'url' => Url::to(
                     [
-                        '/shop/product/list',
+                        '@category',
                         'category_group_id' => $category->category_group_id,
                         'last_category_id' => $category->id,
                     ]
                 ),
-                'items' => static::getMenuItems($category->id, is_null($depth) ? null : $depth - 1),
+                'id' => $category->id,
+                'model' => $fetchModels ? $category : null,
+                'items' => static::getMenuItems($category->id, null === $depth ? null : $depth - 1),
             ];
             $cache_tags[] = ActiveRecordHelper::getObjectTag(static::className(), $category->id);
         }
@@ -600,6 +614,9 @@ class Category extends ActiveRecord
         return $items;
     }
 
+    /**
+     * @return FilterSets[]
+     */
     public function filterSets()
     {
         if ($this->filterSets === null) {

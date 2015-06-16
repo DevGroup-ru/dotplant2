@@ -143,6 +143,9 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public function aliases()
     {
-        return [];
+        return [
+            '@article' => '/page/page/show',
+            '@articles' => '/page/page/list',
+        ];
     }
 }
