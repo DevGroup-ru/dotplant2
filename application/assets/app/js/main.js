@@ -153,9 +153,9 @@ $(function() {
                 $widget = $(".btn-show-cart");
             }
             if ($widget.length > 0) {
-                $widget.find('.total-price').text(data['totalPrice']);
+                $widget.find('.total-price').html(data['totalPrice']);
 
-                $widget.find('.items-count').text(data['itemsCount']);
+                $widget.find('.items-count').html(data['itemsCount']);
 
 
                 var imgtofly = $this.hasClass('fly-out') ? $this : $($this.closest('.fly-out'));
