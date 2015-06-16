@@ -330,4 +330,9 @@ class Page extends ActiveRecord
         }
         return true;
     }
+
+    public function getChildren()
+    {
+        return $this->hasMany(Page::className(), ['parent_id' => 'id'])->orderBy(['sort_order'=>SORT_ASC]);
+    }
 }
