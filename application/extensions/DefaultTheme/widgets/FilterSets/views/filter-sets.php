@@ -58,7 +58,7 @@ if ($this->beginCache('FilterSets:'.$urlParams['last_category_id'], $cacheParams
             foreach ($selections as $selection) {
                 /** @var \app\models\PropertyStaticValues $selection */
                 $params = $urlParams;
-                $params['properties'][$property->id] = $selection['id'];
+                $params['properties'][$property->id] = [$selection['id']];
 
 
                 $url = Url::to($params);
