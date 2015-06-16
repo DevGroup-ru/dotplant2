@@ -3,6 +3,7 @@
 namespace app\extensions\DefaultTheme\components;
 
 use app\components\ViewElementsGathener;
+use app\extensions\DefaultTheme\models\ThemeActiveWidgets;
 use app\extensions\DefaultTheme\models\ThemeWidgets;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
@@ -23,6 +24,8 @@ abstract class BaseWidget extends Widget
 
     /** @var ThemeWidgets model */
     public $themeWidgetModel = null;
+    /** @var ThemeActiveWidgets $activeWidget */
+    public $activeWidget = null;
 
     /** @var array ThemePart model as array where we are rendering */
     public $partRow = null;
@@ -123,7 +126,7 @@ abstract class BaseWidget extends Widget
     {
         $guestVary = Yii::$app->user->isGuest ? '1' : '0';
         $sessionVary = $this->themeWidgetModel->cache_vary_by_session ? ':' . Yii::$app->session->id . ':' . $guestVary : '';
-        return "WidgetCache:".$this->themeWidgetModel->id.$sessionVary;
+        return "WidgetCache:".$this->themeWidgetModel->id.$sessionVary.':'.$this->activeWidget->id;
     }
 
     /**
