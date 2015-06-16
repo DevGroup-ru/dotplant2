@@ -5,6 +5,7 @@
 /** @var boolean $isInSidebar */
 /** @var boolean $display_date */
 /** @var string $date_format */
+/** @var integer $parent_id */
 /** @var string $header */
 use kartik\icons\Icon;
 use yii\helpers\Url;
@@ -22,24 +23,24 @@ if ($displayHeader === true) {
 }
 ?>
     <ul class="pages-list">
-        <?php foreach ($pages as $model): ?>
+        <?php foreach ($pages as $page): ?>
             <li>
                 <?php if ($display_date): ?>
                 <div class="page-date_added">
-                    <?= date($date_format, strtotime($model->date_added)); ?>
+                    <?= date($date_format, strtotime($page->date_added)); ?>
                 </div>
                 <?php endif; ?>
-                <a href="<?= Url::to(['/page/page/show', 'id'=>$model->id])?>" class="page-title">
-                    <?= \yii\helpers\Html::encode($model->name) ?>
+                <a href="<?= Url::to(['/page/page/show', 'id'=>$page->id])?>" class="page-title">
+                    <?= \yii\helpers\Html::encode($page->name) ?>
                 </a>
                 <div class="page-announce">
-                    <?= $model->announce ?>
+                    <?= $page->announce ?>
                 </div>
             </li>
         <?php endforeach; ?>
     </ul>
 <?php if (!empty($more_pages_label)) : ?>
-    <a href="<?= Url::to(['/page/page/list', 'id'=>$model->id]); ?>" class="read-more-link">
+    <a href="<?= Url::to(['/page/page/list', 'id'=>$parent_id]); ?>" class="read-more-link">
         <?= $more_pages_label ?>
     </a>
 <?php endif; ?>

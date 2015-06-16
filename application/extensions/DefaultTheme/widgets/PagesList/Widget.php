@@ -46,6 +46,7 @@ class Widget extends BaseWidget
             $this->view_file,
             [
                 'pages' => $pages,
+                'parent_id' => $this->parent_id,
                 'more_pages_label' => $this->more_pages_label,
                 'display_date' => $this->display_date,
                 'date_format' => $this->date_format,
