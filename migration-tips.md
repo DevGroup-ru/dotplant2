@@ -2,6 +2,16 @@
 
 ## alpha => 2.0.0-beta
 
+## step-by-step
+
+1. dump your database
+2. clone dotplant repo
+3. run `install.sh` from `application` folder
+4. open `<your_server_name>/installer.php` and walk thru steps
+5. restore database from dump
+6. run migrations from `application/yii migrate --migrationPath="@app/extensions/migrations/alpha-beta/"`
+7. run migrations from `application/yii migrate`
+
 ### Database migrations
 
 First you need to run migrations from a-to-b

@@ -192,6 +192,7 @@ class ThemeParts extends \yii\db\ActiveRecord
                 $config = ArrayHelper::merge($merged, $params);
                 $config['themeWidgetModel'] = $widgetModel;
                 $config['partRow'] = $model;
+                $config['activeWidget'] = $activeWidget;
 
                 $carry .= $widgetClassName::widget($config);
                 return $carry;

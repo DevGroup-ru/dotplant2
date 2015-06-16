@@ -65,7 +65,7 @@ $listView = UserPreferences::preferences()->getAttributes()['listViewType'];
     } ?>
     <?php
     if ($listView === 'blockView') {
-        echo '</div><hr class="soft">';
+        echo '</div>';
     }
     ?>
 </div>
