@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <?= \app\widgets\Alert::widget() ?>
-
+<div class="row">
 <div class="col-md-12">
     <div class="row">
         <?php \app\backend\widgets\BackendWidget::begin([
@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php \app\backend\widgets\BackendWidget::end(); ?>
     </div>
 </div>
-
+</div>
 <div class="data-index">
     <?=
     \yii\grid\GridView::widget([
