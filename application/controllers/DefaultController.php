@@ -3,6 +3,8 @@
 namespace app\controllers;
 
 use app\actions\SubmitFormAction;
+use app\backend\actions\PropertyHandler;
+use app\models\Form;
 use app\modules\core\components\MailComponent;
 use app\modules\shop\models\Product;
 use app\models\Search;
@@ -43,6 +45,10 @@ class DefaultController extends Controller
             'submit-form' => [
                 'class' => SubmitFormAction::className(),
             ],
+//            'property-handler' => [
+//                'class' => PropertyHandler::className(),
+//                'modelName' => Form::className()
+//            ]
         ];
     }
 
@@ -87,7 +93,7 @@ class DefaultController extends Controller
                 'id' => $product->id,
                 'name' => $product->name,
                 'url' => Url::toRoute([
-                    '/shop/product/show',
+                    '@product',
                     'model' => $product,
                     'category_group_id' => $product->getMainCategory()->category_group_id,
                 ]

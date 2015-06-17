@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @var $attribute_name string
  * @var $form \yii\widgets\ActiveForm
@@ -8,12 +7,12 @@
  * @var $multiple boolean
  * @var $property_id integer
  * @var $property_key string
- * @var $this \app\properties\handlers\Handler
+ * @var $this \yii\web\View
  * @var $values array
+ * @var $additional array
  */
 
 use app\models\Property;
-use kartik\helpers\Html;
 use yii\helpers\Url;
 
 ?>
