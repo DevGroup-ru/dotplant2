@@ -2,9 +2,10 @@
 
 namespace app\modules\image\controllers;
 
+use app\backgroundtasks\helpers\BackgroundTasks;
+use app\components\SearchModel;
 use app\modules\image\models\ErrorImage;
-use app\modules\image\models\Image;
-use app\models\Object;
+use Yii;
 use yii\filters\AccessControl;
 
 class BackendErrorImagesController extends \app\backend\components\BackendController
@@ -26,14 +27,40 @@ class BackendErrorImagesController extends \app\backend\components\BackendContro
 
     public function actionIndex()
     {
-        $objects = [];
-        $errors = ErrorImage::find()->all();
-        foreach ($errors as $error) {
-            $image = Image::findOne($error->img_id);
-            $object = Object::findOne($image->object_id);
-            $item = call_user_func([$object->object_class, 'findOne'], $image->object_model_id);
-            $objects[$object->name][] = $item;
-        }
-        return $this->render('index', ['objects' => $objects]);
+        $searchModel = new SearchModel(
+            [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ],
+                'model' => ErrorImage::className(),
+                'scenario' => 'default',
+            ]
+        );
+        $dataProvider = $searchModel->search(Yii::$app->request->get());
+        return $this->render(
+            'index',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+            ]
+        );
+    }
+
+    public function actionFind()
+    {
+        $result = BackgroundTasks::addTask(
+            [
+                'action' => 'images/check-broken',
+                'name' => 'Find broken images',
+                'description' => 'Find broken images',
+                'init_event' => 'checkBrokenImages',
+            ],
+            ['create_notification' => false]
+        );
+        Yii::$app->session->setFlash(
+            'info',
+            Yii::t('app', $result ? 'Background task created' : 'Cannot create a task')
+        );
+        $this->redirect('index');
     }
 }

@@ -11,7 +11,7 @@ use yii\console\Controller;
 
 class ImagesController extends Controller
 {
-    public function actionRecreateThumbnails($idList = null)
+    public function actionRecreateThumbnails($idList = null, $showProgress = false)
     {
         /** @var ThumbnailSize[] $sizes */
         $sizes = ThumbnailSize::find()->all();
@@ -23,7 +23,9 @@ class ImagesController extends Controller
             $images = Image::findAll(['id' => $ids]);
         }
         foreach ($images as $image) {
-            echo "Image: {$image->id}\n";
+            if ($showProgress) {
+                echo "Image: {$image->id}\n";
+            }
             if ($image !== null) {
                 foreach ($sizes as $size) {
                     Thumbnail::createThumbnail($image, $size);

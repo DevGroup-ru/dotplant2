@@ -30,17 +30,19 @@ class BackendThumbnailController extends \app\backend\components\BackendControll
 
     public function actionRecreate()
     {
-        BackgroundTasks::addTask(
+        $result = BackgroundTasks::addTask(
             [
                 'action' => 'images/recreate-thumbnails',
                 'name' => 'Recreate images',
                 'description' => 'Creating YML file',
-                'params' => null,
-                'init_event' => 'yml',
+                'init_event' => 'recreateThumbnails',
             ],
             ['create_notification' => false]
         );
-        Yii::$app->session->setFlash('info', Yii::t('app', 'Background task created'));
+        Yii::$app->session->setFlash(
+            'info',
+            Yii::t('app', $result ? 'Background task created' : 'Cannot create a task')
+        );
         $this->redirect('index');
     }
 }
