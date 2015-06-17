@@ -5,6 +5,7 @@ namespace app\modules\user\controllers;
 use app\backend\components\BackendController;
 use app\components\SearchModel;
 use app\modules\user\models\User;
+use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -79,6 +80,7 @@ class BackendUserController extends BackendController
     */
     public function actionUpdate($id = null)
     {
+        /** @var User $model */
         if (is_null($id)) {
             $model = new User(['scenario' => 'adminSignup']);
         } else {
@@ -86,61 +88,66 @@ class BackendUserController extends BackendController
             $model->scenario = 'admin';
             $model->updatePropertyGroupsInformation(true);
         }
-        $assignments = \Yii::$app->authManager->getAssignments($id);
-        if ($model->load(\Yii::$app->request->post()) && $model->validate()) {
-            $model->save();
-            $postAssignments = \Yii::$app->request->post('AuthAssignment', []);
-            $errors = [];
-            foreach ($assignments as $assignment) {
-                $key = array_search($assignment->roleName, $postAssignments);
-                if ($key === false) {
-                    \Yii::$app->authManager->revoke(new Item(['name' => $assignment->roleName]), $model->id);
-                } else {
-                    unset($postAssignments[$key]);
+        $assignments = Yii::$app->authManager->getAssignments($id);
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
+            if ($model->validate()) {
+                if (!empty($model->password)) {
+                    $model->setPassword($model->password);
                 }
-            }
-            foreach ($postAssignments as $assignment) {
-                try {
-                    \Yii::$app->authManager->assign(new Item(['name' => $assignment]), $model->id);
-                } catch (\Exception $e) {
-                    $errors[] = 'Cannot assign "'.$assignment.'" to user';
+                $model->save();
+                $postAssignments = Yii::$app->request->post('AuthAssignment', []);
+                $errors = [];
+                foreach ($assignments as $assignment) {
+                    $key = array_search($assignment->roleName, $postAssignments);
+                    if ($key === false) {
+                        Yii::$app->authManager->revoke(new Item(['name' => $assignment->roleName]), $model->id);
+                    } else {
+                        unset($postAssignments[$key]);
+                    }
                 }
-            }
-            if (count($errors) > 0) {
-                \Yii::$app->getSession()->setFlash('error', implode('<br />', $errors));
-            }
-            \Yii::$app->session->setFlash('success', \Yii::t('app', 'Record has been saved'));
-            $returnUrl = \Yii::$app->request->get('returnUrl', ['index']);
-            switch (\Yii::$app->request->post('action', 'save')) {
-                case 'next':
-                    return $this->redirect(
-                        [
-                            'update',
-                            'returnUrl' => $returnUrl,
-                        ]
-                    );
-                case 'back':
-                    return $this->redirect($returnUrl);
-                default:
-                    return $this->redirect(
-                        Url::toRoute(
+                foreach ($postAssignments as $assignment) {
+                    try {
+                        Yii::$app->authManager->assign(new Item(['name' => $assignment]), $model->id);
+                    } catch (\Exception $e) {
+                        $errors[] = 'Cannot assign "' . $assignment . '" to user';
+                    }
+                }
+                if (count($errors) > 0) {
+                    Yii::$app->getSession()->setFlash('error', implode('<br />', $errors));
+                }
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
+                $returnUrl = Yii::$app->request->get('returnUrl', ['index']);
+                switch (Yii::$app->request->post('action', 'save')) {
+                    case 'next':
+                        return $this->redirect(
                             [
                                 'update',
-                                'id' => $model->id,
-                                'returnUrl' => $returnUrl
+                                'returnUrl' => $returnUrl,
                             ]
-                        )
-                    );
+                        );
+                    case 'back':
+                        return $this->redirect($returnUrl);
+                    default:
+                        return $this->redirect(
+                            Url::toRoute(
+                                [
+                                    'update',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl
+                                ]
+                            )
+                        );
+                }
             }
-        } else {
-            return $this->render(
-                'update',
-                [
-                    'model' => $model,
-                    'assignments' => ArrayHelper::map($assignments, 'roleName', 'roleName'),
-                ]
-            );
         }
+        return $this->render(
+            'update',
+            [
+                'model' => $model,
+                'assignments' => ArrayHelper::map($assignments, 'roleName', 'roleName'),
+            ]
+        );
     }
 
     /**
@@ -160,7 +167,7 @@ class BackendUserController extends BackendController
 
     public function actionRemoveAll()
     {
-        $items = \Yii::$app->request->post('items', []);
+        $items = Yii::$app->request->post('items', []);
         if (!empty($items)) {
             $items = User::find()->where(['in', 'id', $items])->all();
             foreach ($items as $item) {
@@ -176,7 +183,7 @@ class BackendUserController extends BackendController
     public function actionAddAssignment($id, $userId)
     {
         try {
-            \Yii::$app->authManager->assign(new Item(['name' => $id]), $userId);
+            Yii::$app->authManager->assign(new Item(['name' => $id]), $userId);
             $result = [
             'status' => 1,
             'message' => 'Success',
@@ -192,7 +199,7 @@ class BackendUserController extends BackendController
 
     public function actionRemoveAssignment($id, $userId)
     {
-        if (\Yii::$app->authManager->revoke(new Item(['name' => $id]), $userId)) {
+        if (Yii::$app->authManager->revoke(new Item(['name' => $id]), $userId)) {
             $result = [
                 'status' => 1,
                 'message' => 'Success',
