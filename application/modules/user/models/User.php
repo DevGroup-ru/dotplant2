@@ -392,6 +392,9 @@ class User extends ActiveRecord implements IdentityInterface
         return $name ? $name : $this->username;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function beforeSave($insert)
     {
         if (!parent::beforeSave($insert)) {
@@ -403,4 +406,3 @@ class User extends ActiveRecord implements IdentityInterface
         return true;
     }
 }
-?>

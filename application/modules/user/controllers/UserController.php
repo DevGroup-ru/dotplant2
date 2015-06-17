@@ -369,8 +369,7 @@ class UserController extends Controller
                 $model->addError('password', Yii::t('app', 'Wrong password'));
             }
             if ($formIsValid && $passwordIsValid) {
-                $security = new \yii\base\Security;
-                $model->password_hash = $security->generatePasswordHash($model->newPassword);
+                $model->setPassword($model->newPassword);
                 if ($model->save(true, ['password_hash'])) {
                     Yii::$app->session->setFlash('success', Yii::t('app', 'Password has been changed'));
                     return $this->refresh();
