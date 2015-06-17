@@ -43,6 +43,14 @@ $form = ActiveForm::begin([
             )
             ?>
         </div>
+        <div class="form-group">
+            <?=
+            Html::a(
+                Yii::t('app', 'Your orders'),
+                ['/shop/orders/list']
+            )
+            ?>
+        </div>
 
     </div>
     <div class="col-md-6 col-sm-12">
