@@ -3,7 +3,11 @@
 namespace app\modules\shop\widgets;
 
 use app\modules\shop\models\Category;
+use app\modules\shop\models\Product;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\base\Widget;
+use yii\caching\TagDependency;
+use yii\db\Query;
 use yii\helpers\Url;
 
 class CategoriesList extends Widget
@@ -13,6 +17,7 @@ class CategoriesList extends Widget
     public $depth = null;
     public $includeRoot = false;
     public $fetchModels = false;
+    public $onlyNonEmpty = false;
     public $excludedCategories = [];
 
     /**
@@ -25,6 +30,9 @@ class CategoriesList extends Widget
         if (false === is_array($this->excludedCategories)) {
             $this->excludedCategories = [];
         }
+        array_walk($this->excludedCategories, function(&$value, $key) {
+            $value = intval($value);
+        });
         array_unique($this->excludedCategories);
     }
 
@@ -37,6 +45,19 @@ class CategoriesList extends Widget
 
         if (null === $this->rootCategory) {
             return '';
+        }
+
+        $cacheKey = $this->className() . ':' . implode('_', [
+            $this->rootCategory,
+            null === $this->depth ? 'null' : intval($this->depth),
+            intval($this->includeRoot),
+            intval($this->fetchModels),
+            intval($this->onlyNonEmpty),
+            implode(',', $this->excludedCategories)
+        ]);
+
+        if (false !== $cache = \Yii::$app->cache->get($cacheKey)) {
+            return $cache;
         }
 
         /** @var array $tree */
@@ -60,12 +81,44 @@ class CategoriesList extends Widget
             }
         }
 
+        if (true === $this->onlyNonEmpty) {
+            $_sq1 = (new Query())->select('main_category_id')
+                ->distinct()
+                ->from(Product::tableName());
+            $_sq2 = (new Query())->select('category_id')
+                ->distinct()
+                ->from('{{%product_category}}');
+            $_query = (new Query())->select('id')
+                ->from(Category::tableName())
+                ->andWhere(['not in', 'id', $_sq1])
+                ->andWhere(['not in', 'id', $_sq2])
+                ->all();
+
+            $this->excludedCategories = array_merge(
+                $this->excludedCategories,
+                array_column($_query, 'id')
+            );
+        }
         $tree = $this->filterTree($tree);
 
-        return $this->render($this->viewFile, [
+        $cache = $this->render($this->viewFile, [
             'tree' => $tree,
             'fetchModels' => $this->fetchModels,
         ]);
+
+        \Yii::$app->cache->set(
+            $cacheKey,
+            $cache,
+            0,
+            new TagDependency([
+                'tags' => [
+                    ActiveRecordHelper::getCommonTag(Category::className()),
+                    ActiveRecordHelper::getCommonTag(Product::className()),
+                ],
+            ])
+        );
+
+        return $cache;
     }
 
     /**
