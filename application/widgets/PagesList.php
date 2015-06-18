@@ -31,9 +31,12 @@ class PagesList extends Widget
         }
         $children = Page::find()
             ->where(['parent_id' => $this->model->id])
-            ->orderBy('date_added DESC')
-            ->limit($this->limit)
-            ->all();
+            ->orderBy('date_added DESC');
+        if (null !== $this->limit) {
+            $children->limit($this->limit);
+        }
+        $children = $children->all();
+
         return $this->render(
             $this->viewFile,
             [
