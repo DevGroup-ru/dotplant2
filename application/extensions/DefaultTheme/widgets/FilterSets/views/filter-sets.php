@@ -1,11 +1,15 @@
 <?php
 /** @var app\components\WebView $this */
 /** @var boolean $isInSidebar */
+/** @var boolean $hideEmpty */
 /** @var \app\modules\shop\models\FilterSets[] $filterSets */
 /** @var boolean $displayHeader */
 /** @var string $header  */
 /** @var string $id */
 
+use app\models\Object;
+use app\modules\shop\models\Product;
+use yii\db\Query;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -40,14 +44,52 @@ $cacheParams = [
         'tags' => \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(\app\modules\shop\models\FilterSets::className())
     ])
 ];
-if ($this->beginCache('FilterSets:'.$urlParams['last_category_id'], $cacheParams)) {
+if ($this->beginCache('FilterSets:'.json_encode($urlParams).':'.(int) $hideEmpty, $cacheParams)) {
     foreach ($filterSets as $set) {
         $property = $set->getProperty();
 
         if ($property->has_static_values) {
             $selections = \app\models\PropertyStaticValues::getValuesForPropertyId($property->id);
-            $selections = array_filter($selections, function ($val) {
-                return $val['dont_filter'] === '0';
+            $productObject = Object::getForClass(Product::className());
+            $selections = array_filter($selections, function ($val) use ($urlParams, $productObject, $hideEmpty) {
+                $productFlag = true;
+                if ($hideEmpty) {
+                    $countQuery = (new Query())
+                        ->from('{{%product_category}}')
+                        ->join(
+                            'LEFT JOIN',
+                            '{{%object_static_values}}',
+                            '{{%object_static_values}}.object_model_id={{%product_category}}.object_model_id'
+                        )
+                        ->where(
+                            [
+                                '{{%product_category}}.category_id' => $urlParams['last_category_id'],
+                                '{{%object_static_values}}.property_static_value_id' => $val['id'],
+                                '{{%object_static_values}}.object_id' => $productObject->id
+                            ]
+                        )
+                        ->limit(1);
+                    if (!empty($urlParams['properties'])) {
+                        $listProperty = [];
+                        foreach ($urlParams['properties'] as $selectProperties) {
+                            $listProperty += $selectProperties;
+                        }
+                        $countQuery->join(
+                            'LEFT JOIN',
+                            '{{%object_static_values}} as osv',
+                            'osv.object_model_id={{%product_category}}.object_model_id'
+                        )->andWhere(
+                            [
+                                'osv.object_id' =>  $productObject->id,
+                                'osv.property_static_value_id' => $listProperty
+                            ]
+                        );
+
+                    }
+
+                    $productFlag = $countQuery->count() > 0 ? true : false;
+                }
+                return ($val['dont_filter'] === '0' && $productFlag);
             });
             if (count($selections) === 0) {
                 continue;
