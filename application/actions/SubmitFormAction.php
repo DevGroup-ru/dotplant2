@@ -15,16 +15,26 @@ use kartik\widgets\ActiveForm;
 use Yii;
 use yii\base\Action;
 use yii\helpers\ArrayHelper;
+use yii\helpers\FileHelper;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
 
 class SubmitFormAction extends Action
 {
+    /**
+     * @param int $id
+     * @return int|mixed
+     * @throws NotFoundHttpException
+     */
     public function run($id)
     {
-        $post = \Yii::$app->request->post();
         /** @var Form|HasProperties $form */
-        $form = Form::findOne($id);
+        if (null === $form = Form::findById($id)) {
+            throw new NotFoundHttpException();
+        }
+
+        $post = \Yii::$app->request->post();
         $form->abstractModel->setAttrubutesValues($post);
         /** @var AbstractModel|SpamCheckerBehavior $model */
         $model = $form->getAbstractModel();
@@ -85,6 +95,7 @@ class SubmitFormAction extends Action
                 }
             }
         }
+
         $date = new \DateTime();
         /** @var Submission|HasProperties $submission */
         $submission = new Submission(
@@ -103,23 +114,15 @@ class SubmitFormAction extends Action
             return "0";
         }
         if (isset($post[$form->abstractModel->formName()])) {
-            foreach ($post[$form->abstractModel->formName()] as $key => &$value) {
-                if ($file = UploadedFile::getInstance($model, $key)) {
-                    $folder = Yii::$app->getModule('core')->fileUploadPath;
-                    $fullPath = "@webroot/{$folder}";
-                    if (!file_exists(\Yii::getAlias($fullPath))) {
-                        mkdir(\Yii::getAlias($fullPath), 0755, true);
-                    }
-                    $value = '/' . $folder . $file->baseName . '.' . $file->extension;
-                    $file->saveAs($folder . $file->baseName . '.' . $file->extension);
-                }
-            }
             $data = [
                 'AddPropetryGroup' => [
                     $submission->formName() => array_keys($form->getPropertyGroups()),
                 ],
                 $submission->abstractModel->formName() => $post[$form->abstractModel->formName()],
             ];
+            if (isset($_FILES[$form->abstractModel->formName()])) {
+                $_FILES[$submission->abstractModel->formName()] = $_FILES[$form->abstractModel->formName()];
+            }
             $submission->saveProperties($data);
         }
         if ($haveSpam === false) {

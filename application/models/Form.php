@@ -5,7 +5,9 @@ namespace app\models;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use Yii;
+use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 
 /**
  * This is the model class for table "form".
@@ -77,6 +79,10 @@ class Form extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @param array $params
+     * @return ActiveDataProvider
+     */
     public function search($params)
     {
         /* @var $query \yii\db\ActiveQuery */
@@ -107,33 +113,43 @@ class Form extends \yii\db\ActiveRecord
         return $dataProvider;
     }
 
+    /**
+     * @return Submission[]|array
+     */
     public function getSubmissions()
     {
         return $this->hasMany(Submission::className(), ['form_id' => 'id'])->inverseOf('form');
     }
 
-    public static function findById($id)
+    /**
+     * @param int $id
+     * @return Form|null
+     */
+    public static function findById($id = null)
     {
+        if (null === $id) {
+            return null;
+        }
+        $id = intval($id);
         if (!isset(static::$identity_map[$id])) {
-
             $cacheKey = "Form:$id";
-            static::$identity_map[$id] = Yii::$app->cache->get($cacheKey);
-            if (!is_object(static::$identity_map[$id])) {
-                static::$identity_map[$id] = Form::findOne($id);
-
-                if (is_object(static::$identity_map[$id])) {
-                    Yii::$app->cache->set(
-                        $cacheKey,
-                        static::$identity_map[$id],
-                        86400,
-                        new \yii\caching\TagDependency([
-                            'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id)
-                            ]
-                        ])
-                    );
+            if (false === $cache = Yii::$app->cache->get($cacheKey)) {
+                if (null === $cache = static::findOne(['id' => $id])) {
+                    return null;
                 }
+                Yii::$app->cache->set(
+                    $cacheKey,
+                    $cache,
+                    0,
+                    new TagDependency([
+                        'tags' => [
+                            ActiveRecordHelper::getObjectTag(static::className(), $id),
+                            ActiveRecordHelper::getCommonTag(static::className()),
+                        ]
+                    ])
+                );
             }
+            static::$identity_map[$id] = $cache;
         }
         return static::$identity_map[$id];
     }

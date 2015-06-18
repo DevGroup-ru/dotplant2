@@ -56,7 +56,18 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
             return !empty($v);
         });
 
-        $files = UploadedFile::getInstancesByName($formProperties.'['.$property->key.']');
+        $_fi_hack = [];
+        $files = array_filter(UploadedFile::getInstancesByName($formProperties.'['.$property->key.']'),
+            function ($v) use ($_fi_hack)
+            {
+                /** @var UploadedFile $v */
+                if (in_array($v->name, $_fi_hack)) {
+                    return false;
+                }
+                $_fi_hack[] = $v->name;
+                return true;
+            });
+        /** @var UploadedFile $file */
         foreach ($files as $file) {
             $fileName = $file->baseName.'.'.$file->extension;
             if ($file->saveAs($this->uploadDir.DIRECTORY_SEPARATOR.$fileName)) {
@@ -64,7 +75,7 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
             }
         }
 
-        return $values;
+        return array_unique($values);
     }
 
     /**
