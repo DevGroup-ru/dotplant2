@@ -79,7 +79,7 @@ class ContentBlockHelper
 
     public static function replaceForms($chunkData)
     {
-        $regexp = '/(?P<formId>\d+)(#(?P<id>[\w\d\-_]+))?(;(?P<isModal>isModal))?/Usi';
+        $regexp = '/(?P<formId>\d+)(#(?P<id>[\w\d\-_]+))?(;(?P<isModal>isModal))?/si';
         return preg_replace_callback(
             $regexp,
             function($matches) {
