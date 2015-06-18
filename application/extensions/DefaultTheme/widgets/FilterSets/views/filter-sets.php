@@ -49,48 +49,13 @@ if ($this->beginCache('FilterSets:'.json_encode($urlParams).':'.(int) $hideEmpty
         $property = $set->getProperty();
 
         if ($property->has_static_values) {
-            $selections = \app\models\PropertyStaticValues::getValuesForPropertyId($property->id);
-            $productObject = Object::getForClass(Product::className());
-            $selections = array_filter($selections, function ($val) use ($urlParams, $productObject, $hideEmpty) {
-                $productFlag = true;
-                if ($hideEmpty) {
-                    $countQuery = (new Query())
-                        ->from('{{%product_category}}')
-                        ->join(
-                            'LEFT JOIN',
-                            '{{%object_static_values}}',
-                            '{{%object_static_values}}.object_model_id={{%product_category}}.object_model_id'
-                        )
-                        ->where(
-                            [
-                                '{{%product_category}}.category_id' => $urlParams['last_category_id'],
-                                '{{%object_static_values}}.property_static_value_id' => $val['id'],
-                                '{{%object_static_values}}.object_id' => $productObject->id
-                            ]
-                        )
-                        ->limit(1);
-                    if (!empty($urlParams['properties'])) {
-                        $listProperty = [];
-                        foreach ($urlParams['properties'] as $selectProperties) {
-                            $listProperty += $selectProperties;
-                        }
-                        $countQuery->join(
-                            'LEFT JOIN',
-                            '{{%object_static_values}} as osv',
-                            'osv.object_model_id={{%product_category}}.object_model_id'
-                        )->andWhere(
-                            [
-                                'osv.object_id' =>  $productObject->id,
-                                'osv.property_static_value_id' => $listProperty
-                            ]
-                        );
+            $selections = \app\models\PropertyStaticValues::getValuesForFilter(
+                $property->id,
+                $urlParams['last_category_id'],
+                $urlParams['properties']
+            );
 
-                    }
 
-                    $productFlag = $countQuery->count() > 0 ? true : false;
-                }
-                return ($val['dont_filter'] === '0' && $productFlag);
-            });
             if (count($selections) === 0) {
                 continue;
             }
