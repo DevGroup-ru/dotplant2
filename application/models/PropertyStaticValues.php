@@ -212,7 +212,7 @@ class PropertyStaticValues extends ActiveRecord
             if ($properties) {
                 $listProperty = [];
                 foreach ($properties as $selectProperties) {
-                    $listProperty += $selectProperties;
+                    $listProperty += is_array($selectProperties) ? $selectProperties : [$selectProperties];
                 }
                 $query->leftJoin(
                     ObjectStaticValues::tableName() . ' as osv',
