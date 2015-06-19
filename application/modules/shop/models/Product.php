@@ -51,7 +51,7 @@ use yii\data\Pagination;
  * Relations:
  * @property Category $category
  */
-class Product extends ActiveRecord implements ImportableInterface, ExportableInterface
+class Product extends ActiveRecord implements ImportableInterface, ExportableInterface, \JsonSerializable
 {
     use GetImages;
     private static $identity_map = [];
@@ -1065,6 +1065,22 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
 
         return $tags;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return ($this->className() . ':' . $this->id);
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize()
+    {
+        return ($this->className() . ':' . $this->id);
     }
 }
 ?>

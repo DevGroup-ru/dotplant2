@@ -37,7 +37,7 @@ use yii\helpers\Url;
  * @property Category[] $children
  * @property Category $parent
  */
-class Category extends ActiveRecord
+class Category extends ActiveRecord implements \JsonSerializable
 {
     use GetImages;
 
@@ -685,6 +685,22 @@ class Category extends ActiveRecord
         }
 
         return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return ($this->className() . ':' . $this->id);
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize()
+    {
+        return ($this->className() . ':' . $this->id);
     }
 }
 ?>

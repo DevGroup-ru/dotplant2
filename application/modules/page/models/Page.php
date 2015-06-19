@@ -35,7 +35,7 @@ use app\models\Config;
  * @property string $name
  * @property Image $images
  */
-class Page extends ActiveRecord
+class Page extends ActiveRecord implements \JsonSerializable
 {
     use GetImages;
     private static $identity_map = [];
@@ -334,5 +334,21 @@ class Page extends ActiveRecord
     public function getChildren()
     {
         return $this->hasMany(Page::className(), ['parent_id' => 'id'])->orderBy(['sort_order'=>SORT_ASC]);
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return ($this->className() . ':' . $this->id);
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize()
+    {
+        return ($this->className() . ':' . $this->id);
     }
 }
