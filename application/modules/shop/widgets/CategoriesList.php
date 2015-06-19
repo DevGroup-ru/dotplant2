@@ -19,6 +19,7 @@ class CategoriesList extends Widget
     public $fetchModels = false;
     public $onlyNonEmpty = false;
     public $excludedCategories = [];
+    public $additional = [];
 
     /**
      * @inheritdoc
@@ -48,19 +49,20 @@ class CategoriesList extends Widget
         }
 
         $cacheKey = $this->className() . ':' . implode('_', [
+            $this->viewFile,
             $this->rootCategory,
             null === $this->depth ? 'null' : intval($this->depth),
             intval($this->includeRoot),
             intval($this->fetchModels),
             intval($this->onlyNonEmpty),
             implode(',', $this->excludedCategories)
-        ]);
+        ]) . ':' . json_encode($this->additional);
 
         if (false !== $cache = \Yii::$app->cache->get($cacheKey)) {
             return $cache;
         }
 
-        /** @var array $tree */
+        /** @var array|Category[] $tree */
         $tree = Category::getMenuItems(intval($this->rootCategory), $this->depth, boolval($this->fetchModels));
 
         if (true === $this->includeRoot) {
@@ -104,6 +106,7 @@ class CategoriesList extends Widget
         $cache = $this->render($this->viewFile, [
             'tree' => $tree,
             'fetchModels' => $this->fetchModels,
+            'additional' => $this->additional,
         ]);
 
         \Yii::$app->cache->set(
