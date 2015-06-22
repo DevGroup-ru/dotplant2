@@ -121,12 +121,12 @@ class FilterSetsController extends BackendController
 
     public function actionModifyFilterSet()
     {
-        if (Yii::$app->request->isPost === false || Yii::$app->request->isAjax === false || !isset($_POST['id'], $_POST['delegateState'])) {
+        if (Yii::$app->request->isPost === false || Yii::$app->request->isAjax === false || !isset($_POST['id'])) {
             throw new BadRequestHttpException;
         }
 
         $filterSet = $this->loadModel($_POST['id']);
-        $filterSet->delegate_to_children = $_POST['delegateState'];
+        $filterSet->load(Yii::$app->request->post());
         Yii::$app->response->format = Response::FORMAT_JSON;
         return $filterSet->save();
     }

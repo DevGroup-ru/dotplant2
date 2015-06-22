@@ -162,6 +162,9 @@ $config = [
             'filters' => [
                 [
                     'class' => 'app\components\filters\ProductPriceRangeFilter',
+                ],
+                [
+                    'class' => 'app\components\filters\FilterRangeProperty',
                 ]
             ]
         ],

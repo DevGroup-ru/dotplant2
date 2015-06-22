@@ -13,6 +13,7 @@ class ProductPriceRangeFilter implements FilterQueryInterface
 {
     public $minAttribute = 'price_min';
     public $maxAttribute = 'price_max';
+    public $changeAttribute = 'price_change_flag';
 
     public $minValue = 0;
     public $maxValue = 9999999;
@@ -23,13 +24,16 @@ class ProductPriceRangeFilter implements FilterQueryInterface
     public function filter(ActiveQuery $query, &$cacheKeyAppend)
     {
         $get = ArrayHelper::merge(Yii::$app->request->get(), Yii::$app->request->post() );
+
+        $isChange = (isset($get[$this->changeAttribute]) && $get[$this->changeAttribute] == 1 ) ? true : false;
+
         $min = floatval(
             ArrayHelper::getValue($get, $this->minAttribute, $this->minValue)
         );
         $max = floatval(
             ArrayHelper::getValue($get, $this->maxAttribute, $this->maxValue)
         );
-        if ($min !== floatval($this->minValue)) {
+        if ($min !== floatval($this->minValue) && $isChange) {
             $cacheKeyAppend .= "[MinPrice:$min]";
             $query = $query->andWhere(
                 Product::tableName() . '.price >= :min_price',
@@ -43,7 +47,7 @@ class ProductPriceRangeFilter implements FilterQueryInterface
             );
         }
 
-        if ($max !== floatval($this->maxValue)) {
+        if ($max !== floatval($this->maxValue) && $isChange) {
             $cacheKeyAppend .= "[MaxPrice:$max]";
             $query = $query->andWhere(
                 Product::tableName() . '.price <= :max_price',
