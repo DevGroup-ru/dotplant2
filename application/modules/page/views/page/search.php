@@ -9,7 +9,7 @@
     <div class="tab-pane active" id="blockView">
         <ul>
             <?php foreach($pagelist as $page): ?>
-                <li><a href="<?= \yii\helpers\Url::to(['/page/show', 'id' => $page->id]) ?>"><?= $page->breadcrumbs_label; ?></a></li>
+                <li><a href="<?= \yii\helpers\Url::to(['/page/page/show', 'id' => $page->id]) ?>"><?= $page->breadcrumbs_label; ?></a></li>
             <?php endforeach; ?>
         </ul>
     </div>
