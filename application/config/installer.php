@@ -49,6 +49,10 @@ $config = [
             'include' => [
                 'basic/default',
                 'basic/page',
+                'page/page',
+                'shop/product',
+                'shop/cart',
+                'shop/product-compare',
             ],
         ],
         'review' => [
