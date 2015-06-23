@@ -136,6 +136,18 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        /** @var Order $order */
+        if (null !== $order = $this->order) {
+            $order->calculate(true);
+        }
+    }
+
+    /**
      * @param Order $order
      * @param boolean $dummyObject Empty object, non saved to database
      * @return OrderDeliveryInformation|null
@@ -143,7 +155,7 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
      */
     public static function createNewOrderDeliveryInformation(Order $order, $dummyObject = true)
     {
-        /** @var OrderDeliveryInformation $model */
+        /** @var OrderDeliveryInformation|HasProperties $model */
         $model = new static();
         $model->order_id = $order->id;
         $model->loadDefaultValues();

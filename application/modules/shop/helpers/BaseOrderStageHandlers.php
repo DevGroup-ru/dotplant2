@@ -12,6 +12,7 @@ use app\modules\shop\models\OrderDeliveryInformation;
 use app\modules\shop\models\OrderStageLeaf;
 use app\modules\shop\models\OrderTransaction;
 use app\modules\shop\models\PaymentType;
+use app\properties\HasProperties;
 use yii\helpers\Url;
 
 class BaseOrderStageHandlers
@@ -32,7 +33,7 @@ class BaseOrderStageHandlers
             if (!$order->load(\Yii::$app->request->post())) {
                 return null;
             }
-            /** @var Customer $customer */
+            /** @var Customer|HasProperties $customer */
             $customer = !empty($order->customer)
                 ? $order->customer
                 : (!empty(Customer::getCustomerByUserId($order->user_id))
@@ -52,7 +53,7 @@ class BaseOrderStageHandlers
                 return null;
             }
 
-            /** @var Contragent $contragent */
+            /** @var Contragent|HasProperties $contragent */
             $contragent = !empty($order->contragent)
                 ? $order->contragent
                 : Contragent::createEmptyContragent($customer);
@@ -129,7 +130,7 @@ class BaseOrderStageHandlers
                     ? DeliveryInformation::createNewDeliveryInformation($order->contragent)
                     : $order->contragent->deliveryInformation
                 );
-            /** @var OrderDeliveryInformation $orderDeliveryInformation */
+            /** @var OrderDeliveryInformation|HasProperties $orderDeliveryInformation */
             $orderDeliveryInformation = empty($order->orderDeliveryInformation)
                 ? OrderDeliveryInformation::createNewOrderDeliveryInformation($order)
                 : $order->orderDeliveryInformation;
@@ -194,7 +195,7 @@ class BaseOrderStageHandlers
     {
         /** @var Order $order */
         $order = $event->eventData()['order'];
-        $order->calculate();
+        $order->calculate(true);
 
         /** @var PaymentType[] $paymentTypes */
         $paymentTypes = PaymentType::getPaymentTypes();
