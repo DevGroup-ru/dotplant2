@@ -1,11 +1,15 @@
 <?php
 /** @var app\components\WebView $this */
 /** @var boolean $isInSidebar */
+/** @var boolean $hideEmpty */
 /** @var \app\modules\shop\models\FilterSets[] $filterSets */
 /** @var boolean $displayHeader */
 /** @var string $header  */
 /** @var string $id */
 
+use app\models\Object;
+use app\modules\shop\models\Product;
+use yii\db\Query;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -40,15 +44,18 @@ $cacheParams = [
         'tags' => \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(\app\modules\shop\models\FilterSets::className())
     ])
 ];
-if ($this->beginCache('FilterSets:'.$urlParams['last_category_id'], $cacheParams)) {
+if ($this->beginCache('FilterSets:'.json_encode($urlParams).':'.(int) $hideEmpty, $cacheParams)) {
     foreach ($filterSets as $set) {
         $property = $set->getProperty();
 
         if ($property->has_static_values) {
-            $selections = \app\models\PropertyStaticValues::getValuesForPropertyId($property->id);
-            $selections = array_filter($selections, function ($val) {
-                return $val['dont_filter'] === '0';
-            });
+            $selections = \app\models\PropertyStaticValues::getValuesForFilter(
+                $property->id,
+                $urlParams['last_category_id'],
+                $urlParams['properties']
+            );
+
+
             if (count($selections) === 0) {
                 continue;
             }

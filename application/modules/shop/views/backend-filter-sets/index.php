@@ -99,6 +99,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <?= Yii::t('app', 'Delegate to children') ?>
                                     </td>
                                     <td>
+                                        <?= Yii::t('app', 'Is range slider') ?>
+                                    </td>
+                                    <td>
                                         <?= Yii::t('app', 'Inherited from') ?>
                                     </td>
                                     <td>
@@ -133,6 +136,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     'class'=>'delegate-property-checkbox',
                                                     'data-filterset-id' => $filterSet->id,
                                                     'data-inherited' => $filterSet->category_id === $selectedCategory->id ? '0' : '1',
+                                                ]
+                                            )
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?=
+                                            Html::checkbox(
+                                                'isRangeSlider['.$filterSet->id.']',
+                                                $filterSet->is_range_slider === 1,
+                                                [
+                                                    'class'=>'is-range-slider-checkbox',
+                                                    'data-filterset-id' => $filterSet->id,
                                                 ]
                                             )
                                             ?>
@@ -262,7 +277,7 @@ $(".delegate-property-checkbox").change(function(){
         'method': 'POST',
         'data': {
             'id': $(this).data('filtersetId'),
-            'delegateState': state ? '1' : '0'
+            'FilterSets[delegate_to_children]': state ? '1' : '0'
         },
         complete: function() {
             row
@@ -280,6 +295,34 @@ $(".delegate-property-checkbox").change(function(){
         }
     })
 });
+$(".is-range-slider-checkbox").change(function(){
+    var state = this.checked,
+        row = $(this).parent().parent(),
+        inherited = $(this).data('inherited') == '1';
+    $.ajax({
+        'url': $modifyFilterSetUrl,
+        'method': 'POST',
+        'data': {
+            'id': $(this).data('filtersetId'),
+            'FilterSets[is_range_slider]': state ? '1' : '0'
+        },
+        complete: function() {
+            row
+                .removeClass('info')
+                .removeClass('success')
+                .removeClass('danger');
+
+            if (state && inherited) {
+                row.addClass('info');
+            } else if (state && !inherited) {
+                row.addClass('success');
+            } else if (!state && inherited) {
+                row.addClass('danger');
+            }
+        }
+    })
+});
+
 $(".psv_slug,.display_in_filter").change(function(){
     var that = $(this),
         data = {

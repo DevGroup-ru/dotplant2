@@ -5,6 +5,7 @@ namespace app\modules\image\models;
 use app\behaviors\ImageExist;
 use app\models\Object;
 use app\modules\image\widgets\ImageDropzone;
+use app\traits\FindById;
 use Yii;
 use yii\base\Exception;
 use yii\caching\TagDependency;
@@ -20,6 +21,8 @@ use yii\caching\TagDependency;
  */
 class Image extends \yii\db\ActiveRecord
 {
+    use FindById;
+
     private static $identityMap = [];
 
     public static function tableName()

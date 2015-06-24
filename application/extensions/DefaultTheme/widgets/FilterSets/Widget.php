@@ -9,6 +9,7 @@ use app\extensions\DefaultTheme\components\BaseWidget;
 class Widget extends BaseWidget
 {
     public $viewFile = 'filter-sets';
+    public $hideEmpty = true;
 
     /**
      * Actual run function for all widget classes extending BaseWidget
@@ -35,6 +36,7 @@ class Widget extends BaseWidget
             [
                 'filterSets' => $filterSets,
                 'id' => 'filter-set-'.$this->getId(),
+                'hideEmpty' => $this->hideEmpty
             ]
         );
     }

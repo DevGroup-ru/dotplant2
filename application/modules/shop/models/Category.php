@@ -37,7 +37,7 @@ use yii\helpers\Url;
  * @property Category[] $children
  * @property Category $parent
  */
-class Category extends ActiveRecord
+class Category extends ActiveRecord implements \JsonSerializable
 {
     use GetImages;
 
@@ -265,7 +265,7 @@ class Category extends ActiveRecord
 
         $identity_key = $slug . ':' . $category_group_id . ':' . $parent_id;
         if (isset(static::$id_by_slug_group_parent[$identity_key]) === true) {
-            return static::findById(static::$id_by_slug_group_parent[$identity_key], null, null);
+            return static::findById(static::$id_by_slug_group_parent[$identity_key], null);
         }
         $category = Yii::$app->cache->get("Category:bySlug:" . $identity_key);
         if ($category === false) {
@@ -318,7 +318,7 @@ class Category extends ActiveRecord
 
         $identity_key = $name . ':' . $category_group_id . ':' . $parent_id;
         if (isset(static::$id_by_name_group_parent[$identity_key])) {
-            return static::findById(static::$id_by_name_group_parent[$identity_key], null, null);
+            return static::findById(static::$id_by_name_group_parent[$identity_key], null);
         }
         $category = Yii::$app->cache->get("Category:byName:" . $identity_key);
         if (!is_object($category)) {
@@ -411,6 +411,7 @@ class Category extends ActiveRecord
     }
 
     /**
+     * @deprecated
      * @param $category_group_id
      * @param int $level
      * @param int $is_active
@@ -451,35 +452,49 @@ class Category extends ActiveRecord
         return $models;
     }
 
-    public static function getByParentId($parent_id, $is_active = 1)
+    /**
+     * @param int $parentId
+     * @param int|null $isActive
+     * @return Category[]|array
+     */
+    public static function getByParentId($parentId = null, $isActive = 1)
     {
-        $cacheKey = "CategoriesByParentId:$parent_id";
-        if (false === $models = Yii::$app->cache->get($cacheKey)) {
-            $models = static::find()->where(['parent_id' => $parent_id, 'active' => $is_active])->orderBy(
-                'sort_order'
-            )->with('images')->all();
-            if (null !== $models) {
-                $cache_tags = [];
-                foreach ($models as $model) {
-                    $cache_tags [] = ActiveRecordHelper::getObjectTag($model, $model->id);
-                }
-                $cache_tags [] = ActiveRecordHelper::getObjectTag(static::className(), $parent_id);
+        if (null === $parentId) {
+            return [];
+        }
+        $parentId = intval($parentId);
+        $cacheKey = "CategoriesByParentId:$parentId" . ':' . (null === $isActive ? 'null' : $isActive);
+        if (false !== $models = Yii::$app->cache->get($cacheKey)) {
+            return $models;
+        }
+        $query = static::find()
+            ->where(['parent_id' => $parentId]);
+        if (null !== $isActive) {
+            $query->andWhere(['active' => $isActive]);
+        }
+        $models = $query->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])
+            ->with('images')
+            ->all();
 
-                Yii::$app->cache->set(
-                    $cacheKey,
-                    $models,
-                    86400,
-                    new TagDependency(
-                        [
-                            'tags' => $cache_tags
-                        ]
-                    )
-                );
-            }
+        if (empty($models)) {
+            return [];
         }
-        foreach ($models as $model) {
-            static::$identity_map[$model->id] = $model;
-        }
+        Yii::$app->cache->set(
+            $cacheKey,
+            $models,
+            0,
+            new TagDependency([
+                'tags' => array_reduce($models,
+                    function ($result, $item)
+                    {
+                        /** @var Category $item */
+                        $result[] = ActiveRecordHelper::getObjectTag(static::className(), $item->id);
+                        return $result;
+                    },
+                    [ActiveRecordHelper::getObjectTag(static::className(), $parentId)]
+                )
+            ])
+        );
         return $models;
     }
 
@@ -570,7 +585,11 @@ class Category extends ActiveRecord
         if ($depth === 0) {
             return [];
         }
-        $cacheKey = 'CategoryMenuItems:' . $parentId . ':' . $depth . ':' . intval($fetchModels);
+        $cacheKey = 'CategoryMenuItems:' . implode(':', [
+            $parentId,
+            null === $depth ? 'null' : intval($depth),
+            intval($fetchModels)
+        ]) ;
         $items = Yii::$app->cache->get($cacheKey);
         if ($items !== false) {
             return $items;
@@ -587,7 +606,7 @@ class Category extends ActiveRecord
         foreach ($categories as $category) {
             $items[] = [
                 'label' => $category->name,
-                'url' => Url::to(
+                'url' => Url::toRoute(
                     [
                         '@category',
                         'category_group_id' => $category->category_group_id,
@@ -670,6 +689,22 @@ class Category extends ActiveRecord
         }
 
         return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return ($this->className() . ':' . $this->id);
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize()
+    {
+        return ($this->className() . ':' . $this->id);
     }
 }
 ?>

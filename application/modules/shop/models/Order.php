@@ -470,8 +470,16 @@ class Order extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param bool $insert
-     * @param array $changedAttributes
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        $this->calculate();
+        return parent::beforeSave($insert);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function afterSave($insert, $changedAttributes)
     {

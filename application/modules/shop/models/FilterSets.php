@@ -14,11 +14,13 @@ use Yii;
  * @property integer $sort_order
  * @property integer $property_id
  * @property integer $is_filter_by_price
+ * @property integer $is_range_slider
  * @property integer $delegate_to_children
  */
 class FilterSets extends \yii\db\ActiveRecord
 {
     use SortModels;
+
     /**
      * @inheritdoc
      */
@@ -30,6 +32,7 @@ class FilterSets extends \yii\db\ActiveRecord
             ],
         ];
     }
+
     /**
      * @inheritdoc
      */
@@ -45,8 +48,18 @@ class FilterSets extends \yii\db\ActiveRecord
     {
         return [
             [['category_id'], 'required'],
-            [['category_id', 'sort_order', 'property_id', 'is_filter_by_price', 'delegate_to_children'], 'integer'],
-            [['category_id', 'property_id'], 'unique', 'targetAttribute'=>['category_id', 'property_id']],
+            [
+                [
+                    'category_id',
+                    'sort_order',
+                    'property_id',
+                    'is_filter_by_price',
+                    'is_range_slider',
+                    'delegate_to_children'
+                ],
+                'integer'
+            ],
+            [['category_id', 'property_id'], 'unique', 'targetAttribute' => ['category_id', 'property_id']],
         ];
     }
 
@@ -62,6 +75,7 @@ class FilterSets extends \yii\db\ActiveRecord
             'property_id' => Yii::t('app', 'Property ID'),
             'is_filter_by_price' => Yii::t('app', 'Is Filter By Price'),
             'delegate_to_children' => Yii::t('app', 'Delegate To Children'),
+            'is_range_slider' => Yii::t('app', 'Is Range Slider')
         ];
     }
 
@@ -71,7 +85,7 @@ class FilterSets extends \yii\db\ActiveRecord
      */
     public static function getForCategoryId($categoryId)
     {
-        Yii::beginProfile('FilterSets.GetForCategory '.$categoryId);
+        Yii::beginProfile('FilterSets.GetForCategory ' . $categoryId);
         $category = Category::findById($categoryId);
         if ($category === null) {
             return [];
@@ -84,7 +98,7 @@ class FilterSets extends \yii\db\ActiveRecord
             ->orWhere(['category_id' => $category->id])
             ->orderBy(['sort_order' => SORT_ASC])
             ->all();
-        Yii::endProfile('FilterSets.GetForCategory '.$categoryId);
+        Yii::endProfile('FilterSets.GetForCategory ' . $categoryId);
         return $filter_sets;
     }
 

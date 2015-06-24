@@ -14,13 +14,15 @@ class CashPayment extends AbstractPayment
             'transactionId' => $this->transaction->id,
         ]);
 
-        return $this->render(
-            'cash',
-            [
-                'transaction' => $this->transaction,
-                'url' => $resultUrl,
-            ]
-        );
+//        return $this->render(
+//            'cash',
+//            [
+//                'transaction' => $this->transaction,
+//                'url' => $resultUrl,
+//            ]
+//        );
+        $responce = \Yii::$app->response->redirect($resultUrl);
+        \Yii::$app->end(0, $responce);
     }
 
     public function checkResult($hash = '')

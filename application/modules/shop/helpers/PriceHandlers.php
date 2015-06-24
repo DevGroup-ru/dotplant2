@@ -234,7 +234,7 @@ class PriceHandlers
             SpecialPriceObject::setObject(
                 $special_price_list->id,
                 $event->order->id,
-                $deliveryInformation->shipping_price_total,
+                $shippingOption->cost,
                 $shippingOption->name
             );
         } else {

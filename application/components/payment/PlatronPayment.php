@@ -1,7 +1,7 @@
 <?php
 namespace app\components\payment;
 
-use app\models\OrderTransaction;
+use app\modules\shop\models\OrderTransaction;
 use SimpleXMLElement;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -11,29 +11,33 @@ use yii\web\HttpException;
 
 class PlatronPayment extends AbstractPayment
 {
-    protected $merchantId;
-    protected $secretKey;
-    protected $strCurrency = 'RUR';
-    protected $merchantUrl = 'www.platron.ru';
-    protected $merchantScriptName = 'payment.php';
+    public $merchantId;
+    public $secretKey;
+    public $strCurrency = 'RUR';
+    public $merchantUrl = 'www.platron.ru';
+    public $merchantScriptName = 'payment.php';
 
-
-    public function content($order, $transaction)
+    public function content()
     {
-
         $arrReq = [
             'pg_merchant_id' => $this->merchantId,
-            'pg_order_id' => $transaction->id,
+            'pg_order_id' => $this->transaction->id,
             'pg_currency' => $this->strCurrency,
-            'pg_amount' => $transaction->total_sum,
+            'pg_amount' => $this->transaction->total_sum,
             'pg_lifetime' => 3600 * 24,
-            'pg_description' => \Yii::t('app', 'Payment of order #{orderId}', ['orderId' => $order->id]),
+            'pg_description' => \Yii::t('app', 'Payment of order #{orderId}', ['orderId' => $this->order->id]),
             'pg_language' => Yii::$app->language == 'ru' ? 'ru' : 'en',
-            'pg_result_url' => Url::toRoute(['/cart/payment-result', 'id' => $transaction->payment_type_id], true),
-            'pg_success_url' => Url::toRoute(['/cart/payment-success', 'id' => $order->id], true),
-            'pg_failure_url' => Url::toRoute(['/cart/payment-error', 'id' => $order->id], true),
+            'pg_result_url' => $this->createResultUrl([
+                'id' => $this->order->payment_type_id,
+                'transactionId' => $this->transaction->id,
+            ]),
+            'pg_success_url' => $this->createSuccessUrl([
+                'id' => $this->order->id,
+            ]),
+            'pg_failure_url' => $this->createFailUrl([
+                'id' => $this->order->id,
+            ]),
             'pg_salt' => Yii::$app->security->generateRandomString(8),
-
         ];
 
         if (!Yii::$app->user->isGuest) {
@@ -46,12 +50,10 @@ class PlatronPayment extends AbstractPayment
         return $this->render(
             'platron',
             [
-                'order' => $order,
+                'order' => $this->order,
                 'url' => 'https://' . $this->merchantUrl . '/' . $this->merchantScriptName . '?' . $query,
             ]
         );
-
-
     }
 
     /**
@@ -103,7 +105,7 @@ class PlatronPayment extends AbstractPayment
         return join(';', $arrParams);
     }
 
-    public function checkResult()
+    public function checkResult($hash = '')
     {
         $arrParams = Yii::$app->request->get();
         unset($arrParams['id']);

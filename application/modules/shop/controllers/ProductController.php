@@ -60,14 +60,15 @@ class ProductController extends Controller
         }
 
         if (Yii::$app->request->isAjax && Yii::$app->request->isPost && isset($_POST['properties'])) {
-
             if (is_array($_POST['properties'])) {
-
-
                 foreach ($_POST['properties'] as $key => $value) {
                     if (isset($values_by_property_id[$key])) {
-                        $values_by_property_id[$key] = array_unique(ArrayHelper::merge($values_by_property_id[$key],
-                            $value));
+                        $values_by_property_id[$key] = array_unique(
+                            ArrayHelper::merge(
+                                $values_by_property_id[$key],
+                                $value
+                            )
+                        );
                     } else {
                         $values_by_property_id[$key] = array_unique($value);
                     }
@@ -113,7 +114,7 @@ class ProductController extends Controller
                 }
             }
         }
-        if (!$selected_category->active) {
+        if (is_null($selected_category) || !$selected_category->active) {
             throw new NotFoundHttpException;
         }
 
@@ -154,7 +155,13 @@ class ProductController extends Controller
             return [
                 'content' => $content,
                 'title' => $this->view->title,
-                'url' => Url::to(['/shop/product/list', 'last_category_id'=>$selected_category_id, 'properties'=>$values_by_property_id]),
+                'url' => Url::to(
+                    [
+                        '/shop/product/list',
+                        'last_category_id' => $selected_category_id,
+                        'properties' => $values_by_property_id
+                    ]
+                ),
             ];
         } else {
             return $this->render(
