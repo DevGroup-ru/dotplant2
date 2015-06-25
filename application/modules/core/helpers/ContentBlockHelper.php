@@ -21,6 +21,7 @@ use app;
 class ContentBlockHelper
 {
     private static $chunksByKey = [];
+
     /**
      * Compiles content string by injecting chunks into content
      * Preloads chunks which have preload = 1
