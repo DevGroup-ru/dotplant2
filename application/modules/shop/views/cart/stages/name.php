@@ -3,7 +3,7 @@
  * @var \yii\web\View $this
  * @var \yii\bootstrap\ActiveForm $form
  * @var \app\modules\shop\models\Order $order
- * @var \app\modules\shop\models\Customer $customer
+ * @var \app\modules\shop\models\Customer|\app\properties\HasProperties $customer
  * @var \app\modules\shop\models\Contragent[] $contragents
  * @var \app\properties\AbstractModel $abstractModel
  */
@@ -49,9 +49,13 @@ if ($order->contragent_id === 0 && count($contragents) > 0) {
         <div class="contragents_list">
             <?php
             foreach ($contragents as $key => $contragent) {
-                /** @var \app\modules\shop\models\Contragent $contragent */
+                /** @var \app\modules\shop\models\Contragent|\app\properties\HasProperties $contragent */
                 $_content = $form->field($contragent, 'type')
-                    ->dropDownList(['Individual' => 'Individual', 'Self-employed' => 'Self-employed', 'Legal entity' => 'Legal entity']);
+                    ->dropDownList([
+                        'Individual' => Yii::t('app', 'Individual'),
+                        'Self-employed' => Yii::t('app', 'Self-employed'),
+                        'Legal entity' => Yii::t('app', 'Legal entity'),
+                    ]);
                 /** @var \app\properties\AbstractModel $abstractModel */
                 $abstractModel = $contragent->getAbstractModel();
                 $abstractModel->setArrayMode(false);

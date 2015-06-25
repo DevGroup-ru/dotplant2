@@ -132,6 +132,7 @@ class Contragent extends \yii\db\ActiveRecord
      */
     public static function createEmptyContragent(Customer $customer, $dummyObject = true)
     {
+        /** @var Contragent|HasProperties $model */
         $model = new static();
         $model->customer_id = $customer->id;
         $model->loadDefaultValues();

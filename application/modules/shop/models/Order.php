@@ -402,7 +402,6 @@ class Order extends \yii\db\ActiveRecord
             self::$order = self::find()
                 ->where(['id' => Yii::$app->session->get('orderId')])
                 ->one();
-
         }
         if (is_null(self::$order) && !Yii::$app->user->isGuest) {
             self::$order = self::find()

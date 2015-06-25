@@ -4,6 +4,7 @@ namespace app\modules\shop\models;
 
 use app\behaviors\Tree;
 use app\modules\shop\helpers\PriceHelper;
+use app\properties\HasProperties;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\db\ActiveRecord;
@@ -26,7 +27,7 @@ use yii\db\ActiveRecord;
  * @property OrderItem[] $children
  * @property Order $order
  * @property OrderItem $parent
- * @property Product $product
+ * @property Product|HasProperties $product
  */
 class OrderItem extends ActiveRecord
 {
@@ -88,6 +89,9 @@ class OrderItem extends ActiveRecord
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function beforeValidate()
     {
         $this->total_price = PriceHelper::getProductPrice(
@@ -100,21 +104,29 @@ class OrderItem extends ActiveRecord
         return parent::beforeValidate();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function afterDelete()
     {
         SpecialPriceObject::deleteAllByObject($this);
         if (!static::find()->where(['order_id' => $this->order_id])->one()) {
             Order::deleteOrderElements($this->order);
         }
-        return parent::afterDelete();
+        parent::afterDelete();
     }
 
-
+    /**
+     * @return Product|null
+     */
     public function getProduct()
     {
         return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
 
+    /**
+     * @return Order|null
+     */
     public function getOrder()
     {
         return $this->hasOne(Order::className(), ['id' => 'order_id']);

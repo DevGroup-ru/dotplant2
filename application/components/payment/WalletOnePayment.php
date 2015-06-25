@@ -2,7 +2,7 @@
 
 namespace app\components\payment;
 
-use app\models\OrderTransaction;
+use app\modules\shop\models\OrderTransaction;
 use yii\helpers\Json;
 use yii\helpers\Url;
 

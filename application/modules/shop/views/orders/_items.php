@@ -41,6 +41,9 @@ foreach ($items as $i => $item) {
                 \app\modules\image\widgets\ObjectImageWidget::widget([
                     'limit' => 1,
                     'model' => $item->product,
+                    'thumbnailOnDemand' => true,
+                    'thumbnailWidth' => 140,
+                    'thumbnailHeight' => 140,
                 ])
                 ?>
             </td>

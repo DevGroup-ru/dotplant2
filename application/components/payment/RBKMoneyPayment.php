@@ -2,16 +2,16 @@
 
 namespace app\components\payment;
 
-use app\models\OrderTransaction;
+use app\modules\shop\models\OrderTransaction;
 use yii\helpers\Json;
 
 class RBKMoneyPayment extends AbstractPayment
 {
-    protected $eshopId;
-    protected $currency;
-    protected $language;
-    protected $secretKey;
-    protected $serviceName;
+    public $eshopId;
+    public $currency;
+    public $language;
+    public $secretKey;
+    public $serviceName;
 
     public function content()
     {
