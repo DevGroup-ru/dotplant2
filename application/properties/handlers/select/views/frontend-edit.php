@@ -17,6 +17,7 @@
     <div class="form-group field-<?= \kartik\helpers\Html::getInputId($model, $property_key) ?>">
         <?= \yii\helpers\Html::activeLabel($model, $property_key, ['class' => 'col-md-2 control-label']); ?>
         <div class="col-md-10">
+            <?= \yii\helpers\Html::hiddenInput(\yii\helpers\Html::getInputName($model, $property_key), '') ?>
             <?=
                 kartik\widgets\Select2::widget(
                     [

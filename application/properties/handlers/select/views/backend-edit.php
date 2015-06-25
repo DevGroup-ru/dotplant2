@@ -22,6 +22,13 @@
 ?>
 
     <div class="form-group field-<?= \kartik\helpers\Html::getInputId($model, $property_key) ?>">
+        <?php
+        if ($multiple):
+            ?>
+            <?= \yii\helpers\Html::hiddenInput(\yii\helpers\Html::getInputName($model, $property_key), '') ?>
+        <?php
+        endif;
+        ?>
         <?= \yii\helpers\Html::activeLabel($model, $property_key, ['class' => 'col-md-2 control-label']); ?>
         <div class="col-md-10">
             <?php
@@ -40,9 +47,6 @@
                         'data' => ['' => ''] + app\models\PropertyStaticValues::getSelectForPropertyId($property_id),
                         'options' => [
                             'multiple' => $multiple ? true : false,
-                        ],
-                        'pluginEvents' => [
-                            'select2:selecting' => 'function(data) { console.log(data) }'
                         ],
                         'pluginOptions' => [
                             'allowClear' => false,
