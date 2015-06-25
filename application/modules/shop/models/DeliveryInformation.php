@@ -98,6 +98,5 @@ class DeliveryInformation extends \yii\db\ActiveRecord
 
         return $model;
     }
-
 }
 ?>

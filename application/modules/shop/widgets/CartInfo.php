@@ -7,12 +7,21 @@ use yii\base\Widget;
 
 class CartInfo extends Widget
 {
+    /**
+     * @var string
+     */
     public $viewFile = 'cart-info';
 
     public function run()
     {
+        /** @var Order $order */
         $order = Order::getOrder(false);
-        echo $this->render(
+
+        if (!empty($order)) {
+            $order->calculate();
+        }
+
+        return $this->render(
             $this->viewFile,
             [
                 'order' => $order,

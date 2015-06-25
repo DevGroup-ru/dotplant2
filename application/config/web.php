@@ -40,10 +40,6 @@ $config = [
         ],
         'seo' => [
             'class' => 'app\modules\seo\SeoModule',
-            'include' => [
-                'basic/default',
-                'basic/page',
-            ],
         ],
         'review' => [
             'class' => 'app\modules\review\ReviewModule',

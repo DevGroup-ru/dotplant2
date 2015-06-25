@@ -402,7 +402,6 @@ class Order extends \yii\db\ActiveRecord
             self::$order = self::find()
                 ->where(['id' => Yii::$app->session->get('orderId')])
                 ->one();
-
         }
         if (is_null(self::$order) && !Yii::$app->user->isGuest) {
             self::$order = self::find()
@@ -470,8 +469,16 @@ class Order extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param bool $insert
-     * @param array $changedAttributes
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        $this->calculate();
+        return parent::beforeSave($insert);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function afterSave($insert, $changedAttributes)
     {

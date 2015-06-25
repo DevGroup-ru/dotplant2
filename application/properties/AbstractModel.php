@@ -13,9 +13,10 @@ use yii\helpers\ArrayHelper;
 class AbstractModel extends Model
 {
     /**
-     * @var $values_by_property_key PropertyValue[]
-     * @var $form_name string
-     * @var $rules array
+     * @var PropertyValue[] $values_by_property_key
+     * @var string $form_name
+     * @var array $rules
+     * @var Property[] $properties_models
      */
     private $values_by_property_key = [];
     private $form_name;
@@ -33,7 +34,6 @@ class AbstractModel extends Model
     public function __construct($config = [], $ownerModel = null)
     {
         parent::__construct($config);
-
         $this->ownerModel = $ownerModel;
     }
 
@@ -76,6 +76,9 @@ class AbstractModel extends Model
         $this->values_by_property_key = array_fill_keys(array_keys($properties_models), []);
     }
 
+    /**
+     * @return Property[]
+     */
     public function getPropertiesModels()
     {
         return $this->properties_models;

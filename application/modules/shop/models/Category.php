@@ -585,7 +585,11 @@ class Category extends ActiveRecord implements \JsonSerializable
         if ($depth === 0) {
             return [];
         }
-        $cacheKey = 'CategoryMenuItems:' . $parentId . ':' . $depth . ':' . intval($fetchModels);
+        $cacheKey = 'CategoryMenuItems:' . implode(':', [
+            $parentId,
+            null === $depth ? 'null' : intval($depth),
+            intval($fetchModels)
+        ]) ;
         $items = Yii::$app->cache->get($cacheKey);
         if ($items !== false) {
             return $items;
@@ -602,7 +606,7 @@ class Category extends ActiveRecord implements \JsonSerializable
         foreach ($categories as $category) {
             $items[] = [
                 'label' => $category->name,
-                'url' => Url::to(
+                'url' => Url::toRoute(
                     [
                         '@category',
                         'category_group_id' => $category->category_group_id,

@@ -409,9 +409,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     public function saveCategoriesBindings(array $categories_ids)
     {
         $object = Object::getForClass(static::className());
-
         $catIds = $this->getCategoryIds();
-
 
         $remove = [];
         $add = [];
@@ -446,6 +444,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
     }
 
+    /**
+     * @return array
+     */
     public function getCategoryIds()
     {
         if ($this->category_ids === null) {
@@ -454,6 +455,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 'object_model_id = :id',
                 [':id' => $this->id]
             )->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])->column();
+            $this->category_ids[] = $this->main_category_id;
+            $this->category_ids = array_unique($this->category_ids);
         }
         return $this->category_ids;
     }

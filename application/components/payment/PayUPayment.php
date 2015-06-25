@@ -2,8 +2,8 @@
 
 namespace app\components\payment;
 
-use app\models\Order;
-use app\models\OrderTransaction;
+use app\modules\shop\models\Order;
+use app\modules\shop\models\OrderTransaction;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
@@ -11,10 +11,14 @@ use yii\web\HttpException;
 
 class PayUPayment extends AbstractPayment
 {
-    protected $merchantName;
-    protected $secretKey;
-    protected $testMode;
+    public $merchantName;
+    public $secretKey;
+    public $testMode;
 
+    /**
+     * @param $data
+     * @return string
+     */
     protected function getOrderHash($data)
     {
         $ignoredKeys = [
@@ -75,7 +79,9 @@ class PayUPayment extends AbstractPayment
         }
         $data['ORDER_SHIPPING'] = $order->shippingOption->cost;
         $data['PRICES_CURRENCY'] = 'RUB';
-        $data['BACK_REF'] = Url::toRoute(['/cart/payment-result', 'id' => $transaction->payment_type_id], true);
+        $data['BACK_REF'] = $this->createResultUrl([
+            'id' => $this->order->payment_type_id,
+        ]);
         $data['ORDER_HASH'] = $this->getOrderHash($data);
         if ($this->testMode) {
             $data['DEBUG'] = 'TRUE';
@@ -85,6 +91,10 @@ class PayUPayment extends AbstractPayment
         return $data;
     }
 
+    /**
+     * @param array $data
+     * @return string
+     */
     protected function getSignature($data = [])
     {
         $result = "";
@@ -100,6 +110,9 @@ class PayUPayment extends AbstractPayment
         return hash_hmac("md5", $result, $this->secretKey);
     }
 
+    /**
+     * @return string
+     */
     public function content()
     {
         $url = 'https://secure.payu.ru/order/lu.php';
@@ -114,6 +127,12 @@ class PayUPayment extends AbstractPayment
         );
     }
 
+    /**
+     * @param string $hash
+     * @throws BadRequestHttpException
+     * @throws HttpException
+     * @throws \yii\base\ExitException
+     */
     public function checkResult($hash = '')
     {
         if (isset($_GET['result'])) {

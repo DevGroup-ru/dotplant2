@@ -33,8 +33,9 @@ class Image extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sort_order'], 'required'],
+            [['sort_order', 'filename'], 'required'],
             [['object_id', 'object_model_id', 'sort_order'], 'integer'],
+            [['filename'], 'string'],
         ];
     }
 
@@ -46,7 +47,7 @@ class Image extends \yii\db\ActiveRecord
             'object_model_id' => Yii::t('app', 'Object Model ID'),
             'image_description' => Yii::t('app', 'Image Description'),
             'sort_order' => Yii::t('app', 'Sort Order'),
-            'file' => Yii::t('app', 'File')
+            'filename' => Yii::t('app', 'File')
         ];
     }
 
@@ -196,7 +197,6 @@ class Image extends \yii\db\ActiveRecord
                         }
 
 
-
                         $image_model->image_description = isset($new['image_description']) ? $new['image_description'] : '';
                         $image_model->sort_order = $key;
                         $image_model->save();
@@ -247,7 +247,7 @@ class Image extends \yii\db\ActiveRecord
         parent::afterDelete();
         Yii::$app->getModule('image')->fsComponent->delete($this->filename);
         $thumbnails = Thumbnail::findAll(['img_id' => $this->id]);
-        foreach($thumbnails as $thumbnail){
+        foreach ($thumbnails as $thumbnail) {
             $thumbnail->delete();
         }
     }

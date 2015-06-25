@@ -21,7 +21,7 @@ use yii\helpers\Url;
         'settings' => [
             'replaceDivs' => false,
             'minHeight' => 200,
-            'paragraphize' => true,
+            'paragraphize' => false,
             'pastePlainText' => true,
             'buttonSource' => true,
             'imageManagerJson' => Url::to(['/backend/dashboard/imperavi-images-get']),
