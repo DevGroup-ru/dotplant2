@@ -78,9 +78,7 @@ class ObjectImageWidget extends Widget
                 $images = $this->model->images;
             }
             if ($this->noImageOnEmptyImages === true && count($images) === 0) {
-                $no_image = new Image();
-                $no_image->filename = Yii::$app->getModule('image')->noImageSrc;
-                $images[] = $no_image;
+                return $this->render('noimage');
             }
             $result = $this->render(
                 $this->viewFile,
