@@ -3,6 +3,8 @@
 namespace app\modules\image;
 
 use app\components\BaseModule;
+use creocoder\flysystem\Filesystem;
+use League\Flysystem\Plugin\GetWithMetadata;
 use Yii;
 
 class ImageModule extends BaseModule
@@ -105,7 +107,10 @@ class ImageModule extends BaseModule
 
     public function getFsComponent()
     {
-        return Yii::$app->{$this->defaultComponent};
+        /** @var Filesystem $fs */
+        $fs = Yii::$app->{$this->defaultComponent};
+//        $fs->addPlugin(new GetWithMetadata());
+        return $fs;
     }
 
     public function behaviors()
