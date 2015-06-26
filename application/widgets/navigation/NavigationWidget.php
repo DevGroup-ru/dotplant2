@@ -17,6 +17,7 @@ class NavigationWidget extends Widget
     public $appendItems;
     public $options;
     public $rootId = 1;
+    public $depth = 99;
     public $useCache = true;
     public $viewFile = 'navigation';
     public $widget = '';
@@ -51,6 +52,7 @@ class NavigationWidget extends Widget
             [
                 'Navigation',
                 $this->rootId,
+                $this->depth,
                 $this->viewFile
             ]
         );
@@ -66,8 +68,10 @@ class NavigationWidget extends Widget
                 ->orderBy(['sort_order' => SORT_ASC])
                 ->one();
             $items = [];
-            foreach ($root->children as $child) {
-                $items[] = self::getTree($child);
+            if ($this->depth > 0) {
+                foreach ($root->children as $child) {
+                    $items[] = self::getTree($child, $this->depth - 1);
+                }
             }
             if (count($items) > 0) {
                 \Yii::$app->cache->set(
@@ -106,9 +110,10 @@ class NavigationWidget extends Widget
 
     /**
      * @param Navigation $model
+     * @param int $depth
      * @return array
      */
-    private static function getTree($model)
+    private static function getTree($model, $depth)
     {
         if (trim($model->url)) {
             $url = trim($model->url);
@@ -122,8 +127,10 @@ class NavigationWidget extends Widget
             'options' => ['class' => $model->advanced_css_class],
             'items' => [],
         ];
-        foreach ($model->children as $child) {
-            $tree['items'][] = self::getTree($child);
+        if ($depth > 0) {
+            foreach ($model->children as $child) {
+                $tree['items'][] = self::getTree($child, $depth - 1);
+            }
         }
         return $tree;
     }

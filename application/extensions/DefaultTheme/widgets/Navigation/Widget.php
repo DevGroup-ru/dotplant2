@@ -15,8 +15,12 @@ use yii\helpers\Json;
 class Widget extends BaseWidget
 {
     public $rootNavigationId = 1;
+    public $depth = 99;
+    public $viewFile = 'navigation';
     public $options = '{}';
+    public $linkTemplate = '<a href="{url}" title="{label}" itemprop="url"><span itemprop="name">{label}</span></a>';
     public $submenuTemplate = "\n<ul>\n{items}\n</ul>\n";
+
     /**
      * Actual run function for all widget classes extending BaseWidget
      *
@@ -28,8 +32,11 @@ class Widget extends BaseWidget
             'navigation',
             [
                 'rootNavigationId' => $this->rootNavigationId,
+                'depth' => $this->depth,
                 'options' => Json::decode($this->options),
+                'linkTemplate' => $this->linkTemplate,
                 'submenuTemplate' => $this->submenuTemplate,
+                'viewFile' => $this->viewFile,
             ]
         );
     }

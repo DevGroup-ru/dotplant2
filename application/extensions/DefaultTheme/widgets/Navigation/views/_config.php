@@ -7,10 +7,9 @@
 /** @var \kartik\widgets\ActiveForm $form */
 
 ?>
-<?= $form->field(
-    $configurationModel,
-    'rootNavigationId'
-) ?>
+<?= $form->field($configurationModel, 'rootNavigationId') ?>
+<?= $form->field($configurationModel, 'depth') ?>
+<?= $form->field($configurationModel, 'linkTemplate') ?>
 <?= $form->field($configurationModel, 'submenuTemplate') ?>
+<?= $form->field($configurationModel, 'viewFile') ?>
 <?= $form->field($configurationModel, 'options')->widget(\devgroup\jsoneditor\Jsoneditor::className()) ?>
-
