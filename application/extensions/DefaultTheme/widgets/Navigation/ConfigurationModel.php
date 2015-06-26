@@ -42,6 +42,11 @@ class ConfigurationModel extends WidgetConfigurationModel
                 'filter',
                 'filter' => 'intval',
             ],
+            [
+                'depth',
+                'integer',
+                'min' => 1,
+            ],
         ];
     }
 }
