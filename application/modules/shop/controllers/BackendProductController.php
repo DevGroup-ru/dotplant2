@@ -435,7 +435,7 @@ class BackendProductController extends BackendController
      * @param integer $id
      * @throws \yii\web\NotFoundHttpException
      */
-    public function actionClone($id)
+    public function actionClone($id, $returnUrl = ['index'])
     {
         /** @var Product|HasProperties $model */
         $model = Product::findOne($id);
@@ -536,7 +536,7 @@ class BackendProductController extends BackendController
                 ]
             );
             Yii::$app->session->setFlash('success', Yii::t('app', 'Product has been cloned successfully.'));
-            $this->redirect(['edit', 'id' => $newModel->id]);
+            $this->redirect(['edit', 'id' => $newModel->id, 'returnUrl' => $returnUrl]);
         }
     }
 
