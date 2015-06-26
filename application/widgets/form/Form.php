@@ -36,7 +36,7 @@ class Form extends Widget
                 'header' => $this->model->name,
             ]);
         }
-
+        $this->setId('frm'.$this->formId);
     }
 
     public function run()
