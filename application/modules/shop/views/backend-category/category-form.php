@@ -53,6 +53,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'target' => '_blank',
             ]
         )?>
+        <?=Html::a(
+            Icon::show('list') . Yii::t('app', 'Products'),
+            [
+                '/shop/backend-product/index',
+                'parent_id' => $model->id,
+            ],
+            [
+                'class' => 'btn btn-info',
+                'target' => '_blank',
+            ]
+        )?>
     <?php endif; ?>
     <?=
     Html::a(
