@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\widgets\Pjax;
 
 /** @var \yii\data\ActiveDataProvider $partsDataProvider */
 /** @var \app\extensions\DefaultTheme\models\ThemeParts  $partsSearchModel */
@@ -16,7 +17,7 @@ use yii\helpers\Html;
 ) ?>
 <?php $this->endBlock(); ?>
 
-
+<?php Pjax::begin(['enablePushState' => false]) ?>
 <?= \kartik\dynagrid\DynaGrid::widget([
     'options' => [
         'id' => 'theme-parts-grid',
@@ -40,6 +41,9 @@ use yii\helpers\Html;
                     'label' => Yii::t('app', 'Edit'),
                 ],
                 'delete-part' => [
+                    'options' => [
+                        'data-action' => 'delete',
+                    ],
                     'url' => 'delete-part',
                     'icon' => 'trash-o',
                     'class' => 'btn-danger',
@@ -59,5 +63,4 @@ use yii\helpers\Html;
         ],
     ]
 ]);?>
-
-
+<?php Pjax::end() ?>

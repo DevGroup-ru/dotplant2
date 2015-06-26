@@ -269,6 +269,10 @@ class ThemeParts extends \yii\db\ActiveRecord
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
+                'pagination' => [
+                    'pageParam' => 'part-page',
+                    'pageSizeParam' => 'part-per-page',
+                ],
             ]
         );
         if (!($this->load($params))) {

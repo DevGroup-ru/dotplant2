@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\widgets\Pjax;
 
 /** @var \yii\data\ActiveDataProvider $widgetsDataProvider */
 /** @var \app\extensions\DefaultTheme\models\ThemeWidgets  $widgetsSearchModel */
@@ -16,7 +17,7 @@ use yii\helpers\Html;
 ) ?>
 <?php $this->endBlock(); ?>
 
-
+<?php Pjax::begin(['enablePushState' => false]) ?>
 <?= \kartik\dynagrid\DynaGrid::widget([
     'options' => [
         'id' => 'theme-widgets-grid',
@@ -49,6 +50,9 @@ use yii\helpers\Html;
                     'label' => Yii::t('app', 'Edit'),
                 ],
                 'delete-part' => [
+                    'options' => [
+                        'data-action' => 'delete',
+                    ],
                     'url' => 'delete-widget',
                     'icon' => 'trash-o',
                     'class' => 'btn-danger',
@@ -68,5 +72,4 @@ use yii\helpers\Html;
         ],
     ]
 ]);?>
-
-
+<?php Pjax::end() ?>

@@ -183,6 +183,10 @@ class ThemeVariation extends \yii\db\ActiveRecord
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
+                'pagination' => [
+                    'pageParam' => 'variation-page',
+                    'pageSizeParam' => 'variation-per-page',
+                ],
             ]
         );
         if (!($this->load($params))) {
