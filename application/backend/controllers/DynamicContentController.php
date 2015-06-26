@@ -96,6 +96,7 @@ class DynamicContentController extends Controller
         )->andWhere(['in', 'property_group_id', $property_groups_ids_for_object])->all();
         foreach ($properties as $prop) {
             $static_values_properties[$prop->id] = [
+                'has_static_values' => true,
                 'property' => $prop,
                 'static_values_select' => PropertyStaticValues::getSelectForPropertyId($prop->id),
             ];
