@@ -113,6 +113,10 @@ class ThemeWidgets extends \yii\db\ActiveRecord
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
+                'pagination' => [
+                    'pageParam' => 'widget-page',
+                    'pageSizeParam' => 'widget-per-page',
+                ],
             ]
         );
         if (!($this->load($params))) {

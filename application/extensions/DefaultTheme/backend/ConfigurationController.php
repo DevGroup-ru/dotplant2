@@ -74,6 +74,17 @@ class ConfigurationController extends BackendController
         );
     }
 
+    public function actionDeletePart($id)
+    {
+        /** @var ThemeParts $model */
+        $model = ThemeParts::findOne($id);
+        if (is_null($model)) {
+            throw new NotFoundHttpException;
+        }
+        $model->delete();
+        return $this->redirect(['index']);
+    }
+
     public function actionEditVariation($id='')
     {
         $model = $this->loadModel(ThemeVariation::className(), $id, true);
@@ -93,6 +104,17 @@ class ConfigurationController extends BackendController
                 'model' => $model,
             ]
         );
+    }
+
+    public function actionDeleteVariation($id)
+    {
+        /** @var ThemeVariation $model */
+        $model = ThemeVariation::findById($id);
+        if (is_null($model)) {
+            throw new NotFoundHttpException;
+        }
+        $model->delete();
+        return $this->redirect(['index']);
     }
 
     public function actionEditWidget($id='')
@@ -135,6 +157,17 @@ class ConfigurationController extends BackendController
                 'model' => $model,
             ]
         );
+    }
+
+    public function actionDeleteWidget($id)
+    {
+        /** @var ThemeWidgets $model */
+        $model = ThemeWidgets::findOne($id);
+        if (is_null($model)) {
+            throw new NotFoundHttpException;
+        }
+        $model->delete();
+        return $this->redirect(['index']);
     }
 
     public function actionRemoveApplying($id, $part_id)

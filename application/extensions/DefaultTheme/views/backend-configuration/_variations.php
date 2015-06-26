@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\widgets\Pjax;
 
 /** @var \yii\data\ActiveDataProvider $variationsDataProvider */
 /** @var \app\extensions\DefaultTheme\models\ThemeVariation $variationsSearchModel */
@@ -16,7 +17,7 @@ use yii\helpers\Html;
 ) ?>
 <?php $this->endBlock(); ?>
 
-
+<?php Pjax::begin(['enablePushState' => false]) ?>
 <?= \kartik\dynagrid\DynaGrid::widget([
     'options' => [
         'id' => 'theme-variations-grid',
@@ -50,6 +51,9 @@ use yii\helpers\Html;
                     'label' => Yii::t('app', 'Show active widgets'),
                 ],
                 'delete-part' => [
+                    'options' => [
+                        'data-action' => 'delete',
+                    ],
                     'url' => 'delete-variation',
                     'icon' => 'trash-o',
                     'class' => 'btn-danger',
@@ -69,5 +73,4 @@ use yii\helpers\Html;
         ],
     ]
 ]);?>
-
-
+<?php Pjax::end() ?>
