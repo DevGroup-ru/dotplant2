@@ -1128,4 +1128,5 @@ return [
     'Thumbnails sizes' => 'Размены миниатюр',
     'Create thumbnails' => 'Создать миниатюры',
     'Watermarks' => 'Водяные знаки',
+    '{n} products are available' => 'Доступно товаров: {n}'
 ];
