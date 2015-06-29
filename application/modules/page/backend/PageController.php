@@ -67,6 +67,7 @@ class PageController extends \app\backend\components\BackendController
             'move' => [
                 'class' => TreeNodeMoveAction::className(),
                 'className' => Page::className(),
+                'saveAttributes' => ['slug_compiled'],
             ],
             'reorder' => [
                 'class' => TreeNodesReorderAction::className(),

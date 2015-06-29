@@ -36,11 +36,14 @@ class Tree extends Behavior
             if ($parent_id < 1) {
                 return null;
             }
-            if ($parent->hasMethod('findById')) {
-                $parent = $parent->findById($parent_id);
-            } else {
-                $parent = $parent->findOne($parent_id);
-            }
+            /* findById does not have a calling standard and uses different parameters. For example isActive = 1.
+             * But we must get a parent model by primary id only.
+             * Uncomment this code if you unify findById method.
+             */
+            // if ($parent->hasMethod('findById')) {
+            //     $parent = $parent->findById($parent_id);
+            // } else {
+            $parent = $parent->findOne($parent_id);
             Yii::$app->cache->set(
                 $cacheKey,
                 $parent,

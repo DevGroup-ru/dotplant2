@@ -7,10 +7,11 @@ use app\behaviors\Tree;
 use app\modules\image\models\Image;
 use app\properties\HasProperties;
 use app\traits\GetImages;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
-use app\models\Config;
 
 /**
  * This is the model class for table "page".
@@ -112,7 +113,7 @@ class Page extends ActiveRecord implements \JsonSerializable
                 'class' => HasProperties::className(),
             ],
             [
-                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+                'class' => ActiveRecordHelper::className(),
             ],
             [
                 'class' => CleanRelations::className(),
@@ -173,10 +174,10 @@ class Page extends ActiveRecord implements \JsonSerializable
                         $cacheKey,
                         static::$identity_map[$id],
                         86400,
-                        new \yii\caching\TagDependency(
+                        new TagDependency(
                             [
                                 'tags' => [
-                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                                    ActiveRecordHelper::getCommonTag(static::className())
                                 ]
                             ]
                         )
@@ -189,45 +190,42 @@ class Page extends ActiveRecord implements \JsonSerializable
 
     public function beforeSave($insert)
     {
+        if (!$insert) {
+            // reset a cache tag to get a new parent model below
+            TagDependency::invalidate(Yii::$app->cache, [ActiveRecordHelper::getCommonTag(self::className())]);
+        }
         if (!isset($this->date_added)) {
             $this->date_added = date('Y-m-d H:i:s');
         }
         $this->date_modified = date('Y-m-d H:i:s');
         $this->slug_compiled = $this->compileSlug();
-
-        \yii\caching\TagDependency::invalidate(
+        TagDependency::invalidate(
             Yii::$app->cache,
             [
-                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
+                ActiveRecordHelper::getCommonTag($this->className()),
                 'Page:' . $this->slug_compiled
             ]
         );
-
-        \yii\caching\TagDependency::invalidate(
+        TagDependency::invalidate(
             Yii::$app->cache,
             [
-                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
+                ActiveRecordHelper::getCommonTag($this->className()),
                 'Page:' . $this->id . ':0'
             ]
         );
-
-        \yii\caching\TagDependency::invalidate(
+        TagDependency::invalidate(
             Yii::$app->cache,
             [
-                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($this->className()),
+                ActiveRecordHelper::getCommonTag($this->className()),
                 'Page:' . $this->id . ':1'
             ]
         );
-
         if (empty($this->breadcrumbs_label)) {
             $this->breadcrumbs_label = $this->title;
         }
-
         if (empty($this->h1)) {
             $this->h1 = $this->title;
         }
-
-
         return parent::beforeSave($insert);
     }
 
@@ -237,7 +235,6 @@ class Page extends ActiveRecord implements \JsonSerializable
      */
     public function compileSlug()
     {
-
         $parent_model = $this->parent;
 
         $main_domain = Yii::$app->getModule('core')->serverName;
@@ -302,10 +299,10 @@ class Page extends ActiveRecord implements \JsonSerializable
                 $cacheKey,
                 $page,
                 $duration,
-                new \yii\caching\TagDependency(
+                new TagDependency(
                     [
                         'tags' => [
-                            \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                            ActiveRecordHelper::getCommonTag(static::className())
                         ]
                     ]
                 )
