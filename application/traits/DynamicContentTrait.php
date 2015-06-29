@@ -88,6 +88,9 @@ trait DynamicContentTrait
                         if ($model->h1) {
                             $dynamicResult['blocks']['h1'] = $model->h1;
                         }
+                        if ($model->announce) {
+                            $dynamicResult['blocks']['announce'] = $model->announce;
+                        }
                         if ($model->content) {
                             $dynamicResult['blocks'][$model->content_block_name] = $model->content;
                         }

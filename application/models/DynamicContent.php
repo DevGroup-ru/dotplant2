@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  * @property string $route
  * @property string $name
  * @property string $content_block_name
+ * @property string $announce
  * @property string $content
  * @property string $title
  * @property string $h1
@@ -38,7 +39,7 @@ class DynamicContent extends ActiveRecord
     public function rules()
     {
         return [
-            [['route', 'name', 'content', 'title', 'h1', 'meta_description', 'apply_if_params'], 'string'],
+            [['route', 'name', 'announce', 'content', 'title', 'h1', 'meta_description', 'apply_if_params'], 'string'],
             [
                 [
                     'apply_if_last_category_id',
@@ -72,6 +73,7 @@ class DynamicContent extends ActiveRecord
             'route' => Yii::t('app', 'Route'),
             'name' => Yii::t('app', 'Name'),
             'content_block_name' => Yii::t('app', 'Content Block Name'),
+            'announce' => Yii::t('app', 'Announce'),
             'content' => Yii::t('app', 'Content'),
             'title' => Yii::t('app', 'Title'),
             'h1' => Yii::t('app', 'H1'),
