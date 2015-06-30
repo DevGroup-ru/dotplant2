@@ -19,6 +19,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $sort_order
  * @property string $configuration_json
  * @property ThemeWidgets $widget
+ * @property ThemeParts $part
  */
 class ThemeActiveWidgets extends \yii\db\ActiveRecord
 {
@@ -79,6 +80,15 @@ class ThemeActiveWidgets extends \yii\db\ActiveRecord
     public function getWidget()
     {
         return $this->hasOne(ThemeWidgets::className(), ['id' => 'widget_id']);
+    }
+
+    /**
+     * Relation to ThemeWidgets
+     * @return ThemeWidgets
+     */
+    public function getPart()
+    {
+        return $this->hasOne(ThemeParts::className(), ['id' => 'part_id']);
     }
 
     /**

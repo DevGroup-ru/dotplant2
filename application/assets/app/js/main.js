@@ -278,6 +278,7 @@ $(function() {
                 data: form.serialize(),
                 dataType: 'json',
                 success: function(data) {
+                    form.html($(data.filters).find('form').html());
                     var elem = $(data.content);
                     block.empty().css('height', 'auto').append(elem);
                     document.title = data.title;

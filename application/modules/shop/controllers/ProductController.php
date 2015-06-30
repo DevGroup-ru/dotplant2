@@ -3,6 +3,10 @@
 namespace app\modules\shop\controllers;
 
 use app\components\Controller;
+use app\extensions\DefaultTheme\components\BaseWidget;
+use app\extensions\DefaultTheme\models\ThemeActiveWidgets;
+use app\extensions\DefaultTheme\models\ThemeWidgets;
+use app\extensions\DefaultTheme\widgets\FilterSets\Widget;
 use app\modules\core\helpers\EventTriggeringHelper;
 use app\modules\shop\events\ProductPageShowed;
 use app\modules\shop\models\Category;
@@ -15,6 +19,7 @@ use Yii;
 use yii\caching\TagDependency;
 use yii\data\Pagination;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -152,8 +157,32 @@ class ProductController extends Controller
                 $viewFile,
                 $params
             );
+            $filters = '';
+            $activeWidgets = ThemeActiveWidgets::getActiveWidgets();
+            foreach ($activeWidgets as $activeWidget) {
+                if ($activeWidget->widget->widget == Widget::className()) {
+                    /** @var ThemeWidgets $widgetModel */
+                    $widgetModel = $activeWidget->widget;
+                    /** @var BaseWidget $widgetClassName */
+                    $widgetClassName =  $widgetModel->widget;
+                    $widgetConfiguration = Json::decode($widgetModel->configuration_json, true);
+                    if (!is_array($widgetConfiguration)) {
+                        $widgetConfiguration = [];
+                    }
+                    $activeWidgetConfiguration = Json::decode($activeWidget->configuration_json, true);
+                    if (!is_array($activeWidgetConfiguration)) {
+                        $activeWidgetConfiguration  = [];
+                    }
+                    $config = ArrayHelper::merge($widgetConfiguration, $activeWidgetConfiguration);
+                    $config['themeWidgetModel'] = $widgetModel;
+                    $config['partRow'] = $activeWidget->part;
+                    $config['activeWidget'] = $activeWidget;
+                    $filters = $widgetClassName::widget($config);
+                }
+            }
             return [
                 'content' => $content,
+                'filters' => $filters,
                 'title' => $this->view->title,
                 'url' => Url::to(
                     [

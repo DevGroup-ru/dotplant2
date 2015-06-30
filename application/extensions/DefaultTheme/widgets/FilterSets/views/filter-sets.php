@@ -34,6 +34,24 @@ if (isset($_GET['properties'])) {
 if (isset($_GET['last_category_id'])) {
     $urlParams['last_category_id'] = $_GET['last_category_id'];
 }
+// Checked items
+$checkedIds = [];
+foreach ($urlParams['properties'] as $propertyId => $values) {
+    $values = (array) $values;
+    foreach ($values as $selectionId) {
+        $checkedIds[] = '#filter-check-'.$selectionId;
+    }
+}
+$checkedIds = implode(',', $checkedIds);
+if (!Yii::$app->request->isAjax) {
+    $js = <<<JS
+$('$checkedIds').prop('checked', true);
+$('#$id').dotPlantSmartFilters();
+
+JS;
+    $this->registerJs($js);
+}
+
 ?>
     <form action="<?=Url::to(['/shop/product/list', 'last_category_id'=>$urlParams['last_category_id']])?>" method="post" class="filter-form">
 <?php
@@ -109,21 +127,9 @@ echo Html::submitButton(
     ]
 );
 echo '</div>';
+if (Yii::$app->request->isAjax) {
+    echo '<script>$("' . $checkedIds . '").prop("checked", true);</script>';
+}
 echo '</form>';
 echo '</div>';
 echo '</div>';
-
-$checkedIds = [];
-foreach ($urlParams['properties'] as $propertyId => $values) {
-    $values = (array) $values;
-    foreach ($values as $selectionId) {
-        $checkedIds[] = '#filter-check-'.$selectionId;
-    }
-}
-$checkedIds = implode(',', $checkedIds);
-$js = <<<JS
-$('$checkedIds').prop('checked', true);
-$('#$id').dotPlantSmartFilters();
-
-JS;
-$this->registerJs($js);
