@@ -28,7 +28,7 @@ class ImagesController extends Controller
             }
             if ($image !== null) {
                 foreach ($sizes as $size) {
-                    Thumbnail::createThumbnail($image, $size);
+                    Thumbnail::getImageThumbnailBySize($image, $size);
                 }
             }
         }
