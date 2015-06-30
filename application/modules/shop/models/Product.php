@@ -827,6 +827,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 $pages = new Pagination(
                     [
                         'defaultPageSize' => !is_null($query->limit) ? $query->limit : $productsPerPage,
+                        'pageSizeLimit' => [],
                         'forcePageParam' => false,
                         'totalCount' => $products_query->count(),
                     ]
