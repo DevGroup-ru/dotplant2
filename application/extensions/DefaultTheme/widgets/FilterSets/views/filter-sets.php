@@ -30,6 +30,8 @@ if ($displayHeader === true) {
 $urlParams = ['/shop/product/list','properties'=>[],'last_category_id'=>1];
 if (isset($_GET['properties'])) {
     $urlParams['properties'] = $_GET['properties'];
+} elseif (isset($_POST['properties'])) {
+    $urlParams['properties'] = $_POST['properties'];
 }
 if (isset($_GET['last_category_id'])) {
     $urlParams['last_category_id'] = $_GET['last_category_id'];
