@@ -12,7 +12,7 @@ use kartik\icons\Icon;
     $properties = array_reduce($products,
         function ($result, $item)
         {
-            /** @var \app\modules\shop\models\Product $item */
+            /** @var \app\modules\shop\models\Product|\app\properties\HasProperties $item */
             /** @var \app\properties\AbstractModel $model */
             $model = $item->getAbstractModel();
             foreach ($model->attributes() as $attr) {
@@ -30,13 +30,9 @@ use kartik\icons\Icon;
         <?=
         \yii\helpers\Html::a(
             Yii::t('app', 'Print version'),
-            [
-                '/shop/product-compare/print',
-            ],
-            [
-                'class' => 'btn pull-right'
-            ]
-        )
+            ['/shop/product-compare/print'],
+            ['class' => 'btn pull-right']
+        );
         ?>
     </div>
 </div>
@@ -45,7 +41,7 @@ use kartik\icons\Icon;
         <?php
             foreach ($products as $key => $item) {
                 $column = $blank;
-                /** @var \app\modules\shop\models\Product $item */
+                /** @var \app\modules\shop\models\Product|\app\properties\HasProperties $item */
                 /** @var \app\properties\AbstractModel $model */
                 $model = $item->getAbstractModel();
                 foreach ($model->attributes() as $attr) {
@@ -102,16 +98,22 @@ use kartik\icons\Icon;
             <tbody>
             <?php
                 foreach ($properties as $key => $prop) {
+                    $_flag = false;
                     $result = '<tr><th>'. $prop .'</th>';
                     $result .= array_reduce(array_column($compares, $key),
-                        function ($result, $item)
+                        function ($result, $item) use (&$_flag)
                         {
+                            if (!empty(strval($item))) {
+                                $_flag = true;
+                            }
                             $result .= '<td>'. $item .'</td>';
                             return $result;
                         },
                     '');
                     $result .= '</tr>' . PHP_EOL;
-                    echo $result;
+                    if ($_flag) {
+                        echo $result;
+                    }
                 }
             ?>
             </tbody>

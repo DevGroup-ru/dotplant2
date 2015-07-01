@@ -219,10 +219,17 @@ class Image extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * @param string $demand
+     * @param bool|false $useWatermark
+     * @return string
+     * @throws Exception
+     */
     public function getThumbnail($demand, $useWatermark = false)
     {
         $size = ThumbnailSize::getByDemand($demand);
         $thumb = Thumbnail::getImageThumbnailBySize($this, $size);
+        /** @var string $src */
         $src = $thumb->file;
         if ($useWatermark === true) {
             $watermark = Watermark::findOne($size->default_watermark_id);
@@ -237,6 +244,9 @@ class Image extends \yii\db\ActiveRecord
         return $src;
     }
 
+    /**
+     * @return mixed
+     */
     public function getOriginalUrl()
     {
         return $this->file;

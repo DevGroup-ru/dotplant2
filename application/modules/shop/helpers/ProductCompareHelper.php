@@ -53,7 +53,7 @@ class ProductCompareHelper
         }
         $comparisonProductList[$id] = $id;
 
-        Yii::$app->session->set('comparisonProductList', $comparisonProductList);
+        Yii::$app->session->set(static::SESSION_COMPARE_LIST, $comparisonProductList);
         yii\caching\TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
         return true;
     }
@@ -69,7 +69,7 @@ class ProductCompareHelper
         if (isset($comparisonProductList[$id])) {
             unset($comparisonProductList[$id]);
         }
-        Yii::$app->session->set('comparisonProductList', $comparisonProductList);
+        Yii::$app->session->set(static::SESSION_COMPARE_LIST, $comparisonProductList);
     }
 
     /**
@@ -91,5 +91,14 @@ class ProductCompareHelper
         $id = intval($id);
         $list = null === $list ? static::getProductsList() : $list;
         return isset($list[$id]);
+    }
+
+    /**
+     * @return int
+     */
+    public static function listLength()
+    {
+        $list = static::getProductsList();
+        return count($list);
     }
 }

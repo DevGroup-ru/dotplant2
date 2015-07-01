@@ -13,6 +13,10 @@ class ImageExist extends Behavior
 {
     public $srcAttrName = 'filename';
 
+    /**
+     * @return mixed
+     * @throws HttpException
+     */
     public function getFile()
     {
         $src = $this->owner->{$this->srcAttrName};

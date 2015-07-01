@@ -20,6 +20,7 @@ use yii\helpers\Json;
 /**
  * Class HasProperties
  * @property \yii\db\ActiveRecord $owner
+ * @property $object Object
  * @package app\properties
  */
 class HasProperties extends Behavior
