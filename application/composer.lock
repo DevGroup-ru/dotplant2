@@ -1294,7 +1294,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FortAwesome/Font-Awesome/zipball/5ad6a98a54873dfdbadb0639405cdb0660bc6092",
+                "url": "https://api.github.com/repos/FortAwesome/Font-Awesome/zipball/6549e2920b0a27213b895200becc485ab01e9974",
                 "reference": "5ad6a98a54873dfdbadb0639405cdb0660bc6092",
                 "shasum": ""
             },
@@ -1494,7 +1494,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/e0f18d6d27e54afab3eb84b45f7eef1df11ed41d",
+                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/889e829890409d3c8e9fcfba10020958bd02a6a4",
                 "reference": "6ca9f207ad33deeb8556cbdd762182678c67bf10",
                 "shasum": ""
             },
@@ -1542,7 +1542,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/bootstrap-popover-x/zipball/8ff5e9ee10c130896b0556cc6c7a7c0a8385367b",
+                "url": "https://api.github.com/repos/kartik-v/bootstrap-popover-x/zipball/1c35ed9e994cf275df634883c0500fdfbb882486",
                 "reference": "8ff5e9ee10c130896b0556cc6c7a7c0a8385367b",
                 "shasum": ""
             },
@@ -2056,7 +2056,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-grid/zipball/c3b9b77698d2060691d63f1c191021c4dea72a91",
+                "url": "https://api.github.com/repos/kartik-v/yii2-grid/zipball/263af3138dda76ea43aa8f6f82f5932f787dff53",
                 "reference": "9946a187eb635d5e5b9e1ff4e053891f269b9098",
                 "shasum": ""
             },
@@ -2288,7 +2288,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-popover-x/zipball/28b7ea5ec5dae2354b64da74ee10927d72a97a25",
+                "url": "https://api.github.com/repos/kartik-v/yii2-popover-x/zipball/6a21af40c66dd10588fede392d7458f80890cac3",
                 "reference": "28b7ea5ec5dae2354b64da74ee10927d72a97a25",
                 "shasum": ""
             },
@@ -2924,7 +2924,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/d2d65a7e3b88b965f231a5949dc693807c03fff8",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/585e8797d7982e0c9d09370b98b451a028a59439",
                 "reference": "e0fff9c0044936d9b884e259b28ca88471330971",
                 "shasum": ""
             },
@@ -3381,7 +3381,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafo/scssphp/zipball/57cfb337be75c6d34a755e060d31e633124aaff0",
+                "url": "https://api.github.com/repos/leafo/scssphp/zipball/62591150323beff348ced4a5be5345665e8979e9",
                 "reference": "732e210b34aaa3451b4a6e1c68bd6db8dbeb3e77",
                 "shasum": ""
             },
@@ -3949,7 +3949,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/533b9a5983e1ea6dfd1604dd9cfb32d0a0eccc35",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/39898180f12a828bf3146243cbe104d4c2c98d56",
                 "reference": "3085bec3ff42140846652c300cc75315c26126a8",
                 "shasum": ""
             },
