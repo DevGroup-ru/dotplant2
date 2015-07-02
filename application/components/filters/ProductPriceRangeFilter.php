@@ -23,7 +23,7 @@ class ProductPriceRangeFilter implements FilterQueryInterface
      */
     public function filter(ActiveQuery $query, &$cacheKeyAppend)
     {
-        $get = ArrayHelper::merge(Yii::$app->request->get(), Yii::$app->request->post() );
+        $get = array_merge(Yii::$app->request->get(), Yii::$app->request->post());
 
         $isChange = (isset($get[$this->changeAttribute]) && $get[$this->changeAttribute] == 1 ) ? true : false;
 
