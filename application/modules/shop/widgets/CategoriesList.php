@@ -12,6 +12,16 @@ use yii\helpers\Url;
 
 class CategoriesList extends Widget
 {
+    /**
+     * @property string $viewFile
+     * @property int $rootCategory
+     * @property int|null $depth
+     * @property boolean $includeRoot
+     * @property boolean $fetchModels
+     * @property boolean $onlyNonEmpty
+     * @property array $excludedCategories
+     * @property array $additional
+     */
     public $viewFile = 'categories-list/tree';
     public $rootCategory = null;
     public $depth = null;

@@ -42,4 +42,16 @@ class RelatedProduct extends \yii\db\ActiveRecord
             'related_product_id' => Yii::t('app', 'Related Product ID'),
         ];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+            ],
+        ];
+    }
 }

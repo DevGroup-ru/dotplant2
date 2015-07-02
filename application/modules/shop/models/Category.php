@@ -597,7 +597,7 @@ class Category extends ActiveRecord implements \JsonSerializable
         $items = [];
         $categories = static::find()->select(['id', 'name', 'category_group_id'])->where(
             ['parent_id' => $parentId, 'active' => 1]
-        )->orderBy('sort_order')->with('images')->all();
+        )->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])->with('images')->all();
         $cache_tags = [
             ActiveRecordHelper::getCommonTag(static::className()),
         ];
