@@ -137,9 +137,7 @@ $(function(){
         container: 'body'
     });
     $('[data-toggle="tooltip"]').tooltip();
-
-    $('[data-toggle="tooltip"]').tooltip();
-    $('[data-action="delete"]').on('click', function(e) {
+    $('body').on('click', '[data-action="delete"]', function() {
         $('#delete-confirmation').attr('data-url', $(this).attr('href')).attr('data-items', '').modal('show');
         return false;
     });
