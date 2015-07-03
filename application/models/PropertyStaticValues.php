@@ -87,6 +87,8 @@ class PropertyStaticValues extends ActiveRecord
             'value' => Yii::t('app', 'Value'),
             'slug' => Yii::t('app', 'Slug'),
             'sort_order' => Yii::t('app', 'Sort Order'),
+            'title_append' => Yii::t('app', 'Title append'),
+            'dont_filter' => Yii::t('app', 'Don\'t filter (for FilterWidget only)'),
         ];
     }
 

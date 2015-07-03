@@ -477,7 +477,7 @@ class HasProperties extends Behavior
                     new TagDependency(
                         [
                             'tags' => [
-                                ActiveRecordHelper::getObjectTag($this->getObject(), $this->owner->id),
+                                ActiveRecordHelper::getObjectTag($this->owner, $this->owner->id),
                             ],
                         ]
                     )

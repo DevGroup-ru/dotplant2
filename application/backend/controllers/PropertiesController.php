@@ -5,16 +5,20 @@ namespace app\backend\controllers;
 use app\components\Helper;
 use app\models\Form;
 use app\models\Object;
+use app\models\ObjectStaticValues;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
 use app\models\Submission;
 use app\properties\PropertyHandlers;
 use app\modules\image\widgets\SaveInfoAction;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\caching\TagDependency;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 class PropertiesController extends Controller
 {
@@ -311,16 +315,52 @@ class PropertiesController extends Controller
     }
 
 
-    public function actionAddStaticValue($key, $value = "", $returnUrl)
+    public function actionAddStaticValue($key, $value, $returnUrl, $objectId = null, $objectModelId = null)
     {
-
         $model = new PropertyStaticValues();
-        $property = Property::find()->where(['key'=>$key])->one();
+        /** @var Property $property */
+        $property = Property::findOne(['key'=>$key]);
+        if (is_null($property)) {
+            throw new NotFoundHttpException;
+        }
         $model->property_id = $property->id;
-
         if (Yii::$app->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                $this->redirect($returnUrl);
+                $tags = [
+                    ActiveRecordHelper::getCommonTag(Property::className()),
+                    ActiveRecordHelper::getObjectTag(Property::className(), $property->id),
+                    ActiveRecordHelper::getCommonTag(PropertyGroup::className()),
+                    ActiveRecordHelper::getObjectTag(PropertyGroup::className(), $property->property_group_id),
+                ];
+                if (!is_null($objectId) && !is_null($objectModelId)) {
+                    if ($property->multiple == 0) {
+                        $propertyStaticValueIds = PropertyStaticValues::find()
+                            ->select('id')
+                            ->where(['property_id' => $property->id])
+                            ->column();
+                        ObjectStaticValues::deleteAll(
+                            [
+                                'object_id' => $objectId,
+                                'object_model_id' => $objectModelId,
+                                'property_static_value_id' => $propertyStaticValueIds,
+                            ]
+                        );
+                    }
+                    $objectStaticValues = new ObjectStaticValues;
+                    $objectStaticValues->attributes = [
+                        'object_id' => $objectId,
+                        'object_model_id' => $objectModelId,
+                        'property_static_value_id' => $model->id,
+                    ];
+                    $objectStaticValues->save();
+                    $tags[] = ActiveRecordHelper::getCommonTag(Object::findById($objectId)->object_class);
+                    $tags[] = ActiveRecordHelper::getObjectTag(
+                        Object::findById($objectId)->object_class,
+                        $objectModelId
+                    );
+                }
+                TagDependency::invalidate(Yii::$app->cache, $tags);
+                return $this->redirect($returnUrl);
             }
         } elseif ($value !== "") {
             $model->name = $value;
@@ -328,15 +368,17 @@ class PropertiesController extends Controller
             $model->slug = Helper::createSlug($value);
             $model->sort_order = 0;
         }
-        return $this->renderAjax('ajax-static-value', ['model'=>$model]);
-
-
+        return $this->renderAjax('ajax-static-value', ['model' => $model]);
     }
 
 
     public function actionDeleteStaticValue($id, $property_id, $property_group_id)
     {
+        /** @var PropertyStaticValues $model */
         $model = PropertyStaticValues::findOne($id);
+        if (is_null($model)) {
+            throw new NotFoundHttpException;
+        }
         $model->delete();
         Yii::$app->session->setFlash('danger', Yii::t('app', 'Object removed'));
         return $this->redirect(
@@ -352,7 +394,11 @@ class PropertiesController extends Controller
 
     public function actionDeleteProperty($id, $property_group_id)
     {
+        /** @var Property $model */
         $model = Property::findOne($id);
+        if (is_null($model)) {
+            throw new NotFoundHttpException;
+        }
         $model->delete();
         Yii::$app->session->setFlash('danger', Yii::t('app', 'Object removed'));
         return $this->redirect(
@@ -374,13 +420,16 @@ class PropertiesController extends Controller
                 $item->delete();
             }
         }
-
         return $this->redirect(['group', 'id' => $group_id]);
     }
 
     public function actionDeleteGroup($id)
     {
+        /** @var PropertyGroup $model */
         $model = PropertyGroup::findOne($id);
+        if (is_null($model)) {
+            throw new NotFoundHttpException;
+        }
         $model->delete();
         Yii::$app->session->setFlash('danger', Yii::t('app', 'Object removed'));
         return $this->redirect(
@@ -410,46 +459,6 @@ class PropertiesController extends Controller
 
         return $this->redirect(['index']);
     }
-
-
-    public function actionAutocomplete($search = null, $id = null, $object_id = null)
-    {
-        /**
-         * @todo Добавить отображение вложенности
-         */
-        $out = ['more' => false];
-        if (!is_null($search)) {
-            $query = new Query;
-            $query->select(
-                Property::tableName().'.id, '.Property::tableName().'.name AS text'
-            )
-                ->from(Property::tableName())
-                ->andWhere(['like', Property::tableName().'.name', $search])
-                ->limit(100);
-            if (!is_null($object_id)) {
-                $query->leftJoin(
-                    PropertyGroup::tableName(),
-                    PropertyGroup::tableName().'.id = '.Property::tableName().'.property_group_id'
-                );
-
-                $query->andWhere([
-                    PropertyGroup::tableName().'.id' => $object_id
-                ]);
-
-            }
-
-            $command = $query->createCommand();
-            $data = $command->queryAll();
-            $out['results'] = array_values($data);
-        } elseif ($id > 0) {
-            $out['results'] = ['id' => $id, 'text' => Property::findOne($id)->name];
-        } else {
-            $out['results'] = ['id' => 0, 'text' => Yii::t('app', 'No matching records found')];
-        }
-        echo Json::encode($out);
-    }
-
-
 
     public function actionHandlers()
     {

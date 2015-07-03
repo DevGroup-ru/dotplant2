@@ -1146,4 +1146,6 @@ return [
     'static' => 'Статичный',
     'unnecessary' => 'необязательные',
     '{currentModuleName} {componentName} is flushed' => '{currentModuleName} {componentName} очишен',
+    'Don\'t filter (for FilterWidget only)' => 'Не участвует в фильтре (только для FitlerWidget)',
+    'Title append' => 'Добавок к тайтлу',
 ];
