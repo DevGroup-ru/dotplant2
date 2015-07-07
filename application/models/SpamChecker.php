@@ -17,6 +17,10 @@ use yii\helpers\ArrayHelper;
  */
 class SpamChecker extends \yii\db\ActiveRecord
 {
+    const FIELD_TYPE_NO_CHECKING = 'notinterpret';
+    const FIELD_TYPE_AUTHOR = 'author_field';
+    const FIELD_TYPE_CONTENT = 'content_field';
+
     /**
      * @var int
      */
@@ -137,9 +141,9 @@ class SpamChecker extends \yii\db\ActiveRecord
     public static function getFieldTypesForForm()
     {
         return [
-            'notinterpret' => 'Не интерпретировать',
-            'author_field' => 'Имя',
-            'content_field' => 'Контент',
+            self::FIELD_TYPE_NO_CHECKING => Yii::t('app', 'No'),
+            self::FIELD_TYPE_AUTHOR => Yii::t('app', 'Username'),
+            self::FIELD_TYPE_CONTENT => Yii::t('app', 'Content'),
         ];
     }
 

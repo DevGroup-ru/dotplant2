@@ -62,7 +62,7 @@ class SubmitFormAction extends Action
         // Spam checking
         $activeSpamChecker = SpamChecker::getActive();
         $data = [];
-        $spamResult = [];
+        $haveSpam = false;
         if ($activeSpamChecker !== null && !empty($activeSpamChecker->api_key)) {
             $data[$activeSpamChecker->name]['class'] = $activeSpamChecker->behavior;
             $data[$activeSpamChecker->name]['value']['key'] = $activeSpamChecker->api_key;
@@ -85,17 +85,8 @@ class SubmitFormAction extends Action
                     'data' => $data,
                 ]
             );
-            $spamResult = $model->check();
+            $haveSpam = $model->isSpam();
         }
-        $haveSpam = false;
-        if (is_array($spamResult) === true) {
-            foreach ($spamResult as $result) {
-                if (ArrayHelper::getValue($result, 'ok', false) === true) {
-                    $haveSpam = $haveSpam || ArrayHelper::getValue($result, 'is_spam', false);
-                }
-            }
-        }
-
         $date = new \DateTime();
         /** @var Submission|HasProperties $submission */
         $submission = new Submission(
