@@ -16,6 +16,7 @@ use Yii;
  * @property integer $is_filter_by_price
  * @property integer $is_range_slider
  * @property integer $delegate_to_children
+ * @property Property $property
  */
 class FilterSets extends \yii\db\ActiveRecord
 {
