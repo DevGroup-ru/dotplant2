@@ -2,14 +2,17 @@
 
 namespace app\modules\review\controllers;
 
-use app\components\Controller;
-use app\modules\review\models\Review;
-use Yii;
 use app\actions\SubmitFormAction;
-use yii\web\HttpException;
+use app\behaviors\spamchecker\SpamCheckerBehavior;
+use app\components\Controller;
+use app\models\SpamChecker;
+use app\models\Submission;
 use app\modules\review\models\RatingItem;
 use app\modules\review\models\RatingValues;
+use app\modules\review\models\Review;
+use Yii;
 use yii\helpers\Json;
+use yii\web\HttpException;
 
 class ProcessController extends Controller
 {
@@ -27,7 +30,7 @@ class ProcessController extends Controller
         if (false === Yii::$app->request->isPost) {
             throw new HttpException(403);
         }
-        /** @var $review \app\modules\review\models\Review */
+        /** @var $review \app\modules\review\models\Review|SpamCheckerBehavior */
         $post = Yii::$app->request->post();
         $review = new Review(['scenario' => 'check']);
         $review->load($post);
@@ -47,6 +50,30 @@ class ProcessController extends Controller
             }
             $review->submission_id = $submission_id;
             $review->status = Review::STATUS_NEW;
+            if ($this->module->enableSpamChecking) {
+                $activeSpamChecker = SpamChecker::getActive();
+                if (!is_null($activeSpamChecker) && !empty($activeSpamChecker->api_key)) {
+                    $review->attachBehavior(
+                        'spamChecker',
+                        [
+                            'class' => SpamCheckerBehavior::className(),
+                            'data' => [
+                                $activeSpamChecker->name => [
+                                    'class' => $activeSpamChecker->behavior,
+                                    'value' => [
+                                        'key' => $activeSpamChecker->api_key,
+                                        SpamChecker::FIELD_TYPE_CONTENT => $review->review_text
+                                    ],
+                                ],
+                            ],
+                        ]
+                    );
+                    if ($review->isSpam()) {
+                        $review->status = Review::STATUS_NOT_APPROVED;
+                        Submission::updateAll(['spam' => 1], ['id' => $submission_id]);
+                    }
+                }
+            }
             if ($review->save()) {
                 $ratingData = isset($post['ObjectRating']) ? $post['ObjectRating'] : null;
                 if (null !== $ratingData) {

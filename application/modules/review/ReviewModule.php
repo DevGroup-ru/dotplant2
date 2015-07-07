@@ -21,6 +21,11 @@ class ReviewModule extends BaseModule
     public $pageSize = 10;
 
     /**
+     * @var bool Enable spam checking
+     */
+    public $enableSpamChecking = false;
+
+    /**
      * @return array the behavior configurations.
      */
     public function behaviors()

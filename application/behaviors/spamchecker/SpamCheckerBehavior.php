@@ -7,8 +7,10 @@ use yii\helpers\ArrayHelper;
 
 class SpamCheckerBehavior extends Behavior
 {
+    /**
+     * @var array
+     */
     private $data = [];
-    private $checkers = [];
 
     /**
      * @param array $data
@@ -26,21 +28,28 @@ class SpamCheckerBehavior extends Behavior
         return $this->data;
     }
 
-    public function check()
+    /**
+     * Check data
+     * @param bool $asArray
+     * @return array|bool
+     */
+    public function isSpam($asArray = false)
     {
-        $this->checkers = [];
-
+        $results = [];
         foreach ($this->data as $data) {
             $class = ArrayHelper::getValue($data, 'class', '');
             $value = ArrayHelper::getValue($data, 'value', []);
-            $this->checkers[] = new $class($value);
+            /** @var SpamCheckable $checker */
+            $checker = new $class($value);
+            $result = $checker->check();
+            if ($asArray) {
+                $results[$checker->getType()] = $result;
+            } else {
+                if (ArrayHelper::getValue($result, 'ok', false) && ArrayHelper::getValue($result, 'is_spam', false)) {
+                    return true;
+                }
+            }
         }
-
-        $results = [];
-        foreach ($this->checkers as $checker) {
-            $results[$checker->getType()] = $checker->check();
-        }
-
-        return $results;
+        return $asArray ? $results : false;
     }
 }

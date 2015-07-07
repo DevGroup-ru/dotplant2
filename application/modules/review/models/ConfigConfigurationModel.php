@@ -23,11 +23,17 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public $pageSize = 10;
 
+    /**
+     * @var bool Enable spam checking
+     */
+    public $enableSpamChecking = false;
+
     public function attributeLabels()
     {
         return [
             'maxPerPage' => Yii::t('app', 'Max per page'),
             'pageSize' => Yii::t('app', 'Page size'),
+            'enableSpamChecking' => Yii::t('app', 'Enable spam checking'),
         ];
     }
 
@@ -38,6 +44,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     {
         return [
             [['maxPerPage', 'pageSize'], 'integer'],
+            [['enableSpamChecking'], 'filter', 'filter' => 'boolval'],
         ];
     }
 

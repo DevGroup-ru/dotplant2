@@ -13,6 +13,7 @@ use app\backend\widgets\BackendWidget;
         <?php BackendWidget::begin(['title' => Yii::t('app', 'Main settings'), 'options' => ['class' => 'visible-header']]); ?>
         <?= $form->field($model, 'maxPerPage') ?>
         <?= $form->field($model, 'pageSize') ?>
+        <?= $form->field($model, 'enableSpamChecking')->widget(\kartik\switchinput\SwitchInput::className()) ?>
         <?php BackendWidget::end() ?>
     </div>
 </div>
