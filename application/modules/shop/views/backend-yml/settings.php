@@ -1,8 +1,8 @@
 <?php
 /**
  * @var $this \yii\web\View
+ * @var $model \app\modules\shop\models\Yml
  **/
-
 use \yii\helpers\Html;
 use \kartik\icons\Icon;
 use \app\backend\widgets\BackendWidget;
@@ -197,6 +197,16 @@ $formName = 'YmlSettings';
             ['create'],
             ['class' => 'btn btn-primary']
         ); ?>
+
+        <?php
+            if (is_file(\Yii::getAlias('@webroot').'/'.$model->general_yml_filename)) {
+                echo Html::a(
+                    Icon::show('download') . Yii::t('app', 'Download'),
+                    \yii\helpers\Url::to($model->general_yml_filename, true),
+                    ['class' => 'btn btn-default']
+                );
+            }
+        ?>
         <?php BackendWidget::end(); ?>
     </div>
 </div>
