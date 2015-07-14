@@ -26,6 +26,8 @@ use app\components\Helper;
 
         <?= $form->field($model, 'filterOnlyByParentProduct')->widget(SwitchInput::className()) ?>
 
+        <?= $form->field($model, 'showFiltersInBreadcrumbs')->widget(SwitchInput::className()) ?>
+
         <?php BackendWidget::end() ?>
 
     </div>

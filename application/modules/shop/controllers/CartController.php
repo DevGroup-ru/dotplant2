@@ -119,6 +119,10 @@ class CartController extends Controller
             }
             if (!$orderItem->save()) {
                 $result['errors'][] = Yii::t('app', 'Cannot save order item.');
+            } else {
+                // refresh order
+                Order::clearStaticOrder();
+                $order = $this->loadOrder(false);
             }
             if (isset($product['children'])) {
                 $result = ArrayHelper::merge(
