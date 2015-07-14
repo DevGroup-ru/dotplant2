@@ -55,7 +55,14 @@ class Search extends Model
             ->orWhere('`h1` LIKE :q')
             ->orWhere('`content` LIKE :q')
             ->addParams([':q' => '%' . $this->q . '%'])
-            ->andWhere('active=1')
+            ->andWhere(
+                ArrayHelper::merge(
+                    [
+                        'active' => 1,
+                    ],
+                    Yii::$app->request->get('params', [])
+                )
+            )
             ->all();
         return ArrayHelper::getColumn($result, 'id');
     }
