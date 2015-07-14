@@ -18,6 +18,8 @@ use app\components\Helper;
 
         <?= $form->field($model, 'searchResultsLimit') ?>
 
+        <?= $form->field($model, 'allowSearchGeneratedProducts')->widget(SwitchInput::className()) ?>
+
         <?= $form->field($model, 'maxProductsToCompare') ?>
 
         <?= $form->field($model, 'maxLastViewedProducts') ?>

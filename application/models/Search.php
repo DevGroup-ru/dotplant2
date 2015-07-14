@@ -48,7 +48,10 @@ class Search extends Model
 
     public function searchProductsByDescription()
     {
-        $result = (new Query())
+        /** @var \app\modules\shop\ShopModule $module */
+        $module = Yii::$app->modules['shop'];
+
+        $query = (new Query())
             ->select('`id`')
             ->from(Product::tableName())
             ->orWhere('`name` LIKE :q')
@@ -56,15 +59,19 @@ class Search extends Model
             ->orWhere('`content` LIKE :q')
             ->addParams([':q' => '%' . $this->q . '%'])
             ->andWhere(
-                ArrayHelper::merge(
-                    [
-                        'active' => 1,
-                    ],
-                    Yii::$app->request->get('params', [])
-                )
-            )
-            ->all();
-        return ArrayHelper::getColumn($result, 'id');
+                [
+                    'active' => 1,
+                ]
+            );
+        if ($module->allowSearchGeneratedProducts != 1) {
+            $query->andWhere(
+                [
+                    'parent_id' => 0
+                ]
+            );
+        }
+
+        return ArrayHelper::getColumn($query->all(), 'id');
     }
 
     public function searchPagesByDescription()
