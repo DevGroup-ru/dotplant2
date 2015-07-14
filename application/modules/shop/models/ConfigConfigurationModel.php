@@ -90,6 +90,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $ymlConfig = [];
 
     /**
+     * @var bool Show filter links in breadcrumbs
+     */
+    public $showFiltersInBreadcrumbs = false;
+
+    /**
      * @inheritdoc
      */
     public function rules()
@@ -136,6 +141,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                     'deleteOrdersAbility',
                     'filterOnlyByParentProduct',
                     'showDeletedOrders',
+                    'showFiltersInBreadcrumbs',
                 ],
                 'boolean',
             ],

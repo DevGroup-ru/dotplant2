@@ -98,6 +98,11 @@ class ShopModule extends BaseModule implements BootstrapInterface
     public $ymlConfig = [];
 
     /**
+     * @var bool Show filter links in breadcrumbs
+     */
+    public $showFiltersInBreadcrumbs = false;
+
+    /**
      * @inheritdoc
      */
     public function behaviors()
