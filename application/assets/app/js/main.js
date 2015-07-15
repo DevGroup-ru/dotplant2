@@ -261,7 +261,6 @@ $(function() {
             datId = '#'+thatFilters.attr('id'),
             catchTimeout = false,
             overlay = thatFilters.find('.overlay');
-        console.log(overlay);
         var doFiltration = function() {
             if (catchTimeout !== false) {
                 clearTimeout(catchTimeout);
@@ -315,6 +314,7 @@ $(function() {
             return true;
         });
         thatFilters.find('form').submit(function() {
+            overlay.show();
             doFiltration();
             return false;
         });
