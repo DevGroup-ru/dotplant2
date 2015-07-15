@@ -53,7 +53,6 @@ $listView = UserPreferences::preferences()->getAttributes()['listViewType'];
                 [
                     '@product',
                     'model' => $product,
-                    'properties' => $values_by_property_id,
                     'category_group_id' => $category_group_id,
                 ]
             );

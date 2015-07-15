@@ -35,6 +35,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $searchResultsLimit = 9;
 
     /**
+     * @var boolean Possible to search generated products
+     */
+    public $allowSearchGeneratedProducts = 0;
+
+    /**
      * @var bool Show delete order in backend
      */
     public $deleteOrdersAbility = false;
@@ -90,6 +95,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $ymlConfig = [];
 
     /**
+     * @var bool Show filter links in breadcrumbs
+     */
+    public $showFiltersInBreadcrumbs = false;
+
+    /**
      * @inheritdoc
      */
     public function rules()
@@ -136,6 +146,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                     'deleteOrdersAbility',
                     'filterOnlyByParentProduct',
                     'showDeletedOrders',
+                    'showFiltersInBreadcrumbs',
                 ],
                 'boolean',
             ],
@@ -148,7 +159,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 'filter',
                 'filter' => 'boolval',
             ],
-            [['allowToAddSameProduct', 'countUniqueProductsOnly', 'countChildrenProducts'], 'boolean'],
+            [['allowToAddSameProduct', 'countUniqueProductsOnly', 'countChildrenProducts', 'allowSearchGeneratedProducts'], 'boolean'],
             [['defaultMeasureId'], 'integer'],
             [['ymlConfig'], function ($attribute, $params) {
                 if (!is_array($this->$attribute)) {

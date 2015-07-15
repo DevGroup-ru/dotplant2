@@ -7,6 +7,7 @@ use app\extensions\DefaultTheme\components\BaseWidget;
 use app\extensions\DefaultTheme\models\ThemeActiveWidgets;
 use app\extensions\DefaultTheme\models\ThemeWidgets;
 use app\extensions\DefaultTheme\widgets\FilterSets\Widget;
+use app\models\PropertyStaticValues;
 use app\modules\core\helpers\EventTriggeringHelper;
 use app\modules\shop\events\ProductPageShowed;
 use app\modules\shop\models\Category;
@@ -145,7 +146,7 @@ class ProductController extends Controller
             'pages' => $pages,
             'title_append' => $title_append,
             'selections' => $request->get(),
-            'breadcrumbs' => $this->buildBreadcrumbsArray($selected_category),
+            'breadcrumbs' => $this->buildBreadcrumbsArray($selected_category, null, $values_by_property_id),
             'allSorts' => $allSorts,
         ];
         $viewFile = $this->computeViewFile($selected_category, 'list');
@@ -378,9 +379,10 @@ class ProductController extends Controller
     * This function build array for widget "Breadcrumbs"
     * @param Category $selCat - model of current category
     * @param Product|null $product - model of product, if current page is a page of product
+    * @param array $properties - array of properties and static values
     * Return an array for widget or empty array
     */
-    private function buildBreadcrumbsArray($selCat, $product = null)
+    private function buildBreadcrumbsArray($selCat, $product = null, $properties = [])
     {
         if ($selCat === null) {
             return [];
@@ -409,6 +411,29 @@ class ProductController extends Controller
                 'label' => $label,
                 'url' => $url
             ];
+        }
+        if (is_null($product) && $this->module->showFiltersInBreadcrumbs && !empty($properties)) {
+            $route = [
+                '@category',
+                'last_category_id' => $selCat->id,
+                'category_group_id' => $selCat->category_group_id,
+            ];
+            $params = [];
+            foreach ($properties as $propertyId => $propertyStaticValues) {
+                $localParams = $params;
+                foreach ($propertyStaticValues as $propertyStaticValue) {
+                    $psv = PropertyStaticValues::findById($propertyStaticValue);
+                    if (is_null($psv)) {
+                        continue;
+                    }
+                    $localParams[$propertyId][] = $propertyStaticValue;
+                    $breadcrumbs[] = [
+                        'label' => $psv['name'],
+                        'url' => array_merge($route, ['properties' => $localParams]),
+                    ];
+                }
+                $params[$propertyId] = $propertyStaticValues;
+            }
         }
         unset($breadcrumbs[count($breadcrumbs) - 1]['url']); // last item is not a link
 

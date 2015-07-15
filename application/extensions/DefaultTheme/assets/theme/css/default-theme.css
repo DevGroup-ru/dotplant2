@@ -148,11 +148,21 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .cart .cta {
   margin-top: 10px; }
 
-.filter-sets-widget ul {
-  list-style: none;
-  padding-left: 0; }
+.filter-sets-widget {
+  position: relative; }
+  .filter-sets-widget ul {
+    list-style: none;
+    padding-left: 0; }
   .filter-sets-widget .property-values .filter-check {
     margin-right: 10px; }
+  .filter-sets-widget .overlay {
+    background-color: white;
+    display: none;
+    height: 100%;
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+    width: 100%; }
 
 .properties-widget {
   margin: 4px;

@@ -458,8 +458,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 'object_model_id = :id',
                 [':id' => $this->id]
             )->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_ASC])->column();
-            $this->category_ids[] = $this->main_category_id;
-            $this->category_ids = array_unique($this->category_ids);
         }
         return $this->category_ids;
     }

@@ -133,6 +133,29 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'class' => 'app\backend\components\ActionColumn',
+                        'buttons' => [
+                            [
+                                'url' => 'edit',
+                                'icon' => 'pencil',
+                                'class' => 'btn-primary',
+                                'label' => Yii::t('app', 'Edit'),
+                            ],
+                            [
+                                'url' => 'clone',
+                                'icon' => 'copy',
+                                'class' => 'btn-success',
+                                'label' => Yii::t('app', 'Clone'),
+                            ],
+                            [
+                                'url' => 'delete',
+                                'icon' => 'trash-o',
+                                'class' => 'btn-danger',
+                                'label' => Yii::t('app', 'Delete'),
+                                'options' => [
+                                    'data-action' => 'delete',
+                                ],
+                            ],
+                        ],
                         'url_append' => '&parent_id='.(is_object($model)?$model->id:0),
                     ],
                 ],

@@ -43,6 +43,11 @@ class ShopModule extends BaseModule implements BootstrapInterface
     public $searchResultsLimit = 9;
 
     /**
+     * @var boolean Possible to search generated products
+     */
+    public $allowSearchGeneratedProducts = 0;
+
+    /**
      * @var bool Show delete order in backend
      */
     public $deleteOrdersAbility = 0;
@@ -96,6 +101,11 @@ class ShopModule extends BaseModule implements BootstrapInterface
      * @var array
      */
     public $ymlConfig = [];
+
+    /**
+     * @var bool Show filter links in breadcrumbs
+     */
+    public $showFiltersInBreadcrumbs = false;
 
     /**
      * @inheritdoc

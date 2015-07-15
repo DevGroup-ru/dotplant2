@@ -29,6 +29,7 @@ class ThemeVariation extends \yii\db\ActiveRecord
      * @var array|null Array representation of all ThemeVariation records in db
      */
     public static $allVariations = null;
+
     /**
      * @inheritdoc
      */
@@ -89,7 +90,7 @@ class ThemeVariation extends \yii\db\ActiveRecord
             static::$allVariations = Yii::$app->cache->get($cacheKey);
             if (static::$allVariations === false) {
                 static::$allVariations = ThemeVariation::find()
-                    ->orderBy(['exclusive'=>SORT_DESC])
+                    ->orderBy(['exclusive' => SORT_DESC])
                     ->asArray()
                     ->all();
                 Yii::$app->cache->set(
@@ -200,5 +201,22 @@ class ThemeVariation extends \yii\db\ActiveRecord
         $query->andFilterWhere(['like', 'matcher_class_name', $this->matcher_class_name]);
 
         return $dataProvider;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+
+        $activeWidgets = ThemeActiveWidgets::find()->where(['part_id' => $this->id])->all();
+        foreach ($activeWidgets as $widget) {
+            $widget->delete();
+        }
+        return true;
+
     }
 }

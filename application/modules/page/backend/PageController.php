@@ -5,6 +5,9 @@ namespace app\modules\page\backend;
 use app\backend\actions\PropertyHandler;
 use app\backend\events\BackendEntityEditEvent;
 use app\models\Object;
+use app\models\ObjectPropertyGroup;
+use app\models\Property;
+use app\modules\image\models\Image;
 use app\modules\page\models\Page;
 use app\models\ViewObject;
 use app\properties\HasProperties;
@@ -15,7 +18,9 @@ use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use devgroup\JsTreeWidget\TreeNodeMoveAction;
 use devgroup\JsTreeWidget\TreeNodesReorderAction;
 use Yii;
+use yii\db\Query;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 
@@ -108,7 +113,7 @@ class PageController extends \app\backend\components\BackendController
         $model->published = 1;
         if ($id !== null) {
             $model = Page::findOne($id);
-            if ($model===null) {
+            if ($model === null) {
                 throw new NotFoundHttpException;
             }
         }
@@ -137,7 +142,7 @@ class PageController extends \app\backend\components\BackendController
                 }
 
                 if ($save_result) {
-                    $this->runAction('save-info', ['model_id'=>$model->id]);
+                    $this->runAction('save-info', ['model_id' => $model->id]);
                     Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
                     $returnUrl = Yii::$app->request->get('returnUrl', ['/page/backend/index']);
                     switch (Yii::$app->request->post('action', 'save')) {
@@ -237,5 +242,104 @@ class PageController extends \app\backend\components\BackendController
                 Url::toRoute(['edit', 'id' => $id, 'parent_id' => $parent_id])
             )
         );
+    }
+
+
+    /**
+     * Clone page action.
+     * @param integer $id
+     * @param array|string $returnUrl
+     * @throws \yii\web\NotFoundHttpException
+     */
+    public function actionClone($id, $returnUrl = ['index'])
+    {
+        /** @var Page|HasProperties $model */
+        $model = Page::findOne($id);
+        if ($model === null) {
+            throw new NotFoundHttpException;
+        }
+
+        /** @var Page|HasProperties $newModel */
+        $newModel = new Page;
+        $newModel->setAttributes($model->attributes, false);
+        $time = time();
+        $newModel->name .= ' (copy ' . date('Y-m-d h:i:s', $time) . ')';
+        $newModel->slug .= '-copy-' . date('Ymdhis', $time);
+        $newModel->title .= '-copy-' . date('Ymdhis', $time);
+        $newModel->id = null;
+        if ($newModel->save()) {
+            $object = Object::getForClass(get_class($newModel));
+            $query = new Query();
+
+            // save images bindings
+            $params = $query->select(
+                ['object_id', 'filename', 'image_description', 'sort_order']
+            )->from(Image::tableName())->where(
+                [
+                    'object_id' => $object->id,
+                    'object_model_id' => $model->id
+                ]
+            )->all();
+            if (!empty($params)) {
+                $rows = [];
+                foreach ($params as $param) {
+                    $rows[] = [
+                        $param['object_id'],
+                        $newModel->id,
+                        $param['filename'],
+                        $param['image_description'],
+                        $param['sort_order'],
+                    ];
+                }
+                Yii::$app->db->createCommand()->batchInsert(
+                    Image::tableName(),
+                    [
+                        'object_id',
+                        'object_model_id',
+                        'filename',
+                        'image_description',
+                        'sort_order',
+                    ],
+                    $rows
+                )->execute();
+            }
+            $newModelProps = [];
+            foreach (array_keys($model->propertyGroups) as $key) {
+                $opg = new ObjectPropertyGroup();
+                $opg->attributes = [
+                    'object_id' => $object->id,
+                    'object_model_id' => $newModel->id,
+                    'property_group_id' => $key,
+                ];
+                $opg->save();
+                $props = Property::getForGroupId($key);
+                foreach ($props as $prop) {
+                    $propValues = $model->getPropertyValuesByPropertyId($prop->id);
+                    if ($propValues !== null) {
+                        foreach ($propValues->values as $val) {
+                            $valueToSave = ArrayHelper::getValue($val, 'psv_id', $val['value']);
+                            $newModelProps[$prop->key][] = $valueToSave;
+                        }
+                    }
+                }
+            }
+            $newModel->saveProperties(
+                [
+                    'Properties_Page_' . $newModel->id => $newModelProps,
+                ]
+            );
+            $view = ViewObject::findOne(['object_id' => $model->object->id, 'object_model_id' => $model->id]);
+            if ($view !== null) {
+                $newView = new ViewObject;
+                $newView->setAttributes($view->attributes, false);
+                $newView->id = null;
+                $newView->object_model_id = $newModel->id;
+                $newView->save();
+            }
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Page has been cloned successfully.'));
+            $this->redirect(
+                ['edit', 'id' => $newModel->id, 'parent_id' => $newModel->parent_id, 'returnUrl' => $returnUrl]
+            );
+        }
     }
 }

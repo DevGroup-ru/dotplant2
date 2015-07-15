@@ -256,12 +256,11 @@ $(function() {
 
 (function($){
     "use strict";
-
     $.fn.dotPlantSmartFilters = function() {
         var thatFilters = $(this),
             datId = '#'+thatFilters.attr('id'),
-            catchTimeout = false;
-
+            catchTimeout = false,
+            overlay = thatFilters.find('.overlay');
         var doFiltration = function() {
             if (catchTimeout !== false) {
                 clearTimeout(catchTimeout);
@@ -269,9 +268,7 @@ $(function() {
             var block = $("#product-list-block"),
                 form = thatFilters.find('form');
             block.css('height', block.height()+'px');
-
             block.empty().html('Loading...');
-
             $.ajax({
                 url: form.attr('action'),
                 method: 'POST',
@@ -291,11 +288,12 @@ $(function() {
                             );
                         }
                     }
+                    overlay.hide();
                 }
             })
         };
-
-        $('.filter-sets-widget').on('click', datId + ' .filter-link', function(){
+        $('.filter-sets-widget').on('click', datId + ' .filter-link', function() {
+            overlay.show();
             if (catchTimeout !== false) {
                 clearTimeout(catchTimeout);
             }
@@ -303,22 +301,20 @@ $(function() {
                 selectionId = that.data('selectionId'),
                 checkbox = $('#filter-check-'+selectionId),
                 propertyId = checkbox.data('propertyId');
-
-
             checkbox.prop('checked', !checkbox.prop('checked'));
-
             catchTimeout = setTimeout(doFiltration, 1000);
-
             return false;
         });
-        thatFilters.find('.filter-check').change(function(){
+        thatFilters.on('click', '.filter-check', function() {
+            overlay.show();
             if (catchTimeout !== false) {
                 clearTimeout(catchTimeout);
             }
             catchTimeout = setTimeout(doFiltration, 1000);
             return true;
         });
-        thatFilters.find('form').submit(function(){
+        thatFilters.find('form').submit(function() {
+            overlay.show();
             doFiltration();
             return false;
         });

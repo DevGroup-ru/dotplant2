@@ -146,4 +146,26 @@ class ThemeWidgets extends \yii\db\ActiveRecord
             ]
         );
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+
+        $parts = ThemeWidgetApplying::find()->where(['widget_id'=>$this->id])->all();
+        foreach ($parts as $part) {
+            $part->delete();
+        }
+
+        $activeWidgets = ThemeActiveWidgets::find()->where(['widget_id'=>$this->id])->all();
+        foreach ($activeWidgets as $widget) {
+            $widget->delete();
+        }
+
+        return true;
+    }
 }

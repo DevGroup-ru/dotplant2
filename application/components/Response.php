@@ -71,4 +71,37 @@ class Response extends \yii\web\Response
      * @var bool Is this is the response to backend
      */
     public $is_backend = false;
+
+    /**
+     * @property string $globalCacheKey
+     * @var string
+     */
+    protected $_globalCacheKey = null;
+
+    /**
+     * @param string $value
+     */
+    public function setGlobalCacheKey($value)
+    {
+        $this->_globalCacheKey = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGlobalCacheKey()
+    {
+        $key = $this->_globalCacheKey;
+        if (empty($key)) {
+            $u = Yii::$app->request->getPathInfo();
+            $p = Yii::$app->request->getQueryParams();
+            ksort($p);
+            $key = $this->_globalCacheKey = implode(':', [
+                'ResponseKey',
+                $u,
+                json_encode($p)
+            ]);
+        }
+        return $key;
+    }
 }

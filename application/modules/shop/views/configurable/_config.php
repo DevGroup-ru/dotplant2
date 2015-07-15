@@ -18,6 +18,8 @@ use app\components\Helper;
 
         <?= $form->field($model, 'searchResultsLimit') ?>
 
+        <?= $form->field($model, 'allowSearchGeneratedProducts')->widget(SwitchInput::className()) ?>
+
         <?= $form->field($model, 'maxProductsToCompare') ?>
 
         <?= $form->field($model, 'maxLastViewedProducts') ?>
@@ -25,6 +27,8 @@ use app\components\Helper;
         <?= $form->field($model, 'showProductsOfChildCategories')->widget(SwitchInput::className()) ?>
 
         <?= $form->field($model, 'filterOnlyByParentProduct')->widget(SwitchInput::className()) ?>
+
+        <?= $form->field($model, 'showFiltersInBreadcrumbs')->widget(SwitchInput::className()) ?>
 
         <?php BackendWidget::end() ?>
 

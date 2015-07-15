@@ -172,22 +172,22 @@ $editable_formOptions = [
                         'placement' => PopoverX::ALIGN_BOTTOM,
                     ],
                 ],
-                [
-                    'attribute' => 'active',
-                    'class' => \kartik\grid\EditableColumn::className(),
-                    'editableOptions' => [
-                        'inputType' => Editable::INPUT_CHECKBOX,
-                        'formOptions' => $editable_formOptions,
-                        'placement' => PopoverX::ALIGN_BOTTOM,
-                    ],
-                    'format' => 'raw',
-                    'value' => function ($model, $key, $index, $column) {
-                        if ($model === null || $model->active === null) {
-                            return null;
-                        }
-                        return $model->active ? Icon::show('check txt-color-green') : Icon::show('times txt-color-red');
-                    },
-                ],
+//                [
+//                    'attribute' => 'active',
+//                    'class' => \kartik\grid\EditableColumn::className(),
+//                    'editableOptions' => [
+//                        'inputType' => Editable::INPUT_CHECKBOX,
+//                        'formOptions' => $editable_formOptions,
+//                        'placement' => PopoverX::ALIGN_BOTTOM,
+//                    ],
+//                    'format' => 'raw',
+//                    'value' => function ($model, $key, $index, $column) {
+//                        if ($model === null || $model->active === null) {
+//                            return null;
+//                        }
+//                        return $model->active ? Icon::show('check txt-color-green') : Icon::show('times txt-color-red');
+//                    },
+//                ],
                 [
                     'class' => 'app\backend\components\ActionColumn',
                     'buttons' => [

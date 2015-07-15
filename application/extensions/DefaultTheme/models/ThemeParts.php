@@ -287,4 +287,26 @@ class ThemeParts extends \yii\db\ActiveRecord
 
         return $dataProvider;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+
+        $activeParts = ThemeWidgetApplying::find()->where(['part_id'=>$this->id])->all();
+        foreach ($activeParts as $part) {
+            $part->delete();
+        }
+
+        $activeWidgets = ThemeActiveWidgets::find()->where(['widget_id'=>$this->id])->all();
+        foreach ($activeWidgets as $widget) {
+            $widget->delete();
+        }
+
+        return true;
+    }
 }
