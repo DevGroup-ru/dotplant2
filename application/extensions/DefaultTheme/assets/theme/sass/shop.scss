@@ -203,11 +203,21 @@ $big_image_height: 400px;
 }
 
 .filter-sets-widget {
+  position: relative;
   ul {
     list-style: none;
     padding-left: 0;
   }
   .property-values .filter-check {
     margin-right: 10px;
+  }
+  .overlay {
+    background-color: white;
+    display: none;
+    height: 100%;
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+    width: 100%;
   }
 }

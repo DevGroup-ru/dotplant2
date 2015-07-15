@@ -119,5 +119,6 @@ TPL;
         }
     ?>
     </form>
+        <div class="overlay"></div>
     </div>
 </div>
