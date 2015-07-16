@@ -109,7 +109,7 @@ class Thumbnail extends \yii\db\ActiveRecord
                 return false;
             }
 
-            $stream = $thumb->get($fileInfo['ext']);
+            $stream = $thumb->get($fileInfo['ext'], ['quality' => $size->quality]);
             $src = "$path/{$fileInfo['name']}-{$size->width}x{$size->height}.{$fileInfo['ext']}";
             $fs->put($src, $stream);
             return $src;
