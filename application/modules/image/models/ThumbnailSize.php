@@ -34,7 +34,7 @@ class ThumbnailSize extends ActiveRecord
         return [
             [['width', 'height'], 'required'],
             [['width', 'height', 'default_watermark_id', 'quality'], 'integer'],
-            [['quality'], 'number', 'min' => 0, 'max' => 99],
+            [['quality'], 'number', 'min' => 0, 'max' => 100],
             [['resize_mode'], 'string'],
         ];
     }
