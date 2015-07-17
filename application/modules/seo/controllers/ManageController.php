@@ -405,15 +405,6 @@ class ManageController extends BackendController
     }
 
     /**
-     * Deletes robots value from cache
-     * @return bool if no error happens during deletion
-     */
-    public function actionFlushRobotsCache()
-    {
-        return Robots::removeCacheByKey();
-    }
-
-    /**
      * Show list of Redirect models
      * @return string
      */

@@ -3,6 +3,7 @@
 namespace app\modules\seo\models;
 
 use Yii;
+
 /**
  * @inheritdoc
  */
@@ -44,16 +45,16 @@ class Robots extends Config
     /**
      * @return Config|null
      */
-    static public function getModel()
+    public static function getModel()
     {
-        return parent::getModelByKey(self::KEY_ROBOTS, Yii::$app->getModule('seo')->cacheConfig['robotsCache']['expire']);
+        return self::getModelByKey(self::KEY_ROBOTS, Yii::$app->getModule('seo')->cacheConfig['robotsCache']['expire']);
     }
 
     /**
      * @inheritdoc
      */
-    static public function removeCacheByKey($key = null)
+    public static function removeCacheByKey($key = null)
     {
-        return parent::removeCacheByKey(self::KEY_ROBOTS);
+        return self::removeCacheByKey(self::KEY_ROBOTS);
     }
 }
