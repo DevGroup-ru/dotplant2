@@ -2963,9 +2963,13 @@ class m150531_084444_new_init extends Migration
                 ['app\\behaviors\\spamchecker\\YandexSpamChecker', 'Yandex', 'realname', 'body-plain'],
             ]
         );
-        $defaultSize = new ThumbnailSize;
-        $defaultSize->setAttributes(['width' => 80, 'height' => 80]);
-        $defaultSize->save();
+        $this->insert(
+            ThumbnailSize::tableName(),
+            [
+                'width' => 80,
+                'height' => 80
+            ]
+        );
         $this->insert(
             Task::tableName(),
             [
