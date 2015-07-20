@@ -194,7 +194,7 @@ class PropertyStaticValues extends ActiveRecord
     public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false)
     {
         $cacheKey = "getValuesForFilter:" . json_encode([$property_id, $category_id, $properties]);
-        if (false === $values = false/*Yii::$app->cache->get($cacheKey)*/) {
+        if (false === $values = Yii::$app->cache->get($cacheKey)) {
             /** @var ActiveQuery $query */
             $query = static::find()
                 ->innerJoin(
