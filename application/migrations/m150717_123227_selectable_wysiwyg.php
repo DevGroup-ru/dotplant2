@@ -50,7 +50,7 @@ class m150717_123227_selectable_wysiwyg extends Migration
             'configuration_model' => 'app\modules\core\models\WysiwygConfiguration\Imperavi',
         ]);
 
-        
+
     }
 
     public function down()
