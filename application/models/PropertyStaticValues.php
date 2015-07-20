@@ -11,6 +11,7 @@ use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -184,17 +185,23 @@ class PropertyStaticValues extends ActiveRecord
         return $result;
     }
 
-    public static function getValuesForFilter($property_id, $category_id, $properties)
+    /**
+     * @param $property_id
+     * @param $category_id
+     * @param $properties
+     * @return PropertyStaticValues[]
+     */
+    public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false)
     {
         $cacheKey = "getValuesForFilter:" . json_encode([$property_id, $category_id, $properties]);
-
-        if (false === $values = Yii::$app->cache->get($cacheKey)) {
+        if (false === $values = false/*Yii::$app->cache->get($cacheKey)*/) {
+            /** @var ActiveQuery $query */
             $query = static::find()
-                ->leftJoin(
+                ->innerJoin(
                     ObjectStaticValues::tableName(),
                     ObjectStaticValues::tableName() . '.property_static_value_id=' . self::tableName() . '.id'
                 )
-                ->leftJoin(
+                ->innerJoin(
                     '{{%product_category}}',
                     '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
                 )
@@ -211,12 +218,19 @@ class PropertyStaticValues extends ActiveRecord
                         self::tableName() . '.name' => SORT_ASC
                     ]
                 );
+            if (!$multiple) {
+                if (isset($properties[$property_id])) {
+                    $query->andWhere([self::tableName() . '.id' => $properties[$property_id]]);
+                }
+            } else {
+                unset($properties[$property_id]);
+            }
             if ($properties) {
                 $listProperty = [];
                 foreach ($properties as $selectProperties) {
                     $listProperty += is_array($selectProperties) ? $selectProperties : [$selectProperties];
                 }
-                $query->leftJoin(
+                $query->innerJoin(
                     ObjectStaticValues::tableName() . ' as osv',
                     'osv.object_model_id={{%product_category}}.object_model_id'
                 );
@@ -227,10 +241,7 @@ class PropertyStaticValues extends ActiveRecord
                 );
 
             }
-
-
-            $values = $query->asArray()->all();
-
+            $values = $query->asArray(true)->all();
             if (null !== $values) {
                 Yii::$app->cache->set(
                     $cacheKey,

@@ -4,28 +4,19 @@ namespace app\modules\shop\widgets;
 
 use yii\jui\Widget;
 
-
 class SliderRangeWidget extends Widget
 {
-
-
     public $attributeName = 'NameAttr';
-
     public $minAttribute = 'min_attr';
     public $maxAttribute = 'max_attr';
     public $changeFlagAttribute = 'change_flag';
     public $changeFlagDefaultValue = 0;
-
-
     public $minValue = 0;
     public $maxValue = 99999;
-
-
     public $minValueNow = 0;
     public $maxValueNow = 99999;
-
     public $viewFile = 'slider-range-widget';
-
+    public $step = 10;
 
     public function run()
     {
@@ -41,10 +32,9 @@ class SliderRangeWidget extends Widget
                 'minValue' => $this->minValue,
                 'maxValue' => $this->maxValue,
                 'minValueNow' => $this->minValueNow,
-                'maxValueNow' => $this->maxValueNow
+                'maxValueNow' => $this->maxValueNow,
+                'step' => $this->step,
             ]
         );
     }
-
-
 }

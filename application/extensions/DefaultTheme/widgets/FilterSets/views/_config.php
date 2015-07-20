@@ -10,3 +10,5 @@
 ?>
 <?= $form->field($configurationModel, 'viewFile') ?>
 <?= $form->field( $configurationModel, 'hideEmpty')->checkbox() ?>
+<?= $form->field( $configurationModel, 'usePjax')->checkbox() ?>
+<?= $form->field( $configurationModel, 'useNewFilter')->checkbox() ?>

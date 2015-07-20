@@ -16,6 +16,7 @@ use Yii;
  * @property integer $is_filter_by_price
  * @property integer $is_range_slider
  * @property integer $delegate_to_children
+ * @property integer $multiple
  * @property Property $property
  */
 class FilterSets extends \yii\db\ActiveRecord
@@ -61,6 +62,7 @@ class FilterSets extends \yii\db\ActiveRecord
                 'integer'
             ],
             [['category_id', 'property_id'], 'unique', 'targetAttribute' => ['category_id', 'property_id']],
+            [['multiple'], 'boolean'],
         ];
     }
 
@@ -76,7 +78,8 @@ class FilterSets extends \yii\db\ActiveRecord
             'property_id' => Yii::t('app', 'Property ID'),
             'is_filter_by_price' => Yii::t('app', 'Is Filter By Price'),
             'delegate_to_children' => Yii::t('app', 'Delegate To Children'),
-            'is_range_slider' => Yii::t('app', 'Is Range Slider')
+            'is_range_slider' => Yii::t('app', 'Is Range Slider'),
+            'multiple' => Yii::t('app', 'Multiple'),
         ];
     }
 

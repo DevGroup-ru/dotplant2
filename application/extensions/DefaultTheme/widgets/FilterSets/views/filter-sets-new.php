@@ -1,19 +1,24 @@
 <?php
 
-/** @var app\components\WebView $this */
-/** @var boolean $isInSidebar */
-/** @var boolean $hideEmpty */
-/** @var array $filtersArray */
-/** @var \app\modules\shop\models\FilterSets[] $filterSets */
-/** @var boolean $displayHeader */
-/** @var string $header  */
-/** @var string $id */
+/**
+ * @var app\components\WebView $this
+ * @var boolean $isInSidebar
+ * @var boolean $hideEmpty
+ * @var array $filtersArray
+ * @var boolean $displayHeader
+ * @var string $header
+ * @var string $id
+ * @var array $urlParams
+ * @var bool $usePjax
+*/
 
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 $sidebarClass = $isInSidebar ? 'sidebar-widget' : '';
-$this->registerJs("$('#{$id}').dotPlantSmartFilters();");
+if ($usePjax) {
+    $this->registerJs("$('#{$id}').dotPlantSmartFilters();");
+}
 
 ?>
 
@@ -24,47 +29,61 @@ $this->registerJs("$('#{$id}').dotPlantSmartFilters();");
         </div>
     <?php endif; ?>
     <div class="filters" id="<?=$id?>">
-        <form action="<?= Url::to(['/shop/product/list', 'last_category_id'=>$urlParams['last_category_id']]) ?>" method="post" class="filter-form">
-            <?php
-            $cacheParams = [
-                'duration'=>86400,
-                'dependency' => new \yii\caching\TagDependency([
-                    'tags' => \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(\app\modules\shop\models\FilterSets::className())
-                ])
-            ];
-            ?>
+        <?=
+        Html::beginForm(
+            ['@category', 'last_category_id' => $urlParams['last_category_id']],
+            'post',
+            [
+                'class' => 'filter-form',
+            ]
+        )
+        ?>
             <?php foreach ($filtersArray as $filter): ?>
             <div class="filter-property">
-                <div class="property-name"><?= Html::encode($filter['name']) ?></div>
-                <ul class="property-values">
-                    <?php foreach ($filter['selections'] as $selection): ?>
-                    <li>
-                        <?=
-                        Html::checkbox(
-                            'properties[' . $filter['id'] . '][]',
-                            $selection['checked'],
-                            [
-                                'value' => $selection['id'],
-                                'class' => 'filter-check filter-check-property-' . $filter['id'],
-                                'id' => 'filter-check-' . $selection['id'],
-                                'data-property-id' => $filter['id'],
-                            ]
-                        )
-                        ?>
-                        <?=
-                        Html::a(
-                            $selection['label'],
-                            $selection['url'],
-                            [
-                                'class' => 'filter-link',
-                                'data-selection-id' => $selection['id'],
-                                'data-property-id' => $filter['id'],
-                            ]
-                        )
-                        ?>
-                    </li>
-                    <?php endforeach; ?>
-                </ul>
+                <?php if ($filter['isRange']): ?>
+                    <?=
+                    \app\modules\shop\widgets\PropertiesSliderRangeWidget::widget(
+                        [
+                            'property' => $filter['property'],
+                            'categoryId' => $urlParams['last_category_id'],
+                            'maxValue' => $filter['max'],
+                            'minValue' => $filter['min'],
+                            'step' => $filter['step'],
+                        ]
+                    )
+                    ?>
+                <?php else: ?>
+                    <div class="property-name"><?= Html::encode($filter['name']) ?></div>
+                    <ul class="property-values">
+                        <?php foreach ($filter['selections'] as $selection): ?>
+                        <li>
+                            <?=
+                            Html::checkbox(
+                                'properties[' . $filter['id'] . '][]',
+                                $selection['checked'],
+                                [
+                                    'value' => $selection['id'],
+                                    'class' => 'filter-check filter-check-property-' . $filter['id'],
+                                    'id' => 'filter-check-' . $selection['id'],
+                                    'data-property-id' => $filter['id'],
+                                ]
+                            )
+                            ?>
+                            <?=
+                            Html::a(
+                                $selection['label'],
+                                $selection['url'],
+                                [
+                                    'class' => 'filter-link',
+                                    'data-selection-id' => $selection['id'],
+                                    'data-property-id' => $filter['id'],
+                                ]
+                            )
+                            ?>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
             </div>
             <?php endforeach; ?>
             <div class="filter-actions">
@@ -77,6 +96,7 @@ $this->registerJs("$('#{$id}').dotPlantSmartFilters();");
                 )
                 ?>
             </div>
-        </form>
+        <?= Html::endForm() ?>
+        <div class="overlay"></div>
     </div>
 </div>

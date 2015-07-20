@@ -6,6 +6,7 @@ use app\models\Property;
 use app\models\PropertyStaticValues;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 class PropertyPart extends UrlPart
 {
@@ -37,6 +38,7 @@ class PropertyPart extends UrlPart
         $next_part,
         &$previous_parts
     ) {
+        // @todo Need to implement multi property
         $property = Property::findById($this->property_id);
         if (is_null($property)) {
             return false;
@@ -62,7 +64,6 @@ class PropertyPart extends UrlPart
                         'parameters' => $this->parameters,
                         'cacheTags' => $cacheTags,
                     ]);
-
                     return $part;
                 }
             }
@@ -82,15 +83,23 @@ class PropertyPart extends UrlPart
             if (isset($parameters['properties'][$this->property_id]) &&
                 is_array($parameters['properties'][$this->property_id])
             ) {
-                $psv = PropertyStaticValues::findById($parameters['properties'][$this->property_id][0]);
-                if (count($this->include_if_value) > 0) {
-                    if (!in_array($psv['value'], $this->include_if_value)) {
-                        return false;
+                $psvs = PropertyStaticValues::find()
+                    ->where(['id' => array_values($parameters['properties'][$this->property_id])])
+                    ->asArray(true)
+                    ->all();
+                foreach ($psvs as $psv) {
+                    if (count($this->include_if_value) > 0) {
+                        if (!in_array($psv['value'], $this->include_if_value)) {
+                            return false;
+                        }
                     }
                 }
-                if (is_array($psv)) {
-                    $cacheTags[] = ActiveRecordHelper::getObjectTag(PropertyStaticValues::className(), $psv['id']);
-                    return $psv['slug'];
+                if (!empty($psvs)) {
+                    foreach ($psvs as $psv) {
+                        $cacheTags[] = ActiveRecordHelper::getObjectTag(PropertyStaticValues::className(), $psv['id']);
+                    }
+                    // @todo May be sort values before imploding?
+                    return implode('/', ArrayHelper::getColumn($psvs, 'slug'));
                 } else {
                     return false;
                 }
