@@ -55,6 +55,8 @@ class ConfigConfigurationModel extends BaseConfigurationModel
         'sendMail' => '',
     ];
 
+    public $wysiwyg_id = 1;
+
     /**
      * @inheritdoc
      */
@@ -81,6 +83,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 [
                     'autoCompleteResultsCount',
                     'daysToStoreSubmissions',
+                    'wysiwyg_id',
                 ],
                 'integer',
             ],

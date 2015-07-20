@@ -26,6 +26,7 @@ class CoreModule extends BaseModule implements BootstrapInterface
     public $controllerMap = [
         'backend-extensions' => 'app\modules\core\backend\ExtensionsController',
         'backend-routing' => 'app\modules\core\backend\RoutingController',
+        'backend-wysiwyg' => 'app\modules\core\backend\WysiwygController',
     ];
 
     public $autoCompleteResultsCount = 5;
@@ -63,6 +64,14 @@ class CoreModule extends BaseModule implements BootstrapInterface
         'mailFrom' => 'login',
         'sendMail' => '',
     ];
+
+    public $wysiwyg_id = 1;
+
+    /** @var string|null Active WYSIWYG editor class name for use in backend forms */
+    private $wysiwyg_class_name = '';
+
+    /** @var array|null Active WYSIWYG editor params for use in backend forms */
+    private $wysiwyg_params = null;
 
     /**
      * @inheritdoc
@@ -111,5 +120,34 @@ class CoreModule extends BaseModule implements BootstrapInterface
         if (Yii::$app instanceof \yii\console\Application) {
             $this->controllerMap = [];
         }
+    }
+
+    /**
+     * @return string Active WYSIWYG widget class name for use in backend forms
+     */
+    public function wysiwyg_class_name()
+    {
+        if (empty($this->wysiwyg_class_name)) {
+            $this->fetchWYSIWYG();
+        }
+        return $this->wysiwyg_class_name;
+    }
+
+    /**
+     * @return array WYSIWYG params for widget
+     */
+    public function wysiwyg_params()
+    {
+        if ($this->wysiwyg_params === null) {
+            $this->fetchWYSIWYG();
+        }
+        return $this->wysiwyg_params;
+    }
+
+    private function fetchWYSIWYG()
+    {
+        $data = app\modules\core\models\Wysiwyg::getClassNameAndParamsById($this->wysiwyg_id);
+        $this->wysiwyg_class_name = $data['class_name'];
+        $this->wysiwyg_params = $data['params'];
     }
 }
