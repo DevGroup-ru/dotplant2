@@ -140,6 +140,8 @@ class UpdateHelper extends Component
         return $process;
     }
 
+
+
     /**
      * Runs composer remove command for uninstalling new package to CMS.
      * Migrations and other actions should be handled separately.

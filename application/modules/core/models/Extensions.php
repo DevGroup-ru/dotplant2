@@ -2,14 +2,20 @@
 
 namespace app\modules\core\models;
 
+use app;
 use app\components\ExtensionModule;
 use Yii;
+use yii\base\ErrorException;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\db\ActiveQuery;
 use yii\data\ActiveDataProvider;
+use Packagist\Api\Result\Package\Version;
+use yii\helpers\Json;
+use yii\web\NotFoundHttpException;
+
 /**
  * This is the model class for table "{{%extensions}}".
  *
@@ -305,6 +311,19 @@ class Extensions extends \yii\db\ActiveRecord
 
     }
 
+    public function updateExtensionPackage()
+    {
+        /** @var \app\modules\core\helpers\UpdateHelper $updateHelper */
+        $updateHelper = Yii::$app->updateHelper;
+
+        try {
+            return $updateHelper->updateComposer($this->name)->mustRun();
+        } catch (\Exception $e) {
+            Yii::$app->session->setFlash('error', "Error updating composer package");
+            return false;
+        }
+    }
+
     public function installExtensionPackage()
     {
 
@@ -318,5 +337,123 @@ class Extensions extends \yii\db\ActiveRecord
             return false;
         }
 
+    }
+
+    public static function installExtension($name, $updateComposer = false)
+    {
+        $extension = null;
+
+        /** @var app\modules\core\helpers\UpdateHelper $updateHelper */
+
+        if (Extensions::isPackageInstalled($name) === true) {
+            // we should just activate it
+            $extension = Extensions::findByName($name);
+        } else {
+            $client = new app\modules\core\components\PackagistClient();
+
+            $package = $client->get($name);
+
+            /** @var Version[] $versions */
+            $versions = $package->getVersions();
+            /** @var Version $version */
+            // we are assuming that first version is latest
+            $version = array_shift($versions);
+
+            $extension = new Extensions();
+            $extension->name = $name;
+            $extension->homepage = $version->getHomepage();
+            $extension->current_package_version_timestamp = date('Y-m-d H:i:s', strtotime($version->getTime()));
+            $extension->latest_package_version_timestamp = date('Y-m-d H:i:s', strtotime($version->getTime()));
+
+            $autoload = $version->getAutoload();
+            if (isset($autoload['psr-4'])) {
+                $namespaces = array_keys($autoload['psr-4']);
+                $prefix = array_shift($namespaces);
+
+                if (isset(array_keys($autoload['psr-4'])[0])) {
+                    $extension->namespace_prefix = $prefix;
+                }
+            }
+            $extension->is_active = 0;
+
+
+            if ($extension->save() === false) {
+                throw new ErrorException(Yii::t('app', 'Unable to save extension to database'));
+            }
+
+            if ($extension->installExtensionPackage() === false) {
+                throw new ErrorException(Yii::t('app', 'Could not install extension package'));
+            }
+            $loader = require(Yii::getAlias('@app/vendor/autoload.php'));
+            $psr4 = require(Yii::getAlias('@app/vendor/composer/autoload_psr4.php'));
+            foreach ($psr4 as $prefix => $paths) {
+                $loader->setPsr4($prefix, $paths);
+            }
+        }
+
+        if ($extension === null) {
+            throw new NotFoundHttpException;
+        }
+        try {
+            $result = $extension->activateExtension($updateComposer);
+        } catch (\Exception $e) {
+            throw new ErrorException(Yii::t('app', 'Unable to activate extension').': '.$e->getMessage());
+        }
+        if ($result) {
+            $extension->is_active = 1;
+            $extension->save();
+        }
+        return $extension;
+    }
+
+    public static function installStudioPackage($name, $path)
+    {
+        $extension = null;
+
+        /** @var app\modules\core\helpers\UpdateHelper $updateHelper */
+
+        if (Extensions::isPackageInstalled($name) === true) {
+            // we should just activate it
+            $extension = Extensions::findByName($name);
+        } else {
+            $extension = new Extensions();
+            $extension->name = $name;
+            $extension->current_package_version_timestamp = date('Y-m-d H:i:s');
+            $extension->latest_package_version_timestamp = date('Y-m-d H:i:s');
+
+            $composerPath = rtrim($path,'/').'/composer.json';
+
+            $data = Json::decode(file_get_contents($composerPath), true);
+
+            $autoload = ArrayHelper::getValue($data, 'autoload', []);
+
+            if (isset($autoload['psr-4'])) {
+                $namespaces = array_keys($autoload['psr-4']);
+                $prefix = array_shift($namespaces);
+
+                if (isset(array_keys($autoload['psr-4'])[0])) {
+                    $extension->namespace_prefix = $prefix;
+                }
+            }
+            $extension->is_active = 0;
+            if ($extension->save() === false) {
+                throw new ErrorException(Yii::t('app', 'Unable to save extension to database'));
+            }
+            $loader = require(Yii::getAlias('@app/vendor/autoload.php'));
+            $psr4 = require(Yii::getAlias('@app/vendor/composer/autoload_psr4.php'));
+            foreach ($psr4 as $prefix => $paths) {
+                $loader->setPsr4($prefix, $paths);
+            }
+        }
+        //try {
+            $result = $extension->activateExtension(false);
+//        } catch (\Exception $e) {
+//            throw new ErrorException(Yii::t('app', 'Unable to activate extension').': '.$e->getMessage());
+//        }
+        if ($result) {
+            $extension->is_active = 1;
+            $extension->save();
+        }
+        return $extension;
     }
 }

@@ -129,6 +129,10 @@ class CoreModule extends BaseModule implements BootstrapInterface
     {
         if (empty($this->wysiwyg_class_name)) {
             $this->fetchWYSIWYG();
+            if (class_exists($this->wysiwyg_class_name) === false) {
+                $this->wysiwyg_id = 1;
+                $this->fetchWYSIWYG();
+            }
         }
         return $this->wysiwyg_class_name;
     }
@@ -147,6 +151,14 @@ class CoreModule extends BaseModule implements BootstrapInterface
     private function fetchWYSIWYG()
     {
         $data = app\modules\core\models\Wysiwyg::getClassNameAndParamsById($this->wysiwyg_id);
+        if (!isset($data['class_name'])) {
+            if ($this->wysiwyg_id > 1) {
+                $this->wysiwyg_id = 1;
+            } else {
+                Yii::$app->cache->delete('WysiwygClassName:' . $this->wysiwyg_id);
+            }
+            return $this->fetchWYSIWYG();
+        }
         $this->wysiwyg_class_name = $data['class_name'];
         $this->wysiwyg_params = $data['params'];
     }
