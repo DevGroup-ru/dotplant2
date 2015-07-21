@@ -124,9 +124,11 @@ class NavigationWidget extends Widget
         $tree = [
             'label' => $model->name,
             'url' => $url,
-            'options' => ['class' => $model->advanced_css_class],
             'items' => [],
         ];
+        if (!empty($model->advanced_css_class)) {
+            $tree['options'] = ['class' => $model->advanced_css_class];
+        }
         if ($depth > 0) {
             foreach ($model->children as $child) {
                 $tree['items'][] = self::getTree($child, $depth - 1);
