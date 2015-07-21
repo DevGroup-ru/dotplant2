@@ -417,10 +417,11 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $remove = [];
         $add = [];
 
-        foreach ($catIds as $value) {
+        foreach ($catIds as $catsKey => $value) {
             $key = array_search($value, $categories_ids);
             if ($key === false) {
                 $remove[] = $value;
+                unset($this->category_ids[$catsKey]);
             } else {
                 unset($categories_ids[$key]);
             }
@@ -430,6 +431,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 $value,
                 $this->id
             ];
+            $this->category_ids[] = $value;
         }
 
         Yii::$app->db->createCommand()->delete(
@@ -444,6 +446,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 $add
             )->execute();
         }
+
 
     }
 
