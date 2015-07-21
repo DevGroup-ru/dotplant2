@@ -5,6 +5,7 @@ namespace app\modules\shop\controllers;
 use app\modules\core\behaviors\DisableRobotIndexBehavior;
 use app\modules\shop\models\OrderTransaction;
 use app\modules\shop\models\PaymentType;
+use yii\base\Action;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use Yii;
@@ -18,6 +19,18 @@ class PaymentController extends Controller
                 'class' => DisableRobotIndexBehavior::className(),
             ]
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        /** @var Action $action */
+        if ('custom-check' === $action->id) {
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
     }
 
     /**
@@ -137,5 +150,25 @@ class PaymentController extends Controller
         }
 
         return $this->render('transaction', ['transaction' => $transaction]);
+    }
+
+    /**
+     * @param int|null $type
+     * @return null|string
+     * @throws BadRequestHttpException
+     * @throws \yii\base\UnknownClassException
+     */
+    public function actionCustomCheck($type = null)
+    {
+        if (empty($type)) {
+            throw new BadRequestHttpException();
+        }
+
+        /** @var PaymentType $payment */
+        if (null === $payment = PaymentType::findOne(['id' => $type, 'active' => 1])) {
+            throw new BadRequestHttpException();
+        }
+
+        return $payment->getPayment()->customCheck();
     }
 }

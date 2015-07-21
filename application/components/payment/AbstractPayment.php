@@ -35,6 +35,14 @@ abstract class AbstractPayment extends Widget
     abstract public function checkResult($hash = '');
 
     /**
+     * @return string|null
+     */
+    public function customCheck()
+    {
+        return null;
+    }
+
+    /**
      * @param bool $success
      * @param integer|null $orderId
      */
