@@ -93,7 +93,7 @@ class Widget extends BaseWidget
                             $urlParams['properties'],
                             $filterSet->property->depends_on_property_id,
                             $filterSet->property->depended_property_values
-                        )
+                        ) === false
                         ) {
                             continue;
                         }
