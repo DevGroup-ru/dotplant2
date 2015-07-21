@@ -57,7 +57,7 @@ class ObjectImageWidget extends Widget
 
     public function run()
     {
-        $cacheKey = "ObjectImageWidget:" . implode(
+        $cacheKey = static::className() . ':' . implode(
             "_",
             [
                 $this->model->object->id,
