@@ -157,25 +157,27 @@ class ConfigurationUpdater
             }
         }
 
-        if ($isValid === true) {
-            Yii::$app->session->setFlash(
-                'success',
-                Yii::t(
-                    'app',
-                    'Configuration saved'
-                )
-            );
-        } else {
-            Yii::$app->session->setFlash(
-                'error',
-                Yii::t(
-                    'app',
-                    'Error saving configuration for module {module}',
-                    [
-                        'module' => $errorModule,
-                    ]
-                )
-            );
+        if (Yii::$app->get('session', false)) {
+            if ($isValid === true) {
+                Yii::$app->session->setFlash(
+                    'success',
+                    Yii::t(
+                        'app',
+                        'Configuration saved'
+                    )
+                );
+            } else {
+                Yii::$app->session->setFlash(
+                    'error',
+                    Yii::t(
+                        'app',
+                        'Error saving configuration for module {module}',
+                        [
+                            'module' => $errorModule,
+                        ]
+                    )
+                );
+            }
         }
 
         return $isValid;

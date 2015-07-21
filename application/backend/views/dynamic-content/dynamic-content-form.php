@@ -77,57 +77,13 @@ $this->registerJs('
             <?=$form->field($model, 'content_block_name')?>
 
             <?=$form->field($model, 'announce')->widget(
-                ImperaviWidget::className(),
-                [
-                    'settings' => [
-                        'replaceDivs' => false,
-                        'minHeight' => 200,
-                        'paragraphize' => false,
-                        'pastePlainText' => true,
-                        'buttonSource' => true,
-                        'imageManagerJson' => Url::to(['/backend/dashboard/imperavi-images-get']),
-                        'plugins' => [
-                            'table',
-                            'fontsize',
-                            'fontfamily',
-                            'fontcolor',
-                            'video',
-                            'imagemanager',
-                        ],
-                        'replaceStyles' => [],
-                        'replaceTags' => [],
-                        'deniedTags' => [],
-                        'removeEmpty' => [],
-                        'imageUpload' => Url::to(['/backend/dashboard/imperavi-image-upload']),
-                    ],
-                ]
+                Yii::$app->getModule('core')->wysiwyg_class_name(),
+                Yii::$app->getModule('core')->wysiwyg_params()
             );?>
 
             <?=$form->field($model, 'content')->widget(
-                ImperaviWidget::className(),
-                [
-                    'settings' => [
-                        'replaceDivs' => false,
-                        'minHeight' => 200,
-                        'paragraphize' => false,
-                        'pastePlainText' => true,
-                        'buttonSource' => true,
-                        'imageManagerJson' => Url::to(['/backend/dashboard/imperavi-images-get']),
-                        'plugins' => [
-                            'table',
-                            'fontsize',
-                            'fontfamily',
-                            'fontcolor',
-                            'video',
-                            'imagemanager',
-                        ],
-                        'replaceStyles' => [],
-                        'replaceTags' => [],
-                        'deniedTags' => [],
-                        'removeEmpty' => [],
-                        'imageUpload' => Url::to(['/backend/dashboard/imperavi-image-upload']),
-                    ],
-                ]
+                Yii::$app->getModule('core')->wysiwyg_class_name(),
+                Yii::$app->getModule('core')->wysiwyg_params()
             );?>
 
             <?php BackendWidget::end(); ?>

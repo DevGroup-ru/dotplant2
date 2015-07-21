@@ -49,6 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'id',
         'width',
         'height',
+        'quality',
         [
             'class' => 'app\backend\components\ActionColumn',
             'buttons' => [

@@ -87,6 +87,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ); ?>
                 <?=$form->field($model, 'width')?>
                 <?=$form->field($model, 'height')?>
+                <?=$form->field($model, 'quality')?>
                 <?php
                 if (Yii::$app->getModule('image')->useWatermark == 1) {
                     $watermarks = Watermark::find()->all();

@@ -17,6 +17,7 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
     public $values_by_property_id = [];
     public $limit = null;
     public $category_group_id = null;
+    public $sort = ['sort_order' => SORT_ASC];
 
     public function run()
     {
@@ -29,7 +30,7 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
             $query->andWhere([Category::tableName() . '.category_group_id' => $this->category_group_id]);
         }
         $query->groupBy(Category::tableName().".id");
-        $query->orderBy(Category::tableName().".sort_order");
+        $query->orderBy($this->sort);
 
         if ($this->limit !== null) {
             $query->limit($this->limit);

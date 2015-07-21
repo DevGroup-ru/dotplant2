@@ -7,7 +7,7 @@ use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 
 /**
- * This is the model class for table "seo_config".
+ * This is the model class for table "{{%seo_config}}".
  *
  * @property string $key
  * @property string $value
@@ -57,7 +57,7 @@ class Config extends \yii\db\ActiveRecord
     {
         return [
             [
-                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+                'class' => ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -66,12 +66,11 @@ class Config extends \yii\db\ActiveRecord
      * @param string|null $key
      * @return Config|null
      */
-    static public function getModelByKey($key = null, $cacheTime = 0)
+    public static function getModelByKey($key = null, $cacheTime = 0)
     {
         if (empty($key)) {
             return null;
         }
-
         if (!isset(static::$modelMap[$key])) {
             $cacheKey = static::tableName() . ':' . $key;
             if (false === $cache = Yii::$app->cache->get($cacheKey)) {
@@ -79,14 +78,17 @@ class Config extends \yii\db\ActiveRecord
                 if (empty($cache)) {
                     return null;
                 }
-
                 Yii::$app->cache->set(
                     $cacheKey,
                     $cache,
                     intval($cacheTime),
-                    new TagDependency(['tags' => [
-                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::tableName())
-                    ]])
+                    new TagDependency(
+                        [
+                            'tags' => [
+                                ActiveRecordHelper::getCommonTag(static::className()),
+                            ]
+                        ]
+                    )
                 );
             }
             static::$modelMap[$key] = $cache;
@@ -98,7 +100,7 @@ class Config extends \yii\db\ActiveRecord
      * @param $key
      * @return bool
      */
-    static public function removeCacheByKey($key = null)
+    public static function removeCacheByKey($key = null)
     {
         return empty($key) ? false : Yii::$app->cache->delete(static::tableName() . ':' . $key);
     }

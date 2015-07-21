@@ -1149,4 +1149,5 @@ return [
     'Don\'t filter (for FilterWidget only)' => 'Не участвует в фильтре (только для FitlerWidget)',
     'Title append' => 'Добавок к тайтлу',
     '{n} products are available' => 'Доступно товаров: {n}',
+    'Quality' => 'Качество'
 ];

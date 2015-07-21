@@ -12,12 +12,13 @@ use kartik\widgets\SwitchInput;
 ?>
 
 <div>
-    <div class="col-md-6 col-sm-12">
+    <div class="col-md-5 col-sm-12">
         <?php BackendWidget::begin(['title' => Yii::t('app', 'Main settings'), 'options' => ['class' => 'visible-header']]); ?>
         <?= $form->field($model, 'serverName') ?>
         <?= $form->field($model, 'composerHomeDirectory') ?>
         <?= $form->field($model, 'internalEncoding') ?>
         <?= $form->field($model, 'autoCompleteResultsCount') ?>
+        <?= $form->field($model, 'wysiwyg_id')->dropDownList(\app\modules\core\models\Wysiwyg::itemsForSelect()) ?>
         <?= $form->field($model, 'fileUploadPath') ?>
         <?= $form->field($model, 'removeUploadedFiles')->widget(SwitchInput::className()) ?>
         <?= $form->field($model, 'daysToStoreSubmissions') ?>

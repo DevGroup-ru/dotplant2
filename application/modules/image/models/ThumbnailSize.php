@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property integer $width
  * @property integer $height
+ * @property integer $quality
  * @property integer $default_watermark_id
  * @property string $resize_mode
  */
@@ -32,7 +33,8 @@ class ThumbnailSize extends ActiveRecord
     {
         return [
             [['width', 'height'], 'required'],
-            [['width', 'height', 'default_watermark_id'], 'integer'],
+            [['width', 'height', 'default_watermark_id', 'quality'], 'integer'],
+            [['quality'], 'number', 'min' => 0, 'max' => 100],
             [['resize_mode'], 'string'],
         ];
     }
@@ -46,6 +48,7 @@ class ThumbnailSize extends ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'width' => Yii::t('app', 'Width'),
             'height' => Yii::t('app', 'Height'),
+            'quality' => Yii::t('app', 'Quality'),
             'default_watermark_id' => Yii::t('app', 'Default watermark id'),
             'resize_mode' => Yii::t('app', 'Resize mode'),
         ];
