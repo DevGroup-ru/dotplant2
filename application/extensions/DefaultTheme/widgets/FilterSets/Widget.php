@@ -64,18 +64,43 @@ class Widget extends BaseWidget
 
         // Begin of a new filter sets implementation
         if ($this->useNewFilter) {
-            // @todo Need to add caching
-            $urlParams = array_merge(
-                [
-                    '@category',
-                    'last_category_id' => $categoryId,
-                    'properties' => []
-                ],
-                array_merge(
-                    Yii::$app->request->get(),
-                    Yii::$app->request->post()
-                )
-            );
+            $urlParams = [
+                '@category',
+                'last_category_id' => $categoryId,
+                'properties' => Yii::$app->request->get('properties', []),
+            ];
+            $urlParams = $this->mergeUrlProperties($urlParams, Yii::$app->request->post('properties', []));
+            $depends = [];
+            $toUnset = [];
+            foreach ($filterSets as $set) {
+                if (false == empty($set->property->depends_on_property_id)) {
+                    if (array_key_exists($set->property->depends_on_property_id, $toUnset)) {
+                        $toUnset[$set->property->depends_on_property_id][] = $set->property->id;
+                    } else {
+                        $toUnset[$set->property->depends_on_property_id] = [$set->property->id];
+                    }
+                    if (false === array_key_exists($set->property->id, $depends)) {
+                        $depends[$set->property->id] = [
+                            $set->property->depends_on_property_id => $set->property->depended_property_values
+                        ];
+                    } else {
+                        $depends[$set->property->id][$set->property->depends_on_property_id] =
+                            $set->property->depended_property_values;
+                    }
+                }
+            }
+            foreach ($depends as $prop_id => $depend) {
+                $key = key($depend);
+                if (true === array_key_exists($prop_id, $urlParams['properties'])) {
+                    if (false === array_key_exists($key, $urlParams['properties'])) {
+                        unset($urlParams['properties'][$prop_id]);
+                    } else {
+                        if (false === in_array($depend[$key], $urlParams['properties'][$key])) {
+                            unset($urlParams['properties'][$prop_id]);
+                        }
+                    }
+                }
+            }
             $properties = $urlParams['properties'];
             ksort($properties);
             $cacheKey = 'FilterSets:' . $categoryId . ':' . json_encode($properties);
@@ -89,11 +114,12 @@ class Widget extends BaseWidget
                     if (!empty($filterSet->property->depends_on_property_id)
                         && !empty($filterSet->property->depended_property_values)
                     ) {
-                        if ($this->getSelectedPropertyIndex(
-                            $urlParams['properties'],
-                            $filterSet->property->depends_on_property_id,
-                            $filterSet->property->depended_property_values
-                        ) === false
+                        if (
+                            $this->getSelectedPropertyIndex(
+                                $urlParams['properties'],
+                                $filterSet->property->depends_on_property_id,
+                                $filterSet->property->depended_property_values
+                            ) === false
                         ) {
                             continue;
                         }
@@ -139,6 +165,13 @@ class Widget extends BaseWidget
                                 } else {
                                     $routeParams = $urlParams;
                                     unset($routeParams['properties'][$filterSet->property_id]);
+                                }
+                                if (true === array_key_exists($filterSet->property_id, $toUnset)) {
+                                    foreach ($toUnset[$filterSet->property_id] as $id) {
+                                        if (array_key_exists($id, $routeParams['properties'])) {
+                                            unset($routeParams['properties'][$id]);
+                                        }
+                                    }
                                 }
                             } else {
                                 $routeParams = $this->mergeUrlProperties(

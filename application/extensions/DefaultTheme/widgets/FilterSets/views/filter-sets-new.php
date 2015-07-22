@@ -77,6 +77,7 @@ if ($usePjax) {
                                     'class' => 'filter-link',
                                     'data-selection-id' => $selection['id'],
                                     'data-property-id' => $filter['id'],
+                                    'rel' => !$selection['checked'] ? null : 'nofollow',
                                 ]
                             )
                             ?>
