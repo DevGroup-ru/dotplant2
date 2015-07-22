@@ -14,11 +14,62 @@ use yii\helpers\Url;
 
 class Widget extends BaseWidget
 {
+    protected $toUnset = [];
     public $viewFile = 'filter-sets';
     public $hideEmpty = true;
     public $usePjax = true;
     public $useNewFilter = false;
 
+    /**
+     * Remove lost dependencies from url params.
+     * Also this method builds toUnset array.
+     * @param FilterSets $filterSets
+     * @param array $urlParams
+     * @return array
+     */
+    protected function removeLostDependencies($filterSets, $urlParams)
+    {
+        $depends = [];
+        $this->toUnset = [];
+        foreach ($filterSets as $set) {
+            if (false == empty($set->property->depends_on_property_id)) {
+                if (array_key_exists($set->property->depends_on_property_id, $this->toUnset)) {
+                    $this->toUnset[$set->property->depends_on_property_id][] = $set->property->id;
+                } else {
+                    $this->toUnset[$set->property->depends_on_property_id] = [$set->property->id];
+                }
+                if (false === array_key_exists($set->property->id, $depends)) {
+                    $depends[$set->property->id] = [
+                        $set->property->depends_on_property_id => $set->property->depended_property_values
+                    ];
+                } else {
+                    $depends[$set->property->id][$set->property->depends_on_property_id] =
+                        $set->property->depended_property_values;
+                }
+            }
+        }
+        foreach ($depends as $prop_id => $depend) {
+            $key = key($depend);
+            if (true === array_key_exists($prop_id, $urlParams['properties'])) {
+                if (false === array_key_exists($key, $urlParams['properties'])) {
+                    unset($urlParams['properties'][$prop_id]);
+                } else {
+                    if (false === in_array($depend[$key], $urlParams['properties'][$key])) {
+                        unset($urlParams['properties'][$prop_id]);
+                    }
+                }
+            }
+        }
+        return $urlParams;
+    }
+
+    /**
+     * Get selected property index
+     * @param array $properties
+     * @param integer $propertyId
+     * @param integer $propertyValueId
+     * @return string|false
+     */
     protected function getSelectedPropertyIndex($properties, $propertyId, $propertyValueId)
     {
         if (!isset($properties[$propertyId])) {
@@ -27,6 +78,12 @@ class Widget extends BaseWidget
         return array_search($propertyValueId, $properties[$propertyId]);
     }
 
+    /**
+     * Smart url params merging
+     * @param array $a
+     * @param array $b
+     * @return array mixed
+     */
     protected function mergeUrlProperties($a, $b)
     {
         if (isset($a['properties'], $b['properties'])) {
@@ -70,37 +127,7 @@ class Widget extends BaseWidget
                 'properties' => Yii::$app->request->get('properties', []),
             ];
             $urlParams = $this->mergeUrlProperties($urlParams, Yii::$app->request->post('properties', []));
-            $depends = [];
-            $toUnset = [];
-            foreach ($filterSets as $set) {
-                if (false == empty($set->property->depends_on_property_id)) {
-                    if (array_key_exists($set->property->depends_on_property_id, $toUnset)) {
-                        $toUnset[$set->property->depends_on_property_id][] = $set->property->id;
-                    } else {
-                        $toUnset[$set->property->depends_on_property_id] = [$set->property->id];
-                    }
-                    if (false === array_key_exists($set->property->id, $depends)) {
-                        $depends[$set->property->id] = [
-                            $set->property->depends_on_property_id => $set->property->depended_property_values
-                        ];
-                    } else {
-                        $depends[$set->property->id][$set->property->depends_on_property_id] =
-                            $set->property->depended_property_values;
-                    }
-                }
-            }
-            foreach ($depends as $prop_id => $depend) {
-                $key = key($depend);
-                if (true === array_key_exists($prop_id, $urlParams['properties'])) {
-                    if (false === array_key_exists($key, $urlParams['properties'])) {
-                        unset($urlParams['properties'][$prop_id]);
-                    } else {
-                        if (false === in_array($depend[$key], $urlParams['properties'][$key])) {
-                            unset($urlParams['properties'][$prop_id]);
-                        }
-                    }
-                }
-            }
+            $urlParams = $this->removeLostDependencies($filterSets, $urlParams);
             $properties = $urlParams['properties'];
             ksort($properties);
             $cacheKey = 'FilterSets:' . $categoryId . ':' . json_encode($properties);
@@ -166,8 +193,8 @@ class Widget extends BaseWidget
                                     $routeParams = $urlParams;
                                     unset($routeParams['properties'][$filterSet->property_id]);
                                 }
-                                if (true === array_key_exists($filterSet->property_id, $toUnset)) {
-                                    foreach ($toUnset[$filterSet->property_id] as $id) {
+                                if (true === array_key_exists($filterSet->property_id, $this->toUnset)) {
+                                    foreach ($this->toUnset[$filterSet->property_id] as $id) {
                                         if (array_key_exists($id, $routeParams['properties'])) {
                                             unset($routeParams['properties'][$id]);
                                         }
