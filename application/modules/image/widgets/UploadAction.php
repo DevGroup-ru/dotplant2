@@ -40,7 +40,7 @@ class UploadAction extends \devgroup\dropzone\UploadAction
                 'object_id' => $data['params']['objectId'],
                 'object_model_id' => $data['params']['modelId'],
                 'filename' => $data['filename'],
-                'image_description' => '',
+                'image_title' => '',
                 'sort_order' => 0,
             ]
         );

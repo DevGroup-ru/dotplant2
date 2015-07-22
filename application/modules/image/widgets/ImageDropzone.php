@@ -65,8 +65,10 @@ class ImageDropzone extends DropZone
                 'jQuery(' . $fhName . '.previewElement).find("[name=\"id[]\"]").val(' . $file['id'] . ');
                 jQuery(' . $fhName . '.previewElement).find("[name=\"file[]\"]").val("' . $file['file'] . '");
                 jQuery(' . $fhName . '.previewElement).data("filename", "' . $file['name'] . '");
-                jQuery(' . $fhName . '.previewElement).find(".description textarea").text("' . $file['description'] . '");
-                jQuery(' . $fhName . '.previewElement).find(".description textarea").attr("name", "description[' . $file['id'] . ']")'
+                jQuery(' . $fhName . '.previewElement).find(".title textarea").text("' . $file['image_title'] . '");
+                jQuery(' . $fhName . '.previewElement).find(".title textarea").attr("name", "title[' . $file['id'] . ']");
+                jQuery(' . $fhName . '.previewElement).find(".alt textarea").text("' . $file['image_alt'] . '");
+                jQuery(' . $fhName . '.previewElement).find(".alt textarea").attr("name", "alt[' . $file['id'] . ']");'
             );
         }
     }
@@ -117,7 +119,8 @@ class ImageDropzone extends DropZone
                 'name' => $file->filename,
                 'file' => $file->file,
                 'thumbnail' => $thumbnail_src,
-                'description' => $file->image_description,
+                'image_title' => $file->image_title,
+                'image_alt' => $file->image_alt,
             ];
         }
 
@@ -144,9 +147,18 @@ class ImageDropzone extends DropZone
                             <p class="name" data-dz-name></p>
                             <div class="dz-error-message"><span data-dz-errormessage></span></div>
                         </div>
-                        <div class="description">
+                        <div class="title">
+                            <label>' . Yii::t('app','Image Title') . '</label>
                             ' . Html::textarea(
-                        'description',
+                        'image_title',
+                        '',
+                        ['style' => 'width: 100%; min-width: 80px; height: 80px;']
+                    ) . '
+                        </div>
+                        <div class="alt">
+                            <label>' . Yii::t('app','Image Alt') . '</label>
+                            ' . Html::textarea(
+                        'image_alt',
                         '',
                         ['style' => 'width: 100%; min-width: 80px; height: 80px;']
                     ) . '
@@ -188,7 +200,8 @@ class ImageDropzone extends DropZone
                 jQuery(file.previewElement).data("filename", response.filename);
                 jQuery(file.previewElement).find("[name=\"id[]\"]").val(response.afterUpload.id);
                 jQuery(file.previewElement).find("[name=\"file[]\"]").val(response.afterUpload.file);
-                jQuery(file.previewElement).find(".description textarea").attr("name", "description["+response.afterUpload.id+"]");
+                jQuery(file.previewElement).find(".title textarea").attr("name", "title["+response.afterUpload.id+"]");
+                jQuery(file.previewElement).find(".alt textarea").attr("name", "alt["+response.afterUpload.id+"]");
             }',
             'complete' => 'function(file) {
                 jQuery(file.previewElement).removeClass("dz-processing");

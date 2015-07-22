@@ -273,7 +273,7 @@ class PageController extends \app\backend\components\BackendController
 
             // save images bindings
             $params = $query->select(
-                ['object_id', 'filename', 'image_description', 'sort_order']
+                ['object_id', 'filename', 'image_title', 'image_alt', 'sort_order']
             )->from(Image::tableName())->where(
                 [
                     'object_id' => $object->id,
@@ -287,7 +287,8 @@ class PageController extends \app\backend\components\BackendController
                         $param['object_id'],
                         $newModel->id,
                         $param['filename'],
-                        $param['image_description'],
+                        $param['image_title'],
+                        $param['image_alt'],
                         $param['sort_order'],
                     ];
                 }
@@ -297,7 +298,8 @@ class PageController extends \app\backend\components\BackendController
                         'object_id',
                         'object_model_id',
                         'filename',
-                        'image_description',
+                        'image_title',
+                        'image_alt',
                         'sort_order',
                     ],
                     $rows
