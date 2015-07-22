@@ -16,7 +16,8 @@ use yii\caching\TagDependency;
  * @property integer $object_id
  * @property integer $object_model_id
  * @property string $filename
- * @property string $image_description
+ * @property string $image_title
+ * @property string $image_alt
  * @property integer $sort_order
  */
 class Image extends \yii\db\ActiveRecord
@@ -35,7 +36,7 @@ class Image extends \yii\db\ActiveRecord
         return [
             [['sort_order', 'filename'], 'required'],
             [['object_id', 'object_model_id', 'sort_order'], 'integer'],
-            [['filename'], 'string'],
+            [['filename', 'image_title', 'image_alt'], 'string'],
         ];
     }
 
@@ -45,7 +46,8 @@ class Image extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'object_id' => Yii::t('app', 'Object ID'),
             'object_model_id' => Yii::t('app', 'Object Model ID'),
-            'image_description' => Yii::t('app', 'Image Description'),
+            'image_title' => Yii::t('app', 'Image Title'),
+            'image_alt' => Yii::t('app', 'Image Alt'),
             'sort_order' => Yii::t('app', 'Sort Order'),
             'filename' => Yii::t('app', 'File')
         ];
@@ -128,11 +130,12 @@ class Image extends \yii\db\ActiveRecord
      * [
      *      0 => [
      *          'filename' => 'something.png',
-     *          'image_description' => 'desc',
+     *          'image_title' => 'title',
+     *          'image_alt' => 'alt',
      *      ],
      *      1 => [
-     *          'filename' => 'another-image.jpg',
-     *          'image_description' => 'alt for image',
+     *          'image_title' => 'title',
+     *          'image_alt' => 'alt',
      *      ],
      * ]
      * @param \yii\db\ActiveRecord $model
@@ -197,7 +200,8 @@ class Image extends \yii\db\ActiveRecord
                         }
 
 
-                        $image_model->image_description = isset($new['image_description']) ? $new['image_description'] : '';
+                        $image_model->image_title = isset($new['image_title']) ? $new['image_title'] : '';
+                        $image_model->image_alt = isset($new['image_alt']) ? $new['image_alt'] : '';
                         $image_model->sort_order = $key;
                         $image_model->save();
                         unset($image_model);

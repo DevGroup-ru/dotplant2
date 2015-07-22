@@ -2,127 +2,37 @@
 
 namespace app\components\payment;
 
+use app\modules\shop\models\Currency;
 use app\modules\shop\models\Order;
+use app\modules\shop\models\OrderItem;
 use app\modules\shop\models\OrderTransaction;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
+use yii\web\Response;
 
 class PayUPayment extends AbstractPayment
 {
-    public $merchantName;
-    public $secretKey;
-    public $testMode;
-
-    /**
-     * @param $data
-     * @return string
-     */
-    protected function getOrderHash($data)
-    {
-        $ignoredKeys = [
-            'AUTOMODE',
-            'BACK_REF',
-            'DEBUG',
-            'BILL_FNAME',
-            'BILL_LNAME',
-            'BILL_EMAIL',
-            'BILL_PHONE',
-            'BILL_ADDRESS',
-            'BILL_CITY',
-            'DELIVERY_FNAME',
-            'DELIVERY_LNAME',
-            'DELIVERY_PHONE',
-            'DELIVERY_ADDRESS',
-            'DELIVERY_CITY',
-            'LU_ENABLE_TOKEN',
-            'LU_TOKEN_TYPE',
-            'TESTORDER',
-        ];
-        $hash = strlen($data['MERCHANT']) . $data['MERCHANT'];
-        unset($data['MERCHANT']);
-        foreach ($data as $key => $value) {
-            if (in_array($key, $ignoredKeys)) {
-                continue;
-            }
-            if (is_array($value)) {
-                foreach ($value as $productValue) {
-                    $hash .= mb_strlen($productValue, '8bit') . $productValue;
-                }
-            } else {
-                $hash .= mb_strlen($value, '8bit') . $value;
-            }
-        }
-        return hash_hmac('md5', $hash, $this->secretKey);
-    }
-
-    /**
-     * @param Order $order
-     * @return array
-     */
-    protected function getFormData($order, $transaction)
-    {
-        $data = [
-            'MERCHANT' => $this->merchantName,
-            'ORDER_REF' => $transaction->id,
-            'ORDER_DATE' => date('Y-m-d H:i:s'),
-        ];
-        foreach ($order->items as $item) {
-            $data[] = [
-                'ORDER_PNAME[]' => $item->product->name,
-                'ORDER_PCODE[]' => $item->product_id,
-                'ORDER_PRICE[]' => $item->product->convertedPrice(),
-                'ORDER_QTY[]' => $item->quantity,
-                'ORDER_VAT[]' => 0,
-            ];
-        }
-        $data['ORDER_SHIPPING'] = $order->shippingOption->cost;
-        $data['PRICES_CURRENCY'] = 'RUB';
-        $data['BACK_REF'] = $this->createResultUrl([
-            'id' => $this->order->payment_type_id,
-        ]);
-        $data['ORDER_HASH'] = $this->getOrderHash($data);
-        if ($this->testMode) {
-            $data['DEBUG'] = 'TRUE';
-            $data['TESTORDER'] = 'TRUE';
-        }
-        $data['LANGUAGE'] = 'RU';
-        return $data;
-    }
-
-    /**
-     * @param array $data
-     * @return string
-     */
-    protected function getSignature($data = [])
-    {
-        $result = "";
-        foreach ($data as $value) {
-            if (is_array($value)) {
-                foreach ($value as $piece) {
-                    $result .= mb_strlen($piece, '8bit') . $piece;
-                }
-            } else {
-                $result .= mb_strlen($value, '8bit') . $value;
-            }
-        }
-        return hash_hmac("md5", $result, $this->secretKey);
-    }
+    public $merchantId = '';
+    public $merchantSecretKey = '';
+    public $systemTestMode = false;
+    public $systemDebugMode = false;
+    public $systemUrl_LU = '';
 
     /**
      * @return string
      */
     public function content()
     {
-        $url = 'https://secure.payu.ru/order/lu.php';
+        $formData = $this->getData_LU();
         return $this->render(
             'payu',
             [
-                'data' => $this->getFormData($this->order, $this->transaction),
+                'data' => $formData,
                 'order' => $this->order,
                 'transaction' => $this->transaction,
-                'url' => $url,
+                'url' => $this->systemUrl_LU,
             ]
         );
     }
@@ -135,42 +45,110 @@ class PayUPayment extends AbstractPayment
      */
     public function checkResult($hash = '')
     {
-        if (isset($_GET['result'])) {
-            if (in_array($_GET['result'], [-1, 0])) {
-                $this->redirect(true);
-            } else {
-                $this->redirect(false);
-            }
+    }
+
+    /**
+     * @return string
+     */
+    public function customCheck()
+    {
+        return $this->checkHash_IPN();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getData_LU()
+    {
+        $result = [
+            'MERCHANT' => $this->merchantId,
+            'ORDER_REF' => $this->transaction->id, // $this->order->id,
+            'ORDER_DATE' => date('Y-m-d H:i:s'),
+            'ORDER_PNAME[]' => [],
+            'ORDER_PCODE[]' => [],
+            'ORDER_PINFO[]' => [],
+            'ORDER_PRICE[]' => [],
+            'ORDER_QTY[]' => [],
+            'ORDER_VAT[]' => [],
+            'ORDER_SHIPPING' => null !== $this->order->shippingOption ? $this->order->shippingOption->cost : 0,
+            'PRICES_CURRENCY' => null !== Currency::getMainCurrency() ? Currency::getMainCurrency()->iso_code : 'RUB',
+            'ORDER_PRICE_TYPE[]' => [],
+        ];
+
+        /** @var OrderItem $item */
+        foreach ($this->order->items as $item) {
+            $product = $item->product;
+            $result['ORDER_PNAME[]'][] = $product->name;
+            $result['ORDER_PINFO[]'][] = $product->name;
+            $result['ORDER_PCODE[]'][] = $product->id;
+            $result['ORDER_PRICE[]'][] = $product->convertedPrice();
+            $result['ORDER_QTY[]'][] = $item->quantity;
+            $result['ORDER_VAT[]'][] = 0;
+            $result['ORDER_PRICE_TYPE[]'][] = 'NET';
         }
-        $requiredFields = ['IPN_PID', 'IPN_PNAME', 'IPN_DATE', 'ORDERSTATUS', 'HASH', 'REFNOEXT', 'ORDERSTATUS'];
-        foreach ($requiredFields as $field) {
-            if (!isset($_POST[$field])) {
-                throw new BadRequestHttpException;
-            }
-        }
-        $hash = $_POST['HASH'];
-        unset($_POST['HASH']);
-        if ($this->getSignature($_POST) == $hash) {
-            throw new BadRequestHttpException;
-        }
-        $transaction = OrderTransaction::findOne($_POST['REFNOEXT']);
-        $transaction->result_data = Json::encode($_POST);
-        if ($_POST['ORDERSTATUS'] == 'COMPLETE') {
-            $transaction->status = OrderTransaction::TRANSACTION_SUCCESS;
-        }
-        if (!$transaction->save(true, ['status', 'result_data'])) {
-            throw new HttpException(500);
-        }
-        $date = date('YmdHis');
-        $returnHash = $this->getSignature(
-            [
-                'IPN_PID' => $_POST['IPN_PID'][0],
-                'IPN_PNAME' => $_POST['IPN_PNAME'][0],
-                'IPN_DATE' => $_POST['IPN_DATE'],
-                'DATE' => $date,
-            ]
+
+        $result['ORDER_HASH'] = $this->generateHash_LU($result);
+        $result['LANGUAGE'] = 'RU';
+        $result['TESTORDER'] = true === $this->systemTestMode ? 'TRUE' : 'FALSE';
+        $result['DEBUG'] = true === $this->systemDebugMode ? 'TRUE' : 'FALSE';
+        $result['DEBUG'] = 'TRUE';
+
+        return $result;
+    }
+
+    /**
+     * @param array $input
+     * @return string
+     */
+    protected function generateHash_LU($input)
+    {
+        $f = function ($input) use (&$f) {
+            return array_reduce($input, function ($result, $item) use (&$f) {
+                $result .= is_array($item) ? $f($item) : mb_strlen($item, '8bit') . $item;
+                return $result;
+            }, '');
+        };
+        $hash = $f($input);
+
+        return hash_hmac(
+            'md5',
+            $hash,
+            $this->merchantSecretKey
         );
-        echo '<EPAYMENT>' . $date . '|' . $returnHash . '</EPAYMENT>';
-        \Yii::$app->end();
+    }
+
+    protected function checkHash_IPN()
+    {
+        \Yii::$app->response->format = Response::FORMAT_RAW;
+
+        $requiredFields = ['REFNOEXT', 'IPN_PID', 'IPN_PNAME', 'IPN_DATE', 'ORDERSTATUS', 'HASH'];
+        $post = \Yii::$app->request->post();
+        foreach ($requiredFields as $r) {
+            if (empty($post[$r])) {
+                throw new BadRequestHttpException();
+            }
+        }
+
+        $inputHash = mb_strtolower($post['HASH'], '8bit');
+        unset($post['HASH']);
+
+        if ($inputHash !== $this->generateHash_LU($post)) {
+            throw new BadRequestHttpException();
+        }
+
+        $dt = date('YmdHis');
+        $outputHash = $this->generateHash_LU([
+            'IPN_PID' => $post['IPN_PID'][0],
+            'IPN_PNAME' => $post['IPN_PNAME'][0],
+            'IPN_DATE' => $post['IPN_DATE'],
+            'DATE' => $dt
+        ]);
+
+        $transactionId = $post['REFNOEXT'];
+        $transaction = $this->loadTransaction($transactionId);
+            $transaction->status = OrderTransaction::TRANSACTION_SUCCESS;
+        $transaction->save();
+
+        return sprintf('<EPAYMENT>%s|%s</EPAYMENT>', $dt, $outputHash);
     }
 }

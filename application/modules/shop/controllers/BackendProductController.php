@@ -397,7 +397,7 @@ class BackendProductController extends BackendController
                         $add
                     )->execute();
                 }
-                
+
                 $params = $parent->images;
                 if (!empty($params)) {
                     $rows = [];
@@ -406,7 +406,8 @@ class BackendProductController extends BackendController
                             $param['object_id'],
                             $model->id,
                             $param['filename'],
-                            $param['image_description'],
+                            $param['image_title'],
+                            $param['image_alt'],
                             $param['sort_order'],
                         ];
                     }
@@ -417,7 +418,8 @@ class BackendProductController extends BackendController
                             'object_id',
                             'object_model_id',
                             'filename',
-                            'image_description',
+                            'image_title',
+                            'image_alt',
                             'sort_order',
                         ],
                         $rows
@@ -480,7 +482,7 @@ class BackendProductController extends BackendController
 
             // save images bindings
             $params = $query->select(
-                ['object_id', 'filename', 'image_description', 'sort_order']
+                ['object_id', 'filename', 'image_title', 'image_alt', 'sort_order']
             )->from(Image::tableName())->where(
                 [
                     'object_id' => $object->id,
@@ -494,7 +496,8 @@ class BackendProductController extends BackendController
                         $param['object_id'],
                         $newModel->id,
                         $param['filename'],
-                        $param['image_description'],
+                        $param['image_title'],
+                        $param['image_alt'],
                         $param['sort_order'],
                     ];
                 }
@@ -504,7 +507,8 @@ class BackendProductController extends BackendController
                         'object_id',
                         'object_model_id',
                         'filename',
-                        'image_description',
+                        'image_title',
+                        'image_alt',
                         'sort_order',
                     ],
                     $rows
