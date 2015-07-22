@@ -10,8 +10,8 @@ class SaveInfoAction extends Action
 {
     public function run($model_id = null)
     {
-        $titles = \Yii::$app->request->post('title');
-        $alts = \Yii::$app->request->post('alt');
+        $titles = \Yii::$app->request->post('title', []);
+        $alts = \Yii::$app->request->post('alt', []);
         $sortOrder = (array) \Yii::$app->request->post('id', []);
 
         foreach ($titles as $id => $title) {
