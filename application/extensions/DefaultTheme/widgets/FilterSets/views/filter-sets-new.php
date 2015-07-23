@@ -54,7 +54,7 @@ if ($usePjax) {
                     ?>
                 <?php else: ?>
                     <div class="property-name"><?= Html::encode($filter['name']) ?></div>
-                    <ul class="property-values">
+                    <ul class="property-values" data-multiple="<?= $filter['multiple'] ?>">
                         <?php foreach ($filter['selections'] as $selection): ?>
                         <li>
                             <?=
@@ -101,3 +101,21 @@ if ($usePjax) {
         <div class="overlay"></div>
     </div>
 </div>
+<?php
+$JS = <<<JS
+(function($){
+"use strict"
+$('.filter-check').change(function(){
+    var \$multiple = $(this).parents('ul.property-values').data('multiple');
+    if (0 === \$multiple) {
+        if (true === $(this).prop('checked')) {
+            $(this).parents('ul.property-values').find('input[type=checkbox]').not(this).each(function(){
+                $(this).prop('checked', false);
+            })
+        }
+    }
+});
+})(jQuery)
+JS;
+$this->registerJs($JS);
+?>
