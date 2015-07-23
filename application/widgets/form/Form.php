@@ -26,6 +26,7 @@ class Form extends Widget
     {
         FormAsset::register($this->view);
         $this->model = \app\models\Form::findById($this->formId);
+        $this->setId('frm'.$this->formId);
         if ($this->model === null) {
             throw new \InvalidArgumentException;
         }
@@ -36,7 +37,7 @@ class Form extends Widget
                 'header' => $this->model->name,
             ]);
         }
-        $this->setId('frm'.$this->formId);
+
     }
 
     public function run()
