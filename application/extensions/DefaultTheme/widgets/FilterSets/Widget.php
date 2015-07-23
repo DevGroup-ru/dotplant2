@@ -165,6 +165,7 @@ class Widget extends BaseWidget
                         'name' => $filterSet->property->name,
                         'isRange' => $filterSet->is_range_slider,
                         'selections' => [],
+                        'multiple' => $filterSet->multiple,
                     ];
                     if ($filterSet->is_range_slider) {
                         $item['max'] = 0;
