@@ -2,6 +2,7 @@
 
 use yii\helpers\Json;
 use kartik\dynagrid\DynaGrid;
+use kartik\icons\Icon;
 
 /**
  * @var yii\web\View $this
@@ -43,6 +44,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'force_version',
         'current_package_version_timestamp',
         [
+            'class' => 'app\backend\columns\BooleanStatus',
+            'attribute' => 'is_active',
+        ],
+        [
             'class' => 'app\backend\components\ActionColumn',
             'urlCreator' => function($action, $model, $key, $index) {
 
@@ -74,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'hover'=>true,
         'panel'=>[
-            'heading'=>'<h3 class="panel-title">'.$this->title.'</h3>',
+            'heading'=>'<h3 class="panel-title">' . Icon::show('puzzle-piece') .$this->title.'</h3>',
             'after' => $this->blocks['add-button'],
         ],
 
