@@ -33,12 +33,12 @@ class Widget extends BaseWidget
         $this->toUnset = [];
         foreach ($filterSets as $set) {
             if (false == empty($set->property->depends_on_property_id)) {
-                if (array_key_exists($set->property->depends_on_property_id, $this->toUnset)) {
+                if (isset($this->toUnset[$set->property->depends_on_property_id])) {
                     $this->toUnset[$set->property->depends_on_property_id][] = $set->property->id;
                 } else {
                     $this->toUnset[$set->property->depends_on_property_id] = [$set->property->id];
                 }
-                if (false === array_key_exists($set->property->id, $depends)) {
+                if (isset($depends[$set->property->id])) {
                     $depends[$set->property->id] = [
                         $set->property->depends_on_property_id => $set->property->depended_property_values
                     ];
@@ -50,8 +50,8 @@ class Widget extends BaseWidget
         }
         foreach ($depends as $prop_id => $depend) {
             $key = key($depend);
-            if (true === array_key_exists($prop_id, $urlParams['properties'])) {
-                if (false === array_key_exists($key, $urlParams['properties'])) {
+            if (isset($urlParams['properties'][$prop_id])) {
+                if (isset($urlParams['properties'][$key])) {
                     unset($urlParams['properties'][$prop_id]);
                 } else {
                     if (false === in_array($depend[$key], $urlParams['properties'][$key])) {
@@ -193,11 +193,9 @@ class Widget extends BaseWidget
                                     $routeParams = $urlParams;
                                     unset($routeParams['properties'][$filterSet->property_id]);
                                 }
-                                if (true === array_key_exists($filterSet->property_id, $this->toUnset)) {
+                                if (isset($this->toUnset[$filterSet->property_id])) {
                                     foreach ($this->toUnset[$filterSet->property_id] as $id) {
-                                        if (array_key_exists($id, $routeParams['properties'])) {
-                                            unset($routeParams['properties'][$id]);
-                                        }
+                                        unset($routeParams['properties'][$id]);
                                     }
                                 }
                             } else {
