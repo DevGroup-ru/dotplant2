@@ -45,6 +45,12 @@ class m150723_094753_extensions_backend_menu extends Migration
     public function down()
     {
         $this->delete('{{%backend_menu}}', ['name' => 'Extensions']);
+        \yii\caching\TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(\app\backend\models\BackendMenu::className())
+            ]
+        );
     }
 
     /*
