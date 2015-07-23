@@ -25,7 +25,7 @@ class ExtensionsController extends BackendController
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['administrate'],
+                        'roles' => ['setting manage'],
                         'actions' => [
                             'activate-extension',
                             'deactivate-extension',
@@ -38,7 +38,7 @@ class ExtensionsController extends BackendController
                     ],
                     [
                         'allow' => true,
-                        'roles' => ['administrate'],
+                        'roles' => ['setting manage'],
                         'actions' => [
                             'index',
                             'explore',
@@ -93,12 +93,12 @@ class ExtensionsController extends BackendController
         echo "<PRE>" . $process->getOutput() . $process->getErrorOutput() . "</PRE>";
     }
 
-    private function handleActionEnd()
+    private function handleActionEnd($returnUrl='')
     {
         if (Yii::$app->request->isAjax) {
             return $this->refresh();
         } else {
-            return $this->goBack();
+            return $this->goBack($returnUrl);
         }
     }
 
@@ -114,7 +114,7 @@ class ExtensionsController extends BackendController
             Yii::$app->session->setFlash('error', $e->getMessage());
         }
 
-        return $this->handleActionEnd();
+        return $this->handleActionEnd(['/core/backend-extensions/index']);
 
     }
 
@@ -125,7 +125,7 @@ class ExtensionsController extends BackendController
             throw new NotFoundHttpException;
         }
         $extension->installExtensionPackage();
-        return $this->handleActionEnd();
+        return $this->handleActionEnd(['/core/backend-extensions/index']);
     }
 
     public function actionShowPackage($name)
@@ -173,7 +173,7 @@ class ExtensionsController extends BackendController
         } else {
             Yii::$app->session->setFlash('error', Yii::t('app', 'Extension already inactive'));
         }
-        return $this->handleActionEnd();
+        return $this->handleActionEnd(['/core/backend-extensions/index']);
     }
 
     public function actionRemoveExtension($name)
@@ -186,7 +186,7 @@ class ExtensionsController extends BackendController
         if ($extension->is_active) {
             if ($extension->deactivateExtension() === false) {
                 Yii::$app->session->setFlash('error', Yii::t('app', 'Can\'t deactivate extension.'));
-                return $this->handleActionEnd();
+                return $this->handleActionEnd(['/core/backend-extensions/index']);
             }
 
         }
@@ -197,6 +197,6 @@ class ExtensionsController extends BackendController
             }
         }
 
-        return $this->handleActionEnd();
+        return $this->handleActionEnd(['/core/backend-extensions/index']);
     }
 }
