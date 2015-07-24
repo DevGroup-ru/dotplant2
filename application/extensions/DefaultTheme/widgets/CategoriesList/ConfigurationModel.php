@@ -7,8 +7,8 @@ use app\extensions\DefaultTheme\models\WidgetConfigurationModel;
 class ConfigurationModel extends WidgetConfigurationModel
 {
     public $rootCategoryId = 1;
-
     public $categoryGroupId = 1;
+    public $type = 'plain';
 
     /**
      * @inheritdoc
@@ -22,6 +22,11 @@ class ConfigurationModel extends WidgetConfigurationModel
                     'categoryGroupId',
                 ],
                 'integer',
+            ],
+            [
+                'type',
+                'in',
+                'range' => ['plain', 'tree']
             ],
             [
                 [

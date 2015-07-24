@@ -1,15 +1,5 @@
 <?php
-
 namespace app\models;
-
-use app\modules\data\models\Export;
-use app\modules\data\models\Import;
-use Yii;
-use yii\caching\TagDependency;
-use yii\db\ActiveRecord;
-use yii\db\Query;
-use yii\helpers\ArrayHelper;
-
 /**
  * This is the model class for table "object".
  *
@@ -23,7 +13,16 @@ use yii\helpers\ArrayHelper;
  * @property string $link_slug_category
  * @property string $link_slug_static_value
  */
-class Object extends ActiveRecord
+use app\modules\data\models\Export;
+use app\modules\data\models\Import;
+use Yii;
+use yii\caching\TagDependency;
+use yii\db\ActiveRecord;
+use yii\db\Query;
+use yii\helpers\ArrayHelper;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
+
+class Object extends ActiveRecord implements \JsonSerializable
 {
     private static $identity_map = [];
     private static $ids_for_class_name = [];
@@ -89,33 +88,33 @@ class Object extends ActiveRecord
     /**
      * Returns model instance by ID using IdentityMap
      * @param integer $id
-     * @return Object
+     * @return Object|null
      */
     public static function findById($id)
     {
         if (!isset(static::$identity_map[$id])) {
-            static::$identity_map[$id] = Yii::$app->cache->get('Object: ' . $id);
-            if (static::$identity_map[$id] === false) {
-                static::$identity_map[$id] = Object::findOne($id);
-                if (is_object(static::$identity_map[$id])) {
-                    static::$ids_for_class_name[
-                        static::$identity_map[$id]->object_class
-                    ] = $id;
-                    Yii::$app->cache->set(
-                        'Object: ' . $id,
-                        static::$identity_map[$id],
-                        86400,
-                        new TagDependency(
-                            [
-                                'tags' => [
-                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id),
-                                ],
-                            ]
-                        )
-                    );
-                }
+            $cacheKey = static::className() . ':' . $id;
+            if (false !== $cache = Yii::$app->cache->get($cacheKey)) {
+                return static::$identity_map[$id] = $cache;
             }
+
+            $cache = static::findOne(['id' => $id]);
+            if (null !== $cache) {
+                static::$ids_for_class_name[$cache->object_class] = $id;
+                Yii::$app->cache->set(
+                    $cacheKey,
+                    $cache,
+                    0,
+                    new TagDependency([
+                        'tags' => [
+                            ActiveRecordHelper::getObjectTag(static::className(), $id),
+                        ]
+                    ])
+                );
+            }
+            return static::$identity_map[$id] = $cache;
         }
+
         return static::$identity_map[$id];
     }
 
@@ -212,5 +211,21 @@ class Object extends ActiveRecord
                     Import::tableName() . '.user_id' => Yii::$app->user->id,
                 ]
             );
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return ($this->className() . ':' . $this->id);
+    }
+
+    /**
+     * @return string
+     */
+    public function jsonSerialize()
+    {
+        return ($this->className() . ':' . $this->id);
     }
 }

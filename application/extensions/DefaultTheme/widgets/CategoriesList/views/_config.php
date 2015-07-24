@@ -16,4 +16,12 @@
     'categoryGroupId'
 ) ?>
 
-
+<?= $form->field(
+    $configurationModel,
+    'type'
+)->dropDownList(
+    [
+        'plain' => Yii::t('app', 'Plain'),
+        'tree' => Yii::t('app', 'Tree')
+    ]
+) ?>

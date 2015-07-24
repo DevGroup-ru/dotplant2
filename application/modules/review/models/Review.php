@@ -2,12 +2,14 @@
 
 namespace app\modules\review\models;
 
+use app\models\Object;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use app\models\Submission;
 use yii\caching\TagDependency;
 use app\properties\HasProperties;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "review".
@@ -19,6 +21,12 @@ use yii\db\ActiveQuery;
  * @property string $rating_id
  * @property string $author_email
  * @property string $review_text
+ * @property integer $parent_id
+ * @property integer $root_id
+ *
+ * @property Object $targetObject
+ * @property ActiveRecord $targetObjectModel
+ * @property Review[]|array $children
  */
 class Review extends \yii\db\ActiveRecord
 {
@@ -44,9 +52,10 @@ class Review extends \yii\db\ActiveRecord
     {
         $rules = [
             [['submission_id','object_id','object_model_id','author_email','review_text'],'required'],
-            [['submission_id','object_model_id'],'integer'],
+            [['submission_id','object_model_id', 'parent_id', 'root_id'], 'integer'],
             [['review_text','rating_id','status'],'string'],
-            ['author_email', 'email']
+            ['author_email', 'email'],
+            [['parent_id', 'root_id'], 'default', 'value' => 0],
         ];
         if ($this->useCaptcha) {
             $rules[] = [['captcha'], 'captcha', 'captchaAction' => '/default/captcha'];
@@ -120,6 +129,8 @@ class Review extends \yii\db\ActiveRecord
             'review_text' => Yii::t('app', 'Review text'),
             'status' => Yii::t('app', 'Status'),
             'rating_id' => Yii::t('app', 'Rating ID'),
+            'parent_id' => Yii::t('app', 'Parent ID'),
+            'root_id' => Yii::t('app', 'Root ID'),
         ];
     }
 
@@ -173,5 +184,73 @@ class Review extends \yii\db\ActiveRecord
             }
         }
         return $models;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if (true === $insert) {
+            if (0 === $this->root_id) {
+                if (0 === $this->parent_id) {
+                    $this->root_id = $this->id;
+                } elseif (null !== $parent = static::findOne(['id' => $this->parent_id])) {
+                    $this->root_id = $parent->id;
+                }
+                $this->save();
+            }
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeDelete()
+    {
+        if (false === parent::beforeDelete()) {
+            return false;
+        }
+
+        foreach ($this->children as $child) {
+            /** @var Review $child */
+            $child->delete();
+        }
+
+        return true;
+    }
+
+    /**
+     * @return ActiveRecord|null
+     */
+    public function getTargetObjectModel()
+    {
+        if (null === $object = $this->targetObject) {
+            return null;
+        }
+
+        /** @var ActiveRecord $class */
+        $class = $object->object_class;
+        $model = $class::findOne(['id' => $this->object_model_id]);
+
+        return $model;
+    }
+
+    /**
+     * @return Object|null
+     */
+    public function getTargetObject()
+    {
+        return Object::findById($this->object_id);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getChildren()
+    {
+        return $this->hasMany(static::className(), ['parent_id' => 'id']);
     }
 }

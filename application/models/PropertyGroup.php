@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\properties\HasProperties;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\behaviors\AttributeBehavior;
@@ -269,7 +270,7 @@ class PropertyGroup extends ActiveRecord
     }
 
     /**
-     * @param ActiveRecord $model
+     * @param ActiveRecord|HasProperties $model
      * @param string $idAttribute
      * @return bool
      */
