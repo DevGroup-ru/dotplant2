@@ -12,7 +12,7 @@ class m150716_091156_qualityThumbnail extends Migration
         $this->addColumn(
             ThumbnailSize::tableName(),
             'quality',
-            'TINYINT(1) UNSIGNED NOT NULL DEFAULT 90'
+            'TINYINT(1) UNSIGNED DEFAULT 90'
         );
 
     }
