@@ -43,9 +43,11 @@ class BackendThumbnailSizeController extends \app\backend\components\BackendCont
 
     public function actionEdit($id = null)
     {
-        $model = new ThumbnailSize();
         if ($id !== null) {
             $model = ThumbnailSize::findOne($id);
+        } else {
+            $model = new ThumbnailSize();
+            $model->loadDefaultValues();
         }
 
         $post = \Yii::$app->request->post();

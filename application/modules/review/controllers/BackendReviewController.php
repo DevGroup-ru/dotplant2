@@ -224,7 +224,7 @@ class BackendReviewController extends \app\backend\components\BackendController
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 return $this->redirect(Url::toRoute(['view', 'id' => $model->id]));
             } else {
-                var_dump($model->errors);exit;
+                // @todo add alert and may be something else here
             }
         }
 
