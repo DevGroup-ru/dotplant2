@@ -1213,8 +1213,7 @@
                 {
                     "name": "Edward Z. Yang",
                     "email": "admin@htmlpurifier.org",
-                    "homepage": "http://ezyang.com",
-                    "role": "Developer"
+                    "homepage": "http://ezyang.com"
                 }
             ],
             "description": "Standards compliant HTML filter written in PHP",
@@ -1494,7 +1493,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/6d351a151c77814be30439ba829ebeb37bbaad9c",
+                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/e60f20b2abf3197f0105ea853876b236feefedf3",
                 "reference": "6ca9f207ad33deeb8556cbdd762182678c67bf10",
                 "shasum": ""
             },
@@ -3381,7 +3380,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafo/scssphp/zipball/3b1a663a4b5d261f844f537e8f5e4ffcf4274e83",
+                "url": "https://api.github.com/repos/leafo/scssphp/zipball/f2f74120b65ffa549dba96774ffb455b913f341a",
                 "reference": "732e210b34aaa3451b4a6e1c68bd6db8dbeb3e77",
                 "shasum": ""
             },
@@ -3437,7 +3436,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/9d17af1035f0c4b34a004aee30926e32d73cc279",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/864cd3ecca6f912f6c41a4fe482029d092daed4a",
                 "reference": "30539a698a833df93aa5f6cccd11becf20745b9a",
                 "shasum": ""
             },
@@ -3949,7 +3948,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/5a68054be31e50ef2ce415558669518293c207bd",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/c09d34881129035a9e5374a855194aa384e46461",
                 "reference": "5a68054be31e50ef2ce415558669518293c207bd",
                 "shasum": ""
             },
@@ -4085,7 +4084,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-bootstrap/zipball/56d47544eb98ebdb542422abc598ef8097b3e9c5",
+                "url": "https://api.github.com/repos/yiisoft/yii2-bootstrap/zipball/6787348a3622720ed4b6a61998ff71988454fc53",
                 "reference": "0396fafd62d30dbf83e5f56cc72536ed5ce1d63e",
                 "shasum": ""
             },
@@ -4484,7 +4483,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/744db5ce956ce8de4b4b982ba0cbaa4ae5fdd2f7",
+                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/69ab71b950f05c89ab347e9aeeb2726fb4fd4bad",
                 "reference": "b9bbead8f827a0eae1dad69e52ad322450a9381b",
                 "shasum": ""
             },
@@ -4531,7 +4530,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/391aa2343cd1b0e48bfc99c9061999b0d0be93cb",
+                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/06bcd329e6d4748ccbf7e2118b4e89ead80abd34",
                 "reference": "bc7df9d8fa44b3308cc899ffc8e4204316304e41",
                 "shasum": ""
             },
