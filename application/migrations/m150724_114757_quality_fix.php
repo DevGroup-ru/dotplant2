@@ -1,28 +1,25 @@
 <?php
 
 use app\modules\image\models\ThumbnailSize;
-use yii\db\Schema;
 use yii\db\Migration;
 
-class m150716_091156_qualityThumbnail extends Migration
+class m150724_114757_quality_fix extends Migration
 {
     public function up()
     {
-
-        $this->addColumn(
+	$this->alterColumn(
             ThumbnailSize::tableName(),
             'quality',
-            'TINYINT(1) UNSIGNED NOT NULL DEFAULT 90'
+            'TINYINT(1) UNSIGNED DEFAULT 90'
         );
-
     }
 
     public function down()
     {
-        $this->dropColumn(
+        $this->alterColumn(
             ThumbnailSize::tableName(),
-            'quality'
+            'quality',
+            'TINYINT(1) UNSIGNED NOT NULL DEFAULT 90'
         );
     }
-
 }
