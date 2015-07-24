@@ -2,7 +2,12 @@
 
 namespace app\modules\review\controllers;
 
+use app\models\Object;
+use app\modules\page\models\Page;
 use app\modules\review\models\Review;
+use app\modules\shop\models\Category;
+use app\modules\shop\models\Product;
+use yii\db\ActiveRecord;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
@@ -10,6 +15,7 @@ use Yii;
 use yii\web\NotFoundHttpException;
 use app\components\SearchModel;
 use app\models\Submission;
+use yii\web\Response;
 
 class BackendReviewController extends \app\backend\components\BackendController
 {
@@ -36,6 +42,9 @@ class BackendReviewController extends \app\backend\components\BackendController
             'relations' => [
                 'submission.form' => ['name'],
             ],
+            'additionalConditions' => [
+                ['parent_id' => 0],
+            ]
         ];
         $searchModel = new SearchModel($searchModelConfig);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -50,19 +59,23 @@ class BackendReviewController extends \app\backend\components\BackendController
 
     public function actionView($id)
     {
-        $review = Review::find()
+        $model = Review::find()
             ->with(['submission'])
             ->where(['id' => $id])
             ->one();
-        if (null === $review) {
+        if (null === $model) {
             throw new NotFoundHttpException;
         }
-        return $this->render(
-            'submission-view',
-            [
-                'review' => $review
-            ]
-        );
+
+        if (true === Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(Url::toRoute(['view', 'id' => $model->id]));
+            }
+        }
+
+        return $this->render('edit', [
+            'review' => $model
+        ]);
     }
 
     public function actionUpdateStatus($id = null)
@@ -133,15 +146,32 @@ class BackendReviewController extends \app\backend\components\BackendController
         );
     }
 
-    public function actionDelete($id, $returnUrl)
+    /**
+     * @param $id
+     * @param null $returnUrl
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws \Exception
+     */
+    public function actionDelete($id, $returnUrl = null)
     {
         $model = $this->loadModel($id);
+        $parent_id = $model->parent_id;
         if ($model->delete()) {
             Yii::$app->session->setFlash('info', Yii::t('app', 'Object removed'));
         }
+
+        $returnUrl = !empty($returnUrl)
+            ? $returnUrl
+            : (0 === intval($parent_id) ? Url::toRoute(['index']) : Url::toRoute(['view', 'id' => $parent_id]));
         return $this->redirect($returnUrl);
     }
 
+    /**
+     * @param array $returnUrl
+     * @return Response
+     * @throws \Exception
+     */
     public function actionRemoveAll($returnUrl = ['index'])
     {
         $items = Yii::$app->request->post('items', []);
@@ -168,5 +198,132 @@ class BackendReviewController extends \app\backend\components\BackendController
             throw new NotFoundHttpException;
         }
         return $model;
+    }
+
+    public function actionCreate($parent_id = 0)
+    {
+        $parent_id = intval($parent_id);
+        $model = new Review();
+        $model->loadDefaultValues();
+
+        if (0 === $parent_id) {
+            $model->parent_id = $parent_id;
+            $model->submission_id = 0;
+            $model->object_model_id = 0;
+            $model->object_id = 0;
+        } elseif (null !== $parent = Review::findOne(['id' => $parent_id])) {
+            /** @var Review $parent */
+            $model->parent_id = $parent_id;
+            $model->object_id = $parent->object_id;
+            $model->object_model_id = $parent->object_model_id;
+            $model->root_id = $parent->root_id;
+            $model->submission_id = $parent->submission_id;
+        }
+
+        if (true === Yii::$app->request->isPost) {
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(Url::toRoute(['view', 'id' => $model->id]));
+            } else {
+                var_dump($model->errors);exit;
+            }
+        }
+
+        return $this->render('edit', [
+            'review' => $model
+        ]);
+    }
+
+    /**
+     * @return array
+     */
+    public function actionAjaxSearch()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $search = \Yii::$app->request->get('search', []);
+        $object = !empty($search['object']) ?  intval($search['object']) : 0;
+        $term = !empty($search['term']) ?  $search['term'] : '';
+
+        $result = [
+            'more' => false,
+            'results' => []
+        ];
+
+        if (null === $object = Object::findById($object)) {
+            return $result;
+        }
+
+        /** @var ActiveRecord $class */
+        $class = $object->object_class;
+        $list = [
+            Product::className(),
+            Category::className(),
+            Page::className(),
+        ];
+        if (!in_array($class, $list)) {
+            return $result;
+        }
+
+        $query = $class::find()
+            ->select('id, name, "#" `url`')
+            ->andWhere(['like', 'name', $term])
+            ->asArray(true);
+        $result['results'] = array_values($query->all());
+        array_walk($result['results'],
+            function (&$val) use ($class)
+            {
+                if (null !== $model = $class::findOne(['id' => $val['id']])) {
+                    if (Product::className() === $model->className()) {
+                        $val['url'] = Url::toRoute([
+                            '@product',
+                            'model' => $model,
+                            'category_group_id' => $model->category->category_group_id,
+                        ]);
+                    } elseif (Category::className() === $model->className()) {
+                        $val['url'] = Url::toRoute([
+                            '@category',
+                            'last_category_id' => $model->id,
+                            'category_group_id' => $model->category_group_id,
+                        ]);
+                    } else if (Page::className() === $model->className()) {
+                        $val['url'] = Url::toRoute([
+                            '@article',
+                            'id' => $model->id,
+                        ]);
+                    }
+                }
+            });
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function actionAjaxGetTree($root_id = null, $current_id = 0)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $q = Review::find()
+            ->select('*')
+            ->where(['root_id' => $root_id])
+            ->orderBy(['parent_id' => SORT_ASC])
+            ->asArray(true);
+
+        $result = array_reduce($q->all(),
+            function ($res, $item) use ($current_id)
+            {
+                $res[] = [
+                    'id' => $item['id'],
+                    'parent' => 0 === intval($item['parent_id']) ? '#' : $item['parent_id'],
+                    'text' => $item['id'],
+                    'type' => intval($item['id']) === intval($current_id) ? 'current' : 'leaf',
+                    'a_attr' => [
+                        'data-id' => $item['id'],
+                    ]
+                ];
+                return $res;
+            }, []);
+
+        return $result;
     }
 }

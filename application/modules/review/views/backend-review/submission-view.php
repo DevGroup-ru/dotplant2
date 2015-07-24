@@ -1,11 +1,9 @@
 <?php
-
 /**
  * @var yii\web\View $this
  * @var app\backgroundtasks\models\Task $searchModel
  * @var $review \app\modules\review\models\Review
  */
-
 use kartik\helpers\Html;
 use app\models\Object;
 use app\models\PropertyGroup;
@@ -15,14 +13,15 @@ use kartik\icons\Icon;
 use yii\widgets\ActiveForm;
 use app\modules\review\models\Review;
 
-$this->title = Yii::t('app', 'Review show');
-$this->params['breadcrumbs'] = [
-    ['label' => Yii::t('app', 'Reviews'), 'url' => ['index']],
-    $this->title,
-];
-$formObject = Object::getForClass(Form::className());
-$groups = PropertyGroup::getForModel($formObject->id, $review->submission->form_id);
-$review->submission->getPropertyGroups(true);
+    $this->title = Yii::t('app', 'Review show');
+    $this->params['breadcrumbs'] = [
+        ['label' => Yii::t('app', 'Reviews'), 'url' => ['index']],
+        $this->title,
+    ];
+
+    $formObject = Object::getForClass(Form::className());
+    $groups = PropertyGroup::getForModel($formObject->id, $review->submission->form_id);
+    $review->submission->getPropertyGroups(true);
 ?>
 <div class="review-show">
     <section id="widget-grid">
@@ -198,7 +197,6 @@ $review->submission->getPropertyGroups(true);
                         <?php ActiveForm::end(); ?>
                     </div>
                 </div>
-
             </article>
         </div>
     </section>

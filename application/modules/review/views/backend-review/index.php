@@ -21,20 +21,31 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->beginBlock('add-button');
 ?>
 <div class="clearfix"></div>
-<?=\app\backend\widgets\RemoveAllButton::widget(
-    [
-        'url' => Url::toRoute(
-            [
-                'remove-all',
-                'returnUrl' => Yii::$app->request->url
-            ]
-        ),
-        'gridSelector' => '.grid-view',
-        'htmlOptions' => [
-            'class' => 'btn btn-danger pull-right'
-        ],
-    ]
-);?>
+    <div class="btn-group pull-right">
+    <?=
+    \yii\helpers\Html::a(
+        Yii::t('app', 'Add'),
+        Url::toRoute(['create', 'parent_id' => 0]),
+        [
+            'class' => 'btn btn-success'
+        ]
+    );
+    ?>
+    <?=\app\backend\widgets\RemoveAllButton::widget(
+        [
+            'url' => Url::toRoute(
+                [
+                    'remove-all',
+                    'returnUrl' => Yii::$app->request->url
+                ]
+            ),
+            'gridSelector' => '.grid-view',
+            'htmlOptions' => [
+                'class' => 'btn btn-danger'
+            ],
+        ]
+    );?>
+    </div>
 <div class="clearfix"></div>
 <?php
 $this->endBlock();
