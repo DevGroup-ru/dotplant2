@@ -27,6 +27,7 @@ use yii\db\ActiveRecord;
  * @property Object $targetObject
  * @property ActiveRecord $targetObjectModel
  * @property Review[]|array $children
+ * @property Review|null $child
  */
 class Review extends \yii\db\ActiveRecord
 {
@@ -252,5 +253,13 @@ class Review extends \yii\db\ActiveRecord
     public function getChildren()
     {
         return $this->hasMany(static::className(), ['parent_id' => 'id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getChild()
+    {
+        return $this->hasOne(static::className(), ['parent_id' => 'id']);
     }
 }
