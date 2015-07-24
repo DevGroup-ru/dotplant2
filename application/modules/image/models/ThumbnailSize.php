@@ -32,7 +32,7 @@ class ThumbnailSize extends ActiveRecord
     public function rules()
     {
         return [
-            [['width', 'height'], 'required'],
+            [['width', 'height', 'quality'], 'required'],
             [['width', 'height', 'default_watermark_id', 'quality'], 'integer'],
             [['quality'], 'number', 'min' => 0, 'max' => 100],
             [['resize_mode'], 'string'],
