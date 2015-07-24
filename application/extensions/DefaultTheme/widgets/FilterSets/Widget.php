@@ -38,7 +38,7 @@ class Widget extends BaseWidget
                 } else {
                     $this->toUnset[$set->property->depends_on_property_id] = [$set->property->id];
                 }
-                if (isset($depends[$set->property->id])) {
+                if (false === isset($depends[$set->property->id])) {
                     $depends[$set->property->id] = [
                         $set->property->depends_on_property_id => $set->property->depended_property_values
                     ];
@@ -51,7 +51,7 @@ class Widget extends BaseWidget
         foreach ($depends as $prop_id => $depend) {
             $key = key($depend);
             if (isset($urlParams['properties'][$prop_id])) {
-                if (isset($urlParams['properties'][$key])) {
+                if (false === isset($urlParams['properties'][$key])) {
                     unset($urlParams['properties'][$prop_id]);
                 } else {
                     if (false === in_array($depend[$key], $urlParams['properties'][$key])) {
