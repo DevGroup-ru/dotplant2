@@ -254,6 +254,7 @@ class m150605_094805_demo_data extends Migration
                             $productId,
                             $photo['name'],
                             $product['name'],
+                            $product['name'],
                         ];
                     }
                 }
@@ -262,6 +263,7 @@ class m150605_094805_demo_data extends Migration
                         $productObject->id,
                         $productId,
                         $product['mainPhoto']['name'],
+                        $product['name'],
                         $product['name'],
                     ];
                 }
@@ -272,7 +274,8 @@ class m150605_094805_demo_data extends Migration
                             'object_id',
                             'object_model_id',
                             'filename',
-                            'image_description',
+                            'image_alt',
+                            'image_title',
                         ],
                         $prodPhotos
                     );

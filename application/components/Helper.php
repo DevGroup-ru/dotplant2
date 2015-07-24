@@ -25,14 +25,25 @@ class Helper
      * @param bool $useCache
      * @return array
      */
-    public static function getModelMap($className, $keyAttribute, $valueAttribute, $useCache = true)
+    public static function getModelMap($className, $keyAttribute, $valueAttribute, $useCache = true, $useIntl = false)
     {
         /** @var ActiveRecord $className */
-        $cacheKey = 'Map: ' . $className::tableName() . ':' . $keyAttribute . ':' . $valueAttribute;
+        $cacheKey = 'Map: ' . $className::tableName() . ':' . implode(':', [
+            $keyAttribute,
+            $valueAttribute,
+            intval($useIntl)
+        ]) ;
         if (isset(Helper::$modelMaps[$cacheKey]) === false) {
             Helper::$modelMaps[$cacheKey] = $useCache ? Yii::$app->cache->get($cacheKey) : false;
             if (Helper::$modelMaps[$cacheKey] === false) {
                 Helper::$modelMaps[$cacheKey] = ArrayHelper::map($className::find()->asArray()->all(), $keyAttribute, $valueAttribute);
+                if (true === $useIntl) {
+                    array_walk(Helper::$modelMaps[$cacheKey],
+                        function (&$value, $key)
+                        {
+                            $value = Yii::t('app', $value);
+                        });
+                }
                 if ($useCache === true) {
                     Yii::$app->cache->set(
                         $cacheKey,
