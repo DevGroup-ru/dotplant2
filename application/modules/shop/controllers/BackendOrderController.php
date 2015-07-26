@@ -600,7 +600,7 @@ class BackendOrderController extends BackendController
     /**
      * Add new message to OrderChat
      * @param $orderId
-     * @return array<string, integer>
+     * @return array<string,integer>
      * @throws BadRequestHttpException
      */
     public function actionSendToOrderChat($orderId)
