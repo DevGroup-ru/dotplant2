@@ -15,7 +15,7 @@ class FlushCacheAction extends Action
 
     /**
      * Recursive flush all app cache
-     * @param Module $current Current Module
+     * @param null|Module $current Current Module
      * @return string execute message
      */
     protected function flushCache(Module $current = null)

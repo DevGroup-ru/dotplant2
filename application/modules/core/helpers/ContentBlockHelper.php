@@ -33,10 +33,10 @@ class ContentBlockHelper
      * Compiles single chunk using compileChunk() method
      * Replaces single chunk call with compiled chunk data in the model content
      *
-     * @param  {string} $content Original content with chunk calls
-     * @param  {string} $content_key Key for caching compiled content version
-     * @param  {yii\caching\Dependency} $dependency  Cache dependency
-     * @return {string} Compiled content with injected chunks
+     * @param  string $content Original content with chunk calls
+     * @param  string $content_key Key for caching compiled content version
+     * @param  yii\caching\Dependency $dependency Cache dependency
+     * @return string Compiled content with injected chunks
      */
     public static function compileContentString($content, $content_key, $dependency)
     {
@@ -78,6 +78,10 @@ class ContentBlockHelper
         return $content;
     }
 
+    /**
+     * @param array $chunkData
+     * @return mixed
+     */
     public static function replaceForms($chunkData)
     {
         $regexp = '/^(?P<formId>\d+)(#(?P<id>[\w\d\-_]+))?(;(?P<isModal>isModal))?$/Usi';
@@ -144,10 +148,6 @@ class ContentBlockHelper
     }
 
     /**
-     * @param  {ContentBlock} $chunk     ContentBlock instance
-     * @param  {array} $arguments Arguments for this chunk from original content
-     * @return {string} Result string ready for replacing
-     *
      * Compiles single chunk
      * uses regexp to find placeholders and extract it's data from chunk value field
      * [[<token><paramName>:<format><params>]]
@@ -156,6 +156,10 @@ class ContentBlockHelper
      * applies formatter according previously defined param values type if needed
      * if param name from placeholder was not found in arguments array, placeholder in the compiled chunk will be replaced with empty string
      * returns compiled chunk
+     *
+     * @param  app\modules\core\models\ContentBlock $chunk ContentBlock instance
+     * @param  array $arguments Arguments for this chunk from original content
+     * @return string Result string ready for replacing
      */
     public static function compileChunk($chunk, $arguments)
     {
@@ -189,9 +193,10 @@ class ContentBlockHelper
     /**
      * Find formatter declarations in chunk placeholders. if find trying to apply
      * yii\i18n\Formatter formats see yii\i18n\Formatter for details
-     * @param {string} $rawParam single placeholder declaration from chunk
-     * @param $format {string}
-     * @param $params {array}
+     *
+     * @param string $values single placeholder declaration from chunk
+     * @param string $format
+     * @param array $params
      * @return array
      */
     private static function applyFormatter($value, $format, $params)
@@ -211,8 +216,9 @@ class ContentBlockHelper
     /**
      * Fetches single chunk by key from static var
      * if is no there - get it from db and push to static array
-     * @param $key {string} Chunk key field
-     * @return {string} Chunk value field
+     *
+     * @param $key string Chunk key field
+     * @return string Chunk value field
      */
     public static function fetchChunkByKey($key)
     {
@@ -236,6 +242,7 @@ class ContentBlockHelper
     /**
      * preloads chunks with option preload  = 1
      * and push it to static array
+     *
      * @return array|void
      */
     public static function preloadChunks()

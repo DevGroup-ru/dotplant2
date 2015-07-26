@@ -46,10 +46,10 @@ class CartController extends Controller
      * Get Order.
      * @param bool $create Create order if it does not exist
      * @param bool $throwException Throw exception if it does not exist
-     * @return Order
+     * @return null|Order
      * @throws NotFoundHttpException
      */
-    protected function loadOrder($create = false, $throwException = true)
+    protected function  loadOrder($create = false, $throwException = true)
     {
         $model = Order::getOrder($create);
         if (is_null($model) && $throwException) {
@@ -213,6 +213,7 @@ class CartController extends Controller
      * @param int $id
      * @throws NotFoundHttpException
      * @throws \Exception
+     * @return array
      */
     public function actionDelete($id)
     {

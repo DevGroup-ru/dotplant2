@@ -70,7 +70,7 @@ class SliderController extends Controller
     /**
      * Updates an existing Slider model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
+     * @param null|string $id
      * @return mixed
      */
     public function actionUpdate($id = null)

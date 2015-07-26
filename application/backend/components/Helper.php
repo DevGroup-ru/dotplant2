@@ -11,6 +11,9 @@ class Helper
 {
     private static $returnUrl;
 
+    /**
+     * @return string
+     */
     public static function getReturnUrl()
     {
         if (is_null(self::$returnUrl)) {
