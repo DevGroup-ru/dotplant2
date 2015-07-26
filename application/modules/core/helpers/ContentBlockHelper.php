@@ -194,7 +194,7 @@ class ContentBlockHelper
      * @param string $value single placeholder declaration from chunk
      * @param string $format
      * @param array $params
-     * @return array
+     * @return string|array
      */
     private static function applyFormatter($value, $format, $params)
     {
@@ -202,7 +202,7 @@ class ContentBlockHelper
             return $value;
         }
         array_unshift($params, $value);
-        try{
+        try {
             $formattedValue = call_user_func_array([Yii::$app->formatter, $format], $params);
         } catch (\Exception $e) {
             $formattedValue = $value;
