@@ -21,6 +21,9 @@ class PagesList extends Widget
     public $title = 'Catalogue';
     public $viewFile = 'pagesList';
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
         if ($this->model === null) {

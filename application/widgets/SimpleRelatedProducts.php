@@ -65,11 +65,11 @@ class SimpleRelatedProducts extends Widget
     /**
      * @inheritdoc
      * @throws InvalidConfigException
+     * @return string
      */
     public function run()
     {
         parent::run();
-
 
         $additional_filters = [
             function(&$query, &$cacheKeyAppend)

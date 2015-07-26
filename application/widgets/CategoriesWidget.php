@@ -24,6 +24,9 @@ class CategoriesWidget extends Widget
     public $recursive = true;
     public $onlyAvailableProducts = false;
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
         Yii::beginProfile("CategoriesWidget - get possible selections");

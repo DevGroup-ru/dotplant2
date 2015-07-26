@@ -13,8 +13,11 @@ class PlainCategoriesWidget extends Widget
 
     public $root_category_id = null;
     public $viewFile = 'categories-list';
-    
 
+
+    /**
+     * @return string
+     */
     public function run()
     {
 
