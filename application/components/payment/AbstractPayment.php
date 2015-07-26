@@ -68,6 +68,11 @@ abstract class AbstractPayment extends Widget
         return $this->transaction = $model;
     }
 
+    /**
+     * @param array $params
+     * @param bool|true $scheme
+     * @return string
+     */
     protected function createResultUrl(array $params = [], $scheme = true)
     {
         $result = [
@@ -78,6 +83,11 @@ abstract class AbstractPayment extends Widget
         return Url::toRoute($params, boolval($scheme));
     }
 
+    /**
+     * @param array $params
+     * @param bool|true $scheme
+     * @return string
+     */
     protected function createErrorUrl(array $params = [], $scheme = true)
     {
         $result = [
@@ -89,6 +99,11 @@ abstract class AbstractPayment extends Widget
 
     }
 
+    /**
+     * @param array $params
+     * @param bool|true $scheme
+     * @return string
+     */
     protected function createSuccessUrl(array $params = [], $scheme = true)
     {
         $result = [
@@ -100,6 +115,11 @@ abstract class AbstractPayment extends Widget
 
     }
 
+    /**
+     * @param array $params
+     * @param bool|true $scheme
+     * @return string
+     */
     protected function createFailUrl(array $params = [], $scheme = true)
     {
         $result = [
@@ -111,6 +131,11 @@ abstract class AbstractPayment extends Widget
 
     }
 
+    /**
+     * @param array $params
+     * @param bool|true $scheme
+     * @return string
+     */
     protected function createCancelUrl(array $params = [], $scheme = true)
     {
         $result = [
@@ -119,9 +144,13 @@ abstract class AbstractPayment extends Widget
         ];
         $params = array_merge($result, $params);
         return Url::toRoute($params, boolval($scheme));
-
     }
 
+
+    /**
+     * @param string $url
+     * @return \yii\web\Response
+     */
     protected function redirect($url = '')
     {
         return \Yii::$app->response->redirect($url);

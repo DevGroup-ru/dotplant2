@@ -25,6 +25,14 @@ class ProcessController extends Controller
         ];
     }
 
+    /**
+     * @param $id
+     * @param $objectModelId
+     * @param $objectId
+     * @param string $returnUrl
+     * @return \yii\web\Response
+     * @throws HttpException
+     */
     public function actionProcess($id, $objectModelId, $objectId, $returnUrl = '/')
     {
         if (false === Yii::$app->request->isPost) {
