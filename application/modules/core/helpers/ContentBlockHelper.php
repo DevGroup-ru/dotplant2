@@ -49,8 +49,6 @@ class ContentBlockHelper
                 $cacheChunkKey = $chunkData['key'] . $content_key;
                 $replacement = Yii::$app->cache->get($cacheChunkKey);
                 if ($replacement === false) {
-
-
                     switch ($chunkData['token']) {
                         case '$':
                             $chunk = self::fetchChunkByKey($chunkData['key']);
@@ -70,7 +68,6 @@ class ContentBlockHelper
                         default:
                             $replacement = '';
                     }
-
                 }
                 $content = str_replace($matches[0][$k], $replacement, $content);
             }
@@ -157,7 +154,7 @@ class ContentBlockHelper
      * if param name from placeholder was not found in arguments array, placeholder in the compiled chunk will be replaced with empty string
      * returns compiled chunk
      *
-     * @param  app\modules\core\models\ContentBlock $chunk ContentBlock instance
+     * @param  string $chunk ContentBlock instance
      * @param  array $arguments Arguments for this chunk from original content
      * @return string Result string ready for replacing
      */
