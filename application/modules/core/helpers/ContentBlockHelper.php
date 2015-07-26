@@ -45,7 +45,7 @@ class ContentBlockHelper
         preg_match_all('%\[\[([^\]\[]+)\]\]%ui', $content, $matches);
         if (!empty($matches)) {
             foreach ($matches[0] as $k => $rawChunk) {
-                $chunkData = static::sanitizeChunk($rawChunk);
+                $chunkData = self::sanitizeChunk($rawChunk);
                 $cacheChunkKey = $chunkData['key'] . $content_key;
                 $replacement = Yii::$app->cache->get($cacheChunkKey);
                 if ($replacement === false) {
@@ -119,7 +119,7 @@ class ContentBlockHelper
      *      'secondParam-default'=> default float value,
      *  ]
      *
-     * @param $rawChunk
+     * @param string $rawChunk
      * @return array
      */
     private static function sanitizeChunk($rawChunk)
@@ -194,7 +194,7 @@ class ContentBlockHelper
      * Find formatter declarations in chunk placeholders. if find trying to apply
      * yii\i18n\Formatter formats see yii\i18n\Formatter for details
      *
-     * @param string $values single placeholder declaration from chunk
+     * @param string $value single placeholder declaration from chunk
      * @param string $format
      * @param array $params
      * @return array
