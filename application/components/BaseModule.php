@@ -12,4 +12,20 @@ use yii\base\Module;
 class BaseModule extends Module
 {
     public $isCoreModule = true;
+
+    public function getBackendGrids()
+    {
+        return [];
+    }
+
+    public function getBackendGridDefaultValue($key)
+    {
+        $grids = $this->getBackendGrids();
+        foreach ($grids as $grid) {
+            if ($key == $grid['key']) {
+                return $grid['defaultValue'];
+            }
+        }
+        return null;
+    }
 }

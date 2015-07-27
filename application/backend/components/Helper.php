@@ -3,6 +3,7 @@
 namespace app\backend\components;
 
 use app\backend\BackendModule;
+use app\components\BaseModule;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\Html;
@@ -103,9 +104,10 @@ class Helper
         if (isset($backendModule->backendEditGrids[$moduleId][$key])) {
             $type = $backendModule->backendEditGrids[$moduleId][$key];
         } else {
+            /** @var BaseModule $module */
             $module = Yii::$app->getModule($moduleId);
-            if (isset($module->backendEditGrids[$moduleId][$key])) {
-                $type = $module->backendEditGrids[$moduleId][$key];
+            if ($module->hasMethod('getBackendGridDefaultValue')) {
+                $type = $module->getBackendGridDefaultValue($key);
             } else {
                 return $defaultClass;
             }

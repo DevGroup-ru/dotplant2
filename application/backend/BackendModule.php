@@ -16,7 +16,6 @@ use yii\web\View;
  */
 class BackendModule extends Module implements BootstrapInterface
 {
-
     const BACKEND_GRID_ONE_TO_ONE = 'one_to_one';
     const BACKEND_GRID_ONE_COLUMN = 'one_column';
     const BACKEND_GRID_ONE_TO_TWO = 'one_to_two';
