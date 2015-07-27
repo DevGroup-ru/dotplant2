@@ -13,7 +13,9 @@ trait DynamicContentTrait
 {
     public function loadDynamicContent($object_id, $route, $selections)
     {
-        if (Yii::$app->response->is_prefiltered_page === true) {
+        /** @var \app\components\Response $response */
+        $response = Yii::$app->response;
+        if ($response->is_prefiltered_page === true) {
             // DynamicContent should not work on prefiltered pages - all needed content is set in corresponding model
             return;
         }
@@ -23,17 +25,14 @@ trait DynamicContentTrait
 
         $dynamicCacheKey = 'dynamicCacheKey'.json_encode([$object_id, $route, $selections]);
 
-
         if (!$dynamicResult = Yii::$app->cache->get($dynamicCacheKey)) {
             $dynamicResult = [];
             $models = DynamicContent::find()
-                ->where(
-                    [
-                        'object_id' => $object_id,
-                        'route' => $route,
-                    ]
-                )->all();
-
+                ->where([
+                    'object_id' => $object_id,
+                    'route' => $route,
+                ])
+                ->all();
 
             if (isset($selections['properties']) === false) {
                 $selections['properties'] = [];
@@ -116,21 +115,22 @@ trait DynamicContentTrait
             );
         }
         if (is_array($dynamicResult) === true && $dynamicResult !== []) {
-            Yii::$app->response->dynamic_content_trait = true;
-            Yii::$app->response->matched_dynamic_content_trait_model = $dynamicResult['model'];
+            $response->dynamic_content_trait = true;
+            $response->matched_dynamic_content_trait_model = $dynamicResult['model'];
             if (isset($dynamicResult['title']) && $dynamicResult['title']) {
-                Yii::$app->response->title = $dynamicResult['title'];
+                $response->title = $dynamicResult['title'];
+                $response->dynamic_content_title_rewrited = true;
             }
             if (isset($dynamicResult['meta_description']) && $dynamicResult['meta_description']) {
-                Yii::$app->response->meta_description = $dynamicResult['meta_description'];
+                $response->meta_description = $dynamicResult['meta_description'];
+                $response->dynamic_content_meta_description_rewrited = true;
             }
             if (isset($dynamicResult['blocks']) && is_array($dynamicResult['blocks'])) {
                 foreach ($dynamicResult['blocks'] as $nameBlock => $contentBlock) {
-                    Yii::$app->response->blocks[$nameBlock] = $contentBlock;
+                    $response->blocks[$nameBlock] = $contentBlock;
+                    $response->dynamic_content_blocks_rewrited[$nameBlock] = true;
                 }
             }
-
         }
-
     }
 }

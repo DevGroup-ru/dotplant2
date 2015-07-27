@@ -58,9 +58,33 @@ class Response extends \yii\web\Response
     public $is_prefiltered_page = false;
 
     /**
-     * @var bool If this response proccessed by DynamicContentTrait
+     * @var bool If this response processed by DynamicContentTrait
      */
     public $dynamic_content_trait = false;
+
+    /**
+     * @var bool If title was rewrited by DynamicContentTrait
+     */
+    public $dynamic_content_title_rewrited = false;
+
+    /**
+     * @var bool If meta description was rewrited by DynamicContentTrait
+     */
+    public $dynamic_content_meta_description_rewrited = false;
+
+    /**
+     * @var array Array of statuses of blocks which was rewrited
+     *
+     * can be used like array_keys(Yii::$app->response->dynamic_content_blocks)
+     *
+     * like this:
+     *
+     * [
+     *     'h1' => true,
+     *     'announce' => true
+     * ]
+     */
+    public $dynamic_content_blocks_rewrited = [];
 
     /**
      * @var \app\models\DynamicContent matched DynamicContent model from DynamicContentTrait
