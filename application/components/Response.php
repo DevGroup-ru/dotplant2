@@ -128,4 +128,33 @@ class Response extends \yii\web\Response
         }
         return $key;
     }
+
+    /**
+     * @return bool if title was rewrited by DynamicContent
+     */
+    public function isDynamicTitle()
+    {
+        return $this->dynamic_content_title_rewrited;
+    }
+
+    /**
+     * @return bool if meta description was rewrited by DynamicContent
+     */
+    public function isDynamicMetaDescription()
+    {
+        return $this->dynamic_content_meta_description_rewrited;
+    }
+
+    /**
+     * @param string $name of block which should be tested against rewrite
+     * @return bool if block with name $name was rewrited by DynamiContent
+     */
+    public function isDynamicContentBlock($name)
+    {
+        if (empty($name) or empty($this->dynamic_content_blocks_rewrited[$name])) {
+            return false;
+        } else {
+            return $this->dynamic_content_blocks_rewrited[$name];
+        }
+    }
 }
