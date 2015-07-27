@@ -2,6 +2,7 @@
 
 namespace app\backend\components;
 
+use app\backend\BackendModule;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\Html;
@@ -93,5 +94,37 @@ class Helper
     public static function toString($value)
     {
         return (string) $value;
+    }
+
+    public static function getBackendGridClass($moduleId, $key, $columnNumber, $defaultClass = '')
+    {
+        /** @var BackendModule $backendModule */
+        $backendModule = Yii::$app->getModule('backend');
+        if (isset($backendModule->backendEditGrids[$moduleId][$key])) {
+            $type = $backendModule->backendEditGrids[$moduleId][$key];
+        } else {
+            $module = Yii::$app->getModule($moduleId);
+            if (isset($module->backendEditGrids[$moduleId][$key])) {
+                $type = $module->backendEditGrids[$moduleId][$key];
+            } else {
+                return $defaultClass;
+            }
+        }
+        switch ($type) {
+            case BackendModule::BACKEND_GRID_ONE_COLUMN:
+                return 'backend-edit-grid col-lg-12 col-md-12 col-ms-12 col-xs-12';
+            case BackendModule::BACKEND_GRID_ONE_TO_ONE:
+                return 'backend-edit-grid col-lg-6 col-md-6 col-ms-6 col-xs-12';
+            case BackendModule::BACKEND_GRID_TWO_TO_ONE:
+                return $columnNumber === 1
+                    ? 'backend-edit-grid col-lg-8 col-md-8 col-ms-8 col-xs-12'
+                    : 'backend-edit-grid col-lg-4 col-md-4 col-ms-4 col-xs-12';
+            case BackendModule::BACKEND_GRID_ONE_TO_TWO:
+                return $columnNumber === 1
+                    ? 'backend-edit-grid col-lg-4 col-md-4 col-ms-4 col-xs-12'
+                    : 'backend-edit-grid col-lg-8 col-md-8 col-ms-8 col-xs-12';
+            default:
+                return $defaultClass;
+        }
     }
 }

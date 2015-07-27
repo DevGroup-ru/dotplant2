@@ -1150,5 +1150,10 @@ return [
     'Don\'t filter (for FilterWidget only)' => 'Не участвует в фильтре (только для FitlerWidget)',
     'Title append' => 'Добавок к тайтлу',
     '{n} products are available' => 'Доступно товаров: {n}',
-    'Quality' => 'Качество'
+    'Quality' => 'Качество',
+    'One column' => 'Одна колонка',
+    'One to one' => 'Один к одному',
+    'One to two' => 'Один к двум',
+    'Two to one' => 'Два к одному',
+    'Backend edit grids' => 'Сетка ретакрирования админки',
 ];

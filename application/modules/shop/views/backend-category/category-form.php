@@ -5,9 +5,9 @@ use app\modules\shop\controllers\BackendCategoryController;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use app\backend\components\ActiveForm;
-use vova07\imperavi\Widget as ImperaviWidget;
-use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
+use app\backend\components\Helper;
+use app\modules\shop\ShopModule;
 
 /**
  * @var $this \yii\web\View
@@ -105,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <section id="widget-grid">
     <div class="row">
-        <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <article class="<?= Helper::getBackendGridClass('shop', ShopModule::BACKEND_CATEGORY_GRID, 1) ?>">
 
             <?php BackendWidget::begin(
                 [
@@ -217,7 +217,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php BackendWidget::end(); ?>
         </article>
 
-        <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <article class="<?= Helper::getBackendGridClass('shop', ShopModule::BACKEND_CATEGORY_GRID, 2) ?>">
             <?php BackendWidget::begin(
                 [
                     'title' => Yii::t('app', 'SEO'),

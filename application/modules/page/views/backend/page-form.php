@@ -6,8 +6,8 @@ use app\modules\page\backend\PageController;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\widgets\DateTimePicker;
-use vova07\imperavi\Widget as ImperaviWidget;
-use yii\helpers\Url;
+use app\modules\page\PageModule;
+use app\backend\components\Helper;
 
 
 $this->title = Yii::t('app', 'Page edit');
@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <section id="widget-grid">
     <div class="row">
 
-        <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <article class="<?= Helper::getBackendGridClass('page', PageModule::BACKEND_PAGE_GRID, 1) ?>">
 
             <?php BackendWidget::begin(
                 ['title' => Yii::t('app', 'Page'), 'icon' => 'pencil', 'footer' => $this->blocks['submit']]
@@ -203,7 +203,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php BackendWidget::end(); ?>
         </article>
-        <article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <article class="<?= Helper::getBackendGridClass('page', PageModule::BACKEND_PAGE_GRID, 2) ?>">
             <?php BackendWidget::begin(
                 ['title' => Yii::t('app', 'SEO'), 'icon' => 'search', 'footer' => $this->blocks['submit']]
             ); ?>

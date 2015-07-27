@@ -4,6 +4,7 @@ namespace app\modules\shop;
 
 use app;
 use app\components\BaseModule;
+use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
@@ -15,6 +16,9 @@ use yii\web\UserEvent;
  */
 class ShopModule extends BaseModule implements BootstrapInterface
 {
+    const BACKEND_PRODUCT_GRID = 'productEditGrid';
+    const BACKEND_CATEGORY_GRID = 'categoryEditGrid';
+
     /**
      * @inheritdoc
      */
@@ -157,5 +161,22 @@ class ShopModule extends BaseModule implements BootstrapInterface
         if (\Yii::$app instanceof \yii\console\Application) {
             $this->controllerMap = [];
         }
+    }
+
+    /** @inheritdoc */
+    public function getBackendGrids()
+    {
+        return [
+            [
+                'defaultValue' => app\backend\BackendModule::BACKEND_GRID_ONE_TO_ONE,
+                'key' => self::BACKEND_PRODUCT_GRID,
+                'label' => Yii::t('app', 'Product edit'),
+            ],
+            [
+                'defaultValue' => app\backend\BackendModule::BACKEND_GRID_ONE_TO_ONE,
+                'key' => self::BACKEND_CATEGORY_GRID,
+                'label' => Yii::t('app', 'Category edit'),
+            ],
+        ];
     }
 }

@@ -232,3 +232,12 @@ div#Product-grid, div#reviews-grid {
   max-height: 400px;
   overflow-y: scroll;
 }
+article.backend-edit-grid {
+  &.col-md-4, &.col-sm-4 {
+    .widget-footer .btn {
+      font-size: 12px;
+      line-height: 1.5;
+      padding: 1px 5px;
+    }
+  }
+}

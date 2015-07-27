@@ -16,6 +16,12 @@ use yii\web\View;
  */
 class BackendModule extends Module implements BootstrapInterface
 {
+
+    const BACKEND_GRID_ONE_TO_ONE = 'one_to_one';
+    const BACKEND_GRID_ONE_COLUMN = 'one_column';
+    const BACKEND_GRID_ONE_TO_TWO = 'one_to_two';
+    const BACKEND_GRID_TWO_TO_ONE = 'two_to_one';
+
     public $administratePermission = 'administrate';
 
     public $defaultRoute = 'dashboard/index';
@@ -26,6 +32,18 @@ class BackendModule extends Module implements BootstrapInterface
     public $floatingPanel = [];
 
     public $wysiwygUploadDir = '/upload/images';
+
+    public $backendEditGrids = [];
+
+    public static function backendGridLabels()
+    {
+        return [
+            self::BACKEND_GRID_ONE_COLUMN => Yii::t('app', 'One column'),
+            self::BACKEND_GRID_ONE_TO_ONE => Yii::t('app', 'One to one'),
+            self::BACKEND_GRID_ONE_TO_TWO => Yii::t('app', 'One to two'),
+            self::BACKEND_GRID_TWO_TO_ONE => Yii::t('app', 'Two to one'),
+        ];
+    }
 
     /**
      * @inheritdoc

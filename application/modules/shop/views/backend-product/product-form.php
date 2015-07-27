@@ -7,12 +7,9 @@ use app\backend\widgets\GridView;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use app\backend\components\ActiveForm;
-use kartik\widgets\Select2;
-use vova07\imperavi\Widget as ImperaviWidget;
 use yii\data\ActiveDataProvider;
-use yii\helpers\Url;
-use devgroup\JsTreeWidget\TreeWidget;
-use devgroup\JsTreeWidget\ContextMenuHelper;
+use app\backend\components\Helper;
+use app\modules\shop\ShopModule;
 
 /**
  * @var $this \yii\web\View
@@ -104,7 +101,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <section id="widget-grid">
 <div class="row">
 
-<article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+<article class="<?= Helper::getBackendGridClass('shop', ShopModule::BACKEND_PRODUCT_GRID, 1) ?>">
 
     <?php
     BackendWidget::begin(
@@ -267,7 +264,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </article>
 
 
-<article class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+<article class="<?= Helper::getBackendGridClass('shop', ShopModule::BACKEND_PRODUCT_GRID, 2) ?>">
     <?php
     BackendWidget::begin(
         [
