@@ -38,7 +38,7 @@ class PriceHandlers
 
     /***
      * @param Product $product
-     * @param Order $order
+     * @param null|Order $order
      * @param $price
      * @return mixed
      */
@@ -120,6 +120,9 @@ class PriceHandlers
         return $price + $deliveryPrice;
     }
 
+    /**
+     * @return array|mixed
+     */
     private static function getAllDiscounts()
     {
         if (self::$allDiscounts === []) {

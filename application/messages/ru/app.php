@@ -955,8 +955,8 @@ return [
     'Special actions' => '',
     'Specify fields to import and select the file' => 'Укажите поля для импорта и выберите файл',
     'Stage' => 'Стадия',
-    'Stage From ID' => 'Стадия в',
-    'Stage To ID' => 'Стадия с',
+    'Stage From ID' => 'ID предыдущей стадии',
+    'Stage To ID' => 'ID следующей стадии',
     'Stage settings' => 'Настройки стадии',
     'Start Date' => 'Дата начала',
     'Static redirects' => 'Статичние перенаправления',
@@ -1150,5 +1150,10 @@ return [
     'Don\'t filter (for FilterWidget only)' => 'Не участвует в фильтре (только для FitlerWidget)',
     'Title append' => 'Добавок к тайтлу',
     '{n} products are available' => 'Доступно товаров: {n}',
-    'Quality' => 'Качество'
+    'Quality' => 'Качество',
+    'One column' => 'Одна колонка',
+    'One to one' => 'Один к одному',
+    'One to two' => 'Один к двум',
+    'Two to one' => 'Два к одному',
+    'Backend edit grids' => 'Сетка ретакрирования админки',
 ];

@@ -324,4 +324,9 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
   overflow-y: scroll;
 }
 
-/*# sourceMappingURL=admin.css.map */
+/* line 237, ../sass/admin.scss */
+article.backend-edit-grid.col-md-4 .widget-footer .btn, article.backend-edit-grid.col-sm-4 .widget-footer .btn {
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 1px 5px;
+}

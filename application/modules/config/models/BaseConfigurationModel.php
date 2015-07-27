@@ -130,23 +130,18 @@ abstract class BaseConfigurationModel extends Model
     public function saveState()
     {
         $filename = Yii::getAlias('@app/config/configurables-state/' . $this->module . '.php');
-
         $writer = new ApplicationConfigWriter([
             'filename' => $filename,
         ]);
         $writer->configuration = $this->getAttributesForStateSaving();
         $result =  $writer->commit();
-
         if (ini_get('opcache.enable')) {
-
             // invalidate opcache of this files!
             opcache_invalidate(
                 Yii::getAlias($filename),
                 true
             );
-
         }
-
         return $result;
     }
 

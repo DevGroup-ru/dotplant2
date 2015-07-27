@@ -35,6 +35,9 @@ class MailComponent extends Mailer
         $this->setTransport($_config);
     }
 
+    /**
+     * @return string
+     */
     public function getMailFrom()
     {
         return !empty($this->componentConfig['mailFrom'])

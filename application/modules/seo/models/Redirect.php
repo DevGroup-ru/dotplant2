@@ -21,6 +21,9 @@ class Redirect extends ActiveRecord
     const TYPE_STATIC = 'STATIC';
     const TYPE_PREG = 'PREG';
 
+    /**
+     * @return bool|string
+     */
     private static function getFilename()
     {
         return \Yii::getAlias('@app/modules/seo/redirects/redirectsArray.php');

@@ -70,10 +70,10 @@ class Form extends Widget
         if ($this->isModal) {
             Modal::end();
             Modal::begin([
-                    'id' => 'modal-form-info-' . $this->id,
-                    'size' => Modal::SIZE_SMALL,
-                    'header' => $this->model->name . ' status',
-                ]);
+                'id' => 'modal-form-info-' . $this->id,
+                'size' => Modal::SIZE_SMALL,
+                'header' => $this->model->name . ' status',
+            ]);
             echo $this->render($successView);
             Modal::end();
         }

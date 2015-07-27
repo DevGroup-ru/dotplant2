@@ -112,7 +112,8 @@ class Events extends \yii\db\ActiveRecord
 
     /**
      * Returns Events model by name using identity map by classname and cache
-     * @param string $name Event name to find
+     *
+     * @param null|string $name Event name to find
      * @return Events|null
      */
     public static function findByName($name = null)
@@ -151,7 +152,7 @@ class Events extends \yii\db\ActiveRecord
 
     /**
      * Returns Events models by names using identity map by classname and cache
-     * @param string[] $name Array of event names to find
+     * @param string[] $names Array of event names to find
      * @return Events[]
      */
     public static function findByNames($names)
