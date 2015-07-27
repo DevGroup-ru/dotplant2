@@ -5,15 +5,19 @@ namespace app\widgets\options;
 use app\models\Property;
 use Yii;
 use yii\base\Widget;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
 /**
  * Выводит список комплектаций
  * или многомерные комплектации
  */
-
 class ProductOption extends Widget
 {
+
+    /**
+     * @var \app\modules\shop\models\Product
+     */
     public $model;
     public $type = 'list';
     public $listView = 'listView';
@@ -21,7 +25,6 @@ class ProductOption extends Widget
 
     /**
      * Renders the widget.
-     *
      * @return string
      */
     public function run()
@@ -43,10 +46,16 @@ class ProductOption extends Widget
             $items = [];
             $optionsJson = [];
             foreach ($this->model->options as $option) {
+                /**
+                 * @var $option \app\modules\shop\models\Product|\app\properties\HasProperties
+                 */
                 $optionProperties = $option->getPropertyGroups()[$propertyGroup];
                 $itemsJson = [];
                 foreach ($optionProperties as $key => $property) {
                     foreach ($property->values as $name => $propValue) {
+                        if (ArrayHelper::keyExists('property_id', $propValue) === false) {
+                            continue;
+                        }
                         if (!isset($items[$key])) {
                             $items[$key] = [
                                 'name' => Property::findById($propValue['property_id'])->name,
