@@ -155,10 +155,11 @@ JSCODE;
                             {
                                 /** @var \app\models\Property $prop */
                                 if (null !== $val = $submission->getPropertyValuesByPropertyId($prop->id)) {
-                                    $res .= Html::tag('div',
+                                    $html = Html::tag('div',
                                         $prop->handler('form', $submission->abstractModel, $val, 'backend_render_view'),
                                         ['class' => 'col-md-8']
                                     );
+                                    $res .= Html::tag('div', $html, ['class' => 'form-group']);
                                 }
                                 return $res;
                             }, '');
@@ -166,12 +167,12 @@ JSCODE;
                     }, '');
             ?>
 
-                <?= Html::activeTextInput($submission, 'date_received'); ?>
-                <?= Html::activeTextInput($submission, 'form_id'); ?>
-                <?= Html::activeTextInput($submission, 'ip'); ?>
-                <?= Html::activeTextInput($submission, 'user_agent'); ?>
-                <?= Html::activeTextInput($submission, 'processed_by_user_id'); ?>
-                <?= Html::activeTextInput($submission, 'spam'); ?>
+                <?= $form->field($submission, 'date_received'); ?>
+                <?= $form->field($submission, 'form_id'); ?>
+                <?= $form->field($submission, 'ip'); ?>
+                <?= $form->field($submission, 'user_agent'); ?>
+                <?= $form->field($submission, 'processed_by_user_id'); ?>
+                <?= $form->field($submission, 'spam'); ?>
             <?php
                 BackendWidget::end();
                 endif;
