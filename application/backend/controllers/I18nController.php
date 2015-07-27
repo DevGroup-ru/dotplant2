@@ -15,6 +15,10 @@ class I18nController extends Controller
 {
     private $aliases;
 
+    /**
+     * @return array
+     * @throws \yii\base\InvalidConfigException
+     */
     private function getAliases()
     {
         if ($this->aliases === null) {

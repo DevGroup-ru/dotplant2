@@ -21,6 +21,8 @@ class ConfigConfigurationModel extends BaseConfigurationModel
 
     public $wysiwygUploadDir = '/upload/images';
 
+    public $backendEditGrids = [];
+
     /**
      * @inheritdoc
      */
@@ -45,7 +47,10 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                     'wysiwygUploadDir',
                 ],
                 'required',
-            ]
+            ],
+            [
+                ['backendEditGrids'], 'each', 'rule' => ['each', 'rule' => ['string']],
+            ],
         ];
     }
 
@@ -143,5 +148,26 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public function aliases()
     {
         return [];
+    }
+
+    public function getAllBackendEditGrids()
+    {
+        $grids = [];
+        foreach (Yii::$app->getModules(true) as $module) {
+            /** @var app\backend\BackendModule $module */
+            $moduleGrids = $module->hasMethod('getBackendGrids') ? $module->getBackendGrids() : null;
+            if (!empty($moduleGrids)) {
+                $grids[$module->id] = $moduleGrids;
+                if (!isset($this->backendEditGrids[$module->id])) {
+                    $this->backendEditGrids[$module->id] = [];
+                }
+                foreach ($moduleGrids as $grid) {
+                    if (!isset($this->backendEditGrids[$module->id][$grid['key']])) {
+                        $this->backendEditGrids[$module->id][$grid['key']] = $grid['defaultValue'];
+                    }
+                }
+            }
+        }
+        return $grids;
     }
 }

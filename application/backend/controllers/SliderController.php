@@ -70,7 +70,7 @@ class SliderController extends Controller
     /**
      * Updates an existing Slider model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
+     * @param null|string $id
      * @return mixed
      */
     public function actionUpdate($id = null)
@@ -219,25 +219,24 @@ class SliderController extends Controller
         }
 
         $fileName = $file->name;
-        $uploadDir = '/theme/resources/sliders/';
+        $uploadDir = Yii::getAlias(Yii::$app->getModule('core')->fileUploadPath);
         $fn = $uploadDir . $fileName;
-        if (file_exists('.' . $uploadDir . $fileName)) {
+        if (file_exists($fn)) {
             $fileName = $file->baseName . '-' . uniqid() . '.' . $file->extension;
             $fn = $uploadDir . $fileName;
         }
 
 
-        $file->saveAs('.'. $fn);
+        $file->saveAs($fn);
 
-        $image = \yii\imagine\Image::thumbnail(
-            '.'.Yii::getAlias($uploadDir . '/' . $fileName),
+        $image = \yii\imagine\Image::thumbnail($uploadDir . $fileName,
             $model->image_width,
             $model->image_height,
             ManipulatorInterface::THUMBNAIL_INSET
         );
-        $image->save('.'.$uploadDir . 'small-' . $fileName, ['quality'=>95]);
+        $image->save($uploadDir . 'small-' . $fileName, ['quality'=>95]);
 
-        $slide->setAttribute($_POST['attribute'], $uploadDir . 'small-' . $fileName);
+        $slide->setAttribute($_POST['attribute'], str_replace(Yii::getAlias('@webroot'), '', $uploadDir) . 'small-' . $fileName);
         $slide->save();
 
         return $this->redirect(['update', 'id' => $model->id]);

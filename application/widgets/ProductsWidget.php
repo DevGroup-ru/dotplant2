@@ -26,6 +26,11 @@ class ProductsWidget extends Widget
     public $viewFile = 'products-widget';
 
 
+    /**
+     * @return string
+     * @throws InvalidConfigException
+     * @throws \yii\web\ServerErrorHttpException
+     */
     public function run()
     {
         parent::run();

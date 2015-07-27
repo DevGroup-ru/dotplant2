@@ -25,6 +25,10 @@ class AutocompleteAction extends Action
         }
     }
 
+    /**
+     * @return array
+     * @throws yii\web\NotFoundHttpException
+     */
     public function run()
     {
         if (!isset($_GET[$this->query_variable])) {

@@ -3,15 +3,15 @@
 namespace app\modules\page;
 
 use app;
-use app\components\BaseModule;
 use Yii;
 
 /**
  * Base configuration module for DotPlant2 CMS
  * @package app\modules\page
  */
-class PageModule extends BaseModule
+class PageModule extends app\components\BaseModule
 {
+    const BACKEND_PAGE_GRID = 'pageGrid';
     /**
      * @var int minimum pages per list to show
      */
@@ -47,6 +47,18 @@ class PageModule extends BaseModule
                 'configurationView' => '@app/modules/page/views/configurable/_config',
                 'configurableModel' => 'app\modules\page\models\ConfigConfigurationModel',
             ]
+        ];
+    }
+
+    /** @inheritdoc */
+    public function getBackendGrids()
+    {
+        return [
+            [
+                'defaultValue' => app\backend\BackendModule::BACKEND_GRID_ONE_TO_ONE,
+                'key' => self::BACKEND_PAGE_GRID,
+                'label' => Yii::t('app', 'Page edit'),
+            ],
         ];
     }
 }
