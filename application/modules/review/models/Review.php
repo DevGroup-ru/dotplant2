@@ -84,6 +84,7 @@ class Review extends \yii\db\ActiveRecord
                 'author_email',
                 'review_text',
                 'object_id',
+                'status',
             ],
             'search' => [
                 'object_id',
@@ -151,16 +152,7 @@ class Review extends \yii\db\ActiveRecord
         $models = Yii::$app->cache->get($cacheKey);
         if (false === $models) {
             $models = Review::find()
-                ->with(
-                    [
-                        'submission' => function ($query) use ($formId) {
-                            /** @var ActiveQuery $query */
-                            $query->andWhere('spam != :spam', [':spam' => 1]);
-                            $query->andWhere(['is_deleted' => 0]);
-                            $query->andWhere(['form_id' => $formId]);
-                        }
-                    ]
-                )
+                ->with('submission')
                 ->where(
                     [
                         'object_model_id' => $object_model_id,
