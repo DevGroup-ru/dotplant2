@@ -10,6 +10,7 @@ use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
 use app\models\Submission;
+use app\modules\image\widgets\views\AddImageAction;
 use app\properties\PropertyHandlers;
 use app\modules\image\widgets\SaveInfoAction;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -43,6 +44,9 @@ class PropertiesController extends Controller
         return [
             'save-info' => [
                 'class' => SaveInfoAction::className(),
+            ],
+            'addImage' => [
+                'class' => AddImageAction::className(),
             ],
         ];
     }

@@ -5,6 +5,7 @@ namespace app\modules\shop\controllers;
 use app\backend\actions\PropertyHandler;
 use app\backend\components\BackendController;
 use app\backend\events\BackendEntityEditEvent;
+use app\modules\image\widgets\views\AddImageAction;
 use app\modules\shop\models\Category;
 use app\modules\image\models\Image;
 use app\models\Object;
@@ -63,6 +64,9 @@ class BackendProductController extends BackendController
                 'modelName' => 'app\modules\shop\models\Category',
                 'label_attribute' => 'name',
                 'vary_by_type_attribute' => null,
+            ],
+            'addImage' => [
+                'class' => AddImageAction::className(),
             ],
             'upload' => [
                 'class' => UploadAction::className(),

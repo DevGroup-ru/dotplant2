@@ -8,6 +8,7 @@ use app\backend\components\ActiveForm;
 use yii\helpers\ArrayHelper;
 use app\backend\components\Helper;
 use app\modules\shop\ShopModule;
+use yii\helpers\Url;
 
 /**
  * @var $this \yii\web\View
@@ -190,6 +191,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         'class' => 'btn btn-success fileinput-button'
                     ]
                 )?>
+                <?php
+                if (Yii::$app->getModule('elfinder')) {
+                    echo \DotPlant\ElFinder\widgets\ElfinderFileInput::widget(
+                        ['url' => Url::toRoute(['addImage', 'objId' => $object->id, 'objModelId' => $model->id])]
+                    );
+                }
+                ?>
             </div>
 
             <?=\app\modules\image\widgets\ImageDropzone::widget(
