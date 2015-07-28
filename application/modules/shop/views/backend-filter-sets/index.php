@@ -99,6 +99,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <?= Yii::t('app', 'Delegate to children') ?>
                                     </td>
                                     <td>
+                                        <?= Yii::t('app', 'Multiple') ?>
+                                    </td>
+                                    <td>
                                         <?= Yii::t('app', 'Is range slider') ?>
                                     </td>
                                     <td>
@@ -136,6 +139,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     'class'=>'delegate-property-checkbox',
                                                     'data-filterset-id' => $filterSet->id,
                                                     'data-inherited' => $filterSet->category_id === $selectedCategory->id ? '0' : '1',
+                                                ]
+                                            )
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?=
+                                            Html::checkbox(
+                                                'multiple['.$filterSet->id.']',
+                                                $filterSet->multiple === 1,
+                                                [
+                                                    'class'=>'multiple-checkbox',
+                                                    'data-filterset-id' => $filterSet->id,
                                                 ]
                                             )
                                             ?>
@@ -278,6 +293,33 @@ $(".delegate-property-checkbox").change(function(){
         'data': {
             'id': $(this).data('filtersetId'),
             'FilterSets[delegate_to_children]': state ? '1' : '0'
+        },
+        complete: function() {
+            row
+                .removeClass('info')
+                .removeClass('success')
+                .removeClass('danger');
+
+            if (state && inherited) {
+                row.addClass('info');
+            } else if (state && !inherited) {
+                row.addClass('success');
+            } else if (!state && inherited) {
+                row.addClass('danger');
+            }
+        }
+    })
+});
+$(".multiple-checkbox").change(function(){
+    var state = this.checked,
+        row = $(this).parent().parent(),
+        inherited = $(this).data('inherited') == '1';
+    $.ajax({
+        'url': $modifyFilterSetUrl,
+        'method': 'POST',
+        'data': {
+            'id': $(this).data('filtersetId'),
+            'FilterSets[multiple]': state ? '1' : '0'
         },
         complete: function() {
             row

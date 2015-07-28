@@ -6,6 +6,7 @@ use app\models\Property;
 use app\models\PropertyStaticValues;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 class PropertyPart extends UrlPart
 {
@@ -32,11 +33,8 @@ class PropertyPart extends UrlPart
     /**
      * @inheritdoc
      */
-    public function getNextPart(
-        $full_url,
-        $next_part,
-        &$previous_parts
-    ) {
+    public function getNextPart($full_url, $next_part, &$previous_parts)
+    {
         $property = Property::findById($this->property_id);
         if (is_null($property)) {
             return false;
@@ -45,26 +43,46 @@ class PropertyPart extends UrlPart
             $cacheTags = [];
             $static_values = PropertyStaticValues::getValuesForPropertyId($this->property_id);
             $slugs = explode('/', $next_part);
+            $currentSlug = 0;
+            $slugsCount = count($slugs);
+            $appliedParts = [];
             foreach ($static_values as $value) {
-                if ($slugs[0] === $value['slug']) {
-                    $this->parameters = [
-                        'properties' => [
-                            $this->property_id => [$value['id']],
-                        ],
-                    ];
+                if ($slugs[$currentSlug] === $value['slug']) {
+                    $appliedParts[] = $value['slug'];
+                    if (isset($this->parameters['properties'][$this->property_id])) {
+                        $this->parameters['properties'][$this->property_id][] = $value['id'];
+                    } else {
+                        $this->parameters = [
+                            'properties' => [
+                                $this->property_id => [$value['id']],
+                            ],
+                        ];
+                    }
                     if (!empty($value['title_append'])) {
-                        $this->parameters['title_append'] = [$value['title_append']];
+                        if (isset($this->parameters['title_append'])) {
+                            $this->parameters['title_append'][] = $value['title_append'];
+                        } else {
+                            $this->parameters['title_append'] = [$value['title_append']];
+                        }
                     }
                     $cacheTags[] = ActiveRecordHelper::getObjectTag(PropertyStaticValues::className(), $value['id']);
-                    $part = new self([
-                        'gathered_part' => $value['slug'],
-                        'rest_part' => mb_substr($next_part, mb_strlen($value['slug'])),
+                    $currentSlug++;
+                    if ($currentSlug == $slugsCount) {
+                        break;
+                    }
+                }
+            }
+            if ($currentSlug > 0) {
+                $appliedPartsString = implode('/', $appliedParts);
+                $part = new self(
+                    [
+                        'gathered_part' => $appliedPartsString,
+                        'rest_part' => mb_substr($next_part, mb_strlen($appliedPartsString)),
                         'parameters' => $this->parameters,
                         'cacheTags' => $cacheTags,
-                    ]);
-
-                    return $part;
-                }
+                    ]
+                );
+                return $part;
             }
             return false;
         } else {
@@ -82,15 +100,23 @@ class PropertyPart extends UrlPart
             if (isset($parameters['properties'][$this->property_id]) &&
                 is_array($parameters['properties'][$this->property_id])
             ) {
-                $psv = PropertyStaticValues::findById($parameters['properties'][$this->property_id][0]);
-                if (count($this->include_if_value) > 0) {
-                    if (!in_array($psv['value'], $this->include_if_value)) {
-                        return false;
+                $psvs = PropertyStaticValues::find()
+                    ->where(['id' => array_values($parameters['properties'][$this->property_id])])
+                    ->orderBy('sort_order ASC, name ASC')
+                    ->asArray(true)
+                    ->all();
+                foreach ($psvs as $psv) {
+                    if (count($this->include_if_value) > 0) {
+                        if (!in_array($psv['value'], $this->include_if_value)) {
+                            return false;
+                        }
                     }
                 }
-                if (is_array($psv)) {
-                    $cacheTags[] = ActiveRecordHelper::getObjectTag(PropertyStaticValues::className(), $psv['id']);
-                    return $psv['slug'];
+                if (!empty($psvs)) {
+                    foreach ($psvs as $psv) {
+                        $cacheTags[] = ActiveRecordHelper::getObjectTag(PropertyStaticValues::className(), $psv['id']);
+                    }
+                    return implode('/', ArrayHelper::getColumn($psvs, 'slug'));
                 } else {
                     return false;
                 }

@@ -11,7 +11,10 @@ use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
+use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "property_static_values".
@@ -184,53 +187,58 @@ class PropertyStaticValues extends ActiveRecord
         return $result;
     }
 
-    public static function getValuesForFilter($property_id, $category_id, $properties)
+    /**
+     * @param $property_id
+     * @param $category_id
+     * @param $properties
+     * @return PropertyStaticValues[]
+     */
+    public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false)
     {
         $cacheKey = "getValuesForFilter:" . json_encode([$property_id, $category_id, $properties]);
-
         if (false === $values = Yii::$app->cache->get($cacheKey)) {
-            $query = static::find()
-                ->leftJoin(
+            /** @var ActiveQuery $query */
+            $query = ObjectStaticValues::find()
+                ->distinct(true)
+                ->select(ObjectStaticValues::tableName() . '.object_model_id');
+            if (false === empty($properties)) {
+                /** @var ActiveQuery $subQuery */
+                foreach ($properties as $propertyId => $propertyStaticValues) {
+                    $subQuery = ObjectStaticValues::find();
+                    $subQuery
+                        ->distinct(true)
+                        ->select('object_model_id')
+                        ->where(
+                            [
+                                'property_static_value_id' => $propertyStaticValues,
+                            ]
+                        );
+                    $query->andWhere(['object_model_id' => $subQuery]);
+                }
+            }
+            $objectModelIds = $query->column();
+            $valuesQuery = static::find()
+                ->innerJoin(
                     ObjectStaticValues::tableName(),
-                    ObjectStaticValues::tableName() . '.property_static_value_id=' . self::tableName() . '.id'
+                    ObjectStaticValues::tableName() . '.property_static_value_id = ' . static::tableName() . '.id'
                 )
-                ->leftJoin(
+                ->innerJoin(
                     '{{%product_category}}',
                     '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
                 )
-                ->where(
-                    [
-                        self::tableName() . '.property_id' => $property_id,
-                        self::tableName() . '.dont_filter' => 0,
-                        '{{%product_category}}.category_id' => $category_id
-                    ]
-                )
-                ->orderBy(
-                    [
-                        self::tableName() . '.sort_order' => SORT_ASC,
-                        self::tableName() . '.name' => SORT_ASC
-                    ]
-                );
-            if ($properties) {
-                $listProperty = [];
-                foreach ($properties as $selectProperties) {
-                    $listProperty += is_array($selectProperties) ? $selectProperties : [$selectProperties];
+                ->where([
+                    'property_id' => $property_id,
+                    ObjectStaticValues::tableName() . '.object_model_id' => $objectModelIds,
+                    'category_id' => $category_id,
+                ]);
+            if (false == $multiple) {
+                if (isset($properties[$property_id])) {
+                    $valuesQuery->andWhere([self::tableName() . '.id' => $properties[$property_id]]);
                 }
-                $query->leftJoin(
-                    ObjectStaticValues::tableName() . ' as osv',
-                    'osv.object_model_id={{%product_category}}.object_model_id'
-                );
-                $query->andWhere(
-                    [
-                        'osv.property_static_value_id' => $listProperty
-                    ]
-                );
-
+            } else {
+                unset($properties[$property_id]);
             }
-
-
-            $values = $query->asArray()->all();
-
+            $values = $valuesQuery->asArray(true)->all();
             if (null !== $values) {
                 Yii::$app->cache->set(
                     $cacheKey,

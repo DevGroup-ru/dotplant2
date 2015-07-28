@@ -44,11 +44,11 @@ echo Html::tag(
                     }',
         ],
         'clientOptions' => [
-            'values' => [(int)$minValueNow, (int)$maxValueNow],
+            'values' => [(int) $minValueNow, (int) $maxValueNow],
             'range' => true,
-            'min' => (int)$minValue,
-            'max' => (int)$maxValue,
-            'step' => 10
+            'min' => (int) $minValue,
+            'max' => (int) $maxValue,
+            'step' => (int) $step,
 
 
         ],
