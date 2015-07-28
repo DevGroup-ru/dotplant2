@@ -6,18 +6,18 @@
     "type": "project",
     "license": "GPL-3.0+",
     "support": {
-      "issues": "https://github.com/DevGroup-ru/dotplant2/issues",
-      "source": "https://github.com/DevGroup-ru/dotplant2"
+        "issues": "https://github.com/DevGroup-ru/dotplant2/issues",
+        "source": "https://github.com/DevGroup-ru/dotplant2"
     },
     "minimum-stability": "dev",
     "require": {
-      "devgroup/dotplant": "dev-master",
+        "devgroup/dotplant": "dev-master",
         "dotplant/wysiwyg-tinymce": "dev-master",
         "dotplant/wysiwyg-ckeditor": "dev-master",
         "dotplant/elfinder": "dev-master"
     },
     "require-dev": {
-      "devgroup/dotplant-dev": "dev-master"
+        "devgroup/dotplant-dev": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [
@@ -44,7 +44,7 @@
                     "web/upload/images": "0777",
                     "web/upload/user-uploads": "0777",
                     "web/files": "0777",
-		    "installed.mark": "0666"
+                    "installed.mark": "0666"
                 }
             ]
         },
