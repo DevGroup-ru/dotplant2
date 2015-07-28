@@ -52,7 +52,7 @@ class PasswordResetRequestForm extends Model
                     ->setTo($this->email)
                     ->setSubject(
                         Yii::t(
-                            'user',
+                            'app',
                             'Password reset for {appName}',
                             \Yii::$app->name
                         )
