@@ -11,10 +11,7 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "devgroup/dotplant": "dev-master",
-        "dotplant/wysiwyg-tinymce": "dev-master",
-        "dotplant/wysiwyg-ckeditor": "dev-master",
-        "dotplant/elfinder": "dev-master"
+        "devgroup/dotplant": "dev-master"
     },
     "require-dev": {
         "devgroup/dotplant-dev": "dev-master"
