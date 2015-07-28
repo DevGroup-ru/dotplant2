@@ -196,7 +196,32 @@ class PropertyStaticValues extends ActiveRecord
     public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false)
     {
         $cacheKey = "getValuesForFilter:" . json_encode([$property_id, $category_id, $properties]);
-        if (false === $values = Yii::$app->cache->get($cacheKey)) {
+        if (false === $allSelections = Yii::$app->cache->get($cacheKey)) {
+            $allSelections = static::find()
+                ->asArray(true)
+                ->select([self::tableName() . '.id', 'name', 'value', 'slug'])
+                ->innerJoin(
+                    ObjectStaticValues::tableName(),
+                    ObjectStaticValues::tableName() . '.property_static_value_id=' . self::tableName() . '.id'
+                )
+                ->innerJoin(
+                    '{{%product_category}}',
+                    '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
+                )
+                ->where(
+                    [
+                        self::tableName() . '.property_id' => $property_id,
+                        self::tableName() . '.dont_filter' => 0,
+                        '{{%product_category}}.category_id' => $category_id,
+                    ]
+                )
+                ->orderBy(
+                    [
+                        self::tableName() . '.sort_order' => SORT_ASC,
+                        self::tableName() . '.name' => SORT_ASC,
+                    ]
+                )
+                ->all();
             /** @var ActiveQuery $query */
             $query = ObjectStaticValues::find()
                 ->distinct(true)
@@ -217,7 +242,9 @@ class PropertyStaticValues extends ActiveRecord
                 }
             }
             $objectModelIds = $query->column();
-            $valuesQuery = static::find()
+            $selectedQuery = static::find()
+                ->select(static::tableName() . '.id')
+                ->asArray(true)
                 ->innerJoin(
                     ObjectStaticValues::tableName(),
                     ObjectStaticValues::tableName() . '.property_static_value_id = ' . static::tableName() . '.id'
@@ -233,16 +260,19 @@ class PropertyStaticValues extends ActiveRecord
                 ]);
             if (false == $multiple) {
                 if (isset($properties[$property_id])) {
-                    $valuesQuery->andWhere([self::tableName() . '.id' => $properties[$property_id]]);
+                    $selectedQuery->andWhere([self::tableName() . '.id' => $properties[$property_id]]);
                 }
             } else {
                 unset($properties[$property_id]);
             }
-            $values = $valuesQuery->asArray(true)->all();
-            if (null !== $values) {
+            $selected = $selectedQuery->column();
+            foreach ($allSelections as $index => $selection) {
+                $allSelections[$index]['active'] = in_array($selection['id'], $selected);
+            }
+            if (null !== $allSelections) {
                 Yii::$app->cache->set(
                     $cacheKey,
-                    $values,
+                    $allSelections,
                     0,
                     new TagDependency(
                         [
@@ -256,7 +286,7 @@ class PropertyStaticValues extends ActiveRecord
                 );
             }
         }
-        return $values;
+        return $allSelections;
     }
 
     /**

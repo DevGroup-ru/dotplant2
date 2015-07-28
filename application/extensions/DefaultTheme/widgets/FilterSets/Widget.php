@@ -11,6 +11,7 @@ use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
 use yii\helpers\Url;
+use yii\helpers\VarDumper;
 
 class Widget extends BaseWidget
 {
@@ -209,7 +210,10 @@ class Widget extends BaseWidget
                                 'id' => $selection['id'],
                                 'checked' => $selectedPropertyIndex !== false,
                                 'label' => $selection['name'],
-                                'url' => Url::toRoute($routeParams),
+                                'url' => $selection['active'] === true || $selectedPropertyIndex !== false
+                                    ? Url::toRoute($routeParams)
+                                    : null,
+                                'active' => $selection['active'],
                             ];
                         }
                     }

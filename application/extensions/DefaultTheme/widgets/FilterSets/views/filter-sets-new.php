@@ -65,20 +65,25 @@ if ($usePjax) {
                                             'class' => 'filter-check filter-check-property-' . $filter['id'],
                                             'id' => 'filter-check-' . $selection['id'],
                                             'data-property-id' => $filter['id'],
+                                            'disabled' => $selection['active'] === true || $selection['checked'] === true
+                                                ? null
+                                                : 'disabled',
                                         ]
                                     )
                                     ?>
                                     <?=
-                                    Html::a(
-                                        $selection['label'],
-                                        $selection['url'],
-                                        [
-                                            'class' => 'filter-link',
-                                            'data-selection-id' => $selection['id'],
-                                            'data-property-id' => $filter['id'],
-                                            'rel' => !$selection['checked'] ? null : 'nofollow',
-                                        ]
-                                    )
+                                    $selection['active'] === true || $selection['checked'] === true
+                                        ? Html::a(
+                                            $selection['label'],
+                                            $selection['url'],
+                                            [
+                                                'class' => 'filter-link',
+                                                'data-selection-id' => $selection['id'],
+                                                'data-property-id' => $filter['id'],
+                                                'rel' => !$selection['checked'] ? null : 'nofollow',
+                                            ]
+                                        )
+                                        : Html::tag('span', $selection['label'], ['class' => 'inactive-filter'])
                                     ?>
                                 </li>
                             <?php endforeach; ?>
