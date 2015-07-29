@@ -459,7 +459,7 @@ return [
     'Hi' => 'Привет',
     'Hidden Group Title' => 'Скрытый заголовок группы',
     'Hide Other Values If Selected' => 'Скрывать другие значения, если выбрано',
-    'Hit enter to search' => '',
+    'Hit enter to search' => 'Нажмиите enter для поиска',
     'Homepage' => 'Домашняя страница',
     'I18n' => 'I18n',
     'ID' => '',
