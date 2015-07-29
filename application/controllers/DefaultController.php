@@ -78,7 +78,7 @@ class DefaultController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $query = Product::find()
-            ->select(['id', 'name', 'main_category_id'])
+            ->select(['id', 'name', 'main_category_id', 'slug'])
             ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_DESC]);
         foreach (['name', 'content'] as $attribute) {
             $query->orWhere(['like', $attribute, $term]);
@@ -92,12 +92,14 @@ class DefaultController extends Controller
             $result[] = [
                 'id' => $product->id,
                 'name' => $product->name,
-                'url' => Url::toRoute([
-                    '@product',
-                    'model' => $product,
-                    'category_group_id' => $product->getMainCategory()->category_group_id,
-                ]
-                , true),
+                'url' => Url::toRoute(
+                    [
+                        '@product',
+                        'model' => $product,
+                        'category_group_id' => $product->getMainCategory()->category_group_id,
+                    ],
+                    true
+                ),
             ];
         }
         return $result;
