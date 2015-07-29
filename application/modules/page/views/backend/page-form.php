@@ -8,6 +8,7 @@ use kartik\icons\Icon;
 use kartik\widgets\DateTimePicker;
 use app\modules\page\PageModule;
 use app\backend\components\Helper;
+use yii\helpers\Url;
 
 
 $this->title = Yii::t('app', 'Page edit');
@@ -177,6 +178,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         'class' => 'btn btn-success fileinput-button'
                     ]
                 )?>
+                <?php
+                if (Yii::$app->getModule('elfinder')) {
+                    echo \DotPlant\ElFinder\widgets\ElfinderFileInput::widget(
+                        ['url' => Url::toRoute(['addImage', 'objId' => $object->id, 'objModelId' => $model->id])]
+                    );
+                }
+                ?>
             </div>
 
             <?=\app\modules\image\widgets\ImageDropzone::widget(

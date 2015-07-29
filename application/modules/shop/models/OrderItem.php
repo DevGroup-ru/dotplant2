@@ -100,7 +100,7 @@ class OrderItem extends ActiveRecord
             $this->quantity
         );
         $this->discount_amount = ($this->quantity * $this->price_per_pcs) - $this->total_price;
-        $this->discount_amount = $this->discount_amount < 0 ? 0 : $this->discount_amount;
+        $this->discount_amount = $this->discount_amount < 0 ? 0 : round($this->discount_amount, 2);
         $this->total_price_without_discount = $this->total_price + $this->discount_amount;
         return parent::beforeValidate();
     }

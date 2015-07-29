@@ -147,6 +147,13 @@ $this->endBlock();
                         'class' => 'btn btn-success fileinput-button'
                     ]
                 ) ?>
+                <?php
+                if (Yii::$app->getModule('elfinder')) {
+                    echo \DotPlant\ElFinder\widgets\ElfinderFileInput::widget(
+                        ['url' => Url::toRoute(['addImage', 'objId' => $object->id, 'objModelId' => $model->id])]
+                    );
+                }
+                ?>
             </div>
 
             <?= \app\modules\image\widgets\ImageDropzone::widget([

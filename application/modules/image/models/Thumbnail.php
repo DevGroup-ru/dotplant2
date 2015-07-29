@@ -99,8 +99,7 @@ class Thumbnail extends \yii\db\ActiveRecord
             /** @var Filesystem $fs */
             $fs = Yii::$app->getModule('image')->fsComponent;
 
-            $file = Imagine::getImagine()
-                ->read($fs->readStream($image->filename));
+            $file = Imagine::getImagine()->read($fs->readStream($image->filename));
             /** @var ImageInterface $thumb */
             $thumb = $file->thumbnail(new Box($size->width, $size->height), $size->resize_mode);
             $path = Yii::$app->getModule('image')->thumbnailsDirectory;
@@ -138,7 +137,9 @@ class Thumbnail extends \yii\db\ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        Yii::$app->getModule('image')->fsComponent->delete($this->thumb_path);
+        if (Yii::$app->getModule('image')->fsComponent->has($this->thumb_path)) {
+            Yii::$app->getModule('image')->fsComponent->delete($this->thumb_path);
+        }
         $thumbnailWatermarks = ThumbnailWatermark::findAll(['thumb_id' => $this->id]);
         foreach ($thumbnailWatermarks as $thumbnailWatermark) {
             $thumbnailWatermark->delete();

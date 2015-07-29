@@ -5,6 +5,7 @@ namespace app\modules\shop\controllers;
 use app\backend\actions\PropertyHandler;
 use app\backend\components\BackendController;
 use app\backend\events\BackendEntityEditEvent;
+use app\modules\image\widgets\views\AddImageAction;
 use app\modules\shop\models\Category;
 use app\models\Object;
 use app\models\ViewObject;
@@ -60,6 +61,9 @@ class BackendCategoryController extends BackendController
             'reorder' => [
                 'class' => TreeNodesReorderAction::className(),
                 'className' => Category::className(),
+            ],
+            'addImage' => [
+                'class' => AddImageAction::className(),
             ],
             'upload' => [
                 'class' => UploadAction::className(),

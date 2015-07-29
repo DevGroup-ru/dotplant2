@@ -8,6 +8,7 @@ use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\Property;
 use app\modules\image\models\Image;
+use app\modules\image\widgets\views\AddImageAction;
 use app\modules\page\models\Page;
 use app\models\ViewObject;
 use app\properties\HasProperties;
@@ -53,6 +54,9 @@ class PageController extends \app\backend\components\BackendController
                 'class' => AdjacencyFullTreeDataAction::className(),
                 'class_name' => Page::className(),
                 'model_label_attribute' => 'name',
+            ],
+            'addImage' => [
+                'class' => AddImageAction::className(),
             ],
             'upload' => [
                 'class' => UploadAction::className(),

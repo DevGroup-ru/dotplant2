@@ -4,6 +4,7 @@ use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use app\backend\components\ActiveForm;
+use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Property static value edit');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/properties/index'], 'label' => Yii::t('app', 'Property groups')];
@@ -96,6 +97,13 @@ Html::submitButton(
                         'class' => 'btn btn-success fileinput-button'
                     ]
                 ) ?>
+                <?php
+                if (Yii::$app->getModule('elfinder')) {
+                    echo \DotPlant\ElFinder\widgets\ElfinderFileInput::widget(
+                        ['url' => Url::toRoute(['addImage', 'objId' => $object->id, 'objModelId' => $model->id])]
+                    );
+                }
+                ?>
             </div>
 
             <?= \app\modules\image\widgets\ImageDropzone::widget([

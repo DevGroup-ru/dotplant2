@@ -685,6 +685,7 @@ return [
     'Open' => 'Открыть',
     'Open Graph Object' => 'Открыть граф',
     'Open backend' => 'Открыть административную панель',
+    'Open gallery' => 'Открыть галерею',
     'Open site frontend' => 'Открыть сайт',
     'Opens' => 'Открыты',
     'Option Generate' => 'Генерация опций',
