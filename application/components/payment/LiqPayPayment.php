@@ -5,9 +5,7 @@ namespace app\components\payment;
 use app\modules\shop\models\OrderTransaction;
 use yii\base\InvalidParamException;
 use yii\helpers\Json;
-use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
-use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
 
 class LiqPayPayment extends AbstractPayment
@@ -19,6 +17,10 @@ class LiqPayPayment extends AbstractPayment
     protected $publicKey;
     protected $testMode;
 
+    /**
+     * @param $params
+     * @return mixed
+     */
     protected function getParams($params)
     {
         $params['public_key'] = $this->publicKey;
@@ -36,11 +38,18 @@ class LiqPayPayment extends AbstractPayment
         return $params;
     }
 
+    /**
+     * @param $str
+     * @return string
+     */
     protected function getSignature($str)
     {
         return base64_encode(sha1($this->privateKey . $str . $this->privateKey, 1));
     }
 
+    /**
+     * @return string
+     */
     public function content()
     {
         $params = [
@@ -73,6 +82,13 @@ class LiqPayPayment extends AbstractPayment
         );
     }
 
+    /**
+     * @param string $hash
+     * @throws BadRequestHttpException
+     * @throws ServerErrorHttpException
+     * @throws \yii\web\NotFoundHttpException
+     * @return void
+     */
     public function checkResult($hash = '')
     {
         try {
@@ -101,4 +117,3 @@ class LiqPayPayment extends AbstractPayment
         }
     }
 }
-?>

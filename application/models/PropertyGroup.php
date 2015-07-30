@@ -9,7 +9,6 @@ use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
-use yii\db\Query;
 
 /**
  * This is the model class for table "property_group".
@@ -40,7 +39,7 @@ class PropertyGroup extends ActiveRecord
                 'value' => 0,
             ],
             [
-                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+                'class' => ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -135,7 +134,7 @@ class PropertyGroup extends ActiveRecord
                         new TagDependency(
                             [
                                 'tags' => [
-                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(static::className(), $id),
+                                    ActiveRecordHelper::getObjectTag(static::className(), $id),
                                 ],
                             ]
                         )
@@ -180,10 +179,10 @@ class PropertyGroup extends ActiveRecord
                 static::$groups_by_object_id[$object_id] = $query->all();
                 if (null !== $object = Object::findById($object_id)) {
                     $tags = [
-                        \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object, $object_id)
+                        ActiveRecordHelper::getObjectTag($object, $object_id)
                     ];
                     foreach (static::$groups_by_object_id[$object_id] as $propertyGroup){
-                        $tags[] = \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($propertyGroup, $propertyGroup->id);
+                        $tags[] = ActiveRecordHelper::getObjectTag($propertyGroup, $propertyGroup->id);
                         if ($withProperties === true) {
                             foreach ($propertyGroup->properties as $prop) {
                                 if (isset(Property::$group_id_to_property_ids[$propertyGroup->id]) === false) {
@@ -240,8 +239,8 @@ class PropertyGroup extends ActiveRecord
                     new TagDependency(
                         [
                             'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object, $object_id),
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($object->object_class, $object_model_id),
+                                ActiveRecordHelper::getObjectTag($object, $object_id),
+                                ActiveRecordHelper::getObjectTag($object->object_class, $object_model_id),
                             ],
                         ]
                     )

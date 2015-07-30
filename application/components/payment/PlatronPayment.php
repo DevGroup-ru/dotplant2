@@ -6,7 +6,6 @@ use SimpleXMLElement;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
-use yii\helpers\Url;
 use yii\web\HttpException;
 
 class PlatronPayment extends AbstractPayment
@@ -17,6 +16,9 @@ class PlatronPayment extends AbstractPayment
     public $merchantUrl = 'www.platron.ru';
     public $merchantScriptName = 'payment.php';
 
+    /**
+     * @return string
+     */
     public function content()
     {
         $arrReq = [
@@ -70,6 +72,11 @@ class PlatronPayment extends AbstractPayment
         return md5(self::makeSigStr($strScriptName, $arrFlatParams, $strSecretKey));
     }
 
+    /**
+     * @param $arrParams
+     * @param string $parent_name
+     * @return array
+     */
     private static function makeFlatParamsArray($arrParams, $parent_name = '')
     {
         $arrFlatParams = array();
@@ -95,6 +102,12 @@ class PlatronPayment extends AbstractPayment
         return $arrFlatParams;
     }
 
+    /**
+     * @param $strScriptName
+     * @param array $arrParams
+     * @param $strSecretKey
+     * @return string
+     */
     private static function makeSigStr($strScriptName, array $arrParams, $strSecretKey)
     {
         unset($arrParams['pg_sig']);
@@ -105,6 +118,12 @@ class PlatronPayment extends AbstractPayment
         return join(';', $arrParams);
     }
 
+    /**
+     * @param string $hash
+     * @return void
+     * @throws HttpException
+     * @throws \yii\web\NotFoundHttpException
+     */
     public function checkResult($hash = '')
     {
         $arrParams = Yii::$app->request->get();

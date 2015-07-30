@@ -7,7 +7,6 @@ use kartik\dynagrid\DynaGrid;
 use kartik\grid\CheckboxColumn;
 use kartik\icons\Icon;
 use yii\helpers\Html;
-use yii\helpers\Url;
 
 /**
  * @var yii\web\View $this

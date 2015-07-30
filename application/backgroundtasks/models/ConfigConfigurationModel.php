@@ -4,7 +4,6 @@ namespace app\backgroundtasks\models;
 
 use app;
 use app\modules\config\models\BaseConfigurationModel;
-use Yii;
 
 /**
  * Class ConfigConfigurationModel represents configuration model for retrieving user input

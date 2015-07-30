@@ -4,9 +4,7 @@ namespace app\components\payment;
 
 use app\modules\shop\models\OrderTransaction;
 use yii\helpers\Json;
-use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
-use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
 
 class PayOnlinePayment extends AbstractPayment
@@ -16,6 +14,9 @@ class PayOnlinePayment extends AbstractPayment
     protected $merchantId;
     protected $privateKey;
 
+    /**
+     * @return string
+     */
     public function content()
     {
         $params = 'MerchantId='. $this->merchantId;
@@ -46,6 +47,13 @@ class PayOnlinePayment extends AbstractPayment
         );
     }
 
+    /**
+     * @param string $hash
+     * @return \yii\web\Response
+     * @throws BadRequestHttpException
+     * @throws ServerErrorHttpException
+     * @throws \yii\web\NotFoundHttpException
+     */
     public function checkResult($hash = '')
     {
         $queryString = 'DateTime=' . \Yii::$app->request->post('DateTime')
@@ -71,4 +79,3 @@ class PayOnlinePayment extends AbstractPayment
         ]));
     }
 }
-?>

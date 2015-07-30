@@ -2,6 +2,7 @@
 
 namespace app\actions;
 
+use Yii;
 use app\behaviors\spamchecker\SpamCheckerBehavior;
 use app\models\Form;
 use app\models\Object;
@@ -12,13 +13,10 @@ use app\models\Submission;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use kartik\widgets\ActiveForm;
-use Yii;
 use yii\base\Action;
 use yii\helpers\ArrayHelper;
-use yii\helpers\FileHelper;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yii\web\UploadedFile;
 
 class SubmitFormAction extends Action
 {

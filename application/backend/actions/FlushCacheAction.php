@@ -4,7 +4,6 @@ namespace app\backend\actions;
 
 use Symfony\Component\Finder\Iterator\RecursiveDirectoryIterator;
 use yii\base\Action;
-use yii\base\Exception;
 use yii\base\Module;
 use yii\caching\Cache;
 
