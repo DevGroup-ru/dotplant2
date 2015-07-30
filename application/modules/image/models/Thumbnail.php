@@ -72,17 +72,22 @@ class Thumbnail extends \yii\db\ActiveRecord
      */
     public static function getImageThumbnailBySize($image, $size)
     {
-        $thumb = static::findOne(['img_id' => $image->id, 'size_id' => $size->id]);
-        if ($thumb === null) {
-            $thumb = new Thumbnail;
-            $thumb->setAttributes(
-                [
-                    'img_id' => $image->id,
-                    'size_id' => $size->id,
-                ]
-            );
-            $thumb->thumb_path = static::createThumbnail($image, $size);
-            $thumb->save();
+        $cacheKey = 'thumbBySize:'.$image->id . ';'.$size->id;
+        $thumb = Yii::$app->cache->get($cacheKey);
+        if ($thumb === false) {
+            $thumb = static::findOne(['img_id' => $image->id, 'size_id' => $size->id]);
+            if ($thumb === null) {
+                $thumb = new Thumbnail;
+                $thumb->setAttributes(
+                    [
+                        'img_id' => $image->id,
+                        'size_id' => $size->id,
+                    ]
+                );
+                $thumb->thumb_path = static::createThumbnail($image, $size);
+                $thumb->save();
+            }
+            Yii::$app->cache->set($cacheKey, $thumb, 86400);
         }
         return $thumb;
     }

@@ -2,6 +2,7 @@
 
 namespace app\behaviors;
 
+use app\modules\shop\models\Category;
 use Yii;
 use yii\base\Behavior;
 use yii\caching\TagDependency;
@@ -43,7 +44,12 @@ class Tree extends Behavior
             // if ($parent->hasMethod('findById')) {
             //     $parent = $parent->findById($parent_id);
             // } else {
-            $parent = $parent->findOne($parent_id);
+            if ($parent instanceof Category) {
+                $parent = Category::findById($parent_id, null);
+            } else {
+
+                $parent = $parent->findOne($parent_id);
+            }
             Yii::$app->cache->set(
                 $cacheKey,
                 $parent,
