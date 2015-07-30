@@ -14,8 +14,6 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
-use yii\helpers\ArrayHelper;
-use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "property_static_values".
@@ -198,6 +196,8 @@ class PropertyStaticValues extends ActiveRecord
     {
         $cacheKey = "getValuesForFilter:" . json_encode([$property_id, $category_id, $properties]);
         if (false === $allSelections = Yii::$app->cache->get($cacheKey)) {
+            $objectModel = Object::getForClass(Product::className());
+            $objectId = $objectModel !== null ? $objectModel->id : 0;
             $allSelections = static::find()
                 ->asArray(true)
                 ->select([self::tableName() . '.id', 'name', 'value', 'slug'])
@@ -226,21 +226,25 @@ class PropertyStaticValues extends ActiveRecord
             /** @var ActiveQuery $query */
             $query = ObjectStaticValues::find()
                 ->distinct(true)
-                ->select(ObjectStaticValues::tableName() . '.object_model_id');
+                ->select(ObjectStaticValues::tableName() . '.object_model_id')
+                ->where(['object_id' => $objectId]);
             if (false === empty($properties)) {
                 /** @var ActiveQuery $subQuery */
                 foreach ($properties as $propertyId => $propertyStaticValues) {
                     $subQuery = ObjectStaticValues::find();
                     $subQuery
-                        ->distinct(true)
-                        ->select('object_model_id')
+                        ->select(ObjectStaticValues::tableName() . '.object_model_id')
+                        ->innerJoin(
+                            '{{%product_category}}',
+                            '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
+                        )
                         ->where(
                             [
                                 'property_static_value_id' => $propertyStaticValues,
+                                'category_id' => $category_id,
                             ]
                         );
-
-                    $subQueryOptimisation = Yii::$app->db->cache(function($db) use($subQuery) {
+                    $subQueryOptimisation = Yii::$app->db->cache(function($db) use ($subQuery) {
                         $ids = implode(', ', $subQuery->createCommand($db)->queryColumn());
                         return count($ids) === 0 ? '(-1)' : "($ids)";
                     }, 86400, new TagDependency([
@@ -248,9 +252,8 @@ class PropertyStaticValues extends ActiveRecord
                             ActiveRecordHelper::getCommonTag(ObjectStaticValues::className()),
                         ]
                     ]));
-                    $query->andWhere(new Expression('`object_model_id` IN '.$subQueryOptimisation));
+                    $query->andWhere(new Expression('`object_model_id` IN ' . $subQueryOptimisation));
                 }
-
             }
             $objectModelIds = $query->column();
             $selectedQuery = static::find()
@@ -260,14 +263,9 @@ class PropertyStaticValues extends ActiveRecord
                     ObjectStaticValues::tableName(),
                     ObjectStaticValues::tableName() . '.property_static_value_id = ' . static::tableName() . '.id'
                 )
-                ->innerJoin(
-                    '{{%product_category}}',
-                    '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
-                )
                 ->where([
                     'property_id' => $property_id,
                     ObjectStaticValues::tableName() . '.object_model_id' => $objectModelIds,
-                    'category_id' => $category_id,
                 ]);
             if (false == $multiple) {
                 if (isset($properties[$property_id])) {
@@ -276,7 +274,6 @@ class PropertyStaticValues extends ActiveRecord
             } else {
                 unset($properties[$property_id]);
             }
-            Yii::trace("QQQ: " . $selectedQuery->createCommand()->getRawSql());
             $selected = $selectedQuery->column();
             foreach ($allSelections as $index => $selection) {
                 $allSelections[$index]['active'] = in_array($selection['id'], $selected);
