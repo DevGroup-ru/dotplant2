@@ -127,7 +127,8 @@ class PriceHandlers
     {
         if (self::$allDiscounts === []) {
             $cacheKey = 'getAllDiscounts';
-            if (!self::$allDiscounts = Yii::$app->cache->get($cacheKey)) {
+            self::$allDiscounts = Yii::$app->cache->get($cacheKey);
+            if (is_array(self::$allDiscounts) === false) {
                 self::$allDiscounts = [];
                 $discounts = Discount::find()->all();
                 foreach ($discounts as $discount) {

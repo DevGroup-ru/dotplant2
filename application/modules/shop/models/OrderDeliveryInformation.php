@@ -8,7 +8,9 @@ use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use app\properties\PropertyValue;
 use app\properties\traits\PropertyTrait;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\caching\TagDependency;
 
 /**
  * This is the model class for table "{{%order_delivery_information}}".
@@ -132,7 +134,15 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
      */
     public static function getByOrderId($id = null)
     {
-        return static::findOne(['order_id' => $id]);
+        return Yii::$app->db->cache(
+            function($db) use ($id) {
+                return static::findOne(['order_id' => $id]);
+            },
+            86400,
+            new TagDependency(['tags'=>[
+                ActiveRecordHelper::getObjectTag(Order::className(), $id)
+            ]])
+        );
     }
 
     /**

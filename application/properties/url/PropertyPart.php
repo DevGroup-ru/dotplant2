@@ -6,6 +6,7 @@ use app\models\Property;
 use app\models\PropertyStaticValues;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
 
 class PropertyPart extends UrlPart
@@ -100,11 +101,18 @@ class PropertyPart extends UrlPart
             if (isset($parameters['properties'][$this->property_id]) &&
                 is_array($parameters['properties'][$this->property_id])
             ) {
-                $psvs = PropertyStaticValues::find()
-                    ->where(['id' => array_values($parameters['properties'][$this->property_id])])
-                    ->orderBy('sort_order ASC, name ASC')
-                    ->asArray(true)
-                    ->all();
+                $property_id = $this->property_id;
+                $psvs = Yii::$app->db->cache(
+                    function($db) use ($property_id, $parameters) {
+                        return PropertyStaticValues::find()
+                            ->where(['id' => array_values($parameters['properties'][$property_id])])
+                            ->orderBy('sort_order ASC, name ASC')
+                            ->asArray(true)
+                            ->all();
+                    },
+                    86400, new TagDependency(['tags'=>[ActiveRecordHelper::getCommonTag(PropertyStaticValues::className())]])
+                );
+
                 foreach ($psvs as $psv) {
                     if (count($this->include_if_value) > 0) {
                         if (!in_array($psv['value'], $this->include_if_value)) {
