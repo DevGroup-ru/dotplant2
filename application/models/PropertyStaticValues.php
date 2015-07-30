@@ -13,6 +13,7 @@ use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
 
@@ -240,13 +241,14 @@ class PropertyStaticValues extends ActiveRecord
                         );
 
                     $subQueryOptimisation = Yii::$app->db->cache(function($db) use($subQuery) {
-                        return $subQuery->createCommand($db)->queryColumn();
+                        $ids = implode(', ', $subQuery->createCommand($db)->queryColumn());
+                        return count($ids) === 0 ? '(-1)' : "($ids)";
                     }, 86400, new TagDependency([
                         'tags' => [
                             ActiveRecordHelper::getCommonTag(ObjectStaticValues::className()),
                         ]
                     ]));
-                    $query->andWhere(['object_model_id' => $subQueryOptimisation]);
+                    $query->andWhere(new Expression('`object_model_id` IN '.$subQueryOptimisation));
                 }
 
             }
