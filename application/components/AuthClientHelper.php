@@ -25,7 +25,7 @@ class AuthClientHelper {
      * Finds service record for current logged client and returns corresponding user.
      * @param \yii\authclient\BaseClient $client AuthClient instance with social authenticated details(ie. user attributes)
      * @throws ErrorException
-     * @return app\modules\user\models\User or null
+     * @return app\modules\user\models\User|null
      */
     public static function findUserByService(\yii\authclient\BaseClient $client)
     {
@@ -73,6 +73,7 @@ class AuthClientHelper {
         switch ($client->className()) {
             case 'app\modules\user\authclients\GitHub':
                 try {
+                    /** @var \app\modules\user\authclients\GitHub $client */
                     $emails = $client->api('user/emails');
 
                     foreach ($emails as $email) {
