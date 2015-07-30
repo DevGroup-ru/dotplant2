@@ -78,9 +78,9 @@ class DefaultController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $query = Product::find()
-            ->select(['id', 'name', 'main_category_id', 'slug'])
+            ->select(['id', 'name', 'main_category_id', 'slug', 'sku'])
             ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_DESC]);
-        foreach (['name', 'content'] as $attribute) {
+        foreach (['name', 'content', 'sku'] as $attribute) {
             $query->orWhere(['like', $attribute, $term]);
         }
         $query->andWhere(['active'=>1]);
