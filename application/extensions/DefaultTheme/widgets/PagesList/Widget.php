@@ -21,25 +21,24 @@ class Widget extends BaseWidget
 
     /**
      * Actual run function for all widget classes extending BaseWidget
-     *
      * @return mixed
      */
     public function widgetRun()
     {
         $pages = Page::getDb()->cache(
-            function($db) {
-                return Page::find()
-                    ->where(['parent_id' => $this->parent_id])
-                    ->orderBy([$this->order_by => $this->order])
-                    ->limit($this->limit)
-                    ->all();
+            function ($db) {
+                return Page::find()->where(['parent_id' => $this->parent_id, 'published' => 1])->orderBy(
+                        [$this->order_by => $this->order]
+                    )->limit($this->limit)->all();
             },
             86400,
-            new TagDependency([
-                'tags' => [
-                    ActiveRecordHelper::getObjectTag(Page::className(), $this->parent_id)
+            new TagDependency(
+                [
+                    'tags' => [
+                        ActiveRecordHelper::getObjectTag(Page::className(), $this->parent_id)
+                    ]
                 ]
-            ])
+            )
         );
 
         return $this->render(
