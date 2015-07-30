@@ -4,7 +4,9 @@ namespace app\modules\shop\models;
 
 use app\models\Property;
 use app\traits\SortModels;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\caching\TagDependency;
 
 /**
  * This is the model class for table "{{%filter_sets}}".
@@ -96,12 +98,18 @@ class FilterSets extends \yii\db\ActiveRecord
         }
         $categoryIds = $category->getParentIds();
 
-        $filter_sets = FilterSets::find()
-            ->where(['in', 'category_id', $categoryIds])
-            ->andWhere(['delegate_to_children' => 1])
-            ->orWhere(['category_id' => $category->id])
-            ->orderBy(['sort_order' => SORT_ASC])
-            ->all();
+        $filter_sets = Yii::$app->db->cache(function($db) use ($categoryIds, $category){
+            return FilterSets::find()
+                ->where(['in', 'category_id', $categoryIds])
+                ->andWhere(['delegate_to_children' => 1])
+                ->orWhere(['category_id' => $category->id])
+                ->orderBy(['sort_order' => SORT_ASC])
+                ->all();
+        }, 86400, new TagDependency([
+            'tags' => [
+                ActiveRecordHelper::getCommonTag(static::className())
+            ]
+        ]));
         Yii::endProfile('FilterSets.GetForCategory ' . $categoryId);
         return $filter_sets;
     }
