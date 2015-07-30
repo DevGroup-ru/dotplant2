@@ -104,8 +104,12 @@ class PropertyPart extends UrlPart
                 $property_id = $this->property_id;
                 $psvs = Yii::$app->db->cache(
                     function($db) use ($property_id, $parameters) {
+                        $vals = array_values($parameters['properties'][$property_id]);
+                        $vals = array_map(function($item){
+                            return intval($item);
+                        }, $vals);
                         return PropertyStaticValues::find()
-                            ->where(['id' => array_values($parameters['properties'][$property_id])])
+                            ->where(['id' => $vals])
                             ->orderBy('sort_order ASC, name ASC')
                             ->asArray(true)
                             ->all();
