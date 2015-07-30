@@ -238,8 +238,17 @@ class PropertyStaticValues extends ActiveRecord
                                 'property_static_value_id' => $propertyStaticValues,
                             ]
                         );
-                    $query->andWhere(['object_model_id' => $subQuery]);
+
+                    $subQueryOptimisation = Yii::$app->db->cache(function($db) use($subQuery) {
+                        return $subQuery->createCommand($db)->queryColumn();
+                    }, 86400, new TagDependency([
+                        'tags' => [
+                            ActiveRecordHelper::getCommonTag(ObjectStaticValues::className()),
+                        ]
+                    ]));
+                    $query->andWhere(['object_model_id' => $subQueryOptimisation]);
                 }
+
             }
             $objectModelIds = $query->column();
             $selectedQuery = static::find()
@@ -265,6 +274,7 @@ class PropertyStaticValues extends ActiveRecord
             } else {
                 unset($properties[$property_id]);
             }
+            Yii::trace("QQQ: " . $selectedQuery->createCommand()->getRawSql());
             $selected = $selectedQuery->column();
             foreach ($allSelections as $index => $selection) {
                 $allSelections[$index]['active'] = in_array($selection['id'], $selected);
