@@ -239,19 +239,20 @@ class Page extends ActiveRecord implements \JsonSerializable
 
         $main_domain = Yii::$app->getModule('core')->serverName;
         if (intval($this->slug_absolute) === 1) {
+            $schema = Yii::$app->request->isSecureConnection ? "https://" : "http://";
             if (empty($this->subdomain) === false) {
                 if ($this->slug !== ':mainpage:') {
-                    return 'http://' . $this->subdomain . '.' . $main_domain . '/' . $this->slug;
+                    return $schema . $this->subdomain . '.' . $main_domain . '/' . $this->slug;
                 } else {
-                    return 'http://' . $this->subdomain . '.' . $main_domain . '/';
+                    return $schema . $this->subdomain . '.' . $main_domain . '/';
                 }
             } elseif ($parent_model !== null) {
                 if (empty($parent_model->subdomain) === false) {
                     // subdomain in parent is set - here not
                     if ($this->slug !== ':mainpage:') {
-                        return 'http://' . $parent_model->subdomain . '.' . $main_domain . '/' . $this->slug;
+                        return $schema . $parent_model->subdomain . '.' . $main_domain . '/' . $this->slug;
                     } else {
-                        return 'http://' . $parent_model->subdomain . '.' . $main_domain . '/';
+                        return $schema . $parent_model->subdomain . '.' . $main_domain . '/';
                     }
                 }
             }
