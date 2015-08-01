@@ -34,6 +34,7 @@ use yii\db\ActiveRecord;
  * @property string $date_modified
  * @property string $show_type
  * @property string $name
+ * @property string|false subdomain subdomain name or false if it's not set
  * @property Image $images
  */
 class Page extends ActiveRecord implements \JsonSerializable
@@ -229,6 +230,14 @@ class Page extends ActiveRecord implements \JsonSerializable
         return parent::beforeSave($insert);
     }
 
+    private function compileUrl($sub_domain, $slug = "")
+    {
+        $schema = Yii::$app->request->isSecureConnection ? "https://" : "http://";
+        $main_domain = Yii::$app->getModule("core")->serverName;
+
+        return "{$schema}{$sub_domain}.{$main_domain}/{$slug}";
+    }
+
     /**
      * Compiles slug based on parent compiled slug, slug absoluteness and subdomain property
      * @return string
@@ -237,35 +246,30 @@ class Page extends ActiveRecord implements \JsonSerializable
     {
         $parent_model = $this->parent;
 
-        $main_domain = Yii::$app->getModule('core')->serverName;
         if (intval($this->slug_absolute) === 1) {
-            $schema = Yii::$app->request->isSecureConnection ? "https://" : "http://";
+            $slug = $this->slug === ":mainpage:" ? "" : $this->slug;
+            $subdomain = null;
             if (empty($this->subdomain) === false) {
-                if ($this->slug !== ':mainpage:') {
-                    return $schema . $this->subdomain . '.' . $main_domain . '/' . $this->slug;
-                } else {
-                    return $schema . $this->subdomain . '.' . $main_domain . '/';
-                }
+                $subdomain = $this->subdomain;
             } elseif ($parent_model !== null) {
                 if (empty($parent_model->subdomain) === false) {
-                    // subdomain in parent is set - here not
-                    if ($this->slug !== ':mainpage:') {
-                        return $schema . $parent_model->subdomain . '.' . $main_domain . '/' . $this->slug;
-                    } else {
-                        return $schema . $parent_model->subdomain . '.' . $main_domain . '/';
-                    }
+                    // subdomain in parent is set - here is not
+                    $subdomain = $parent_model->subdomain;
                 }
             }
-            // subdomain empty
-            // no root
-            return $this->slug;
 
+            if ($subdomain === null) {
+                // subdomain is empty
+                // no root
+                return $this->slug;
+            } else {
+                return $this->compileUrl($subdomain, $slug);
+            }
         } else {
             // not-absolute slug
-
             if ($parent_model !== null) {
                 // should prepend parent's slug
-                // can't be another domain then parent!
+                // can't be another domain then parent
                 if ($parent_model->slug === ':mainpage:') {
                     return $this->slug;
                 } else {
@@ -275,8 +279,6 @@ class Page extends ActiveRecord implements \JsonSerializable
                 return ':mainpage:'; // it's main page
             }
         }
-
-
     }
 
     /**
