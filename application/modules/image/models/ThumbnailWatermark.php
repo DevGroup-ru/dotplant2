@@ -170,8 +170,11 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        if (Yii::$app->getModule('image')->fsComponent->has($this->compiled_src)) {
-            Yii::$app->getModule('image')->fsComponent->delete($this->compiled_src);
+        $sameImages = static::findAll(['thumb_path' => $this->compiled_src]);
+        if (empty($sameImages) === true) {
+            if (Yii::$app->getModule('image')->fsComponent->has($this->compiled_src)) {
+                Yii::$app->getModule('image')->fsComponent->delete($this->compiled_src);
+            }
         }
     }
 }
