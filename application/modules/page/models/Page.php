@@ -34,6 +34,7 @@ use yii\db\ActiveRecord;
  * @property string $date_modified
  * @property string $show_type
  * @property string $name
+ * @property Page $children (relation) children of current page
  * @property string|false subdomain subdomain name or false if it's not set
  * @property Image $images
  */
@@ -107,6 +108,9 @@ class Page extends ActiveRecord implements \JsonSerializable
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -161,6 +165,11 @@ class Page extends ActiveRecord implements \JsonSerializable
         return $dataProvider;
     }
 
+    /**
+     * @param int $id
+     * @param int $is_published
+     * @return mixed
+     */
     public static function findById($id, $is_published = 1)
     {
         if (!isset(static::$identity_map[$id])) {
@@ -189,6 +198,9 @@ class Page extends ActiveRecord implements \JsonSerializable
         return static::$identity_map[$id];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function beforeSave($insert)
     {
         if (!$insert) {
@@ -237,7 +249,7 @@ class Page extends ActiveRecord implements \JsonSerializable
      *
      * @param string $sub_domain
      * @param string $slug
-     * @return string
+     * @return string compiled url
      */
     private function compileUrl($sub_domain, $slug = "")
     {
