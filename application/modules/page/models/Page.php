@@ -230,6 +230,15 @@ class Page extends ActiveRecord implements \JsonSerializable
         return parent::beforeSave($insert);
     }
 
+    /**
+     * Compiles url for subdomain's links like http://subdomain.example.com
+     *
+     * Respects schema, relies on Yii::$app->getModule("core")->serverName as main domain name
+     *
+     * @param $sub_domain
+     * @param string $slug
+     * @return string
+     */
     private function compileUrl($sub_domain, $slug = "")
     {
         $schema = Yii::$app->request->isSecureConnection ? "https://" : "http://";
