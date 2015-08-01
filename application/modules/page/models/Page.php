@@ -235,7 +235,7 @@ class Page extends ActiveRecord implements \JsonSerializable
      *
      * Respects schema, relies on Yii::$app->getModule("core")->serverName as main domain name
      *
-     * @param $sub_domain
+     * @param string $sub_domain
      * @param string $slug
      * @return string
      */
