@@ -28,6 +28,10 @@ class MultiSelect extends Widget
     public $sortable = false;
     public $successFunction = 'function(data){}';
 
+    /**
+     * @param $list
+     * @return array
+     */
     private function getSelectedItems($list)
     {
         $result = [];
@@ -51,6 +55,9 @@ class MultiSelect extends Widget
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
         $this->defaultLabel = Yii::t('app', $this->defaultLabel);

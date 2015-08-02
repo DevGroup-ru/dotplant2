@@ -23,8 +23,6 @@ use yii\base\Widget;
  *
  * ```
  *
- *
- *
  * @package app\widgets
  */
 class SimpleRelatedProducts extends Widget
@@ -49,6 +47,10 @@ class SimpleRelatedProducts extends Widget
 
     public $itemView = null;
 
+    /**
+     * @inheritdoc
+     * @throws InvalidConfigException
+     */
     public function init()
     {
         parent::init();
@@ -72,8 +74,7 @@ class SimpleRelatedProducts extends Widget
         parent::run();
 
         $additional_filters = [
-            function(&$query, &$cacheKeyAppend)
-            {
+            function(&$query, &$cacheKeyAppend) {
                 $cacheKeyAppend.='SimpleRelatedProducts:'.$this->model->id;
             }
         ];

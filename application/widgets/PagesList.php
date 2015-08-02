@@ -23,6 +23,7 @@ class PagesList extends Widget
 
     /**
      * @inheritdoc
+     * @return string
      */
     public function run()
     {
@@ -34,7 +35,7 @@ class PagesList extends Widget
         }
         $children = Page::find()
             ->where(['parent_id' => $this->model->id])
-            ->orderBy('date_added DESC');
+            ->orderBy(['date_added' => SORT_DESC]);
         if (null !== $this->limit) {
             $children->limit($this->limit);
         }
