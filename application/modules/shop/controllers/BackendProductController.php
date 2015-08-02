@@ -36,6 +36,10 @@ class BackendProductController extends BackendController
     const EVENT_BACKEND_PRODUCT_EDIT_SAVE = 'backend-product-edit-save';
     const EVENT_BACKEND_PRODUCT_EDIT_FORM = 'backend-product-edit-form';
 
+    /**
+     * @inheritdoc
+     * @return array
+     */
     public function behaviors()
     {
         return [
@@ -51,6 +55,10 @@ class BackendProductController extends BackendController
         ];
     }
 
+    /**
+     * @inheritdoc
+     * @return array
+     */
     public function actions()
     {
         return [
@@ -99,7 +107,7 @@ class BackendProductController extends BackendController
                         if ($model === null || $model->active === null) {
                             return null;
                         }
-                        if ($model->active === '1') {
+                        if ($model->active === 1) {
                             $label_class = 'label-success';
                             $value = 'Active';
                         } else {
@@ -157,7 +165,7 @@ class BackendProductController extends BackendController
     public function actionEdit($id = null)
     {
         /*
-         * todo: Продумать механизм сохранения изображений для нового продукта.
+         * @todo Продумать механизм сохранения изображений для нового продукта.
          * Сейчас для нового продукта скрывается форма добавления изображений.
          */
         if (null === $object = Object::getForClass(Product::className())) {
@@ -255,14 +263,12 @@ class BackendProductController extends BackendController
                             return $this->redirect($returnUrl);
                         default:
                             return $this->redirect(
-                                Url::toRoute(
-                                    [
-                                        'edit',
-                                        'id' => $model->id,
-                                        'returnUrl' => $returnUrl,
-                                        'parent_id' => $model->main_category_id
-                                    ]
-                                )
+                                Url::toRoute([
+                                    'edit',
+                                    'id' => $model->id,
+                                    'returnUrl' => $returnUrl,
+                                    'parent_id' => $model->main_category_id
+                                ])
                             );
                     }
                 } else {
@@ -292,6 +298,11 @@ class BackendProductController extends BackendController
         );
     }
 
+    /**
+     * @param $id
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
+     */
     public function actionGenerate($id)
     {
         $post = \Yii::$app->request->post();
@@ -548,6 +559,12 @@ class BackendProductController extends BackendController
         }
     }
 
+    /**
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     * @throws \Exception
+     */
     public function actionDelete($id)
     {
         /** @var Product $model */
@@ -572,6 +589,11 @@ class BackendProductController extends BackendController
         return $this->redirect($redirect);
     }
 
+    /**
+     * @param $parent_id
+     * @return \yii\web\Response
+     * @throws \Exception
+     */
     public function actionRemoveAll($parent_id)
     {
         $items = Yii::$app->request->post('items', []);
@@ -585,6 +607,13 @@ class BackendProductController extends BackendController
         return $this->redirect(['index', 'parent_id' => $parent_id]);
     }
 
+    /**
+     * @param $tableName
+     * @param $ids
+     * @param string $field
+     * @return bool
+     * @throws \yii\db\Exception
+     */
     public static function sortModels($tableName, $ids, $field = 'sort_order')
     {
         $priorities = [];
@@ -613,7 +642,6 @@ class BackendProductController extends BackendController
      * @param integer $count Счетчик внутри рекурсии
      * @return array
      */
-
     public static function generateOptions($array, $result = [], $count = 0)
     {
         if (empty($result)) {
@@ -639,6 +667,10 @@ class BackendProductController extends BackendController
         return $arResult;
     }
 
+    /**
+     * @param $priorities
+     * @return string
+     */
     private static function generateCase($priorities)
     {
         $result = 'CASE `id`';
@@ -648,6 +680,9 @@ class BackendProductController extends BackendController
         return $result . ' END';
     }
 
+    /**
+     * @return array
+     */
     public function actionAjaxRelatedProduct()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
