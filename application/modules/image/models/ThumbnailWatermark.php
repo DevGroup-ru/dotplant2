@@ -87,7 +87,7 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
      * Create watermark in fs
      * @param $thumb Thumbnail
      * @param $water Watermark
-     * @return string
+     * @return string|false
      */
     public static function createWatermark($thumb, $water)
     {

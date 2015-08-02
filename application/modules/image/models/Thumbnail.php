@@ -91,7 +91,7 @@ class Thumbnail extends \yii\db\ActiveRecord
      * Create thumbnail in fs
      * @param $image Image
      * @param $size ThumbnailSize
-     * @return string
+     * @return string|false
      */
     public static function createThumbnail($image, $size)
     {
@@ -117,6 +117,12 @@ class Thumbnail extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * @inheritdoc
+     * @param bool $insert
+     * @param array $changedAttributes
+     * @throws BadRequestHttpException
+     */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
@@ -134,6 +140,10 @@ class Thumbnail extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * @inheritdoc
+     * @throws \Exception
+     */
     public function afterDelete()
     {
         parent::afterDelete();

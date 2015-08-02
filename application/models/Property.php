@@ -10,6 +10,7 @@ use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\Json;
+use \devgroup\TagDependencyHelper\ActiveRecordHelper;
 
 
 /**
@@ -54,12 +55,12 @@ class Property extends ActiveRecord
             [
                 'class' => AttributeBehavior::className(),
                 'attributes' => [
-                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => 'sort_order',
+                    ActiveRecord::EVENT_BEFORE_INSERT => 'sort_order',
                 ],
                 'value' => 0,
             ],
             [
-                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+                'class' => ActiveRecordHelper::className(),
             ],
             [
                 'class' => HasProperties::className(),
@@ -156,14 +157,12 @@ class Property extends ActiveRecord
     {
         /* @var $query \yii\db\ActiveQuery */
         $query = static::find()->where(['property_group_id' => $this->property_group_id]);
-        $dataProvider = new ActiveDataProvider(
-            [
-                'query' => $query,
-                'pagination' => [
-                    'pageSize' => 10,
-                ],
-            ]
-        );
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
         if (!($this->load($params))) {
             return $dataProvider;
         }
@@ -213,13 +212,11 @@ class Property extends ActiveRecord
                     $cacheKey,
                     $prop,
                     0,
-                    new TagDependency(
-                        [
-                            'tags' => [
-                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag($prop, $id)
-                            ],
-                        ]
-                    )
+                    new TagDependency([
+                        'tags' => [
+                            ActiveRecordHelper::getObjectTag($prop, $id)
+                        ],
+                    ])
                 );
             }
             static::$identity_map[$id] = $prop;
@@ -229,7 +226,7 @@ class Property extends ActiveRecord
 
     /**
      * @param $group_id
-     * @return null|Property[]
+     * @return null|array<Property>
      */
     public static function getForGroupId($group_id)
     {
@@ -244,16 +241,14 @@ class Property extends ActiveRecord
                         $cacheKey,
                         $props,
                         0,
-                        new TagDependency(
-                            [
-                                'tags' => [
-                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(
-                                        PropertyGroup::className(),
-                                        $group_id
-                                    )
-                                ],
-                            ]
-                        )
+                        new TagDependency([
+                            'tags' => [
+                                ActiveRecordHelper::getObjectTag(
+                                    PropertyGroup::className(),
+                                    $group_id
+                                )
+                            ],
+                        ])
                     );
                 }
             }
@@ -292,7 +287,7 @@ class Property extends ActiveRecord
     }
 
     /**
-     *
+     * @inheritdoc
      */
     public function afterFind()
     {
@@ -321,6 +316,7 @@ class Property extends ActiveRecord
     }
 
     /**
+     * @inheritdoc
      * @param bool $insert
      * @return bool
      */
@@ -360,11 +356,11 @@ class Property extends ActiveRecord
         TagDependency::invalidate(
             Yii::$app->cache,
             [
-                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(
+                ActiveRecordHelper::getObjectTag(
                     PropertyGroup::className(),
                     $this->property_group_id
                 ),
-                \devgroup\TagDependencyHelper\ActiveRecordHelper::getObjectTag(Property::className(), $this->id)
+                ActiveRecordHelper::getObjectTag(Property::className(), $this->id)
             ]
         );
     }
@@ -427,4 +423,3 @@ class Property extends ActiveRecord
         return null;
     }
 }
-
