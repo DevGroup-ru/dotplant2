@@ -29,6 +29,7 @@ class ClassnameValidator extends Validator
 {
     /**
      * @inheritdoc
+     * @return null|array
      */
     public function validateValue($value)
     {

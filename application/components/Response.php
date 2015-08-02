@@ -147,11 +147,11 @@ class Response extends \yii\web\Response
 
     /**
      * @param string $name of block which should be tested against rewrite
-     * @return bool if block with name $name was rewrited by DynamiContent
+     * @return bool if block with name $name was rewrited by DynamicContent
      */
     public function isDynamicContentBlock($name)
     {
-        if (empty($name) or empty($this->dynamic_content_blocks_rewrited[$name])) {
+        if (empty($name) || empty($this->dynamic_content_blocks_rewrited[$name])) {
             return false;
         } else {
             return $this->dynamic_content_blocks_rewrited[$name];
