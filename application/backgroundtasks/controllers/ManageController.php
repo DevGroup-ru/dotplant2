@@ -176,18 +176,17 @@ class ManageController extends Controller
     /**
      * Deletes an existing Task models.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @return \yii\web\Response
+     *
+     * @return int|false number of tasks deleted or false if there was no task provided for deletion
      */
     public function actionDeleteTasks()
     {
         if (isset($_POST['tasks'])) {
-            return Task::deleteAll(
-                [
+            return Task::deleteAll([
                     'in',
                     'id',
                     $_POST['tasks'],
-                ]
-            );
+            ]);
         }
         return false;
     }
