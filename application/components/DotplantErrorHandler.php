@@ -10,20 +10,26 @@ use yii\web\ErrorHandler;
 
 class DotplantErrorHandler extends ErrorHandler
 {
+    /**
+     * @inheritdoc
+     * @param \Exception $exception
+     */
     protected function renderException($exception)
     {
         parent::renderException($exception);
         $status_code = 0;
-        if (!isset($response)) {
-            if (Yii::$app->has('response')) {
-                $status_code = Yii::$app->getResponse()->statusCode;
-            }
-        } else {
-            $status_code = $response->statusCode;
+
+        if (Yii::$app->has('response')) {
+            $status_code = Yii::$app->getResponse()->statusCode;
         }
+
         $this->saveErrorInfo($exception, $status_code);
     }
 
+    /**
+     * @param $exception
+     * @param $status_code
+     */
     protected function saveErrorInfo($exception, $status_code)
     {
         $errorLogEnabled = Yii::$app->getModule('core')->errorMonitorEnabled;
@@ -52,6 +58,10 @@ class DotplantErrorHandler extends ErrorHandler
         }
     }
 
+    /**
+     * @param $errorLog
+     * @param $status_code
+     */
     protected function sendImmediateNotify($errorLog, $status_code)
     {
         $immediateNotifyEnabled = Yii::$app->getModule('core')->immediateNotice;
