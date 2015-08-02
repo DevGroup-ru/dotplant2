@@ -17,12 +17,14 @@ use Imagine\Image\ManipulatorInterface;
 class Helper
 {
     private static $modelMaps = [];
+
     /**
      * Get all model records as array key => value.
      * @param string $className
      * @param string $keyAttribute
      * @param string $valueAttribute
      * @param bool $useCache
+     * @param bool $useIntl
      * @return array
      */
     public static function getModelMap($className, $keyAttribute, $valueAttribute, $useCache = true, $useIntl = false)
@@ -84,7 +86,7 @@ class Helper
      * TrimPlain returns cleaned from tags part of text with given length
      * @param string $text input text
      * @param int $length length of text part
-     * @param bool $dots adding dots to end of part
+     * @param string $dots adding dots to end of part
      * @return string
      */
     public static function trimPlain($text, $length = 150, $dots = '...')
