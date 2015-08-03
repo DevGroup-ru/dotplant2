@@ -34,8 +34,9 @@ use yii\db\ActiveRecord;
  * @property string $date_modified
  * @property string $show_type
  * @property string $name
- * @property Page $children (relation) children of current page
- * @property string|false subdomain subdomain name or false if it's not set
+ * @property Page[] $children children of current page
+ * @property Page $parent parent of current page
+ * @property string|false $subdomain subdomain's name or false if it's not set
  * @property Image $images
  */
 class Page extends ActiveRecord implements \JsonSerializable
@@ -142,14 +143,12 @@ class Page extends ActiveRecord implements \JsonSerializable
         if (null != $this->parent_id) {
             $query->andWhere(['parent_id' => $this->parent_id]);
         }
-        $dataProvider = new ActiveDataProvider(
-            [
-                'query' => $query,
-                'pagination' => [
-                    'pageSize' => 10,
-                ],
-            ]
-        );
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
         if (!($this->load($params))) {
             return $dataProvider;
         }
@@ -184,13 +183,11 @@ class Page extends ActiveRecord implements \JsonSerializable
                         $cacheKey,
                         static::$identity_map[$id],
                         86400,
-                        new TagDependency(
-                            [
-                                'tags' => [
-                                    ActiveRecordHelper::getCommonTag(static::className())
-                                ]
+                        new TagDependency([
+                            'tags' => [
+                                ActiveRecordHelper::getCommonTag(static::className())
                             ]
-                        )
+                        ])
                     );
                 }
             }
@@ -265,6 +262,7 @@ class Page extends ActiveRecord implements \JsonSerializable
      */
     public function compileSlug()
     {
+        // accessing parent's model via Tree behaviour
         $parent_model = $this->parent;
 
         if (intval($this->slug_absolute) === 1) {
@@ -323,13 +321,11 @@ class Page extends ActiveRecord implements \JsonSerializable
                 $cacheKey,
                 $page,
                 $duration,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(static::className())
-                        ]
+                new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getCommonTag(static::className())
                     ]
-                )
+                ])
             );
         }
         return $page;
