@@ -57,6 +57,7 @@ class Search extends Model
             ->orWhere('`name` LIKE :q')
             ->orWhere('`h1` LIKE :q')
             ->orWhere('`content` LIKE :q')
+            ->orWhere('`sku` LIKE :q')
             ->addParams([':q' => '%' . $this->q . '%'])
             ->andWhere(
                 [

@@ -21,12 +21,11 @@ class ProductsWidget extends Widget
     public $force_limit = true;
     public $additional_filters = [];
 
-
     public $itemView = '@app/modules/shop/views/product/item';
     public $viewFile = 'products-widget';
 
-
     /**
+     * @inheritdoc
      * @return string
      * @throws InvalidConfigException
      * @throws \yii\web\ServerErrorHttpException

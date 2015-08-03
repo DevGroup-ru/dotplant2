@@ -2,8 +2,8 @@
 
 namespace app\components\payment;
 
+use Yii;
 use app\modules\shop\models\OrderTransaction;
-use yii\helpers\Url;
 
 class CashPayment extends AbstractPayment
 {
@@ -21,13 +21,13 @@ class CashPayment extends AbstractPayment
 //                'url' => $resultUrl,
 //            ]
 //        );
-        $responce = \Yii::$app->response->redirect($resultUrl);
-        \Yii::$app->end(0, $responce);
+        $response = Yii::$app->response->redirect($resultUrl);
+        Yii::$app->end(0, $response);
     }
 
     public function checkResult($hash = '')
     {
-        $transactionId = \Yii::$app->request->get('transactionId');
+        $transactionId = Yii::$app->request->get('transactionId');
 
         /** @var OrderTransaction $transaction */
         if (null === $transaction = $this->loadTransaction($transactionId)) {
@@ -45,4 +45,3 @@ class CashPayment extends AbstractPayment
             : $this->redirect($this->createErrorUrl(['id' => $transactionId]));
     }
 }
-?>

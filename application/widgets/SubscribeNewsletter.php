@@ -10,6 +10,9 @@ class SubscribeNewsletter extends Widget
     public $action = '/subscribe/add';
     public $submitButtonText = "Subscribe";
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
         $model = new SubscribeEmail();

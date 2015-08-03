@@ -24,7 +24,6 @@ use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yii\caching\TagDependency;
 
 /**
  * Class CartController

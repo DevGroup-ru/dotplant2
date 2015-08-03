@@ -5,7 +5,6 @@ namespace app\modules\shop\widgets;
 use app\modules\shop\models\Order;
 use yii\base\Widget;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
 
 class OrderTransaction extends Widget
 {
@@ -16,6 +15,9 @@ class OrderTransaction extends Widget
     public $returnPaymentCancel = null;
     public $additional = [];
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
         parent::run();

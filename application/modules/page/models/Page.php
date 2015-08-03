@@ -34,6 +34,9 @@ use yii\db\ActiveRecord;
  * @property string $date_modified
  * @property string $show_type
  * @property string $name
+ * @property Page[] $children children of current page
+ * @property Page $parent parent of current page
+ * @property string|false $subdomain subdomain's name or false if it's not set
  * @property Image $images
  */
 class Page extends ActiveRecord implements \JsonSerializable
@@ -106,6 +109,9 @@ class Page extends ActiveRecord implements \JsonSerializable
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -137,14 +143,12 @@ class Page extends ActiveRecord implements \JsonSerializable
         if (null != $this->parent_id) {
             $query->andWhere(['parent_id' => $this->parent_id]);
         }
-        $dataProvider = new ActiveDataProvider(
-            [
-                'query' => $query,
-                'pagination' => [
-                    'pageSize' => 10,
-                ],
-            ]
-        );
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
         if (!($this->load($params))) {
             return $dataProvider;
         }
@@ -160,6 +164,11 @@ class Page extends ActiveRecord implements \JsonSerializable
         return $dataProvider;
     }
 
+    /**
+     * @param int $id
+     * @param int $is_published
+     * @return mixed
+     */
     public static function findById($id, $is_published = 1)
     {
         if (!isset(static::$identity_map[$id])) {
@@ -174,13 +183,11 @@ class Page extends ActiveRecord implements \JsonSerializable
                         $cacheKey,
                         static::$identity_map[$id],
                         86400,
-                        new TagDependency(
-                            [
-                                'tags' => [
-                                    ActiveRecordHelper::getCommonTag(static::className())
-                                ]
+                        new TagDependency([
+                            'tags' => [
+                                ActiveRecordHelper::getCommonTag(static::className())
                             ]
-                        )
+                        ])
                     );
                 }
             }
@@ -188,6 +195,9 @@ class Page extends ActiveRecord implements \JsonSerializable
         return static::$identity_map[$id];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function beforeSave($insert)
     {
         if (!$insert) {
@@ -230,41 +240,55 @@ class Page extends ActiveRecord implements \JsonSerializable
     }
 
     /**
+     * Compiles url for subdomain's links like http://subdomain.example.com
+     *
+     * Respects schema, relies on Yii::$app->getModule("core")->serverName as main domain name
+     *
+     * @param string $sub_domain
+     * @param string $slug
+     * @return string compiled url
+     */
+    private function compileUrl($sub_domain, $slug = "")
+    {
+        $schema = Yii::$app->request->isSecureConnection ? "https://" : "http://";
+        $main_domain = Yii::$app->getModule("core")->serverName;
+
+        return "{$schema}{$sub_domain}.{$main_domain}/{$slug}";
+    }
+
+    /**
      * Compiles slug based on parent compiled slug, slug absoluteness and subdomain property
      * @return string
      */
     public function compileSlug()
     {
+        // accessing parent's model via Tree behaviour
         $parent_model = $this->parent;
 
-        $main_domain = Yii::$app->getModule('core')->serverName;
         if (intval($this->slug_absolute) === 1) {
+            $slug = $this->slug === ":mainpage:" ? "" : $this->slug;
+            $subdomain = null;
             if (empty($this->subdomain) === false) {
-                if ($this->slug !== ':mainpage:') {
-                    return 'http://' . $this->subdomain . '.' . $main_domain . '/' . $this->slug;
-                } else {
-                    return 'http://' . $this->subdomain . '.' . $main_domain . '/';
-                }
+                $subdomain = $this->subdomain;
             } elseif ($parent_model !== null) {
                 if (empty($parent_model->subdomain) === false) {
-                    // subdomain in parent is set - here not
-                    if ($this->slug !== ':mainpage:') {
-                        return 'http://' . $parent_model->subdomain . '.' . $main_domain . '/' . $this->slug;
-                    } else {
-                        return 'http://' . $parent_model->subdomain . '.' . $main_domain . '/';
-                    }
+                    // subdomain in parent is set - here is not
+                    $subdomain = $parent_model->subdomain;
                 }
             }
-            // subdomain empty
-            // no root
-            return $this->slug;
 
+            if ($subdomain === null) {
+                // subdomain is empty
+                // no root
+                return $this->slug;
+            } else {
+                return $this->compileUrl($subdomain, $slug);
+            }
         } else {
             // not-absolute slug
-
             if ($parent_model !== null) {
                 // should prepend parent's slug
-                // can't be another domain then parent!
+                // can't be another domain then parent
                 if ($parent_model->slug === ':mainpage:') {
                     return $this->slug;
                 } else {
@@ -274,8 +298,6 @@ class Page extends ActiveRecord implements \JsonSerializable
                 return ':mainpage:'; // it's main page
             }
         }
-
-
     }
 
     /**
@@ -299,13 +321,11 @@ class Page extends ActiveRecord implements \JsonSerializable
                 $cacheKey,
                 $page,
                 $duration,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(static::className())
-                        ]
+                new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getCommonTag(static::className())
                     ]
-                )
+                ])
             );
         }
         return $page;

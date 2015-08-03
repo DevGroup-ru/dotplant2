@@ -82,8 +82,10 @@ class RatingItem extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param bool $fetch
+     * @param bool $isFetched
+     * @param bool $asArray
      * @return array|\yii\db\ActiveRecord[]|static
+     * @internal param bool $fetch
      */
     public static function getGroupsAll($isFetched = true, $asArray = false)
     {
@@ -108,13 +110,11 @@ class RatingItem extends \yii\db\ActiveRecord
                 $cache_key,
                 $result,
                 0,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(static::className())
-                        ],
-                    ]
-                )
+                new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getCommonTag(static::className())
+                    ],
+                ])
             );
         }
         return $result;
@@ -137,9 +137,11 @@ class RatingItem extends \yii\db\ActiveRecord
 
     /**
      * @param array $attributes
-     * @param bool $fetch
-     * @param bool $as_array
+     * @param bool $isFetched
+     * @param bool $asArray
      * @return array|null|\yii\db\ActiveQuery|\yii\db\ActiveRecord|\yii\db\ActiveRecord[]
+     * @internal param bool $fetch
+     * @internal param bool $as_array
      */
     public static function getItemsByAttributes($attributes = [], $isFetched = true, $asArray = false)
     {
@@ -167,13 +169,11 @@ class RatingItem extends \yii\db\ActiveRecord
                 $cache_key,
                 $result,
                 0,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(static::className())
-                        ],
-                    ]
-                )
+                new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getCommonTag(static::className())
+                    ],
+                ])
             );
         }
         return $result;
@@ -181,8 +181,9 @@ class RatingItem extends \yii\db\ActiveRecord
 
     /**
      * @param array $attributes
-     * @param bool $as_array
+     * @param bool $asArray
      * @return array|null|\yii\db\ActiveQuery|\yii\db\ActiveRecord|\yii\db\ActiveRecord[]
+     * @internal param bool $as_array
      */
     public static function getOneItemByAttributes($attributes = [], $asArray = false)
     {

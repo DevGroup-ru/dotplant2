@@ -17,7 +17,6 @@ use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
-use yii\helpers\Url;
 
 /**
  * SliderController implements the CRUD actions for Slider model.

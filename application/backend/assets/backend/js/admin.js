@@ -12,7 +12,7 @@ Admin.prototype = {
 
 };
 
-Admin.makeSlug = function (selectorsFrom, selectorTo){
+Admin.makeSlug = function (selectorsFrom, selectorTo, callback){
 	if (selectorsFrom instanceof Array === false) {
 		selectorsFrom = [selectorsFrom];
 	}
@@ -26,7 +26,6 @@ Admin.makeSlug = function (selectorsFrom, selectorTo){
 	}
 	if (valueFrom.length) {
 		$.ajax({
-		
 			url: "/backend/dashboard/make-slug",
 			type: "GET",
 			cache: false,
@@ -34,11 +33,15 @@ Admin.makeSlug = function (selectorsFrom, selectorTo){
 			data: {
 				'word': valueFrom
 			}
-
 		}).done(function(data){
-			
-			$(selectorTo).val(data);
-
+            if (typeof(callback) === 'function') {
+                data = callback(data);
+            }
+            var $field = $(selectorTo);
+            if (typeof $field.attr('maxlength') !== typeof undefined) {
+                data = data.substr(0, $field.attr('maxlength'));
+            }
+			$field.val(data);
 		}).fail(function(jqXHR, textStatus){
 			
 			$.pnotify({
@@ -47,9 +50,14 @@ Admin.makeSlug = function (selectorsFrom, selectorTo){
 			    type: 'error',
 			    history: false
 			});
-
 		});
 	}
+};
+
+Admin.makeKey = function(selectorFrom, selectorTo) {
+    Admin.makeSlug(selectorFrom, selectorTo, function(data) {
+        return data.replace(new RegExp("[\-]+", "g"), '_');
+    });
 };
 
 Admin.copyFrom = function(selectorsFrom, selectorTo) {

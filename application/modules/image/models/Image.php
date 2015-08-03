@@ -259,12 +259,15 @@ class Image extends \yii\db\ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
-        if (Yii::$app->getModule('image')->fsComponent->has($this->filename)) {
-            Yii::$app->getModule('image')->fsComponent->delete($this->filename);
-        }
-        $thumbnails = Thumbnail::findAll(['img_id' => $this->id]);
-        foreach ($thumbnails as $thumbnail) {
-            $thumbnail->delete();
+        $sameImages = static::findAll(['filename' => $this->filename]);
+        if (empty($sameImages) === true) {
+            if (Yii::$app->getModule('image')->fsComponent->has($this->filename)) {
+                Yii::$app->getModule('image')->fsComponent->delete($this->filename);
+            }
+            $thumbnails = Thumbnail::findAll(['img_id' => $this->id]);
+            foreach ($thumbnails as $thumbnail) {
+                $thumbnail->delete();
+            }
         }
     }
 }

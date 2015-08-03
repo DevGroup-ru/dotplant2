@@ -4,9 +4,7 @@ namespace app\components\payment;
 
 use app\modules\shop\models\OrderTransaction;
 use yii\helpers\Json;
-use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
-use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
 
 class FutubankPayment extends AbstractPayment
@@ -16,6 +14,10 @@ class FutubankPayment extends AbstractPayment
     protected $secretKey;
     protected $testing;
 
+    /**
+     * @param $data
+     * @return string
+     */
     private function getSignature($data)
     {
         ksort($data);
@@ -28,6 +30,10 @@ class FutubankPayment extends AbstractPayment
         return sha1($this->secretKey . sha1($this->secretKey . implode('&', $chunks)));
     }
 
+    /**
+     * @param int $length
+     * @return string
+     */
     private function generateSalt($length = 10)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -38,6 +44,9 @@ class FutubankPayment extends AbstractPayment
         return $result;
     }
 
+    /**
+     * @return string
+     */
     public function content()
     {
         $formData = [
@@ -70,6 +79,13 @@ class FutubankPayment extends AbstractPayment
         );
     }
 
+    /**
+     * @param string $hash
+     * @return string
+     * @throws BadRequestHttpException
+     * @throws ServerErrorHttpException
+     * @throws \yii\web\NotFoundHttpException
+     */
     public function checkResult($hash = '')
     {
         $transactionId = \Yii::$app->request->post('order_id');
@@ -95,4 +111,3 @@ class FutubankPayment extends AbstractPayment
         }
     }
 }
-?>

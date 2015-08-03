@@ -7,10 +7,6 @@
 /** @var \yii\data\ActiveDataProvider $widgetsDataProvider */
 /** @var \app\extensions\DefaultTheme\models\ThemeWidgets  $widgetsSearchModel */
 
-use yii\helpers\Html;
-use app\backend\components\ActiveForm;
-use kartik\icons\Icon;
-
 $this->title = Yii::t('app', 'Default theme configuration');
 $this->params['breadcrumbs'][] = [
     'url' => [

@@ -96,7 +96,7 @@ class Thumbnail extends \yii\db\ActiveRecord
      * Create thumbnail in fs
      * @param $image Image
      * @param $size ThumbnailSize
-     * @return string
+     * @return string|false
      */
     public static function createThumbnail($image, $size)
     {
@@ -122,6 +122,12 @@ class Thumbnail extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * @inheritdoc
+     * @param bool $insert
+     * @param array $changedAttributes
+     * @throws BadRequestHttpException
+     */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
@@ -139,15 +145,22 @@ class Thumbnail extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * @inheritdoc
+     * @throws \Exception
+     */
     public function afterDelete()
     {
         parent::afterDelete();
-        if (Yii::$app->getModule('image')->fsComponent->has($this->thumb_path)) {
-            Yii::$app->getModule('image')->fsComponent->delete($this->thumb_path);
-        }
-        $thumbnailWatermarks = ThumbnailWatermark::findAll(['thumb_id' => $this->id]);
-        foreach ($thumbnailWatermarks as $thumbnailWatermark) {
-            $thumbnailWatermark->delete();
+        $sameImages = static::findAll(['thumb_path' => $this->thumb_path]);
+        if (empty($sameImages) === true) {
+            if (Yii::$app->getModule('image')->fsComponent->has($this->thumb_path)) {
+                Yii::$app->getModule('image')->fsComponent->delete($this->thumb_path);
+            }
+            $thumbnailWatermarks = ThumbnailWatermark::findAll(['thumb_id' => $this->id]);
+            foreach ($thumbnailWatermarks as $thumbnailWatermark) {
+                $thumbnailWatermark->delete();
+            }
         }
     }
 }

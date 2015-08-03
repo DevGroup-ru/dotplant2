@@ -3,13 +3,14 @@
 namespace app\extensions\DefaultTheme\models;
 
 use Yii;
-use yii\base\Model;
-use yii\helpers\ArrayHelper;
 
 class BaseWidgetConfigurationModel extends WidgetConfigurationModel
 {
     public $configurationJson = '{}';
 
+    /**
+     * @param $json
+     */
     public function loadState($json)
     {
         if (!is_array($json)) {

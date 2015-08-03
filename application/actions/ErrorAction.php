@@ -8,6 +8,10 @@ use yii\web\ErrorAction as BaseErrorAction;
 
 class ErrorAction extends BaseErrorAction
 {
+    /**
+     * @inheritdoc
+     * @return string
+     */
     public function run()
     {
         if (Yii::$app->response->is_backend === true && Yii::$app->user->isGuest === false) {

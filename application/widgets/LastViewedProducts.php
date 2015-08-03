@@ -11,6 +11,10 @@ class LastViewedProducts extends Widget
     public $elementNumber = 3;
     public $title = "Recently Viewed Products";
 
+    /**
+     * @inheritdoc
+     * @return string
+     */
     public function run()
     {
         parent::run();

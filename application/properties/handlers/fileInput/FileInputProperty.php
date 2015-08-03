@@ -5,8 +5,6 @@ namespace app\properties\handlers\fileInput;
 use app\properties\AbstractPropertyEavModel;
 use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
-use yii\helpers\Url;
-use yii\helpers\Html;
 
 class FileInputProperty extends \app\properties\handlers\AbstractHandler
 {
