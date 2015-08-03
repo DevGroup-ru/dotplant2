@@ -45,53 +45,51 @@ class ActiveField extends \kartik\form\ActiveField
      * @var null|array
      */
     public $makeSlug = null;
+    /**
+     * Similar to $makeSlug, but for making keys
+     * @var null|array
+     */
+    public $makeKey = null;
 
     public function init()
     {
-        if (is_array($this->copyFrom)) {
-            $id = Html::getInputId($this->model, $this->attribute);
-            $buttonId = $id . '-copyButton';
-            $this->addon['append']=[
-                'content' => Html::button(
-                    Icon::show('code'),
-                    ['class' => 'btn btn-primary', 'id' => $buttonId]
-                ),
-                'asButton' => true,
-            ];
-            $encodedFrom = Json::encode($this->copyFrom);
-            $encodedTo = Json::encode('#'.$id);
-            $js = <<<EOT
-$("#$buttonId").click(function(){
-Admin.copyFrom(
-    $encodedFrom,
-    $encodedTo
-);
+        $fields = [
+            'copyFrom' => [
+                'buttonIdSuffix' => '-copyButton',
+                'buttonIcon' => 'code',
+                'jsMethodName' => 'Admin.copyFrom',
+            ],
+            'makeSlug' => [
+                'buttonIdSuffix' => '-slugButton',
+                'buttonIcon' => 'code',
+                'jsMethodName' => 'Admin.makeSlug',
+            ],
+            'makeKey' => [
+                'buttonIdSuffix' => '-keyButton',
+                'buttonIcon' => 'code',
+                'jsMethodName' => 'Admin.makeKey',
+            ],
+        ];
+        foreach ($fields as $fieldName => $params) {
+            if (true === is_array($this->$fieldName)) {
+                $id = Html::getInputId($this->model, $this->attribute);
+                $buttonId = $id . $params['buttonIdSuffix'];
+                $this->addon['append'] = [
+                    'content' => Html::button(
+                        Icon::show($params['buttonIcon']),
+                        ['class' => 'btn btn-primary', 'id' => $buttonId]
+                    ),
+                    'asButton' => true,
+                ];
+                $encodedFrom = Json::encode($this->$fieldName);
+                $encodedTo = Json::encode('#' . $id);
+                $js = <<<EOT
+$("#$buttonId").click(function() {
+    {$params['jsMethodName']}($encodedFrom, $encodedTo);
 });
 EOT;
-
-            $this->form->getView()->registerJs($js);
-        } elseif (is_array($this->makeSlug)) {
-            $id = Html::getInputId($this->model, $this->attribute);
-            $buttonId = $id . '-slugButton';
-            $this->addon['append']=[
-                'content' => Html::button(
-                    Icon::show('code'),
-                    ['class' => 'btn btn-primary', 'id' => $buttonId]
-                ),
-                'asButton' => true,
-            ];
-            $encodedFrom = Json::encode($this->makeSlug);
-            $encodedTo = Json::encode('#'.$id);
-            $js = <<<EOT
-$("#$buttonId").click(function(){
-Admin.makeSlug(
-    $encodedFrom,
-    $encodedTo
-);
-});
-EOT;
-
-            $this->form->getView()->registerJs($js);
+                $this->form->getView()->registerJs($js);
+            }
         }
         parent::init();
     }

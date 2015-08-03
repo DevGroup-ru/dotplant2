@@ -85,7 +85,18 @@ $this->endBlock();
 
                 <?= $form->field($model, 'name')?>
 
-                <?= $form->field($model, 'key')?>
+                <?=
+                $form->field(
+                    $model,
+                    'key',
+                    [
+                        'makeKey' => [
+                            "#property-name",
+                            "#property-key",
+                        ]
+                    ]
+                )
+                ?>
 
                 <?= $form->field($model, 'value_type')->dropDownList(['STRING' => 'string', 'NUMBER' => 'number'])?>
 
