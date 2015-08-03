@@ -37,7 +37,11 @@ Admin.makeSlug = function (selectorsFrom, selectorTo, callback){
             if (typeof(callback) === 'function') {
                 data = callback(data);
             }
-			$(selectorTo).val(data);
+            var $field = $(selectorTo);
+            if (typeof $field.attr('maxlength') !== typeof undefined) {
+                data = data.substr(0, $field.attr('maxlength'));
+            }
+			$field.val(data);
 		}).fail(function(jqXHR, textStatus){
 			
 			$.pnotify({

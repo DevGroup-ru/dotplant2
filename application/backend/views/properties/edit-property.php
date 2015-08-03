@@ -92,8 +92,10 @@ $this->endBlock();
                     [
                         'makeKey' => [
                             "#property-name",
-                            "#property-key",
-                        ]
+                        ],
+                        'inputOptions' => [
+                            'maxlength' => '20',
+                        ],
                     ]
                 )
                 ?>
