@@ -246,7 +246,7 @@ class PropertyStaticValues extends ActiveRecord
                         );
                     $subQueryOptimisation = Yii::$app->db->cache(function($db) use ($subQuery) {
                         $ids = implode(', ', $subQuery->createCommand($db)->queryColumn());
-                        return count($ids) === 0 ? '(-1)' : "($ids)";
+                        return empty($ids) === true ? '(-1)' : "($ids)";
                     }, 86400, new TagDependency([
                         'tags' => [
                             ActiveRecordHelper::getCommonTag(ObjectStaticValues::className()),
