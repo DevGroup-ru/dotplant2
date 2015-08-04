@@ -104,6 +104,11 @@ class ProductController extends Controller
         $allSorts = $result['allSorts'];
         $products = $result['products'];
 
+        // throw 404 if we are at filtered page without any products
+        if ( !empty($values_by_property_id) && empty($products)) {
+            throw new NotFoundHttpException();
+        }
+
         if (null !== $selected_category = $selected_category_id) {
             if ($selected_category_id > 0) {
                 if (null !== $selected_category = Category::findById($selected_category_id, null, null)) {
