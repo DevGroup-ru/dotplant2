@@ -111,7 +111,7 @@ class ProductController extends Controller
 
         if (null !== $selected_category = $selected_category_id) {
             if ($selected_category_id > 0) {
-                if (null !== $selected_category = Category::findById($selected_category_id, null, null)) {
+                if (null !== $selected_category = Category::findById($selected_category_id, null)) {
                     if (!empty($selected_category->meta_description)) {
                         $this->view->registerMetaTag(
                             [
