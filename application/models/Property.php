@@ -1,6 +1,7 @@
 <?php
 namespace app\models;
 
+use app\modules\shop\models\FilterSets;
 use app\properties\HasProperties;
 use app\properties\PropertyHandlers;
 use app\traits\GetImages;
@@ -392,22 +393,24 @@ class Property extends ActiveRecord
         foreach ($staticValues as $psv) {
             $psv->delete();
         }
-        if ($this->is_eav) {
-            $eavTable = $object->eav_table_name;
-            Yii::$app->db->createCommand()->delete(
-                $eavTable,
-                ['key' => $this->key, 'property_group_id' => $this->group->id]
-            )->execute();
+        if (null !== $object) {
+            if ($this->is_eav) {
+                Yii::$app->db->createCommand()->delete(
+                    $object->eav_table_name,
+                    ['key' => $this->key, 'property_group_id' => $this->group->id]
+                )->execute();
+            }
+            if ($this->is_column_type_stored) {
+                Yii::$app->db->createCommand()->dropColumn($object->column_properties_table_name, $this->key)->execute();
+                //                if ($object->object_class == Form::className()) {
+                //                    $submissionObject = Object::getForClass(Submission::className());
+                //                    Yii::$app->db->createCommand()
+                //                        ->dropColumn($submissionObject->column_properties_table_name, $this->key)
+                //                        ->execute();
+                //                }
+            }
         }
-        if ($this->is_column_type_stored) {
-            Yii::$app->db->createCommand()->dropColumn($object->column_properties_table_name, $this->key)->execute();
-            //                if ($object->object_class == Form::className()) {
-            //                    $submissionObject = Object::getForClass(Submission::className());
-            //                    Yii::$app->db->createCommand()
-            //                        ->dropColumn($submissionObject->column_properties_table_name, $this->key)
-            //                        ->execute();
-            //                }
-        }
+        FilterSets::deleteAll(['property_id' => $this->id]);
         parent::afterDelete();
     }
 
