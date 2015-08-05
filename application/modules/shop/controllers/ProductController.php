@@ -105,7 +105,7 @@ class ProductController extends Controller
         $products = $result['products'];
 
         // throw 404 if we are at filtered page without any products
-        if ( !empty($values_by_property_id) && empty($products)) {
+        if (!Yii::$app->request->isAjax && !empty($values_by_property_id) && empty($products)) {
             throw new NotFoundHttpException();
         }
 
