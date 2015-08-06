@@ -168,6 +168,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         return [
             [
                 'class' => Tree::className(),
+                'activeAttribute' => 'active',
             ],
             [
                 'class' => HasProperties::className(),

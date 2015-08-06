@@ -126,6 +126,7 @@ class Page extends ActiveRecord implements \JsonSerializable
             ],
             [
                 'class' => Tree::className(),
+                'activeAttribute' => 'published',
             ],
         ];
     }

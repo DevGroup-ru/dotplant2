@@ -94,6 +94,7 @@ class Category extends ActiveRecord implements \JsonSerializable
             ],
             [
                 'class' => Tree::className(),
+                'activeAttribute' => 'active',
             ],
         ];
     }
