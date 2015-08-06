@@ -18,7 +18,7 @@ class Tree extends Behavior
 {
     public $idAttribute = 'id';
     public $parentIdAttribute = 'parent_id';
-    public $sortOrder = 'id ASC';
+    public $sortOrder = 'sort_order ASC, id ASC';
     public $cascadeDeleting = false; // @todo Set default value equals true and check all models that use Tree behavior
 
     /**
