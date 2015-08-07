@@ -89,9 +89,10 @@ class PayUPayment extends AbstractPayment
 
         $result['ORDER_HASH'] = $this->generateHash_LU($result);
         $result['LANGUAGE'] = 'RU';
-        $result['TESTORDER'] = true === $this->systemTestMode ? 'TRUE' : 'FALSE';
-        $result['DEBUG'] = true === $this->systemDebugMode ? 'TRUE' : 'FALSE';
-        $result['DEBUG'] = 'TRUE';
+        if (true === $this->systemTestMode) {
+            $result['TESTORDER'] = 'TRUE';
+            $result['DEBUG'] = true === $this->systemDebugMode ? 'TRUE' : 'FALSE';
+        }
 
         return $result;
     }
