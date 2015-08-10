@@ -235,13 +235,12 @@ $this->endBlock();
                         'class' => 'app\backend\components\ActionColumn',
                         'buttons' => [
                             [
-                                'url' => '@category',
+                                'url' => '@product',
                                 'icon' => 'eye',
                                 'class' => 'btn-info',
                                 'label' => Yii::t('app', 'Preview'),
                                 'appendReturnUrl' => false,
                                 'url_append' => '',
-                                'keyParam' => 'category_id',
                                 'attrs' => ['model'],
                             ],
                             [
@@ -249,7 +248,6 @@ $this->endBlock();
                                 'icon' => 'pencil',
                                 'class' => 'btn-primary',
                                 'label' => Yii::t('app', 'Edit'),
-                                'attrs' => ['model'],
                             ],
                             [
                                 'url' => 'clone',
