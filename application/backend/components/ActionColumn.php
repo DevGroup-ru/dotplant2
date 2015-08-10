@@ -77,15 +77,24 @@ class ActionColumn extends Column
      * @param bool $appendReturnUrl custom return url for each button
      * @param string $url_append custom append url for each button
      * @param string $keyParam custom param if $key is string
+     * @param array $attrs list of model attributes used in route params
      * @return string the created URL
      */
-    public function createUrl($action, $model, $key, $index, $appendReturnUrl = null, $url_append = null, $keyParam = 'id')
-    {
+    public function createUrl(
+        $action, $model, $key, $index, $appendReturnUrl = null, $url_append = null, $keyParam = 'id', $attrs = []
+    ) {
         if ($this->urlCreator instanceof Closure) {
             return call_user_func($this->urlCreator, $action, $model, $key, $index);
         } else {
             $params = is_array($key) ? $key : [$keyParam => (string) $key];
             $params[0] = $this->controller ? $this->controller . '/' . $action : $action;
+            foreach ($attrs as $attrName) {
+                if ($attrName === 'model') {
+                    $params['model'] = $model;
+                } else {
+                    $params[$attrName] = $model->getAttribute($attrName);
+                }
+            }
             if (is_null($appendReturnUrl) === true) {
                 $appendReturnUrl = $this->appendReturnUrl;
             }
@@ -116,12 +125,15 @@ class ActionColumn extends Column
             $appendReturnUrl = ArrayHelper::getValue($button, 'appendReturnUrl', $this->appendReturnUrl);
             $url_append = ArrayHelper::getValue($button, 'url_append', $this->url_append);
             $keyParam = ArrayHelper::getValue($button, 'keyParam', 'id');
+            $attrs = ArrayHelper::getValue($button, 'attrs', []);
             Html::addCssClass($button, 'btn');
             Html::addCssClass($button, 'btn-sm');
             $buttonText = isset($button['text']) ? ' ' . $button['text'] : '';
             $data .= Html::a(
                 Icon::show($button['icon']) . $buttonText,
-                $url = $this->createUrl($button['url'], $model, $key, $index, $appendReturnUrl, $url_append, $keyParam),
+                $url = $this->createUrl(
+                    $button['url'], $model, $key, $index, $appendReturnUrl, $url_append, $keyParam, $attrs
+                ),
                     ArrayHelper::merge(
                         isset($button['options']) ? $button['options'] : [],
                         [

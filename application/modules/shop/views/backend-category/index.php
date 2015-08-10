@@ -140,6 +140,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'appendReturnUrl' => false,
                                 'url_append' => '',
                                 'keyParam' => 'category_id',
+                                'attrs' => ['category_group_id'],
                             ],
                             [
                                 'url' => 'edit',
