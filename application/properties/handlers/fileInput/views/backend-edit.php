@@ -39,6 +39,9 @@ TPL;
         'footer' => $tplFooter
     ];
     foreach ($model->$property_key as $file) {
+        if (file_exists(Yii::getAlias($additional['uploadDir']) . '/' . $file) === false) {
+            continue;
+        }
         $_preview = \yii\helpers\FileHelper::getMimeType(Yii::getAlias($additional['uploadDir']) . '/' . $file);
         $_preview =  false !== strpos(strval($_preview), 'image/')
             ? Html::img($uploadDir.$file, ['class' => 'file-preview-image', 'alt' => $file, 'title' => $file])
