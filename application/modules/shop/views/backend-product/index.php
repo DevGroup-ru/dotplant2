@@ -235,6 +235,15 @@ $this->endBlock();
                         'class' => 'app\backend\components\ActionColumn',
                         'buttons' => [
                             [
+                                'url' => '@product',
+                                'icon' => 'eye',
+                                'class' => 'btn-info',
+                                'label' => Yii::t('app', 'Preview'),
+                                'appendReturnUrl' => false,
+                                'url_append' => '',
+                                'attrs' => ['model'],
+                            ],
+                            [
                                 'url' => 'edit',
                                 'icon' => 'pencil',
                                 'class' => 'btn-primary',

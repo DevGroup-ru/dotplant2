@@ -36,6 +36,7 @@ class BackendMenu extends ActiveRecord
             ],
             [
                 'class' => Tree::className(),
+                'activeAttribute' => false,
             ],
         ];
     }

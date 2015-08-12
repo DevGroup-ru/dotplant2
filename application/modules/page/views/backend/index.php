@@ -135,6 +135,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         'class' => 'app\backend\components\ActionColumn',
                         'buttons' => [
                             [
+                                'url' => '@article',
+                                'icon' => 'eye',
+                                'class' => 'btn-info',
+                                'label' => Yii::t('app', 'Preview'),
+                                'appendReturnUrl' => false,
+                                'url_append' => '',
+                            ],
+                            [
                                 'url' => 'edit',
                                 'icon' => 'pencil',
                                 'class' => 'btn-primary',

@@ -65,7 +65,7 @@ class ProductController extends Controller
             $values_by_property_id = [$values_by_property_id];
         }
 
-        if (Yii::$app->request->isAjax && Yii::$app->request->isPost && isset($_POST['properties'])) {
+        if (Yii::$app->request->isPost && isset($_POST['properties'])) {
             if (is_array($_POST['properties'])) {
                 foreach ($_POST['properties'] as $key => $value) {
                     if (isset($values_by_property_id[$key])) {

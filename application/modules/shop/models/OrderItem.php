@@ -38,6 +38,7 @@ class OrderItem extends ActiveRecord
             [
                 'class' => Tree::className(),
                 'cascadeDeleting' => true,
+                'activeAttribute' => false,
             ],
             [
                 'class' => ActiveRecordHelper::className(),

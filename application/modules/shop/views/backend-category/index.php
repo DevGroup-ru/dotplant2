@@ -133,6 +133,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         'class' => 'app\backend\components\ActionColumn',
                         'buttons' => [
                             [
+                                'url' => '@category',
+                                'icon' => 'eye',
+                                'class' => 'btn-info',
+                                'label' => Yii::t('app', 'Preview'),
+                                'appendReturnUrl' => false,
+                                'url_append' => '',
+                                'keyParam' => 'category_id',
+                                'attrs' => ['category_group_id'],
+                            ],
+                            [
                                 'url' => 'edit',
                                 'icon' => 'pencil',
                                 'class' => 'btn-primary',

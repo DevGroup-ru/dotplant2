@@ -19,8 +19,12 @@ class Tree extends Behavior
 {
     public $idAttribute = 'id';
     public $parentIdAttribute = 'parent_id';
-    public $sortOrder = 'id ASC';
+    public $sortOrder = [
+        'sort_order' => SORT_ASC,
+        'id' => SORT_ASC
+    ];
     public $cascadeDeleting = false; // @todo Set default value equals true and check all models that use Tree behavior
+    public $activeAttribute = 'active';
 
     /**
      * @return ActiveRecord
@@ -79,8 +83,11 @@ class Tree extends Behavior
             $className = $this->owner->className();
             $children = $className::find()
                 ->where([$this->parentIdAttribute => $this->owner->{$this->idAttribute}])
-                ->orderBy($this->sortOrder)
-                ->all();
+                ->orderBy($this->sortOrder);
+            if ($this->activeAttribute !== false) {
+                $children = $children->andWhere([$this->activeAttribute => 1]);
+            }
+            $children = $children->all();
             Yii::$app->cache->set(
                 $cacheKey,
                 $children,
@@ -112,7 +119,7 @@ class Tree extends Behavior
      * - translation_category - if exists and is set then the name will be translated with `Yii::t($item['translation_category'], $item['name'])`
      *
      * For example use see \app\backend\models\BackendMenu::getAllMenu()
-     * 
+     *
      * @param  array  $rows Array of rows. Example query: `$rows = static::find()->orderBy('parent_id ASC, sort_order ASC')->asArray()->all();`
      * @param  integer $start_index Start index of array to go through
      * @param  integer $current_parent_id ID of current parent
