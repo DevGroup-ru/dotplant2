@@ -10,6 +10,7 @@ use app\extensions\DefaultTheme\widgets\FilterSets\Widget;
 use app\models\PropertyStaticValues;
 use app\modules\core\helpers\EventTriggeringHelper;
 use app\modules\shop\events\ProductPageShowed;
+use app\modules\shop\exceptions\EmptyFilterHttpException;
 use app\modules\shop\models\Category;
 use app\models\Object;
 use app\modules\shop\models\Product;
@@ -106,7 +107,7 @@ class ProductController extends Controller
 
         // throw 404 if we are at filtered page without any products
         if (!Yii::$app->request->isAjax && !empty($values_by_property_id) && empty($products)) {
-            throw new NotFoundHttpException();
+            throw new EmptyFilterHttpException();
         }
 
         if (null !== $selected_category = $selected_category_id) {
