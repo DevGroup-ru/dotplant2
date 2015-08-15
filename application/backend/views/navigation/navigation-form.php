@@ -104,7 +104,7 @@ $this->registerJs(
                 <?php
                 if (Yii::$app->getModule('elfinder')) {
                     echo \DotPlant\ElFinder\widgets\ElfinderFileInput::widget(
-                        ['url' => Url::toRoute(['addImage', 'objId' => $object->id, 'objModelId' => $model->id])]
+                        ['url' => Url::toRoute(['addImage', 'objId' => $model->object->id, 'objModelId' => $model->id])]
                     );
                 }
                 ?>
