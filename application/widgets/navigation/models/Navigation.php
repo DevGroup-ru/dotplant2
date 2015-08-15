@@ -6,6 +6,7 @@ use app\backgroundtasks\traits\SearchModelTrait;
 use app\behaviors\Tree;
 use app\properties\HasProperties;
 use app\traits\FindById;
+use app\traits\GetImages;
 use Yii;
 use yii\data\ActiveDataProvider;
 
@@ -25,6 +26,7 @@ use yii\data\ActiveDataProvider;
  */
 class Navigation extends \yii\db\ActiveRecord
 {
+    use GetImages;
     use SearchModelTrait;
     use FindById;
 
