@@ -125,6 +125,7 @@ class NavigationWidget extends Widget
             'label' => $model->name,
             'url' => $url,
             'items' => [],
+            'options' => [],
         ];
         if (!empty($model->advanced_css_class)) {
             $tree['options'] = ['class' => $model->advanced_css_class];
