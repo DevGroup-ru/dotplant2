@@ -4,6 +4,7 @@ namespace app\widgets\navigation\models;
 
 use app\backgroundtasks\traits\SearchModelTrait;
 use app\behaviors\Tree;
+use app\properties\HasProperties;
 use app\traits\FindById;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -85,6 +86,9 @@ class Navigation extends \yii\db\ActiveRecord
                 'class' => Tree::className(),
                 'sortOrder' => ['sort_order' => SORT_ASC],
 				'activeAttribute' => false,
+            ],
+            [
+                'class' => HasProperties::className(),
             ],
         ];
     }
