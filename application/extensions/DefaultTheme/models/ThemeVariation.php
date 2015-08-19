@@ -56,7 +56,7 @@ class ThemeVariation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['exclusive'], 'integer'],
+            [['exclusive', 'omit_get_params'], 'integer'],
             [['name', 'by_url', 'by_route', 'matcher_class_name'], 'string', 'max' => 255]
         ];
     }
@@ -73,6 +73,7 @@ class ThemeVariation extends \yii\db\ActiveRecord
             'by_route' => Yii::t('app', 'By Route'),
             'matcher_class_name' => Yii::t('app', 'Matcher Class Name'),
             'exclusive' => Yii::t('app', 'Exclusive'),
+            'omit_get_params' => Yii::t('app', 'Omit GET parameters'),
         ];
     }
 
@@ -119,19 +120,26 @@ class ThemeVariation extends \yii\db\ActiveRecord
             Yii::beginProfile('Get matched variations');
             $variations = static::getAllVariations();
             $route = Yii::$app->requestedRoute;
-            $uri = Yii::$app->request->url;
+            $oldUri = $uri = Yii::$app->request->url;
             static::$matchedVariations = [];
 
 
             foreach ($variations as $variation) {
                 $match = true;
-
+                $uri = $oldUri;
+                if ($variation['omit_get_params']) {
+                    $uri = preg_replace('/\?.*$/Us', '', $oldUri);
+                }
                 // check by url
                 if (!empty($variation['by_url'])) {
                     $asteriskPosition = mb_strpos($variation['by_url'], '*');
                     if ($asteriskPosition === false) {
-                        // direct compare! no *
+                        // no *
+
+                        // direct compare!
                         $match = $variation['by_url'] === $uri;
+
+
                     } elseif ($asteriskPosition === 0) {
                         // all pages
                         $match = true;

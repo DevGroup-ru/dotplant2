@@ -36,6 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'by_route'); ?>
                 <?= $form->field($model, 'matcher_class_name'); ?>
                 <?= $form->field($model, 'exclusive')->checkbox(); ?>
+                <?= $form->field($model, 'omit_get_params')->checkbox(); ?>
 
 
                 <?php BackendWidget::end(); ?>

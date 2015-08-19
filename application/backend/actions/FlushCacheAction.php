@@ -66,17 +66,19 @@ class FlushCacheAction extends Action
         /* @var RecursiveDirectoryIterator[] $files */
         $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::CHILD_FIRST);
         $hasErrors = false;
-        foreach ($files as $file) {
-            if (!in_array($file->getRealPath(), $except)) {
-                if ($file->isDir() && $file->isLink() === false) {
-                    $result = @rmdir($file->getRealPath());
-                } elseif ($file->isLink() === true) {
-                    $result = @unlink($file->getPath() . DIRECTORY_SEPARATOR . $file->getFilename());
-                } else {
-                    $result = @unlink($file->getRealPath());
-                }
-                if (!$result) {
-                    $hasErrors = true;
+        if (stristr(PHP_OS, 'WIN') === false) {
+            foreach ($files as $file) {
+                if (!in_array($file->getRealPath(), $except)) {
+                    if ($file->isDir() && $file->isLink() === false) {
+                        $result = @rmdir($file->getRealPath());
+                    } elseif ($file->isLink() === true) {
+                        $result = @unlink($file->getPath() . DIRECTORY_SEPARATOR . $file->getFilename());
+                    } else {
+                        $result = @unlink($file->getRealPath());
+                    }
+                    if (!$result) {
+                        $hasErrors = true;
+                    }
                 }
             }
         }

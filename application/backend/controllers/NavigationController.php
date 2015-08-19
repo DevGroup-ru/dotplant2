@@ -2,6 +2,10 @@
 
 namespace app\backend\controllers;
 
+use app\modules\image\widgets\RemoveAction;
+use app\modules\image\widgets\SaveInfoAction;
+use app\modules\image\widgets\UploadAction;
+use app\modules\image\widgets\views\AddImageAction;
 use app\widgets\navigation\models\Navigation;
 use devgroup\JsTreeWidget\AdjacencyFullTreeDataAction;
 use devgroup\JsTreeWidget\TreeNodeMoveAction;
@@ -43,6 +47,18 @@ class NavigationController extends Controller
             'reorder' => [
                 'class' => TreeNodesReorderAction::className(),
                 'className' => Navigation::className(),
+            ],
+            'addImage' => [
+                'class' => AddImageAction::className(),
+            ],
+            'upload' => [
+                'class' => UploadAction::className(),
+            ],
+            'remove' => [
+                'class' => RemoveAction::className(),
+            ],
+            'save-info' => [
+                'class' => SaveInfoAction::className(),
             ],
         ];
     }
