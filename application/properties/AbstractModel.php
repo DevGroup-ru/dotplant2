@@ -217,7 +217,10 @@ class AbstractModel extends Model
                             }
                         }
                         if ($exist_in_new == false) {
-                            $eav_ids_to_delete[] =  $old_val['eav_id'];
+                            // @todo find why sometimes it isn't exist
+                            if (isset($old_val['eav_id'])) {
+                                $eav_ids_to_delete[] =  $old_val['eav_id'];
+                            }
                         }
                     }
                 }
