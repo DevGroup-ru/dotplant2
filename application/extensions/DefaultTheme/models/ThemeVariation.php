@@ -130,8 +130,20 @@ class ThemeVariation extends \yii\db\ActiveRecord
                 if (!empty($variation['by_url'])) {
                     $asteriskPosition = mb_strpos($variation['by_url'], '*');
                     if ($asteriskPosition === false) {
-                        // direct compare! no *
-                        $match = $variation['by_url'] === $uri;
+                        // no *
+                        if (preg_match('/\?\?$/Us', $variation['by_url'])) {
+                            // url ends with ?? ie. /??
+                            // that means we should omit _GET params on URL
+                            // so it will apply to / and /?utm and /?from...
+
+                            // remove _GET params and
+                            // compare uri without get params
+                            $match = $variation['by_url'] === preg_replace('/\?.*$/Us', $uri, '');
+                        } else {
+                            // direct compare!
+                            $match = $variation['by_url'] === $uri;
+                        }
+
                     } elseif ($asteriskPosition === 0) {
                         // all pages
                         $match = true;
