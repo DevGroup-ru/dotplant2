@@ -38,7 +38,7 @@ if ($order->contragent_id === 0 && count($contragents) > 0) {
                     if ($item->isNewRecord) {
                         $result[0] = Yii::t('app', 'New payer profile');
                     } else {
-                        $result[$item->id] = $item->type;
+                        $result[$item->id] = Yii::t('app', $item->type);
                     }
                     return $result;
                 }, [])
