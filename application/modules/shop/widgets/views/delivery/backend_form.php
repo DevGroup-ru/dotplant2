@@ -8,10 +8,15 @@
  * @var string $action
  * @var \yii\bootstrap\ActiveForm $form
  * @var array $additional
+ *
+ * TODO
+ * In the order total price are taken into account only data from SpecialPriceObject
+ * and only `shipping_option_id` from this form.
+ * @see SpecialPriceObject
  */
 
     echo $form->field($orderDeliveryInformation, 'shipping_option_id')
-        ->dropDownList(\app\components\Helper::getModelMap(\app\modules\shop\models\ShippingOption::className(), 'id', 'name'),
+        ->dropDownList(\app\components\Helper::getModelMap(\app\modules\shop\models\ShippingOption::className(), 'id', 'name', true, true),
         ['readonly' => $immutable]
     );
     echo $form->field($orderDeliveryInformation, 'shipping_price')->textInput(['readonly' => $immutable]);
@@ -25,4 +30,3 @@
     foreach ($abstractModel->attributes() as $attr) {
         echo $form->field($abstractModel, $attr)->textInput(['readonly' => $immutable]);
     }
-?>

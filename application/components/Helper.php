@@ -152,6 +152,20 @@ class Helper
     }
 
     /**
+     * Translate associative multidimensional array
+     * @param $array - data
+     * @param array $translatableFields - field list that should be translate
+     * @return array
+     */
+    public static function translateArray($array, $translatableFields = [])
+    {
+        return array_map(function($item) use ($translatableFields) {
+            foreach ($translatableFields as $field) $item[$field] = Yii::t('app', $item[$field]);
+            return $item;
+        }, $array);
+    }
+
+    /**
      * used with backend/widgets/DataRelationsWidget
      * @param ActiveRecord $model
      * @param $relationData

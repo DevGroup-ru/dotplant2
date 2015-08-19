@@ -7,6 +7,7 @@
  */
 
     $transactionsDataProvider = $additional['transactionsDataProvider'];
+//var_dump($model);
 ?>
 <?=
     \kartik\dynagrid\DynaGrid::widget(
@@ -31,17 +32,33 @@
                     },
                     'format' => 'raw',
                     'encodeLabel' => false,
+                    'label' => Yii::t('app', 'ID')
                 ],
+
                 [
                     'attribute' => 'status',
                     'value' => function ($model, $key, $index, $column) {
                         /** @var \app\modules\shop\models\OrderTransaction $model */
                         return $model->getTransactionStatus();
                     },
+                    'label' => Yii::t('app', 'Status')
                 ],
-                'start_date',
-                'end_date',
-                'total_sum',
+
+                [
+                    'attribute' => 'start_date',
+                    'label' => Yii::t('app', 'Start Date')
+                ],
+
+                [
+                    'attribute' => 'end_date',
+                    'label' => Yii::t('app', 'End Date')
+                ],
+
+                [
+                    'attribute' => 'total_sum',
+                    'label' => Yii::t('app', 'Total Sum')
+                ],
+
                 [
                     'attribute' => 'payment_type_id',
                     'filter' => \app\components\Helper::getModelMap(
@@ -53,8 +70,9 @@
                         if ($model === null || $model->paymentType === null) {
                             return null;
                         }
-                        return $model->paymentType->name;
+                        return Yii::t('app', $model->paymentType->name);
                     },
+                    'label' => Yii::t('app', 'Payment Type')
                 ],
 
             ],

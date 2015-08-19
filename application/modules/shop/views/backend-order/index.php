@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         if ($model === null || $model->shippingOption === null) {
                             return null;
                         }
-                        return $model->shippingOption->name;
+                        return Yii::t('app', $model->shippingOption->name);
                     },
                 ],
                 [

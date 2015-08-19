@@ -3423,9 +3423,9 @@ class m150531_084444_new_init extends Migration
         $this->insert(
             OrderStage::tableName(),
             [
-                'name' => 'customer',
+                'name' => 'Customer',
                 'name_frontend' => Yii::t('app', 'Your information'),
-                'name_short' => 'customer',
+                'name_short' => 'Customer',
                 'is_initial' => 1,
                 'is_buyer_stage' => 1,
                 'become_non_temporary' => 0,
@@ -3443,9 +3443,9 @@ class m150531_084444_new_init extends Migration
         $this->insert(
             OrderStage::tableName(),
             [
-                'name' => 'delivery',
+                'name' => 'Delivery',
                 'name_frontend' => Yii::t('app', 'Delivery'),
-                'name_short' => 'delivery',
+                'name_short' => 'Delivery',
                 'is_initial' => 0,
                 'is_buyer_stage' => 1,
                 'become_non_temporary' => 0,
@@ -3463,9 +3463,9 @@ class m150531_084444_new_init extends Migration
         $this->insert(
             OrderStage::tableName(),
             [
-                'name' => 'payment',
+                'name' => 'Payment',
                 'name_frontend' => Yii::t('app', 'Payment method selection'),
-                'name_short' => 'payment',
+                'name_short' => 'Payment',
                 'is_initial' => 0,
                 'is_buyer_stage' => 1,
                 'become_non_temporary' => 0,
@@ -3483,9 +3483,9 @@ class m150531_084444_new_init extends Migration
         $this->insert(
             OrderStage::tableName(),
             [
-                'name' => 'payment pay',
+                'name' => 'Payment pay',
                 'name_frontend' => Yii::t('app', 'Payment'),
-                'name_short' => 'payment pay',
+                'name_short' => 'Payment pay',
                 'is_initial' => 0,
                 'is_buyer_stage' => 0,
                 'become_non_temporary' => 1,
@@ -3547,9 +3547,9 @@ class m150531_084444_new_init extends Migration
         $this->insert(
             OrderStage::tableName(),
             [
-                'name' => 'final',
+                'name' => 'Final',
                 'name_frontend' => Yii::t('app', 'Order complete'),
-                'name_short' => 'final',
+                'name_short' => 'Final',
                 'is_initial' => 0,
                 'is_buyer_stage' => 0,
                 'become_non_temporary' => 0,

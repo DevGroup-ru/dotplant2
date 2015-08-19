@@ -22,7 +22,7 @@ use yii\helpers\Html;
         <tbody>
             <tr>
                 <th><?= $model->getAttributeLabel('type'); ?></th>
-                <td><?= $model->type; ?></td>
+                <td><?= Yii::t('app', $model->type) ?></td>
             </tr>
             <?php
                 /** @var \app\properties\AbstractModel $abstractModel */

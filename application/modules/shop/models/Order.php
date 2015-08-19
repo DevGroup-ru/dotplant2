@@ -285,6 +285,7 @@ class Order extends \yii\db\ActiveRecord
             ->all();
     }
 
+    // TODO take into account delivery price which installed in the admin panel
     public function getFullPrice()
     {
         $fullPrice = $this->total_price;

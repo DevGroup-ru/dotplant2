@@ -180,7 +180,7 @@ class OrderTransaction extends ActiveRecord
             ? null
             : ($asLiteral
                 ? Yii::t('app', $this->statusTransaction[$this->status])
-                : $this->status
+                : Yii::t('app', $this->status)
             );
     }
 

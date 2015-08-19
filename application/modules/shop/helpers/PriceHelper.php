@@ -105,6 +105,7 @@ class PriceHelper
                 )
             );
         }
+        /* @var SpecialPriceList $specialPriceRow */
         foreach ($specialPriceList as $specialPriceRow) {
             $class = $specialPriceRow->class;
             $handler = $specialPriceRow->handler;
