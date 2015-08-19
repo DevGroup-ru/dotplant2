@@ -145,7 +145,7 @@ $(function() {
                 'type': 'addToCart',
                 'productId': $this.data('id'),
                 'quantity': quantity,
-                'data': data,
+                'orderData': data,
                 'button': $this
             });
             var $widget = $('#cart-info-widget');
