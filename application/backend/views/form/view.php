@@ -35,12 +35,17 @@ $this->endBlock('buttons');
         'options' => [
             'id' => 'submission-grid',
         ],
-        'columns' => [
-            'id',
-            'date_received',
-            'ip',
-            'user_agent',
-            [
+        'columns' => \yii\helpers\ArrayHelper::merge(
+            $searchModel->columns([
+                'id',
+                'date_received',
+                'ip',
+                [
+                    'attribute' => 'user_agent',
+                    'format' => ['truncated', 40],
+                ]
+            ]),
+            [[
                 'class' => 'app\backend\components\ActionColumn',
                 'buttons' => function ($model, $key, $index, $parent) {
                     if (1 === $model->is_deleted) {
@@ -83,8 +88,9 @@ $this->endBlock('buttons');
                 'options' => [
                     'width' => '50px',
                 ]
-            ],
-        ],
+            ]]
+        ),
+
         'theme' => 'panel-default',
         'gridOptions' => [
             'dataProvider' => $dataProvider,

@@ -7,6 +7,7 @@ use app\models\Object;
 use app\models\ObjectPropertyGroup;
 use app\models\PropertyGroup;
 use app\models\Submission;
+use app\properties\DynamicSearchModel;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
@@ -167,16 +168,34 @@ class FormController extends Controller
 
     public function actionView($id, $show_deleted = 0)
     {
+        $form = Form::findById($id);
+        $propertyGroups = $form->getPropertyGroups();
         $submission = new Submission();
-        $data = $submission->search(Yii::$app->request->get(), $id, $show_deleted);
+
+        $dynamicModel = new DynamicSearchModel($submission, $propertyGroups);
+        $data = $dynamicModel->search(Yii::$app->request->get());
+        $data->query->andWhere('form_id = :form_id', [':form_id' => $form->id]);
+        $data->query->andWhere(['is_deleted' => $show_deleted]);
+        $data->query->andFilterWhere(['like', 'ip', $dynamicModel->ip]);
+        $data->query->andFilterWhere(['like', 'user_agent', $dynamicModel->user_agent]);
+
 
         return $this->render(
             'view',
             [
-                'searchModel' => $submission,
+                'searchModel' => $dynamicModel,
                 'dataProvider' => $data,
             ]
         );
+    }
+
+    public function actionTestDynamic()
+    {
+        $form = Form::find()->where(['id'=>4])->one();
+        $propertyGroups = $form->getPropertyGroups();
+        $baseModel = new Submission();
+        $dynamicModel = new DynamicSearchModel($baseModel, $propertyGroups);
+        var_dump($dynamicModel->columns([]), $dynamicModel->getAttributes());
     }
 
     public function actionViewSubmission($id)
