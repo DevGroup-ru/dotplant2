@@ -2,7 +2,9 @@
 
 namespace app\modules\seo\models;
 
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\base\Event;
+use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -35,6 +37,13 @@ class Counter extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            ActiveRecordHelper::className(),
+        ];
+    }
+
     /**
      * @inheritdoc
      */
@@ -54,16 +63,19 @@ class Counter extends \yii\db\ActiveRecord
             && in_array($event->sender->context->module->id.'/'.$event->sender->context->id, $event->data)) {
             $counter_str = '';
             /* @var $counters Counter[] */
-            if (\Yii::$app->getCache()->exists(\Yii::$app->getModule('seo')->cacheConfig['counterCache']['name'])) {
-                $counters = \Yii::$app->getCache()->get(
-                    \Yii::$app->getModule('seo')->cacheConfig['counterCache']['name']
-                );
-            } else {
+            if (false === $counters = \Yii::$app->getCache()->get(\Yii::$app->getModule('seo')->cacheConfig['counterCache']['name'])) {
                 $counters = self::find()->all();
                 \Yii::$app->getCache()->set(
                     \Yii::$app->getModule('seo')->cacheConfig['counterCache']['name'],
                     $counters,
-                    \Yii::$app->getModule('seo')->cacheConfig['counterCache']['expire']
+                    \Yii::$app->getModule('seo')->cacheConfig['counterCache']['expire'],
+                    new TagDependency(
+                        [
+                            'tags' => [
+                                ActiveRecordHelper::getCommonTag(self::className()),
+                            ],
+                        ]
+                    )
                 );
             }
             foreach ($counters as $counter) {

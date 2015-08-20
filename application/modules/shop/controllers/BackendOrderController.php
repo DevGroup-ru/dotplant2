@@ -428,11 +428,20 @@ class BackendOrderController extends BackendController
         Yii::$app->response->format = Response::FORMAT_JSON;
         /** @var OrderItem $orderItem */
         $orderItem = OrderItem::findOne($id);
-        if (!$orderItem->load(Yii::$app->request->post()) || !$orderItem->save(true, ['quantity'])
+        $orderItem->load(Yii::$app->request->post());
+        $orderItem->quantity = $orderItem->product->measure->ceilQuantity($orderItem->quantity);
+        $orderItem->price_per_pcs = PriceHelper::getProductPrice(
+            $orderItem->product,
+            $orderItem->order,
+            1,
+            SpecialPriceList::TYPE_CORE
+        );
+        if (!$orderItem->save(true, ['quantity', 'total_price', 'discount_amount', 'total_price_without_discount'])
             || !$orderItem->order->calculate(true)
         ) {
             return [
                 'message' => Yii::t('app', 'Cannot change quantity'),
+                'error' => $orderItem->errors,
             ];
         }
         return [

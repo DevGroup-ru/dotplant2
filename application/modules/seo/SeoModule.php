@@ -40,11 +40,15 @@ class SeoModule extends BaseModule implements BootstrapInterface
                 $app->getView()->on(View::EVENT_END_BODY, [Counter::className(), 'renderCounters'], $this->include);
             }
         );
-
         $app->on(
             Application::EVENT_BEFORE_ACTION,
             function () use ($app) {
-                if ('cart' === $app->requestedAction->controller->id && 'payment-success' === $app->requestedAction->id) {
+                if ('payment' === $app->requestedAction->controller->id && 'success' === $app->requestedAction->id) {
+                    $app->getView()->on(
+                        View::EVENT_END_BODY,
+                        [Counter::className(), 'renderCounters'],
+                        [$app->requestedAction->controller->module->id . '/' . $app->requestedAction->controller->id]
+                    );
                     $app->getView()
                         ->on(
                             View::EVENT_END_BODY,
