@@ -89,13 +89,26 @@ class PageController extends Controller
             );
         }
 
-        /** @var ActiveQuery $children */
+        $cacheKey = 'PagesList:'.$model->id;
+
+        // query that needed for pages retrieve and pagination
         $children = Page::find()
             ->where(['parent_id' => $model->id])
             ->orderBy('date_added DESC, sort_order')
             ->with('images');
 
-        $countQuery = clone $children;
+        // count all pages
+        $count = Yii::$app->cache->get($cacheKey.';count');
+        if ($count === false) {
+            $countQuery = clone $children;
+            $count = $countQuery->count();
+            Yii::$app->cache->set($cacheKey.';count', $count, 86400, new TagDependency([
+                'tags' => [
+                    ActiveRecordHelper::getCommonTag(Page::className())
+                ]
+            ]));
+        }
+
         $pages = new Pagination(
             [
                 'defaultPageSize' => $this->module->pagesPerList,
@@ -104,13 +117,29 @@ class PageController extends Controller
                     $this->module->minPagesPerList,
                     $this->module->maxPagesPerList
                 ],
-                'totalCount' => $countQuery->count(),
+                'totalCount' => $count,
             ]
         );
 
-        $children = $children->offset($pages->offset)
-            ->limit($pages->limit)
-            ->all();
+        // append current page number to cache key
+        $cacheKey .= ';page:' . $pages->page;
+
+        $childrenModels = Yii::$app->cache->get($cacheKey);
+        if ($childrenModels === false) {
+
+            /** @var ActiveQuery $children */
+
+            $children = $children->offset($pages->offset)
+                ->limit($pages->limit)
+                ->all();
+            Yii::$app->cache->set($cacheKey, $children, 86400, new TagDependency([
+                'tags' => [
+                    ActiveRecordHelper::getCommonTag(Page::className())
+                ]
+            ]));
+        } else {
+            $children = $childrenModels;
+        }
 
         $this->view->title = $model->title;
         if (!empty($model->h1)) {

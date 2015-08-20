@@ -53,7 +53,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
                         ->on(
                             View::EVENT_END_BODY,
                             [ManageController::className(), 'renderEcommerceCounters'],
-                            ['orderId' => intval(Yii::$app->request->get('id'))]
+                            ['transactionId' => intval(Yii::$app->request->get('id'))]
                         );
                 }
             }

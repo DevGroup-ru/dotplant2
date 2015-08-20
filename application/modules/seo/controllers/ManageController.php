@@ -4,8 +4,7 @@ namespace app\modules\seo\controllers;
 
 use app\backend\components\BackendController;
 use app\modules\shop\models\Category;
-use app\modules\shop\models\Order;
-use app\modules\shop\models\OrderItem;
+use app\modules\shop\models\OrderTransaction;
 use app\modules\shop\models\Product;
 use app\modules\seo\models\Config;
 use app\modules\seo\models\Counter;
@@ -667,18 +666,18 @@ class ManageController extends BackendController
         );
     }
 
-    static public function renderEcommerceCounters(Event $event)
+    public static function renderEcommerceCounters(Event $event)
     {
-        $order = Order::findOne(['id' => $event->data['orderId']]);
+        /** @var OrderTransaction $orderTransaction */
+        $orderTransaction = OrderTransaction::findOne($event->data['transactionId']);
         $config = Config::getModelByKey('ecommerceCounters');
-        if (empty($event->data['orderId']) || empty($config) || empty($order)) {
+        if (empty($event->data['transactionId']) || empty($config) || !isset($orderTransaction->order)) {
             return ;
         }
 
-        $orderItems = OrderItem::findAll(['order_id' => $event->data['orderId']]);
-        if (!empty($orderItems)) {
+        if (!empty($orderTransaction->order->items)) {
             $products = [];
-            foreach ($orderItems as $item) {
+            foreach ($orderTransaction->order->items as $item) {
                 $product = Product::findById($item->product_id, null, null);
                 if (empty($product)) {
                     continue;
@@ -696,8 +695,8 @@ class ManageController extends BackendController
             }
 
             $order = [
-                'id' => $order->id,
-                'total' => number_format($order->total_price, 2, '.', ''),
+                'id' => $orderTransaction->order->id,
+                'total' => number_format($orderTransaction->order->total_price, 2, '.', ''),
             ];
 
             echo Yii::$app->view->renderFile(Yii::getAlias('@app/modules/seo/views/manage/_ecommerceCounters.php'), [

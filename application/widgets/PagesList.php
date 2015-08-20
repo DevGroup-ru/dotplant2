@@ -3,8 +3,10 @@
 namespace app\widgets;
 
 use app\modules\page\models\Page;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Widget;
+use yii\caching\TagDependency;
 
 /**
  * Class PagesList renders pages list
@@ -33,13 +35,24 @@ class PagesList extends Widget
         if ($this->model === null) {
             return "<!-- can't render - model is null -->";
         }
-        $children = Page::find()
-            ->where(['parent_id' => $this->model->id])
-            ->orderBy(['date_added' => SORT_DESC]);
-        if (null !== $this->limit) {
-            $children->limit($this->limit);
+
+        $cacheKey = 'PagesListWidget:'.$this->model->id.':limit:'.$this->limit;
+
+        $children = Yii::$app->cache->get($cacheKey);
+        if ($children === false) {
+            $children = Page::find()
+                ->where(['parent_id' => $this->model->id])
+                ->orderBy(['date_added' => SORT_DESC]);
+            if (null !== $this->limit) {
+                $children->limit($this->limit);
+            }
+            $children = $children->all();
+            Yii::$app->cache->set($cacheKey, $children, 86400, new TagDependency([
+                'tags' => [
+                    ActiveRecordHelper::getCommonTag(Page::className())
+                ]
+            ]));
         }
-        $children = $children->all();
 
         return $this->render(
             $this->viewFile,
