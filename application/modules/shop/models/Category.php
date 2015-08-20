@@ -95,6 +95,10 @@ class Category extends ActiveRecord implements \JsonSerializable
             [
                 'class' => Tree::className(),
                 'activeAttribute' => 'active',
+                'sortOrder' => [
+                    'sort_order' => SORT_ASC,
+                    'id' => SORT_ASC
+                ],
             ],
         ];
     }
