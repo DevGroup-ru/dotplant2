@@ -185,6 +185,7 @@ class FormController extends Controller
             [
                 'searchModel' => $dynamicModel,
                 'dataProvider' => $data,
+                'form' => $form,
             ]
         );
     }

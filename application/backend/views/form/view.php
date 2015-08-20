@@ -33,7 +33,7 @@ $this->endBlock('buttons');
 <?=\kartik\dynagrid\DynaGrid::widget(
     [
         'options' => [
-            'id' => 'submission-grid',
+            'id' => 'submission-grid-'.$form->id,
         ],
         'columns' => \yii\helpers\ArrayHelper::merge(
             $searchModel->columns([
