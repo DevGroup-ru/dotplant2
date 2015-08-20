@@ -100,7 +100,14 @@ class ProductController extends Controller
             true,
             false
         );
+        /** @var Pagination $pages */
         $pages = $result['pages'];
+        if (Yii::$app->response->is_prefiltered_page) {
+            $pages->route = '/' . Yii::$app->request->pathInfo;
+            $pages->params = [
+
+            ];
+        }
         $allSorts = $result['allSorts'];
         $products = $result['products'];
 
