@@ -247,8 +247,8 @@ class Currency extends \yii\db\ActiveRecord
                 'decimalSeparator' => $this->dec_point,
                 'thousandSeparator' => $this->thousands_sep,
                 'numberFormatterOptions' => [
-                    7 => 0, // min
-                    6 => 0, // max
+                    7 => $this->min_fraction_digits, // min
+                    6 => $this->max_fraction_digits, // max
                 ]
             ]);
         }
