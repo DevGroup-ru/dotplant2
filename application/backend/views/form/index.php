@@ -43,10 +43,19 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         'id',
         'name',
-        'form_view',
-        'form_success_view',
+        [
+            'attribute' => 'form_view',
+            'format' => ['truncated', 40],
+        ],
+        [
+            'attribute' => 'form_success_view',
+            'format' => ['truncated', 40],
+        ],
         'email_notification_addresses:email',
-        'email_notification_view',
+        [
+            'attribute' => 'email_notification_view',
+            'format' => ['truncated', 40],
+        ],
         'form_open_analytics_action_id',
         'form_submit_analytics_action_id',
         [
