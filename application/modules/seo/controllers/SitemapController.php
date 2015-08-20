@@ -2,15 +2,75 @@
 
 namespace app\modules\seo\controllers;
 
+use app\modules\page\models\Page;
 use app\modules\seo\helpers\SitemapHelper;
 use app\modules\seo\models\Config;
 use app\modules\seo\models\Sitemap;
+use app\modules\seo\models\SitemapXML;
+use app\modules\shop\models\Category;
+use app\modules\shop\models\Product;
+use Yii;
 use yii\console\Controller;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 class SitemapController extends Controller
 {
+    // Begin of sitemap beta
+    // @todo include filter pages
+    /** @var  SitemapXML */
+    protected $sitemap;
+
+    protected function pagesSitemap($parentId = 1)
+    {
+        // @todo exclude subdomain urls
+        $pages = Page::find()
+            ->select(['id', 'slug_compiled'])
+            ->where(['parent_id' => $parentId, 'published' => 1])
+            ->asArray(true)
+            ->all();
+        array_reduce($pages, function ($carry, $item) {
+            $this->sitemap->addUrl('/' . $item['slug_compiled']);
+            $this->pagesSitemap($item['id']);
+        });
+    }
+
+    protected function categoriesSitemap($parentId = 0, $prefix = '')
+    {
+        $categories = Category::find()
+            ->select(['id', 'category_group_id', 'slug'])
+            ->where(['parent_id' => $parentId, 'active' => 1])
+            ->asArray(true)
+            ->all();
+        array_reduce($categories, function ($carry, $item) use ($prefix) {
+            $this->sitemap->addUrl($prefix . '/' . $item['slug']);
+            $this->categoriesSitemap($item['id'], $prefix . '/' . $item['slug']);
+            $this->productsSitemap($item['id'], $prefix . '/' . $item['slug']);
+        });
+    }
+
+    protected function productsSitemap($categoryId, $categoryUrl)
+    {
+        $product = Product::find()
+            ->select(['id', 'slug'])
+            ->where(['main_category_id' => $categoryId, 'active' => 1])
+            ->asArray(true)
+            ->all();
+        array_reduce($product, function ($carry, $item) use ($categoryUrl) {
+            $this->sitemap->addUrl($categoryUrl . '/' . $item['slug']);
+        });
+    }
+
+    public function actionGenerateSitemapBeta()
+    {
+        $this->sitemap = new SitemapXML(Yii::getAlias('@webroot/'), 'http://' . Yii::$app->getModule('core')->serverName);
+        $this->sitemap->addUrl('');
+        $this->pagesSitemap();
+        $this->categoriesSitemap();
+        $this->sitemap->save();
+    }
+    // End of sitemap beta
+
     public function actionGenerateSitemap()
     {
         if ($this->regenerate()) {
