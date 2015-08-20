@@ -6,6 +6,7 @@ use app\behaviors\ImageExist;
 use app\models\Object;
 use app\modules\image\widgets\ImageDropzone;
 use app\traits\FindById;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Exception;
 use yii\caching\TagDependency;
@@ -59,7 +60,10 @@ class Image extends \yii\db\ActiveRecord
             [
                 'class' => ImageExist::className(),
                 'srcAttrName' => 'filename',
-            ]
+            ],
+            [
+                'class' => ActiveRecordHelper::className(),
+            ],
         ];
     }
 
