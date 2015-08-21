@@ -169,6 +169,10 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             [
                 'class' => Tree::className(),
                 'activeAttribute' => 'active',
+                'sortOrder' => [
+                    'sort_order' => SORT_ASC,
+                    'id' => SORT_ASC
+                ],
             ],
             [
                 'class' => HasProperties::className(),

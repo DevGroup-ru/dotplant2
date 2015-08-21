@@ -127,6 +127,10 @@ class Page extends ActiveRecord implements \JsonSerializable
             [
                 'class' => Tree::className(),
                 'activeAttribute' => 'published',
+                'sortOrder' => [
+                    'sort_order' => SORT_ASC,
+                    'id' => SORT_ASC
+                ],
             ],
         ];
     }
