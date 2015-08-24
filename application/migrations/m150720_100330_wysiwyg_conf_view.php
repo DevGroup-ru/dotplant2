@@ -7,7 +7,7 @@ class m150720_100330_wysiwyg_conf_view extends Migration
 {
     public function up()
     {
-        $this->addColumn('{{%wysiwyg}}', 'configuration_view', Schema::string());
+        $this->addColumn('{{%wysiwyg}}', 'configuration_view', $this->string());
         $this->update('{{%wysiwyg}}', ['configuration_view' => '@app/modules/core/wysiwyg/imperavi-config.php'], ['name'=>'Imperavi']);
     }
 

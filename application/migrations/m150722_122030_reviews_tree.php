@@ -10,13 +10,13 @@ class m150722_122030_reviews_tree extends Migration
         $this->addColumn(
             \app\modules\review\models\Review::tableName(),
             'parent_id',
-            Schema::integer()->default(0)
+            $this->integer()->defaultValue(0)
         );
 
         $this->addColumn(
             \app\modules\review\models\Review::tableName(),
             'root_id',
-            Schema::integer()->default(0)
+            $this->integer()->defaultValue(0)
         );
 
     }
