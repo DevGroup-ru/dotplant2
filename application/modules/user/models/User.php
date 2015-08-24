@@ -92,7 +92,7 @@ class User extends ActiveRecord implements IdentityInterface
             // admin
             'search' => ['id', 'username', 'email', 'status', 'create_time', 'first_name', 'last_name'],
             'admin' => ['username', 'status', 'email', 'password', 'first_name', 'last_name'],
-            'adminSignup' => ['username', 'status', 'email', 'password', 'first_name', 'last_name'],
+            'adminSignup' => ['username', 'status', 'email', 'password', 'first_name', 'last_name', 'auth_key'],
             'passwordResetToken' => ['password_reset_token'],
         ];
     }

@@ -53,6 +53,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             'url' => 'delete',
                             'icon' => 'trash-o',
                             'class' => 'btn-danger',
+                            'options' => [
+                                'data-action' => 'delete',
+                            ],
                             'label' => Yii::t('app', 'Delete'),
                         ],
                     ],
