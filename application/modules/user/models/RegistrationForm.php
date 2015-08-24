@@ -51,14 +51,11 @@ class RegistrationForm extends Model
     public function signup()
     {
         if ($this->validate() === true) {
-            $user = new User();
+            $user = new User;
             $user->setScenario('signup');
             $user->username = $this->username;
+            $user->password = $this->password;
             $user->email = $this->email;
-
-
-            $user->setPassword($this->password);
-
             $user->generateAuthKey();
             if ($user->save() === false) {
                 return null;

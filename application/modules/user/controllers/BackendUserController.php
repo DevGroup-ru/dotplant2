@@ -91,8 +91,9 @@ class BackendUserController extends BackendController
         $assignments = Yii::$app->authManager->getAssignments($id);
         if (Yii::$app->request->isPost) {
             $model->load(Yii::$app->request->post());
+            $model->auth_key = '';
             if ($model->validate()) {
-                if (!empty($model->password)) {
+                if ($id !== null && !empty($model->password)) {
                     $model->setPassword($model->password);
                 }
                 $model->save();
