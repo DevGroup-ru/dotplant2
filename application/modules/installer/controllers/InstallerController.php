@@ -211,6 +211,14 @@ class InstallerController extends Controller
     {
         $model = new FinalStep();
         $model->serverName = Yii::$app->request->serverName;
+
+        if (extension_loaded('memcached') || extension_loaded('memcache')) {
+            $model->cacheClass = 'yii\caching\MemCache';
+            if (extension_loaded('memcached')) {
+                $model->useMemcached = true;
+            }
+        }
+
         if (Yii::$app->request->serverPort !== 80) {
             $model->serverName .= ':' . Yii::$app->request->serverPort;
         }
