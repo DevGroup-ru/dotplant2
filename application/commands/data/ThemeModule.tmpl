@@ -31,12 +31,14 @@ class ThemeModule extends Module implements BootstrapInterface
             function ($event) use ($app)
             {
                 // add live reload for `gulp watch`
-                $app->view->registerJs(<<<JS
+                if (YII_DEBUG) {
+                    $app->view->registerJs(<<<JS
     $('body').append(
         $('<script>').attr('src', 'http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1')
     );
 JS
 );
+                }
                 return true;
             }
         );
