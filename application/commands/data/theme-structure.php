@@ -11,6 +11,50 @@ return [
         ],
     ],
     [
+        'name' => 'dist',
+        'type' => 'dir',
+        'children' => [
+            [
+                'name' => 'styles',
+                'type' => 'dir',
+            ],
+            [
+                'name' => 'images',
+                'type' => 'dir',
+            ],
+            [
+                'name' => 'scripts',
+                'type' => 'dir',
+            ],
+        ],
+    ],
+    [
+        'name' => 'sass',
+        'type' => 'dir',
+        'children' => [
+            [
+                'name' => 'main.scss',
+                'content' => "body {\n\tbackground-color: #fff;\n}\n",
+            ]
+        ],
+    ],
+    [
+        'name' => 'gulpfile.js',
+        'content' => file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'gulpfile.js'),
+    ],
+    [
+        'name' => 'package.json',
+        'content' => file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'package.json'),
+    ],
+    [
+        'name' => '.gitignore',
+        'content' => file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'gitignore.txt'),
+    ],
+    [
+        'name' => '.jshintrc',
+        'content' => file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'jshintrc'),
+    ],
+    [
         'name' => 'fonts',
         'type' => 'dir',
         'children' => [
@@ -35,6 +79,10 @@ return [
             [
                 'name' => 'index.html',
             ],
+            [
+                'name' => 'main.js',
+                'content' => "$(function(){\n\t// your awesome code hoes here\n});\n",
+            ],
         ],
     ],
     [
@@ -47,7 +95,7 @@ return [
                 'children' => [
                     [
                         'name' => 'ThemeAsset.php',
-                        'content' => file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'theme-asset.tmlp'),
+                        'content' => file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'theme-asset.tmpl'),
                     ],
                 ],
             ],
@@ -78,10 +126,6 @@ return [
                 'type' => 'dir',
             ],
             [
-                'name' => 'views',
-                'type' => 'dir',
-            ],
-            [
                 'name' => 'widgets',
                 'type' => 'dir',
             ],
@@ -89,6 +133,10 @@ return [
                 'name' => '.htaccess',
                 'content' => 'Deny from All',
             ],
+            [
+                'name' => 'ThemeModule.php',
+                'content' => file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'ThemeModule.tmpl'),
+            ]
         ],
     ],
     [
