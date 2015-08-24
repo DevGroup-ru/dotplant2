@@ -82,7 +82,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             'signup' => ['username', 'email', 'password', 'first_name', 'last_name'],
-            'resetPassword' => ['password'],
+            'resetPassword' => ['password_hash', 'password_reset_token'],
             'requestPasswordResetToken' => ['email'],
 
             'registerService' => ['email', 'first_name', 'last_name'],
@@ -93,6 +93,7 @@ class User extends ActiveRecord implements IdentityInterface
             'search' => ['id', 'username', 'email', 'status', 'create_time', 'first_name', 'last_name'],
             'admin' => ['username', 'status', 'email', 'password', 'first_name', 'last_name'],
             'adminSignup' => ['username', 'status', 'email', 'password', 'first_name', 'last_name'],
+            'passwordResetToken' => ['password_reset_token'],
         ];
     }
 
