@@ -93,7 +93,7 @@ class PageController extends Controller
 
         // query that needed for pages retrieve and pagination
         $children = Page::find()
-            ->where(['parent_id' => $model->id])
+            ->where(['parent_id' => $model->id, 'published' => 1])
             ->orderBy('date_added DESC, sort_order')
             ->with('images');
 

@@ -128,5 +128,9 @@ class AdminController extends Controller
         mkdir($themeRoot);
         $this->createStructure($themeRoot, $structure, $name);
         echo "Theme \"{$name}\" has been created" . PHP_EOL;
+        if (exec("which npm")) {
+            echo "Installing node.js dependencies" . PHP_EOL;
+            exec("cd $themeRoot ; npm install");
+        }
     }
 }

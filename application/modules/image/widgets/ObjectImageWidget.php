@@ -4,8 +4,10 @@ namespace app\modules\image\widgets;
 
 use app\modules\image\models\Image;
 use app\traits\GetImages;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Widget;
+use yii\caching\TagDependency;
 
 /**
  * Class ObjectImageWidget
@@ -58,19 +60,19 @@ class ObjectImageWidget extends Widget
     public function run()
     {
         $cacheKey = static::className() . ':' . implode(
-            "_",
-            [
-                $this->model->object->id,
-                $this->model->id,
-                $this->viewFile,
-                $this->limit,
-                $this->offset,
-                $this->thumbnailOnDemand ? '1' : '0',
-                $this->thumbnailWidth,
-                $this->thumbnailHeight,
-                $this->useWatermark,
-            ]
-        );
+                "_",
+                [
+                    $this->model->object->id,
+                    $this->model->id,
+                    $this->viewFile,
+                    $this->limit,
+                    $this->offset,
+                    $this->thumbnailOnDemand ? '1' : '0',
+                    $this->thumbnailWidth,
+                    $this->thumbnailHeight,
+                    $this->useWatermark,
+                ]
+            );
         $result = Yii::$app->cache->get($cacheKey);
         if ($result === false) {
             if ($this->offset > 0 || !is_null($this->limit)) {
@@ -97,9 +99,12 @@ class ObjectImageWidget extends Widget
                 $cacheKey,
                 $result,
                 86400,
-                new \yii\caching\TagDependency(
+                new TagDependency(
                     [
-                        'tags' => 'Images:' . $this->model->object->id . ':' . $this->model->id
+                        'tags' => [
+                            ActiveRecordHelper::getCommonTag(Image::className()),
+                            ActiveRecordHelper::getCommonTag($this->model->className()),
+                        ]
                     ]
                 )
             );

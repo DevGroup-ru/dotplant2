@@ -2,12 +2,12 @@
 
 namespace app\modules\core\models;
 
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\data\ActiveDataProvider;
 use Yii;
 
 /**
  * This is the model class for table "content_block".
- *
  * @property integer $id
  * @property string $name
  * @property string $key
@@ -45,11 +45,24 @@ class ContentBlock extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => Yii::t('app', 'Name'),
-            'key' => Yii::t('app','Key'),
-            'value' => Yii::t('app','Value'),
+            'key' => Yii::t('app', 'Key'),
+            'value' => Yii::t('app', 'Value'),
             'preload' => Yii::t('app', 'Preload'),
         ];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => ActiveRecordHelper::className(),
+            ],
+        ];
+    }
+
     public function search($params)
     {
         /* @var $query \yii\db\ActiveQuery */

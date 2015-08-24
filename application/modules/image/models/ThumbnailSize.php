@@ -32,6 +32,7 @@ class ThumbnailSize extends ActiveRecord
     public function rules()
     {
         return [
+            [['resize_mode'], 'default', 'value' => ManipulatorInterface::THUMBNAIL_INSET],
             [['width', 'height', 'quality'], 'required'],
             [['width', 'height', 'default_watermark_id', 'quality'], 'integer'],
             [['quality'], 'number', 'min' => 0, 'max' => 100],
@@ -98,8 +99,8 @@ class ThumbnailSize extends ActiveRecord
         $size = static::findOne(['width' => $sizes[0], 'height' => $sizes[1]]);
         if ($size === null) {
             $size = new ThumbnailSize;
+            $size->loadDefaultValues();
             $size->setAttributes(['width' => $sizes[0], 'height' => $sizes[1]]);
-            $size->resize_mode = ManipulatorInterface::THUMBNAIL_INSET;
             $size->save();
         }
         return $size;
