@@ -7,6 +7,7 @@ use app\models\ObjectStaticValues;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
+use app\modules\Shop\models\Product;
 use Yii;
 use yii\base\Widget;
 use yii\caching\TagDependency;
@@ -98,7 +99,16 @@ class FilterWidget extends Widget
                     $query = $query->select($object->categories_table_name . '.object_model_id')
                         ->distinct()
                         ->from($object->categories_table_name)
-                        ->where(['category_id' => $this->currentSelections['last_category_id']]);
+                        ->join(
+                            "JOIN",
+                            Product::tableName(),
+                            sprintf("%s.`id` = %s.`object_model_id`",
+                                Product::tableName(),
+                                $object->categories_table_name
+                            )
+                        )
+                        ->andWhere([Product::tableName() . ".`active`" => 1])
+                        ->andWhere(['category_id' => $this->currentSelections['last_category_id']]);
 
                     if (count($this->currentSelections['properties']) > 0) {
                         Yii::beginProfile("Apply currency selections(properties)");
@@ -163,13 +173,11 @@ class FilterWidget extends Widget
                         $cacheKey,
                         $data,
                         86400,
-                        new TagDependency(
-                            [
-                                'tags' => [
-                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($object->object_class)
-                                ],
-                            ]
-                        )
+                        new TagDependency([
+                            'tags' => [
+                                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag($object->object_class)
+                            ],
+                        ])
                     );
                     $object = null;
                 }
