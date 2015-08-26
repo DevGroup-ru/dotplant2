@@ -5,6 +5,8 @@ use yii\helpers\Url;
 
 /** @var \yii\web\View $this */
 /** @var array $file_permissions */
+/** @var bool $minPhpVersion True if PHP version is ok */
+/** @var bool $docRoot True if document root is ok */
 
 $this->title = Yii::t('app', 'Installer');
 $permissions_ok = true;
@@ -12,6 +14,22 @@ $permissions_ok = true;
 <h1>
     <?= Yii::t('app', 'Installation') ?>
 </h1>
+
+<?php if ($minPhpVersion === false): ?>
+    <div class="alert alert-danger">
+        <strong><?= Yii::t('app', 'Your PHP version {0} is lower then required 5.5+', [PHP_VERSION]) ?></strong>
+    </div>
+<?php endif; ?>
+
+<?php if ($docRoot === false): ?>
+    <div class="alert alert-danger">
+        <strong><?= Yii::t('app', 'Your DocumentRoot is not set to application/web/') ?></strong>
+        <p>
+            <?= Yii::t('app', 'You MUST set your DocumentRoot setting in your web server config to') ?>
+            <code><?= realpath(Yii::getAlias('@app/web/')) ?></code>.
+        </p>
+    </div>
+<?php endif; ?>
 
 <strong>
     <?= Yii::t('app', 'File permissions:') ?>

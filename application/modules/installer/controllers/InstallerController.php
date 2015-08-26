@@ -33,10 +33,15 @@ class InstallerController extends Controller
 
     public function actionIndex()
     {
+        $minPhpVersion = version_compare(PHP_VERSION, '5.5.0') >= 0;
+        $docRoot = strpos(Yii::$app->request->url, '/installer.php') === 0;
+
         return $this->render(
             'index',
             [
                 'file_permissions' => InstallerHelper::checkPermissions(),
+                'minPhpVersion' => $minPhpVersion,
+                'docRoot' => $docRoot,
             ]
         );
     }
@@ -114,7 +119,7 @@ class InstallerController extends Controller
         $model->ignore_time_limit_warning = Yii::$app->session->get('ignore_time_limit_warning', false);
         $model->manual_migration_run = false;
         $model->composerHomeDirectory = Yii::$app->session->get('composerHomeDirectory', './.composer/');
-        $model->updateComposer = Yii::$app->session->get('updateComposer', true);
+        $model->updateComposer = Yii::$app->session->get('updateComposer', false);
         if ($model->load(Yii::$app->request->post())) {
             $model->validate();
             foreach ($model->getAttributes() as $key => $value) {
@@ -205,6 +210,18 @@ class InstallerController extends Controller
     public function actionFinal()
     {
         $model = new FinalStep();
+        $model->serverName = Yii::$app->request->serverName;
+
+        if (extension_loaded('memcached') || extension_loaded('memcache')) {
+            $model->cacheClass = 'yii\caching\MemCache';
+            if (extension_loaded('memcached')) {
+                $model->useMemcached = true;
+            }
+        }
+
+        if (Yii::$app->request->serverPort !== 80) {
+            $model->serverName .= ':' . Yii::$app->request->serverPort;
+        }
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
 
             if (InstallerHelper::writeCommonConfig($model) && InstallerHelper::updateConfigurables()) {

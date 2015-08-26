@@ -14,11 +14,11 @@ class m150717_123227_selectable_wysiwyg extends Migration
             ? 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB'
             : null;
         $this->createTable('{{%wysiwyg}}', [
-            'id' => Schema::primaryKey(),
-            'name' => Schema::string()->notNull(),
-            'class_name' => Schema::string()->notNull(),
-            'params' => Schema::text(),
-            'configuration_model' => Schema::string(),
+            'id' => $this->primaryKey(),
+            'name' => $this->string()->notNull(),
+            'class_name' => $this->string()->notNull(),
+            'params' => $this->text(),
+            'configuration_model' => $this->string(),
         ], $tableOptions);
 
         $this->insert('{{%wysiwyg}}', [

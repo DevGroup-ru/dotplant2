@@ -189,16 +189,7 @@ class FormController extends Controller
             ]
         );
     }
-
-    public function actionTestDynamic()
-    {
-        $form = Form::find()->where(['id'=>4])->one();
-        $propertyGroups = $form->getPropertyGroups();
-        $baseModel = new Submission();
-        $dynamicModel = new DynamicSearchModel($baseModel, $propertyGroups);
-        var_dump($dynamicModel->columns([]), $dynamicModel->getAttributes());
-    }
-
+    
     public function actionViewSubmission($id)
     {
         $submission = Submission::findOne($id);

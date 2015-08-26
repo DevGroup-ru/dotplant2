@@ -38,6 +38,8 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
  * @property integer $interpret_as
  * @property integer $as_yml_field
  * @property integer $captcha
+ * @property string $mask
+ * @property integer $alias
  * @property PropertyGroup $group
  */
 class Property extends ActiveRecord
@@ -98,7 +100,8 @@ class Property extends ActiveRecord
                     'is_eav',
                     'is_column_type_stored',
                     'multiple',
-                    'sort_order'
+                    'sort_order',
+                    'alias',
                 ],
                 'integer'
             ],
@@ -112,7 +115,7 @@ class Property extends ActiveRecord
                 'integer'
             ],
             [['interpret_as'], 'string'],
-            [['name', 'handler_additional_params', 'depended_property_values', 'value_type'], 'string'],
+            [['name', 'handler_additional_params', 'depended_property_values', 'value_type', 'mask'], 'string'],
             [['key'], 'string', 'max' => 20],
             [['key'], 'match', 'pattern' => '#^[\w]+$#'],
             [['depends_on_property_id', 'depends_on_category_group_id'], 'default', 'value' => 0],
@@ -151,6 +154,8 @@ class Property extends ActiveRecord
             'depended_property_values' => Yii::t('app', 'Depended Property Values'),
             'depends_on_category_group_id' => Yii::t('app', 'Depends On Category Group Id'),
             'as_yml_field' => Yii::t('app', 'Interpret Field As Field Of YML'),
+            'mask' => Yii::t('app', 'Mask'),
+            'alias' => Yii::t('app', 'Alias'),
         ];
     }
 
@@ -429,5 +434,19 @@ class Property extends ActiveRecord
             return $this->handlerAdditionalParams[$name];
         }
         return null;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAliases()
+    {
+        return [
+            0 => Yii::t('app', 'Not selected'),
+            1 => 'date',
+            2 => 'ip',
+            3 => 'url',
+            4 => 'email',
+        ];
     }
 }

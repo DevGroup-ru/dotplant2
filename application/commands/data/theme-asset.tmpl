@@ -5,15 +5,15 @@ use yii\web\AssetBundle;
 
 class ThemeAsset extends AssetBundle
 {
-    public $basePath = '@webroot/{%theme-name%}';
-    public $baseUrl = '@web/{%theme-name%}';
+    public $basePath = '@webroot/{%theme-name%}/dist';
+    public $baseUrl = '@web/{%theme-name%}/dist';
     public $css = [
         // your css files will be here
-        "dist/styles/main.css",
+        "styles/main.css",
     ];
     public $js = [
         // your js files will be here
-        "dist/scripts/main.min.js",
+        "scripts/main.min.js",
     ];
     public $depends = [
         'app\assets\AppAsset',

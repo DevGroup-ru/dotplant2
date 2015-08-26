@@ -87,7 +87,8 @@ class Navigation extends \yii\db\ActiveRecord
             [
                 'class' => Tree::className(),
                 'sortOrder' => ['sort_order' => SORT_ASC],
-				'activeAttribute' => false,
+                'activeAttribute' => false,
+                'cascadeDeleting' => true,
             ],
             [
                 'class' => HasProperties::className(),

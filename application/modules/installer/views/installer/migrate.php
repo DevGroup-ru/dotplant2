@@ -30,7 +30,7 @@ $form = ActiveForm::begin([
         </h2>
 
         <?= $form->field($model, 'updateComposer')->checkbox() ?>
-        <?= $form->field($model, 'composerHomeDirectory') ?>
+        <?= $form->field($model, 'composerHomeDirectory')->hint(Yii::t('app', 'Fill it with your users\'s home directory followed by "/.composer/" (ie. /home/user/.composer/).')) ?>
         <?= $form->field($model, 'ignore_time_limit_warning')->checkbox() ?>
         <?= $form->field($model, 'manual_migration_run')->checkbox() ?>
 

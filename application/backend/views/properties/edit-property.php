@@ -1,6 +1,7 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
+use app\models\Property;
 use app\models\SpamChecker;
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
@@ -125,6 +126,22 @@ $this->endBlock();
                 <?= $form->field($model, 'as_yml_field')->checkbox() ?>
 
             <?php BackendWidget::end(); ?>
+
+            <?php if ($model->property_handler_id == 9): ?>
+
+                <?php
+                BackendWidget::begin(
+                    ['title' => Yii::t('app', 'Mask'), 'icon' => 'cogs', 'footer' => $this->blocks['submit']]
+                );
+                ?>
+
+                <?= $form->field($model, 'mask') ?>
+
+                <?= $form->field($model, 'alias')->dropDownList(Property::getAliases()) ?>
+
+                <?php BackendWidget::end(); ?>
+
+            <?php endif; ?>
 
         </article>
 
