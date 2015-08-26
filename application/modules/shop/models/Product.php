@@ -120,7 +120,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             [['active', 'unlimited_count'], 'default', 'value' => true],
             [['parent_id', 'slug_absolute', 'sort_order'], 'default', 'value' => 0],
             [['sku', 'name'], 'default', 'value' => ''],
-            [['unlimited_count', 'currency_id'], 'default', 'value' => 1],
+            [['unlimited_count', 'currency_id', 'measure_id'], 'default', 'value' => 1],
             [['relatedProductsArray'], 'safe'],
             [['slug'], 'unique', 'targetAttribute' => ['slug', 'main_category_id']],
 
