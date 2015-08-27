@@ -48,28 +48,41 @@ class ImageDropzone extends DropZone
             $fhName = 'file_' . $i ++;
 
             // Create the mock file:
-            $this->getView()->registerJs(
-                'var ' . $fhName . ' = { name: "' . $file['name'] . '", size: ' . Yii::$app->getModule('image')->fsComponent->getSize(
-                    $file['name']
-                ) . ' };'
-            );
-            // Call the default addedfile event handler
-            $this->getView()->registerJs(
-                $this->dropzoneName . '.emit("addedfile", ' . $fhName . ');'
-            );
-            // And optionally show the thumbnail of the file:
-            $this->getView()->registerJs(
-                $this->dropzoneName . '.emit("thumbnail", ' . $fhName . ', "' . $file['thumbnail'] . '");'
-            );
-            $this->getView()->registerJs(
-                'jQuery(' . $fhName . '.previewElement).find("[name=\"id[]\"]").val(' . $file['id'] . ');
+            try {
+                $this->getView()->registerJs(
+                    'var ' . $fhName . ' = { name: "' . $file['name'] . '", size: ' . Yii::$app->getModule('image')->fsComponent->getSize(
+                        $file['name']
+                    ) . ' };'
+                );
+                // Call the default addedfile event handler
+                $this->getView()->registerJs(
+                    $this->dropzoneName . '.emit("addedfile", ' . $fhName . ');'
+                );
+                // And optionally show the thumbnail of the file:
+                $this->getView()->registerJs(
+                    $this->dropzoneName . '.emit("thumbnail", ' . $fhName . ', "' . $file['thumbnail'] . '");'
+                );
+                $this->getView()->registerJs(
+                    'jQuery(' . $fhName . '.previewElement).find("[name=\"id[]\"]").val(' . $file['id'] . ');
                 jQuery(' . $fhName . '.previewElement).find("[name=\"file[]\"]").val("' . $file['file'] . '");
                 jQuery(' . $fhName . '.previewElement).data("filename", "' . $file['name'] . '");
                 jQuery(' . $fhName . '.previewElement).find(".title textarea").text("' . $file['image_title'] . '");
                 jQuery(' . $fhName . '.previewElement).find(".title textarea").attr("name", "title[' . $file['id'] . ']");
                 jQuery(' . $fhName . '.previewElement).find(".alt textarea").text("' . $file['image_alt'] . '");
                 jQuery(' . $fhName . '.previewElement).find(".alt textarea").attr("name", "alt[' . $file['id'] . ']");'
-            );
+                );
+            } catch (\RuntimeException $e) {
+                Yii::$app->session->addFlash(
+                    'warning',
+                    Yii::t(
+                        'app',
+                        'Image with name {name} not found on file system and will be deleted from object.',
+                        [
+                            'name' => $file['name'],
+                        ]
+                    )
+                );
+            }
         }
     }
 
