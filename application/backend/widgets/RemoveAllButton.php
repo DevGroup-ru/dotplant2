@@ -5,6 +5,7 @@ namespace app\backend\widgets;
 use yii\base\InvalidParamException;
 use yii\base\Widget;
 use yii\helpers\Html;
+use kartik\icons\Icon;
 
 class RemoveAllButton extends Widget
 {
@@ -34,6 +35,7 @@ class RemoveAllButton extends Widget
     protected function renderButton()
     {
         return Html::button(
+            Icon::show('trash-o') . ' ' .
             \Yii::t('app', 'Delete selected'),
             $this->htmlOptions
         );
