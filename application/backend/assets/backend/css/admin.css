@@ -330,3 +330,33 @@ article.backend-edit-grid.col-md-4 .widget-footer .btn, article.backend-edit-gri
   line-height: 1.5;
   padding: 1px 5px;
 }
+
+/* line 246, ../sass/admin.scss */
+div.table .file-row > div {
+  display: block;
+  box-sizing: border-box;
+  margin-left: 100px;
+}
+/* line 250, ../sass/admin.scss */
+div.table .file-row > div.preview-div {
+  width: 96px;
+  margin-left: 0;
+  float: left;
+  background: #eee;
+}
+/* line 256, ../sass/admin.scss */
+div.table .file-row > div.fn {
+  background: #eee;
+}
+/* line 260, ../sass/admin.scss */
+div.table .file-row > div:after {
+  content: ' ';
+  clear: both;
+}
+
+/* line 267, ../sass/admin.scss */
+div.table .file-row > div.title label {
+  float: left;
+}
+
+/*# sourceMappingURL=admin.css.map */

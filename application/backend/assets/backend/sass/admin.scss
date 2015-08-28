@@ -241,3 +241,30 @@ article.backend-edit-grid {
     }
   }
 }
+
+// better image dropzone
+div.table .file-row > div {
+  display: block;
+
+  box-sizing: border-box;
+  &.preview-div {
+    width: 96px;
+    margin-left: 0;
+    float:left;
+    background: #eee;
+  }
+  &.fn {
+    background: #eee;
+  }
+  margin-left: 100px;
+  &:after {
+    content: ' ';
+    clear:both;
+  }
+}
+
+div.table .file-row > div.title {
+  label {
+    float:left;
+  }
+}

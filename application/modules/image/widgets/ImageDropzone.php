@@ -153,10 +153,21 @@ class ImageDropzone extends DropZone
                 'previewTemplate' => '<div class="file-row">
                         ' . Html::input('hidden', 'id[]') . Html::input('hidden', 'file[]') . '
                         <!-- This is used as the file preview template -->
-                        <div>
+                        <div class="preview-div">
                             <span class="preview"><img style="width: 80px; height: 80px;" data-dz-thumbnail /></span>
+                            <p class="size" data-dz-size></p>
+                            <div class="dz-progress progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                              <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+                            </div>
+                            <div class="dz-success-mark"><span>✔</span> OK</div>
+                            <div class="dz-error-mark"><span>✘</span> ERROR</div>
+
+                          <button data-dz-remove class="btn btn-danger delete">
+                            <i class="fa fa-trash-o"></i>
+                            <span>' . Yii::t('app', 'Delete') . '</span>
+                          </button>
                         </div>
-                        <div>
+                        <div class="fn">
                             <p class="name" data-dz-name></p>
                             <div class="dz-error-message"><span data-dz-errormessage></span></div>
                         </div>
@@ -176,20 +187,7 @@ class ImageDropzone extends DropZone
                         ['style' => 'width: 100%; min-width: 80px; height: 80px;']
                     ) . '
                         </div>
-                        <div>
-                            <p class="size" data-dz-size></p>
-                            <div class="dz-progress progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                              <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
-                            </div>
-                            <div class="dz-success-mark"><span>✔</span> OK</div>
-                            <div class="dz-error-mark"><span>✘</span> ERROR</div>
-                        </div>
-                        <div>
-                          <button data-dz-remove class="btn btn-danger delete">
-                            <i class="fa fa-trash-o"></i>
-                            <span>' . Yii::t('app', 'Delete') . '</span>
-                          </button>
-                        </div>
+
                       </div>',
                 'thumbnailWidth' => '80',
                 'thumbnailHeight' => '80',
