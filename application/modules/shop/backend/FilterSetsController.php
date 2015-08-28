@@ -183,11 +183,11 @@ class FilterSetsController extends BackendController
         $ids = (array) $_POST['ids'];
         if ($_POST['filterSets'] === '1') {
             $result = FilterSets::sortModels($ids);
-
             $this->invalidateTags(FilterSets::className(), $ids);
         } else {
             $result = PropertyStaticValues::sortModels($ids);
             $this->invalidateTags(PropertyStaticValues::className(), $ids);
+            $this->invalidateTags(FilterSets::className(), []);
         }
 
         return $result;
