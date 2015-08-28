@@ -24,6 +24,7 @@ class ShopModule extends BaseModule implements BootstrapInterface
      */
     public $controllerMap = [
         'backend-filter-sets' => 'app\modules\shop\backend\FilterSetsController',
+        'backend-addons' => 'app\modules\shop\backend\AddonsController',
     ];
 
     /**

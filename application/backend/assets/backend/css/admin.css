@@ -359,4 +359,9 @@ div.table .file-row > div.title label {
   float: left;
 }
 
+/* line 272, ../sass/admin.scss */
+div.files.dropzone {
+  margin-top: 0;
+}
+
 /*# sourceMappingURL=admin.css.map */

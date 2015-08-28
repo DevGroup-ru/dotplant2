@@ -144,7 +144,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'multiple' => true,
                 'searchUrl' => '/shop/backend-product/ajax-related-product',
                 'additional' => [
-                    'placeholder' => 'Поиск продуктов ...',
+                    'placeholder' => Yii::t('app', 'Search products...'),
                 ],
             ]);
         ?>
@@ -172,23 +172,23 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ); ?>
 
-    <div id="actions">
-        <?=
-        \yii\helpers\Html::tag(
-            'span',
-            Icon::show('plus') . Yii::t('app', 'Add files..'),
-            [
-                'class' => 'btn btn-success fileinput-button'
-            ]
-        ) ?>
-        <?php
-        if (Yii::$app->getModule('elfinder')) {
-            echo \DotPlant\ElFinder\widgets\ElfinderFileInput::widget(
-                ['url' => Url::toRoute(['addImage', 'objId' => $object->id, 'objModelId' => $model->id])]
-            );
-        }
-        ?>
-    </div>
+
+    <?=
+    \yii\helpers\Html::tag(
+        'span',
+        Icon::show('plus') . Yii::t('app', 'Add files..'),
+        [
+            'class' => 'btn btn-success fileinput-button'
+        ]
+    ) ?>
+    <?php
+    if (Yii::$app->getModule('elfinder')) {
+        echo \DotPlant\ElFinder\widgets\ElfinderFileInput::widget(
+            ['url' => Url::toRoute(['addImage', 'objId' => $object->id, 'objModelId' => $model->id])]
+        );
+    }
+    ?>
+
 
     <?= \app\modules\image\widgets\ImageDropzone::widget([
         'name' => 'file',
@@ -268,6 +268,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'form' => $form,
     ]);
     ?>
+
+    <?= \app\modules\shop\widgets\AddonsWidget::widget([
+        'form' => $form,
+        'model' => $model
+    ]) ?>
 
 </article>
 

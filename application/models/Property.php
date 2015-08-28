@@ -237,7 +237,7 @@ class Property extends ActiveRecord
 
     /**
      * @param $group_id
-     * @return null|array<Property>
+     * @return null|Property[]
      */
     public static function getForGroupId($group_id)
     {

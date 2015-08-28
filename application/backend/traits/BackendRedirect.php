@@ -4,6 +4,7 @@ namespace app\backend\traits;
 
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 /**
@@ -20,7 +21,7 @@ trait BackendRedirect
      * @param string $editAction route path to edit action
      * @return \yii\web\Response
      */
-    public function redirectUser($id, $setFlash = true, $indexAction = 'index', $editAction='edit')
+    public function redirectUser($id, $setFlash = true, $indexAction = 'index', $editAction='edit', $additionalEditParams=[])
     {
         /** @var \app\backend\components\BackendController $this */
         if ($setFlash === true) {
@@ -47,11 +48,11 @@ trait BackendRedirect
             default:
                 return $this->redirect(
                     Url::toRoute(
-                        [
+                        ArrayHelper::merge([
                             $editAction,
                             'id' => $id,
                             'returnUrl' => $returnUrl,
-                        ]
+                        ], $additionalEditParams)
                     )
                 );
         }
