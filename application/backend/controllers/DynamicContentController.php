@@ -4,6 +4,8 @@ namespace app\backend\controllers;
 
 use app\backend\actions\DeleteOne;
 use app\backend\actions\MultipleDelete;
+use app\backend\components\BackendController;
+use app\backend\events\BackendEntityEditEvent;
 use app\backend\traits\BackendRedirect;
 use app\models\DynamicContent;
 use app\models\Property;
@@ -12,11 +14,14 @@ use app\models\PropertyStaticValues;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 
-class DynamicContentController extends Controller
+class DynamicContentController extends BackendController
 {
     use BackendRedirect;
+
+    const BACKEND_DYNAMIC_CONTENT_EDIT = 'backend-dynamic-content-edit';
+    const BACKEND_DYNAMIC_CONTENT_EDIT_SAVE = 'backend-dynamic-content-edit-save';
+    const BACKEND_DYNAMIC_CONTENT_EDIT_FORM = 'backend-dynamic-content-edit-form';
 
     /**
      * @inheritdoc
@@ -109,6 +114,8 @@ class DynamicContentController extends Controller
         if ($model->load($post) && $model->validate() && !isset($_GET['DynamicContent'])) {
             $save_result = $model->save();
             if ($save_result) {
+                $saveStateEvent = new BackendEntityEditEvent($model);
+                $this->trigger(self::BACKEND_DYNAMIC_CONTENT_EDIT_SAVE, $saveStateEvent);
                 return $this->redirectUser($model->id);
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
