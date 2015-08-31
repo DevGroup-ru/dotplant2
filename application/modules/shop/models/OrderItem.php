@@ -17,6 +17,7 @@ use yii\db\ActiveRecord;
  * @property integer $parent_id
  * @property integer $order_id
  * @property integer $product_id
+ * @property integer $addon_id
  * @property double $quantity
  * @property double $price_per_pcs
  * @property double $total_price_without_discount
@@ -31,7 +32,9 @@ use yii\db\ActiveRecord;
  */
 class OrderItem extends ActiveRecord
 {
-
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -66,8 +69,9 @@ class OrderItem extends ActiveRecord
                 'number',
                 'min' => 0,
             ],
-            [['order_id', 'product_id', 'parent_id'], 'integer'],
+            [['order_id', 'product_id', 'parent_id', 'addon_id'], 'integer'],
             [['lock_product_price'], 'boolean'],
+            [['custom_name'], 'string',],
         ];
     }
 
@@ -81,12 +85,14 @@ class OrderItem extends ActiveRecord
             'parent_id' => Yii::t('app', 'Parent ID'),
             'order_id' => Yii::t('app', 'Order ID'),
             'product_id' => Yii::t('app', 'Product ID'),
+            'addon_id' => Yii::t('app', 'Addon ID'),
             'quantity' => Yii::t('app', 'Quantity'),
             'price_per_pcs' => Yii::t('app', 'Price per pcs'),
             'total_price_without_discount' => Yii::t('app', 'Total price without discount'),
             'lock_product_price' => Yii::t('app', 'Lock product price'),
             'discount_amount' => Yii::t('app', 'Discount amount'),
             'total_price' => Yii::t('app', 'Total price'),
+            'custom_name' => Yii::t('app', 'Custom name'),
         ];
     }
 
@@ -132,5 +138,19 @@ class OrderItem extends ActiveRecord
     public function getOrder()
     {
         return $this->hasOne(Order::className(), ['id' => 'order_id']);
+    }
+
+    /**
+     * Returns instance of OrderItem entity - product or addon
+     * Used for calculating prices, etc.
+     * @return Product|Addon
+     */
+    public function sellingItem()
+    {
+        if ($this->addon_id !== 0) {
+            return Addon::findById($this->addon_id);
+        } else {
+            return Product::findById($this->product_id);
+        }
     }
 }

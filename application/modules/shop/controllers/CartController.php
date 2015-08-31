@@ -8,6 +8,7 @@ use app\modules\core\models\Events;
 use app\modules\shop\helpers\PriceHelper;
 use app\modules\shop\events\OrderStageEvent;
 use app\modules\shop\events\OrderStageLeafEvent;
+use app\modules\shop\models\Addon;
 use app\modules\shop\models\Currency;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderCode;
@@ -87,33 +88,76 @@ class CartController extends Controller
             'errors' => [],
             'itemModalPreview' => '',
         ];
+
+        $parentId = intval($parentId);
+        if ($parentId !== 0) {
+            // if parent id is set - order item should exist in this order!
+            $parentOrderItem = OrderItem::findOne(['order_id' => $order->id, 'id' => $parentId]);
+            if ($parentOrderItem === null) {
+                throw new BadRequestHttpException;
+            }
+        }
+
         foreach ($products as $product) {
-            if (!isset($product['id']) || is_null($productModel = Product::findById($product['id']))) {
+            $productModel = $addonModel = null;
+
+            if (!isset($product['id'])) {
+                if (isset($product['addon_id'])) {
+                    $addonModel = Addon::findById($product['addon_id']);
+                }
+            } else {
+                $productModel = Product::findById($product['id']);
+            }
+
+            if ($addonModel === null && $productModel === null) {
                 $result['errors'][] = Yii::t('app', 'Product not found.');
                 continue;
             }
+
             /** @var Product $productModel */
             $quantity = isset($product['quantity']) && (double) $product['quantity'] > 0
                 ? (double) $product['quantity']
                 : 1;
+
+            $condition = ['order_id' => $order->id, 'parent_id' => 0];
+
+            if ($productModel !== null) {
+                $condition['product_id'] = $productModel->id;
+                $thisItemModel = $productModel;
+            } else {
+                $condition['addon_id'] = $addonModel->id;
+                $thisItemModel = $addonModel;
+                if (!$addonModel->can_change_quantity) {
+                    $quantity = 1;
+                }
+            }
+
             if ($this->module->allowToAddSameProduct
-                || is_null($orderItem = OrderItem::findOne(['order_id' => $order->id, 'product_id' => $productModel->id, 'parent_id' => 0]))
+                || is_null($orderItem = OrderItem::findOne($condition))
             ) {
                 $orderItem = new OrderItem;
                 $orderItem->attributes = [
                     'parent_id' => $parentId,
                     'order_id' => $order->id,
-                    'product_id' => $productModel->id,
                     'quantity' => $quantity,
-                    'price_per_pcs' =>  PriceHelper::getProductPrice(
-                        $productModel,
+                    'price_per_pcs' => PriceHelper::getProductPrice(
+                        $thisItemModel,
                         $order,
                         1,
                         SpecialPriceList::TYPE_CORE
                     ),
                 ];
+                if ($productModel !== null) {
+                    $orderItem->product_id = $thisItemModel->id;
+                } else {
+                    $orderItem->addon_id = $thisItemModel->id;
+                }
             } else {
                 /** @var OrderItem $orderItem */
+                if ($addonModel !== null && !$addonModel->can_change_quantity) {
+                    // quantity can not be changed
+                    $quantity = 0;
+                }
                 $orderItem->quantity += $quantity;
             }
             if (!$orderItem->save()) {

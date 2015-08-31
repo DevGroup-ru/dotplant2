@@ -74,4 +74,9 @@ class AddonBindings extends \yii\db\ActiveRecord
         $query->andFilterWhere(['addon_id' => $this->addon_id]);
         return $dataProvider;
     }
+
+    public function getAddon()
+    {
+        return $this->hasOne(Addon::className(), ['id'=>'addon_id']);
+    }
 }

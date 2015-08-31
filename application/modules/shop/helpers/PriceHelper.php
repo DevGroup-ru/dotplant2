@@ -59,7 +59,26 @@ class PriceHelper
                 $price = $class::$handler($product, $order, $specialPriceRow, $price);
         }
 
-        return round($price * $quantity, 2);
+        $resultingPrice = round($price * $quantity, 2);
+
+        // count product addons here
+        /** @var \app\modules\shop\models\Addon[] $addons */
+//        $addons = $product->bindedAddons;
+//        foreach ($addons as $addon) {
+//            // no discounts for addons binded to product for now
+//            // no quantity support for such binded addons yet
+//            if ($addon->price_is_multiplier) {
+//
+//            }
+//            else {
+//
+//                $resultingPrice += round(
+//                    $addon->price
+//                    , 2);
+//            }
+//        }
+
+        return $resultingPrice;
     }
 
     public static function getOrderPrice(Order $order, $type = null)

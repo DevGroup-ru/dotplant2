@@ -2,6 +2,7 @@
 
 use yii\db\Migration;
 use app\modules\shop\models\Addon;
+use app\backend\models\BackendMenu;
 
 class m150827_075105_product_addons extends Migration
 {
@@ -75,21 +76,37 @@ class m150827_075105_product_addons extends Migration
             'sort_order' => $this->integer()->notNull()->defaultValue(0),
         ], $tableOptions);
 
-        $this->createIndex('addons4object', '{{%addon_bindings}}', ['appliance_object_id', 'object_model_id'], true);
+        $this->createIndex('addons4object', '{{%addon_bindings}}', ['appliance_object_id', 'object_model_id']);
 
-        // for those addons that added not to order but to specific order item(product in order)
-        // in fact in such cases we should not support discounts for now
-        // if you want discount support - addons should not be binded to product
-        $this->createTable('{{%order_item_addon}}', [
-            'id' => $this->primaryKey(),
-            'addon_id' => $this->integer()->notNull(),
-            'order_item_id' => $this->integer()->notNull(),
-            'quantity' => $this->float()->notNull()->defaultValue(1),
-            'price_per_pcs' => $this->float()->notNull(),
-            'total_price' => $this->float()->notNull(),
-        ], $tableOptions);
+        $this->addColumn('{{%order_item}}', 'addon_id', $this->integer()->notNull()->defaultValue(0));
 
-        $this->createIndex('itemaddon', '{{%order_item_addon}}', ['order_item_id']);
+        $tblMenu = '{{%backend_menu}}';
+        /** @var BackendMenu $shopMenuItem */
+        $shopMenuItem = BackendMenu::findOne([
+            'name' => 'Shop',
+        ]);
+        $this->batchInsert($tblMenu,
+            [
+                'parent_id',
+                'name',
+                'route',
+                'icon',
+                'sort_order',
+                'added_by_ext',
+                'rbac_check',
+                'css_class',
+                'translation_category'
+            ],
+            [
+                [$shopMenuItem->id, 'Addons', 'shop/backend-addons/index', 'cart-plus', 0, 'core', 'product manage', '', 'app'],
+            ]
+        );
+        \yii\caching\TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(\app\backend\models\BackendMenu::className())
+            ]
+        );
     }
 
     public function down()
@@ -97,8 +114,16 @@ class m150827_075105_product_addons extends Migration
         $this->dropTable('{{%addon}}');
         $this->dropTable('{{%addon_category}}');
         $this->dropTable('{{%addon_bindings}}');
-        $this->dropTable('{{%order_item_addon}}');
         $this->delete('{{%object}}', ['name' => 'Addon']);
+
+        $this->delete('{{%backend_menu}}', ['name' => 'Addons']);
+        \yii\caching\TagDependency::invalidate(
+            Yii::$app->cache,
+            [
+                \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(\app\backend\models\BackendMenu::className())
+            ]
+        );
+        $this->dropColumn('{{%order_item}}', 'addon_id');
     }
 
     /*
