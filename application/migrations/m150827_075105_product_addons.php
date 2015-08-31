@@ -9,7 +9,7 @@ class m150827_075105_product_addons extends Migration
     public function up()
     {
         $tableOptions = $this->db->driverName === 'mysql'
-            ? 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB'
+            ? 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=MyISAM'
             : null;
 
         $this->insert('{{%object}}', [
