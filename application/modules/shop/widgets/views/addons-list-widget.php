@@ -1,38 +1,45 @@
 <?php
+/** @var array $bindedAddons */
+/** @var integer $object_id */
+/** @var integer $object_model_id */
 
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 ?>
 <div class="addons-list-widget">
-    <div class="alert alert-warning">
-        <b>@todo</b> выводить аддоны по категориям!!!
-    </div>
-<?php foreach ($bindedAddons as $addon): ?>
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <div class="pull-right btn-group">
+<?php foreach ($bindedAddons as $categoryName => $addons): ?>
+    <fieldset>
+        <legend><?= Html::encode($categoryName) ?></legend>
 
-                <div class="btn btn-xs btn-default">
-                    <?php
-                    $currency = \app\modules\shop\models\Currency::findById($addon->currency_id);
-                    echo $currency->format($addon->price);
+        <?php foreach ($addons as $addon): ?>
+            <?php /* @var \app\modules\shop\models\Addon $addon */ ?>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="pull-right btn-group">
 
-                    ?>
+                        <div class="btn btn-xs btn-default">
+                            <?php
+                            $currency = \app\modules\shop\models\Currency::findById($addon->currency_id);
+                            echo $currency->format($addon->price);
 
+                            ?>
+
+                        </div>
+                        <?= Html::a(
+                            \kartik\icons\Icon::show('trash-o') . ' ' . Yii::t('app', 'Delete'),
+                            '#',
+                            [
+                                'data-id' => $addon->id,
+                                'class' => 'btn btn-xs btn-danger remove-addon',
+                            ]
+                        ) ?>
+                    </div>
+                    <?= Html::encode($addon->name) ?>
                 </div>
-                <?= Html::a(
-                    \kartik\icons\Icon::show('trash-o') . ' ' . Yii::t('app', 'Delete'),
-                    '#',
-                    [
-                        'data-id' => $addon->id,
-                        'class' => 'btn btn-xs btn-danger remove-addon',
-                    ]
-                ) ?>
             </div>
-            <?= Html::encode($addon->name) ?>
-        </div>
-    </div>
+        <?php endforeach; ?>
+    </fieldset>
 <?php endforeach; ?>
 </div>
 <?php

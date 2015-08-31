@@ -9,6 +9,7 @@ use app\modules\shop\widgets\AddonsListWidget;
  * @var \app\models\Object $object
  * @var \yii\db\ActiveRecord $model
  * @var array $addAddonTree
+ * @var array $bindedAddons
  */
 /** @var \app\modules\shop\models\AddonCategory $addonCategories */
 /** @var app\backend\components\ActiveForm $form */
