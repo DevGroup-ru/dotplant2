@@ -20,6 +20,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $productsPerPage = 15;
 
     /**
+     * @var string How show products in category
+     */
+    public $listViewType = 'blockView';
+
+    /**
      * @var int How much products allow to compare at once
      */
     public $maxProductsToCompare = 3;
@@ -113,6 +118,15 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 ],
                 'integer',
                 'min' => 1,
+            ],
+            [
+                'listViewType',
+                'in',
+                'range'=>[
+                    'listView',
+                    'blockView'
+                ],
+                'strict'=>true
             ],
             [
                 [

@@ -32,6 +32,10 @@ class ShopModule extends BaseModule implements BootstrapInterface
     public $productsPerPage = 15;
 
     /**
+     * @var string How show products in category
+     */
+    public $listViewType = 'blockView';
+    /**
      * @var int How much products allow to compare at once
      */
     public $maxProductsToCompare = 3;
