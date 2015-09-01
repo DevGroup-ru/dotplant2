@@ -34,7 +34,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
     /**
      * @var int type of redirect from WWW or without WWW
      */
-    public $redirectWWW = 0;
+    public $redirectWWW = self::NO_REDIRECT;
     /**
      * @var bool if true redirect from url with trailing slash
      */
