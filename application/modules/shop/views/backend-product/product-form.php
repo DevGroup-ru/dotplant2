@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
         Html::a(
             Icon::show('eye') . Yii::t('app', 'Preview'),
             [
-                '/shop/product/show',
+                '@product',
                 'model' => $model,
                 'category_group_id' => is_null($model->mainCategory) ? null : $model->mainCategory->category_group_id,
             ],

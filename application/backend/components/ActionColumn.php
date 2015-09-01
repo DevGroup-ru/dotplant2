@@ -86,7 +86,14 @@ class ActionColumn extends Column
         if ($this->urlCreator instanceof Closure) {
             return call_user_func($this->urlCreator, $action, $model, $key, $index);
         } else {
-            $params = is_array($key) ? $key : [$keyParam => (string) $key];
+            $params = [];
+            if (is_array($key)) {
+                $params = $key;
+            } else {
+                if (is_null($keyParam) === false) {
+                    $params = [$keyParam => (string) $key];
+                }
+            }
             $params[0] = $this->controller ? $this->controller . '/' . $action : $action;
             foreach ($attrs as $attrName) {
                 if ($attrName === 'model') {
@@ -120,7 +127,7 @@ class ActionColumn extends Column
             }
         }
         $min_width = count($this->buttons) * 34; //34 is button-width
-        $data = Html::beginTag('div', ['class' => 'btn-group', 'style'=>'min-width: '.$min_width.'px']);
+        $data = Html::beginTag('div', ['class' => 'btn-group', 'style' => 'min-width: ' . $min_width . 'px']);
         foreach ($this->buttons as $button) {
             $appendReturnUrl = ArrayHelper::getValue($button, 'appendReturnUrl', $this->appendReturnUrl);
             $url_append = ArrayHelper::getValue($button, 'url_append', $this->url_append);
@@ -130,10 +137,17 @@ class ActionColumn extends Column
             Html::addCssClass($button, 'btn-sm');
             $buttonText = isset($button['text']) ? ' ' . $button['text'] : '';
             $data .= Html::a(
-                Icon::show($button['icon']) . $buttonText,
-                $url = $this->createUrl(
-                    $button['url'], $model, $key, $index, $appendReturnUrl, $url_append, $keyParam, $attrs
-                ),
+                    Icon::show($button['icon']) . $buttonText,
+                    $url = $this->createUrl(
+                        $button['url'],
+                        $model,
+                        $key,
+                        $index,
+                        $appendReturnUrl,
+                        $url_append,
+                        $keyParam,
+                        $attrs
+                    ),
                     ArrayHelper::merge(
                         isset($button['options']) ? $button['options'] : [],
                         [
@@ -143,7 +157,7 @@ class ActionColumn extends Column
                             'title' => $button['label'],
                         ]
                     )
-            ) . ' ';
+                ) . ' ';
         }
         $data .= '</div>';
         return $data;
