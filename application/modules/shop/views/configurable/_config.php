@@ -16,6 +16,11 @@ use app\components\Helper;
 
         <?= $form->field($model, 'productsPerPage') ?>
 
+        <?= $form->field($model, 'listViewType')->dropDownList([
+            'listView' => Yii::t('app', 'List view'),
+            'blockView' => Yii::t('app', 'Block view')
+        ]) ?>
+
         <?= $form->field($model, 'searchResultsLimit') ?>
 
         <?= $form->field($model, 'allowSearchGeneratedProducts')->widget(SwitchInput::className()) ?>

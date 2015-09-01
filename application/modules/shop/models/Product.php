@@ -10,6 +10,7 @@ use app\models\Object;
 use app\modules\data\components\ImportableInterface;
 use app\modules\data\components\ExportableInterface;
 use app\modules\shop\traits\HasAddonTrait;
+use app\modules\shop\ShopModule;
 use app\properties\HasProperties;
 use app\traits\GetImages;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -611,7 +612,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             // post-process categories
             // find & add parent category
             // if we need to show products of child categories in products list
-            $module = Yii::$app->modules['shop'];
+            /** @var ShopModule $module */
+            $module = Yii::$app->getModule('shop');
             if (is_array($categories) && $module->showProductsOfChildCategories) {
                 do {
                     $repeat = false;
@@ -739,7 +741,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         }
 
         /** @var \app\modules\shop\ShopModule $module */
-        $module = Yii::$app->modules['shop'];
+        $module = Yii::$app->getModule('shop');
 
         $onlyParents = $module->filterOnlyByParentProduct;
         $query = static::find()->with('images');

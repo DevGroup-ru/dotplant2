@@ -39,7 +39,7 @@ class UserPreferences extends Model {
                 'range' => array_keys(ProductListingSort::enabledSorts())
             ],
 
-            ['listViewType', 'default', 'value' => 'blockView'],
+            ['listViewType', 'default', 'value' => Yii::$app->getModule('shop')->listViewType],
             [
                 'listViewType',
                 'in',

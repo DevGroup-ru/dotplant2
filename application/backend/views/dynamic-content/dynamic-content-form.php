@@ -3,12 +3,12 @@
  * @var \yii\web\View $this
  */
 
+use app\backend\controllers\DynamicContentController;
 use app\backend\widgets\BackendWidget;
 use kartik\widgets\Select2;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
-use vova07\imperavi\Widget as ImperaviWidget;
+use app\backend\components\ActiveForm;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JsExpression;
@@ -134,6 +134,12 @@ $this->registerJs('
     </div>
 </div>
 <?php BackendWidget::end(); ?>
+
+<?php
+$event = new \app\backend\events\BackendEntityEditFormEvent($form, $model);
+$this->trigger(DynamicContentController::BACKEND_DYNAMIC_CONTENT_EDIT_FORM, $event);
+?>
+
 <?php ActiveForm::end(); ?>
 
 

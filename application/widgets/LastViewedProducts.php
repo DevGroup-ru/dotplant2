@@ -10,6 +10,7 @@ class LastViewedProducts extends Widget
 {
     public $elementNumber = 3;
     public $title = "Recently Viewed Products";
+    public $viewFile = 'lastviewedproducts\main-view';
 
     /**
      * @inheritdoc
@@ -33,7 +34,7 @@ class LastViewedProducts extends Widget
             }
         }
         return $this->render(
-            'lastviewedproducts\main-view',
+            $this->viewFile,
             [
                 'title' => $this->title,
                 'elementNumber' => $this->elementNumber,

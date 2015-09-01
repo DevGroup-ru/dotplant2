@@ -10,20 +10,24 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $cacheConfig;
     public $include;
     public $mainPage;
+    public $redirectWWW = 0;
+    public $redirectTrailingSlash = false;
 
     public function attributeLabels()
     {
         return [
             'mainPage' => \Yii::t('app', 'Main page'),
             'include' => \Yii::t('app', 'Includes'),
+            'redirectWWW' => \Yii::t('app', 'Redirect WWW'),
+            'redirectTrailingSlash' => \Yii::t('app', 'Redirect trailing slash'),
         ];
     }
 
     public function rules()
     {
         return [
-//            [['cacheConfig'], 'each', 'rule' => ['each', 'rule' => ['string']]],
-            [['mainPage', 'include', 'cacheConfig'], 'safe'],
+            //            [['cacheConfig'], 'each', 'rule' => ['each', 'rule' => ['string']]],
+            [['mainPage', 'include', 'cacheConfig', 'redirectWWW', 'redirectTrailingSlash'], 'safe'],
         ];
     }
 
@@ -44,7 +48,6 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      * Returns array of module configuration that should be stored in application config.
      * Array should be ready to merge in app config.
      * Used both for web only.
-     *
      * @return array
      */
     public function webApplicationAttributes()
@@ -60,7 +63,6 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      * Returns array of module configuration that should be stored in application config.
      * Array should be ready to merge in app config.
      * Used both for console only.
-     *
      * @return array
      */
     public function consoleApplicationAttributes()
@@ -72,7 +74,6 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      * Returns array of module configuration that should be stored in application config.
      * Array should be ready to merge in app config.
      * Used both for web and console.
-     *
      * @return array
      */
     public function commonApplicationAttributes()
@@ -82,7 +83,6 @@ class ConfigConfigurationModel extends BaseConfigurationModel
 
     /**
      * Returns array of key=>values for configuration.
-     *
      * @return mixed
      */
     public function keyValueAttributes()
