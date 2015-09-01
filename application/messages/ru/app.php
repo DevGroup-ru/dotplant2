@@ -820,7 +820,7 @@ return [
     'Redirects' => 'Перенаправления',
     'Redirects management' => 'Управление перенаправлениями',
     'Redirect WWW' => 'WWW перенаправление',
-    'Redirect trailing slash' => 'Перенаправление с ведушего слеша',
+    'Redirect trailing slash' => 'Перенаправление с ведущего слеша',
     'No redirect' => 'Без перенаправления',
     'Redirect from WWW to without WWW' => 'Перенаправление с WWW на без WWW',
     'Redirect from without WWW to WWW' => 'Перенаправление с без WWW на WWW',
