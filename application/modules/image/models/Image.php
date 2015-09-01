@@ -172,7 +172,6 @@ class Image extends \yii\db\ActiveRecord
             }
             unset($current_images);
 
-            $dir = '/theme/resources/product-images/';
             // insert new images
             foreach ($images as $key => $new) {
                 if (isset($new['filename'])) {
@@ -191,14 +190,11 @@ class Image extends \yii\db\ActiveRecord
                                 )
                             );
                             try {
-                                $stream = fopen($new['filename'], 'r+');
+                                $stream = fopen($new['filename'], 'r');
                                 Yii::$app->getModule('image')->fsComponent->putStream($image_model->filename, $stream);
-
                             } catch (\Exception $e) {
                                 // whoops :-(
                             }
-                            $image_model->filename = $dir . $image_model->filename;
-
                         } else {
                             $image_model->filename = $new['filename'];
                         }
