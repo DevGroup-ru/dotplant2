@@ -108,7 +108,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
     public static function redirectWWW()
     {
         $type = Yii::$app->getModule('seo')->redirectWWW;
-        if ($type != 0) {
+        if ($type != self::NO_REDIRECT) {
             $readirArr = [
                 self::FROM_WITHOUT_WWW => function () {
                     if (preg_match('#^www\.#i', Yii::$app->request->serverName) === 0) {
