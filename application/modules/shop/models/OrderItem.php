@@ -3,6 +3,9 @@
 namespace app\modules\shop\models;
 
 use app\behaviors\Tree;
+use app\modules\shop\components\AddonOrderItemIdentityFactory;
+use app\modules\shop\components\CustomOrderItemIdentityFactory;
+use app\modules\shop\components\ProductOrderItemIdentityFactory;
 use app\modules\shop\helpers\PriceHelper;
 use app\properties\HasProperties;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -11,12 +14,12 @@ use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "{{%order_item}}".
- *
  * Model fields:
  * @property integer $id
  * @property integer $parent_id
  * @property integer $order_id
  * @property integer $product_id
+ * @property string $custom_name
  * @property integer $addon_id
  * @property double $quantity
  * @property double $price_per_pcs
@@ -151,6 +154,34 @@ class OrderItem extends ActiveRecord
             return Addon::findById($this->addon_id);
         } else {
             return Product::findById($this->product_id);
+        }
+    }
+
+    /**
+     * @return AddonOrderItemIdentity|CustomOrderItemIdentity|ProductOrderItemIdentity|null
+     */
+    public function getIdentityByModel()
+    {
+        if ($this->addon_id !== 0) {
+            return AddonOrderItemIdentityFactory::getOrderItemIdentityByModel($this);
+        } elseif ($this->product_id !== 0) {
+            return ProductOrderItemIdentityFactory::getOrderItemIdentityByModel($this);
+        } else {
+            return CustomOrderItemIdentityFactory::getOrderItemIdentityByModel($this);
+        }
+    }
+
+    /**
+     * @return AddonOrderItemIdentity|CustomOrderItemIdentity|ProductOrderItemIdentity|null
+     */
+    public function getIdentityById()
+    {
+        if ($this->addon_id !== 0) {
+            return AddonOrderItemIdentityFactory::getOrderItemIdentityById($this->id);
+        } elseif ($this->product_id !== 0) {
+            return ProductOrderItemIdentityFactory::getOrderItemIdentityById($this->id);
+        } else {
+            return CustomOrderItemIdentityFactory::getOrderItemIdentityById($this->id);
         }
     }
 }
