@@ -4,12 +4,12 @@
 namespace app\modules\shop\models;
 
 /**
- * Class AddonOrderItemIdentity
+ * Class AddonOrderItemEntity
  * @package app\modules\shop\models
  * Relations:
  * @property Addon $model
  */
-class AddonOrderItemIdentity extends AbstractOrderItemIdentity
+class AddonOrderItemEntity extends AbstractOrderItemEntity
 {
     /**
      * @return string

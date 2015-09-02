@@ -3,9 +3,9 @@
 namespace app\modules\shop\models;
 
 use app\behaviors\Tree;
-use app\modules\shop\components\AddonOrderItemIdentityFactory;
-use app\modules\shop\components\CustomOrderItemIdentityFactory;
-use app\modules\shop\components\ProductOrderItemIdentityFactory;
+use app\modules\shop\components\AddonOrderItemEntityFactory;
+use app\modules\shop\components\CustomOrderItemEntityFactory;
+use app\modules\shop\components\ProductOrderItemEntityFactory;
 use app\modules\shop\helpers\PriceHelper;
 use app\properties\HasProperties;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -158,30 +158,30 @@ class OrderItem extends ActiveRecord
     }
 
     /**
-     * @return AddonOrderItemIdentity|CustomOrderItemIdentity|ProductOrderItemIdentity|null
+     * @return AddonOrderItemEntity|CustomOrderItemEntity|ProductOrderItemEntity|null
      */
-    public function getIdentityByModel()
+    public function getEntityByModel()
     {
         if ($this->addon_id !== 0) {
-            return AddonOrderItemIdentityFactory::getOrderItemIdentityByModel($this);
+            return AddonOrderItemEntityFactory::getOrderItemEntityByModel($this);
         } elseif ($this->product_id !== 0) {
-            return ProductOrderItemIdentityFactory::getOrderItemIdentityByModel($this);
+            return ProductOrderItemEntityFactory::getOrderItemEntityByModel($this);
         } else {
-            return CustomOrderItemIdentityFactory::getOrderItemIdentityByModel($this);
+            return CustomOrderItemEntityFactory::getOrderItemEntityByModel($this);
         }
     }
 
     /**
-     * @return AddonOrderItemIdentity|CustomOrderItemIdentity|ProductOrderItemIdentity|null
+     * @return AddonOrderItemEntity|CustomOrderItemEntity|ProductOrderItemEntity|null
      */
-    public function getIdentityById()
+    public function getEntityById()
     {
         if ($this->addon_id !== 0) {
-            return AddonOrderItemIdentityFactory::getOrderItemIdentityById($this->id);
+            return AddonOrderItemEntityFactory::getOrderItemEntityById($this->id);
         } elseif ($this->product_id !== 0) {
-            return ProductOrderItemIdentityFactory::getOrderItemIdentityById($this->id);
+            return ProductOrderItemEntityFactory::getOrderItemEntityById($this->id);
         } else {
-            return CustomOrderItemIdentityFactory::getOrderItemIdentityById($this->id);
+            return CustomOrderItemEntityFactory::getOrderItemEntityById($this->id);
         }
     }
 }

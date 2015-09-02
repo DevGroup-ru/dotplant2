@@ -3,10 +3,10 @@
 namespace app\modules\shop\models;
 
 /**
- * Class AbstractOrderItemIdentity
+ * Class AbstractOrderItemEntity
  * @package app\modules\shop\models
  */
-class AbstractOrderItemIdentity extends OrderItem
+class AbstractOrderItemEntity extends OrderItem
 {
     /**
      * @return string

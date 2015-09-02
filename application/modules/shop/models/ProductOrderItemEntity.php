@@ -3,12 +3,12 @@
 namespace app\modules\shop\models;
 
 /**
- * Class ProductOrderItemIdentity
+ * Class ProductOrderItemEntity
  * @package app\modules\shop\models
  * Relations:
  * @property Product $model
  */
-class ProductOrderItemIdentity extends AbstractOrderItemIdentity
+class ProductOrderItemEntity extends AbstractOrderItemEntity
 {
     /**
      * @return string
