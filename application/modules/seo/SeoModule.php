@@ -34,7 +34,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
     /**
      * @var int type of redirect from WWW or without WWW
      */
-    public $redirectWWW = 0;
+    public $redirectWWW = self::NO_REDIRECT;
     /**
      * @var bool if true redirect from url with trailing slash
      */
@@ -108,7 +108,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
     public static function redirectWWW()
     {
         $type = Yii::$app->getModule('seo')->redirectWWW;
-        if ($type != 0) {
+        if ($type != self::NO_REDIRECT) {
             $readirArr = [
                 self::FROM_WITHOUT_WWW => function () {
                     if (preg_match('#^www\.#i', Yii::$app->request->serverName) === 0) {
@@ -116,6 +116,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
                             str_replace('://', '://www.', Yii::$app->request->absoluteUrl),
                             301
                         );
+                        Yii::$app->end();
                     }
                 },
                 self::FROM_WWW => function () {
@@ -124,6 +125,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
                             str_replace('://www.', '://', Yii::$app->request->absoluteUrl),
                             301
                         );
+                        Yii::$app->end();
                     }
                 },
             ];
@@ -139,6 +141,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
         $redirUrl = preg_replace('#^(.*)/$#', '$1', Yii::$app->request->url);
         if (!empty($redirUrl) && $redirUrl !== Yii::$app->request->url) {
             Yii::$app->response->redirect($redirUrl, 301);
+            Yii::$app->end();
         }
     }
 }

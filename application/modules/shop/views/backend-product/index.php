@@ -44,73 +44,72 @@ $this->endBlock();
 
 <div class="row">
     <div class="col-md-4">
-        <?=
-        TreeWidget::widget([
-            'treeDataRoute' => ['getTree'],
-            'doubleClickAction' => ContextMenuHelper::actionUrl(
-                ['index', 'returnUrl' => Helper::getReturnUrl()],
-                [
-                    'parent_id' => 'id',
-                ]
-            ),
-            'contextMenuItems' => [
-                'show' => [
-                    'label' => 'Show products in category',
-                    'icon' => 'fa fa-folder-open',
-                    'action' => ContextMenuHelper::actionUrl(
-                        ['index'],
-                        [
-                            'parent_id' => 'id',
-                        ]
-                    ),
-                ],
-                'createProduct' => [
-                    'label' => 'Create product in this category',
-                    'icon' => 'fa fa-plus-circle',
-                    'action' => ContextMenuHelper::actionUrl(
-                        ['edit', 'returnUrl' => Helper::getReturnUrl()],
-                        [
-                            'parent_id' => 'id',
-                        ]
-                    ),
-                ],
-                'edit' => [
-                    'label' => 'Edit category',
-                    'icon' => 'fa fa-pencil',
-                    'action' => ContextMenuHelper::actionUrl(
-                        ['/shop/backend-category/edit', 'returnUrl' => Helper::getReturnUrl()]
-                    ),
-                ],
-                'create' => [
-                    'label' => 'Create category',
-                    'icon' => 'fa fa-plus-circle',
-                    'action' => ContextMenuHelper::actionUrl(
-                        ['/shop/backend-category/edit', 'returnUrl' => Helper::getReturnUrl()],
-                        [
-                            'parent_id' => 'id',
-                        ]
-                    ),
-                ],
-                'delete' => [
-                    'label' => 'Delete',
-                    'icon' => 'fa fa-trash-o',
-                    'action' => new \yii\web\JsExpression(
-                        "function(node) {
+        <?=TreeWidget::widget(
+            [
+                'treeDataRoute' => ['getTree'],
+                'doubleClickAction' => ContextMenuHelper::actionUrl(
+                    ['index', 'returnUrl' => Helper::getReturnUrl()],
+                    [
+                        'parent_id' => 'id',
+                    ]
+                ),
+                'contextMenuItems' => [
+                    'show' => [
+                        'label' => 'Show products in category',
+                        'icon' => 'fa fa-folder-open',
+                        'action' => ContextMenuHelper::actionUrl(
+                            ['index'],
+                            [
+                                'parent_id' => 'id',
+                            ]
+                        ),
+                    ],
+                    'createProduct' => [
+                        'label' => 'Create product in this category',
+                        'icon' => 'fa fa-plus-circle',
+                        'action' => ContextMenuHelper::actionUrl(
+                            ['edit', 'returnUrl' => Helper::getReturnUrl()],
+                            [
+                                'parent_id' => 'id',
+                            ]
+                        ),
+                    ],
+                    'edit' => [
+                        'label' => 'Edit category',
+                        'icon' => 'fa fa-pencil',
+                        'action' => ContextMenuHelper::actionUrl(
+                            ['/shop/backend-category/edit', 'returnUrl' => Helper::getReturnUrl()]
+                        ),
+                    ],
+                    'create' => [
+                        'label' => 'Create category',
+                        'icon' => 'fa fa-plus-circle',
+                        'action' => ContextMenuHelper::actionUrl(
+                            ['/shop/backend-category/edit', 'returnUrl' => Helper::getReturnUrl()],
+                            [
+                                'parent_id' => 'id',
+                            ]
+                        ),
+                    ],
+                    'delete' => [
+                        'label' => 'Delete',
+                        'icon' => 'fa fa-trash-o',
+                        'action' => new \yii\web\JsExpression(
+                            "function(node) {
                             jQuery('#delete-category-confirmation')
                                 .attr('data-url', '/backend/category/delete?id=' + jQuery(node.reference[0]).data('id'))
                                 .attr('data-items', '')
                                 .modal('show');
                             return true;
                         }"
-                    ),
+                        ),
+                    ],
                 ],
-            ],
-        ]);
-        ?>
+            ]
+        );?>
     </div>
     <div class="col-md-8" id="jstree-more">
-        <?=
-        DynaGrid::widget(
+        <?=DynaGrid::widget(
             [
                 'options' => [
                     'id' => 'Product-grid',
@@ -136,8 +135,8 @@ $this->endBlock();
                         'attribute' => 'active',
                         'editableOptions' => [
                             'data' => [
-                                0 =>  Yii::t('app', 'Inactive'),
-                                1 =>  Yii::t('app', 'Active'),
+                                0 => Yii::t('app', 'Inactive'),
+                                1 => Yii::t('app', 'Active'),
                             ],
                             'inputType' => 'dropDownList',
                             'placement' => 'left',
@@ -146,8 +145,8 @@ $this->endBlock();
                             ],
                         ],
                         'filter' => [
-                            0 =>  Yii::t('app', 'Inactive'),
-                            1 =>  Yii::t('app', 'Active'),
+                            0 => Yii::t('app', 'Inactive'),
+                            1 => Yii::t('app', 'Active'),
                         ],
                         'format' => 'raw',
                         'value' => function (Product $model) {
@@ -242,6 +241,7 @@ $this->endBlock();
                                 'appendReturnUrl' => false,
                                 'url_append' => '',
                                 'attrs' => ['model'],
+                                'keyParam' => null,
                             ],
                             [
                                 'url' => 'edit',
@@ -278,7 +278,6 @@ $this->endBlock();
                     ],
                 ]
             ]
-        );
-        ?>
+        );?>
     </div>
 </div>
