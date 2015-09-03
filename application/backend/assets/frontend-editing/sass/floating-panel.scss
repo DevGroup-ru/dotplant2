@@ -4,98 +4,98 @@ $panel-background-color: #222;
 $panel-height: 50px;
 
 #dotplant-floating-panel {
-	position: fixed;
-	top: 0;
-	height: $panel-height;
-	min-height: $panel-height;
-	margin-bottom: 0;
-	border-radius: 0;
-	z-index: 999999;
-	background: $panel-background-color;
-	border-bottom: 1px solid contrast-color($panel-background-color, darken($panel-background-color, 50%), lighten($panel-background-color, 50%));
-	color: contrast-color($panel-background-color);
-	&.open {
-		width: 100%;
-		span.panel-toggler {
-			&:before {
-				content: "<";
-			}
-		}
-	}
-	&.closed {
-		span.panel-toggler {
-			&:before {
-				content: ">";
-			}
-		}
-		div.navbar-text, .navbar-nav {
-			display: none;
-		}
-	}
-	span.panel-toggler {
-		float: left;
-		display: block;
-		line-height: 20px;
-		margin: 15px;
-		width: 20px;
-		&:hover {
-			cursor: pointer;
-		}
-	}
+  position: fixed;
+  top: 0;
+  height: $panel-height;
+  min-height: $panel-height;
+  margin-bottom: 0;
+  border-radius: 0;
+  z-index: 999999;
+  background: $panel-background-color;
+  border-bottom: 1px solid contrast-color($panel-background-color, darken($panel-background-color, 50%), lighten($panel-background-color, 50%));
+  color: contrast-color($panel-background-color);
+  &.open {
+    width: 100%;
+    span.panel-toggler {
+      &:before {
+        content: "<";
+      }
+    }
+  }
+  &.closed {
+    span.panel-toggler {
+      &:before {
+        content: ">";
+      }
+    }
+    div.navbar-text, .navbar-nav {
+      display: none;
+    }
+  }
+  span.panel-toggler {
+    float: left;
+    display: block;
+    line-height: 20px;
+    margin: 15px;
+    width: 20px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
 
-	.container-fluid {
-		padding-right: 15px;
-		padding-left: 15px;
-		margin-right: auto;
-		margin-left: auto;
-	}
-	a {
-		color: #337ab7;
-		text-decoration: none;
-		&:hover {
-			color: #23527c;
-			text-decoration: underline;
-		}
-	}
-	.navbar-text {
-		float: left;
-		line-height: 20px;
-		margin: 15px;
-	}
-	.navbar-nav {
-		float: left;
-		margin: 0;
-		li {
-			display: block;
-			float: left;
-			position: relative;
-		}
-		a, a:visited {
-			color: contrast-color($panel-background-color);
-			display: block;
-			line-height: 20px;
-			padding: 15px;
-			&:hover {
-				background: #fff;
-				color: #000;
-				text-decoration: none;
-			}
-		}
-	}
-	&.dotplant-floating-panel-bottom {
-		top: auto;
-		bottom: 0;
-	}
+  .container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  a {
+    color: #337ab7;
+    text-decoration: none;
+    &:hover {
+      color: #23527c;
+      text-decoration: underline;
+    }
+  }
+  .navbar-text {
+    float: left;
+    line-height: 20px;
+    margin: 15px;
+  }
+  .navbar-nav {
+    float: left;
+    margin: 0;
+    li {
+      display: block;
+      float: left;
+      position: relative;
+    }
+    a, a:visited {
+      color: contrast-color($panel-background-color);
+      display: block;
+      line-height: 20px;
+      padding: 15px;
+      &:hover {
+        background: #fff;
+        color: #000;
+        text-decoration: none;
+      }
+    }
+  }
+  &.dotplant-floating-panel-bottom {
+    top: auto;
+    bottom: 0;
+  }
 }
 
 @media (max-width: 320px) {
 
-	// hide floating panel on small screens
-	// maybe later we'll make it responsive
-	#dotplant-floating-panel {
-		display: none;
-	}
-	body {
-		padding-top: 0 !important;
-	}
+  // hide floating panel on small screens
+  // maybe later we'll make it responsive
+  #dotplant-floating-panel {
+    display: none;
+  }
+  body {
+    padding-top: 0 !important;
+  }
 }
