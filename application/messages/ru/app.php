@@ -216,6 +216,7 @@ return [
     'Content page listing' => 'Листинг контентных страниц',
     'Content page(show)' => 'Контентная страница(показать)',
     'Continue at your own risk.' => 'Продолжить на свой риск.',
+    'Continue checkout' => 'Продолжить оформление заказа',
     'Contragent' => 'Контрагент',
     'Contragent ID' => 'ID контрагента',
     'Contragent edit' => 'Редактировать контрагента',

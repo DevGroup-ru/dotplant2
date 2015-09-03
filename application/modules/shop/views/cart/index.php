@@ -35,7 +35,7 @@ $this->title = Yii::t('app', 'Cart');
     </div>
     <div class="clearfix"></div>
     <div class="pull-right cta">
-        <?= \yii\helpers\Html::a(Yii::t('app', 'Checkout'), ['/shop/cart/stage'], ['class' => 'btn btn-primary']); ?>
+        <?= \yii\helpers\Html::a(Yii::t('app', $model->stage->isInitial() ? 'Checkout' : 'Continue checkout'), ['/shop/cart/stage'], ['class' => 'btn btn-primary']); ?>
     </div>
 
 <?php else: ?>
