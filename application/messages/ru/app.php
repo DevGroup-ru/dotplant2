@@ -907,7 +907,7 @@ return [
     'Shipping center' => 'Центр доставки',
     'Shipping option' => 'Способ доставки',
     'Shipping options' => 'Способы доставки',
-    'Shipping method' => 'Способ доставˆки',
+    'Shipping method' => 'Способ доставки',
     'Shipping option management' => 'Управление способами доставки',
     'Shipping price' => 'Стоимость доставки',
     'Shipping price total' => 'Итоговая стоимость доставки',
