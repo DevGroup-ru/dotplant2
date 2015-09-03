@@ -8,8 +8,9 @@ use kartik\icons\Icon;
 
 ?>
 
-<nav id="dotplant-floating-panel" class="<?= $bottom?'dotplant-floating-panel-bottom':''?>">
+<nav id="dotplant-floating-panel" class="<?= $bottom?'dotplant-floating-panel-bottom open':'open'?>">
     <div class="container-fluid">
+        <span class="panel-toggler"></span>
         <a href="/backend/" class="navbar-text">DotPlant2</a>
         <div class="navbar-text">
 
@@ -37,6 +38,12 @@ use kartik\icons\Icon;
     $this->registerJs("$('body').css('padding-top', parseInt($('body').css('padding-top'))+51);",
         \yii\web\View::POS_READY);
 }
+$this->registerJs(<<<JS
+    $('#dotplant-floating-panel .panel-toggler').click(function(){
+        $('#dotplant-floating-panel').toggleClass('open closed');
+    });
+JS
+);
 ?>
 
 
