@@ -100,6 +100,15 @@ class OrderStage extends \yii\db\ActiveRecord
     }
 
     /**
+     * Check if current stage is initial
+     * @return bool
+     */
+    public function isInitial()
+    {
+        return $this->is_initial === 1 ? true : false;
+    }
+
+    /**
      * @return OrderStage|null
      */
     public static function getInitialStage()

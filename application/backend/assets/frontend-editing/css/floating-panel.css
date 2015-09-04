@@ -6,72 +6,99 @@
   min-height: 50px;
   margin-bottom: 0;
   border-radius: 0;
-  width: 100%;
   z-index: 999999;
   background: #222;
   border-bottom: 1px solid #a2a2a2;
   color: #fff;
 }
-/* line 18, ../sass/floating-panel.scss */
+/* line 17, ../sass/floating-panel.scss */
+#dotplant-floating-panel.open {
+  width: 100%;
+}
+/* line 20, ../sass/floating-panel.scss */
+#dotplant-floating-panel.open span.panel-toggler:before {
+  content: "<";
+}
+/* line 27, ../sass/floating-panel.scss */
+#dotplant-floating-panel.closed span.panel-toggler:before {
+  content: ">";
+}
+/* line 31, ../sass/floating-panel.scss */
+#dotplant-floating-panel.closed div.navbar-text, #dotplant-floating-panel.closed .navbar-nav {
+  display: none;
+}
+/* line 35, ../sass/floating-panel.scss */
+#dotplant-floating-panel span.panel-toggler {
+  float: left;
+  display: block;
+  line-height: 20px;
+  margin: 15px;
+  width: 20px;
+}
+/* line 41, ../sass/floating-panel.scss */
+#dotplant-floating-panel span.panel-toggler:hover {
+  cursor: pointer;
+}
+/* line 46, ../sass/floating-panel.scss */
 #dotplant-floating-panel .container-fluid {
   padding-right: 15px;
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
 }
-/* line 24, ../sass/floating-panel.scss */
+/* line 52, ../sass/floating-panel.scss */
 #dotplant-floating-panel a {
   color: #337ab7;
   text-decoration: none;
 }
-/* line 27, ../sass/floating-panel.scss */
+/* line 55, ../sass/floating-panel.scss */
 #dotplant-floating-panel a:hover {
   color: #23527c;
   text-decoration: underline;
 }
-/* line 32, ../sass/floating-panel.scss */
+/* line 60, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-text {
   float: left;
   line-height: 20px;
   margin: 15px;
 }
-/* line 37, ../sass/floating-panel.scss */
+/* line 65, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav {
   float: left;
   margin: 0;
 }
-/* line 40, ../sass/floating-panel.scss */
+/* line 68, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav li {
   display: block;
   float: left;
   position: relative;
 }
-/* line 45, ../sass/floating-panel.scss */
+/* line 73, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav a, #dotplant-floating-panel .navbar-nav a:visited {
   color: #fff;
   display: block;
   line-height: 20px;
   padding: 15px;
 }
-/* line 50, ../sass/floating-panel.scss */
+/* line 78, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav a:hover, #dotplant-floating-panel .navbar-nav a:visited:hover {
   background: #fff;
   color: #000;
   text-decoration: none;
 }
-/* line 57, ../sass/floating-panel.scss */
+/* line 85, ../sass/floating-panel.scss */
 #dotplant-floating-panel.dotplant-floating-panel-bottom {
   top: auto;
   bottom: 0;
 }
 
 @media (max-width: 320px) {
-  /* line 68, ../sass/floating-panel.scss */
+  /* line 96, ../sass/floating-panel.scss */
   #dotplant-floating-panel {
     display: none;
   }
 
-  /* line 71, ../sass/floating-panel.scss */
+  /* line 99, ../sass/floating-panel.scss */
   body {
     padding-top: 0 !important;
   }

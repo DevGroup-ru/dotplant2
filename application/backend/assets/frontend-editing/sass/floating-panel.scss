@@ -10,11 +10,39 @@ $panel-height: 50px;
   min-height: $panel-height;
   margin-bottom: 0;
   border-radius: 0;
-  width: 100%;
   z-index: 999999;
   background: $panel-background-color;
   border-bottom: 1px solid contrast-color($panel-background-color, darken($panel-background-color, 50%), lighten($panel-background-color, 50%));
   color: contrast-color($panel-background-color);
+  &.open {
+    width: 100%;
+    span.panel-toggler {
+      &:before {
+        content: "<";
+      }
+    }
+  }
+  &.closed {
+    span.panel-toggler {
+      &:before {
+        content: ">";
+      }
+    }
+    div.navbar-text, .navbar-nav {
+      display: none;
+    }
+  }
+  span.panel-toggler {
+    float: left;
+    display: block;
+    line-height: 20px;
+    margin: 15px;
+    width: 20px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
   .container-fluid {
     padding-right: 15px;
     padding-left: 15px;
@@ -59,7 +87,6 @@ $panel-height: 50px;
     bottom: 0;
   }
 }
-
 
 @media (max-width: 320px) {
 

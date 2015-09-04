@@ -58,6 +58,7 @@ class Navigation extends \yii\db\ActiveRecord
                     return \$('#navigation-url').val() === '' && value === '';
                 }
             }"],
+            ['sort_order', 'default', 'value' => 0],
         ];
     }
 

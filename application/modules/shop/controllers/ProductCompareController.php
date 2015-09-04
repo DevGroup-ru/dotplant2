@@ -32,7 +32,7 @@ class ProductCompareController extends Controller
     public function actionAdd($id, $backUrl = null)
     {
         ProductCompareHelper::addProductToList($id);
-        return null !== $backUrl ? $this->redirect($backUrl, 302) : true;
+        return $this->redirect($backUrl !== null ? $backUrl : Yii::$app->request->referrer);
     }
 
     /**
@@ -43,7 +43,7 @@ class ProductCompareController extends Controller
     public function actionRemove($id, $backUrl = null)
     {
         ProductCompareHelper::removeProductFromList($id);
-        return null !== $backUrl ? $this->redirect($backUrl, 302) : true;
+        return $this->redirect($backUrl !== null ? $backUrl : Yii::$app->request->referrer);
     }
 
     /**
