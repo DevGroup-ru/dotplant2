@@ -49,7 +49,7 @@ class CartController extends Controller
      * @return null|Order
      * @throws NotFoundHttpException
      */
-    protected function  loadOrder($create = false, $throwException = true)
+    protected function loadOrder($create = false, $throwException = true)
     {
         $model = Order::getOrder($create);
         if (is_null($model) && $throwException) {
@@ -356,10 +356,14 @@ class CartController extends Controller
         Yii::$app->session->remove('OrderStageReach');
 //        }
 
-        return $this->render('stage', [
-            'stage' => $orderStage,
-            'eventData' => $eventData,
-        ]);
+        return $this->render(
+            'stage',
+            [
+                'order' => $order,
+                'stage' => $orderStage,
+                'eventData' => $eventData,
+            ]
+        );
     }
 
     /**
@@ -413,4 +417,3 @@ class CartController extends Controller
         return $this->redirect(Url::to(['stage']));
     }
 }
-?>
