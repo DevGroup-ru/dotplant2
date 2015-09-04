@@ -66,9 +66,9 @@ class ImageDropzone extends DropZone
                     'jQuery(' . $fhName . '.previewElement).find("[name=\"id[]\"]").val(' . $file['id'] . ');
                 jQuery(' . $fhName . '.previewElement).find("[name=\"file[]\"]").val("' . $file['file'] . '");
                 jQuery(' . $fhName . '.previewElement).data("filename", "' . $file['name'] . '");
-                jQuery(' . $fhName . '.previewElement).find(".title textarea").text("' . $file['image_title'] . '");
+                jQuery(' . $fhName . '.previewElement).find(".title textarea").text(' . Json::encode($file['image_title']) . ');
                 jQuery(' . $fhName . '.previewElement).find(".title textarea").attr("name", "title[' . $file['id'] . ']");
-                jQuery(' . $fhName . '.previewElement).find(".alt textarea").text("' . $file['image_alt'] . '");
+                jQuery(' . $fhName . '.previewElement).find(".alt textarea").text(' . Json::encode($file['image_alt']) . ');
                 jQuery(' . $fhName . '.previewElement).find(".alt textarea").attr("name", "alt[' . $file['id'] . ']");'
                 );
             } catch (\RuntimeException $e) {
