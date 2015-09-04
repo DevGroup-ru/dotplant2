@@ -200,7 +200,7 @@ class PropertyStaticValues extends ActiveRecord
             $objectId = $objectModel !== null ? $objectModel->id : 0;
             $allSelections = static::find()
                 ->asArray(true)
-                ->select([self::tableName() . '.id', 'name', 'value', 'slug'])
+                ->select([self::tableName() . '.id', self::tableName() . '.name', 'value', self::tableName() . '.slug'])
                 ->innerJoin(
                     ObjectStaticValues::tableName(),
                     ObjectStaticValues::tableName() . '.property_static_value_id=' . self::tableName() . '.id'
@@ -208,6 +208,10 @@ class PropertyStaticValues extends ActiveRecord
                 ->innerJoin(
                     '{{%product_category}}',
                     '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
+                )
+                ->innerJoin(
+                    Product::tableName() . ' p',
+                    'p.id = {{%product_category}}.object_model_id AND p.active = 1'
                 )
                 ->where(
                     [
@@ -255,7 +259,6 @@ class PropertyStaticValues extends ActiveRecord
                     $query->andWhere(new Expression('`object_model_id` IN ' . $subQueryOptimisation));
                 }
             }
-            $objectModelIds = $query->column();
             $selectedQuery = static::find()
                 ->select(static::tableName() . '.id')
                 ->asArray(true)
@@ -265,8 +268,12 @@ class PropertyStaticValues extends ActiveRecord
                 )
                 ->where([
                     'property_id' => $property_id,
-                    ObjectStaticValues::tableName() . '.object_model_id' => $objectModelIds,
-                ]);
+                ])
+                ->andWhere(
+                    new Expression(
+                        ObjectStaticValues::tableName() . '.object_model_id IN (' . $query->createCommand()->getRawSql() . ')'
+                    )
+                );
             if (false == $multiple) {
                 if (isset($properties[$property_id])) {
                     $selectedQuery->andWhere([self::tableName() . '.id' => $properties[$property_id]]);
