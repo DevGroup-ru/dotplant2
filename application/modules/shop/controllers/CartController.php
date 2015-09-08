@@ -147,8 +147,8 @@ class CartController extends Controller
                         SpecialPriceList::TYPE_CORE
                     ),
                 ];
-                if (empty($product['custom_name']) === false) {
-                    $orderItem->custom_name = $product['custom_name'];
+                if (empty($product['customName']) === false) {
+                    $orderItem->custom_name = $product['customName'];
                 }
                 if ($productModel !== null) {
                     $orderItem->product_id = $thisItemModel->id;

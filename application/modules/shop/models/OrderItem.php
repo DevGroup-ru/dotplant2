@@ -5,6 +5,7 @@ namespace app\modules\shop\models;
 use app\behaviors\Tree;
 use app\modules\shop\components\AddonOrderItemEntityFactory;
 use app\modules\shop\components\CustomOrderItemEntityFactory;
+use app\modules\shop\components\EntityFactory;
 use app\modules\shop\components\ProductOrderItemEntityFactory;
 use app\modules\shop\helpers\PriceHelper;
 use app\properties\HasProperties;
@@ -32,6 +33,7 @@ use yii\db\ActiveRecord;
  * @property Order $order
  * @property OrderItem $parent
  * @property Product|HasProperties $product
+ * @property Addon $addon
  */
 class OrderItem extends ActiveRecord
 {
@@ -136,6 +138,14 @@ class OrderItem extends ActiveRecord
     }
 
     /**
+     * @return Addon|null
+     */
+    public function getAddon()
+    {
+        return $this->hasOne(Addon::className(), ['id' => 'addon_id']);
+    }
+
+    /**
      * @return Order|null
      */
     public function getOrder()
@@ -157,31 +167,8 @@ class OrderItem extends ActiveRecord
         }
     }
 
-    /**
-     * @return AddonOrderItemEntity|CustomOrderItemEntity|ProductOrderItemEntity|null
-     */
-    public function getEntityByModel()
+    public function getEntity()
     {
-        if ($this->addon_id !== 0) {
-            return AddonOrderItemEntityFactory::getOrderItemEntityByModel($this);
-        } elseif ($this->product_id !== 0) {
-            return ProductOrderItemEntityFactory::getOrderItemEntityByModel($this);
-        } else {
-            return CustomOrderItemEntityFactory::getOrderItemEntityByModel($this);
-        }
-    }
-
-    /**
-     * @return AddonOrderItemEntity|CustomOrderItemEntity|ProductOrderItemEntity|null
-     */
-    public function getEntityById()
-    {
-        if ($this->addon_id !== 0) {
-            return AddonOrderItemEntityFactory::getOrderItemEntityById($this->id);
-        } elseif ($this->product_id !== 0) {
-            return ProductOrderItemEntityFactory::getOrderItemEntityById($this->id);
-        } else {
-            return CustomOrderItemEntityFactory::getOrderItemEntityById($this->id);
-        }
+        return EntityFactory::getEntityByModel($this);
     }
 }

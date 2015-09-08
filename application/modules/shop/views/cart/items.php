@@ -46,7 +46,7 @@ foreach ($items as $i => $item) {
             </td>
             <td>
                 <?= Html::a(
-                        Html::encode($item->product->name),
+                        Html::encode($item->entity->getName()),
                         \yii\helpers\Url::to([
                             '/shop/product/show',
                             'model' => $item->product,
