@@ -884,7 +884,7 @@ return [
     'Searchable' => 'Доступен для поиска',
     'Section name' => 'Название секции',
     'See all today\'s deals' => '',
-    'See review details ' => 'Смотреть подробности отзыва',
+    'See review details ' => 'Смотреть подробности отзыва ',
     'Select ...' => 'Выбрать ...',
     'Select All' => 'Выделить все',
     'Select a parent order item' => 'Выберите родительский элемент для позиции заказа',

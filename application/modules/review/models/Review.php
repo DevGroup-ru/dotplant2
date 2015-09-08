@@ -34,7 +34,8 @@ class Review extends \yii\db\ActiveRecord
     const STATUS_NEW = 'NEW';
     const STATUS_APPROVED = 'APPROVED';
     const STATUS_NOT_APPROVED = 'NOT APPROVED';
-
+    protected $targetObject;
+    protected $targetObjectModel;
     public $captcha;
     public $useCaptcha = false;
 
@@ -220,15 +221,16 @@ class Review extends \yii\db\ActiveRecord
      */
     public function getTargetObjectModel()
     {
-        if (null === $object = $this->targetObject) {
+        if ($this->targetObjectModel !== null) {
+            return $this->targetObjectModel;
+        }
+        if ($this->getTargetObject() === null) {
             return null;
         }
-
         /** @var ActiveRecord $class */
-        $class = $object->object_class;
-        $model = $class::findOne(['id' => $this->object_model_id]);
-
-        return $model;
+        $class = $this->getTargetObject()->object_class;
+        $this->targetObjectModel = $class::findOne(['id' => $this->object_model_id]);
+        return $this->targetObjectModel;
     }
 
     /**
@@ -236,7 +238,10 @@ class Review extends \yii\db\ActiveRecord
      */
     public function getTargetObject()
     {
-        return Object::findById($this->object_id);
+        if ($this->targetObject === null) {
+            $this->targetObject = Object::findById($this->object_id);
+        }
+        return $this->targetObject;
     }
 
     /**

@@ -8,9 +8,6 @@
 /** @var \app\modules\review\models\Review $review */
 $review = \app\modules\review\models\Review::findOne(['submission_id' => $submission->id]);
 
-// @todo A variable review is null because we're sending an e-mail after form record creating.
-// It will have been fixed when we be using background tasks for sending.
-
 // @todo Add rating to email
 
 ?>
@@ -28,20 +25,20 @@ $review = \app\modules\review\models\Review::findOne(['submission_id' => $submis
         <td><?= Yii::t('app', 'User-Agent') ?></td>
         <td><?= $submission->user_agent ?></td>
     </tr>
-    <?php if (!is_null($review)): ?>
+    <?php if ($review !== null): ?>
         <?php
-        if (!is_null($review->object)
-            && !is_null($model = call_user_func([$review->object->object_class, 'findOne'], $review->object_model_id))
-            ):
+        if ($review->getTargetObjectModel() !== null):
         ?>
             <tr>
                 <td><?= Yii::t('app', 'Object') ?></td>
-                <td><?= $review->object->name ?></td>
+                <td><?= $review->getTargetObject()->name ?></td>
             </tr>
+            <?php if (isset($review->getTargetObjectModel()->name)): ?>
             <tr>
                 <td><?= Yii::t('app', 'Object model') ?></td>
-                <td><?= $model->name ?></td>
+                <td><?= $review->getTargetObjectModel()->name ?></td>
             </tr>
+            <?php endif; ?>
         <?php endif; ?>
         <tr>
             <td><?= $review->getAttributeLabel('author_email') ?></td>
@@ -54,21 +51,19 @@ $review = \app\modules\review\models\Review::findOne(['submission_id' => $submis
     <?php endif; ?>
     <?php foreach ($submission->abstractModel->attributes as $name => $value): ?>
         <tr>
-            <td><?=$submission->abstractModel->getAttributeLabel($name);?></td>
-            <td><?=$value;?></td>
+            <td><?= $submission->abstractModel->getAttributeLabel($name) ?></td>
+            <td><?= $value ?></td>
         </tr>
     <?php endforeach; ?>
 </table>
-<?php if (!is_null($review)): ?>
+<?php if ($review !== null): ?>
 <p>
     <?=
         Yii::t('app', 'See review details ')
         . \kartik\helpers\Html::a(
             Yii::t('app', 'here'),
-            \yii\helpers\Url::to(
-                ['/review/backend-review/view', 'id' => $review->id],
-                true
-            )
+            'http://' . Yii::$app->getModule('core')->serverName
+                . \yii\helpers\Url::to(['/review/backend-review/view', 'id' => $review->id])
         )
     ?>
 </p>
