@@ -173,7 +173,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public function webApplicationAttributes()
     {
-        $attributes = $this->getAttributes(null, ['composerHomeDirectory']);
+        $attributes = $this->getAttributes(null, ['composerHomeDirectory', 'emailConfig']);
         return [
             'modules' => [
                 'core' => $attributes,
@@ -208,6 +208,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 'updateHelper' => [
                     'composerHomeDirectory' => $this->composerHomeDirectory,
                 ]
+            ],
+            'modules' => [
+                'core' => [
+                    'emailConfig' => $this->emailConfig,
+                ],
             ],
         ];
     }

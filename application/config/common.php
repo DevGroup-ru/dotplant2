@@ -36,7 +36,10 @@ return [
         ],
         'updateHelper' => [
             'class' => 'app\modules\core\helpers\UpdateHelper',
-        ]
+        ],
+        'mail' => [
+            'class' => '\app\modules\core\components\MailComponent',
+        ],
     ],
     'params' => $params,
 ];
