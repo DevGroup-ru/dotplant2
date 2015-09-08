@@ -141,9 +141,6 @@ $config = [
 //            'class' => 'app\components\DotplantErrorHandler',
             'errorAction' => 'default/error',
         ],
-        'mail' => [
-            'class' => '\app\modules\core\components\MailComponent',
-        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 6 : 0,
             'targets' => [

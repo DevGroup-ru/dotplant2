@@ -115,26 +115,6 @@ class SubmitFormAction extends Action
             }
             $submission->saveProperties($data);
         }
-        if ($haveSpam === false) {
-            if (!empty($form->email_notification_addresses)) {
-                try {
-                    $emailView = !empty($form->email_notification_view)
-                        ? $form->email_notification_view
-                        :'@app/widgets/form/views/email-template.php';
-                    Yii::$app->mail->compose(
-                        $emailView,
-                        [
-                            'form' => $form,
-                            'submission' => $submission,
-                        ]
-                    )->setTo(explode(',', $form->email_notification_addresses))->setFrom(
-                        Yii::$app->mail->getMailFrom()
-                    )->setSubject($form->name . ' #' . $submission->id)->send();
-                } catch (\Exception $e) {
-                    // do nothing
-                }
-            }
-        }
         return $submission->id;
     }
 }

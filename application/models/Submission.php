@@ -28,11 +28,18 @@ use yii\data\ActiveDataProvider;
  * @property integer $form_fill_time
  * @property integer $is_deleted
  * @property bool $spam
+ * @property int $sending_status
  * @property AbstractModel $abstractModel
  * @property Form $form
  */
 class Submission extends \yii\db\ActiveRecord
 {
+    const STATUS_NEW = 0;
+    const STATUS_SUCCESS = 1;
+    const STATUS_ERROR = -1;
+    const STATUS_HOPELESS_ERROR = -2;
+    const STATUS_FATAL_ERROR = -3;
+
     /**
      * @inheritdoc
      */
@@ -104,6 +111,7 @@ class Submission extends \yii\db\ActiveRecord
             'form_fill_time' => Yii::t('app', 'Form Fill Time'),
             'spam' => Yii::t('app', 'Spam Info'),
             'is_deleted' => Yii::t('app', 'Is deleted'),
+            'sending_status' => Yii::t('app', 'Sending status'),
         ];
     }
 
