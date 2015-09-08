@@ -1074,7 +1074,7 @@ return [
     'User profile' => 'Профиль пользователя',
     'User-Agent' => '',
     'Useragent' => '',
-    'Username' => 'Имя пользователя',
+    'Username' => 'Логин',
     'Users' => 'Пользователи',
     'Valid From' => 'Активен с',
     'Valid Till' => 'Активен до',
