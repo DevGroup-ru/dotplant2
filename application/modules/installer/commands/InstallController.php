@@ -133,7 +133,7 @@ class InstallController extends Controller
 
         $process->run();
 
-        if (!this->interactive && getenv("DP2_SKIP_ADMIN")) {
+        if (!$this->interactive && getenv("DP2_SKIP_ADMIN")) {
             return $this->finalStep();
         } else {
             return $this->adminUser();
