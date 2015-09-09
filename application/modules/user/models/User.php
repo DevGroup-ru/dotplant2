@@ -219,7 +219,7 @@ class User extends ActiveRecord implements IdentityInterface
      * Finds user by password reset token
      *
      * @param string $token password reset token
-     * @return static|null
+     * @return User|null
      */
     public static function findByPasswordResetToken($token)
     {

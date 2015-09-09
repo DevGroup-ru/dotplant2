@@ -68,7 +68,7 @@ class Thumbnail extends \yii\db\ActiveRecord
      * Return thumb of image by size or create if not exist
      * @param $image Image
      * @param $size ThumbnailSize
-     * @return static
+     * @return Thumbnail
      */
     public static function getImageThumbnailBySize($image, $size)
     {
