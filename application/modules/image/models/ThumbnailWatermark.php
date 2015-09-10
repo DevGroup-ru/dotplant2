@@ -64,7 +64,7 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
      * Return thumbnail width watermark or create if not exist
      * @param $thumb Thumbnail
      * @param $water Watermark
-     * @return static
+     * @return thumbnail
      */
     public static function getThumbnailWatermark($thumb, $water)
     {

@@ -203,7 +203,7 @@ $(function() {
     $('input[data-type=quantity]').blur(function() {
         var $input = $(this);
         var quantity = parseFloat($input.val());
-        var nominal = parseFloat($input.attr('data-nominal'));
+        var nominal = parseFloat($input.data('nominal'));
         if (isNaN(quantity) || quantity < nominal) {
             quantity = nominal;
         }
@@ -220,7 +220,7 @@ $(function() {
         var $this = $(this);
         var $input = $this.parents('td').eq(0).find('input[data-type=quantity]');
         var quantity = parseFloat($input.val());
-        var nominal = parseFloat($input.attr('data-nominal'));
+        var nominal = parseFloat($input.data('nominal'));
         if (isNaN(quantity)) {
             quantity = nominal;
         }

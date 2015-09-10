@@ -364,4 +364,7 @@ div.files.dropzone {
   margin-top: 0;
 }
 
-/*# sourceMappingURL=admin.css.map */
+/* line 275, ../sass/admin.scss */
+.select2-search {
+  z-index: initial;
+}
