@@ -330,3 +330,8 @@ article.backend-edit-grid.col-md-4 .widget-footer .btn, article.backend-edit-gri
   line-height: 1.5;
   padding: 1px 5px;
 }
+
+/* line 244, ../sass/admin.scss */
+.select2-search {
+  z-index: initial;
+}
