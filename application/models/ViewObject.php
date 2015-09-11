@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
  * @property integer $object_id
  * @property integer $object_model_id
  * @property integer $view_id
+ * @property integer $child_view_id
  */
 class ViewObject extends ActiveRecord
 {
@@ -30,8 +31,9 @@ class ViewObject extends ActiveRecord
     public function rules()
     {
         return [
-            [['object_id', 'object_model_id', 'view_id'], 'required'],
-            [['object_id', 'object_model_id', 'view_id'], 'integer']
+            [['view_id', 'child_view_id'], 'default', 'value' => 1],
+            [['object_id', 'object_model_id', 'view_id', 'child_view_id'], 'required'],
+            [['object_id', 'object_model_id', 'view_id', 'child_view_id'], 'integer']
         ];
     }
 
@@ -45,6 +47,7 @@ class ViewObject extends ActiveRecord
             'object_id' => Yii::t('app', 'Object ID'),
             'object_model_id' => Yii::t('app', 'Object Model ID'),
             'view_id' => Yii::t('app', 'View'),
+            'child_view_id' => Yii::t('app', 'Child view')
         ];
     }
 
@@ -54,7 +57,7 @@ class ViewObject extends ActiveRecord
      * @param Object $model
      * @return string|null Возвращает имя файла или null, если ничего не найдено
      */
-    public static function getViewByModel($model = null)
+    public static function getViewByModel($model = null, $childView = false)
     {
         if ((null === $model) || !is_object($model)) {
             return null;
@@ -90,7 +93,7 @@ class ViewObject extends ActiveRecord
                     ]
                 ])
             );
-            return View::getViewById($viewObject->view_id);
+            return View::getViewById($childView ? $viewObject->child_view_id : $viewObject->view_id);
         } else {
             return null;
         }
@@ -127,8 +130,10 @@ class ViewObject extends ActiveRecord
                 $result->object_id = $object->id;
                 $result->object_model_id = $model->id;
                 $result->view_id = 1;
+                $result->child_view_id = 1;
             }
         }
+
         return $result;
     }
 
