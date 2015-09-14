@@ -609,7 +609,7 @@ return [
     'Multiple widgets' => 'несколько виджетов',
     'Musical and video production' => 'Музыкальная и видео продукция',
     'Name' => 'Название',
-    'Name Frontend' => 'Зазвание на фронтэнде',
+    'Name Frontend' => 'Название на фронтэнде',
     'Name Short' => 'Короткое название',
     'Namespace Prefix' => 'Префикс нэймспейса',
     'Navigation' => 'Навигация',
