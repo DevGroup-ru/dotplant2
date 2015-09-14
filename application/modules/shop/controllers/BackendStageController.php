@@ -5,12 +5,15 @@ namespace app\modules\shop\controllers;
 use app\modules\core\models\Events;
 use app\modules\shop\models\OrderStage;
 use app\modules\shop\models\OrderStageLeaf;
+use app\traits\LoadModel;
 use yii;
 use yii\filters\AccessControl;
 use yii\helpers\Url;
 
 class BackendStageController extends \app\backend\components\BackendController
 {
+    use LoadModel;
+
     public function behaviors()
     {
         return [
@@ -143,6 +146,40 @@ class BackendStageController extends \app\backend\components\BackendController
             'stages' => $stages,
             'events' => $events,
         ]);
+    }
+
+    public function actionLeafDelete($id)
+    {
+        if (Yii::$app->request->isPost === false) {
+            throw new yii\web\BadRequestHttpException;
+        }
+        if ($id === null) {
+            throw new yii\web\BadRequestHttpException;
+        }
+        /** @var OrderStageLeaf $model */
+        $model = $this->loadModel(OrderStageLeaf::className(), $id);
+        $model->delete();
+
+        Yii::$app->session->setFlash('info', Yii::t('app', 'Leaf successfully deleted. Check your stages and leafs for correct workflow!'));
+
+        return $this->redirect('leaf-index');
+    }
+
+    public function actionStageDelete($id)
+    {
+        if (Yii::$app->request->isPost === false) {
+            throw new yii\web\BadRequestHttpException;
+        }
+        if ($id === null) {
+            throw new yii\web\BadRequestHttpException;
+        }
+        /** @var OrderStage $model */
+        $model = $this->loadModel(OrderStage::className(), $id);
+        $model->delete();
+
+        Yii::$app->session->setFlash('info', Yii::t('app', 'Stage successfully deleted. Check your stages and leafs for correct workflow!'));
+
+        return $this->redirect('stage-index');
     }
 
     public function actionRenderGraph()
