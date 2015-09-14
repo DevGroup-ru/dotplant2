@@ -30,16 +30,18 @@ foreach ($model->items as $item) {
 <?php $this->beginBlock('page-buttons'); ?>
 <div class="row" style="margin-bottom: 10px;">
     <div class="col-xs-12">
-    <a href="#" class="btn btn-default pull-right do-not-print" id="print-button"><?=\kartik\icons\Icon::show(
-            'print'
-        )?>&nbsp;&nbsp;<?=Yii::t('app', 'Print')?></a>
-    <a href="<?=Yii::$app->request->get(
-        'returnUrl',
-        \yii\helpers\Url::toRoute(['index'])
-    )?>" class="btn btn-danger pull-right do-not-print"><?=\kartik\icons\Icon::show(
-            'arrow-circle-left'
-        )?>&nbsp;&nbsp;<?=Yii::t('app', 'Back')?></a>
-    <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success pull-right']); ?>
+        <div class="btn-group pull-right">
+            <a href="#" class="btn btn-default do-not-print" id="print-button"><?=\kartik\icons\Icon::show(
+                    'print'
+                )?>&nbsp;&nbsp;<?=Yii::t('app', 'Print')?></a>
+            <a href="<?=Yii::$app->request->get(
+                'returnUrl',
+                \yii\helpers\Url::toRoute(['index'])
+            )?>" class="btn btn-danger do-not-print"><?=\kartik\icons\Icon::show(
+                    'arrow-circle-left'
+                )?>&nbsp;&nbsp;<?=Yii::t('app', 'Back')?></a>
+            <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']); ?>
+        </div>
     </div>
 </div>
 <?php $this->endBlock(); ?>
