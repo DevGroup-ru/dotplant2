@@ -970,6 +970,7 @@ return [
     'Static value' => 'Статичное значение',
     'Static values' => 'Статичные значения',
     'Status' => 'Статус',
+    'status' => 'статус',
     'Step Value' => 'Шаг',
     'Subdomain' => 'Субдомен',
     'Submission' => '',
