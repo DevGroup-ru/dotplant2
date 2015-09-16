@@ -904,7 +904,7 @@ return [
     'Settings for currencies section' => 'Настройки для секции Валюта',
     'Settings for offers section' => 'Настройки для секции Торговые предложения',
     'Settings for shop section' => 'Настройки для секции Магазин',
-    'Shipment option ID' => 'ID способа доставки',
+    'Shipping option ID' => 'ID способа доставки',
     'Shipping center' => 'Центр доставки',
     'Shipping option' => 'Способ доставки',
     'Shipping options' => 'Способы доставки',
