@@ -127,7 +127,7 @@ $(function() {
             $this = $(this);
         var data = JSON.parse($this.attr('data-pg'));
         var $hidden = $('<input type="hidden">');
-        $hidden.attr('name', 'AddPropetryGroup[' + data.form_name + ']').val(data.id);
+        $hidden.attr('name', 'AddPropertyGroup[' + data.form_name + ']').val(data.id);
         $form.append($hidden);
         $form.find(".btn-primary:submit:first").mouseup().click();
 
@@ -138,7 +138,7 @@ $(function() {
             $this = $(this);
         var data = JSON.parse($this.attr('data-pg'));
         var $hidden = $('<input type="hidden">');
-        $hidden.attr('name', 'RemovePropetryGroup[' + data.form_name + ']').val(data.id);
+        $hidden.attr('name', 'RemovePropertyGroup[' + data.form_name + ']').val(data.id);
         $form.append($hidden);
         $form.find(".btn-primary:submit:first").mouseup().click();
     });

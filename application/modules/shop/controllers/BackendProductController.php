@@ -246,7 +246,7 @@ class BackendProductController extends BackendController
 
 
                     $action = Yii::$app->request->post('action', 'save');
-                    if (Yii::$app->request->post('AddPropetryGroup') || Yii::$app->request->post('RemovePropetryGroup')) {
+                    if (Yii::$app->request->post('AddPropertyGroup') || Yii::$app->request->post('RemovePropertyGroup')) {
                         $action = 'save';
                     }
                     $returnUrl = Yii::$app->request->get('returnUrl', ['index']);
@@ -323,7 +323,7 @@ class BackendProductController extends BackendController
 
         if (isset($post['GeneratePropertyValue'])) {
             $generateValues = $post['GeneratePropertyValue'];
-            $post['AddPropetryGroup']['Product'] = $post['PropertyGroup']['id'];
+            $post['AddPropertyGroup']['Product'] = $post['PropertyGroup']['id'];
         } else {
             $generateValues = [];
         }

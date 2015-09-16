@@ -228,17 +228,17 @@ class HasProperties extends Behavior
             : $this->propertiesFormName;
 
         $this->getPropertyGroups();
-        if (isset($data['AddPropetryGroup']) && isset($data['AddPropetryGroup'][$form])) {
-            $groups_to_add = is_array($data['AddPropetryGroup'][$form])
-                ? $data['AddPropetryGroup'][$form]
-                : [$data['AddPropetryGroup'][$form]];
+        if (isset($data['AddPropertyGroup']) && isset($data['AddPropertyGroup'][$form])) {
+            $groups_to_add = is_array($data['AddPropertyGroup'][$form])
+                ? $data['AddPropertyGroup'][$form]
+                : [$data['AddPropertyGroup'][$form]];
             foreach ($groups_to_add as $group_id) {
                 $this->addPropertyGroup($group_id, false);
             }
             $this->updatePropertyGroupsInformation(true);
         }
-        if (isset($data['RemovePropetryGroup']) && isset($data['RemovePropetryGroup'][$form])) {
-            $this->removePropertyGroup($data['RemovePropetryGroup'][$form]);
+        if (isset($data['RemovePropertyGroup']) && isset($data['RemovePropertyGroup'][$form])) {
+            $this->removePropertyGroup($data['RemovePropertyGroup'][$form]);
         }
         if (isset($data[$formProperties])) {
             $my_data = $data[$formProperties];
