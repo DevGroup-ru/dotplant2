@@ -62,7 +62,7 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'order_id' => Yii::t('app', 'Order ID'),
-            'shipping_option_id' => Yii::t('app', 'Shipment Option ID'),
+            'shipping_option_id' => Yii::t('app', 'Shipping option ID'),
             'shipping_price' => Yii::t('app', 'Shipping price'),
             'shipping_price_total' => Yii::t('app', 'Shipping price total'),
             'planned_delivery_date' => Yii::t('app', 'Planned Delivery Date'),

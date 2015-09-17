@@ -72,7 +72,7 @@ class Form extends Widget
             Modal::begin([
                 'id' => 'modal-form-info-' . $this->id,
                 'size' => Modal::SIZE_SMALL,
-                'header' => $this->model->name . ' status',
+                'header' => $this->model->name .' '. \Yii::t('app', 'status'),
             ]);
             echo $this->render($successView);
             Modal::end();

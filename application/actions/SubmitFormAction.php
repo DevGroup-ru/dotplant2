@@ -34,7 +34,7 @@ class SubmitFormAction extends Action
         }
 
         $post = Yii::$app->request->post();
-        $form->abstractModel->setAttrubutesValues($post);
+        $form->abstractModel->setAttributesValues($post);
         /** @var AbstractModel|SpamCheckerBehavior $model */
         $model = $form->getAbstractModel();
 
@@ -114,26 +114,6 @@ class SubmitFormAction extends Action
                 $_FILES[$submission->abstractModel->formName()] = $_FILES[$form->abstractModel->formName()];
             }
             $submission->saveProperties($data);
-        }
-        if ($haveSpam === false) {
-            if (!empty($form->email_notification_addresses)) {
-                try {
-                    $emailView = !empty($form->email_notification_view)
-                        ? $form->email_notification_view
-                        :'@app/widgets/form/views/email-template.php';
-                    Yii::$app->mail->compose(
-                        $emailView,
-                        [
-                            'form' => $form,
-                            'submission' => $submission,
-                        ]
-                    )->setTo(explode(',', $form->email_notification_addresses))->setFrom(
-                        Yii::$app->mail->getMailFrom()
-                    )->setSubject($form->name . ' #' . $submission->id)->send();
-                } catch (\Exception $e) {
-                    // do nothing
-                }
-            }
         }
         return $submission->id;
     }

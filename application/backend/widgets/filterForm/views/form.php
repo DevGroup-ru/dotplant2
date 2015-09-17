@@ -7,7 +7,7 @@
  **
  */
 
-use app\backend\widgets\Select2;
+use kartik\select2\Select2;
 use kartik\icons\Icon;
 
 ?>

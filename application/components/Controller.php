@@ -65,7 +65,10 @@ class Controller extends \yii\web\Controller
         if (Yii::$app->response->view_id !== null) {
             $view = \app\models\View::getViewById(Yii::$app->response->view_id);
             if (!is_null($view)) {
-                return $view === 'default' ? $defaultView : $view;
+                if ($view === 'default') {
+                    $view =  ViewObject::getViewByModel($model->parent);
+                }
+                return $view === null ? $defaultView : $view;
             }
         }
         if (is_null($model)) {
@@ -74,6 +77,9 @@ class Controller extends \yii\web\Controller
 
         do {
             $view = ViewObject::getViewByModel($model);
+            if (is_null($view) || $view == 'default') {
+                $view = ViewObject::getViewByModel($model->parent, true);
+            }
             if (!is_null($view)) {
                 return $view === 'default' ? $defaultView : $view;
             }

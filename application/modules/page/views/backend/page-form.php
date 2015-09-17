@@ -127,11 +127,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     app\models\View::getAllAsArray()
                 );
             ?>
-
-            <?=$form->field($model, 'content')->widget(
+            <?php if ($model->children !== []): ?>
+                <?=
+                $form->field(app\models\ViewObject::getByModel($model, true), 'child_view_id')->dropDownList(
+                    app\models\View::getAllAsArray()
+                );
+                ?>
+            <?php endif; ?>
+            <?= $form->field($model, 'content')->widget(
                 Yii::$app->getModule('core')->wysiwyg_class_name(),
                 Yii::$app->getModule('core')->wysiwyg_params()
-            );?>
+            ); ?>
 
             <?=$form->field($model, 'announce')->widget(
                 Yii::$app->getModule('core')->wysiwyg_class_name(),
