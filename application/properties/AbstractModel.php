@@ -139,7 +139,7 @@ class AbstractModel extends Model
         $this->values_by_property_key = $values;
     }
 
-    public function setAttrubutesValues($values)
+    public function setAttributesValues($values)
     {
         foreach ($this->values_by_property_key as $key => $value) {
             /** @var PropertyValue $value */

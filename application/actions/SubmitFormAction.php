@@ -34,7 +34,7 @@ class SubmitFormAction extends Action
         }
 
         $post = Yii::$app->request->post();
-        $form->abstractModel->setAttrubutesValues($post);
+        $form->abstractModel->setAttributesValues($post);
         /** @var AbstractModel|SpamCheckerBehavior $model */
         $model = $form->getAbstractModel();
 

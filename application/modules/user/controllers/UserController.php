@@ -326,8 +326,7 @@ class UserController extends Controller
         $model->scenario = 'updateProfile';
 
         $model->getPropertyGroups(false, false, true);
-
-        $model->abstractModel->setAttrubutesValues(Yii::$app->request->post());
+        $model->abstractModel->setAttributesValues(Yii::$app->request->post());
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->abstractModel->validate()) {
             if ($model->save()) {
                 $model->saveProperties(Yii::$app->request->post());

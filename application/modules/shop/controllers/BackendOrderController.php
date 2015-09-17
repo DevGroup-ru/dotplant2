@@ -506,7 +506,7 @@ class BackendOrderController extends BackendController
     {
         /** @var Order|HasProperties $model */
         $model = $this->findModel($id);
-        $model->abstractModel->setAttrubutesValues(Yii::$app->request->post());
+        $model->abstractModel->setAttributesValues(Yii::$app->request->post());
         if ($model->abstractModel->validate()) {
             $model->getPropertyGroups(true);
             $model->saveProperties(Yii::$app->request->post());
