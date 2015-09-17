@@ -125,7 +125,7 @@ $(function() {
     $("#properties-widget-%1$s .add-property-group").click(function() {
         var $form = $("#%2$s"),
             $this = $(this);
-        var data = JSON.parse($this.attr('data-pg'));
+        var data = JSON.parse($this.data('pg'));
         var $hidden = $('<input type="hidden">');
         $hidden.attr('name', '%3$s[' + data.form_name + ']').val(data.id);
         $form.append($hidden);
@@ -136,7 +136,7 @@ $(function() {
     $("#properties-widget-%1$s .remove-property-group").click(function() {
         var $form = $("#%2$s"),
             $this = $(this);
-        var data = JSON.parse($this.attr('data-pg'));
+        var data = JSON.parse($this.data('pg'));
         var $hidden = $('<input type="hidden">');
         $hidden.attr('name', '%4$s[' + data.form_name + ']').val(data.id);
         $form.append($hidden);
