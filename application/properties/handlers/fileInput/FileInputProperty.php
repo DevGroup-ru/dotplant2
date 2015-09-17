@@ -68,6 +68,9 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
         /** @var UploadedFile $file */
         foreach ($files as $file) {
             $fileName = $file->baseName.'.'.$file->extension;
+            if (is_file($this->uploadDir.DIRECTORY_SEPARATOR.$fileName)) {
+                $fileName = $file->baseName. substr(md5($fileName.microtime()), 0, 6) .'.'.$file->extension;
+            }
             if ($file->saveAs($this->uploadDir.DIRECTORY_SEPARATOR.$fileName)) {
                 $values[] = $fileName;
             }
