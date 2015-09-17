@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Html;
-
+use app\properties\HasProperties;
 ?>
     <div id="properties-widget-<?=$widget_id?>">
         <?php
@@ -127,7 +127,7 @@ $(function() {
             $this = $(this);
         var data = JSON.parse($this.attr('data-pg'));
         var $hidden = $('<input type="hidden">');
-        $hidden.attr('name', 'AddPropertyGroup[' + data.form_name + ']').val(data.id);
+        $hidden.attr('name', '%3$s[' + data.form_name + ']').val(data.id);
         $form.append($hidden);
         $form.find(".btn-primary:submit:first").mouseup().click();
 
@@ -138,11 +138,16 @@ $(function() {
             $this = $(this);
         var data = JSON.parse($this.attr('data-pg'));
         var $hidden = $('<input type="hidden">');
-        $hidden.attr('name', 'RemovePropertyGroup[' + data.form_name + ']').val(data.id);
+        $hidden.attr('name', '%4$s[' + data.form_name + ']').val(data.id);
         $form.append($hidden);
         $form.find(".btn-primary:submit:first").mouseup().click();
     });
 });
 JS;
 
-$this->registerJs(sprintf($js, $widget_id, $form->id));
+$this->registerJs(sprintf($js,
+    $widget_id, // %1$s
+    $form->id,  // %2$s
+    HasProperties::FIELD_ADD_PROPERTY_GROUP,   // %3$s
+    HasProperties::FIELD_REMOVE_PROPERTY_GROUP // %4$s
+));

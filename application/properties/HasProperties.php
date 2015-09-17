@@ -25,6 +25,9 @@ use yii\helpers\Json;
  */
 class HasProperties extends Behavior
 {
+    const FIELD_ADD_PROPERTY_GROUP = 'AddPropertyGroup';
+    const FIELD_REMOVE_PROPERTY_GROUP = 'RemovePropertyGroup';
+    const FIELD_ADD_PROPERTY = 'AddProperty';
     /**
      * @var AbstractModel
      */
@@ -228,27 +231,27 @@ class HasProperties extends Behavior
             : $this->propertiesFormName;
 
         $this->getPropertyGroups();
-        if (isset($data['AddPropertyGroup']) && isset($data['AddPropertyGroup'][$form])) {
-            $groups_to_add = is_array($data['AddPropertyGroup'][$form])
-                ? $data['AddPropertyGroup'][$form]
-                : [$data['AddPropertyGroup'][$form]];
+        if (isset($data[self::FIELD_ADD_PROPERTY_GROUP]) && isset($data[self::FIELD_ADD_PROPERTY_GROUP][$form])) {
+            $groups_to_add = is_array($data[self::FIELD_ADD_PROPERTY_GROUP][$form])
+                ? $data[self::FIELD_ADD_PROPERTY_GROUP][$form]
+                : [$data[self::FIELD_ADD_PROPERTY_GROUP][$form]];
             foreach ($groups_to_add as $group_id) {
                 $this->addPropertyGroup($group_id, false);
             }
             $this->updatePropertyGroupsInformation(true);
         }
-        if (isset($data['RemovePropertyGroup']) && isset($data['RemovePropertyGroup'][$form])) {
-            $this->removePropertyGroup($data['RemovePropertyGroup'][$form]);
+        if (isset($data[self::FIELD_REMOVE_PROPERTY_GROUP]) && isset($data[self::FIELD_REMOVE_PROPERTY_GROUP][$form])) {
+            $this->removePropertyGroup($data[self::FIELD_REMOVE_PROPERTY_GROUP][$form]);
         }
         if (isset($data[$formProperties])) {
             $my_data = $data[$formProperties];
 
-            if (isset($data['AddProperty'])) {
+            if (isset($data[self::FIELD_ADD_PROPERTY])) {
                 // admin clicked add property button for multiple properties
-                if (!isset($my_data[$data['AddProperty']])) {
-                    $my_data[$data['AddProperty']] = [];
+                if (!isset($my_data[$data[self::FIELD_ADD_PROPERTY]])) {
+                    $my_data[$data[self::FIELD_ADD_PROPERTY]] = [];
                 }
-                $my_data[$data['AddProperty']][] = '';
+                $my_data[$data[self::FIELD_ADD_PROPERTY]][] = '';
             }
 
             $propertiesModels = $this->getAbstractModel()->getPropertiesModels();

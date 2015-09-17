@@ -105,7 +105,7 @@ class SubmitFormAction extends Action
         }
         if (isset($post[$form->abstractModel->formName()])) {
             $data = [
-                'AddPropertyGroup' => [
+                HasProperties::FIELD_ADD_PROPERTY_GROUP => [
                     $submission->formName() => array_keys($form->getPropertyGroups()),
                 ],
                 $submission->abstractModel->formName() => $post[$form->abstractModel->formName()],
