@@ -122,6 +122,7 @@ class NavigationWidget extends Widget
             $url = ArrayHelper::merge([$model->route], $params);
         }
         $tree = [
+            'model' => $model,
             'label' => $model->name,
             'url' => $url,
             'items' => [],
