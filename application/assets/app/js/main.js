@@ -127,7 +127,7 @@ $(function() {
         });
         return false;
     });
-    $('[data-action="add-to-cart"]').click(function() {
+    $('body').on('click', '[data-action="add-to-cart"]', function() {
         var $this = $(this);
         var quantity = typeof($this.data('quantity')) !== 'undefined' ? parseFloat($this.data('quantity')) : 1;
         if (isNaN(quantity) || quantity < 1) {
