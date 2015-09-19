@@ -46,7 +46,7 @@ use kartik\icons\Icon;
             $hidden
                 .attr(
                     \'name\',
-                    \'AddProperty\'
+                    \''. \app\properties\HasProperties::FIELD_ADD_PROPERTY . '\'
                 ).val('.Json::encode($property_key).');
             $form.append($hidden);
             $form.find(":submit:first").mouseup().click();

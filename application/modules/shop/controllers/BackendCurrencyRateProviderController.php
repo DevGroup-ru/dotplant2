@@ -4,7 +4,7 @@ namespace app\modules\shop\controllers;
 
 use app\backend\actions\DeleteOne;
 use app\backend\actions\MultipleDelete;
-use app\modules\review\controllers\BackendController;
+use app\backend\components\BackendController;
 use app\modules\shop\models\CurrencyRateProvider;
 use Yii;
 use yii\filters\AccessControl;
