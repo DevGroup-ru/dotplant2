@@ -21,6 +21,7 @@ use kartik\widgets\SwitchInput;
         <?= $form->field($model, 'wysiwyg_id')->dropDownList(\app\modules\core\models\Wysiwyg::itemsForSelect()) ?>
         <?= $form->field($model, 'fileUploadPath') ?>
         <?= $form->field($model, 'removeUploadedFiles')->widget(SwitchInput::className()) ?>
+        <?= $form->field($model, 'overwriteUploadedFiles')->widget(SwitchInput::className()) ?>
         <?= $form->field($model, 'daysToStoreSubmissions') ?>
         <?php BackendWidget::end() ?>
     </div>

@@ -33,6 +33,7 @@ class CoreModule extends BaseModule implements BootstrapInterface
 
     public $fileUploadPath = '@webroot/upload/files/';
     public $removeUploadedFiles = true;
+    public $overwriteUploadedFiles = false;
 
     public $spamCheckerApiKey;
 
