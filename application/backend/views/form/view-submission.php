@@ -44,7 +44,7 @@ $submission->getPropertyGroups(true);
             <?=$form->field($submission, 'date_received')?>
             <?=$form->field($submission, 'ip')?>
             <?=$form->field($submission, 'user_agent')?>
-
+            <?=$form->field($submission, 'submission_referrer')?>
 
             <?php BackendWidget::end(); ?>
         </article>

@@ -976,7 +976,7 @@ return [
     'Submission' => '',
     'Submission #' => 'Отправленная форма #',
     'Submission ID' => '',
-    'Submission Referrer' => '',
+    'Submission Referrer' => 'Страница заполения формы',
     'Submission details' => '',
     'Submissions' => 'Отправленные формы',
     'Submit' => 'Отправить',
