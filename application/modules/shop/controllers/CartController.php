@@ -227,6 +227,13 @@ class CartController extends Controller
                 'success' => true,
                 'itemsCount' => $order->items_count,
                 'totalPrice' => $mainCurrency->format($order->total_price),
+                'itemModalPreview' => $this->renderPartial("item-modal-preview",
+                    [
+                        "order" => $order,
+                        "orderItem" => null,
+                        "product" => null
+                    ]
+                )
             ];
         } else {
             return [
