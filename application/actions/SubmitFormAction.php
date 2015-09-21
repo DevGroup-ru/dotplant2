@@ -94,7 +94,8 @@ class SubmitFormAction extends Action
                 'date_received' => $date->format('Y-m-d H:i:s'),
                 'ip' => Yii::$app->request->userIP,
                 'user_agent' => Yii::$app->request->userAgent,
-                'spam' => (int) $haveSpam,
+                'spam' => (int)$haveSpam,
+                'submission_referrer' => Yii::$app->request->referrer
             ]
         );
         if (false === Yii::$app->user->isGuest) {
