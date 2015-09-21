@@ -81,7 +81,17 @@ class ObjectImageWidget extends Widget
                 $images = $this->model->images;
             }
             if ($this->noImageOnEmptyImages === true && count($images) === 0) {
-                return $this->render('noimage');
+                return $this->render(
+                    'noimage',
+                    [
+                        'model' => $this->model,
+                        'thumbnailOnDemand' => $this->thumbnailOnDemand,
+                        'thumbnailWidth' => $this->thumbnailWidth,
+                        'thumbnailHeight' => $this->thumbnailHeight,
+                        'useWatermark' => $this->useWatermark,
+                        'additional' => $this->additional,
+                    ]
+                );
             }
             $result = $this->render(
                 $this->viewFile,
