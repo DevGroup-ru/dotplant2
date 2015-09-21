@@ -31,15 +31,21 @@ class PropertiesSliderRangeWidget extends SliderRangeWidget
                 $this->maxValue = $select['value'] > $this->maxValue ? $select['value'] : $this->maxValue;
             }
         }
-        if (isset($get[$this->minAttribute]) && is_numeric($get[$this->minAttribute])) {
+        if (isset($get['minValue']) &&
+            isset($get['minValue'][$this->property->id]) &&
+            is_numeric($get['minValue'][$this->property->id])
+        ) {
             $this->changeFlagDefaultValue = 1;
-            $this->minValueNow = $get[$this->minAttribute];
+            $this->minValueNow = $get['minValue'][$this->property->id];
         } else {
             $this->minValueNow = $this->minValue;
         }
-        if (isset($get[$this->maxAttribute]) && is_numeric($get[$this->maxAttribute])) {
+        if (isset($get['maxValue']) &&
+            isset($get['maxValue'][$this->property->id]) &&
+            is_numeric($get['maxValue'][$this->property->id])
+        ) {
             $this->changeFlagDefaultValue = 1;
-            $this->maxValueNow = $get[$this->maxAttribute];
+            $this->maxValueNow = $get['maxValue'][$this->property->id];
         } else {
             $this->maxValueNow = $this->maxValue;
         }
