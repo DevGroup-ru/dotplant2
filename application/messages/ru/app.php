@@ -1164,5 +1164,6 @@ return [
     'One to two' => 'Один к двум',
     'Two to one' => 'Два к одному',
     'Backend edit grids' => 'Сетка ретакрирования админки',
-    'Child view' => 'Представление внутрених страниц'
+    'Child view' => 'Представление внутрених страниц',
+    'Registration Guest User In Cart' => 'Регистрация гостей в корзине'
 ];
