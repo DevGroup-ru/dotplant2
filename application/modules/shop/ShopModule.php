@@ -55,6 +55,11 @@ class ShopModule extends BaseModule implements BootstrapInterface
      */
     public $allowSearchGeneratedProducts = 0;
 
+    /***
+     * @var bool registration Guest User In Cart as new user and send data on e-mail
+     */
+    public $registrationGuestUserInCart = 0;
+
     /**
      * @var bool Show delete order in backend
      */

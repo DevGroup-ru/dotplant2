@@ -49,6 +49,8 @@ use app\components\Helper;
 
         <?= $form->field($model, 'countChildrenProducts')->widget(SwitchInput::className()) ?>
 
+        <?= $form->field($model, 'registrationGuestUserInCart')->widget(SwitchInput::className()) ?>
+
         <?= $form->field($model, 'showDeletedOrders')->widget(SwitchInput::className()) ?>
 
         <?= $form->field($model, 'defaultMeasureId')->dropDownList(Helper::getModelMap(\app\modules\shop\models\Measure::className(), 'id', 'name')) ?>

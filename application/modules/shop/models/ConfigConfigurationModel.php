@@ -89,6 +89,10 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public $defaultOrderStageFilterBackend = 0;
 
+    /***
+     * @var bool registration Guest User In Cart as new user and send data on e-mail
+     */
+    public $registrationGuestUserInCart = 0;
     /**
      * @var int Show deleted orders in backend or not
      */
@@ -122,11 +126,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             [
                 'listViewType',
                 'in',
-                'range'=>[
+                'range' => [
                     'listView',
                     'blockView'
                 ],
-                'strict'=>true
+                'strict' => true
             ],
             [
                 [
@@ -173,13 +177,25 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 'filter',
                 'filter' => 'boolval',
             ],
-            [['allowToAddSameProduct', 'countUniqueProductsOnly', 'countChildrenProducts', 'allowSearchGeneratedProducts'], 'boolean'],
+            [
+                [
+                    'allowToAddSameProduct',
+                    'countUniqueProductsOnly',
+                    'countChildrenProducts',
+                    'allowSearchGeneratedProducts',
+                    'registrationGuestUserInCart'
+                ],
+                'boolean'
+            ],
             [['defaultMeasureId'], 'integer'],
-            [['ymlConfig'], function ($attribute, $params) {
-                if (!is_array($this->$attribute)) {
-                    $this->$attribute = [];
+            [
+                ['ymlConfig'],
+                function ($attribute, $params) {
+                    if (!is_array($this->$attribute)) {
+                        $this->$attribute = [];
+                    }
                 }
-            }],
+            ],
         ];
     }
 
@@ -193,6 +209,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             'countUniqueProductsOnly' => Yii::t('app', 'Count unique products only'),
             'countChildrenProducts' => Yii::t('app', 'Count children products'),
             'defaultMeasureId' => Yii::t('app', 'Default measure'),
+            'registrationGuestUserInCart' => Yii::t('app', 'Registration Guest User In Cart'),
         ];
     }
 

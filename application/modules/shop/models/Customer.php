@@ -52,6 +52,8 @@ class Customer extends \yii\db\ActiveRecord
             [['user_id', 'first_name'], 'required'],
             [['first_name', 'middle_name', 'last_name', 'email', 'phone'], 'string', 'max' => 255],
             [['email'], 'email'],
+            [['email', 'phone'], 'required', 'on' => 'registerUser'],
+            [['email'], 'unique', 'targetClass' => User::className(), 'on' => 'registerUser']
         ];
     }
 
@@ -173,6 +175,10 @@ class Customer extends \yii\db\ActiveRecord
         $model->user_id = intval($user_id);
         $model->loadDefaultValues();
 
+        if ($model->user_id === 0 && (int)Yii::$app->getModule('shop')->registrationGuestUserInCart === 1) {
+            $model->setScenario('registerUser');
+        }
+
         $groups = PropertyGroup::getForObjectId($model->getObject()->id, true);
         $group = array_shift($groups);
 
@@ -180,15 +186,13 @@ class Customer extends \yii\db\ActiveRecord
             $model->setPropertyGroup($group);
             $abstractModel = new AbstractModel();
             $abstractModel->setPropertiesModels(array_reduce($group->properties,
-                function($result, $item)
-                {
+                function ($result, $item) {
                     /** @var Property $item */
                     $result[$item->key] = $item;
                     return $result;
                 }, []));
             $abstractModel->setAttributes(array_reduce($group->properties,
-                function($result, $item) use ($model)
-                {
+                function ($result, $item) use ($model) {
                     /** @var Property $item */
                     $result[$item->key] = new PropertyValue([], $item->id, $model->getObject()->id, null);
                     return $result;
@@ -226,5 +230,44 @@ class Customer extends \yii\db\ActiveRecord
     {
         return $this->propertyGroup;
     }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+
+        if ($this->scenario == 'registerUser') {
+            $password = Yii::$app->security->generateRandomString(10);
+            $user = new User();
+            $user->setScenario('signup');
+            $user->username = $this->email;
+            $user->email = $this->email;
+            $user->first_name = $this->first_name;
+            $user->last_name = $this->last_name;
+            $user->password = $password;
+            $user->generateAuthKey();
+            if ($user->save()) {
+                Yii::$app->mail->compose('new-user-in-order', ['user' => $user, 'password' => $password])
+                    ->setFrom(Yii::$app->getModule('core')->emailConfig['mailFrom'])
+                    ->setTo($this->email)
+                    ->setSubject(
+                        Yii::t(
+                            'app',
+                            'Welcome to {appName}',
+                            [
+                                'appName' => Yii::$app->name
+                            ]
+
+                        )
+                    )
+                    ->send();
+                Yii::$app->user->login($user, 86400);
+                self::update(['user_id' => $user->id]);
+            }
+
+
+        }
+
+        return parent::afterSave($insert, $changedAttributes);
+    }
 }
+
 ?>
