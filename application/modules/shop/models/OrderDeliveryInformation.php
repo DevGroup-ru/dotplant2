@@ -51,7 +51,24 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
             [['planned_delivery_date', 'planned_delivery_time'], 'safe'],
             [['planned_delivery_time_range'], 'string', 'max' => 255],
             [['shipping_price', 'shipping_price_total'], 'number'],
+            [['shipping_option_id'], 'validateShipping'],
         ];
+    }
+
+    public function validateShipping($attribute, $params)
+    {
+        /** @var ShippingOption $shippingOption */
+        $shippingOption = ShippingOption::findOne($this->$attribute);
+        if ($shippingOption === null) {
+            $this->addError($attribute, Yii::t('app', 'Unknown shipping option'));
+            return;
+        }
+        $shippingPrice = $shippingOption->getHandler()->calculate();
+        if ($shippingPrice === false) {
+            $this->addError($attribute, $shippingOption->getHandler()->getLastError());
+            return;
+        }
+        $this->shipping_price = $shippingPrice;
     }
 
     /**
@@ -166,20 +183,24 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
         if (null !== $group) {
             $model->setPropertyGroup($group);
             $abstractModel = new AbstractModel();
-            $abstractModel->setPropertiesModels(array_reduce($group->properties,
-                function($result, $item)
-                {
+            $abstractModel->setPropertiesModels(array_reduce(
+                $group->properties,
+                function($result, $item) {
                     /** @var Property $item */
                     $result[$item->key] = $item;
                     return $result;
-                }, []));
-            $abstractModel->setAttributes(array_reduce($group->properties,
-                function($result, $item) use ($model)
-                {
+                },
+                []
+            ));
+            $abstractModel->setAttributes(array_reduce(
+                $group->properties,
+                function($result, $item) use ($model) {
                     /** @var Property $item */
                     $result[$item->key] = new PropertyValue([], $item->id, $model->getObject()->id, null);
                     return $result;
-                }, []));
+                },
+                []
+            ));
             $abstractModel->setFormName('OrderDeliveryInformationNew');
             $model->setAbstractModel($abstractModel);
         }

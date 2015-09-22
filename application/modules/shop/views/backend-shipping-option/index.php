@@ -54,7 +54,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'name',
                     'price_from',
                     'price_to',
-                    'cost',
                     'sort',
                     [
                         'class' => BooleanColumn::className(),

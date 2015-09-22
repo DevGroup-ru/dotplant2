@@ -16,38 +16,14 @@ $this->params['breadcrumbs'] = [
     $this->params['breadcrumbs'][] = $this->title,
 ];
 ?>
-<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-    <?php $form = ActiveForm::begin(); ?>
+<?php $form = ActiveForm::begin(); ?>
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
         <?php
             BackendWidget::begin(
                 [
                     'icon' => 'car',
                     'title'=> Yii::t('app', 'Shipping Option'),
-                    'footer' => Html::a(
-                            Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
-                            Yii::$app->request->get('returnUrl', ['index', 'id' => $model->id]),
-                            ['class' => 'btn btn-danger']
-                        ).' '.($model->isNewRecord ? (Html::submitButton(
-                            Icon::show('save') . Yii::t('app', 'Save & Go next'),
-                            [
-                                'class' => 'btn btn-success',
-                                'name' => 'action',
-                                'value' => 'next',
-                            ])):'').' '.(Html::submitButton(
-                            Icon::show('save') . Yii::t('app', 'Save & Go back'),
-                            [
-                                'class' => 'btn btn-warning',
-                                'name' => 'action',
-                                'value' => 'back',
-                            ]
-                        )).' '.(Html::submitButton(
-                            Icon::show('save') . Yii::t('app', 'Save'),
-                            [
-                                'class' => 'btn btn-primary',
-                                'name' => 'action',
-                                'value' => 'save',
-                            ]
-                        )),
+                    'footer' => \app\backend\components\Helper::saveButtons($model),
                 ]
             );
         ?>
@@ -55,9 +31,22 @@ $this->params['breadcrumbs'] = [
             <?= $form->field($model, 'description')->textInput(['maxlength' => 255]) ?>
             <?= $form->field($model, 'price_from')->textInput() ?>
             <?= $form->field($model, 'price_to')->textInput() ?>
-            <?= $form->field($model, 'cost')->textInput() ?>
             <?= $form->field($model, 'sort')->textInput() ?>
             <?= $form->field($model, 'active')->widget(\kartik\widgets\SwitchInput::className()) ?>
         <?php BackendWidget::end(); ?>
-    <?php ActiveForm::end(); ?>
-</div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <?php
+        BackendWidget::begin(
+            [
+                'icon' => 'gears',
+                'title'=> Yii::t('app', 'Shipping option handler config'),
+                'footer' => \app\backend\components\Helper::saveButtons($model),
+            ]
+        );
+        ?>
+        <?= $form->field($model, 'handler_class')->textInput(['maxlength' => 255]) ?>
+        <?= $form->field($model, 'handler_params')->widget(\devgroup\jsoneditor\Jsoneditor::className()) ?>
+        <?php BackendWidget::end(); ?>
+    </div>
+<?php ActiveForm::end(); ?>

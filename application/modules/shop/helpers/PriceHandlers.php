@@ -2,7 +2,6 @@
 
 namespace app\modules\shop\helpers;
 
-
 use app\modules\shop\events\OrderCalculateEvent;
 use app\modules\shop\models\Currency;
 use app\modules\shop\models\DeliveryInformation;
@@ -223,7 +222,6 @@ class PriceHandlers
         if (OrderCalculateEvent::BEFORE_CALCULATE !== $event->state) {
             return null;
         }
-
         $deliveryInformation = $event->order->orderDeliveryInformation;
         $shippingOption = $event->order->shippingOption;
         $special_price_list = SpecialPriceList::find()->where(
@@ -232,12 +230,11 @@ class PriceHandlers
                 'object_id' => $event->order->object->id
             ]
         )->one();
-
         if (null !== $deliveryInformation && null !== $shippingOption) {
             SpecialPriceObject::setObject(
                 $special_price_list->id,
                 $event->order->id,
-                $shippingOption->cost,
+                $deliveryInformation->shipping_price,
                 $shippingOption->name
             );
         } else {
@@ -248,6 +245,5 @@ class PriceHandlers
                 ]
             );
         }
-
     }
 }
