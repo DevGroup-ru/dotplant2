@@ -20,6 +20,18 @@ class PriceHandlers
 {
     private static $allDiscounts = [];
 
+    public static function getFinalDeliveryPrice(Order $order)
+    {
+        $finalCost = $order->shippingOption->cost;
+        foreach ($order->specialPriceObjects as $spo) {
+            if ($spo->isDiscount()) {
+                $finalCost += $spo->price;
+            }
+        }
+
+        return $finalCost;
+    }
+
 
     public static function getCurrencyPriceProduct(
         Product $product,
@@ -103,15 +115,12 @@ class PriceHandlers
         SpecialPriceList $specialPrice,
         $price
     ) {
-
         $deliveryPrice = 0;
 
-        $deliveryObjects = SpecialPriceObject::findAll(
-            [
-                'special_price_list_id' => $specialPrice->id,
-                'object_model_id' => $order->id
-            ]
-        );
+        $deliveryObjects = SpecialPriceObject::findAll([
+            'special_price_list_id' => $specialPrice->id,
+            'object_model_id' => $order->id
+        ]);
 
         foreach ($deliveryObjects as $object) {
             $deliveryPrice += $object->price;
@@ -137,16 +146,13 @@ class PriceHandlers
                     $cacheKey,
                     self::$allDiscounts,
                     86400,
-                    new TagDependency(
-                        [
-                            'tags' => [
-                                ActiveRecordHelper::getCommonTag(Discount::className())
-                            ]
+                    new TagDependency([
+                        'tags' => [
+                            ActiveRecordHelper::getCommonTag(Discount::className())
                         ]
-                    )
+                    ])
                 );
             }
-
         }
         return self::$allDiscounts;
     }
@@ -177,17 +183,21 @@ class PriceHandlers
 
                     }
 
-                    $special_price_list_id = SpecialPriceList::find()->where(
-                        [
-                            'handler' => 'getDiscountPriceOrder',
-                            'object_id' => $event->order->object->id
-                        ]
-                    )
-                        ->one()
-                        ->id;
+                    $special_price_list_id = SpecialPriceList::find()
+                    ->where([
+                        'handler' => 'getDiscountPriceOrder',
+                        'object_id' => $event->order->object->id
+                    ])
+                    ->one()
+                    ->id;
 
-
-                    if ($discountFlag === true && $event->price > 0) {
+                    if ($discountFlag === true
+                        && $event->price > 0
+                        && (
+                            $discount->apply_order_price_lg !== -1
+                            && $event->order->total_price > $discount->apply_order_price_lg
+                        )
+                    ) {
                         $oldPrice = $event->price;
                         $deliveryPrice = SpecialPriceObject::getSumPrice(
                             $event->order->id,
@@ -204,12 +214,10 @@ class PriceHandlers
                         );
 
                     } else {
-                        SpecialPriceObject::deleteAll(
-                            [
-                                'special_price_list_id' => $special_price_list_id,
-                                'object_model_id' => $event->order->id
-                            ]
-                        );
+                        SpecialPriceObject::deleteAll([
+                            'special_price_list_id' => $special_price_list_id,
+                            'object_model_id' => $event->order->id
+                        ]);
                     }
                 }
             }
