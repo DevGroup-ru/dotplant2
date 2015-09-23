@@ -14,6 +14,7 @@ class Form extends Widget
     public $formId;
     public $route = 'default/submit-form';
     public $options = ['data-type' => 'form-widget'];
+    public $statusHeaderName = null;
     private $model;
     private $modal = null;
 
@@ -27,7 +28,7 @@ class Form extends Widget
         FormAsset::register($this->view);
         $this->model = \app\models\Form::findById($this->formId);
         if ($this->getId(false) === null) {
-            $this->setId('frm'.$this->formId);
+            $this->setId('frm' . $this->formId);
         }
         if ($this->model === null) {
             throw new \InvalidArgumentException;
@@ -62,17 +63,19 @@ class Form extends Widget
         }
 
         echo $this->render($view, [
-                'id' => $this->id,
-                'model' => $this->model,
-                'groups' => $groups,
-                'options' => $this->options,
-            ]);
+            'id' => $this->id,
+            'model' => $this->model,
+            'groups' => $groups,
+            'options' => $this->options,
+        ]);
         if ($this->isModal) {
             Modal::end();
             Modal::begin([
                 'id' => 'modal-form-info-' . $this->id,
                 'size' => Modal::SIZE_SMALL,
-                'header' => $this->model->name .' '. \Yii::t('app', 'status'),
+                'header' => $this->statusHeaderName ?
+                    $this->statusHeaderName :
+                    $this->model->name . ' ' . \Yii::t('app', 'status'),
             ]);
             echo $this->render($successView);
             Modal::end();
