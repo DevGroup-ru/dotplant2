@@ -28,6 +28,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
 
     public $fileUploadPath = '@webroot/upload/files/';
     public $removeUploadedFiles = true;
+    public $overwriteUploadedFiles = false;
 
     public $spamCheckerApiKey;
 
@@ -96,12 +97,14 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             [
                 [
                     'removeUploadedFiles',
+                    'overwriteUploadedFiles',
                 ],
                 'boolean'
             ],
             [
                 [
                     'removeUploadedFiles',
+                    'overwriteUploadedFiles',
                 ],
                 'filter',
                 'filter' => 'boolval',
