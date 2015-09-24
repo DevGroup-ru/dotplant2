@@ -34,7 +34,7 @@ class Yml extends Model
                 ],
                 'required'
             ],
-            [['shop_store', 'shop_pickup', 'shop_delivery', 'shop_adult', ], 'integer'],
+            [['shop_store', 'shop_pickup', 'shop_delivery', 'shop_adult', 'offer_param', 'use_gzip'], 'integer'],
             ['shop_url', 'url', 'defaultScheme' => 'http'],
             [['shop_name', 'shop_company'], 'string', 'length' => [1, 255]],
             ['offer_description', 'safe'],
@@ -58,6 +58,7 @@ class Yml extends Model
             'shop_store',
             'shop_pickup',
             'shop_delivery',
+            'offer_param',
             'shop_adult',
             'currency_id',
             'offer_name',
@@ -65,6 +66,7 @@ class Yml extends Model
             'offer_category',
             'offer_picture',
             'offer_description',
+            'use_gzip'
         ];
     }
 
@@ -90,7 +92,8 @@ class Yml extends Model
             'offer_picture' => Yii::t('app', 'Offer picture'),
             'offer_description' => Yii::t('app', 'Offer description'),
             'offer_category' => Yii::t('app', 'Offer category'),
-            'offer_param' => Yii::t('app', 'To show all properties of a product in YML'),
+            'offer_param' => Yii::t('app', 'Import properties to YML'),
+            'use_gzip' => Yii::t('app', 'Compress file with gzip. Will store file as "File name".gz'),
         ];
     }
 
@@ -124,9 +127,10 @@ class Yml extends Model
             'offer_name' => ['type' => 'field', 'key' => 'name'],
             'offer_price' => ['type' => 'field', 'key' => 'price'],
             'offer_category' => ['type' => 'field', 'key' => 'main_category_id'],
-            'offer_picture' => ['type' => 'relation', 'key' => 'getImage', 'value' => 'filename'],
+            'offer_picture' => ['type' => 'relation', 'key' => 'getImage', 'value' => 'file'],
             'offer_description' => ['type' => 'field', 'key' => 'content'],
             'offer_param' => 0,
+            'use_gzip' => 0,
         ];
     }
 
@@ -138,7 +142,9 @@ class Yml extends Model
         if (isset($this->attrStorage[$name])) {
             return $this->attrStorage[$name];
         }
-
+        if (in_array($name, $this->attributes())) {
+            return '';
+        }
         return parent::__get($name);
     }
 
