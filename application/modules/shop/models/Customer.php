@@ -231,9 +231,8 @@ class Customer extends \yii\db\ActiveRecord
         return $this->propertyGroup;
     }
 
-    public function afterSave($insert, $changedAttributes)
+    public function beforeSave($insert)
     {
-
         if ($this->scenario == 'registerUser') {
             $password = Yii::$app->security->generateRandomString(10);
             $user = new User();
@@ -245,28 +244,31 @@ class Customer extends \yii\db\ActiveRecord
             $user->password = $password;
             $user->generateAuthKey();
             if ($user->save()) {
-                Yii::$app->mail->compose('new-user-in-order', ['user' => $user, 'password' => $password])
-                    ->setFrom(Yii::$app->getModule('core')->emailConfig['mailFrom'])
-                    ->setTo($this->email)
-                    ->setSubject(
-                        Yii::t(
-                            'app',
-                            'Welcome to {appName}',
-                            [
-                                'appName' => Yii::$app->name
-                            ]
+                try {
+                    Yii::$app->mail->compose('new-user-in-order', ['user' => $user, 'password' => $password])
+                        ->setFrom(Yii::$app->getModule('core')->emailConfig['mailFrom'])
+                        ->setTo($this->email)
+                        ->setSubject(
+                            Yii::t(
+                                'app',
+                                'Welcome to {appName}',
+                                [
+                                    'appName' => Yii::$app->name
+                                ]
 
+                            )
                         )
-                    )
-                    ->send();
+                        ->send();
+                } catch (\Exception $e) {
+                }
                 Yii::$app->user->login($user, 86400);
-                self::update(['user_id' => $user->id]);
+                $this->user_id = $user->id;
             }
 
 
         }
 
-        return parent::afterSave($insert, $changedAttributes);
+        return parent::beforeSave($insert);
     }
 }
 
