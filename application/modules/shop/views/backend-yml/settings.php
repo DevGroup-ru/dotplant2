@@ -48,15 +48,17 @@ $formName = 'YmlSettings';
             }, ''),
         ];
     }
-
+    if (true === isset ($yml_settings['relations_map']['getImage'])) {
+        $yml_settings['relations_map']['getImage']['fields']['file'] = Yii::t('app', 'File');
+        $yml_settings['relations_map']['getImage']['html'] .= '<option value="file">'.Yii::t('app', 'File').'</option>';
+    }
     $prop_group = \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id;
-    $prop_group = (new \yii\db\Query())
-        ->select(['pg.name as pgname', 'p.name', 'p.id'])
+    $provider = (new \yii\db\Query())
+        ->select(['pg.name as pgname', 'p.name', 'p.id', 'p.handler_additional_params'])
         ->from(\app\models\Property::tableName().' as p', \app\models\PropertyGroup::tableName().'as pg')
         ->leftJoin(\app\models\PropertyGroup::tableName().'as pg', 'pg.id=p.property_group_id')
-        ->where(['pg.object_id' => $prop_group])
-        ->all();
-
+        ->where(['pg.object_id' => $prop_group]);
+    $prop_group = $provider->all();
     $yml_settings['properties_map'] = ['html' => '', 'fields' => []];
     $yml_settings['properties_map'] = array_reduce(
         array_reduce(
@@ -75,7 +77,7 @@ $formName = 'YmlSettings';
         function($result, $i)
         {
             $result['fields'] = array_replace($result['fields'], $i['fields']);
-            $result['html'] .= '<optgroup label="'.$i['name'].'">'.$i['html'].'</optgroup>';
+            $result['html'] .= '<optgroup label="'.$i['name'].'">'.addslashes($i['html']).'</optgroup>';
             return $result;
         },
         $yml_settings['properties_map']
@@ -110,7 +112,6 @@ $formName = 'YmlSettings';
 
         <?php BackendWidget::begin(['title'=> Yii::t('app', 'General settings'), 'icon' => 'cogs']); ?>
         <?= $form->field($model, 'general_yml_filename'); ?>
-        <?= $form->field($model, 'offer_param')->checkbox(); ?>
         <?= $form->field($model, 'general_yml_type')->dropDownList([
             'simplified' => Yii::t('app', 'The simplified description'),
             'vendor.model' => Yii::t('app', 'Any goods'),
@@ -120,6 +121,7 @@ $formName = 'YmlSettings';
             'tour' => Yii::t('app', 'Tours'),
             'event-ticket' => Yii::t('app', 'Tickets for event'),
         ]); ?>
+        <?= $form->field($model, 'use_gzip')->checkbox(); ?>
         <?php BackendWidget::end(); ?>
     </div>
 </div>
@@ -186,7 +188,7 @@ $formName = 'YmlSettings';
                 );
             }
         ?>
-
+        <?= $form->field($model, 'offer_param')->checkbox(); ?>
         <?= Html::submitButton(
             Icon::show('save') . Yii::t('app', 'Save'),
             ['class' => 'btn btn-primary']
@@ -209,33 +211,105 @@ $formName = 'YmlSettings';
         ?>
         <?php BackendWidget::end(); ?>
     </div>
+    <div id="yml-properties-section" class="col-md-12">
+        <?php
+        $dataProvider = new \yii\data\ActiveDataProvider([
+            'query' => $provider,
+        ]);
+        echo \kartik\dynagrid\DynaGrid::widget([
+            'options' => [
+                'id' => 'Props-grid',
+            ],
+            'columns' => [
+                [
+                    'class' => 'yii\grid\DataColumn',
+                    'attribute' => 'id',
+                ],
+                [
+                    'class' => 'yii\grid\DataColumn',
+                    'attribute' => 'pgname',
+                    'label' => Yii::t('app', 'Property Group ID'),
+                ],
+                [
+                    'class' => 'yii\grid\DataColumn',
+                    'attribute' => 'name',
+                    'label' => Yii::t('app', 'Property name'),
+                ],
+                [
+                    'class' => 'yii\grid\DataColumn',
+                    'format' => 'raw',
+                    'label' => Yii::t('app', 'Use in YML file'),
+                    'value' => function ($model, $key, $index, $column) {
+                        $data = \yii\helpers\Json::decode($model['handler_additional_params']);
+                        return Html::checkbox(
+                            'use_in_file',
+                            (isset($data['use_in_file']) && $data['use_in_file'] == 1) ? true : false,
+                            [
+                                'class' => 'form-control',
+                                'data-id' => $model['id'],
+                                'data-type' => 'ajax-input',
+                            ]
+                        );
+                    },
+                ],
+                [
+                    'class' => 'yii\grid\DataColumn',
+                    'format' => 'raw',
+                    'label' => Yii::t('app', 'Measure'),
+                    'value' => function ($model, $key, $index, $column) {
+                        $data = \yii\helpers\Json::decode($model['handler_additional_params']);
+                        return Html::input(
+                            'text',
+                            'unit',
+                            isset($data['unit']) ? $data['unit'] : '',
+                            [
+                                'class' => 'form-control',
+                                'data-id' => $model['id'],
+                                'data-type' => 'ajax-input',
+                            ]
+                        );
+                    },
+                ],
+            ],
+            'theme' => 'panel-default',
+            'gridOptions' => [
+                'dataProvider' => $dataProvider,
+                'hover' => true,
+                'panel' => [
+                    'heading' => '<h3 class="panel-title">' . Yii::t('app', 'Properties import to YML') . '</h3>',
+                ],
+            ]
+        ]);
+        ?>
+</div>
 </div>
 <?php \kartik\widgets\ActiveForm::end(); ?>
 
 <?php $this->beginBlock('jsValues') ?>
-    ymlSelectFields = '<?= array_reduce(
+    var $url = '<?= \yii\helpers\Url::toRoute(['/shop/backend-yml/save-property-unit'])?>';
+    var ymlSelectFields = '<?= array_reduce(
     $yml_settings['product_fields'],
     function($result, $i) {
         $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
         return $result;
     }, ''); ?>';
 
-    ymlSelectRelKeys = '<?= array_reduce(
+    var ymlSelectRelKeys = '<?= array_reduce(
     $yml_settings['relations_keys'],
     function($result, $i) {
         $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
         return $result;
     }, ''); ?>';
 
-    ymlSelectRelations = {
-<?php
-foreach ($yml_settings['relations_map'] as $k => $v) {
-    echo $k.': \''.$v['html'].'\','.PHP_EOL;
-}
-?>
+    var ymlSelectRelations = {
+        <?php
+        foreach ($yml_settings['relations_map'] as $k => $v) {
+            echo $k.': \''.$v['html'].'\','.PHP_EOL;
+        }
+        ?>
     };
 
-    ymlSelectProperties = '<?= $yml_settings['properties_map']['html']; ?>';
+    var ymlSelectProperties = '<?= $yml_settings['properties_map']['html']; ?>';
 <?php $this->endBlock(); ?>
 
 <?php $this->registerJs($this->blocks['jsValues'], \yii\web\View::POS_HEAD) ; ?>

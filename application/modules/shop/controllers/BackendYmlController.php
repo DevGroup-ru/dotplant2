@@ -8,6 +8,10 @@ use app\modules\shop\models\Yml;
 use app\backgroundtasks\helpers\BackgroundTasks;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\Json;
+use app\models\Property;
+use yii\web\HttpException;
+use yii\web\Response;
 
 class BackendYmlController extends BackendController
 {
@@ -84,5 +88,33 @@ class BackendYmlController extends BackendController
 
         Yii::$app->session->setFlash('success', 'Task has been created.');
         return $this->redirect(['settings']);
+    }
+
+    /**
+     * @return Response
+     * @throws HttpException
+     */
+    public function actionSavePropertyUnit()
+    {
+        if (false === \Yii::$app->request->isAjax) {
+            throw new HttpException(403);
+        }
+        /** @var $property Property | null */
+        $property = null;
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $post = Yii::$app->request->post();
+        if (false === isset($post['id']) || null === $property = Property::findOne(['id' => $post['id']])) {
+            return 0;
+        }
+        if (false === isset($post['name']) || false === isset($post['val'])) {
+            return 0;
+        }
+        $data = Json::decode($property->handler_additional_params);
+        $data[$post['name']] = $post['val'];
+        $property->handler_additional_params = Json::encode($data);
+        if (true === $property->save(true, ['handler_additional_params'])) {
+            return 1;
+        }
+        return 0;
     }
 }

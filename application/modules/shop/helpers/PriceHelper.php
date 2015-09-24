@@ -89,39 +89,32 @@ class PriceHelper
         }
 
         $cacheKey = 'PriceHelper::getOrderPrice'
-            . json_encode(
-                [
-                    $order->object->id,
-                    $type
-                ]
-            );
+            . json_encode([
+                $order->object->id,
+                $type
+            ]);
         if (!$specialPriceList = Yii::$app->cache->get($cacheKey)) {
             $specialPriceListQuery = SpecialPriceList::find()
                 ->where(['object_id' => $order->object->id])
                 ->orderBy(['sort_order'=>SORT_ASC]);
 
             if ($type !== null) {
-                $specialPriceListQuery->andWhere(
-                    [
-                        'type' => $type
-                    ]
-                );
+                $specialPriceListQuery->andWhere(['type' => $type]);
             }
+
             $specialPriceList = $specialPriceListQuery->all();
 
             Yii::$app->cache->set(
                 $cacheKey,
                 $specialPriceList,
                 86400,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(
-                                SpecialPriceList::className()
-                            )
-                        ]
+                new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getCommonTag(
+                            SpecialPriceList::className()
+                        )
                     ]
-                )
+                ])
             );
         }
         foreach ($specialPriceList as $specialPriceRow) {

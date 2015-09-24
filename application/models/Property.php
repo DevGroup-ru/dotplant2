@@ -36,7 +36,6 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
  * @property boolean $dont_filter
  * @property integer $required
  * @property integer $interpret_as
- * @property integer $as_yml_field
  * @property integer $captcha
  * @property string $mask
  * @property integer $alias
@@ -51,7 +50,6 @@ class Property extends ActiveRecord
     private $handlerAdditionalParams = [];
     public $required;
     public $interpret_as;
-    public $as_yml_field;
     public $captcha;
 
     /**
@@ -119,7 +117,7 @@ class Property extends ActiveRecord
             [['key'], 'string', 'max' => 20],
             [['key'], 'match', 'pattern' => '#^[\w]+$#'],
             [['depends_on_property_id', 'depends_on_category_group_id'], 'default', 'value' => 0],
-            [['required', 'captcha', 'as_yml_field'], 'integer', 'min' => 0, 'max' => 1],
+            [['required', 'captcha'], 'integer', 'min' => 0, 'max' => 1],
             [['dont_filter'], 'safe'],
             [['key'], 'unique', 'targetAttribute' => ['key', 'property_group_id']],
         ];
@@ -153,7 +151,6 @@ class Property extends ActiveRecord
             'depends_on_property_id' => Yii::t('app', 'Depends On Property Id'),
             'depended_property_values' => Yii::t('app', 'Depended Property Values'),
             'depends_on_category_group_id' => Yii::t('app', 'Depends On Category Group Id'),
-            'as_yml_field' => Yii::t('app', 'Interpret Field As Field Of YML'),
             'mask' => Yii::t('app', 'Mask'),
             'alias' => Yii::t('app', 'Alias'),
         ];
@@ -308,7 +305,6 @@ class Property extends ActiveRecord
                 $this->handlerAdditionalParams['rules']
             ) && in_array('required', $this->handlerAdditionalParams['rules']);
         $this->interpret_as = isset($this->handlerAdditionalParams['interpret_as']) ? $this->handlerAdditionalParams['interpret_as'] : 0;
-        $this->as_yml_field = isset($this->handlerAdditionalParams['as_yml_field']) && $this->handlerAdditionalParams['as_yml_field'];
         if (isset($this->handlerAdditionalParams['rules']) && is_array($this->handlerAdditionalParams['rules'])) {
             foreach ($this->handlerAdditionalParams['rules'] as $rule) {
                 if (is_array($rule)) {
@@ -336,7 +332,7 @@ class Property extends ActiveRecord
         if (!parent::beforeSave($insert)) {
             return false;
         }
-        $handlerAdditionalParams = [];
+        $handlerAdditionalParams = $this->isNewRecord ? [] : Json::decode($this->handler_additional_params);
         $handlerRules = [];
         if (1 === intval($this->required)) {
             $handlerRules[] = 'required';
@@ -352,7 +348,6 @@ class Property extends ActiveRecord
             $handlerRules[] = ['captcha', 'captchaAction' => '/default/captcha'];
         }
         $handlerAdditionalParams['interpret_as'] = $this->interpret_as;
-        $handlerAdditionalParams['as_yml_field'] = $this->as_yml_field;
         $handlerAdditionalParams['rules'] = $handlerRules;
         $this->handlerAdditionalParams = $handlerAdditionalParams;
         $this->handler_additional_params = Json::encode($handlerAdditionalParams);

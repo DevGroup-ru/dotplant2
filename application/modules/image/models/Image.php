@@ -50,7 +50,7 @@ class Image extends \yii\db\ActiveRecord
             'image_title' => Yii::t('app', 'Image Title'),
             'image_alt' => Yii::t('app', 'Image Alt'),
             'sort_order' => Yii::t('app', 'Sort Order'),
-            'filename' => Yii::t('app', 'File')
+            'filename' => Yii::t('app', 'Filename')
         ];
     }
 

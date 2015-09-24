@@ -3,6 +3,7 @@
 namespace app\modules\shop\models;
 
 use Yii;
+use yii\base\InvalidParamException;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -56,6 +57,11 @@ class SpecialPriceObject extends \yii\db\ActiveRecord
     public function getSpecialPriceList()
     {
         return $this->hasOne(SpecialPriceList::className(), ['id' => 'special_price_list_id']);
+    }
+
+    public function isDiscount($type = null)
+    {
+        return $this->specialPriceList->type === "discount";
     }
 
     /**
