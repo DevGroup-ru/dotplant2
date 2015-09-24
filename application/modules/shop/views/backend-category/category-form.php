@@ -5,6 +5,7 @@ use app\modules\shop\controllers\BackendCategoryController;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use app\backend\components\ActiveForm;
+use kartik\widgets\DateTimePicker;
 use yii\helpers\ArrayHelper;
 use app\backend\components\Helper;
 use app\modules\shop\ShopModule;
@@ -157,6 +158,20 @@ $this->params['breadcrumbs'][] = $this->title;
             );?>
 
             <?=$form->field($model, 'sort_order');?>
+
+            <?=$form->field($model, 'date_added')->widget(
+                DateTimePicker::classname(),
+                [
+                    'pluginOptions' => [
+                        'autoclose' => true,
+                        'format' => 'yyyy-mm-dd hh:ii',
+                        'todayHighlight' => true,
+                        'todayBtn' => true,
+
+                    ]
+                ]
+            );?>
+
             <?php
             if($model->isNewRecord === false) {
                 echo $form->field($model, 'parent_id')->dropDownList(

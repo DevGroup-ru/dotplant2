@@ -9,9 +9,11 @@ use app\properties\HasProperties;
 use app\traits\GetImages;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "page".
@@ -132,6 +134,16 @@ class Page extends ActiveRecord implements \JsonSerializable
                     'id' => SORT_ASC
                 ],
             ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'date_added',
+                'updatedAtAttribute' => 'date_modified',
+                'value' => new Expression('NOW()'),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['date_added'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['date_modified'],
+                ],
+            ],
         ];
     }
 
@@ -209,10 +221,6 @@ class Page extends ActiveRecord implements \JsonSerializable
             // reset a cache tag to get a new parent model below
             TagDependency::invalidate(Yii::$app->cache, [ActiveRecordHelper::getCommonTag(self::className())]);
         }
-        if (!isset($this->date_added)) {
-            $this->date_added = date('Y-m-d H:i:s');
-        }
-        $this->date_modified = date('Y-m-d H:i:s');
         $this->slug_compiled = $this->compileSlug();
         TagDependency::invalidate(
             Yii::$app->cache,

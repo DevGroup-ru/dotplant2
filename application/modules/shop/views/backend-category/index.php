@@ -129,6 +129,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'title',
                     'slug',
+                    'date_modified',
                     [
                         'class' => 'app\backend\components\ActionColumn',
                         'buttons' => [
