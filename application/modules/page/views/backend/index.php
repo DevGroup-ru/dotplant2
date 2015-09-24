@@ -131,6 +131,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'class' => 'app\backend\columns\BooleanStatus',
                         'attribute' => 'published',
                     ],
+                    'date_modified',
                     [
                         'class' => 'app\backend\components\ActionColumn',
                         'buttons' => [

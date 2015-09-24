@@ -7,6 +7,7 @@ use app\backend\widgets\GridView;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use app\backend\components\ActiveForm;
+use kartik\widgets\DateTimePicker;
 use yii\data\ActiveDataProvider;
 use app\backend\components\Helper;
 use app\modules\shop\ShopModule;
@@ -337,6 +338,19 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $form->field($model, 'announce')->widget(Yii::$app->getModule('core')->wysiwyg_class_name(), Yii::$app->getModule('core')->wysiwyg_params()); ?>
 
     <?= $form->field($model, 'sort_order'); ?>
+
+    <?=$form->field($model, 'date_added')->widget(
+        DateTimePicker::classname(),
+        [
+            'pluginOptions' => [
+                'autoclose' => true,
+                'format' => 'yyyy-mm-dd hh:ii',
+                'todayHighlight' => true,
+                'todayBtn' => true,
+
+            ]
+        ]
+    );?>
 
     <?php BackendWidget::end(); ?>
 

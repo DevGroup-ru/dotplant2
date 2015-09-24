@@ -16,10 +16,12 @@ use app\traits\GetImages;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Exception;
+use yii\behaviors\TimestampBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\data\Pagination;
@@ -50,6 +52,8 @@ use yii\data\Pagination;
  * @property Measure $measure
  * @property string $sku
  * @property boolean unlimited_count
+ * @property string $date_added
+ * @property string $date_modified
  * Relations:
  * @property Category $category
  */
@@ -127,6 +131,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             [['unlimited_count', 'currency_id', 'measure_id'], 'default', 'value' => 1],
             [['relatedProductsArray'], 'safe'],
             [['slug'], 'unique', 'targetAttribute' => ['slug', 'main_category_id']],
+            [['date_added', 'date_modified'], 'safe'],
 
         ];
     }
@@ -161,6 +166,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             'relatedProductsArray' => Yii::t('app', 'Related products'),
             'currency_id' => Yii::t('app', 'Currency'),
             'measure_id' => Yii::t('app', 'Measure'),
+            'date_added' => Yii::t('app', 'Date Added'),
+            'date_modified' => Yii::t('app', 'Date Modified'),
         ];
     }
 
@@ -186,6 +193,16 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             ],
             [
                 'class' => CleanRelations::className(),
+            ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'date_added',
+                'updatedAtAttribute' => 'date_modified',
+                'value' => new Expression('NOW()'),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['date_added'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['date_modified'],
+                ],
             ],
         ];
     }

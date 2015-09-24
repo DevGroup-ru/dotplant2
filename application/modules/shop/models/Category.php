@@ -11,9 +11,11 @@ use app\properties\HasProperties;
 use app\traits\GetImages;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 use yii\helpers\Url;
 
 /**
@@ -34,6 +36,8 @@ use yii\helpers\Url;
  * @property string $announce
  * @property integer $sort_order
  * @property boolean $active
+ * @property string $date_added
+ * @property string $date_modified
  * @property Category[] $children
  * @property Category $parent
  */
@@ -100,6 +104,16 @@ class Category extends ActiveRecord implements \JsonSerializable
                     'id' => SORT_ASC
                 ],
             ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'date_added',
+                'updatedAtAttribute' => 'date_modified',
+                'value' => new Expression('NOW()'),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['date_added'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['date_modified'],
+                ],
+            ],
         ];
     }
 
@@ -137,6 +151,7 @@ class Category extends ActiveRecord implements \JsonSerializable
             [['slug_compiled'], 'string', 'max' => 180],
             [['title_append'], 'string'],
             [['active'], 'default', 'value' => 1],
+            [['date_added', 'date_modified'], 'safe'],
         ];
     }
 
@@ -182,6 +197,8 @@ class Category extends ActiveRecord implements \JsonSerializable
             'sort_order' => Yii::t('app', 'Sort Order'),
             'active' => Yii::t('app', 'Active'),
             'title_append' => Yii::t('app', 'Title Append'),
+            'date_added' => Yii::t('app', 'Date Added'),
+            'date_modified' => Yii::t('app', 'Date Modified'),
         ];
     }
 

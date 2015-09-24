@@ -230,6 +230,7 @@ $this->endBlock();
                             'placement' => 'left',
                         ],
                     ],
+                    'date_modified',
                     [
                         'class' => 'app\backend\components\ActionColumn',
                         'buttons' => [
