@@ -123,8 +123,6 @@ $this->endBlock();
 
                 <?= $form->field($model, 'sort_order') ?>
 
-                <?= $form->field($model, 'as_yml_field')->checkbox() ?>
-
             <?php BackendWidget::end(); ?>
 
             <?php if ($model->property_handler_id == 9): ?>
