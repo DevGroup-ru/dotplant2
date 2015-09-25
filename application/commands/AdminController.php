@@ -89,20 +89,41 @@ class AdminController extends Controller
             . ' WHERE `object_class` IN (\'app\\models\\Submission\', \'app\\models\\Order\'))')->execute();
     }
 
+    public function actionTestMail($email)
+    {
+
+        $mailComponent = Yii::$app->mail;
+
+        $status = $mailComponent->compose('test')
+            ->setFrom(Yii::$app->getModule('core')->emailConfig['mailFrom'])
+            ->setTo($email)
+            ->setSubject(
+                Yii::t(
+                    'app', 'subject test mail on {site}',
+                    [
+                        'site' => 'Site'
+                    ]
+                )
+            )->send();
+        echo $status ? "OK\n" : "NOT OK\n";
+    }
+
+
     protected function createStructure($path, $children, $themeName)
     {
         foreach ($children as $child) {
             $newPath = $path . DIRECTORY_SEPARATOR . $child['name'];
             if (isset($child['type']) && $child['type'] == 'dir') {
                 mkdir($newPath);
-                chmod($newPath,  isset($child['writable']) && $child['writable'] ? 0777 : 0775);
+                chmod($newPath, isset($child['writable']) && $child['writable'] ? 0777 : 0775);
                 if (isset($child['children']) && !empty($child['children'])) {
                     $this->createStructure($newPath, $child['children'], $themeName);
                 } else {
                     file_put_contents($newPath . DIRECTORY_SEPARATOR . '.keep', '');
                 }
             } else {
-                file_put_contents($newPath, isset($child['content']) ? str_replace('{%theme-name%}', $themeName, $child['content']) : '');
+                file_put_contents($newPath,
+                    isset($child['content']) ? str_replace('{%theme-name%}', $themeName, $child['content']) : '');
             }
         }
     }

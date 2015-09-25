@@ -64,4 +64,11 @@ class ResetPasswordForm extends Model
         $user->removePasswordResetToken();
         return $user->save();
     }
+
+    public function attributeLabels()
+    {
+        return [
+            'password' => Yii::t('app', 'Password'),
+        ];
+    }
 }
