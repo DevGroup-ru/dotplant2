@@ -244,7 +244,7 @@ class Customer extends \yii\db\ActiveRecord
             $user->password = $password;
             $user->generateAuthKey();
             if ($user->save()) {
-                try {
+
                     Yii::$app->mail->compose('new-user-in-order', ['user' => $user, 'password' => $password])
                         ->setFrom(Yii::$app->getModule('core')->emailConfig['mailFrom'])
                         ->setTo($this->email)
@@ -253,14 +253,13 @@ class Customer extends \yii\db\ActiveRecord
                                 'app',
                                 'Welcome to {appName}',
                                 [
-                                    'appName' => Yii::$app->name
+                                    'appName' => Yii::$app->getModule('DefaultTheme')->siteName
                                 ]
 
                             )
                         )
                         ->send();
-                } catch (\Exception $e) {
-                }
+
                 Yii::$app->user->login($user, 86400);
                 $this->user_id = $user->id;
             }

@@ -1168,5 +1168,15 @@ return [
     'Two to one' => 'Два к одному',
     'Backend edit grids' => 'Сетка ретакрирования админки',
     'Child view' => 'Представление внутрених страниц',
-    'Registration Guest User In Cart' => 'Регистрация гостей в корзине'
+    'Request password reset' => 'Запрос на сброс пароля',
+    'Reset password' => 'Сброс пароля',
+    'Please choose your new password' => 'Пожалуйста, задайте новый пароль',
+    'Please fill out your email. A link to reset password will be sent there.' => 'Пожалуйста, укажите ваш e-mail, на него придет ссылка для сброса пароля.',
+    'Registration Guest User In Cart' => 'Регистрация гостей в корзине',
+    'Welcome to {appName}' => 'Добро пожаловать на сайт {appName}',
+    'Welcome, {name}!' => 'Добро пожаловать, {name}!',
+    '<strong>Your login:</strong> {username}' => '<strong>Ваш логин:</strong> {username}',
+    '<strong>Your password:</strong> {password}' => '<strong>Ваш пароль:</strong> {password}',
+    'Password reset for {appName}' => 'Сброс пароля на сайте {appName}',
+    '<a href="{link}">This</a> is link for reset your password. If you did not request it ignore this letter.' => 'Для сброса пароля перейдите по <a href="{link}">ссылке</a>. Если Вы не запрашивали сброс пароля, игнорируйте данное письмо.'
 ];

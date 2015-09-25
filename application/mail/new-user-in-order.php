@@ -9,8 +9,8 @@ use yii\helpers\Url;
 
 ?>
 
-<p>Welcome, <?= $user->first_name ?> <?= $user->last_name ?>!</p>
+<p><?= Yii::t('app', 'Welcome, {name}!', ['name' => $user->first_name . ' ' . $user->last_name]) ?></p>
 <ul>
-    <li><strong>Your login:</strong> <?= $user->username ?></li>
-    <li><strong>Your password:</strong> <?= $password; ?></li>
+    <li><?= Yii::t('app', '<strong>Your login:</strong> {username}', ['username' => $user->username]); ?></li>
+    <li><?= Yii::t('app', '<strong>Your password:</strong> {password}', ['password' => $password]); ?></li>
 </ul>

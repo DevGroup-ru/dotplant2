@@ -53,7 +53,9 @@ class PasswordResetRequestForm extends Model
                         Yii::t(
                             'app',
                             'Password reset for {appName}',
-                            Yii::$app->name
+                            [
+                                'appName' => Yii::$app->getModule('DefaultTheme')->siteName
+                            ]
                         )
                     )
                     ->send();
