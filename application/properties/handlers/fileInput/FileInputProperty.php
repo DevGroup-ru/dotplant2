@@ -20,7 +20,7 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
         parent::init();
         $this->uploadDir = Yii::$app->getModule('core')->visitorsFileUploadPath;
 
-        $this->uploadDir = FileHelper::normalizePath($this->uploadDir);
+        $this->uploadDir = FileHelper::normalizePath( Yii::getAlias($this->uploadDir));
         $this->additionalRenderData['uploadDir'] = $this->uploadDir;
     }
 

@@ -122,7 +122,7 @@ class CoreModule extends BaseModule implements BootstrapInterface
         if (Yii::$app instanceof \yii\console\Application) {
             $this->controllerMap = [];
         }
-        $this->visitorsFileUploadPath = Yii::getAlias($this->visitorsFileUploadPath);
+
     }
 
     /**

@@ -16,6 +16,7 @@ class SubmissionsController extends Controller
     private function sendSubmissions($submissions, $errorStatus = Submission::STATUS_ERROR)
     {
         foreach ($submissions as $submission) {
+            echo "Sending {$submission->id}\n";
             if ($submission->form === null) {
                 $submission->processed = Submission::STATUS_FATAL_ERROR;
             } else {
@@ -35,8 +36,13 @@ class SubmissionsController extends Controller
                             Yii::$app->mail->getMailFrom()
                         )->setSubject($submission->form->name . ' #' . $submission->id)->send();
                     } catch (\Exception $e) {
+                        echo "Exception\n";
                         $submission->sending_status = $errorStatus;
+                        $submission->internal_comment = $e->getMessage() ."\n\n".$e->getFile().":".$e->getLine();
+                        echo $e->getMessage() ."\n\n".$e->getFile().":".$e->getLine();
                     }
+                } else {
+                    echo "No email\n";
                 }
             }
             $submission->save(true, ['sending_status']);
@@ -81,6 +87,7 @@ class SubmissionsController extends Controller
                 ]
             )
             ->all();
+
         $this->sendSubmissions($submissions);
     }
 
