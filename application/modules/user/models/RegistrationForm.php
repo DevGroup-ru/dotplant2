@@ -58,6 +58,7 @@ class RegistrationForm extends Model
             $user->email = $this->email;
             $user->generateAuthKey();
             if ($user->save() === false) {
+                $this->addErrors($user->errors);
                 return null;
             }
             return $user;
