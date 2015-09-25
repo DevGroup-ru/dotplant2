@@ -32,13 +32,13 @@ use yii\helpers\Url;
                     '/shop/backend-order/download-file',
                     'key' => $val['key'],
                     'orderId' => $values->object_model_id
-                ])));
+                ], true)));
             } else {
                 echo Html::tag('dd', Html::a($val['value'], Url::to([
                     'form/download',
                     'key' => $val['key'],
                     'submissionId' => $values->object_model_id
-                ])));
+                ], true)));
             }
         }
 
