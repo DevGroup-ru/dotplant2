@@ -41,7 +41,8 @@
                     "web/upload/images": "0777",
                     "web/upload/user-uploads": "0777",
                     "web/files": "0777",
-                    "installed.mark": "0666"
+                    "installed.mark": "0666",
+                    "visitors-uploaded": "0777"
                 }
             ]
         },

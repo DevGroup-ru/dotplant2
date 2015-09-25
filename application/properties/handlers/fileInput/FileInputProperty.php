@@ -2,6 +2,7 @@
 
 namespace app\properties\handlers\fileInput;
 
+use Yii;
 use app\properties\AbstractPropertyEavModel;
 use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
@@ -17,11 +18,9 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
     public function init()
     {
         parent::init();
-        $this->uploadDir = !empty(\Yii::$app->getModule('core')->fileUploadPath)
-            ? \Yii::$app->getModule('core')->fileUploadPath
-            : $this->uploadDir;
+        $this->uploadDir = Yii::$app->getModule('core')->visitorsFileUploadPath;
 
-        $this->uploadDir = FileHelper::normalizePath(\Yii::getAlias($this->uploadDir));
+        $this->uploadDir = FileHelper::normalizePath($this->uploadDir);
         $this->additionalRenderData['uploadDir'] = $this->uploadDir;
     }
 
@@ -71,6 +70,7 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
             if (false === \Yii::$app->getModule('core')->overwriteUploadedFiles && is_file($this->uploadDir . DIRECTORY_SEPARATOR . $fileName)) {
                 $fileName = $file->baseName . substr(md5($fileName . microtime()), 0, 6) . '.' . $file->extension;
             }
+
             if ($file->saveAs($this->uploadDir . DIRECTORY_SEPARATOR . $fileName)) {
                 $values[] = $fileName;
             }
@@ -149,6 +149,7 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
             if (false === \Yii::$app->getModule('core')->overwriteUploadedFiles && is_file($this->uploadDir . DIRECTORY_SEPARATOR . $fileName)) {
                 $fileName = $file->baseName . substr(md5($fileName . microtime()), 0, 6) . '.' . $file->extension;
             }
+
             if ($file->saveAs($this->uploadDir . DIRECTORY_SEPARATOR . $fileName)) {
                 $modelEav->isNewRecord = true;
                 $modelEav->value = $fileName;

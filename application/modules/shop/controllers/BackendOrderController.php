@@ -62,6 +62,17 @@ class BackendOrderController extends BackendController
         }
     }
 
+    public function actionDownloadFile($key, $orderId)
+    {
+        $order = Order::findOne($orderId);
+        if ($order === null) {
+            throw new NotFoundHttpException('Order not found');
+        }
+        $prop = $order->getPropertyValuesByKey($key);
+        return \Yii::$app->response->sendFile(Yii::$app->getModule('core')->visitorsFileUploadPath . DIRECTORY_SEPARATOR . $prop->values[0]['value']);
+    }
+
+
     protected function getManagersList()
     {
         $managers = Yii::$app->cache->get('ManagersList');

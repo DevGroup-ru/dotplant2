@@ -13,7 +13,7 @@ class Form extends Widget
     public $isModal = false;
     public $formId;
     public $route = 'default/submit-form';
-    public $options = ['data-type' => 'form-widget'];
+    public $options = ['data-type' => 'form-widget','enctype' => 'multipart/form-data'];
     public $statusHeaderName = null;
     private $model;
     private $modal = null;

@@ -26,12 +26,23 @@ use yii\helpers\Url;
     echo Html::tag('dt', $property->name);
     foreach ($values->values as $val) {
         if (isset($val['value'])) {
-            echo Html::tag('dd', Html::a($val['value'], Url::to([
-                'form/download',
-                'key' => $val['key'],
-                'sumissionId' => $values->object_model_id
-            ])));
+            if ($model->getOwnerModel()->className() === \app\modules\shop\models\Order::className())
+            {
+                echo Html::tag('dd', Html::a($val['value'], Url::to([
+                    '/shop/backend-order/download-file',
+                    'key' => $val['key'],
+                    'orderId' => $values->object_model_id
+                ])));
+            } else {
+                echo Html::tag('dd', Html::a($val['value'], Url::to([
+                    'form/download',
+                    'key' => $val['key'],
+                    'submissionId' => $values->object_model_id
+                ])));
+            }
         }
+
     }
+
     ?>
 </dl>

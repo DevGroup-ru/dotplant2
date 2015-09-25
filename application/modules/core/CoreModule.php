@@ -32,6 +32,7 @@ class CoreModule extends BaseModule implements BootstrapInterface
     public $autoCompleteResultsCount = 5;
 
     public $fileUploadPath = '@webroot/upload/files/';
+    public $visitorsFileUploadPath = '@app/visitors-uploaded/';
     public $removeUploadedFiles = true;
     public $overwriteUploadedFiles = false;
 
@@ -121,6 +122,7 @@ class CoreModule extends BaseModule implements BootstrapInterface
         if (Yii::$app instanceof \yii\console\Application) {
             $this->controllerMap = [];
         }
+        $this->visitorsFileUploadPath = Yii::getAlias($this->visitorsFileUploadPath);
     }
 
     /**
