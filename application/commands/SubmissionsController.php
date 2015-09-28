@@ -26,7 +26,10 @@ class SubmissionsController extends Controller
                         $emailView = !empty($submission->form->email_notification_view)
                             ? $submission->form->email_notification_view
                             : '@app/widgets/form/views/email-template.php';
-                        Yii::$app->mail->compose(
+
+                        /** @var \app\modules\core\components\MailComponent $mail */
+                        $mail = Yii::$app->mail;
+                        $msg = $mail->compose(
                             $emailView,
                             [
                                 'form' => $submission->form,
@@ -34,7 +37,22 @@ class SubmissionsController extends Controller
                             ]
                         )->setTo(explode(',', $submission->form->email_notification_addresses))->setFrom(
                             Yii::$app->mail->getMailFrom()
-                        )->setSubject($submission->form->name . ' #' . $submission->id)->send();
+                        )->setSubject($submission->form->name . ' #' . $submission->id);
+
+                        if (Yii::$app->getModule('core')->attachFilePropertiesToFormEmail === true) {
+                            $properties = $submission->abstractModel->getPropertiesModels();
+                            $basePath = Yii::getAlias(Yii::$app->getModule('core')->visitorsFileUploadPath) . '/';
+                            foreach ($properties as $property) {
+                                /** @var \app\models\Property $property */
+                                if (stripos($property->getHandler()->handler_class_name, 'FileInput') !== false) {
+                                    $filename = $basePath . $submission->property($property->key);
+                                    $msg = $msg->attach($filename);
+                                }
+                            }
+                        }
+
+                        $msg->send();
+
                     } catch (\Exception $e) {
                         echo "Exception\n";
                         $submission->sending_status = $errorStatus;
