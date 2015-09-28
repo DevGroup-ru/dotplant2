@@ -43,7 +43,7 @@ $formName = 'YmlSettings';
         $yml_settings['relations_map'][$key] = [
             'fields' => $_fields,
             'html' => array_reduce($_fields, function($result, $i) {
-                $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
+                $result .= '<option value="'.htmlspecialchars($i).'">'.addslashes(htmlspecialchars($i)).'</option>';
                 return $result;
             }, ''),
         ];
@@ -290,14 +290,14 @@ $formName = 'YmlSettings';
     var ymlSelectFields = '<?= array_reduce(
     $yml_settings['product_fields'],
     function($result, $i) {
-        $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
+        $result .= '<option value="'.addslashes(htmlspecialchars($i)).'">'.addslashes(htmlspecialchars($i)).'</option>';
         return $result;
     }, ''); ?>';
 
     var ymlSelectRelKeys = '<?= array_reduce(
     $yml_settings['relations_keys'],
     function($result, $i) {
-        $result .= '<option value="'.htmlspecialchars($i).'">'.htmlspecialchars($i).'</option>';
+        $result .= '<option value="'.addslashes(htmlspecialchars($i)).'">'.addslashes(htmlspecialchars($i)).'</option>';
         return $result;
     }, ''); ?>';
 
