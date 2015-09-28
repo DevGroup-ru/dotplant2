@@ -64,6 +64,39 @@ class Widget extends BaseWidget
         return $urlParams;
     }
 
+    public function getEavSliderFilter(Property $property, $urlParams)
+    {
+        $result = null;
+        $key = $property->key;
+        $eavCategoryData = Yii::$app->db->createCommand(
+            'SELECT MAX(CAST({{%product_eav}}.value AS DECIMAL)) as max, MIN(CAST({{%product_eav}}.value AS DECIMAL)) as min
+              FROM {{%product_eav}}
+              LEFT JOIN {{%product_category}} ON ({{%product_category}}.object_model_id = {{%product_eav}}.object_model_id)
+              WHERE {{%product_eav}}.key=:key AND {{%product_category}}.category_id=:category_id'
+        )->bindParam(':key', $key)
+            ->bindParam(':category_id', $urlParams['last_category_id'])
+            ->queryOne();
+
+        if ($eavCategoryData['max'] !== null &&
+            $eavCategoryData['min'] !== null &&
+            $eavCategoryData['max'] !== $eavCategoryData['min']
+        ) {
+            $result = [
+                'id' => $property->id,
+                'name' => $property->name,
+                'isRange' => 1,
+                'selections' => [],
+                'multiple' => 0,
+                'max' => $eavCategoryData['max'],
+                'min' => $eavCategoryData['min'],
+                'property' => $property,
+                'step' => 1
+            ];
+        }
+        return $result;
+    }
+
+
     /**
      * Get selected property index
      * @param array $properties
@@ -136,7 +169,14 @@ class Widget extends BaseWidget
             if (false === $filtersArray = Yii::$app->cache->get($cacheKey)) {
                 $filtersArray = [];
                 foreach ($filterSets as $filterSet) {
-                    if ($filterSet->property->has_static_values === 0) {
+                    /** Если eav и слайдер, то фильтр формируется по особым правилам */
+                    if ($filterSet->is_range_slider && $filterSet->property->is_eav) {
+                        $filter = $this->getEavSliderFilter($filterSet->property, $urlParams);
+                        if($filter) {
+                            $filtersArray[] = $filter;
+                        }
+                        continue;
+                    } elseif ($filterSet->property->has_static_values === 0) {
                         continue;
                     }
                     if (!empty($filterSet->property->depends_on_property_id)
@@ -175,11 +215,11 @@ class Widget extends BaseWidget
                     }
                     foreach ($selections as $selection) {
                         if ($filterSet->is_range_slider) {
-                            if ((int) $selection['value'] > $item['max']) {
-                                $item['max'] = (int) $selection['value'];
+                            if ((int)$selection['value'] > $item['max']) {
+                                $item['max'] = (int)$selection['value'];
                             }
-                            if ((int) $selection['value'] < $item['min']) {
-                                $item['min'] = (int) $selection['value'];
+                            if ((int)$selection['value'] < $item['min']) {
+                                $item['min'] = (int)$selection['value'];
                             }
                         } else {
                             $selectedPropertyIndex = $this->getSelectedPropertyIndex(
@@ -227,7 +267,7 @@ class Widget extends BaseWidget
                             $n = $n / 10;
                             $i++;
                         }
-                        $item['step'] = $i > 3 ? (int) pow(10, $i - 3) : 1;
+                        $item['step'] = $i > 3 ? (int)pow(10, $i - 3) : 1;
                         unset($i, $n);
                     }
                     $filtersArray[] = $item;
