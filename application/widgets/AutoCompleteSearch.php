@@ -36,8 +36,8 @@ class AutoCompleteSearch extends \kartik\widgets\Typeahead
                 'templates' => [
                     'empty' => Html::tag('span', Yii::t('app', 'Hit enter to search'), ['class'=>'empty-search']),
                     'suggestion' => new JsExpression("Handlebars.compile('{$this->template}')")
-                ]
-
+                ],
+                'display' => 'name'
             ],
         ];
 
