@@ -159,6 +159,7 @@ class Widget extends BaseWidget
                 '@category',
                 'last_category_id' => $categoryId,
                 'properties' => Yii::$app->request->get('properties', []),
+                'category_group_id' => Yii::$app->request->get('category_group_id', 0),
             ];
             $urlParams = $this->mergeUrlProperties($urlParams, Yii::$app->request->post('properties', []));
             $urlParams = $this->removeLostDependencies($filterSets, $urlParams);
