@@ -35,10 +35,12 @@ class Form extends Widget
         }
 
         if ($this->isModal) {
-            $this->modal = Modal::begin([
-                'id' => 'modal-form-' . $this->id,
-                'header' => $this->model->name,
-            ]);
+            $this->modal = Modal::begin(
+                [
+                    'id' => 'modal-form-' . $this->id,
+                    'header' => $this->model->name,
+                ]
+            );
         }
 
     }
@@ -58,26 +60,32 @@ class Form extends Widget
                     'style' => 'display: none;',
                 ]
             );
-            echo $this->render($successView);
+            echo $this->render($successView, ['isModal' => $this->isModal]);
             echo '</div>';
         }
 
-        echo $this->render($view, [
-            'id' => $this->id,
-            'model' => $this->model,
-            'groups' => $groups,
-            'options' => $this->options,
-        ]);
+        echo $this->render(
+            $view,
+            [
+                'id' => $this->id,
+                'model' => $this->model,
+                'groups' => $groups,
+                'options' => $this->options,
+            ]
+        );
         if ($this->isModal) {
             Modal::end();
-            Modal::begin([
-                'id' => 'modal-form-info-' . $this->id,
-                'size' => Modal::SIZE_SMALL,
-                'header' => $this->statusHeaderName ?
-                    $this->statusHeaderName :
-                    $this->model->name . ' ' . \Yii::t('app', 'status'),
-            ]);
-            echo $this->render($successView);
+            Modal::begin(
+                [
+                    'id' => 'modal-form-info-' . $this->id,
+                    'size' => Modal::SIZE_SMALL,
+                    'header' => $this->statusHeaderName ? $this->statusHeaderName : $this->model->name . ' ' . \Yii::t(
+                            'app',
+                            'status'
+                        ),
+                ]
+            );
+            echo $this->render($successView, ['isModal' => $this->isModal]);
             Modal::end();
         }
     }
