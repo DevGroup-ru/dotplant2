@@ -37,3 +37,8 @@ echo $form->field($model, $modelAttribute, !empty($additional['fieldOptions'])?$
             'pluginOptions' => array_replace_recursive($defaultOptions, $pluginOptions),
         ]
     );
+$id = \yii\helpers\Html::getInputId($model, $modelAttribute);
+$this->registerJs(<<<js
+    $('#$id').select2Sortable();
+js
+);

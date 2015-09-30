@@ -346,10 +346,17 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      */
     public function getRelatedProducts()
     {
-        return $this->hasMany(Product::className(), ['id' => 'related_product_id'])->viaTable(
-            RelatedProduct::tableName(),
-            ['product_id' => 'id']
-        );
+        return $this->hasMany(Product::className(), ['id' => 'related_product_id'])
+            ->viaTable(
+                RelatedProduct::tableName(),
+                ['product_id' => 'id'],
+                function($relation) {
+                    /** @var \yii\db\ActiveQuery $relation */
+                    return $relation->orderBy('sort_order ASC');
+                }
+            )
+            ->innerJoin('{{%related_product}}','related_product.product_id=:id AND related_product.related_product_id =product.id',[':id'=>$this->id])
+            ->orderBy('related_product.sort_order ASC');
     }
 
     public function getImage()
@@ -562,6 +569,24 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 Image::replaceForModel($this, $input_array);
             }
         }
+
+        if (isset($additionalFields['relatedProducts'])) {
+            if (isset($additionalFields['relatedProducts']['processValuesAs'],$fields['relatedProducts'])) {
+
+                $ids = explode($multipleValuesDelimiter, $fields['relatedProducts']);
+                $this->relatedProductsArray=$ids;
+                $this->saveRelatedProducts();
+//                $this->unlinkAll('relatedProducts', true);
+//
+//                foreach ($ids as $index => $id) {
+//                    $product = Product::findById($id);
+//                    $this->link('relatedProduct', $product, ['sort_order'=>$index]);
+//                }
+
+
+
+            }
+        }
     }
 
     /**
@@ -575,7 +600,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     private function unpackCategories(array $fields, $multipleValuesDelimiter, array $additionalFields)
     {
         $categories = isset($fields['categories']) ? $fields['categories'] : (isset($fields['category']) ? $fields['category'] : false);
-        if ($categories === false) {
+        if ($categories === false || empty($fields['categories'])) {
             return $this->getCategoryIds();
 
         }
@@ -681,6 +706,12 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     'id' => Yii::t('app', 'ID'),
                 ]
             ],
+            'relatedProducts' => [
+                'label' => Yii::t('app', 'Related products'),
+                'processValueAs' => [
+                    'id' => Yii::t('app', 'ID'),
+                ],
+            ],
         ];
     }
 
@@ -720,6 +751,12 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $object = Object::getForClass($this->className());
             $images = Image::getForModel($object->id, $this->id);
             $result['images'] = ArrayHelper::getColumn($images, $configuration['images']['processValuesAs']);
+        }
+
+        if (isset($configuration['relatedProducts'], $configuration['relatedProducts']['processValuesAs'])
+            && $configuration['relatedProducts']['enabled']
+        ) {
+            $result['relatedProducts'] = ArrayHelper::getColumn($this->relatedProducts, $configuration['relatedProducts']['processValuesAs']);
         }
 
 
@@ -932,25 +969,18 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $this->relatedProductsArray = explode(',', $this->relatedProductsArray);
         }
 
-        $addRelatedProductsArray = (array) $this->relatedProductsArray;
-        foreach ($this->relatedProducts as $product) {
-            $key = array_search($product->id, $addRelatedProductsArray);
-            if ($key === false) {
-                RelatedProduct::deleteAll(
-                    [
-                        'product_id' => $this->id,
-                        'related_product_id' => $product->id,
-                    ]
-                );
-            } else {
-                unset($addRelatedProductsArray[$key]);
-            }
-        }
-        foreach ($addRelatedProductsArray as $relatedProductId) {
+        RelatedProduct::deleteAll(
+            [
+                'product_id' => $this->id,
+            ]
+        );
+
+        foreach ($this->relatedProductsArray as $index => $relatedProductId) {
             $relation = new RelatedProduct;
             $relation->attributes = [
                 'product_id' => $this->id,
                 'related_product_id' => $relatedProductId,
+                'sort_order' => $index,
             ];
             $relation->save();
         }

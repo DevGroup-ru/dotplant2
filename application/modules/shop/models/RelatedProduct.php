@@ -27,7 +27,7 @@ class RelatedProduct extends \yii\db\ActiveRecord
     {
         return [
             [['product_id', 'related_product_id'], 'required'],
-            [['product_id', 'related_product_id'], 'integer'],
+            [['product_id', 'related_product_id', 'sort_order',], 'integer'],
             [['product_id', 'related_product_id'], 'unique', 'targetAttribute' => ['product_id', 'related_product_id'], 'message' => 'The combination of Product ID and Related Product ID has already been taken.']
         ];
     }
