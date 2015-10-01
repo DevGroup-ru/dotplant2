@@ -63,7 +63,11 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
             $this->addError($attribute, Yii::t('app', 'Unknown shipping option'));
             return;
         }
-        $shippingPrice = $shippingOption->getHandler()->calculate();
+        $shippingPrice = $shippingOption->getHandler()->calculate(
+            [
+                'order' => $this->order,
+            ]
+        );
         if ($shippingPrice === false) {
             $this->addError($attribute, $shippingOption->getHandler()->getLastError());
             return;
