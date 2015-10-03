@@ -195,11 +195,11 @@ class ThemeParts extends \yii\db\ActiveRecord
                 $widgetModel = $activeWidget->widget;
                 /** @var BaseWidget $widgetClassName */
                 $widgetClassName =  $widgetModel->widget;
-                $widgetConfiguration = Json::decode(static::_php7JsonPatch($widgetModel->configuration_json), true);
+                $widgetConfiguration = Json::decode(self::_php7JsonPatch($widgetModel->configuration_json), true);
                 if (!is_array($widgetConfiguration)) {
                     $widgetConfiguration = [];
                 }
-                $activeWidgetConfiguration = Json::decode(static::_php7JsonPatch($activeWidget->configuration_json), true);
+                $activeWidgetConfiguration = Json::decode(self::_php7JsonPatch($activeWidget->configuration_json), true);
                 if (!is_array($activeWidgetConfiguration)) {
                     $activeWidgetConfiguration  = [];
                 }
