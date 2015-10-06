@@ -474,6 +474,7 @@ return [
     'Image Alt' => 'Тег alt',
     'Image Height' => 'Высота картинки',
     'Image Width' => 'Ширина картинки',
+    'Image not found!' => 'Изображение не найдено!',
     'Images' => 'Изображения',
     'Img ID' => 'Изображение',
     'Immediate error report (sent {0})' => 'Немедленный отчет об ошибке (отправлено {0})',
