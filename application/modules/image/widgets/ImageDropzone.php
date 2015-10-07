@@ -46,12 +46,12 @@ class ImageDropzone extends DropZone
         $i = 0;
         foreach ($files as $file) {
             $fhName = 'file_' . $i ++;
-            $isFile = is_file($file['file']);
 
             // Create the mock file:
             $this->getView()->registerJs(
-                'var ' . $fhName . ' = { name: "' . $file['name'] . '", size: '
-                . ($isFile ? Yii::$app->getModule('image')->fsComponent->getSize($file['name']) : 0) . ' };'
+                'var ' . $fhName . ' = { name: "' . $file['name'] . '", size: ' . Yii::$app->getModule('image')->fsComponent->getSize(
+                    $file['name']
+                ) . ' };'
             );
             // Call the default addedfile event handler
             $this->getView()->registerJs(
@@ -61,12 +61,6 @@ class ImageDropzone extends DropZone
             $this->getView()->registerJs(
                 $this->dropzoneName . '.emit("thumbnail", ' . $fhName . ', "' . $file['thumbnail'] . '");'
             );
-
-            if (!$isFile) {
-                $this->getView()->registerJs(
-                    $this->dropzoneName . '.emit("error", ' . $fhName . ', "' . Yii::t('app', 'Image not found!') . '");'
-                );
-            }
             $this->getView()->registerJs(
                 'jQuery(' . $fhName . '.previewElement).find("[name=\"id[]\"]").val(' . $file['id'] . ');
                 jQuery(' . $fhName . '.previewElement).find("[name=\"file[]\"]").val("' . $file['file'] . '");
