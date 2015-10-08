@@ -24,20 +24,20 @@ class BackendAsset extends AssetBundle
 {
     public $sourcePath = '@app/backend/assets/backend';
     public $css = [
-        'http://st-1.dotplant.ru/css/smartadmin-production.min.css',
-        'http://st-2.dotplant.ru/css/smartadmin-production-plugins.min.css',
+        '//st-1.dotplant.ru/css/smartadmin-production.min.css',
+        '//st-2.dotplant.ru/css/smartadmin-production-plugins.min.css',
         'css/admin.css',
     ];
     public $js = [
         'js/admin.js',
         'js/DialogActions.js',
         'js/select2sortable.js',
-        'http://st-4.dotplant.ru/js/plugin/SmartNotification_jarvis.uglify.min.js',
-        'http://st-2.dotplant.ru/js/plugin/msie-fix/jquery.mb.browser.min.js',
-        'http://st-3.dotplant.ru/js/app.min.js',
-        'http://st-4.dotplant.ru/js/plugin/fullcalendar/jquery.fullcalendar.min.js',
-        'http://cdn.jsdelivr.net/lodash/3.6.0/lodash.min.js',
-        'http://cdn.jsdelivr.net/bootbox/4.3.0/bootbox.min.js',
+        '//st-4.dotplant.ru/js/plugin/SmartNotification_jarvis.uglify.min.js',
+        '//st-2.dotplant.ru/js/plugin/msie-fix/jquery.mb.browser.min.js',
+        '//st-3.dotplant.ru/js/app.min.js',
+        '//st-4.dotplant.ru/js/plugin/fullcalendar/jquery.fullcalendar.min.js',
+        '//cdn.jsdelivr.net/lodash/3.6.0/lodash.min.js',
+        '//cdn.jsdelivr.net/bootbox/4.3.0/bootbox.min.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',
