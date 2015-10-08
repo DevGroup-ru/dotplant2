@@ -25,7 +25,7 @@ use kartik\helpers\Html;
         echo Html::tag('dt', $property->name);
         foreach ($values->values as $val) {
             if (isset($val['value'])) {
-                echo Html::tag('dd', $val['value']);
+                echo Html::tag('dd', Html::encode($val['value']));
             }
         }
     ?>

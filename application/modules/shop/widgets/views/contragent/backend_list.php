@@ -46,19 +46,19 @@ use yii\helpers\Html;
             ?>
             <tr>
                 <th><?= $deliveryInformation->getAttributeLabel('country_id'); ?></th>
-                <td><?= null !== $deliveryInformation->country ? $deliveryInformation->country->name : ''; ?></td>
+                <td><?= null !== $deliveryInformation->country ? Html::encode($deliveryInformation->country->name) : ''; ?></td>
             </tr>
             <tr>
                 <th><?= $deliveryInformation->getAttributeLabel('city_id'); ?></th>
-                <td><?= null !== $deliveryInformation->city ? $deliveryInformation->city->name : ''; ?></td>
+                <td><?= null !== $deliveryInformation->city ? Html::encode($deliveryInformation->city->name) : ''; ?></td>
             </tr>
             <tr>
                 <th><?= $deliveryInformation->getAttributeLabel('zip_code'); ?></th>
-                <td><?= $deliveryInformation->zip_code; ?></td>
+                <td><?= Html::encode($deliveryInformation->zip_code); ?></td>
             </tr>
             <tr>
                 <th><?= $deliveryInformation->getAttributeLabel('address'); ?></th>
-                <td><?= $deliveryInformation->address; ?></td>
+                <td><?= Html::encode($deliveryInformation->address); ?></td>
             </tr>
         </tbody>
     </table>

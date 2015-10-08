@@ -31,6 +31,7 @@ class BackendAsset extends AssetBundle
     public $js = [
         'js/admin.js',
         'js/DialogActions.js',
+        'js/select2sortable.js',
         '//st-4.dotplant.ru/js/plugin/SmartNotification_jarvis.uglify.min.js',
         '//st-2.dotplant.ru/js/plugin/msie-fix/jquery.mb.browser.min.js',
         '//st-3.dotplant.ru/js/app.min.js',

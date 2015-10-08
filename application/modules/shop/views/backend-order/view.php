@@ -45,7 +45,9 @@ foreach ($model->items as $item) {
     </div>
 </div>
 <?php $this->endBlock(); ?>
-
+<?php $this->beginBlock('submit'); ?>
+<?=Html::submitButton(Yii::t('app', 'Send'), ['class' => 'btn btn-primary'])?>
+<?php $this->endBlock(); ?>
 <h1 class="page-title txt-color-blueDark">
     <?=Html::encode($this->title)?>
 </h1>
@@ -220,20 +222,20 @@ JSCODE;
                     ?>
                 </td>
             </tr>
-            <?php foreach ($model->abstractModel->attributes as $name => $attribute): ?>
-                <tr>
-                    <th><?=$model->abstractModel->getAttributeLabel($name)?></th>
-                    <td>
-                        <button data-toggle="modal" data-target="#custom-fields-modal" class="kv-editable-value kv-editable-link">
-                            <?=
-                            !empty($attribute)
-                                ? Html::encode($attribute)
-                                : Html::tag('em', Yii::t('yii', '(not set)'))
-                            ?>
-                        </button>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
+            <tr>
+                <td colspan="2">
+                    <?php $model->getPropertyGroups(true,false,true);?>
+                    <?php $properties = $model->abstractModel->getPropertiesModels(); ?>
+                    <?php foreach ($properties as $property): ?>
+                        <?php
+                        $property_values = $model->getPropertyValuesByPropertyId($property->id);
+                        echo $property->handler($form, $model->abstractModel, $property_values, 'backend_render_view');
+                        ?>
+                    <?php endforeach; ?>
+                </td>
+            </tr>
+
+
             </tbody>
         </table>
         <?php BackendWidget::end(); ?>
@@ -546,22 +548,7 @@ echo $this->blocks['page-buttons'];
     $form->end();
 ?>
 
-<?php \yii\bootstrap\Modal::begin(
-    ['id' => 'custom-fields-modal', 'header' => Yii::t('app', 'Edit order properties')]
-) ?>
-<?php $form = \kartik\widgets\ActiveForm::begin(['action' => ['update-order-properties', 'id' => $model->id]]) ?>
-<?php foreach (\app\models\PropertyGroup::getForModel($model->object->id, $model->id) as $group): ?>
-    <?php if ($group->hidden_group_title == 0): ?>
-        <h4><?=$group->name;?></h4>
-    <?php endif; ?>
-    <?php $properties = \app\models\Property::getForGroupId($group->id); ?>
-    <?php foreach ($properties as $property): ?>
-        <?=$property->handler($form, $model->abstractModel, [], 'frontend_edit_view');?>
-    <?php endforeach; ?>
-<?php endforeach; ?>
-<?=Html::submitButton(Yii::t('app', 'Send'), ['class' => 'btn btn-primary'])?>
-<?php \kartik\widgets\ActiveForm::end() ?>
-<?php \yii\bootstrap\Modal::end() ?>
+
 
 <?php
 

@@ -83,6 +83,7 @@ class BackendUserController extends BackendController
         /** @var User $model */
         if (is_null($id)) {
             $model = new User(['scenario' => 'adminSignup']);
+            $model->generateAuthKey();
         } else {
             $model = $this->findModel($id);
             $model->scenario = 'admin';

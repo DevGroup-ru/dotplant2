@@ -36,7 +36,7 @@ use kartik\helpers\Html;
                     $valuesRendered++;
                     $result .= Html::tag(
                         'dd',
-                        $val['value'],
+                        Html::encode($val['value']),
                         [
                             'itemprop' => 'value',
                         ]

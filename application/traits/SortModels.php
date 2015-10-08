@@ -19,7 +19,7 @@ trait SortModels
      */
     public static function sortModels($ids, $field = 'sort_order')
     {
-        $priorities = array();
+        $priorities = [];
         $start=0;
         $ids_sorted = $ids;
         sort($ids_sorted);

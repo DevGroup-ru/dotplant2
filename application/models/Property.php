@@ -195,7 +195,7 @@ class Property extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return PropertyHandler
      */
     public function getHandler()
     {

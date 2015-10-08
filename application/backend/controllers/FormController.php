@@ -244,14 +244,18 @@ class FormController extends Controller
         return $this->redirect(Url::toRoute(['view', 'id' => $submission->form_id]));
     }
 
-    public function actionDownload($key, $sumissionId)
+    public function actionDownload($key, $submissionId)
     {
-        $submission = Submission::findOne($sumissionId);
+        $submission = Submission::findOne($submissionId);
         if ($submission === null) {
             throw new NotFoundHttpException('Submission not found');
         }
         $prop = $submission->getPropertyValuesByKey($key);
-        return \Yii::$app->response->sendFile(Yii::getAlias("@webroot") . $prop->values[0]['value']);
+        return \Yii::$app->response->sendFile(
+            Yii::getAlias(Yii::$app->getModule('core')->visitorsFileUploadPath) .
+            DIRECTORY_SEPARATOR .
+            $prop->values[0]['value']
+        );
     }
 
     public function actionDelete($id = null)

@@ -162,7 +162,11 @@ $config = [
             ]
         ],
         'session' => [
-            'timeout' => 2592000, // 30 days
+            'timeout' => 24*3600*30, // 30 days
+            'useCookies' => true,
+            'cookieParams' => [
+                'lifetime' => 24*3600*30,
+            ],
         ],
         'view' => [
             'class' => 'app\components\WebView',

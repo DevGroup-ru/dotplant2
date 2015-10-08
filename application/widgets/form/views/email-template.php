@@ -18,10 +18,14 @@
         <td>User-Agent</td>
         <td><?=$submission->user_agent;?></td>
     </tr>
-    <?php foreach ($submission->abstractModel->attributes as $name => $value): ?>
-        <tr>
-            <td><?=$submission->abstractModel->getAttributeLabel($name);?></td>
-            <td><?=$value;?></td>
-        </tr>
-    <?php endforeach; ?>
+
+
 </table>
+<?php $submission->getPropertyGroups(true,false,true);?>
+<?php $properties = $submission->abstractModel->getPropertiesModels(); ?>
+<?php foreach ($properties as $property): ?>
+    <?php
+    $property_values = $submission->getPropertyValuesByPropertyId($property->id);
+    echo $property->handler($form, $submission->abstractModel, $property_values, 'backend_render_view');
+    ?>
+<?php endforeach; ?>

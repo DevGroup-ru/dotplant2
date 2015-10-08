@@ -1,4 +1,5 @@
 <?php
+use yii\helpers\Html;
 /**
  * Use existent form
  * @var \yii\web\View $this
@@ -12,23 +13,23 @@
         <tbody>
             <tr>
                 <th><?= $model->getAttributeLabel('first_name'); ?></th>
-                <td><?= $model->first_name; ?></td>
+                <td><?= Html::encode($model->first_name); ?></td>
             </tr>
             <tr>
                 <th><?= $model->getAttributeLabel('middle_name'); ?></th>
-                <td><?= $model->middle_name; ?></td>
+                <td><?= Html::encode($model->middle_name); ?></td>
             </tr>
             <tr>
                 <th><?= $model->getAttributeLabel('last_name'); ?></th>
-                <td><?= $model->last_name; ?></td>
+                <td><?= Html::encode($model->last_name); ?></td>
             </tr>
             <tr>
                 <th><?= $model->getAttributeLabel('email'); ?></th>
-                <td><?= $model->email; ?></td>
+                <td><?= Html::encode($model->email); ?></td>
             </tr>
             <tr>
                 <th><?= $model->getAttributeLabel('phone'); ?></th>
-                <td><?= $model->phone; ?></td>
+                <td><?= Html::encode($model->phone); ?></td>
             </tr>
             <?php
                 /** @var \app\properties\AbstractModel $abstractModel */

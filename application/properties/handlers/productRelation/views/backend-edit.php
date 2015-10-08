@@ -32,3 +32,8 @@ $data = ArrayHelper::map(Product::findAll($productIds), 'id', 'name');
         'placeholder' => Yii::t('app', 'Search'),
     ],
 ]);
+$id = \yii\helpers\Html::getInputId($model, $property_key);
+$this->registerJs(<<<js
+    $('#$id').select2Sortable();
+js
+);
