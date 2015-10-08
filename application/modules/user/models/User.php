@@ -372,7 +372,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function gravatar($size = 40)
     {
         $hash = md5(strtolower(trim($this->email)));
-        return 'http://www.gravatar.com/avatar/' . $hash . '?s=' . $size;
+        return '//www.gravatar.com/avatar/' . $hash . '?s=' . $size;
     }
 
     /**
