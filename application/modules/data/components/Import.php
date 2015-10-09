@@ -135,10 +135,13 @@ abstract class Import extends Component
      * @param array $titleFields
      * @throws \Exception
      */
-    protected function save($objectId, $object, $objectFields = [], $properties = [], $propertiesFields = [], $row=[], $titleFields=[])
+    protected function save($objectId, $object, $objectFields = [], $properties = [], $propertiesFields = [], $row=[], $titleFields=[], $columnsCount = null)
     {
+        if ($columnsCount === null) {
+            $columnsCount = count($titleFields);
+        }
         try {
-            $rowFields = array_combine(array_keys($titleFields), $row);
+            $rowFields = array_combine(array_keys($titleFields), array_slice($row, 0, $columnsCount));
         } catch(\Exception $e) {
             echo "title fields: ";
             var_dump(array_keys($titleFields));
@@ -479,14 +482,18 @@ abstract class Import extends Component
         $objAttributes = $objectFields['object'];
         $propAttributes = isset($objectFields['property']) ? $objectFields['property'] : [];
 
-        $titleFields = array_shift($data);
+        $titleFields = array_filter(
+            array_shift($data),
+            function ($value) {
+                return !empty($value);
+            }
+        );
         $titleFields = array_intersect_key(array_flip($titleFields), array_flip($fields['fields_header']));
 
         $transaction = \Yii::$app->db->beginTransaction();
-        try
-        {
-            foreach ($data as $row)
-            {
+        $columnsCount = count($titleFields);
+        try {
+            foreach ($data as $row) {
                 $objData = [];
                 $propData = [];
                 foreach ($objAttributes as $attribute) {
@@ -500,7 +507,6 @@ abstract class Import extends Component
                     }
                     $propValue = $row[$titleFields[$attribute]];
                     if (!empty($this->multipleValuesDelimiter)) {
-
                         if (strpos($propValue, $this->multipleValuesDelimiter) > 0) {
                             $values = explode($this->multipleValuesDelimiter, $propValue);
                         } elseif (strpos($this->multipleValuesDelimiter, '/') === 0) {
@@ -509,7 +515,7 @@ abstract class Import extends Component
                             $values = [$propValue];
                         }
                         $propValue = [];
-                        foreach($values as $value) {
+                        foreach ($values as $value) {
                             $value = trim($value);
                             if (!empty($value)) {
                                 $propValue[] = $value;
@@ -520,11 +526,18 @@ abstract class Import extends Component
                 }
 
                 $objectId = isset($titleFields['internal_id']) ? $row[$titleFields['internal_id']] : 0;
-                $this->save($objectId, $objData, $fields['fields_object'], $propData, $fields['fields_property'], $row, $titleFields);
+                $this->save(
+                    $objectId,
+                    $objData,
+                    $fields['fields_object'],
+                    $propData,
+                    $fields['fields_property'],
+                    $row,
+                    $titleFields,
+                    $columnsCount
+                );
             }
-        }
-        catch (\Exception $exception)
-        {
+        } catch (\Exception $exception) {
             $transaction->rollBack();
             throw $exception;
         }
