@@ -25,3 +25,11 @@
         'tree' => Yii::t('app', 'Tree')
     ]
 ) ?>
+<?= $form->field(
+    $configurationModel,
+    'activeClass'
+) ?>
+<?= $form->field(
+    $configurationModel,
+    'activateParents'
+)->checkbox() ?>

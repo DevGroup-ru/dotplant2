@@ -9,6 +9,8 @@ class ConfigurationModel extends WidgetConfigurationModel
     public $rootCategoryId = 1;
     public $categoryGroupId = 1;
     public $type = 'plain';
+    public $activeClass = '';
+    public $activateParents = false;
 
     /**
      * @inheritdoc
@@ -36,6 +38,8 @@ class ConfigurationModel extends WidgetConfigurationModel
                 'filter',
                 'filter' => 'intval',
             ],
+            [['activeClass'], 'string'],
+            [['activateParents'], 'boolean'],
         ];
     }
 }
