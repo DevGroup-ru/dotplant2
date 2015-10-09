@@ -394,7 +394,7 @@ class XmlFileReader
      * @param int $parentId
      * @return int
      */
-    private function createCategory($item, $parentId)
+    protected function createCategory($item, $parentId)
     {
         if (empty($item) || empty($item[static::ELEMENT_ID]) || empty($item[static::ELEMENT_NAIMENOVANIE])) {
             return $parentId;
@@ -433,7 +433,7 @@ class XmlFileReader
         return $result;
     }
 
-    private function createProduct($item = [], $createNotExists = true)
+    protected function createProduct($item = [], $createNotExists = true)
     {
         if (empty($item) || !isset($item[static::ELEMENT_ID]) || !isset($item[static::ELEMENT_NAIMENOVANIE])) {
             return false;
@@ -558,7 +558,7 @@ class XmlFileReader
      * @param null $defaultValue
      * @return string|null
      */
-    private function getElementText($elementName = null, $nodeType = \XMLReader::TEXT, $defaultValue = null)
+    protected function getElementText($elementName = null, $nodeType = \XMLReader::TEXT, $defaultValue = null)
     {
         if (empty($elementName)) {
             return $defaultValue;
