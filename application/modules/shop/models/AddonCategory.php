@@ -47,6 +47,7 @@ class AddonCategory extends \yii\db\ActiveRecord
         return [
             [['name'], 'required'],
             [['name'], 'string'],
+            [['sort_order'], 'integer'],
         ];
     }
 
@@ -58,6 +59,7 @@ class AddonCategory extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'name' => Yii::t('app', 'Name'),
+            'sort_order' => Yii::t('app', 'Sort order'),
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace app\modules\shop\models;
 
+use app\traits\SortModels;
 use Yii;
 use yii\data\ActiveDataProvider;
 
@@ -16,6 +17,7 @@ use yii\data\ActiveDataProvider;
  */
 class AddonBindings extends \yii\db\ActiveRecord
 {
+    use SortModels;
     /**
      * @inheritdoc
      */
@@ -31,8 +33,9 @@ class AddonBindings extends \yii\db\ActiveRecord
     {
         return [
             [['addon_id', 'appliance_object_id', 'object_model_id'], 'required'],
-            [['addon_id', 'appliance_object_id', 'object_model_id', 'sort_order'], 'integer'],
-            [['appliance_object_id', 'object_model_id'], 'unique', 'targetAttribute' => ['appliance_object_id', 'object_model_id'], 'message' => 'The combination of Appliance Object ID and Object Model ID has already been taken.'],
+            [['addon_id', 'appliance_object_id', 'object_model_id'], 'integer'],
+            [['sort_order'], 'number'],
+            [['appliance_object_id', 'object_model_id'], 'unique', 'targetAttribute' => ['appliance_object_id', 'object_model_id'], 'message' => 'The combination of Appliance Object ID and Object Model ID has already been taken.', 'on'=>'insert'],
         ];
     }
 

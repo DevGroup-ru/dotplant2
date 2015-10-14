@@ -20,6 +20,7 @@ use yii\data\ActiveDataProvider;
  * @property integer $addon_category_id
  * @property integer $can_change_quantity
  * @property integer $measure_id
+ * @property integer $sort_order
  */
 class Addon extends \yii\db\ActiveRecord
 {
@@ -54,7 +55,7 @@ class Addon extends \yii\db\ActiveRecord
             [['name', 'addon_category_id'], 'required'],
             [['name'], 'string'],
             [['price'], 'number'],
-            [['currency_id', 'price_is_multiplier', 'is_product_id', 'add_to_order', 'addon_category_id', 'can_change_quantity', 'measure_id'], 'integer'],
+            [['currency_id', 'price_is_multiplier', 'is_product_id', 'add_to_order', 'addon_category_id', 'can_change_quantity', 'measure_id', 'sort_order'], 'integer'],
             [['is_product_id',], 'default', 'value' => 0,],
         ];
     }
@@ -75,6 +76,7 @@ class Addon extends \yii\db\ActiveRecord
             'addon_category_id' => Yii::t('app', 'Addon Category ID'),
             'can_change_quantity' => Yii::t('app', 'Can Change Quantity'),
             'measure_id' => Yii::t('app', 'Measure ID'),
+            'sort_order' => Yii::t('app', 'Sort order'),
         ];
     }
 

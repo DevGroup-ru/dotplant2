@@ -14,6 +14,7 @@ use app\backend\actions\MultipleDelete;
 use app\backend\actions\DeleteOne;
 use app\modules\shop\models\AddonCategory;
 use Yii;
+use yii\caching\TagDependency;
 use yii\filters\AccessControl;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -207,6 +208,68 @@ class AddonsController extends BackendController
         return $result;
     }
 
+    public function actionReorder()
+    {
+        if (Yii::$app->request->isAjax === false) {
+            throw new BadRequestHttpException;
+        }
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+
+        $object_id = Yii::$app->request->get('object_id', null);
+        $object_model_id = Yii::$app->request->get('object_model_id', null);
+        $addons = (array) Yii::$app->request->post('addons', []);
+
+        if ($object_id === null || $object_model_id === null || empty($addons)){
+            throw new BadRequestHttpException;
+        }
+
+        array_walk($addons, function($item){
+            return intval($item);
+        });
+        // magic begins
+        $priorities=[];
+        $start=0;
+        $ids_sorted = $addons;
+        sort($ids_sorted);
+        foreach ($addons as $id) {
+            $priorities[$id] = $start++;
+        }
+        $result = 'CASE addons.`id`';
+        foreach ($priorities as $k => $v) {
+            $result .= ' when "' . $k . '" then "' . $v . '"';
+        }
+        $case = $result . ' END';
+
+        $query = <<< SQL
+UPDATE {{%addon_bindings}} ab
+INNER JOIN {{%addon}} addons ON addons.id = ab.addon_id
+SET ab.`sort_order` = $case
+SQL;
+        $query .= ' where addons.id IN ('.implode(', ', $addons).')';
+
+        Yii::$app->db->createCommand($query)->execute();
+
+        TagDependency::invalidate(Yii::$app->cache, [Addon::className()]);
+
+        $object = Object::findById($object_id);
+        if ($object === null) {
+            throw new NotFoundHttpException;
+        }
+        $modelClassName = $object->object_class;
+        $model = $this->loadModel($modelClassName, $object_model_id);
+
+        return [
+            'query' => $query,
+            'data' => AddonsListWidget::widget([
+                'object_id' => $object->id,
+                'object_model_id' => $model->id,
+                'bindedAddons' => $model->bindedAddons,
+            ]),
+            'error' => false,
+        ];
+    }
+
     public function actionAddAddonBinding($remove='0')
     {
         if (Yii::$app->request->isAjax === false) {
@@ -230,6 +293,7 @@ class AddonsController extends BackendController
         $modelClassName = $object->object_class;
         $model = $this->loadModel($modelClassName, $object_model_id);
 
+
         // ok, now all's ok, addon and model exist!
         try {
 
@@ -252,10 +316,10 @@ class AddonsController extends BackendController
                     'data' =>
                         Html::tag('div', Yii::t('app', 'Addon is already added'), ['class' => 'alert alert-info']) .
                         AddonsListWidget::widget([
-                        'object_id' => $object->id,
-                        'object_model_id' => $model->id,
-                        'bindedAddons' => $model->bindedAddons,
-                    ]),
+                            'object_id' => $object->id,
+                            'object_model_id' => $model->id,
+                            'bindedAddons' => $model->bindedAddons,
+                        ]),
                     'error' => false,
                 ];
             } else {
@@ -265,6 +329,7 @@ class AddonsController extends BackendController
                 ];
             }
         }
+        TagDependency::invalidate(Yii::$app->cache, [Addon::className()]);
         return [
             'data' => AddonsListWidget::widget([
                 'object_id' => $object->id,

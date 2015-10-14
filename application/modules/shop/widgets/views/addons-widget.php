@@ -34,16 +34,18 @@ use app\modules\shop\widgets\AddonsListWidget;
 
 ]);
 ?>
-
+<div class="addons-widget">
 <?= AddonsListWidget::widget([
     'object_id' => $object->id,
     'object_model_id' => $model->id,
     'bindedAddons' => $bindedAddons,
 ]) ?>
-
+</div>
 <?php BackendWidget::end() ?>
 <?php
 $url = \yii\helpers\Json::encode(Url::to(['/shop/backend-addons/add-addon-binding', 'object_id' => $object->id, 'object_model_id' => $model->id]));
+$reorderUrl = \yii\helpers\Json::encode(Url::to(['/shop/backend-addons/reorder', 'object_id' => $object->id, 'object_model_id' => $model->id]));
+
 $js = <<<JS
     $("#addaddonmodel-addon_id").on('change', function(){
         var val = $(this).val();
@@ -63,6 +65,32 @@ $js = <<<JS
         });
 
     });
+    activateReorder = function() {
+        $(".addons-for-category").each(function(){
+            $(this).sortable({
+                handle: '.handle',
+                placeholder: 'panel panel-default',
+                update: function(event, ui) {
+                    var result = [];
+                    $(".addons-for-category .panel").each(function() {
+                        result.push($(this).data('addon'));
+                    });
+                    $.ajax({
+                        url: $reorderUrl,
+                        data: {
+                            addons: result
+                        },
+                        method: 'POST',
+                        success: function(data) {
+                            $(".addons-list-widget").replaceWith($(data.data));
+                            activateReorder();
+                        }
+                    });
+                }
+            })
+        });
+    }
+    activateReorder();
 
 JS;
 $this->registerJs($js);
