@@ -210,7 +210,7 @@ $(function() {
                 $('#cart-table .total-price, #cart-info-widget .total-price').html(data.totalPrice);
                 $('#cart-table .items-count, #cart-info-widget .items-count').html(data.itemsCount);
                 $input.parents('tr').eq(0).find('.item-price').html(data.itemPrice);
-                $input.val(quantity);
+                $input.val(data.calculatedQuantity);
             }
         });
     });
@@ -234,7 +234,7 @@ $(function() {
                 $('#cart-table .total-price, #cart-info-widget .total-price').html(data.totalPrice);
                 $('#cart-table .items-count, #cart-info-widget .items-count').html(data.itemsCount);
                 $input.parents('tr').eq(0).find('.item-price').html(data.itemPrice);
-                $input.val(quantity);
+                $input.val(data.calculatedQuantity);
             }
         });
         return false;

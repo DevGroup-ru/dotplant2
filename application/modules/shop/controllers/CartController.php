@@ -96,6 +96,7 @@ class CartController extends Controller
             $quantity = isset($product['quantity']) && (double) $product['quantity'] > 0
                 ? (double) $product['quantity']
                 : 1;
+            $quantity = $productModel->measure->ceilQuantity($quantity);
             if ($this->module->allowToAddSameProduct
                 || is_null($orderItem = OrderItem::findOne(['order_id' => $order->id, 'product_id' => $productModel->id, 'parent_id' => 0]))
             ) {
@@ -198,6 +199,7 @@ class CartController extends Controller
                 'itemsCount' => $order->items_count,
                 'itemPrice' => $mainCurrency->format($orderItem->total_price),
                 'totalPrice' => $mainCurrency->format($order->total_price),
+                'calculatedQuantity' => $orderItem->quantity,
             ];
         } else {
             return [
