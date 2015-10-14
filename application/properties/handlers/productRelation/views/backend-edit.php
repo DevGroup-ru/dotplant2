@@ -21,6 +21,7 @@ foreach ($values->values as $value) {
     $product = Product::findOne($value['value']);
     $data [$product->id] = $product->name;
 }
+
 ?>
 
 <?=

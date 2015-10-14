@@ -19,7 +19,10 @@ use kartik\helpers\Html;
 
 $productIds = ArrayHelper::getColumn($values->values, 'value');
 /** @var Product[] $products */
-$products = Product::findAll($productIds);
+$products = [];
+foreach ($productIds as $id) {
+    $products[] = Product::findOne($id);
+}
 
 ?>
 

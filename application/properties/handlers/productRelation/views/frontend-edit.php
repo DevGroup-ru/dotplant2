@@ -16,7 +16,11 @@ use app\modules\shop\models\Product;
 use yii\helpers\ArrayHelper;
 
 $productIds = ArrayHelper::getColumn($values->values, 'value');
-$data = ArrayHelper::map(Product::findAll($productIds), 'id', 'name');
+$data = [];
+foreach ($values->values as $value) {
+    $product = Product::findOne($value['value']);
+    $data [$product->id] = $product->name;
+}
 
 ?>
 
