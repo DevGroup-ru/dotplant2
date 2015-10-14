@@ -189,38 +189,20 @@ class AbstractModel extends Model
                     }
                 } elseif ($property->is_eav) {
                     // добавим новые
-                    foreach ($values->values as $val) {
-                        $exist_in_old = false;
-                        foreach ($this->values_by_property_key[$key]->values as $old_val) {
-                            if ($old_val['value'] == $val['value']) {
-                                $exist_in_old = true;
-                                break;
-                            }
-                        }
-                        if ($exist_in_old == false) {
-                            $new_eav_values[] = [
-                                $object_model_id,
-                                $values->property_group_id,
-                                $key,
-                                $val['value'],
-                                0,
-                            ];
-                        }
+                    foreach ($values->values as $index => $val) {
+                        $new_eav_values[] = [
+                            $object_model_id,
+                            $values->property_group_id,
+                            $key,
+                            $val['value'],
+                            $val['sort_order'],
+                        ];
                     }
+
                     // теперь добавим на удаление
                     foreach ($this->values_by_property_key[$key]->values as $old_val) {
-                        $exist_in_new = false;
-                        foreach ($values->values as $new_val) {
-                            if ($old_val['value'] == $new_val['value']) {
-                                $exist_in_new = true;
-                                break;
-                            }
-                        }
-                        if ($exist_in_new == false) {
-                            // @todo find why sometimes it isn't exist
-                            if (isset($old_val['eav_id'])) {
-                                $eav_ids_to_delete[] =  $old_val['eav_id'];
-                            }
+                        if (isset($old_val['eav_id'])) {
+                            $eav_ids_to_delete[] =  $old_val['eav_id'];
                         }
                     }
                 }
@@ -317,18 +299,19 @@ class AbstractModel extends Model
                     )->execute();
             }
         }
-        if (count($new_eav_values) > 0) {
-            $table_name = Object::findById($object_id)->eav_table_name;
-            Yii::$app->db->createCommand()
-                ->batchInsert($table_name, ['object_model_id', 'property_group_id', 'key', 'value', 'sort_order'], $new_eav_values)
-                ->execute();
-        }
         if (count($eav_ids_to_delete) > 0) {
             $table_name = Object::findById($object_id)->eav_table_name;
             Yii::$app->db->createCommand()
                 ->delete($table_name, ['in', 'id', $eav_ids_to_delete])
                 ->execute();
         }
+        if (count($new_eav_values) > 0) {
+            $table_name = Object::findById($object_id)->eav_table_name;
+            Yii::$app->db->createCommand()
+                ->batchInsert($table_name, ['object_model_id', 'property_group_id', 'key', 'value', 'sort_order'], $new_eav_values)
+                ->execute();
+        }
+
         Yii::$app->cache->delete("TIR:".$object_id . ':' .$object_model_id);
         $this->values_by_property_key = $new_values;
     }

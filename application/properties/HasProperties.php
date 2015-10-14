@@ -273,9 +273,10 @@ class HasProperties extends Behavior
                         $values = $propertyHandler->processValues($_property, $formProperties, $values);
                     }
 
-                    foreach ($values as $val) {
-                        $vals[] = ['value' => $val, 'property_id' => $property_id];
+                    foreach ($values as $index => $val) {
+                        $vals[] = ['value' => $val, 'property_id' => $property_id, 'sort_order' => $index];
                     }
+
                     $val = new PropertyValue(
                         $vals,
                         $property_id,
