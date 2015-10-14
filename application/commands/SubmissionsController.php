@@ -2,7 +2,10 @@
 
 namespace app\commands;
 
+use app\models\Object;
+use app\models\ObjectStaticValues;
 use app\models\Submission;
+use app\modules\review\models\Review;
 use Yii;
 use yii\console\Controller;
 
@@ -77,9 +80,34 @@ class SubmissionsController extends Controller
         $time = new \DateTime();
         $days = Yii::$app->getModule('core')->daysToStoreSubmissions;
         $time->sub(new \DateInterval("P{$days}D"));
-        Submission::deleteAll(
-            'UNIX_TIMESTAMP(`date_received`) < ' . $time->getTimestamp() . ' AND `is_deleted` = \'1\''
-        );
+        /** @var Object $object */
+        $object = Object::getForClass(Submission::className());
+        if ($object !== null) {
+            $submissionIds = Submission::find()
+                ->select(['id'])
+                ->where('UNIX_TIMESTAMP(`date_received`) < ' . $time->getTimestamp() . ' AND `is_deleted` = \'1\'')
+                ->column();
+            Review::deleteAll(['submission_id' => $submissionIds]);
+            Yii::$app->db->createCommand()->delete(
+                $object->column_properties_table_name,
+                ['object_model_id' => $submissionIds]
+            );
+            Yii::$app->db->createCommand()->delete(
+                $object->eav_table_name,
+                ['object_model_id' => $submissionIds]
+            );
+            Yii::$app->db->createCommand()->delete(
+                $object->categories_table_name,
+                ['object_model_id' => $submissionIds]
+            );
+            ObjectStaticValues::deleteAll(
+                [
+                    'object_id' => $object->id,
+                    'object_model_id' => $submissionIds,
+                ]
+            );
+            Submission::deleteAll(['id' => $submissionIds]);
+        }
     }
 
     /**
