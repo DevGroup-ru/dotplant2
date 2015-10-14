@@ -555,6 +555,19 @@ class BackendProductController extends BackendController
                     'Properties_Product_' . $newModel->id => $newModelProps,
                 ]
             );
+
+            // addons cloning
+            foreach ($model->bindedAddons as $index => $addon) {
+                $newModel->link(
+                    'bindedAddons',
+                    $addon,
+                    [
+                        'sort_order'=>$index,
+                        'appliance_object_id' => $object->id,
+                    ]
+                );
+            }
+
             Yii::$app->session->setFlash('success', Yii::t('app', 'Product has been cloned successfully.'));
             $this->redirect(['edit', 'id' => $newModel->id, 'returnUrl' => $returnUrl]);
         }
