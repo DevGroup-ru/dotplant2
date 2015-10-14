@@ -120,10 +120,10 @@ class CartController extends Controller
                 : 1;
 
             $condition = ['order_id' => $order->id, 'parent_id' => 0];
-
             if ($productModel !== null) {
                 $condition['product_id'] = $productModel->id;
                 $thisItemModel = $productModel;
+                $quantity = $productModel->measure->ceilQuantity($quantity);
             } else {
                 $condition['addon_id'] = $addonModel->id;
                 $thisItemModel = $addonModel;
@@ -245,6 +245,7 @@ class CartController extends Controller
                 'itemsCount' => $order->items_count,
                 'itemPrice' => $mainCurrency->format($orderItem->total_price),
                 'totalPrice' => $mainCurrency->format($order->total_price),
+                'calculatedQuantity' => $orderItem->quantity,
             ];
         } else {
             return [

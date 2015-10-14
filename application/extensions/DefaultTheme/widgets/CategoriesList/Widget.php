@@ -10,6 +10,8 @@ class Widget extends BaseWidget
     public $type = 'plain';
     public $rootCategoryId = 1;
     public $categoryGroupId = 1;
+    public $activeClass = '';
+    public $activateParents = false;
 
     /**
      * Actual run function for all widget classes extending BaseWidget
@@ -28,6 +30,8 @@ class Widget extends BaseWidget
                 'type' => $this->type,
                 'rootCategoryId' => $this->rootCategoryId,
                 'categoryGroupId' => $this->categoryGroupId,
+                'activeClass' => $this->activeClass,
+                'activateParents' => $this->activateParents,
             ]
         );
     }

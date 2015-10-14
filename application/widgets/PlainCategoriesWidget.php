@@ -11,7 +11,8 @@ class PlainCategoriesWidget extends Widget
 {
     public $root_category_id = null;
     public $viewFile = 'categories-list';
-
+    public $activeClass = '';
+    public $activateParents = false;
 
     /**
      * @inheritdoc
@@ -19,7 +20,7 @@ class PlainCategoriesWidget extends Widget
      */
     public function run()
     {
-        $cacheKey = "PlainCategoriesWidget:".$this->root_category_id.":".$this->viewFile;
+        $cacheKey = "PlainCategoriesWidget:".$this->root_category_id.":".$this->viewFile.":".$this->activeClass.":".Yii::$app->request->url;
         $result = Yii::$app->cache->get($cacheKey);
         if ($result === false) {
             $categories = Category::getByParentId($this->root_category_id);
@@ -27,6 +28,7 @@ class PlainCategoriesWidget extends Widget
                 $this->viewFile,
                 [
                     'categories' => $categories,
+                    'activeClass' => $this->activeClass,
                 ]
             );
             Yii::$app->cache->set(

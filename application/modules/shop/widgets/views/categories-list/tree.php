@@ -6,6 +6,8 @@
 
 echo yii\widgets\Menu::Widget([
     'items' => $tree,
+    'activeCssClass' => $activeClass,
+    'activateParents' => $activateParents,
     'options' => [
         'class' => 'widget-categories',
     ],

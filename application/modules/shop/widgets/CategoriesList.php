@@ -30,6 +30,8 @@ class CategoriesList extends Widget
     public $onlyNonEmpty = false;
     public $excludedCategories = [];
     public $additional = [];
+    public $activeClass = '';
+    public $activateParents = false;
 
     /**
      * @inheritdoc
@@ -65,7 +67,8 @@ class CategoriesList extends Widget
             intval($this->includeRoot),
             intval($this->fetchModels),
             intval($this->onlyNonEmpty),
-            implode(',', $this->excludedCategories)
+            implode(',', $this->excludedCategories),
+            \Yii::$app->request->url
         ]) . ':' . json_encode($this->additional);
 
         if (false !== $cache = \Yii::$app->cache->get($cacheKey)) {
@@ -117,6 +120,8 @@ class CategoriesList extends Widget
             'tree' => $tree,
             'fetchModels' => $this->fetchModels,
             'additional' => $this->additional,
+            'activeClass' => $this->activeClass,
+            'activateParents' => $this->activateParents,
         ]);
 
         \Yii::$app->cache->set(
@@ -145,6 +150,9 @@ class CategoriesList extends Widget
             {
                 if (in_array($item['id'], $this->excludedCategories)) {
                     return $result;
+                }
+                if ($item['url'] === \Yii::$app->request->url) {
+                    $item['active'] = true;
                 }
                 $item['items'] = empty($item['items']) ? $item['items'] : $this->filterTree($item['items']);
                 $result[] = $item;
