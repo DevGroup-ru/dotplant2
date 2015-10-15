@@ -245,6 +245,17 @@ class CartController extends Controller
         }
     }
 
+    public function actionClear()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $order = $this->loadOrder();
+        foreach ($order->items as $item) {
+            $item->delete();
+        }
+        $order->calculate(true);
+        return ['success' => true,];
+    }
+
     public function actionIndex()
     {
         $model = $this->loadOrder(false, false);
