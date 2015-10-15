@@ -81,7 +81,14 @@ class ActionColumn extends Column
      * @return string the created URL
      */
     public function createUrl(
-        $action, $model, $key, $index, $appendReturnUrl = null, $url_append = null, $keyParam = 'id', $attrs = []
+        $action,
+        $model,
+        $key,
+        $index,
+        $appendReturnUrl = null,
+        $url_append = null,
+        $keyParam = 'id',
+        $attrs = []
     ) {
         if ($this->urlCreator instanceof Closure) {
             return call_user_func($this->urlCreator, $action, $model, $key, $index);
@@ -91,13 +98,15 @@ class ActionColumn extends Column
                 $params = $key;
             } else {
                 if (is_null($keyParam) === false) {
-                    $params = [$keyParam => (string) $key];
+                    $params = [$keyParam => (string)$key];
                 }
             }
             $params[0] = $this->controller ? $this->controller . '/' . $action : $action;
             foreach ($attrs as $attrName) {
                 if ($attrName === 'model') {
                     $params['model'] = $model;
+                } elseif ($attrName === 'mainCategory.category_group_id' && $model->getMainCategory()) {
+                    $params['category_group_id'] = $model->getMainCategory()->category_group_id;
                 } else {
                     $params[$attrName] = $model->getAttribute($attrName);
                 }

@@ -241,7 +241,7 @@ $this->endBlock();
                                 'label' => Yii::t('app', 'Preview'),
                                 'appendReturnUrl' => false,
                                 'url_append' => '',
-                                'attrs' => ['model'],
+                                'attrs' => ['model', 'mainCategory.category_group_id'],
                                 'keyParam' => null,
                             ],
                             [
