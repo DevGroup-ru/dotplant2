@@ -118,34 +118,23 @@ class Redirect extends ActiveRecord
         $head .= "/*\n";
         $head .= " * This file is generated automatically\n";
         $head .= "*/\n";
-
-        $staticRedirects = ArrayHelper::map(
-            self::find()->where(
-                'type = :type AND active = :active',
-                [':type' => self::TYPE_STATIC, ':active' => true]
-            )->all(),
-            'from',
-            'to'
-        );
-        $regexpRedirects = ArrayHelper::map(
-            self::find()->where(
-                'type = :type AND active = :active',
-                [':type' => self::TYPE_PREG, ':active' => true]
-            )->all(),
-            'from',
-            'to'
-        );
-
-        $encodedStaticRedirects = [];
-        foreach ($staticRedirects as $old => $new) {
-            $parts = explode("/", $old);
-            $encodedUrlParts = array_map('urlencode', $parts);
-            $encodedStaticRedirects[implode("/", $encodedUrlParts)] = $new;
-        }
-
         $redirects = [
-            'static' => $encodedStaticRedirects,
-            'regular' => $regexpRedirects,
+            'static' => ArrayHelper::map(
+                self::find()->where(
+                    'type = :type AND active = :active',
+                    [':type' => self::TYPE_STATIC, ':active' => true]
+                )->all(),
+                'from',
+                'to'
+            ),
+            'regular' => ArrayHelper::map(
+                self::find()->where(
+                    'type = :type AND active = :active',
+                    [':type' => self::TYPE_PREG, ':active' => true]
+                )->all(),
+                'from',
+                'to'
+            ),
         ];
         $body = "return ".var_export($redirects, true).";\n";
         return file_put_contents(self::getFilename(), $head."\n".$body);
