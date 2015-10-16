@@ -1,9 +1,8 @@
 <?php
-
 namespace app\modules\seo;
 
 use app\components\BaseModule;
-use app\modules\seo\controllers\ManageController;
+use app\modules\seo\handlers\AnalyticsHandler;
 use app\modules\seo\models\Counter;
 use Yii;
 use yii\base\BootstrapInterface;
@@ -40,6 +39,14 @@ class SeoModule extends BaseModule implements BootstrapInterface
      */
     public $redirectTrailingSlash = false;
 
+    public $analytics = [
+        'ecGoogle' => 0,
+        'ecYandex' => 0,
+    ];
+
+    /**
+     * @inheritdoc
+     */
     public function bootstrap($app)
     {
         if (is_string($this->include)) {
@@ -57,23 +64,9 @@ class SeoModule extends BaseModule implements BootstrapInterface
                 $app->getView()->on(View::EVENT_END_BODY, [Counter::className(), 'renderCounters'], $this->include);
             }
         );
-        $app->on(
-            Application::EVENT_BEFORE_ACTION,
-            function () use ($app) {
-                if ('payment' === $app->requestedAction->controller->id && 'success' === $app->requestedAction->id) {
-                    $app->getView()->on(
-                        View::EVENT_END_BODY,
-                        [Counter::className(), 'renderCounters'],
-                        [$app->requestedAction->controller->module->id . '/' . $app->requestedAction->controller->id]
-                    );
-                    $app->getView()->on(
-                        View::EVENT_END_BODY,
-                        [ManageController::className(), 'renderEcommerceCounters'],
-                        ['transactionId' => intval(Yii::$app->request->get('id'))]
-                    );
-                }
-            }
-        );
+
+        // Analytics
+        $app->on(Application::EVENT_BEFORE_ACTION, [AnalyticsHandler::className(), 'handleBeforeAction']);
     }
 
     /**

@@ -23,6 +23,11 @@ if (is_array($model->include)) {
             <?= $form->field($model, 'redirectWWW')->dropDownList(SeoModule::getRedirectTypes()) ?>
             <?= $form->field($model, 'redirectTrailingSlash')->widget(SwitchInput::className()) ?>
         <?php BackendWidget::end(); ?>
+
+        <?php BackendWidget::begin(['title' => Yii::t('app', 'Analytics'), 'options' => ['class' => 'visible-header']]); ?>
+            <?= $form->field($model, 'analytics[ecGoogle]')->widget(SwitchInput::className())->label(Yii::t('app', 'Google ecommerce')); ?>
+            <?= $form->field($model, 'analytics[ecYandex]')->widget(SwitchInput::className())->label(Yii::t('app', 'Yandex ecommerce')); ?>
+        <?php BackendWidget::end(); ?>
     </div>
     <div class="col-md-6 col-sm-12">
         <?php BackendWidget::begin(['title' => Yii::t('app', 'Meta cache'), 'options' => ['class' => 'visible-header']]); ?>

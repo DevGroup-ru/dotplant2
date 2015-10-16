@@ -8,7 +8,6 @@ use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
-use yii\web\UserEvent;
 
 /**
  * Shop module is the base core module of DotPlant2 CMS handling all common e-commerce features

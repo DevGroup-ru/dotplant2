@@ -2,6 +2,7 @@
 namespace app\modules\shop\helpers;
 
 use app\modules\shop\models\Currency;
+use app\modules\shop\models\UserPreferences;
 
 class CurrencyHelper
 {
@@ -13,7 +14,11 @@ class CurrencyHelper
      */
     static public function getUserCurrency()
     {
-        return null === static::$userCurrency ? static::getMainCurrency() : static::$userCurrency;
+        if (null === static::$userCurrency) {
+            static::$userCurrency = static::findCurrencyByIso(UserPreferences::preferences()->userCurrency);
+        }
+
+        return static::$userCurrency;
     }
 
     /**
