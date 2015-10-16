@@ -27,7 +27,9 @@
                         /** @var \app\modules\shop\models\OrderTransaction $model */
                         return \yii\helpers\Html::a($model->id, \yii\helpers\Url::toRoute(
                             ['/shop/payment/transaction', 'id' => $model->id, 'othash' => $model->generateHash()]
-                        ));
+                            ),
+                            ['class' => 'print-without-link']
+                        );
                     },
                     'format' => 'raw',
                     'encodeLabel' => false,
