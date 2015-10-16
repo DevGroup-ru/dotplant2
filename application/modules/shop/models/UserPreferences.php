@@ -1,10 +1,10 @@
 <?php
-
 namespace app\modules\shop\models;
 
 use app;
 use Yii;
 use yii\base\Model;
+use app\modules\shop\helpers\CurrencyHelper;
 
 /**
  * Class for handling User's preferences ie:
@@ -15,14 +15,12 @@ use yii\base\Model;
  * @package app\models
  */
 class UserPreferences extends Model {
+    static private $_cachedPreferences = null;
 
     public $listViewType;
-
     public $productListingSortId;
-
     public $productsPerPage;
-
-    public static $_cachedPreferences = null;
+    public $userCurrency;
 
     /**
      * @inheritdoc
@@ -59,10 +57,14 @@ class UserPreferences extends Model {
                 'productsPerPage',
                 'integer',
                 'max' => 50,
-            ]
-
-
-
+            ],
+            ['userCurrency', 'default', 'value' => CurrencyHelper::getMainCurrency()->iso_code],
+            [
+                'userCurrency',
+                'in',
+                'range' => array_column(Currency::find()->select(['iso_code'])->asArray()->all(), 'iso_code'),
+                'strict' => true
+            ],
         ];
     }
 
@@ -96,4 +98,4 @@ class UserPreferences extends Model {
             'productsPerPage' => Yii::t('app', 'Products per page:'),
         ];
     }
-} 
+}

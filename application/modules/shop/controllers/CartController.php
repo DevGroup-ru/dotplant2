@@ -1,10 +1,11 @@
 <?php
-
 namespace app\modules\shop\controllers;
 
 use app\modules\core\behaviors\DisableRobotIndexBehavior;
 use app\modules\core\helpers\EventTriggeringHelper;
 use app\modules\core\models\Events;
+use app\modules\shop\events\CartActionEvent;
+use app\modules\shop\handlers\CartHandler;
 use app\modules\shop\helpers\PriceHelper;
 use app\modules\shop\events\OrderStageEvent;
 use app\modules\shop\events\OrderStageLeafEvent;
@@ -17,7 +18,9 @@ use app\modules\shop\models\OrderStage;
 use app\modules\shop\models\OrderStageLeaf;
 use app\modules\shop\models\Product;
 use app\modules\shop\models\SpecialPriceList;
+use app\modules\shop\models\UserPreferences;
 use app\modules\shop\ShopModule;
+use yii\base\Event;
 use yii\helpers\Url;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -25,6 +28,7 @@ use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use app\modules\shop\helpers\CurrencyHelper;
 
 /**
  * Class CartController
@@ -33,6 +37,14 @@ use yii\web\Response;
  */
 class CartController extends Controller
 {
+    const EVENT_ACTION_ADD = 'shopCartActionAdd';
+    const EVENT_ACTION_REMOVE = 'shopCartActionRemove';
+    const EVENT_ACTION_QUANTITY = 'shopCartActionQuantity';
+    const EVENT_ACTION_CLEAR = 'shopCartActionClear';
+
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         return [
@@ -78,17 +90,17 @@ class CartController extends Controller
         return $orderItemModel;
     }
 
-    protected function addProductsToOrder($products, $parentId = 0)
+    /**
+     * @param Order $order
+     * @param array $products
+     * @param $result
+     * @param int $parentId
+     * @return mixed
+     * @throws BadRequestHttpException
+     * @throws NotFoundHttpException
+     */
+    protected function addProductsToOrder(Order $order, $products = [], $result, $parentId = 0)
     {
-        if (!is_array($products)) {
-            throw new BadRequestHttpException;
-        }
-        $order = $this->loadOrder(true);
-        $result = [
-            'errors' => [],
-            'itemModalPreview' => '',
-        ];
-
         $parentId = intval($parentId);
         if ($parentId !== 0) {
             // if parent id is set - order item should exist in this order!
@@ -124,6 +136,11 @@ class CartController extends Controller
                 $condition['product_id'] = $productModel->id;
                 $thisItemModel = $productModel;
                 $quantity = $productModel->measure->ceilQuantity($quantity);
+
+                $result['products'][] = [
+                    'model' => $productModel,
+                    'quantity' => $quantity,
+                ];
             } else {
                 $condition['addon_id'] = $addonModel->id;
                 $thisItemModel = $addonModel;
@@ -132,9 +149,8 @@ class CartController extends Controller
                 }
             }
 
-            if ($this->module->allowToAddSameProduct
-                || is_null($orderItem = OrderItem::findOne($condition))
-            ) {
+            $orderItem = OrderItem::findOne($condition);
+            if ($this->module->allowToAddSameProduct || null === $orderItem) {
                 $orderItem = new OrderItem;
                 $orderItem->attributes = [
                     'parent_id' => $parentId,
@@ -161,57 +177,79 @@ class CartController extends Controller
                     // quantity can not be changed
                     $quantity = 0;
                 }
-                $orderItem->quantity += $quantity;
+                if (null !== $orderItem) {
+                    $orderItem->quantity += $quantity;
+                }
             }
-            if (!$orderItem->save()) {
+            if (false === $orderItem->save()) {
                 $result['errors'][] = Yii::t('app', 'Cannot save order item.');
             } else {
                 // refresh order
                 Order::clearStaticOrder();
                 $order = $this->loadOrder(false);
             }
-            if (isset($product['children'])) {
-                $result = ArrayHelper::merge(
-                    $result,
-                    $this->addProductsToOrder($product['children'], $orderItem->id)
-                );
-            }
-            if ($parentId === 0) {
-                $result['itemModalPreview'] .= $this->renderPartial(
-                    'item-modal-preview',
-                    [
-                        'order' => $order,
-                        'orderItem' => $orderItem,
-                        'product' => $product,
-                    ]
-                );
+
+            if (isset($product['children']) && is_array($product['children'])) {
+                $result = $this->addProductsToOrder($order, $product['children'], $result, $orderItem->id);
             }
         }
-        if ($parentId === 0) {
-            $order->calculate(true);
-        }
-        $mainCurrency = Currency::getMainCurrency();
-        return ArrayHelper::merge(
-            $result,
-            [
-                'itemsCount' => $order->items_count,
-                'success' => true, // @todo Return true success value
-                'totalPrice' => $mainCurrency->format($order->total_price),
-            ]
-        );
+
+        return $result;
     }
 
+    /**
+     * @return array
+     * @throws BadRequestHttpException
+     * @throws NotFoundHttpException
+     */
     public function actionAdd()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        if (!is_array(Yii::$app->request->post('products', null))) {
+
+        $products = Yii::$app->request->post('products', []);
+
+        if (false === is_array($products) || true === empty($products)) {
             throw new BadRequestHttpException;
         }
+
         $order = $this->loadOrder(true);
-        if (is_null($order->stage) || $order->stage->immutable_by_user == 1) {
+        if (null === $order->stage || true === $order->getImmutability(Order::IMMUTABLE_USER)) {
             throw new BadRequestHttpException;
         }
-        return $this->addProductsToOrder(Yii::$app->request->post('products'));
+
+        $result = [
+            'products' => [],
+            'errors' => [],
+            'additional' => [],
+        ];
+
+        $result = $this->addProductsToOrder($order, $products, $result);
+
+        $order->calculate(true);
+
+        $userCurrency = CurrencyHelper::getUserCurrency();
+
+        $result['success'] = count($products) > 0 && count($result['products']) > 0;
+        $result['itemsCount'] = $order->items_count;
+        $result['totalPrice'] = $userCurrency->format(
+            CurrencyHelper::convertToUserCurrency($order->total_price, CurrencyHelper::getMainCurrency())
+        );
+
+        $event = new CartActionEvent($order, $result['products']);
+        Event::trigger($this, self::EVENT_ACTION_ADD, $event);
+
+        $result['additional'] = $event->getEventData();
+
+        /**
+         * Backward compatibility
+         */
+        $result['itemModalPreview'] = isset($result['additional']['itemModalPreview'])
+            ? $result['additional']['itemModalPreview']
+            : '';
+
+        $result['products'] = $this->productsModelsToArray($result['products']);
+
+        return $result;
     }
 
     public function actionChangeQuantity()
@@ -265,35 +303,49 @@ class CartController extends Controller
     public function actionDelete($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $order = $this->loadOrder();
-        if (is_null($order->stage) || $order->stage->immutable_by_user == 1) {
+
+        $order = $this->loadOrder(true);
+        if (null === $order->stage || true === $order->getImmutability(Order::IMMUTABLE_USER)) {
             throw new BadRequestHttpException;
         }
-        if ($this->loadOrderItem($id)->delete() && $order->calculate(true)) {
-            $mainCurrency = Currency::getMainCurrency();
-            return [
-                'success' => true,
-                'itemsCount' => $order->items_count,
-                'totalPrice' => $mainCurrency->format($order->total_price),
-                'itemModalPreview' => $this->renderPartial("item-modal-preview",
-                    [
-                        "order" => $order,
-                        "orderItem" => null,
-                        "product" => null
-                    ]
-                )
-            ];
-        } else {
-            return [
-                'success' => false,
-                'message' => Yii::t('app', 'Cannot change additional params'),
-            ];
-        }
+
+        $orderItem = $this->loadOrderItem($id);
+        $model = $orderItem->product;
+
+        $product = null === $model
+            ? []
+            : ['model' => $model, 'quantity' => $orderItem->quantity,];
+
+        $event = new CartActionEvent($order, $product);
+        Event::trigger($this, self::EVENT_ACTION_REMOVE, $event);
+
+        $result['additional'] = $event->getEventData();
+
+        /**
+         * Backward compatibility
+         */
+        $result['itemModalPreview'] = isset($result['additional']['itemModalPreview'])
+            ? $result['additional']['itemModalPreview']
+            : '';
+
+        $result['products'] = $this->productsModelsToArray([$product]);
+        $result['success'] = $orderItem->delete() && $order->calculate(true);
+        $result['itemsCount'] = $order->items_count;
+        $result['totalPrice'] = CurrencyHelper::getMainCurrency()->format($order->total_price);
+        $result['message'] = false === $result['success'] ? Yii::t('app', 'Cannot change additional params') : '';
+
+        return $result;
     }
 
+    /**
+     * @return array
+     * @throws NotFoundHttpException
+     * @throws \Exception
+     */
     public function actionClear()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
+
         $order = $this->loadOrder();
         foreach ($order->items as $item) {
             $item->delete();
@@ -434,5 +486,52 @@ class CartController extends Controller
         }
 
         return $this->redirect(Url::to(['stage']));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        if (false === parent::beforeAction($action)) {
+            return false;
+        }
+
+        $_renderCartPreview = [
+            self::EVENT_ACTION_ADD,
+            self::EVENT_ACTION_REMOVE,
+            self::EVENT_ACTION_QUANTITY,
+            self::EVENT_ACTION_CLEAR,
+        ];
+        foreach ($_renderCartPreview as $_eventName) {
+            Event::on(self::className(), $_eventName, [CartHandler::className(), 'renderCartPreview']);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param array $products
+     * @return array
+     */
+    private function productsModelsToArray($products)
+    {
+        return array_reduce($products, function($res, $item) {
+            /** @var Product $model */
+            $model = $item['model'];
+
+            $i = [
+                'id' => $model->id,
+                'name' => $model->name,
+                'price' => CurrencyHelper::convertToMainCurrency($model->price, $model->currency),
+                'currency' => CurrencyHelper::getMainCurrency()->iso_code,
+            ];
+            if (isset($item['quantity'])) {
+                $i['quantity'] = $item['quantity'];
+            }
+
+            $res[] = $i;
+            return $res;
+        }, []);
     }
 }
