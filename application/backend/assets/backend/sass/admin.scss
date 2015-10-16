@@ -1,6 +1,9 @@
 @media print {
-    #left-panel, #header, #ribbon, .order-chat, .page-footer, .do-not-print{
+    #left-panel, #header, #ribbon, .page-footer, .do-not-print{
         display: none;
+    }
+    a.print-without-link:after {
+      content: none!important;
     }
 }
 
