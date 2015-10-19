@@ -136,11 +136,6 @@ class CartController extends Controller
                 $condition['product_id'] = $productModel->id;
                 $thisItemModel = $productModel;
                 $quantity = $productModel->measure->ceilQuantity($quantity);
-
-                $result['products'][] = [
-                    'model' => $productModel,
-                    'quantity' => $quantity,
-                ];
             } else {
                 $condition['addon_id'] = $addonModel->id;
                 $thisItemModel = $addonModel;
@@ -187,6 +182,14 @@ class CartController extends Controller
                 // refresh order
                 Order::clearStaticOrder();
                 $order = $this->loadOrder(false);
+            }
+
+            if (null !== $productModel) {
+                $result['products'][] = [
+                    'model' => $productModel,
+                    'quantity' => $quantity,
+                    'orderItem' => $orderItem,
+                ];
             }
 
             if (isset($product['children']) && is_array($product['children'])) {
@@ -243,8 +246,8 @@ class CartController extends Controller
         /**
          * Backward compatibility
          */
-        $result['itemModalPreview'] = isset($result['additional']['itemModalPreview'])
-            ? $result['additional']['itemModalPreview']
+        $result['itemModalPreview'] = isset($result['additional']['bcItemModalPreview'])
+            ? $result['additional']['bcItemModalPreview']
             : '';
 
         $result['products'] = $this->productsModelsToArray($result['products']);
@@ -278,9 +281,14 @@ class CartController extends Controller
         }
 
         $model = $orderItem->product;
-        $product = null === $model
-            ? []
-            : [['model' => $model, 'quantity' => $model->measure->ceilQuantity($quantity), 'oldQuantity' => $orderItem->quantity,]];
+        $product = [
+            [
+                'model' => $model,
+                'quantity' => $model->measure->ceilQuantity($quantity),
+                'oldQuantity' => $orderItem->quantity,
+                'orderItem' => $orderItem,
+            ]
+        ];
 
         $orderItem->quantity = $orderItem->product->measure->ceilQuantity($quantity);
         // @todo Consider lock_product_price ?
@@ -298,14 +306,6 @@ class CartController extends Controller
         Event::trigger($this, self::EVENT_ACTION_QUANTITY, $event);
 
         $result['additional'] = $event->getEventData();
-
-        /**
-         * Backward compatibility
-         */
-        $result['itemModalPreview'] = isset($result['additional']['itemModalPreview'])
-            ? $result['additional']['itemModalPreview']
-            : '';
-
         $result['success'] = $order->calculate(true);
         $result['message'] = false === $result['success'] ? Yii::t('app', 'Cannot change quantity') : '';
         $result['itemsCount'] = $order->items_count;
@@ -337,9 +337,13 @@ class CartController extends Controller
         $orderItem = $this->loadOrderItem($id);
         $model = $orderItem->product;
 
-        $product = null === $model
-            ? []
-            : [['model' => $model, 'quantity' => $orderItem->quantity,]];
+        $product = [
+            [
+                'model' => $model,
+                'quantity' => $orderItem->quantity,
+                'orderItem' => $orderItem,
+            ]
+        ];
 
         $event = new CartActionEvent($order, $product);
         Event::trigger($this, self::EVENT_ACTION_REMOVE, $event);
@@ -349,8 +353,8 @@ class CartController extends Controller
         /**
          * Backward compatibility
          */
-        $result['itemModalPreview'] = isset($result['additional']['itemModalPreview'])
-            ? $result['additional']['itemModalPreview']
+        $result['itemModalPreview'] = isset($result['additional']['bcItemModalPreview'])
+            ? $result['additional']['bcItemModalPreview']
             : '';
 
         $result['products'] = $this->productsModelsToArray($product);
@@ -379,7 +383,11 @@ class CartController extends Controller
         }
 
         $products = array_reduce($order->items, function($res, $item) {
-            $res[] = ['model' => $item->product, 'quantity' => $item->quantity];
+            $res[] = [
+                'model' => $item->product,
+                'quantity' => $item->quantity,
+                'orderItem' => $item,
+            ];
             return $res;
         }, []);
 
@@ -395,14 +403,6 @@ class CartController extends Controller
         Event::trigger($this, self::EVENT_ACTION_CLEAR, $event);
 
         $result['additional'] = $event->getEventData();
-
-        /**
-         * Backward compatibility
-         */
-        $result['itemModalPreview'] = isset($result['additional']['itemModalPreview'])
-            ? $result['additional']['itemModalPreview']
-            : '';
-
         $result['products'] = $this->productsModelsToArray($products);
 
         return $result;
