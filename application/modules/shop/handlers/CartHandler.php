@@ -45,7 +45,7 @@ class CartHandler extends Object
     static private function bcRenderCartPreview(Order $order, View $view, $products = [])
     {
         return array_reduce($products, function($result, $item) use ($order, $view) {
-            $result .= $view->renderFile(
+            return $result .= $view->renderFile(
                 ShopModule::getInstance()->getViewPath() . '/cart/item-modal-preview.php',
                 [
                     'order' => $order,
