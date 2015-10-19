@@ -1,6 +1,7 @@
 <?php
 namespace app\modules\seo\handlers;
 
+use app\modules\seo\assets\GoogleAnalyticsAssets;
 use app\modules\shop\controllers\CartController;
 use app\modules\shop\events\CartActionEvent;
 use app\modules\shop\models\Product;
@@ -20,6 +21,8 @@ class GoogleEcommerceHandler extends Object
             CartController::EVENT_ACTION_ADD,
             [self::className(), 'handleCartAdd']
         );
+
+        GoogleAnalyticsAssets::register(\Yii::$app->getView());
     }
 
     /**
@@ -29,10 +32,10 @@ class GoogleEcommerceHandler extends Object
     {
         $result = $event->getEventData();
 
-        $result = [];
+        $ga = [];
 
-        $result['currency'] = CurrencyHelper::getMainCurrency()->iso_code;
-        $result['products'] = array_reduce($event->getProducts(), function($res, $item) {
+        $ga['currency'] = CurrencyHelper::getMainCurrency()->iso_code;
+        $ga['products'] = array_reduce($event->getProducts(), function($res, $item) {
             $quantity = $item['quantity'];
             $item = $item['model'];
 
@@ -55,7 +58,7 @@ class GoogleEcommerceHandler extends Object
             return $res;
         }, []);
 
-        $result['ecGoogle'] = $result;
+        $result['ecGoogle'] = $ga;
         $event->setEventData($result);
     }
 }

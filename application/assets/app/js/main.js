@@ -43,6 +43,19 @@ var Shop = {
             'type' : 'post',
             'url' : '/shop/cart/change-quantity'
         });
+    },
+    'removeFromCart': function(orderItemId, callback) {
+        $.ajax({
+            'data' : {'id': orderItemId},
+            'dataType' : 'json',
+            'success' : function(data) {
+                if (typeof(callback) === 'function') {
+                    callback(data);
+                }
+            },
+            'type' : 'get',
+            'url' : '/shop/cart/delete?id=' + orderItemId
+        });
     }
 };
 
@@ -115,19 +128,38 @@ $(function() {
         window.print();
         return false;
     });
+
     $('[data-action=delete]').click(function() {
-        var $link = $(this);
-        $.ajax({
-            'dataType' : 'json',
-            'success' : function(data) {
-                if (data['success']) {
-                    location.reload();
-                }
-            },
-            'url' : $link.data('url')
+        //var $link = $(this);
+        //$.ajax({
+        //    'dataType' : 'json',
+        //    'success' : function(data) {
+        //        if (data['success']) {
+        //            location.reload();
+        //        }
+        //    },
+        //    'url' : $link.data('url')
+        //});
+        var $this = $(this);
+        var $body = $('body');
+        $body.trigger({
+            'type': 'removeFromCartClicked',
+            'orderItemId': $this.data('id'),
+            'button': $this
         });
+        Shop.removeFromCart($this.data('id'), function(data) {
+            $body.trigger({
+                'type': 'removeFromCart',
+                'orderItemId': $this.data('id'),
+                'orderData': data,
+                'button': $this
+            });
+            //window.location.reload();
+        });
+
         return false;
     });
+
     $('body').on('click', '[data-action="add-to-cart"]', function() {
         var $this = $(this);
         var quantity = typeof($this.data('quantity')) !== 'undefined' ? parseFloat($this.data('quantity')) : 1;
@@ -216,6 +248,7 @@ $(function() {
             }
         });
     });
+
     $('#cart-table [data-action="change-quantity"]').click(function() {
         var $this = $(this);
         var $input = $this.parents('td').eq(0).find('input[data-type=quantity]');

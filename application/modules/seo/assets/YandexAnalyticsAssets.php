@@ -3,12 +3,12 @@ namespace app\modules\seo\assets;
 
 use yii\web\AssetBundle;
 
-class EcommerceAnalyticsAssets extends AssetBundle
+class YandexAnalyticsAssets extends AssetBundle
 {
     public $sourcePath = '@app/modules/seo/assets';
 
     public $js = [
-        'js/ec-analytics.js',
+        'js/ya-analytics.js',
     ];
 
     public $css = [
