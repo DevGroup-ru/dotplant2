@@ -7,7 +7,9 @@ use app\modules\seo\assets\YandexAnalyticsAssets;
 use app\modules\shop\controllers\CartController;
 use app\modules\shop\events\CartActionEvent;
 use app\modules\shop\helpers\CurrencyHelper;
+use app\modules\shop\models\Order;
 use app\modules\shop\models\Product;
+use yii\base\ActionEvent;
 use yii\base\Event;
 use yii\base\Object;
 use yii\helpers\Json;
@@ -18,8 +20,14 @@ class YandexEcommerceHandler extends Object
     /**
      * Install handlers
      */
-    static public function installHandlers()
+    static public function installHandlers(ActionEvent $event)
     {
+        $route = implode('/', [
+            $event->action->controller->module->id,
+            $event->action->controller->id,
+            $event->action->id
+        ]);
+
         Event::on(
             CartController::className(),
             CartController::EVENT_ACTION_ADD,
@@ -49,6 +57,10 @@ class YandexEcommerceHandler extends Object
             Controller::EVENT_PRE_DECORATOR,
             [self::className(), 'handleProductShow']
         );
+
+        if ('shop/cart/index' === $route) {
+            self::handleCartIndex();
+        }
 
         YandexAnalyticsAssets::register(\Yii::$app->getView());
     }
@@ -194,6 +206,33 @@ class YandexEcommerceHandler extends Object
                 'price' => CurrencyHelper::convertToMainCurrency($model->price, $model->currency),
                 'quantity' => null === $model->measure ? 1 : $model->measure->nominal,
             ]
+        ];
+
+        $js = 'window.DotPlantParams = window.DotPlantParams || {};';
+        $js .= 'window.DotPlantParams.ecYandex = ' . Json::encode($ya) . ';';
+        \Yii::$app->getView()->registerJs($js, View::POS_BEGIN);
+    }
+
+    /**
+     *
+     */
+    static public function handleCartIndex()
+    {
+    }
+
+    /**
+     *
+     */
+    static public function handlePurchase()
+    {
+        if (null === $order = Order::getOrder()) {
+            return ;
+        }
+
+        $ya = [
+            'action' => 'purchase',
+            'currency' => CurrencyHelper::getMainCurrency()->iso_code,
+            'orderId' => $order->id,
         ];
 
         $js = 'window.DotPlantParams = window.DotPlantParams || {};';

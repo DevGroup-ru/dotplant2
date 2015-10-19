@@ -6,8 +6,11 @@ use app\modules\core\events\ViewEvent;
 use app\modules\seo\assets\GoogleAnalyticsAssets;
 use app\modules\shop\controllers\CartController;
 use app\modules\shop\events\CartActionEvent;
+use app\modules\shop\models\Order;
+use app\modules\shop\models\OrderItem;
 use app\modules\shop\models\Product;
 use app\modules\shop\helpers\CurrencyHelper;
+use yii\base\ActionEvent;
 use yii\base\Event;
 use yii\base\Object;
 use yii\helpers\Json;
@@ -18,8 +21,14 @@ class GoogleEcommerceHandler extends Object
     /**
      *
      */
-    static public function installHandlers()
+    static public function installHandlers(ActionEvent $event)
     {
+        $route = implode('/', [
+            $event->action->controller->module->id,
+            $event->action->controller->id,
+            $event->action->id
+        ]);
+
         Event::on(
             CartController::className(),
             CartController::EVENT_ACTION_ADD,
@@ -49,6 +58,10 @@ class GoogleEcommerceHandler extends Object
             Controller::EVENT_PRE_DECORATOR,
             [self::className(), 'handleProductShow']
         );
+
+        if ('shop/cart/index' === $route) {
+            self::handleCartIndex();
+        }
 
         GoogleAnalyticsAssets::register(\Yii::$app->getView());
     }
@@ -194,6 +207,26 @@ class GoogleEcommerceHandler extends Object
                 'price' => CurrencyHelper::convertToMainCurrency($model->price, $model->currency),
                 'quantity' => null === $model->measure ? 1 : $model->measure->nominal,
             ]
+        ];
+
+        $js = 'window.DotPlantParams = window.DotPlantParams || {};';
+        $js .= 'window.DotPlantParams.ecGoogle = ' . Json::encode($ga) . ';';
+        \Yii::$app->getView()->registerJs($js, View::POS_BEGIN);
+    }
+
+    /**
+     *
+     */
+    static public function handleCartIndex()
+    {
+        if (null === $order = Order::getOrder()) {
+            return ;
+        }
+
+        $ga = [
+            'action' => 'action',
+            'type' => 'checkout',
+            'step' => 1,
         ];
 
         $js = 'window.DotPlantParams = window.DotPlantParams || {};';

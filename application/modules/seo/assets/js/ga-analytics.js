@@ -71,10 +71,15 @@ jQuery(function($){
         try {
             var $data = window.DotPlantParams.ecGoogle;
 
-            if ('detail' == $data.action) {
+            if ('detail' === $data.action) {
                 ga('set', '&cu', $data.currency);
                 ga('ec:addProduct', $data.products);
                 ga('ec:setAction', 'detail');
+                ga('send', 'pageview');
+            } else if ('action' === $data.action) {
+                ga('ec:setAction', $data.type, {
+                    'step': $data.step
+                });
                 ga('send', 'pageview');
             }
         } catch (e) {console.log('Google e-commerce error: ' + e);}

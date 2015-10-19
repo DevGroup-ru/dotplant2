@@ -29,11 +29,11 @@ class AnalyticsHandler extends Object
         }
 
         if (1 === intval($seoModule->analytics['ecGoogle'])) {
-            GoogleEcommerceHandler::installHandlers();
+            GoogleEcommerceHandler::installHandlers($event);
         }
 
         if (1 === intval($seoModule->analytics['ecYandex'])) {
-            YandexEcommerceHandler::installHandlers();
+            YandexEcommerceHandler::installHandlers($event);
         }
     }
 }

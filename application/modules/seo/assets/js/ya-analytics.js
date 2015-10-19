@@ -83,11 +83,21 @@ jQuery(function($){
         try {
             var $data = window.DotPlantParams.ecYandex;
 
-            if ('detail' == $data.action) {
+            if ('detail' === $data.action) {
                 window.dataLayer.push({
                     'ecommerce': {
                         'currencyCode': $data.currency,
                         'detail': {'products': $data.products}
+                    }
+                });
+            } else if ('purchase' === $data.action) {
+                window.dataLayer.push({
+                    'ecommerce': {
+                        'currencyCode': $data.currency,
+                        'purchase': {
+                            'actionField': {'id': $data.orderId},
+                            'products': $data.products
+                        }
                     }
                 });
             }
