@@ -32,11 +32,13 @@ class CartHandler extends Object
         if (true === in_array($event->name, [CartController::EVENT_ACTION_ADD, CartController::EVENT_ACTION_REMOVE])) {
             $result['bcItemModalPreview'] = self::bcRenderCartPreview($order, $view, $event->getProducts());
         }
+        /** Backward compatibility [END] */
 
         $event->setEventData($result);
     }
 
     /**
+     * Backward compatibility
      * @param Order $order
      * @param View $view
      * @param array $products

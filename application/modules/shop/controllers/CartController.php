@@ -284,8 +284,7 @@ class CartController extends Controller
         $product = [
             [
                 'model' => $model,
-                'quantity' => $model->measure->ceilQuantity($quantity),
-                'oldQuantity' => $orderItem->quantity,
+                'quantity' => $model->measure->ceilQuantity($quantity) - $orderItem->quantity,
                 'orderItem' => $orderItem,
             ]
         ];
@@ -312,6 +311,7 @@ class CartController extends Controller
         $result['itemPrice'] = CurrencyHelper::getMainCurrency()->format($orderItem->total_price);
         $result['totalPrice'] = CurrencyHelper::getMainCurrency()->format($order->total_price);
         $result['calculatedQuantity'] = $orderItem->quantity;
+        $result['products'] = $this->productsModelsToArray($product);
 
         return $result;
     }
