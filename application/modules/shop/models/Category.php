@@ -152,6 +152,7 @@ class Category extends ActiveRecord implements \JsonSerializable
             [['title_append'], 'string'],
             [['active'], 'default', 'value' => 1],
             [['date_added', 'date_modified'], 'safe'],
+            ['sort_order', 'default', 'value' => 0],
         ];
     }
 
