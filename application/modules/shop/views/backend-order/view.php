@@ -29,7 +29,7 @@ foreach ($model->items as $item) {
 ?>
 <?php $this->beginBlock('page-buttons'); ?>
 <div class="row" style="margin-bottom: 10px;">
-    <div class="col-xs-12">
+    <div class="col-xs-12 col-md-6">
         <div class="btn-group pull-right">
             <a href="#" class="btn btn-default do-not-print" id="print-button"><?=\kartik\icons\Icon::show(
                     'print'
@@ -86,7 +86,7 @@ if ($sum_transactions < $model->total_price):
     echo $this->blocks['page-buttons'];
 ?>
 <div class="row">
-    <div class="col-xs-6">
+    <div class="col-xs-12 col-md-6">
         <?php
         BackendWidget::begin(
             [
@@ -129,7 +129,7 @@ JSCODE;
                         Html::a(
                             Yii::t('app', Yii::t('app', 'Guest')),
                             '#clear',
-                            ['data-sel' => 'order-user_id', 'class' => 'btn btn-xs btn-info col-md-offset-2']
+                            ['data-sel' => 'order-user_id', 'class' => 'btn btn-xs btn-info col-md-offset-2 do-not-print']
                         )
                     );
                     ?>
@@ -317,7 +317,7 @@ JSCODE;
                 Url::toRoute(['/shop/backend-customer/index']),
                 ['target' => '_blank', 'class' => 'btn btn-xs btn-info edit_customer']
             ),
-            ['class' => 'btn-group col-md-offset-2']
+            ['class' => 'btn-group col-md-offset-2 do-not-print']
         ); ?>
         <hr />
         <div id="div_customer">
@@ -396,7 +396,7 @@ JSCODE;
                 Url::toRoute(['/shop/backend-contragent/index']),
                 ['target' => '_blank', 'class' => 'btn btn-xs btn-info edit_contragent']
             ),
-            ['class' => 'btn-group col-md-offset-2']
+            ['class' => 'btn-group col-md-offset-2 do-not-print']
         ); ?>
         <hr />
         <div id="div_contragent">
@@ -423,11 +423,12 @@ JSCODE;
         ]); ?>
         <?php BackendWidget::end(); ?>
     </div>
-    <div class="col-xs-6 order-chat">
+    <div class="col-xs-12 col-md-6 order-chat">
         <?php
         BackendWidget::begin(
             [
                 'icon' => 'comments',
+                'options' => ['class' => 'do-not-print'],
                 'title' => Yii::t('app', 'Managers chat'),
             ]
         );
@@ -480,7 +481,7 @@ JSCODE;
                 <br />
 
                 <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-xs-12 col-md-6">
                         <label for="add-product"><?=Yii::t('app', 'Add a new product to order')?></label>
                     </div>
                 </div>

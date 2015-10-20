@@ -1,27 +1,32 @@
 @media print {
   /* line 2, ../sass/admin.scss */
-  #left-panel, #header, #ribbon, .order-chat, .page-footer, .do-not-print {
+  #left-panel, #header, #ribbon, .page-footer, .do-not-print {
     display: none;
+  }
+
+  /* line 5, ../sass/admin.scss */
+  a.print-without-link:after {
+    content: none !important;
   }
 }
 @media only screen and (min-width: 600px) and (max-width: 1200px) {
-  /* line 14, ../sass/admin.scss */
+  /* line 17, ../sass/admin.scss */
   .table td, .table th {
     word-break: break-all;
     padding: 2px;
   }
-  /* line 19, ../sass/admin.scss */
+  /* line 22, ../sass/admin.scss */
   .table th {
     min-width: 20px;
   }
-  /* line 24, ../sass/admin.scss */
+  /* line 27, ../sass/admin.scss */
   .table td .form-control {
     padding: 2px;
     height: 20px;
     font-size: 14px;
   }
 }
-/* line 35, ../sass/admin.scss */
+/* line 38, ../sass/admin.scss */
 .footer {
   border-top: 1px solid #ddd;
   margin-top: 30px;
@@ -29,20 +34,20 @@
   padding-bottom: 30px;
 }
 
-/* line 42, ../sass/admin.scss */
+/* line 45, ../sass/admin.scss */
 .jumbotron {
   text-align: center;
   background-color: transparent;
 }
 
-/* line 46, ../sass/admin.scss */
+/* line 49, ../sass/admin.scss */
 .jumbotron .btn {
   font-size: 21px;
   padding: 14px 24px;
 }
 
 /* add sorting icons to gridview sort links */
-/* line 52, ../sass/admin.scss */
+/* line 55, ../sass/admin.scss */
 a.asc:after, a.desc:after {
   position: relative;
   top: 1px;
@@ -54,43 +59,43 @@ a.asc:after, a.desc:after {
   padding-left: 5px;
 }
 
-/* line 63, ../sass/admin.scss */
+/* line 66, ../sass/admin.scss */
 a.asc:after {
   content: "\e151";
 }
 
-/* line 64, ../sass/admin.scss */
+/* line 67, ../sass/admin.scss */
 a.desc:after {
   content: "\e152";
 }
 
-/* line 66, ../sass/admin.scss */
+/* line 69, ../sass/admin.scss */
 .sort-numerical a.asc:after {
   content: "\e153";
 }
 
-/* line 67, ../sass/admin.scss */
+/* line 70, ../sass/admin.scss */
 .sort-numerical a.desc:after {
   content: "\e154";
 }
 
-/* line 69, ../sass/admin.scss */
+/* line 72, ../sass/admin.scss */
 .sort-ordinal a.asc:after {
   content: "\e155";
 }
 
-/* line 70, ../sass/admin.scss */
+/* line 73, ../sass/admin.scss */
 .sort-ordinal a.desc:after {
   content: "\e156";
 }
 
-/* line 72, ../sass/admin.scss */
+/* line 75, ../sass/admin.scss */
 #logo {
   width: auto;
   margin-right: 60px;
 }
 
-/* line 77, ../sass/admin.scss */
+/* line 80, ../sass/admin.scss */
 .is_deleted .fa {
   background-color: #d9534f;
   color: #fff;
@@ -100,148 +105,148 @@ a.desc:after {
   border-radius: 3px;
 }
 
-/* line 86, ../sass/admin.scss */
+/* line 89, ../sass/admin.scss */
 .order-messages-list {
   height: 250px;
   overflow-y: scroll;
 }
-/* line 89, ../sass/admin.scss */
+/* line 92, ../sass/admin.scss */
 .order-messages-list .message {
   margin-bottom: 15px;
 }
-/* line 92, ../sass/admin.scss */
+/* line 95, ../sass/admin.scss */
 .order-messages-list .message-user {
   color: darkgreen;
   font-weight: bold;
 }
-/* line 96, ../sass/admin.scss */
+/* line 99, ../sass/admin.scss */
 .order-messages-list .message-date {
   color: #666;
   font-size: 10px;
 }
-/* line 100, ../sass/admin.scss */
+/* line 103, ../sass/admin.scss */
 .order-messages-list .message-text {
   border-left: 3px solid darkseagreen;
   padding-left: 5px;
 }
 
-/* line 105, ../sass/admin.scss */
+/* line 108, ../sass/admin.scss */
 .ajax-notifications .show-more {
   padding: 8px 0;
   text-align: center;
 }
-/* line 108, ../sass/admin.scss */
+/* line 111, ../sass/admin.scss */
 .ajax-notifications .show-more a {
   border-bottom: 1px dashed #428bca;
 }
 
-/* line 113, ../sass/admin.scss */
+/* line 116, ../sass/admin.scss */
 .notification-body > li a, .notification-body > li a span {
   display: inline;
 }
 
-/* line 117, ../sass/admin.scss */
+/* line 120, ../sass/admin.scss */
 .redactor-toolbar, .redactor-dropdown {
   z-index: 53 !important;
 }
 
-/* line 126, ../sass/admin.scss */
+/* line 129, ../sass/admin.scss */
 .select2-container--krajee .select2-search--dropdown input.select2-search__field {
   background: none !important;
 }
 
-/* line 130, ../sass/admin.scss */
+/* line 133, ../sass/admin.scss */
 .select2-container-multi .select2-choices .select2-search-choice {
   padding: 1px 28px 1px 28px;
 }
 
-/* line 133, ../sass/admin.scss */
+/* line 136, ../sass/admin.scss */
 .select2-container-multi .select2-search-choice-close {
   background-image: none !important;
 }
 
-/* line 137, ../sass/admin.scss */
+/* line 140, ../sass/admin.scss */
 span.file-input > div.file-preview {
   display: none;
 }
 
-/* line 141, ../sass/admin.scss */
+/* line 144, ../sass/admin.scss */
 img.image-column {
   max-height: 80px;
   max-width: 80px;
   margin-right: 8px;
 }
 
-/* line 147, ../sass/admin.scss */
+/* line 150, ../sass/admin.scss */
 #ribbon li {
   max-width: 200px;
   overflow: hidden;
   height: 18px;
 }
-/* line 151, ../sass/admin.scss */
+/* line 154, ../sass/admin.scss */
 #ribbon li.active {
   max-width: 400px;
 }
 
-/* line 156, ../sass/admin.scss */
+/* line 159, ../sass/admin.scss */
 .select2-container.form-control {
   padding: 0px;
 }
 
-/* line 160, ../sass/admin.scss */
+/* line 163, ../sass/admin.scss */
 .jarviswidget header:first-child .nav-tabs li {
   height: 32px;
 }
 
-/* line 164, ../sass/admin.scss */
+/* line 167, ../sass/admin.scss */
 .widget-toolbar {
   height: initial;
   min-height: 32px;
 }
 
-/* line 169, ../sass/admin.scss */
+/* line 172, ../sass/admin.scss */
 div#Product-grid, div#reviews-grid {
   font-size: 12px;
 }
-/* line 171, ../sass/admin.scss */
+/* line 174, ../sass/admin.scss */
 div#Product-grid .table td, div#reviews-grid .table td {
   padding: 4px;
 }
-/* line 174, ../sass/admin.scss */
+/* line 177, ../sass/admin.scss */
 div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
   padding: 3px 5px 3px;
   font-size: 10px;
 }
 
-/* line 181, ../sass/admin.scss */
+/* line 184, ../sass/admin.scss */
 .jstree {
   font-size: 12px;
   max-height: 100%;
   overflow: auto;
 }
 
-/* line 187, ../sass/admin.scss */
+/* line 190, ../sass/admin.scss */
 .jarviswidget .jstree {
   max-height: 400px;
   overflow: auto;
 }
 
-/* line 192, ../sass/admin.scss */
+/* line 195, ../sass/admin.scss */
 .tabs-left > .tab-content {
   margin-left: 140px;
 }
 
-/* line 196, ../sass/admin.scss */
+/* line 199, ../sass/admin.scss */
 .tabs-left > .nav-pills, .tabs-left > .nav-tabs {
   margin-right: 0;
 }
 
-/* line 200, ../sass/admin.scss */
+/* line 203, ../sass/admin.scss */
 .jarviswidget.visible-header header {
   display: block;
 }
 
-/* line 206, ../sass/admin.scss */
+/* line 209, ../sass/admin.scss */
 .table-condensed.table > tbody > tr > td.td-no-padding, .table-condensed.table > tbody > tr > th.td-no-padding, .table-condensed.table > tfoot > tr > td.td-no-padding, .table-condensed.table > tfoot > tr > th.td-no-padding, .table-condensed.table > thead > tr > td.td-no-padding, .table-condensed.table > thead > tr > th.td-no-padding {
   padding: 0 !important;
 }
@@ -296,75 +301,75 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
   background: #eee;
 }
 
-/* line 214, ../sass/admin.scss */
+/* line 217, ../sass/admin.scss */
 .sortable-list {
   list-style: none;
   padding-left: 0;
 }
 
-/* line 219, ../sass/admin.scss */
+/* line 222, ../sass/admin.scss */
 .jarviswidget.affix {
   position: fixed;
   width: 400px;
 }
 
-/* line 224, ../sass/admin.scss */
+/* line 227, ../sass/admin.scss */
 .scrollable-options-list {
   max-height: 150px;
   overflow: scroll;
 }
-/* line 227, ../sass/admin.scss */
+/* line 230, ../sass/admin.scss */
 .scrollable-options-list label {
   display: block;
 }
 
-/* line 231, ../sass/admin.scss */
+/* line 234, ../sass/admin.scss */
 .dropdown-submenu:hover > .dropdown-menu {
   max-height: 400px;
   overflow-y: scroll;
 }
 
-/* line 237, ../sass/admin.scss */
+/* line 240, ../sass/admin.scss */
 article.backend-edit-grid.col-md-4 .widget-footer .btn, article.backend-edit-grid.col-sm-4 .widget-footer .btn {
   font-size: 12px;
   line-height: 1.5;
   padding: 1px 5px;
 }
 
-/* line 246, ../sass/admin.scss */
+/* line 249, ../sass/admin.scss */
 div.table .file-row > div {
   display: block;
   box-sizing: border-box;
   margin-left: 100px;
 }
-/* line 250, ../sass/admin.scss */
+/* line 253, ../sass/admin.scss */
 div.table .file-row > div.preview-div {
   width: 96px;
   margin-left: 0;
   float: left;
   background: #eee;
 }
-/* line 256, ../sass/admin.scss */
+/* line 259, ../sass/admin.scss */
 div.table .file-row > div.fn {
   background: #eee;
 }
-/* line 260, ../sass/admin.scss */
+/* line 263, ../sass/admin.scss */
 div.table .file-row > div:after {
   content: ' ';
   clear: both;
 }
 
-/* line 267, ../sass/admin.scss */
+/* line 270, ../sass/admin.scss */
 div.table .file-row > div.title label {
   float: left;
 }
 
-/* line 272, ../sass/admin.scss */
+/* line 275, ../sass/admin.scss */
 div.files.dropzone {
   margin-top: 0;
 }
 
-/* line 275, ../sass/admin.scss */
+/* line 278, ../sass/admin.scss */
 .select2-search {
   z-index: initial;
 }
