@@ -1,32 +1,26 @@
 @media print {
-  /* line 2, ../sass/admin.scss */
   #left-panel, #header, #ribbon, .page-footer, .do-not-print {
     display: none;
   }
 
-  /* line 5, ../sass/admin.scss */
   a.print-without-link:after {
     content: none !important;
   }
 }
 @media only screen and (min-width: 600px) and (max-width: 1200px) {
-  /* line 17, ../sass/admin.scss */
   .table td, .table th {
     word-break: break-all;
     padding: 2px;
   }
-  /* line 22, ../sass/admin.scss */
   .table th {
     min-width: 20px;
   }
-  /* line 27, ../sass/admin.scss */
   .table td .form-control {
     padding: 2px;
     height: 20px;
     font-size: 14px;
   }
 }
-/* line 38, ../sass/admin.scss */
 .footer {
   border-top: 1px solid #ddd;
   margin-top: 30px;
@@ -34,20 +28,17 @@
   padding-bottom: 30px;
 }
 
-/* line 45, ../sass/admin.scss */
 .jumbotron {
   text-align: center;
   background-color: transparent;
 }
 
-/* line 49, ../sass/admin.scss */
 .jumbotron .btn {
   font-size: 21px;
   padding: 14px 24px;
 }
 
 /* add sorting icons to gridview sort links */
-/* line 55, ../sass/admin.scss */
 a.asc:after, a.desc:after {
   position: relative;
   top: 1px;
@@ -59,43 +50,35 @@ a.asc:after, a.desc:after {
   padding-left: 5px;
 }
 
-/* line 66, ../sass/admin.scss */
 a.asc:after {
   content: "\e151";
 }
 
-/* line 67, ../sass/admin.scss */
 a.desc:after {
   content: "\e152";
 }
 
-/* line 69, ../sass/admin.scss */
 .sort-numerical a.asc:after {
   content: "\e153";
 }
 
-/* line 70, ../sass/admin.scss */
 .sort-numerical a.desc:after {
   content: "\e154";
 }
 
-/* line 72, ../sass/admin.scss */
 .sort-ordinal a.asc:after {
   content: "\e155";
 }
 
-/* line 73, ../sass/admin.scss */
 .sort-ordinal a.desc:after {
   content: "\e156";
 }
 
-/* line 75, ../sass/admin.scss */
 #logo {
   width: auto;
   margin-right: 60px;
 }
 
-/* line 80, ../sass/admin.scss */
 .is_deleted .fa {
   background-color: #d9534f;
   color: #fff;
@@ -105,170 +88,138 @@ a.desc:after {
   border-radius: 3px;
 }
 
-/* line 89, ../sass/admin.scss */
 .order-messages-list {
   height: 250px;
   overflow-y: scroll;
 }
-/* line 92, ../sass/admin.scss */
 .order-messages-list .message {
   margin-bottom: 15px;
 }
-/* line 95, ../sass/admin.scss */
 .order-messages-list .message-user {
   color: darkgreen;
   font-weight: bold;
 }
-/* line 99, ../sass/admin.scss */
 .order-messages-list .message-date {
   color: #666;
   font-size: 10px;
 }
-/* line 103, ../sass/admin.scss */
 .order-messages-list .message-text {
   border-left: 3px solid darkseagreen;
   padding-left: 5px;
 }
 
-/* line 108, ../sass/admin.scss */
 .ajax-notifications .show-more {
   padding: 8px 0;
   text-align: center;
 }
-/* line 111, ../sass/admin.scss */
 .ajax-notifications .show-more a {
   border-bottom: 1px dashed #428bca;
 }
 
-/* line 116, ../sass/admin.scss */
 .notification-body > li a, .notification-body > li a span {
   display: inline;
 }
 
-/* line 120, ../sass/admin.scss */
 .redactor-toolbar, .redactor-dropdown {
   z-index: 53 !important;
 }
 
-/* line 129, ../sass/admin.scss */
 .select2-container--krajee .select2-search--dropdown input.select2-search__field {
   background: none !important;
 }
 
-/* line 133, ../sass/admin.scss */
 .select2-container-multi .select2-choices .select2-search-choice {
   padding: 1px 28px 1px 28px;
 }
 
-/* line 136, ../sass/admin.scss */
 .select2-container-multi .select2-search-choice-close {
   background-image: none !important;
 }
 
-/* line 140, ../sass/admin.scss */
 span.file-input > div.file-preview {
   display: none;
 }
 
-/* line 144, ../sass/admin.scss */
 img.image-column {
   max-height: 80px;
   max-width: 80px;
   margin-right: 8px;
 }
 
-/* line 150, ../sass/admin.scss */
 #ribbon li {
   max-width: 200px;
   overflow: hidden;
   height: 18px;
 }
-/* line 154, ../sass/admin.scss */
 #ribbon li.active {
   max-width: 400px;
 }
 
-/* line 159, ../sass/admin.scss */
 .select2-container.form-control {
   padding: 0px;
 }
 
-/* line 163, ../sass/admin.scss */
 .jarviswidget header:first-child .nav-tabs li {
   height: 32px;
 }
 
-/* line 167, ../sass/admin.scss */
 .widget-toolbar {
   height: initial;
   min-height: 32px;
 }
 
-/* line 172, ../sass/admin.scss */
 div#Product-grid, div#reviews-grid {
   font-size: 12px;
 }
-/* line 174, ../sass/admin.scss */
 div#Product-grid .table td, div#reviews-grid .table td {
   padding: 4px;
 }
-/* line 177, ../sass/admin.scss */
 div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
   padding: 3px 5px 3px;
   font-size: 10px;
 }
 
-/* line 184, ../sass/admin.scss */
 .jstree {
   font-size: 12px;
   max-height: 100%;
   overflow: auto;
 }
 
-/* line 190, ../sass/admin.scss */
 .jarviswidget .jstree {
   max-height: 400px;
   overflow: auto;
 }
 
-/* line 195, ../sass/admin.scss */
 .tabs-left > .tab-content {
   margin-left: 140px;
 }
 
-/* line 199, ../sass/admin.scss */
 .tabs-left > .nav-pills, .tabs-left > .nav-tabs {
   margin-right: 0;
 }
 
-/* line 203, ../sass/admin.scss */
 .jarviswidget.visible-header header {
   display: block;
 }
 
-/* line 209, ../sass/admin.scss */
 .table-condensed.table > tbody > tr > td.td-no-padding, .table-condensed.table > tbody > tr > th.td-no-padding, .table-condensed.table > tfoot > tr > td.td-no-padding, .table-condensed.table > tfoot > tr > th.td-no-padding, .table-condensed.table > thead > tr > td.td-no-padding, .table-condensed.table > thead > tr > th.td-no-padding {
   padding: 0 !important;
 }
 
-/* line 2, ../sass/extensions.scss */
 .packages-grid .package {
   background: #fff;
   border: 1px solid #ccc;
   padding: 4px;
 }
-/* line 7, ../sass/extensions.scss */
 .packages-grid .package .package-name {
   font-size: 120%;
   font-weight: bold;
   color: #3e3e3e;
 }
-/* line 12, ../sass/extensions.scss */
 .packages-grid .package .description {
   height: 120px;
   overflow: hidden;
 }
-/* line 16, ../sass/extensions.scss */
 .packages-grid .package .repository-url {
   font-size: 80%;
   color: #666666;
@@ -277,17 +228,14 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
   display: block;
 }
 
-/* line 25, ../sass/extensions.scss */
 .packages-search {
   margin-bottom: 8px;
 }
 
-/* line 1, ../sass/filter-sets.scss */
 .table-condensed.table > tbody > tr.psv-tr > td {
   padding: 0 !important;
 }
 
-/* line 6, ../sass/filter-sets.scss */
 .properties-body .sort-handle, .properties-body .psv-sort-handle {
   padding: 4px;
   background: #fff;
@@ -296,40 +244,33 @@ div#Product-grid .btn-sm, div#reviews-grid .btn-sm {
   display: block;
   text-align: center;
 }
-/* line 13, ../sass/filter-sets.scss */
 .properties-body .sort-handle:hover, .properties-body .psv-sort-handle:hover {
   background: #eee;
 }
 
-/* line 217, ../sass/admin.scss */
 .sortable-list {
   list-style: none;
   padding-left: 0;
 }
 
-/* line 222, ../sass/admin.scss */
 .jarviswidget.affix {
   position: fixed;
   width: 400px;
 }
 
-/* line 227, ../sass/admin.scss */
 .scrollable-options-list {
   max-height: 150px;
   overflow: scroll;
 }
-/* line 230, ../sass/admin.scss */
 .scrollable-options-list label {
   display: block;
 }
 
-/* line 234, ../sass/admin.scss */
 .dropdown-submenu:hover > .dropdown-menu {
   max-height: 400px;
   overflow-y: scroll;
 }
 
-/* line 240, ../sass/admin.scss */
 article.backend-edit-grid.col-md-4 .widget-footer .btn, article.backend-edit-grid.col-sm-4 .widget-footer .btn {
   font-size: 12px;
   line-height: 1.5;

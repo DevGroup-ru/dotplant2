@@ -1,9 +1,7 @@
-/* line 1, ../sass/filter-sets.scss */
 .table-condensed.table > tbody > tr.psv-tr > td {
   padding: 0 !important;
 }
 
-/* line 6, ../sass/filter-sets.scss */
 .properties-body .sort-handle, .properties-body .psv-sort-handle {
   padding: 4px;
   background: #fff;
@@ -12,7 +10,6 @@
   display: block;
   text-align: center;
 }
-/* line 13, ../sass/filter-sets.scss */
 .properties-body .sort-handle:hover, .properties-body .psv-sort-handle:hover {
   background: #eee;
 }

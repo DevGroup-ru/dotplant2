@@ -80,6 +80,7 @@ class Page extends ActiveRecord implements \JsonSerializable
             [['slug'], 'string', 'max' => 80],
             [['slug_compiled'], 'string', 'max' => 180],
             [['show_type', 'subdomain'], 'string'],
+            ['sort_order', 'default', 'value' => 0],
         ];
     }
 

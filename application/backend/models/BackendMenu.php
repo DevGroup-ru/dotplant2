@@ -61,6 +61,7 @@ class BackendMenu extends ActiveRecord
             [['translation_category'], 'default', 'value' => 'app'],
             [['added_by_ext'], 'default', 'value' => 'core'],
             [['name', 'route', 'icon', 'added_by_ext', 'css_class', 'translation_category'], 'string', 'max' => 255],
+            ['sort_order', 'default', 'value' => 0],
         ];
     }
 
