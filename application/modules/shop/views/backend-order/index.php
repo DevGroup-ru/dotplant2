@@ -75,11 +75,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'order_stage_id',
                     'filter' => $orderStages,
+                    'format' => 'html',
                     'value' => function ($model, $key, $index, $column) {
                         if ($model === null || $model->stage === null) {
                             return null;
                         }
-                        return $model->stage->name_short;
+                        return Html::tag(
+                            'span',
+                            $model->stage->name_frontend,
+                            [
+                                'class' => ['order_stage', 'order_stage' . $model->stage->id]
+                            ]
+                        );
                     },
                 ],
                 [
@@ -106,17 +113,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'total_price',
                 [
                     'class' => 'app\backend\components\ActionColumn',
-                    'buttons' =>  function($model, $key, $index, $parent) {
+                    'buttons' => function ($model, $key, $index, $parent) {
                         $result = [
                             [
                                 'url' => 'view',
                                 'icon' => 'eye',
                                 'class' => 'btn-info',
-                                'label' => Yii::t('app','View'),
+                                'label' => Yii::t('app', 'View'),
                             ],
                         ];
                         if (intval(Yii::$app->getModule('shop')->deleteOrdersAbility) === 1 && $model->is_deleted == 0) {
-                            $result[] =  [
+                            $result[] = [
                                 'url' => 'delete',
                                 'icon' => 'trash-o',
                                 'class' => 'btn-danger',

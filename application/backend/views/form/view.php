@@ -6,6 +6,7 @@
  * @var \app\models\Submission $searchModel
  */
 
+use app\models\Submission;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Submissions');
@@ -40,6 +41,15 @@ $this->endBlock('buttons');
                 'id',
                 'date_received',
                 'ip',
+                [
+                    'class' => 'yii\grid\DataColumn',
+                    'attribute' => 'sending_status',
+                    'filter' => Submission::getStatuses(),
+                    'value' => function ($model, $key, $index, $widget) {
+                        $array = Submission::getStatuses();
+                        return $array[$model->sending_status];
+                    }
+                ],
                 [
                     'attribute' => 'user_agent',
                     'format' => ['truncated', 40],

@@ -176,6 +176,7 @@ class FormController extends Controller
         $data = $dynamicModel->search(Yii::$app->request->get());
         $data->query->andWhere('form_id = :form_id', [':form_id' => $form->id]);
         $data->query->andWhere(['is_deleted' => $show_deleted]);
+        $data->query->andFilterWhere(['sending_status' => $dynamicModel->sending_status]);
         $data->query->andFilterWhere(['like', 'ip', $dynamicModel->ip]);
         $data->query->andFilterWhere(['like', 'user_agent', $dynamicModel->user_agent]);
 
