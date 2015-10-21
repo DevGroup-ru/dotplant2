@@ -55,7 +55,7 @@ class Submission extends \yii\db\ActiveRecord
     {
         return [
             [['form_id'], 'required'],
-            [['form_id', 'processed_by_user_id', 'processed', 'form_fill_time', 'is_deleted'], 'integer'],
+            [['form_id', 'processed_by_user_id', 'processed', 'form_fill_time', 'is_deleted', 'sending_status'], 'integer'],
             [['date_received', 'date_viewed', 'date_processed', 'visit_start_date'], 'safe'],
             [
                 [
@@ -145,5 +145,16 @@ class Submission extends \yii\db\ActiveRecord
     public function getForm()
     {
         return $this->hasOne(Form::className(), ['id' => 'form_id']);
+    }
+
+    public static function getStatuses()
+    {
+        return [
+            self::STATUS_NEW => Yii::t('app', 'New'),
+            self::STATUS_SUCCESS => Yii::t('app', 'Success'),
+            self::STATUS_ERROR => Yii::t('app', 'Error'),
+            self::STATUS_FATAL_ERROR => Yii::t('app', 'Fatal error'),
+            self::STATUS_HOPELESS_ERROR => Yii::t('app', 'Hopeless error'),
+        ];
     }
 }
