@@ -25,13 +25,6 @@ class ContentBlockHelper
     /**
      * Compiles content string by injecting chunks into content
      * Preloads chunks which have preload = 1
-     * Finding chunk calls with regexp
-     * Iterate matches
-     * While iterating:
-     * Extracts single chunk data with sanitizeChunk() method
-     * Fetches chunk by key using fetchChunkByKey(), who returns chunk value by key from static array if exists, otherwise from db
-     * Compiles single chunk using compileChunk() method
-     * Replaces single chunk call with compiled chunk data in the model content
      *
      * @param  string $content Original content with chunk calls
      * @param  string $content_key Key for caching compiled content version
@@ -41,33 +34,59 @@ class ContentBlockHelper
     public static function compileContentString($content, $content_key, $dependency)
     {
         self::preloadChunks();
+        $output = Yii::$app->cache->get($content_key);
+        if ($output === false) {
+            $output = self::processData($content);
+            Yii::$app->cache->set(
+                $content_key,
+                $output,
+                84600,
+                $dependency
+            );
+        }
+        $output = self::processData($output, '', false);
+        return $output;
+    }
+
+    /**
+     * Finding chunk calls with regexp
+     * Iterate matches
+     * While iterating:
+     * Extracts single chunk data with sanitizeChunk() method
+     * Fetches chunk by key using fetchChunkByKey(), who returns chunk value by key from static array if exists, otherwise from db
+     * Compiles single chunk using compileChunk() method
+     * Replaces single chunk call with compiled chunk data in the model content
+     *
+     * @param  bool $preprocess flag to separate rendering non cacheable chunks such as Form
+     * @param  string $content
+     * @param  string $chunk_key ContentBlock key string to prevent endless recursion
+     * @return string
+     */
+    public static function processData($content, $chunk_key = '', $preprocess = true)
+    {
         $matches = [];
+        $replacement = '';
         preg_match_all('%\[\[([^\]\[]+)\]\]%ui', $content, $matches);
         if (!empty($matches)) {
             foreach ($matches[0] as $k => $rawChunk) {
                 $chunkData = self::sanitizeChunk($rawChunk);
-                $cacheChunkKey = $chunkData['key'] . $content_key;
-                $replacement = Yii::$app->cache->get($cacheChunkKey);
-                if ($replacement === false) {
-                    switch ($chunkData['token']) {
-                        case '$':
-                            $chunk = self::fetchChunkByKey($chunkData['key']);
-                            $replacement = static::compileChunk($chunk, $chunkData);
-                            if (null !== $chunk) {
-                                Yii::$app->cache->set(
-                                    $cacheChunkKey,
-                                    $replacement,
-                                    84600,
-                                    $dependency
-                                );
-                            }
+                if ($chunkData['key'] == $chunk_key) {
+                    $content = str_replace($matches[0][$k], '', $content);
+                    continue;
+                }
+                switch ($chunkData['token']) {
+                    case '$':
+                        if ($preprocess === false) break;
+                        $chunk = self::fetchChunkByKey($chunkData['key']);
+                        $replacement = static::compileChunk($chunk, $chunkData, $chunkData['key']);
+                        break;
+                    case '%':
+                        if ($preprocess === true) {
+                            $replacement = $rawChunk;
                             break;
-                        case '%':
-                            $replacement = static::replaceForms($chunkData);
-                            break;
-                        default:
-                            $replacement = '';
-                    }
+                        }
+                        $replacement = static::replaceForms($chunkData);
+                        break;
                 }
                 $content = str_replace($matches[0][$k], $replacement, $content);
             }
@@ -84,7 +103,7 @@ class ContentBlockHelper
         $regexp = '/^(?P<formId>\d+)(#(?P<id>[\w\d\-_]+))?(;(?P<isModal>isModal))?$/Usi';
         return preg_replace_callback(
             $regexp,
-            function($matches) {
+            function ($matches) {
                 if (isset($matches['formId'])) {
                     $params = ['formId' => intval($matches['formId'])];
                     if (isset($matches['id'])) {
@@ -156,12 +175,13 @@ class ContentBlockHelper
      *
      * @param  string $chunk ContentBlock instance
      * @param  array $arguments Arguments for this chunk from original content
+     * @param  string $key ContentBlock key string to prevent endless recursion
      * @return string Result string ready for replacing
      */
-    public static function compileChunk($chunk, $arguments)
+    public static function compileChunk($chunk, $arguments, $key)
     {
         $matches = [];
-        preg_match_all('%\[\[(?P<token>[\+\*\%])(?P<paramName>[^\s\:\]]+)\:?(?P<format>[^\,\]]+)?\,?(?P<params>[^\]]+)?\]\]%ui', $chunk, $matches);
+        preg_match_all('%\[\[(?P<token>[\+\*])(?P<paramName>[^\s\:\]]+)\:?(?P<format>[^\,\]]+)?\,?(?P<params>[^\]]+)?\]\]%ui', $chunk, $matches);
         foreach ($matches[0] as $k => $rawParam) {
             $token = $matches['token'][$k];
             $paramName = trim($matches['paramName'][$k]);
@@ -184,7 +204,7 @@ class ContentBlockHelper
                     $chunk = str_replace($matches[0][$k], '', $chunk);
             }
         }
-        return $chunk;
+        return self::processData($chunk, $key);
     }
 
     /**
@@ -225,7 +245,7 @@ class ContentBlockHelper
                     ActiveRecordHelper::getCommonTag(ContentBlock::className()),
                 ]
             ]);
-            static::$chunksByKey[$key] = ContentBlock::getDb()->cache(function($db) use ($key) {
+            static::$chunksByKey[$key] = ContentBlock::getDb()->cache(function ($db) use ($key) {
                 $chunk = ContentBlock::find()
                     ->where(['key' => $key])
                     ->asArray()
