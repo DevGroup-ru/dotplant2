@@ -228,6 +228,7 @@ class CartController extends Controller
 
         $result = $this->addProductsToOrder($order, $products, $result);
 
+        $order = $this->loadOrder();
         $order->calculate(true);
 
         $userCurrency = CurrencyHelper::getUserCurrency();

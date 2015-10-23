@@ -4,6 +4,7 @@ namespace app\components\payment;
 
 use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderTransaction;
+use app\modules\shop\models\PaymentType;
 use yii\base\Widget;
 use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
@@ -92,6 +93,7 @@ abstract class AbstractPayment extends Widget
     {
         $result = [
             '/shop/payment/error',
+            'id' => $this->transaction->id,
             'othash' => $this->transaction->generateHash(),
         ];
         $params = array_merge($result, $params);
@@ -108,11 +110,11 @@ abstract class AbstractPayment extends Widget
     {
         $result = [
             '/shop/payment/success',
+            'id' => $this->transaction->id,
             'othash' => $this->transaction->generateHash(),
         ];
         $params = array_merge($result, $params);
         return Url::toRoute($params, boolval($scheme));
-
     }
 
     /**
@@ -124,6 +126,7 @@ abstract class AbstractPayment extends Widget
     {
         $result = [
             '/shop/payment/fail',
+            'id' => $this->transaction->id,
             'othash' => $this->transaction->generateHash(),
         ];
         $params = array_merge($result, $params);
@@ -140,12 +143,28 @@ abstract class AbstractPayment extends Widget
     {
         $result = [
             '/shop/payment/cancel',
+            'id' => $this->transaction->id,
             'othash' => $this->transaction->generateHash(),
         ];
         $params = array_merge($result, $params);
         return Url::toRoute($params, boolval($scheme));
     }
 
+    /**
+     * @param PaymentType $type
+     * @param array $params
+     * @param bool|true $scheme
+     * @return string
+     */
+    protected function createCustomCheckUrl(PaymentType $type, array $params = [], $scheme = true)
+    {
+        $result = [
+            '/shop/payment/custom-check',
+            'type' => $type->id,
+        ];
+        $params = array_merge($result, $params);
+        return Url::toRoute($params, boolval($scheme));
+    }
 
     /**
      * @param string $url
@@ -156,4 +175,3 @@ abstract class AbstractPayment extends Widget
         return \Yii::$app->response->redirect($url);
     }
 }
-?>

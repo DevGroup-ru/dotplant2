@@ -6,8 +6,12 @@ use app\modules\shop\models\UserPreferences;
 
 class CurrencyHelper
 {
-    /** @var Currency $currency */
+    /**
+     * @var Currency $userCurrency
+     * @var Currency $mainCurrency
+     */
     static protected $userCurrency = null;
+    static protected $mainCurrency = null;
 
     /**
      * @return Currency
@@ -23,10 +27,11 @@ class CurrencyHelper
 
     /**
      * @param Currency $userCurrency
+     * @return Currency
      */
-    static public function setUserCurrency($userCurrency)
+    static public function setUserCurrency(Currency $userCurrency)
     {
-        static::$userCurrency = $userCurrency;
+        return static::$userCurrency = $userCurrency;
     }
 
     /**
@@ -34,7 +39,9 @@ class CurrencyHelper
      */
     static public function getMainCurrency()
     {
-        return Currency::getMainCurrency();
+        return null === static::$mainCurrency
+            ? static::$mainCurrency = Currency::getMainCurrency()
+            : static::$mainCurrency;
     }
 
     /**
@@ -64,16 +71,16 @@ class CurrencyHelper
         if ($from->id !== $to->id) {
             $main = static::getMainCurrency();
             if ($main->id === $from->id && $main->id !== $to->id) {
-                $input = round($input / $to->convert_rate * $to->convert_nominal, 2);
+                $input = $input / $to->convert_rate * $to->convert_nominal;
             } elseif ($main->id !== $from->id && $main->id === $to->id) {
-                $input = round($input / $from->convert_nominal * $from->convert_rate, 2);
+                $input = $input / $from->convert_nominal * $from->convert_rate;
             } else {
-                $input = round($input / $from->convert_nominal * $from->convert_rate, 2);
-                $input = round($input / $to->convert_rate * $to->convert_nominal, 2);
+                $input = $input / $from->convert_nominal * $from->convert_rate;
+                $input = $input / $to->convert_rate * $to->convert_nominal;
             }
         }
 
-        return $input;
+        return round($input, 2);
     }
 
     /**
@@ -94,5 +101,15 @@ class CurrencyHelper
     static public function convertToMainCurrency($input = 0, Currency $from)
     {
         return static::convertCurrencies($input, $from, static::getMainCurrency());
+    }
+
+    /**
+     * @param float|int $input
+     * @param Currency $to
+     * @return float|int
+     */
+    static public function convertFromMainCurrency($input = 0, Currency $to)
+    {
+        return static::convertCurrencies($input, static::getMainCurrency(), $to);
     }
 }
