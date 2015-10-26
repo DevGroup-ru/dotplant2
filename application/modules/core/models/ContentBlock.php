@@ -2,6 +2,7 @@
 
 namespace app\modules\core\models;
 
+use app\modules\core\helpers\ContentBlockHelper;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
@@ -87,6 +88,7 @@ class ContentBlock extends \yii\db\ActiveRecord
     }
 
     /**
+     * @deprecated use ContentBlockHelper::getChunk($key, $params, $model) instead
      * Get chunk model or value
      * @param string $key
      * @param bool $valueOnly
@@ -95,25 +97,6 @@ class ContentBlock extends \yii\db\ActiveRecord
      */
     public static function getChunk($key, $valueOnly = true, $defaultValue = null)
     {
-        /** @var ContentBlock|ActiveRecordHelper $model */
-        $model = Yii::$app->cache->get('Chunk: ' . $key);
-        if ($model === false) {
-            $model = static::findOne(['key' => $key]);
-            if ($model !== null) {
-                Yii::$app->cache->set(
-                    'Chunk: ' . $key,
-                    $model,
-                    86400,
-                    new TagDependency(
-                        [
-                            'tags' => [
-                                $model->objectTag(),
-                            ],
-                        ]
-                    )
-                );
-            }
-        }
-        return $model === null ? $defaultValue : ($valueOnly ? $model->value : $model);
+        return ContentBlockHelper::getChunk($key);
     }
 }
