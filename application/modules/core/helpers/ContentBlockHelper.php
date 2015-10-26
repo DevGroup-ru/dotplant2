@@ -280,4 +280,31 @@ class ContentBlockHelper
         }
         return static::$chunksByKey;
     }
+
+    /**
+     * renders chunks in template files
+     * @param string $key ContentBlock key
+     * @param array $params . Array of params to be replaced while render
+     * @param yii\base\Model $model . Caller model instance to use in caching
+     * @return mixed
+     */
+    public static function getChunk($key, $params = [], yii\base\Model $model = null)
+    {
+        if (null === $rawChunk = self::fetchChunkByKey($key)) {
+            return '';
+        }
+        if (false === empty($params)) {
+            $rawChunk = self::compileChunk($rawChunk, $params, $key);
+        }
+        $tags = [
+            ActiveRecordHelper::getCommonTag(app\modules\core\models\ContentBlock::className()),
+        ];
+        $content_key = 'templateChunkRender' . $key;
+        if (null !== $model) {
+            $content_key .= $model->id;
+            $tags[] = ActiveRecordHelper::getObjectTag(get_class($model), $model->id);
+        }
+        $dependency = new TagDependency(['tags' => $tags]);
+        return self::compileContentString($rawChunk, $content_key, $dependency);
+    }
 }
