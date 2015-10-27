@@ -241,8 +241,10 @@ class PropertyStaticValues extends ActiveRecord
                         ->innerJoin(
                             '{{%product_category}}',
                             '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
-                        )
-                        ->where(
+                        )->innerJoin(
+                            Product::tableName() . ' p',
+                            'p.id = {{%product_category}}.object_model_id AND p.active = 1'
+                        )->where(
                             [
                                 'property_static_value_id' => $propertyStaticValues,
                                 'category_id' => $category_id,
