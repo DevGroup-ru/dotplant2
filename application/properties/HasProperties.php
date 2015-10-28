@@ -188,20 +188,23 @@ class HasProperties extends Behavior
     public function addPropertyGroup($property_group_id, $refreshProperties = true, $createAbstractModel = false)
     {
         $params = [];
-        $sql = Yii::$app->db->queryBuilder->insert(
-            ObjectPropertyGroup::tableName(),
-            [
-                'object_id' => $this->getObject()->id,
-                'object_model_id' => $this->owner->id,
-                'property_group_id' => $property_group_id,
-            ],
-            $params
-        );
+        $where = [
+            'object_id' => $this->getObject()->id,
+            'object_model_id' => $this->owner->id,
+            'property_group_id' => $property_group_id,
+        ];
+        if (null === ObjectPropertyGroup::findOne($where)) {
+            $sql = Yii::$app->db->queryBuilder->insert(
+                ObjectPropertyGroup::tableName(),
+                $where,
+                $params
+            );
 
-        Yii::$app->db->createCommand(
-            $sql,
-            $params
-        )->execute();
+            Yii::$app->db->createCommand(
+                $sql,
+                $params
+            )->execute();
+        }
         if ($refreshProperties === true) {
             $this->updatePropertyGroupsInformation($createAbstractModel);
         }
