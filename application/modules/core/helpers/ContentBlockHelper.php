@@ -34,17 +34,8 @@ class ContentBlockHelper
     public static function compileContentString($content, $content_key, $dependency)
     {
         self::preloadChunks();
-        $output = Yii::$app->cache->get($content_key);
-        if ($output === false) {
-            $output = self::processData($content);
-            Yii::$app->cache->set(
-                $content_key,
-                $output,
-                84600,
-                $dependency
-            );
-        }
-        $output = self::processData($output, '', false);
+        $output = self::processData($content, $content_key, $dependency);
+        $output = self::processData($output, $content_key, $dependency, '', false);
         return $output;
     }
 
@@ -57,17 +48,19 @@ class ContentBlockHelper
      * Compiles single chunk using compileChunk() method
      * Replaces single chunk call with compiled chunk data in the model content
      *
+     * @param  string $content_key Key for caching compiled content version
+     * @param  yii\caching\Dependency $dependency Cache dependency
      * @param  bool $preprocess flag to separate rendering non cacheable chunks such as Form
      * @param  string $content
      * @param  string $chunk_key ContentBlock key string to prevent endless recursion
      * @return string
      */
-    public static function processData($content, $chunk_key = '', $preprocess = true)
+    public static function processData($content, $content_key, $dependency, $chunk_key = '', $preprocess = true)
     {
         $matches = [];
         $replacement = '';
         preg_match_all('%\[\[([^\]\[]+)\]\]%ui', $content, $matches);
-        if (!empty($matches)) {
+        if (!empty($matches[0])) {
             foreach ($matches[0] as $k => $rawChunk) {
                 $chunkData = self::sanitizeChunk($rawChunk);
                 if ($chunkData['key'] == $chunk_key) {
@@ -78,7 +71,17 @@ class ContentBlockHelper
                     case '$':
                         if ($preprocess === false) break;
                         $chunk = self::fetchChunkByKey($chunkData['key']);
-                        $replacement = static::compileChunk($chunk, $chunkData, $chunkData['key']);
+                        $cacheKey = $content_key . $chunkData['key'] . serialize($chunkData);
+                        $replacement = Yii::$app->cache->get($cacheKey);
+                        if ($replacement === false) {
+                            $replacement = static::compileChunk($chunk, $chunkData, $chunkData['key'], $content_key, $dependency);
+                            Yii::$app->cache->set(
+                                $content_key,
+                                $replacement,
+                                84600,
+                                $dependency
+                            );
+                        }
                         break;
                     case '%':
                         if ($preprocess === true) {
@@ -173,12 +176,14 @@ class ContentBlockHelper
      * if param name from placeholder was not found in arguments array, placeholder in the compiled chunk will be replaced with empty string
      * returns compiled chunk
      *
+     * @param  string $content_key Key for caching compiled content version
+     * @param  yii\caching\Dependency $dependency Cache dependency
      * @param  string $chunk ContentBlock instance
      * @param  array $arguments Arguments for this chunk from original content
      * @param  string $key ContentBlock key string to prevent endless recursion
      * @return string Result string ready for replacing
      */
-    public static function compileChunk($chunk, $arguments, $key)
+    public static function compileChunk($chunk, $arguments, $key, $content_key, $dependency)
     {
         $matches = [];
         preg_match_all('%\[\[(?P<token>[\+\*])(?P<paramName>[^\s\:\]]+)\:?(?P<format>[^\,\]]+)?\,?(?P<params>[^\]]+)?\]\]%ui', $chunk, $matches);
@@ -204,7 +209,7 @@ class ContentBlockHelper
                     $chunk = str_replace($matches[0][$k], '', $chunk);
             }
         }
-        return self::processData($chunk, $key);
+        return self::processData($chunk, $content_key, $dependency, $key);
     }
 
     /**
@@ -293,9 +298,6 @@ class ContentBlockHelper
         if (null === $rawChunk = self::fetchChunkByKey($key)) {
             return '';
         }
-        if (false === empty($params)) {
-            $rawChunk = self::compileChunk($rawChunk, $params, $key);
-        }
         $tags = [
             ActiveRecordHelper::getCommonTag(app\modules\core\models\ContentBlock::className()),
         ];
@@ -305,6 +307,9 @@ class ContentBlockHelper
             $tags[] = ActiveRecordHelper::getObjectTag(get_class($model), $model->id);
         }
         $dependency = new TagDependency(['tags' => $tags]);
+        if (false === empty($params)) {
+            $rawChunk = self::compileChunk($rawChunk, $params, $key, $content_key, $dependency);
+        }
         return self::compileContentString($rawChunk, $content_key, $dependency);
     }
 }
