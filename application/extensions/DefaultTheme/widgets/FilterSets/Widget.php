@@ -205,6 +205,7 @@ class Widget extends BaseWidget
                     $item = [
                         'id' => $filterSet->property->id,
                         'name' => $filterSet->property->name,
+                        'sort_order' => $filterSet->property->sort_order,
                         'isRange' => $filterSet->is_range_slider,
                         'selections' => [],
                         'multiple' => $filterSet->multiple,
