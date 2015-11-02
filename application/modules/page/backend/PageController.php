@@ -271,6 +271,9 @@ class PageController extends \app\backend\components\BackendController
         $newModel->slug .= '-copy-' . date('Ymdhis', $time);
         $newModel->title .= '-copy-' . date('Ymdhis', $time);
         $newModel->id = null;
+        if ($newModel->validate() === false) {
+            $newModel->slug = substr(uniqid() . "-" . $model->slug, 0, 80);
+        }
         if ($newModel->save()) {
             $object = Object::getForClass(get_class($newModel));
             $query = new Query();
