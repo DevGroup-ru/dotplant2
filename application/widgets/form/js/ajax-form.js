@@ -27,6 +27,7 @@ jQuery(function() {
                         } else {
                             $response.fadeIn();
                         }
+                        $form.trigger('DP:formAfterSubmit', [xhr.responseText]);
                     } else {
                         alert('Ошибка при отправке формы. Проверьте правильность заполнения полей.');
                     }

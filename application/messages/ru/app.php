@@ -502,7 +502,7 @@ return [
     'Install extension' => 'Установить расширение',
     'Install new extension' => 'Установить новое расширение',
     'Installation' => 'Установка',
-    'Installation complete' => 'Установка закершена',
+    'Installation complete' => 'Установка завершена',
     'Installer' => 'Установщик',
     'Installer - Admin user' => 'Установщик - Администраторская учетная запись',
     'Installer - Database configuration' => 'Установщик - Настройка базы данных',

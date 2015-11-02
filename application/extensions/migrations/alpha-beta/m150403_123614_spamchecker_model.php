@@ -24,7 +24,6 @@ class m150403_123614_spamchecker_model extends Migration
             ['behavior', 'name', 'author_field', 'content_field'],
             [
                 ['app\\behaviors\\spamchecker\\AkismetSpamChecker', 'Akismet', 'comment_author', 'comment_content'],
-                ['app\\behaviors\\spamchecker\\YandexSpamChecker', 'Yandex', 'realname', 'body-plain'],
             ]
         );
     }

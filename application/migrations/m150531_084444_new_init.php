@@ -2960,7 +2960,6 @@ class m150531_084444_new_init extends Migration
             ['behavior', 'name', 'author_field', 'content_field'],
             [
                 ['app\\behaviors\\spamchecker\\AkismetSpamChecker', 'Akismet', 'comment_author', 'comment_content'],
-                ['app\\behaviors\\spamchecker\\YandexSpamChecker', 'Yandex', 'realname', 'body-plain'],
             ]
         );
         $this->insert(
