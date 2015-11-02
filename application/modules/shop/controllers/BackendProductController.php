@@ -468,6 +468,9 @@ class BackendProductController extends BackendController
         $newModel->name .= ' (copy ' . date('Y-m-d h:i:s', $time) . ')';
         $newModel->slug .= '-copy-' . date('Ymdhis', $time);
         $newModel->id = null;
+        if ($newModel->validate() === false) {
+            $newModel->slug = substr(uniqid() . "-" . $model->slug, 0, 80);
+        }
         if ($newModel->save()) {
             $object = Object::getForClass(get_class($newModel));
             // save categories
