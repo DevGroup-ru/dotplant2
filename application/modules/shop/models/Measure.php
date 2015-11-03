@@ -98,7 +98,7 @@ class Measure extends \yii\db\ActiveRecord
      */
     public function ceilQuantity($quantity)
     {
-        if ($quantity % $this->nominal !== 0) {
+        if (!is_int($quantity / $this->nominal)) {
             $quantity = ceil($quantity / $this->nominal) * $this->nominal;
         }
         return $quantity;
