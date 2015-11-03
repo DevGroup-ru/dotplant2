@@ -9,6 +9,4 @@ use kartik\select2\Select2;
 
 ?>
 
-
-
 <?= $form->field($object, 'shipping_option_id'); ?>

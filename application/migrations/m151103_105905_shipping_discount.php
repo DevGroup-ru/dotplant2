@@ -7,11 +7,14 @@ class m151103_105905_shipping_discount extends Migration
 {
     public function up()
     {
-        $this->createTable('shipping_discount', [
-            'id' => $this->primaryKey(),
-            'shipping_option_id' => $this->integer()->notNull(),
-            'discount_id' => $this->integer()->notNull()
-        ]);
+        $this->createTable(
+            'shipping_discount',
+            [
+                'id' => $this->primaryKey(),
+                'shipping_option_id' => $this->integer()->notNull(),
+                'discount_id' => $this->integer()->notNull()
+            ]
+        );
 
         $discountType = new DiscountType();
         $discountType->name = 'Shipping Discount';

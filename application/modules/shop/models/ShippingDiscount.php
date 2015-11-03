@@ -36,7 +36,14 @@ class ShippingDiscount extends \app\modules\shop\models\AbstractDiscountType
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
         if (!is_null($order) && ($order->orderDeliveryInformation instanceof DeliveryInformation)) {
-            if (self::find()->where(['discount_id' => $discount->id, 'shipping_option_id' => $order->orderDeliveryInformation->shipping_option_id])->count() > 0) {
+            $model_count = self::find()->where(
+                [
+                    'discount_id' => $discount->id,
+                    'shipping_option_id' => $order->orderDeliveryInformation->shipping_option_id
+                ]
+                )->count();
+
+            if ($model_count > 0) {
                 return true;
             }
         }
