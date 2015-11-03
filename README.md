@@ -59,7 +59,7 @@ First install composer dependencies:
 ``` bash
 
 $ cd application
-$ php ../composer.phar global require "fxp/composer-asset-plugin:1.0.0"
+$ php ../composer.phar global require "fxp/composer-asset-plugin:~1.1.0"
 $ php ../composer.phar install --prefer-dist --optimize-autoloader
 
 ```
