@@ -345,7 +345,7 @@ class CartController extends Controller
                 'orderItem' => $orderItem,
             ]
         ];
-
+        $result['success'] = $orderItem->delete() && $order->calculate(true);
         $event = new CartActionEvent($order, $product);
         Event::trigger($this, self::EVENT_ACTION_REMOVE, $event);
 
@@ -357,9 +357,7 @@ class CartController extends Controller
         $result['itemModalPreview'] = isset($result['additional']['bcItemModalPreview'])
             ? $result['additional']['bcItemModalPreview']
             : '';
-
         $result['products'] = $this->productsModelsToArray($product);
-        $result['success'] = $orderItem->delete() && $order->calculate(true);
         $result['itemsCount'] = $order->items_count;
         $result['totalPrice'] = CurrencyHelper::getMainCurrency()->format($order->total_price);
         $result['message'] = false === $result['success'] ? Yii::t('app', 'Cannot change additional params') : '';
