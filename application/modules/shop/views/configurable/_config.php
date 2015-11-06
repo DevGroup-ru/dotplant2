@@ -59,6 +59,8 @@ use app\components\Helper;
             \app\modules\shop\models\OrderStage::className(), 'id', 'name_short'
         )); ?>
 
+        <?= $form->field($model, 'useCeilQuantity')->widget(SwitchInput::className()) ?>
+
         <?php BackendWidget::end() ?>
     </div>
     <?php

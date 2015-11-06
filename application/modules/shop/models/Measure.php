@@ -98,12 +98,14 @@ class Measure extends \yii\db\ActiveRecord
      */
     public function ceilQuantity($quantity)
     {
-        $accuracy = 1000000; // var_dump(round(16.8/1.2)==(16.8/1.2)); false
-        $nQuantity = floor($quantity * $accuracy);
-        $nominal = floor($this->nominal * $accuracy);
+        if (Yii::$app->getModule('shop')->showFiltersInBreadcrumbs) {
+            $accuracy = 1000000; // var_dump(round(16.8/1.2)==(16.8/1.2)); false
+            $nQuantity = floor($quantity * $accuracy);
+            $nominal = floor($this->nominal * $accuracy);
 
-        if ($nQuantity % $nominal !== 0) {
-            $quantity = ceil($nQuantity / $nominal) * $this->nominal;
+            if ($nQuantity % $nominal !== 0) {
+                $quantity = ceil($nQuantity / $nominal) * $this->nominal;
+            }
         }
         return round($quantity, 6);
     }

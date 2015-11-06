@@ -109,6 +109,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $showFiltersInBreadcrumbs = false;
 
     /**
+     * @var bool Use method ceilQuantity of Measure model
+     */
+    public $useCeilQuantity = true;
+
+    /**
      * @inheritdoc
      */
     public function rules()
