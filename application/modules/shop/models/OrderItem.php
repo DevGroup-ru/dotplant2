@@ -126,6 +126,7 @@ class OrderItem extends ActiveRecord
         if (!static::find()->where(['order_id' => $this->order_id])->one()) {
             Order::deleteOrderElements($this->order);
         }
+        $this->order->calculate(true, true);
         parent::afterDelete();
     }
 

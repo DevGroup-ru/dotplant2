@@ -443,7 +443,11 @@ class Order extends \yii\db\ActiveRecord
     {
         $itemsCount = 0;
         foreach ($this->items as $item) {
-            if ($deleteNotActiveProducts && (!isset($item->product) || $item->product->active == 0)) {
+            if (null === OrderItem::findOne(['id' => $item->id])) {
+                $item->delete();
+                continue;
+            }
+            if ($deleteNotActiveProducts && (null === $item->product || $item->product->active == 0)) {
                 $item->delete();
                 continue;
             }

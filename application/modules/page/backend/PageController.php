@@ -31,6 +31,7 @@ class PageController extends \app\backend\components\BackendController
     const BACKEND_PAGE_EDIT = 'backend-page-edit';
     const BACKEND_PAGE_EDIT_SAVE = 'backend-page-edit-save';
     const BACKEND_PAGE_EDIT_FORM = 'backend-page-edit-form';
+    const BACKEND_PAGE_AFTER_SAVE = 'backend-page-after-save';
 
     public function behaviors()
     {
@@ -146,6 +147,9 @@ class PageController extends \app\backend\components\BackendController
                 }
 
                 if ($save_result) {
+                    $modelAfterSaveEvent = new BackendEntityEditEvent($model);
+                    $this->trigger(self::BACKEND_PAGE_AFTER_SAVE, $modelAfterSaveEvent);
+
                     $this->runAction('save-info', ['model_id' => $model->id]);
                     Yii::$app->session->setFlash('info', Yii::t('app', 'Object saved'));
                     $returnUrl = Yii::$app->request->get('returnUrl', ['/page/backend/index']);
