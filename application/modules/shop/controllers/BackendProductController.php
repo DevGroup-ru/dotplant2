@@ -35,6 +35,7 @@ class BackendProductController extends BackendController
     const EVENT_BACKEND_PRODUCT_EDIT = 'backend-product-edit';
     const EVENT_BACKEND_PRODUCT_EDIT_SAVE = 'backend-product-edit-save';
     const EVENT_BACKEND_PRODUCT_EDIT_FORM = 'backend-product-edit-form';
+    const EVENT_BACKEND_PRODUCT_AFTER_SAVE = 'backend-product-after-save';
 
     /**
      * @inheritdoc
@@ -237,6 +238,9 @@ class BackendProductController extends BackendController
                 }
 
                 if ($save_result) {
+                    $modelAfterSaveEvent = new BackendEntityEditEvent($model);
+                    $this->trigger(self::EVENT_BACKEND_PRODUCT_AFTER_SAVE, $modelAfterSaveEvent);
+
                     $categories = isset($post['Product']['categories']) ? $post['Product']['categories'] : [];
 
                     $model->saveCategoriesBindings($categories);

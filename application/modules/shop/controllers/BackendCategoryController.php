@@ -30,6 +30,7 @@ class BackendCategoryController extends BackendController
     const BACKEND_CATEGORY_EDIT = 'backend-category-edit';
     const BACKEND_CATEGORY_EDIT_SAVE = 'backend-category-edit-save';
     const BACKEND_CATEGORY_EDIT_FORM = 'backend-category-edit-form';
+    const BACKEND_CATEGORY_AFTER_SAVE = 'backend-category-after-save';
 
     public function behaviors()
     {
@@ -161,6 +162,9 @@ class BackendCategoryController extends BackendController
             }
 
             if ($save_result) {
+                $modelAfterSaveEvent = new BackendEntityEditEvent($model);
+                $this->trigger(self::BACKEND_CATEGORY_AFTER_SAVE, $modelAfterSaveEvent);
+
                 $this->runAction('save-info', ['model_id'=>$model->id]);
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Record has been saved'));
                 $returnUrl = Yii::$app->request->get('returnUrl', ['index']);
