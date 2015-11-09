@@ -104,6 +104,9 @@ class ObjectRule implements UrlRuleInterface
                     return $finalUrl;
                 }
                 $cacheTags=[];
+                if (is_object($handler_model)) {
+                    $cacheTags[]=ActiveRecordHelper::getObjectTag($handler_model->className(), $handler_model->id);
+                }
             }
         }
         return false;  // this rule does not apply

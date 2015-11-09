@@ -98,9 +98,15 @@ class Measure extends \yii\db\ActiveRecord
      */
     public function ceilQuantity($quantity)
     {
-        if (!is_int($quantity / $this->nominal)) {
-            $quantity = ceil($quantity / $this->nominal) * $this->nominal;
+        if (Yii::$app->getModule('shop')->showFiltersInBreadcrumbs) {
+            $accuracy = 1000000; // var_dump(round(16.8/1.2)==(16.8/1.2)); false
+            $nQuantity = floor($quantity * $accuracy);
+            $nominal = floor($this->nominal * $accuracy);
+
+            if ($nQuantity % $nominal !== 0) {
+                $quantity = ceil($nQuantity / $nominal) * $this->nominal;
+            }
         }
-        return $quantity;
+        return round($quantity, 6);
     }
 }
