@@ -194,7 +194,9 @@ class PropertyStaticValues extends ActiveRecord
      */
     public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false)
     {
-        $cacheKey = "getValuesForFilter:" . json_encode([$property_id, $category_id, $properties]);
+        $priceMin = Yii::$app->request->get('price_min');
+        $priceMax = Yii::$app->request->get('price_max');
+        $cacheKey = "getValuesForFilter:" . json_encode([$property_id, $category_id, $properties, $priceMin, $priceMax]);
         if (false === $allSelections = Yii::$app->cache->get($cacheKey)) {
             $objectModel = Object::getForClass(Product::className());
             $objectId = $objectModel !== null ? $objectModel->id : 0;
@@ -232,24 +234,23 @@ class PropertyStaticValues extends ActiveRecord
                 ->distinct(true)
                 ->select(ObjectStaticValues::tableName() . '.object_model_id')
                 ->where(['object_id' => $objectId]);
+            $subQuery = null;
             if (false === empty($properties)) {
+                $subQuery = self::initSubQuery($category_id);
+                $propertyStaticValues = [];
+                foreach ($properties as $propertyId => $values) {
+                    $propertyStaticValues = array_merge($propertyStaticValues, $values);
+                }
+                $subQuery->andWhere(['property_static_value_id' => $propertyStaticValues]);
+            }
+            if (false === empty($priceMin) && false === empty($priceMax)) {
+                $subQuery = self::initSubQuery($category_id);
+                $subQuery
+                    ->andWhere(['>=', 'p.price', $priceMin])
+                    ->andWhere(['<=', 'p.price', $priceMax]);
+            }
+            if (false === is_null($subQuery) && $subQuery instanceof ActiveQuery) {
                 /** @var ActiveQuery $subQuery */
-                foreach ($properties as $propertyId => $propertyStaticValues) {
-                    $subQuery = ObjectStaticValues::find();
-                    $subQuery
-                        ->select(ObjectStaticValues::tableName() . '.object_model_id')
-                        ->innerJoin(
-                            '{{%product_category}}',
-                            '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
-                        )->innerJoin(
-                            Product::tableName() . ' p',
-                            'p.id = {{%product_category}}.object_model_id AND p.active = 1'
-                        )->where(
-                            [
-                                'property_static_value_id' => $propertyStaticValues,
-                                'category_id' => $category_id,
-                            ]
-                        );
                     $subQueryOptimisation = Yii::$app->db->cache(function($db) use ($subQuery) {
                         $ids = implode(', ', $subQuery->createCommand($db)->queryColumn());
                         return empty($ids) === true ? '(-1)' : "($ids)";
@@ -260,7 +261,6 @@ class PropertyStaticValues extends ActiveRecord
                     ]));
                     $query->andWhere(new Expression('`object_model_id` IN ' . $subQueryOptimisation));
                 }
-            }
             $selectedQuery = static::find()
                 ->select(static::tableName() . '.id')
                 ->asArray(true)
@@ -307,6 +307,23 @@ class PropertyStaticValues extends ActiveRecord
         return $allSelections;
     }
 
+    private static function initSubQuery($category_id)
+    {
+        $subQuery = ObjectStaticValues::find();
+        return $subQuery
+            ->select(ObjectStaticValues::tableName() . '.object_model_id')
+            ->innerJoin(
+                '{{%product_category}}',
+                '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
+            )->innerJoin(
+                Product::tableName() . ' p',
+                'p.id = {{%product_category}}.object_model_id AND p.active = 1'
+            )->where(
+                [
+                    'category_id' => $category_id,
+                ]
+            );
+    }
     /**
      * Аналогично getValuesForPropertyId
      * Но identity_map не используется

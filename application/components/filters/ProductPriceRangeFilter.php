@@ -23,43 +23,31 @@ class ProductPriceRangeFilter implements FilterQueryInterface
      */
     public function filter(ActiveQuery $query, &$cacheKeyAppend)
     {
-        $get = array_merge(Yii::$app->request->get(), Yii::$app->request->post());
-
-        $isChange = (isset($get[$this->changeAttribute]) && $get[$this->changeAttribute] == 1 ) ? true : false;
-
+        $get = Yii::$app->request->get();
+        $params = array_merge($get, Yii::$app->request->post());
         $min = floatval(
-            ArrayHelper::getValue($get, $this->minAttribute, $this->minValue)
+            ArrayHelper::getValue($params, $this->minAttribute, $this->minValue)
         );
         $max = floatval(
-            ArrayHelper::getValue($get, $this->maxAttribute, $this->maxValue)
+            ArrayHelper::getValue($params, $this->maxAttribute, $this->maxValue)
         );
-        if ($min !== floatval($this->minValue) && $isChange) {
+        if ($min !== floatval($this->minValue)) {
             $cacheKeyAppend .= "[MinPrice:$min]";
             $query = $query->andWhere(
                 Product::tableName() . '.price >= :min_price',
                 [':min_price'=>$min]
             );
-        } else {
-            ArrayHelper::remove($get, $this->minAttribute);
-            ArrayHelper::remove($_GET, $this->minAttribute);
-            Yii::$app->request->setQueryParams(
-                $get
-            );
+            $get[$this->minAttribute] = $min;
         }
-
-        if ($max !== floatval($this->maxValue) && $isChange) {
+        if ($max !== floatval($this->maxValue)) {
             $cacheKeyAppend .= "[MaxPrice:$max]";
             $query = $query->andWhere(
                 Product::tableName() . '.price <= :max_price',
                 [':max_price'=>$max]
             );
-        } else {
-            ArrayHelper::remove($get, $this->maxAttribute);
-            ArrayHelper::remove($_GET, $this->maxAttribute);
-            Yii::$app->request->setQueryParams(
-                $get
-            );
+            $get[$this->maxAttribute] = $max;
         }
+        Yii::$app->request->setQueryParams($get);
         return $query;
     }
 }

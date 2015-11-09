@@ -11,7 +11,6 @@ use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
 use yii\helpers\Url;
-use yii\helpers\VarDumper;
 
 class Widget extends BaseWidget
 {
@@ -161,11 +160,22 @@ class Widget extends BaseWidget
                 'properties' => Yii::$app->request->get('properties', []),
                 'category_group_id' => Yii::$app->request->get('category_group_id', 0),
             ];
-            $urlParams = $this->mergeUrlProperties($urlParams, Yii::$app->request->post('properties', []));
+            $priceMin = empty(Yii::$app->request->post('price_min')) ? Yii::$app->request->get('price_min') : Yii::$app->request->post('price_min');
+            $priceMax = empty(Yii::$app->request->post('price_max')) ? Yii::$app->request->get('price_max') : Yii::$app->request->post('price_max');
+            if (false === empty($priceMin)) {
+                $urlParams['price_min'] = $priceMin;
+            }
+            if (false === empty($priceMax)) {
+                $urlParams['price_max'] = $priceMax;
+            }
+            $urlParams = $this->mergeUrlProperties($urlParams, ['properties' => Yii::$app->request->post('properties', [])]);
             $urlParams = $this->removeLostDependencies($filterSets, $urlParams);
             $properties = $urlParams['properties'];
+            $newGet = Yii::$app->request->get();
+            $newGet['properties'] = $properties;
+            Yii::$app->request->setQueryParams($newGet);
             ksort($properties);
-            $cacheKey = 'FilterSets:' . $categoryId . ':' . json_encode($properties);
+            $cacheKey = 'FilterSets:' . $categoryId . ':' . json_encode($urlParams);
             unset($properties);
             if (false === $filtersArray = Yii::$app->cache->get($cacheKey)) {
                 $filtersArray = [];
