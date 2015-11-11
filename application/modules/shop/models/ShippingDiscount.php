@@ -35,7 +35,7 @@ class ShippingDiscount extends \app\modules\shop\models\AbstractDiscountType
      */
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
-        if (self::find()->where(['discount_id' => $discount->id])->count() === 0) {
+        if (intval(self::find()->where(['discount_id' => $discount->id])->count()) === 0) {
             return true;
         }
 
