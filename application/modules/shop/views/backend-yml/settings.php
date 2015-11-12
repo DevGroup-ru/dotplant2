@@ -29,59 +29,59 @@ $formName = 'YmlSettings';
 
 
 <?php
-    $yml_relations = [
-        'getImage' => \app\modules\image\models\Image::className(),
-        'getCategory' => \app\modules\shop\models\Category::className(),
-    ];
+$yml_relations = [
+    'getImage' => \app\modules\image\models\Image::className(),
+    'getCategory' => \app\modules\shop\models\Category::className(),
+];
 
-    $yml_settings = [];
-    $yml_settings['product_fields'] = (new \app\modules\shop\models\Product())->attributeLabels();
-    $yml_settings['relations_keys'] = array_combine(array_keys($yml_relations), array_keys($yml_relations));
-    $yml_settings['relations_map'] = [];
-    foreach ($yml_relations as $key => $value) {
-        $_fields = (new $value)->attributeLabels();
-        $yml_settings['relations_map'][$key] = [
-            'fields' => $_fields,
-            'html' => array_reduce($_fields, function($result, $i) {
-                $result .= '<option value="'.htmlspecialchars($i).'">'.addslashes(htmlspecialchars($i)).'</option>';
-                return $result;
-            }, ''),
-        ];
-    }
-    if (true === isset ($yml_settings['relations_map']['getImage'])) {
-        $yml_settings['relations_map']['getImage']['fields']['file'] = Yii::t('app', 'File');
-        $yml_settings['relations_map']['getImage']['html'] .= '<option value="file">'.Yii::t('app', 'File').'</option>';
-    }
-    $prop_group = \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id;
-    $provider = (new \yii\db\Query())
-        ->select(['pg.name as pgname', 'p.name', 'p.id', 'p.handler_additional_params'])
-        ->from(\app\models\Property::tableName().' as p', \app\models\PropertyGroup::tableName().'as pg')
-        ->leftJoin(\app\models\PropertyGroup::tableName().'as pg', 'pg.id=p.property_group_id')
-        ->where(['pg.object_id' => $prop_group]);
-    $prop_group = $provider->all();
-    $yml_settings['properties_map'] = ['html' => '', 'fields' => []];
-    $yml_settings['properties_map'] = array_reduce(
-        array_reduce(
-            $prop_group,
-            function($result, $i)
-            {
-                if (isset($result[$i['pgname']])) {
-                    $result[$i['pgname']]['html'] .= '<option value="'.htmlspecialchars($i['id']).'">'.htmlspecialchars($i['name']).'</option>';
-                    $result[$i['pgname']]['fields'][$i['pgname']][$i['id']] = $i['name'];
-                    $result[$i['pgname']]['name'] = $i['pgname'];
-                }
-                return $result;
-            },
-            array_fill_keys(array_unique(array_column($prop_group, 'pgname')), ['fields' => [], 'html' => '', 'name' => ''])
-        ),
+$yml_settings = [];
+$yml_settings['product_fields'] = (new \app\modules\shop\models\Product())->attributeLabels();
+$yml_settings['relations_keys'] = array_combine(array_keys($yml_relations), array_keys($yml_relations));
+$yml_settings['relations_map'] = [];
+foreach ($yml_relations as $key => $value) {
+    $_fields = (new $value)->attributeLabels();
+    $yml_settings['relations_map'][$key] = [
+        'fields' => $_fields,
+        'html' => array_reduce($_fields, function($result, $i) {
+            $result .= '<option value="'.addslashes(htmlspecialchars($i)).'">'.addslashes(htmlspecialchars($i)).'</option>';
+            return $result;
+        }, ''),
+    ];
+}
+if (true === isset ($yml_settings['relations_map']['getImage'])) {
+    $yml_settings['relations_map']['getImage']['fields']['file'] = Yii::t('app', 'File');
+    $yml_settings['relations_map']['getImage']['html'] .= '<option value="file">'.Yii::t('app', 'File').'</option>';
+}
+$prop_group = \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id;
+$provider = (new \yii\db\Query())
+    ->select(['pg.name as pgname', 'p.name', 'p.id', 'p.handler_additional_params'])
+    ->from(\app\models\Property::tableName().' as p', \app\models\PropertyGroup::tableName().'as pg')
+    ->leftJoin(\app\models\PropertyGroup::tableName().'as pg', 'pg.id=p.property_group_id')
+    ->where(['pg.object_id' => $prop_group]);
+$prop_group = $provider->all();
+$yml_settings['properties_map'] = ['html' => '', 'fields' => []];
+$yml_settings['properties_map'] = array_reduce(
+    array_reduce(
+        $prop_group,
         function($result, $i)
         {
-            $result['fields'] = array_replace($result['fields'], $i['fields']);
-            $result['html'] .= '<optgroup label="'.$i['name'].'">'.addslashes($i['html']).'</optgroup>';
+            if (isset($result[$i['pgname']])) {
+                $result[$i['pgname']]['html'] .= '<option value="'.addslashes(htmlspecialchars($i['id'])).'">'.addslashes(htmlspecialchars($i['name'])).'</option>';
+                $result[$i['pgname']]['fields'][$i['pgname']][$i['id']] = $i['name'];
+                $result[$i['pgname']]['name'] = $i['pgname'];
+            }
             return $result;
         },
-        $yml_settings['properties_map']
-    );
+        array_fill_keys(array_unique(array_column($prop_group, 'pgname')), ['fields' => [], 'html' => '', 'name' => ''])
+    ),
+    function($result, $i)
+    {
+        $result['fields'] = array_replace($result['fields'], $i['fields']);
+        $result['html'] .= '<optgroup label="'.addslashes(addslashes($i['name'])).'">'.addslashes(addslashes($i['html'])).'</optgroup>';
+        return $result;
+    },
+    $yml_settings['properties_map']
+);
 ?>
 
 <?php $form = \kartik\widgets\ActiveForm::begin(['id' => 'yml-form', 'type' => \kartik\widgets\ActiveForm::TYPE_HORIZONTAL]); ?>
@@ -131,62 +131,62 @@ $formName = 'YmlSettings';
         <?php BackendWidget::begin(['title'=> Yii::t('app', 'Settings for offers section'), 'icon' => 'cogs']); ?>
 
         <?php
-            foreach ($model->getOfferElements() as $el) {
-                echo $form->field($model, $el)->render(
-                    function(\yii\widgets\ActiveField $field) use ($yml_settings)
-                    {
-                        $value = $field->model->{$field->attribute};
+        foreach ($model->getOfferElements() as $el) {
+            echo $form->field($model, $el)->render(
+                function(\yii\widgets\ActiveField $field) use ($yml_settings)
+                {
+                    $value = $field->model->{$field->attribute};
 
-                        $label = Html::activeLabel($field->model, $field->attribute, $field->labelOptions);
+                    $label = Html::activeLabel($field->model, $field->attribute, $field->labelOptions);
 
-                        $input = '<div class="col-md-2">'.
-                            Html::activeDropDownList(
-                                $field->model,
-                                $field->attribute . '[type]',
-                                [
-                                    'field' => Yii::t('app', 'Field'),
-                                    'property' => Yii::t('app', 'Property'),
-                                    'relation' => Yii::t('app', 'Relation'),
-                                ],
-                                array_merge(['data-ymlselect' => 'type'], $field->inputOptions)
-                            ).'</div>';
+                    $input = '<div class="col-md-2">'.
+                        Html::activeDropDownList(
+                            $field->model,
+                            $field->attribute . '[type]',
+                            [
+                                'field' => Yii::t('app', 'Field'),
+                                'property' => Yii::t('app', 'Property'),
+                                'relation' => Yii::t('app', 'Relation'),
+                            ],
+                            array_merge(['data-ymlselect' => 'type'], $field->inputOptions)
+                        ).'</div>';
 
-                        $_key_list = [];
-                        if (!empty($value['key'])) {
-                            if ('field' === $value['type']) {
-                                $_key_list = $yml_settings['product_fields'];
-                            } elseif ('property' === $value['type']) {
-                                $_key_list = $yml_settings['properties_map']['fields'];
-                            } elseif ('relation' === $value['type']) {
-                                $_key_list = $yml_settings['relations_keys'];
-                            }
+                    $_key_list = [];
+                    if (!empty($value['key'])) {
+                        if ('field' === $value['type']) {
+                            $_key_list = $yml_settings['product_fields'];
+                        } elseif ('property' === $value['type']) {
+                            $_key_list = $yml_settings['properties_map']['fields'];
+                        } elseif ('relation' === $value['type']) {
+                            $_key_list = $yml_settings['relations_keys'];
                         }
-
-                        $input .= '<div class="col-md-3">' .
-                            Html::activeDropDownList(
-                                $field->model,
-                                $field->attribute . '[key]',
-                                $_key_list,
-                                array_merge(['data-ymlselect' => 'key'], $field->inputOptions)
-                            ) . '</div>';
-
-                        $_value_list = [];
-                        if (!empty($value['value']) && 'relation' === $value['type']) {
-                            $_value_list = $yml_settings['relations_map'][$value['key']]['fields'];
-                        }
-                        $input .= '<div class="col-md-3">' .
-                            Html::activeDropDownList(
-                                $field->model,
-                                $field->attribute . '[value]',
-                                $_value_list,
-                                array_merge(['data-ymlselect' => 'value', 'style' => empty($_value_list)?'display:none;':''], $field->inputOptions)
-                            ) . '</div>';
-
-                        $error = Html::error($field->model, $field->attribute, $field->errorOptions);
-                        return sprintf("%s\n<div class=\"col-md-10 offer-group\">%s</div>\n<div class=\"col-md-offset-2 col-md-10\">%s</div>", $label, $input, $error);
                     }
-                );
-            }
+
+                    $input .= '<div class="col-md-3">' .
+                        Html::activeDropDownList(
+                            $field->model,
+                            $field->attribute . '[key]',
+                            $_key_list,
+                            array_merge(['data-ymlselect' => 'key'], $field->inputOptions)
+                        ) . '</div>';
+
+                    $_value_list = [];
+                    if (!empty($value['value']) && 'relation' === $value['type']) {
+                        $_value_list = $yml_settings['relations_map'][$value['key']]['fields'];
+                    }
+                    $input .= '<div class="col-md-3">' .
+                        Html::activeDropDownList(
+                            $field->model,
+                            $field->attribute . '[value]',
+                            $_value_list,
+                            array_merge(['data-ymlselect' => 'value', 'style' => empty($_value_list)?'display:none;':''], $field->inputOptions)
+                        ) . '</div>';
+
+                    $error = Html::error($field->model, $field->attribute, $field->errorOptions);
+                    return sprintf("%s\n<div class=\"col-md-10 offer-group\">%s</div>\n<div class=\"col-md-offset-2 col-md-10\">%s</div>", $label, $input, $error);
+                }
+            );
+        }
         ?>
         <?= $form->field($model, 'offer_param')->checkbox(); ?>
         <?= Html::submitButton(
@@ -201,13 +201,13 @@ $formName = 'YmlSettings';
         ); ?>
 
         <?php
-            if (is_file(\Yii::getAlias('@webroot').'/'.$model->general_yml_filename)) {
-                echo Html::a(
-                    Icon::show('download') . Yii::t('app', 'Download'),
-                    \yii\helpers\Url::to($model->general_yml_filename, true),
-                    ['class' => 'btn btn-default']
-                );
-            }
+        if (is_file(\Yii::getAlias('@webroot').'/'.$model->general_yml_filename)) {
+            echo Html::a(
+                Icon::show('download') . Yii::t('app', 'Download'),
+                \yii\helpers\Url::to($model->general_yml_filename, true),
+                ['class' => 'btn btn-default']
+            );
+        }
         ?>
         <?php BackendWidget::end(); ?>
     </div>
@@ -281,34 +281,31 @@ $formName = 'YmlSettings';
             ]
         ]);
         ?>
-</div>
+    </div>
 </div>
 <?php \kartik\widgets\ActiveForm::end(); ?>
 
 <?php $this->beginBlock('jsValues') ?>
     var $url = '<?= \yii\helpers\Url::toRoute(['/shop/backend-yml/save-property-unit'])?>';
     var ymlSelectFields = '<?= array_reduce(
-    $yml_settings['product_fields'],
-    function($result, $i) {
-        $result .= '<option value="'.addslashes(htmlspecialchars($i)).'">'.addslashes(htmlspecialchars($i)).'</option>';
-        return $result;
-    }, ''); ?>';
-
+        $yml_settings['product_fields'],
+        function($result, $i) {
+            $result .= '<option value="'.addslashes(htmlspecialchars($i)).'">'.addslashes(htmlspecialchars($i)).'</option>';
+            return $result;
+        }, ''); ?>';
     var ymlSelectRelKeys = '<?= array_reduce(
-    $yml_settings['relations_keys'],
-    function($result, $i) {
-        $result .= '<option value="'.addslashes(htmlspecialchars($i)).'">'.addslashes(htmlspecialchars($i)).'</option>';
-        return $result;
-    }, ''); ?>';
-
+        $yml_settings['relations_keys'],
+        function($result, $i) {
+            $result .= '<option value="'.addslashes(htmlspecialchars($i)).'">'.addslashes(htmlspecialchars($i)).'</option>';
+            return $result;
+        }, ''); ?>';
     var ymlSelectRelations = {
-        <?php
-        foreach ($yml_settings['relations_map'] as $k => $v) {
-            echo $k.': \''.$v['html'].'\','.PHP_EOL;
-        }
-        ?>
+    <?php
+    foreach ($yml_settings['relations_map'] as $k => $v) {
+        echo $k.': \''.$v['html'].'\','.PHP_EOL;
+    }
+    ?>
     };
-
     var ymlSelectProperties = '<?= $yml_settings['properties_map']['html']; ?>';
 <?php $this->endBlock(); ?>
 
