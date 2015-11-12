@@ -40,8 +40,14 @@ class SeoModule extends BaseModule implements BootstrapInterface
     public $redirectTrailingSlash = false;
 
     public $analytics = [
-        'ecGoogle' => 0,
-        'ecYandex' => 0,
+        'ecGoogle' => [
+            'active' => 0,
+            'currency' => AnalyticsHandler::CURRENCY_MAIN,
+        ],
+        'ecYandex' => [
+            'active' => 0,
+            'currency' => AnalyticsHandler::CURRENCY_MAIN,
+        ],
     ];
 
     /**

@@ -7,6 +7,7 @@ use app\modules\seo\assets\YandexAnalyticsAssets;
 use app\modules\shop\controllers\CartController;
 use app\modules\shop\events\CartActionEvent;
 use app\modules\shop\helpers\CurrencyHelper;
+use app\modules\shop\models\Currency;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\Product;
 use yii\base\ActionEvent;
@@ -17,11 +18,23 @@ use yii\web\View;
 
 class YandexEcommerceHandler extends Object
 {
+    /** @var Currency $currency */
+    static protected $currency = null;
+
     /**
      * Install handlers
      */
     static public function installHandlers(ActionEvent $event)
     {
+        $currency = \Yii::$app->getModule('seo')->analytics['ecYandex']['currency'];
+        if (AnalyticsHandler::CURRENCY_MAIN === intval($currency)) {
+            static::$currency = CurrencyHelper::getMainCurrency();
+        } elseif (AnalyticsHandler::CURRENCY_USER === intval($currency)) {
+            static::$currency = CurrencyHelper::getUserCurrency();
+        } else {
+            static::$currency = CurrencyHelper::findCurrencyByIso($currency);
+        }
+
         $route = implode('/', [
             $event->action->controller->module->id,
             $event->action->controller->id,
@@ -31,25 +44,29 @@ class YandexEcommerceHandler extends Object
         Event::on(
             CartController::className(),
             CartController::EVENT_ACTION_ADD,
-            [self::className(), 'handleCartAdd']
+            [self::className(), 'handleCartAdd'],
+            false
         );
 
         Event::on(
             CartController::className(),
             CartController::EVENT_ACTION_REMOVE,
-            [self::className(), 'handleRemoveFromCart']
+            [self::className(), 'handleRemoveFromCart'],
+            false
         );
 
         Event::on(
             CartController::className(),
             CartController::EVENT_ACTION_QUANTITY,
-            [self::className(), 'handleChangeQuantity']
+            [self::className(), 'handleChangeQuantity'],
+            false
         );
 
         Event::on(
             CartController::className(),
             CartController::EVENT_ACTION_CLEAR,
-            [self::className(), 'handleClearCart']
+            [self::className(), 'handleClearCart'],
+            false
         );
 
         Event::on(
@@ -71,11 +88,13 @@ class YandexEcommerceHandler extends Object
     static public function handleCartAdd(CartActionEvent $event)
     {
         $result = $event->getEventData();
+        /** @var Currency $currency */
+        $currency = static::$currency;
 
         $ya = [];
 
-        $ya['currency'] = CurrencyHelper::getMainCurrency()->iso_code;
-        $ya['products'] = array_reduce($event->getProducts(), function($res, $item) {
+        $ya['currency'] = $currency->iso_code;
+        $ya['products'] = array_reduce($event->getProducts(), function($res, $item) use ($currency) {
             $quantity = $item['quantity'];
             /** @var Product $item */
             $item = $item['model'];
@@ -84,7 +103,7 @@ class YandexEcommerceHandler extends Object
                 'id' => $item->id,
                 'name' => $item->name,
                 'category' => self::getCategories($item),
-                'price' => CurrencyHelper::convertToMainCurrency($item->price, $item->currency),
+                'price' => CurrencyHelper::convertCurrencies($item->price, $item->currency, $currency),
                 'quantity' => $quantity,
             ];
             return $res;
@@ -100,11 +119,13 @@ class YandexEcommerceHandler extends Object
     static public function handleRemoveFromCart(CartActionEvent $event)
     {
         $result = $event->getEventData();
+        /** @var Currency $currency */
+        $currency = static::$currency;
 
         $ya = [];
 
-        $ya['currency'] = CurrencyHelper::getMainCurrency()->iso_code;
-        $ya['products'] = array_reduce($event->getProducts(), function($res, $item) {
+        $ya['currency'] = $currency->iso_code;
+        $ya['products'] = array_reduce($event->getProducts(), function($res, $item) use ($currency) {
             $quantity = $item['quantity'];
             /** @var Product $item */
             $item = $item['model'];
@@ -113,7 +134,7 @@ class YandexEcommerceHandler extends Object
                 'id' => $item->id,
                 'name' => $item->name,
                 'category' => self::getCategories($item),
-                'price' => CurrencyHelper::convertToMainCurrency($item->price, $item->currency),
+                'price' => CurrencyHelper::convertCurrencies($item->price, $item->currency, $currency),
                 'quantity' => $quantity,
             ];
             return $res;
@@ -129,11 +150,13 @@ class YandexEcommerceHandler extends Object
     static public function handleChangeQuantity(CartActionEvent $event)
     {
         $result = $event->getEventData();
+        /** @var Currency $currency */
+        $currency = static::$currency;
 
         $ya = [];
 
-        $ya['currency'] = CurrencyHelper::getMainCurrency()->iso_code;
-        $ya['products'] = array_reduce($event->getProducts(), function($res, $item) {
+        $ya['currency'] = $currency->iso_code;
+        $ya['products'] = array_reduce($event->getProducts(), function($res, $item) use ($currency) {
             $quantity = $item['quantity'];
             /** @var Product $item */
             $item = $item['model'];
@@ -142,7 +165,7 @@ class YandexEcommerceHandler extends Object
                 'id' => $item->id,
                 'name' => $item->name,
                 'category' => self::getCategories($item),
-                'price' => CurrencyHelper::convertToMainCurrency($item->price, $item->currency),
+                'price' => CurrencyHelper::convertCurrencies($item->price, $item->currency, $currency),
                 'quantity' => $quantity,
             ];
             return $res;
@@ -158,11 +181,13 @@ class YandexEcommerceHandler extends Object
     static public function handleClearCart(CartActionEvent $event)
     {
         $result = $event->getEventData();
+        /** @var Currency $currency */
+        $currency = static::$currency;
 
         $ya = [];
 
-        $ya['currency'] = CurrencyHelper::getMainCurrency()->iso_code;
-        $ya['products'] = array_reduce($event->getProducts(), function($res, $item) {
+        $ya['currency'] = $currency->iso_code;
+        $ya['products'] = array_reduce($event->getProducts(), function($res, $item) use ($currency) {
             $quantity = $item['quantity'];
             /** @var Product $item */
             $item = $item['model'];
@@ -171,7 +196,7 @@ class YandexEcommerceHandler extends Object
                 'id' => $item->id,
                 'name' => $item->name,
                 'category' => self::getCategories($item),
-                'price' => CurrencyHelper::convertToMainCurrency($item->price, $item->currency),
+                'price' => CurrencyHelper::convertCurrencies($item->price, $item->currency, $currency),
                 'quantity' => $quantity,
             ];
             return $res;
@@ -196,14 +221,17 @@ class YandexEcommerceHandler extends Object
             return ;
         }
 
+        /** @var Currency $currency */
+        $currency = static::$currency;
+
         $ya = [
             'action' => 'detail',
-            'currency' => CurrencyHelper::getMainCurrency()->iso_code,
+            'currency' => $currency->iso_code,
             'products' => [
                 'id' => $model->id,
                 'name' => $model->name,
                 'category' => self::getCategories($model),
-                'price' => CurrencyHelper::convertToMainCurrency($model->price, $model->currency),
+                'price' => CurrencyHelper::convertCurrencies($model->price, $model->currency, $currency),
                 'quantity' => null === $model->measure ? 1 : $model->measure->nominal,
             ]
         ];
@@ -229,9 +257,12 @@ class YandexEcommerceHandler extends Object
             return ;
         }
 
+        /** @var Currency $currency */
+        $currency = static::$currency;
+
         $ya = [
             'action' => 'purchase',
-            'currency' => CurrencyHelper::getMainCurrency()->iso_code,
+            'currency' => $currency->iso_code,
             'orderId' => $order->id,
         ];
 

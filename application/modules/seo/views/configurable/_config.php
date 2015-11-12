@@ -1,18 +1,22 @@
 <?php
-
-/** @var \app\modules\config\models\Configurable $configurable */
-/** @var \app\backend\components\ActiveForm $form */
-/** @var \app\modules\seo\models\ConfigConfigurationModel $model */
-/** @var \yii\web\View $this */
-
+/**
+ * @var \app\modules\config\models\Configurable $configurable
+ * @var \app\backend\components\ActiveForm $form
+ * @var \app\modules\seo\models\ConfigConfigurationModel $model
+ * @var \yii\web\View $this
+ */
 use app\backend\widgets\BackendWidget;
 use app\modules\seo\SeoModule;
 use kartik\widgets\SwitchInput;
+use app\modules\shop\models\Currency;
 
-if (is_array($model->include)) {
-    $model->include = implode(',', $model->include);
-}
+    if (is_array($model->include)) {
+        $model->include = implode(',', $model->include);
+    }
 
+    $currencies = [\app\modules\seo\handlers\AnalyticsHandler::CURRENCY_MAIN => Yii::t('app', 'Main currency'),
+            \app\modules\seo\handlers\AnalyticsHandler::CURRENCY_USER => Yii::t('app', 'User currency'),]
+        + \yii\helpers\ArrayHelper::map(Currency::find()->select(['iso_code','name'])->asArray()->all(), 'iso_code', 'name');
 ?>
 
 <div>
@@ -25,8 +29,28 @@ if (is_array($model->include)) {
         <?php BackendWidget::end(); ?>
 
         <?php BackendWidget::begin(['title' => Yii::t('app', 'Analytics'), 'options' => ['class' => 'visible-header']]); ?>
-            <?= $form->field($model, 'analytics[ecGoogle]')->widget(SwitchInput::className())->label(Yii::t('app', 'Google ecommerce')); ?>
-            <?= $form->field($model, 'analytics[ecYandex]')->widget(SwitchInput::className())->label(Yii::t('app', 'Yandex ecommerce')); ?>
+            <div class="col-md-6">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <?= Yii::t('app', 'Google ecommerce'); ?>
+                    </div>
+                    <div class="panel-body">
+                        <?= $form->field($model, 'analytics[ecGoogle][active]')->widget(SwitchInput::className())->label(Yii::t('app', 'Active')); ?>
+                        <?= $form->field($model, 'analytics[ecGoogle][currency]')->dropDownList($currencies)->label(Yii::t('app', 'Currency')); ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <?= Yii::t('app', 'Yandex ecommerce'); ?>
+                    </div>
+                    <div class="panel-body">
+                        <?= $form->field($model, 'analytics[ecYandex][active]')->widget(SwitchInput::className())->label(Yii::t('app', 'Active')); ?>
+                        <?= $form->field($model, 'analytics[ecYandex][currency]')->dropDownList($currencies)->label(Yii::t('app', 'Currency')); ?>
+                    </div>
+                </div>
+            </div>
         <?php BackendWidget::end(); ?>
     </div>
     <div class="col-md-6 col-sm-12">

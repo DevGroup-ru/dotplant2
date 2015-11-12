@@ -10,6 +10,9 @@ use yii\web\View;
 
 class AnalyticsHandler extends Object
 {
+    const CURRENCY_MAIN = -1;
+    const CURRENCY_USER = -2;
+
     static public function handleBeforeAction(ActionEvent $event)
     {
         /** @var SeoModule $seoModule */
@@ -28,11 +31,11 @@ class AnalyticsHandler extends Object
             );
         }
 
-        if (1 === intval($seoModule->analytics['ecGoogle'])) {
+        if (1 === intval($seoModule->analytics['ecGoogle']['active'])) {
             GoogleEcommerceHandler::installHandlers($event);
         }
 
-        if (1 === intval($seoModule->analytics['ecYandex'])) {
+        if (1 === intval($seoModule->analytics['ecYandex']['active'])) {
             YandexEcommerceHandler::installHandlers($event);
         }
     }
