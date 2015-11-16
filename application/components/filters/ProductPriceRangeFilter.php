@@ -35,15 +35,15 @@ class ProductPriceRangeFilter implements FilterQueryInterface
             $cacheKeyAppend .= "[MinPrice:$min]";
             $query = $query->andWhere(
                 Product::tableName() . '.price >= :min_price',
-                [':min_price'=>$min]
+                [':min_price' => $min]
             );
             $get[$this->minAttribute] = $min;
         }
-        if ($max !== floatval($this->maxValue)) {
+        if ($max !== floatval($this->maxValue) && (double) 0 !== floatval($max)) {
             $cacheKeyAppend .= "[MaxPrice:$max]";
             $query = $query->andWhere(
                 Product::tableName() . '.price <= :max_price',
-                [':max_price'=>$max]
+                [':max_price' => $max]
             );
             $get[$this->maxAttribute] = $max;
         }
