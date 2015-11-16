@@ -234,23 +234,10 @@ class PropertyStaticValues extends ActiveRecord
                 ->distinct(true)
                 ->select(ObjectStaticValues::tableName() . '.object_model_id')
                 ->where(['object_id' => $objectId]);
-            $subQuery = null;
             if (false === empty($properties)) {
-                $subQuery = self::initSubQuery($category_id);
-                $propertyStaticValues = [];
-                foreach ($properties as $propertyId => $values) {
-                    $propertyStaticValues = array_merge($propertyStaticValues, $values);
-                }
-                $subQuery->andWhere(['property_static_value_id' => $propertyStaticValues]);
-            }
-            if (false === empty($priceMin) && false === empty($priceMax)) {
-                $subQuery = self::initSubQuery($category_id);
-                $subQuery
-                    ->andWhere(['>=', 'p.price', $priceMin])
-                    ->andWhere(['<=', 'p.price', $priceMax]);
-            }
-            if (false === is_null($subQuery) && $subQuery instanceof ActiveQuery) {
-                /** @var ActiveQuery $subQuery */
+                foreach ($properties as $propertyId => $propertyStaticValues) {
+                    $subQuery = self::initSubQuery($category_id);
+                    $subQuery->andWhere(['property_static_value_id' => $propertyStaticValues,]);
                     $subQueryOptimisation = Yii::$app->db->cache(function($db) use ($subQuery) {
                         $ids = implode(', ', $subQuery->createCommand($db)->queryColumn());
                         return empty($ids) === true ? '(-1)' : "($ids)";
@@ -261,6 +248,22 @@ class PropertyStaticValues extends ActiveRecord
                     ]));
                     $query->andWhere(new Expression('`object_model_id` IN ' . $subQueryOptimisation));
                 }
+            }
+            if (false === empty($priceMin) && false === empty($priceMax)) {
+                $subQuery = self::initSubQuery($category_id);
+                $subQuery
+                    ->andWhere(['>=', 'p.price', $priceMin])
+                    ->andWhere(['<=', 'p.price', $priceMax]);
+                $subQueryOptimisation = Yii::$app->db->cache(function($db) use ($subQuery) {
+                    $ids = implode(', ', $subQuery->createCommand($db)->queryColumn());
+                    return empty($ids) === true ? '(-1)' : "($ids)";
+                }, 86400, new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getCommonTag(ObjectStaticValues::className()),
+                    ]
+                ]));
+                $query->andWhere(new Expression('`object_model_id` IN ' . $subQueryOptimisation));
+            }
             $selectedQuery = static::find()
                 ->select(static::tableName() . '.id')
                 ->asArray(true)
