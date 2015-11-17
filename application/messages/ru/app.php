@@ -1185,4 +1185,5 @@ return [
     '<a href="{link}">This</a> is link for reset your password. If you did not request it ignore this letter.' => 'Для сброса пароля перейдите по <a href="{link}">ссылке</a>. Если Вы не запрашивали сброс пароля, игнорируйте данное письмо.',
     'Corresponding models not found' => 'Не найдено соответствующих моделей',
     'Sorry. Corresponding models not found. Please contact our managers or go to catalog.' => 'Извините. Соответствующих моделей не найдено. Пожалуйста, обратитесь к нашему менеджеру или перейдите в каталог',
+    'Previous step' => 'Вернуться на предыдущий шаг',
 ];
