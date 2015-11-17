@@ -56,32 +56,27 @@ class RobokassaPayment extends AbstractPayment
     public function customCheck()
     {
 
-
         if (null === $this->transaction = $this->loadTransaction(\Yii::$app->request->post('InvId'))) {
             throw new BadRequestHttpException();
         }
-
         if (\Yii::$app->request->get('action') == 'result') {
-            $this->checkResult($this->transaction->generateHash());
+            return $this->checkResult($this->transaction->generateHash());
         } elseif (\Yii::$app->request->get('action') == 'success') {
             return $this->redirect(
                 $this->createSuccessUrl()
             );
-        } else {
-            return $this->redirect(
-                $this->createErrorUrl()
-            );
         }
-
-        return "error";
+        return $this->redirect(
+            $this->createErrorUrl()
+        );
 
     }
 
 
     public function checkResult($hash = '')
     {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         $result = "bad sign\n";
-
         if ($this->getSignatureResult() == \Yii::$app->request->post('SignatureValue')) {
             $this->transaction->result_data = Json::encode([
                 \Yii::$app->request->post('OutSum'),
@@ -93,8 +88,8 @@ class RobokassaPayment extends AbstractPayment
                 $result = "OK" . $this->transaction->id . "\n";
             }
         }
-        echo $result;
-        die();
+        return $result;
+
     }
 
     protected function getSignature()
