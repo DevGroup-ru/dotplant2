@@ -1,9 +1,9 @@
 <?php
-    $this->title = 'Моделей, соответствующих запросу, не найдено';
+    $this->title = Yii::t('app', 'Corresponding models not found');
 ?>
 <div class="site-error">
-    <h1>Моделей, соответствующих запросу, не найдено</h1>
+    <h1><?= $this->title ?></h1>
     <div class="alert alert-danger">
-        Извините, моделей, соответствующих Вашему запросу, не найдено. Просьба обратиться к консультану или просмотреть каталог полностью.
+        <?= Yii::t('app', 'Sorry. Corresponding models not found. Please contact our managers or go to catalog.') ?>
     </div>
 </div>
