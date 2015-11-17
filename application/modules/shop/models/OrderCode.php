@@ -50,7 +50,7 @@ class OrderCode extends \yii\db\ActiveRecord
                 $this->addError($attribute, Yii::t('app', 'Code not valid on this time'));
             }
             if ($discountCode->maximum_uses &&
-                $discountCode->maximum_uses >= self::find()
+                $discountCode->maximum_uses <= self::find()
                     ->where(
                         [
                             'discount_code_id' => $this->discount_code_id,
