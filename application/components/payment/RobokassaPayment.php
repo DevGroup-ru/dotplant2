@@ -31,7 +31,6 @@ class RobokassaPayment extends AbstractPayment
         $invoiceDescription = urlencode(\Yii::t('app', 'Payment of order #{orderId}', ['orderId' => $this->order->id]));
         $inCurrency = '';
         $culture = 'ru';
-
         $data = [
             'MrchLogin' => $this->merchantLogin,
             'OutSum' => $this->transaction->total_sum,
@@ -46,18 +45,9 @@ class RobokassaPayment extends AbstractPayment
         }
         $SignatureValue = $this->getSignature();
         $data['SignatureValue'] = $SignatureValue;
-
-
         $url = 'http://' . $this->merchantUrl . '/Index.aspx?' . http_build_query($data);
 
-
-        return $this->render(
-            'robokassa',
-            [
-                'order' => $this->order,
-                'url' => $url,
-            ]
-        );
+        return $this->redirect($url);
     }
 
     /**
@@ -65,9 +55,12 @@ class RobokassaPayment extends AbstractPayment
      */
     public function customCheck()
     {
-        if (null === $this->transaction = $this->loadTransaction(\Yii::$app->request->post('InvId'))) {
+
+
+        if (null === $this->transaction = $this->loadTransaction(\Yii::$app->request->post('InvId', 24))) {
             throw new BadRequestHttpException();
         }
+
         if (\Yii::$app->request->get('action') == 'result') {
             $this->checkResult($this->transaction->generateHash());
         } elseif (\Yii::$app->request->get('action') == 'success') {
@@ -87,7 +80,7 @@ class RobokassaPayment extends AbstractPayment
     {
         $result = "bad sign\n";
 
-        if ($this->getSignature(true) == \Yii::$app->request->post('SignatureValue')) {
+        if ($this->getSignatureResult() == \Yii::$app->request->post('SignatureValue')) {
             $this->transaction->result_data = Json::encode([
                 \Yii::$app->request->post('OutSum'),
                 \Yii::$app->request->post('InvId'),
@@ -102,7 +95,7 @@ class RobokassaPayment extends AbstractPayment
         $this->end();
     }
 
-    protected function getSignature($check = false)
+    protected function getSignature()
     {
         $sData = [
             $this->merchantLogin,
@@ -110,8 +103,19 @@ class RobokassaPayment extends AbstractPayment
             $this->transaction->id,
 
         ];
-        $sData[] = $check ? $this->merchantPass2 : $this->merchantPass1;
+        $sData[] = $this->merchantPass1;
         return md5(implode(':', $sData));
+    }
+
+    protected function getSignatureResult()
+    {
+        $sData = [
+            \Yii::$app->request->post('OutSum'),
+            \Yii::$app->request->post('InvId'),
+            $this->merchantPass2
+        ];
+        return strtoupper(md5(implode(':', $sData)));
+
     }
 
 }
