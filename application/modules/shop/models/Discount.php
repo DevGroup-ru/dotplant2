@@ -129,7 +129,10 @@ class Discount extends \yii\db\ActiveRecord
 
         }
         $resultPrice = $price - $discountPrice;
-        return $resultPrice > 0 ? $resultPrice : 0;
+        if($this->apply_order_price_lg == -1) {
+            $resultPrice =   $resultPrice > 0 ? $resultPrice : 0;
+        }
+        return $resultPrice;
     }
 
     /**

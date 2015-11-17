@@ -6,27 +6,32 @@
 use \yii\helpers\Html;
 use \kartik\icons\Icon;
 use \app\backend\widgets\BackendWidget;
+use yii\helpers\ArrayHelper;
 
-$this->title = Yii::t('app', 'Settings');
-$this->params['breadcrumbs'][] = [
-    'label' => 'YML',
-    'url' => ['index']
-];
-$this->params['breadcrumbs'][] = $this->title;
+    $this->title = Yii::t('app', 'Settings');
+    $this->params['breadcrumbs'][] = [
+        'label' => 'YML',
+        'url' => ['index']
+    ];
+    $this->params['breadcrumbs'][] = $this->title;
 
-$formName = 'YmlSettings';
+    $formName = 'YmlSettings';
 
-\app\backend\assets\YmlAsset::register($this);
-
+    $currencies = ArrayHelper::map(
+        \app\modules\shop\models\Currency::find()
+            ->select('iso_code')
+            ->orderBy(['is_main' => SORT_DESC, 'sort_order' => SORT_ASC, 'iso_code' => SORT_ASC])
+            ->asArray()
+            ->all(),
+        'iso_code',
+        'iso_code'
+    );
+    \app\backend\assets\YmlAsset::register($this);
 ?>
 
 <?= app\widgets\Alert::widget([
     'id' => 'alert',
 ]); ?>
-
-
-
-
 
 <?php
 $yml_relations = [
@@ -101,13 +106,7 @@ $yml_settings['properties_map'] = array_reduce(
 
     <div class="col-md-6">
         <?php BackendWidget::begin(['title'=> Yii::t('app', 'Settings for currencies section'), 'icon' => 'cogs']); ?>
-        <?= $form->field($model, 'currency_id')->dropDownList([
-            'RUR' => 'RUR',
-            'USD' => 'USD',
-            'EUR' => 'EUR',
-            'UAH' => 'UAH',
-            'KZT' => 'KZT',
-        ]); ?>
+        <?= $form->field($model, 'currency_id')->dropDownList($currencies); ?>
         <?php BackendWidget::end(); ?>
 
         <?php BackendWidget::begin(['title'=> Yii::t('app', 'General settings'), 'icon' => 'cogs']); ?>
