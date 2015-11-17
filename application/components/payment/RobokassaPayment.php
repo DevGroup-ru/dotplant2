@@ -57,7 +57,7 @@ class RobokassaPayment extends AbstractPayment
     {
 
 
-        if (null === $this->transaction = $this->loadTransaction(\Yii::$app->request->post('InvId', 24))) {
+        if (null === $this->transaction = $this->loadTransaction(\Yii::$app->request->post('InvId'))) {
             throw new BadRequestHttpException();
         }
 
@@ -72,6 +72,8 @@ class RobokassaPayment extends AbstractPayment
                 $this->createErrorUrl()
             );
         }
+
+        return "error";
 
     }
 
@@ -92,7 +94,7 @@ class RobokassaPayment extends AbstractPayment
             }
         }
         echo $result;
-        $this->end();
+        die();
     }
 
     protected function getSignature()
