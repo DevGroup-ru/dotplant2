@@ -8,7 +8,7 @@
 
     $categories = $shop['categories'];
 ?>
-<?xml version="1.0" encoding="UTF-8"?>
+<?php echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL; ?>
 <!DOCTYPE yml_catalog SYSTEM "shops.dtd">
 <yml_catalog date="<?= date('Y-m-d H:i'); ?>">
     <shop>
