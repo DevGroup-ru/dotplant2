@@ -25,10 +25,10 @@
             </category>
             <?php endforeach; ?>
         </categories>
+        <local_delivery_cost><?= round(floatval($shop['local_delivery_cost']), 2); ?></local_delivery_cost>
         <store><?= $shop['store']; ?></store>
         <pickup><?= $shop['pickup']; ?></pickup>
         <delivery><?= $shop['delivery']; ?></delivery>
-        <local_delivery_cost><?= round(floatval($shop['local_delivery_cost']), 2); ?></local_delivery_cost>
         <adult><?= $shop['adult']; ?></adult>
         <offers>
             <?php
