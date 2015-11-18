@@ -17,6 +17,6 @@ class YmlController extends \yii\console\Controller
         }
 
         $yml = new \app\modules\shop\components\yml\Yml($config);
-        return $yml->generate();
+        return true === $yml->generate() ? 0 : 1;
     }
 }
