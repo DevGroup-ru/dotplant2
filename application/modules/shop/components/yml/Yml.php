@@ -1,5 +1,5 @@
 <?php
-namespace app\modules\shop\components;
+namespace app\modules\shop\components\yml;
 
 use app\models\ObjectStaticValues;
 use app\models\Property;
@@ -104,7 +104,9 @@ class Yml extends Component
             $eventOffer
                 ->clearHandled()
                 ->setOffers(array_reduce($offers, function ($r, $i) use ($config) {
-                    $r[] = $this->generateSingleOffer($config, $i);
+                    if (null !== $o = $this->generateSingleOffer($config, $i)) {
+                        $r[] = $o;
+                    }
                     return $r;
                 }, []));
             $this->trigger(static::EVENT_PROCESS_OFFER, $eventOffer);
@@ -285,13 +287,13 @@ class Yml extends Component
     /**
      * @param YmlModel $config
      * @param Product $model
-     * @return array
+     * @return null|array
      */
     private function generateSingleOffer(YmlModel $config, Product $model)
     {
         $result = $this->offerSimplified($config, $model);
-        if (true === empty($result)) {
-            return [];
+        if (null === $result) {
+            return null;
         }
 
         return [
@@ -303,53 +305,47 @@ class Yml extends Component
     /**
      * @param YmlModel $config
      * @param Product $model
-     * @return array
+     * @return OfferTag|null
      */
     private function offerSimplified(YmlModel $config, Product $model)
     {
+        $offer = new OfferTag('offer', [], ['id' => $model->id, 'available' => 'true',]);
+
         $price = static::getOfferValue($config, 'offer_price', $model, 0);
         $price = CurrencyHelper::convertCurrencies($price, $model->currency, $this->currency);
         if ($price <= 0 || $price >= 1000000000) {
-            return [];
+            return null;
         }
 
-        $result = [
-            '_attr' => [
-                'id' => $model->id,
-                'available' => 'true',
-            ],
-            '_params' => [],
-        ];
         $values = [];
 
         $name = static::getOfferValue($config, 'offer_name', $model, null);
         if (true === empty($name)) {
-            return [];
+            return null;
         }
         if (mb_strlen($name) > 120) {
             $name = mb_substr($name, 0, 120);
             $name = mb_substr($name, 0, mb_strrpos($name, ' '));
         }
-        $values['name'] = htmlspecialchars(trim(strip_tags($name)));
-
-        $values['price'] = $price;
-        $values['currencyId'] = $this->currency->iso_code;
+        $values[] = new OfferTag('name', htmlspecialchars(trim(strip_tags($name))));
+        $values[] = new OfferTag('price', $price);
+        $values[] = new OfferTag('currencyId', $this->currency->iso_code);
 
         /** @var Category $category */
         if (null === $category = $model->category) {
-            return [];
+            return null;
         }
-        $values['categoryId'] = $category->id;
-        $values['url'] = Url::toRoute([
+        $values[] = new OfferTag('categoryId', $category->id);
+        $values[] = new OfferTag('url', Url::toRoute([
             '@product',
             'model' => $model,
             'category_group_id' => $category->category_group_id,
-        ], true);
+        ], true));
 
         $picture = static::getOfferValue($config, 'offer_picture', $model, static::$_noImg);
         if (static::$_noImg !== $picture) {
             $picture = htmlspecialchars(trim($picture, '/'));
-            $values['picture'] = trim($config->shop_url, '/') . '/' . urlencode($picture);
+            $values[] = new OfferTag('picture', trim($config->shop_url, '/') . '/' . urlencode($picture));
         }
 
         $description = static::getOfferValue($config, 'offer_description', $model, null);
@@ -358,17 +354,15 @@ class Yml extends Component
                 $description = mb_substr($description, 0, 175);
                 $description = mb_substr($description, 0, mb_strrpos($description, ' '));
             }
-            $values['description'] = htmlspecialchars(trim(strip_tags($description)));
+            $values[] = new OfferTag('description', htmlspecialchars(trim(strip_tags($description))));
         }
 
         if (static::USE_OFFER_PARAM == $config->offer_param) {
-            $params = static::getOfferParams($model);
-            if (false === empty($params)) {
-                $result['_params'] = $params;
+            foreach (static::getOfferParams($model) as $k => $v) {
+                $values[] = new OfferTag('param', $v['value'], ['name' => $k, 'unit' => $v['unit']]);
             }
         }
 
-        $result['values'] = $values;
-        return $result;
+        return $offer->setValue($values);
     }
 }

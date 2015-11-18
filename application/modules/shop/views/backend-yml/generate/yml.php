@@ -7,7 +7,6 @@
  */
 
     $categories = $shop['categories'];
-    $offerView = \Yii::$app->getModule('shop')->getViewPath() . '/backend-yml/generate/yml_offer-simplified.php';
 ?>
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE yml_catalog SYSTEM "shops.dtd">
@@ -34,7 +33,7 @@
         <offers>
             <?php
                 foreach($offers as $offer) {
-                    echo $this->renderFile($offerView, $offer);
+                    echo $offer;
                 }
             ?>
         </offers>
