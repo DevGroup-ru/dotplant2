@@ -110,7 +110,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
         if ($type != self::NO_REDIRECT) {
             $readirArr = [
                 self::FROM_WITHOUT_WWW => function () {
-                    if (preg_match('#^www\.#i', Yii::$app->request->serverName) === 0) {
+                    if (preg_match('#^(http|https):\/\/www\.#i', Yii::$app->request->hostInfo) === 0) {
                         Yii::$app->response->redirect(
                             str_replace('://', '://www.', Yii::$app->request->absoluteUrl),
                             301
@@ -119,7 +119,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
                     }
                 },
                 self::FROM_WWW => function () {
-                    if (preg_match('#^www\.#i', Yii::$app->request->serverName) === 1) {
+                    if (preg_match('#^(http|https):\/\/www\.#i', Yii::$app->request->hostInfo) === 1) {
                         Yii::$app->response->redirect(
                             str_replace('://www.', '://', Yii::$app->request->absoluteUrl),
                             301
