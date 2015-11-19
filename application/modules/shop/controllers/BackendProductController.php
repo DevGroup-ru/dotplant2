@@ -363,24 +363,23 @@ class BackendProductController extends BackendController
 
             // @todo something
             foreach ($option as $optionValue) {
+                $valueModels = [];
                 foreach ($optionValue as $propertyKey => $propertyValue) {
-                    if (!isset($valueModels[$propertyKey])) {
+                    if (false === in_array($propertyKey, $valueModels)) {
+                        /** @var  $propertyStaticValues  PropertyStaticValues */
                         $propertyStaticValues = PropertyStaticValues::findOne($propertyValue);
-                        $propertyValue = PropertyStaticValues::findById($propertyValue);
                         $key = $propertyStaticValues->property->key;
                         $tempPost[$key] = $propertyValue;
+                        $valueModels[] = $propertyKey;
+                        $nameAppend[] = $propertyStaticValues->name;
+                        $slugAppend[] = $propertyStaticValues->id;
                     }
-                    $nameAppend[] = $propertyValue['name'];
-                    $slugAppend[] = $propertyValue['id'];
                 }
             }
-
             $model->measure_id = $parent->measure_id;
             $model->name = $parent->name . ' (' . implode(', ', $nameAppend) . ')';
             $model->slug = $parent->slug . '-' . implode('-', $slugAppend);
             $save_model = $model->save();
-            $postPropertyKey = 'Properties_Product_' . $model->id;
-            $post[$postPropertyKey] = $tempPost;
             if ($save_model) {
                 foreach (array_keys($parent->propertyGroups) as $key) {
                     $opg = new ObjectPropertyGroup();
@@ -391,25 +390,17 @@ class BackendProductController extends BackendController
                     ];
                     $opg->save();
                 }
-                $model->saveProperties(
-                    [
-                        'Properties_Product_' . $model->id => $parent->abstractModel->attributes,
-                    ]
-                );
-
-                $model->saveProperties($post);
-
-                unset($post[$postPropertyKey]);
-
+                $newValues = array_merge($parent->abstractModel->attributes, $tempPost);
+                $model->saveProperties([
+                    'Properties_Product_' . $model->id => $newValues,
+                ]);
                 $add = [];
-
                 foreach ($catIds as $value) {
                     $add[] = [
                         $value,
                         $model->id
                     ];
                 }
-
                 if (!empty($add)) {
                     Yii::$app->db->createCommand()->batchInsert(
                         $object->categories_table_name,
@@ -447,8 +438,6 @@ class BackendProductController extends BackendController
 
                 }
             }
-
-
         }
     }
 
