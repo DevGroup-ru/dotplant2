@@ -345,7 +345,8 @@ class Yml extends Component
         $picture = static::getOfferValue($config, 'offer_picture', $model, static::$_noImg);
         if (static::$_noImg !== $picture) {
             $picture = htmlspecialchars(trim($picture, '/'));
-            $values[] = new OfferTag('picture', trim($config->shop_url, '/') . '/' . urlencode($picture));
+            $picture = implode('/', array_map('rawurlencode', explode('/', $picture)));
+            $values[] = new OfferTag('picture', trim($config->shop_url, '/') . '/' . $picture);
         }
 
         $description = static::getOfferValue($config, 'offer_description', $model, null);
