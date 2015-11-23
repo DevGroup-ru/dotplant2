@@ -10,7 +10,6 @@ class MetaBehavior extends Behavior
 {
     private $cacheExpire;
     private $cacheName;
-    public $index = 'index';
 
     public function init()
     {
@@ -30,7 +29,7 @@ class MetaBehavior extends Behavior
     {
         /* @var $controller Controller */
         $controller = $this->owner;
-        if ($controller->action->id == $this->index) {
+        if (\Yii::$app->request->url == "/") {
             /* @var $metas Meta[] */
             if (\Yii::$app->getCache()->exists($this->cacheName)) {
                 $metas = \Yii::$app->getCache()->get($this->cacheName);
