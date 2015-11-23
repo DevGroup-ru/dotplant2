@@ -251,11 +251,26 @@ class GoogleEcommerceHandler extends Object
             return ;
         }
 
+        /** @var Currency $currency */
+        $currency = static::$currency;
+
         $ga = [
             'action' => 'action',
             'type' => 'checkout',
             'step' => 1,
+            'products' => [],
         ];
+
+        foreach ($order->items as $item) {
+            $ga['products'][] = [
+                'id' => $item->product->id,
+                'name' => $item->product->name,
+                'category' => self::getCategories($item->product),
+                'price' => CurrencyHelper::convertCurrencies($item->product->price, $item->product->currency, $currency),
+                'quantity' => $item->quantity,
+            ];
+        }
+
 
         $js = 'window.DotPlantParams = window.DotPlantParams || {};';
         $js .= 'window.DotPlantParams.ecGoogle = ' . Json::encode($ga) . ';';
