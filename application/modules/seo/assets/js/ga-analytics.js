@@ -11,9 +11,9 @@ jQuery(function($){
                 ga('set', '&cu', $data.currency);
                 for(var i = 0; i < $data.products.length; i++) {
                     ga('ec:addProduct', $data.products[i]);
+                    ga('ec:setAction', 'add');
+                    ga('send', 'event', 'UX', 'click', 'add to cart');
                 }
-                ga('ec:setAction', 'add');
-                ga('send', 'event', 'UX', 'click', 'add to cart');
             } catch (e) {console.log('Google e-commerce error: ' + e);}
         }
     });
@@ -25,9 +25,11 @@ jQuery(function($){
                 $data = $data.ecGoogle;
 
                 ga('set', '&cu', $data.currency);
-                ga('ec:addProduct', $data.products);
-                ga('ec:setAction', 'remove');
-                ga('send', 'event', 'UX', 'click', 'remove from cart');
+                for(var i = 0; i < $data.products.length; i++) {
+                    ga('ec:addProduct', $data.products[i]);
+                    ga('ec:setAction', 'remove');
+                    ga('send', 'event', 'UX', 'click', 'remove from cart');
+                }
             } catch (e) {console.log('Google e-commerce error: ' + e);}
         }
     });
