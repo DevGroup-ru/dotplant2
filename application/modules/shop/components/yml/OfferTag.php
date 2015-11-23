@@ -61,6 +61,14 @@ class OfferTag
     /**
      * @return string
      */
+    public function getTag()
+    {
+        return $this->tag;
+    }
+
+    /**
+     * @return string
+     */
     function __toString()
     {
         $attr = true === empty($this->attributes)
