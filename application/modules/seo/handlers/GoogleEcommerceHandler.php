@@ -258,6 +258,7 @@ class GoogleEcommerceHandler extends Object
             'action' => 'action',
             'type' => 'checkout',
             'step' => 1,
+            'currency' => $currency->iso_code,
             'products' => [],
         ];
 

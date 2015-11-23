@@ -82,6 +82,7 @@ jQuery(function($){
                 ga('send', 'pageview');
             } else if ('action' === $data.action) {
                 // each cart action should have list of product for ga
+                ga('set', '&cu', $data.currency);
                 for(var i = 0; i < $data.products.length; i++){
                     ga('ec:addProduct', $data.products[i]);
                 }
