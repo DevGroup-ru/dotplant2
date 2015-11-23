@@ -255,7 +255,7 @@ class YandexEcommerceHandler extends Object
      */
     static public function handlePurchase()
     {
-        if (null === $order = Order::getOrder()) {
+        if (null === $order = Order::getOrder()) {die();
             return ;
         }
 
@@ -270,7 +270,7 @@ class YandexEcommerceHandler extends Object
         ];
 
         foreach ($order->items as $item) {
-            $ga['products'][] = [
+            $ya['products'][] = [
                 'id' => $item->product->id,
                 'name' => $item->product->name,
                 'category' => self::getCategories($item->product),
