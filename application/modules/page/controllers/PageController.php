@@ -24,8 +24,7 @@ class PageController extends Controller
     {
         return [
             'seo' => [
-                'class' => MetaBehavior::className(),
-                'index' => $this->defaultAction,
+                'class' => MetaBehavior::className()
             ],
         ];
     }
