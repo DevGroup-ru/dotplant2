@@ -9,7 +9,9 @@ jQuery(function($){
                 $data = $data.ecGoogle;
 
                 ga('set', '&cu', $data.currency);
-                ga('ec:addProduct', $data.products);
+                for(var i = 0; i < $data.products.length; i++) {
+                    ga('ec:addProduct', $data.products[i]);
+                }
                 ga('ec:setAction', 'add');
                 ga('send', 'event', 'UX', 'click', 'add to cart');
             } catch (e) {console.log('Google e-commerce error: ' + e);}
