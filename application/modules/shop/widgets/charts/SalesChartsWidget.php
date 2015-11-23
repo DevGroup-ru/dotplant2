@@ -36,9 +36,7 @@ class SalesChartsWidget extends Widget
 
     public function init()
     {
-        if (null === $this->currency = CurrencyHelper::findCurrencyByIso($this->currencyCode)) {
-            $this->currency = CurrencyHelper::getMainCurrency();
-        }
+        $this->currency = CurrencyHelper::findCurrencyByIso($this->currencyCode);
         $this->startDate = self::getPeriodTs($this->period);
         self::$ordersQuery = OrderTransaction::getDb()->cache(function ($db) {
             return OrderTransaction::find()
