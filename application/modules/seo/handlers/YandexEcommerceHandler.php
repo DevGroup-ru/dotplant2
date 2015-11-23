@@ -255,7 +255,7 @@ class YandexEcommerceHandler extends Object
      */
     static public function handlePurchase()
     {
-        if (null === $order = Order::getOrder()) {die();
+        if (null === $order = Order::getOrder()) {
             return ;
         }
 
