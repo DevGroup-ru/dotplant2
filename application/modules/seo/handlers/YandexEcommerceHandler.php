@@ -228,11 +228,13 @@ class YandexEcommerceHandler extends Object
             'action' => 'detail',
             'currency' => $currency->iso_code,
             'products' => [
-                'id' => $model->id,
-                'name' => $model->name,
-                'category' => self::getCategories($model),
-                'price' => CurrencyHelper::convertCurrencies($model->price, $model->currency, $currency),
-                'quantity' => null === $model->measure ? 1 : $model->measure->nominal,
+                [
+                    'id' => $model->id,
+                    'name' => $model->name,
+                    'category' => self::getCategories($model),
+                    'price' => CurrencyHelper::convertCurrencies($model->price, $model->currency, $currency),
+                    'quantity' => null === $model->measure ? 1 : $model->measure->nominal,
+                ]
             ]
         ];
 
@@ -264,7 +266,18 @@ class YandexEcommerceHandler extends Object
             'action' => 'purchase',
             'currency' => $currency->iso_code,
             'orderId' => $order->id,
+            'products' => [],
         ];
+
+        foreach ($order->items as $item) {
+            $ga['products'][] = [
+                'id' => $item->product->id,
+                'name' => $item->product->name,
+                'category' => self::getCategories($item->product),
+                'price' => CurrencyHelper::convertCurrencies($item->product->price, $item->product->currency, $currency),
+                'quantity' => $item->quantity,
+            ];
+        }
 
         $js = 'window.DotPlantParams = window.DotPlantParams || {};';
         $js .= 'window.DotPlantParams.ecYandex = ' . Json::encode($ya) . ';';
