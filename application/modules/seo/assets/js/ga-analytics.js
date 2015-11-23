@@ -81,6 +81,10 @@ jQuery(function($){
                 ga('ec:setAction', 'detail');
                 ga('send', 'pageview');
             } else if ('action' === $data.action) {
+                // each cart action should have list of product for ga
+                for(var i = 0; i < $data.products.length; i++){
+                    ga('ec:addProduct', $data.products[i]);
+                }
                 ga('ec:setAction', $data.type, {
                     'step': $data.step
                 });
