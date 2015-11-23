@@ -192,12 +192,15 @@ class PropertyStaticValues extends ActiveRecord
      * @param $properties
      * @return PropertyStaticValues[]
      */
-    public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false)
+    public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false, $parentsOnly = true)
     {
         $priceMin = Yii::$app->request->get('price_min');
         $priceMax = Yii::$app->request->get('price_max');
         $cacheKey = "getValuesForFilter:" . json_encode([$property_id, $category_id, $properties, $priceMin, $priceMax]);
         if (false === $allSelections = Yii::$app->cache->get($cacheKey)) {
+            $joinCondition = (true === $parentsOnly) ?
+                'p.id = {{%product_category}}.object_model_id AND p.active = 1 AND p.parent_id = 0'
+                : 'p.id = {{%product_category}}.object_model_id AND p.active = 1';
             $objectModel = Object::getForClass(Product::className());
             $objectId = $objectModel !== null ? $objectModel->id : 0;
             $allSelections = static::find()
@@ -213,7 +216,7 @@ class PropertyStaticValues extends ActiveRecord
                 )
                 ->innerJoin(
                     Product::tableName() . ' p',
-                    'p.id = {{%product_category}}.object_model_id AND p.active = 1'
+                    $joinCondition
                 )
                 ->where(
                     [
@@ -236,7 +239,7 @@ class PropertyStaticValues extends ActiveRecord
                 ->where(['object_id' => $objectId]);
             if (false === empty($properties)) {
                 foreach ($properties as $propertyId => $propertyStaticValues) {
-                    $subQuery = self::initSubQuery($category_id);
+                    $subQuery = self::initSubQuery($category_id, $joinCondition);
                     $subQuery->andWhere(['property_static_value_id' => $propertyStaticValues,]);
                     $subQueryOptimisation = Yii::$app->db->cache(function($db) use ($subQuery) {
                         $ids = implode(', ', $subQuery->createCommand($db)->queryColumn());
@@ -250,7 +253,7 @@ class PropertyStaticValues extends ActiveRecord
                 }
             }
             if (false === empty($priceMin) && false === empty($priceMax)) {
-                $subQuery = self::initSubQuery($category_id);
+                $subQuery = self::initSubQuery($category_id, $joinCondition);
                 $subQuery
                     ->andWhere(['>=', 'p.price', $priceMin])
                     ->andWhere(['<=', 'p.price', $priceMax]);
@@ -310,7 +313,7 @@ class PropertyStaticValues extends ActiveRecord
         return $allSelections;
     }
 
-    private static function initSubQuery($category_id)
+    private static function initSubQuery($category_id, $joinCondition)
     {
         $subQuery = ObjectStaticValues::find();
         return $subQuery
@@ -320,7 +323,7 @@ class PropertyStaticValues extends ActiveRecord
                 '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
             )->innerJoin(
                 Product::tableName() . ' p',
-                'p.id = {{%product_category}}.object_model_id AND p.active = 1'
+                $joinCondition
             )->where(
                 [
                     'category_id' => $category_id,

@@ -207,7 +207,8 @@ class Widget extends BaseWidget
                         $filterSet->property->id,
                         $urlParams['last_category_id'],
                         $urlParams['properties'],
-                        $filterSet->multiple
+                        $filterSet->multiple,
+                        Yii::$app->getModule('shop')->filterOnlyByParentProduct
                     );
                     if (count($selections) === 0) {
                         continue;
