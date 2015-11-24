@@ -14,16 +14,24 @@ var chrt_mono = "#000";
 $(function () {
     (function ($) {
         if ($("#saleschart").length) {
-            var d = jsOrders;
+            if (!window.hasOwnProperty('DotplantSalesCharts')) {
+                return ;
+            }
 
-            for (var i = 0; i < d.length; ++i)
-                d[i][0] += 60 * 60 * 1000;
+            var dsc = window.DotplantSalesCharts;
+            var d = [];
+            $.each(dsc.shops, function(k, shop){
+                for (var i = 0; i < shop.data.length; ++i) {
+                    shop.data[i][0] += 60 * 60 * 1000;
+                }
+                d.push({label: shop.label, data: shop.data});
+            });
 
             function weekendAreas(axes) {
                 var markings = [];
                 var d = new Date(axes.xaxis.min);
                 // go to the first Saturday
-                d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 1) % 7))
+                d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 1) % 7));
                 d.setUTCSeconds(0);
                 d.setUTCMinutes(0);
                 d.setUTCHours(0);
@@ -72,19 +80,23 @@ $(function () {
                     clickable: true,
                     tickColor: chrt_border_color,
                     borderWidth: 0,
-                    borderColor: chrt_border_color,
+                    borderColor: chrt_border_color
                 },
                 tooltip: true,
                 tooltipOpts: {
-                    content: tooltipTpl,
-                    dateFormat: dateFormat,
+                    content: dsc.tooltip,
+                    dateFormat: dsc.dateFormat,
                     defaultTheme: false
                 },
                 colors: [chrt_second],
-
+                legend: {
+                    show: true,
+                    backgroundOpacity: 1,
+                    noColumns: 1
+                }
             };
 
-            var plot = $.plot($("#saleschart"), [d], options);
+            var plot = $.plot($("#saleschart"), d, options);
         };
     })(jQuery);
 });

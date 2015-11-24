@@ -1,24 +1,18 @@
 <?php
 /**
- * @var $userData []
- * @var $salesChart []
- * @var $statistics []
- * @var $this \yii\web\View
+ * @var array $userData
+ * @var array $salesChart
+ * @var array $statistics
+ * @var \yii\web\View $this
  */
 
-if (false === empty($salesChart)) {
-    $JS = "var salesHeader = '" . addslashes($salesChart['salesHeader']) . "', "
-        . "tooltipTpl = '" . addslashes($salesChart['tooltipTpl']) . "',"
-        . "dateFormat = '" . addslashes($salesChart['dateFormat']) . "',"
-        . "jsOrders = {$salesChart['jsOrders']};";
-    $this->registerJs($JS, \yii\web\View::POS_HEAD);
-}
+    $this->registerJs($salesChart['js'], \yii\web\View::POS_HEAD);
 ?>
 <div class="jarviswidget" id="wid-id-charts" data-widget-editbutton="true" data-widget-deletebutton="false">
     <header>
         <span class="widget-icon"> <i class="fa fa-bar-chart-o"></i> </span>
 
-        <h2><?= $salesChart['salesHeader'] ?></h2>
+        <h2><?= $salesChart['header'] ?></h2>
     </header>
     <div>
         <div class="jarviswidget-editbox">
@@ -43,11 +37,14 @@ if (false === empty($salesChart)) {
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <tbody>
-                        <?php foreach ($statistics as $label => $data) : ?>
-                            <tr>
-                                <td><?= $label ?></td>
-                                <td><?= $data ?></td>
-                            </tr>
+                        <?php foreach ($statistics as $shopLabel => $shopValues): ?>
+                            <tr><td colspan="2"><h6><?= $shopLabel; ?></h6></td></tr>
+                            <?php foreach ($shopValues as $label => $data) : ?>
+                                <tr>
+                                    <td><?= $label ?></td>
+                                    <td><?= $data ?></td>
+                                </tr>
+                            <?php endforeach; ?>
                         <?php endforeach; ?>
                         </tbody>
                     </table>
@@ -70,11 +67,14 @@ if (false === empty($salesChart)) {
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <tbody>
-                        <?php foreach ($userData as $label => $data) : ?>
-                            <tr>
-                                <td><?= $label ?></td>
-                                <td><?= $data ?></td>
-                            </tr>
+                        <?php foreach ($userData as $shopLabel => $shopValues): ?>
+                            <tr><td colspan="2"><h6><?= $shopLabel; ?></h6></td></tr>
+                            <?php foreach ($shopValues as $label => $data) : ?>
+                                <tr>
+                                    <td><?= $label ?></td>
+                                    <td><?= $data ?></td>
+                                </tr>
+                            <?php endforeach; ?>
                         <?php endforeach; ?>
                         </tbody>
                     </table>
@@ -83,3 +83,12 @@ if (false === empty($salesChart)) {
         </div>
     </div>
 <?php endif; ?>
+
+<style>
+    #saleschart > div.legend > div {
+        top: 0!important;
+    }
+    #saleschart > div.legend > table {
+        top: 0!important;
+    }
+</style>
