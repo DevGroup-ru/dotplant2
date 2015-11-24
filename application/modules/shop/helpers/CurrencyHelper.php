@@ -112,4 +112,25 @@ class CurrencyHelper
     {
         return static::convertCurrencies($input, static::getMainCurrency(), $to);
     }
+
+    /**
+     * @param Currency $currency
+     * @param string|null $locale
+     * @return string
+     */
+    static public function getCurrencySymbol(Currency $currency, $locale = null)
+    {
+        $locale = null === $locale ? \Yii::$app->language : $locale;
+
+        $result = '';
+        try {
+            $fake = $locale . '@currency=' . $currency->iso_code;
+            $fmt = new \NumberFormatter($fake, \NumberFormatter::CURRENCY);
+            $result = $fmt->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
+        } catch (\Exception $e) {
+            $result = preg_replace('%[\d\s,]%i', '', $currency->format(0));
+        }
+
+        return $result;
+    }
 }
