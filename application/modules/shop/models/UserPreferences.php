@@ -22,6 +22,8 @@ class UserPreferences extends Model {
     public $productsPerPage;
     public $userCurrency;
 
+    const EVENT_SET_ATTRIBUTE = 'userPreferencesSetAttr';
+
     /**
      * @inheritdoc
      */
@@ -97,5 +99,20 @@ class UserPreferences extends Model {
             'productListingSortId' => Yii::t('app', 'Sort by:'),
             'productsPerPage' => Yii::t('app', 'Products per page:'),
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setAttributes($values, $safeOnly = true)
+    {
+        parent::setAttributes($values, $safeOnly);
+
+        if (true === is_array($values)) {
+            foreach ($values as $k => $v) {
+                $event = new app\modules\shop\events\UserPreferenceEvent($k, $v);
+                $this->trigger(static::EVENT_SET_ATTRIBUTE, $event);
+            }
+        }
     }
 }
