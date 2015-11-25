@@ -37,9 +37,9 @@ class CurrencyRateMultiProvider extends AbstractProvider
         $mainProvider,
         $criticalDifference = 20
     ) {
+        parent::__construct($httpAdapter);
         $this->mainProvider = $mainProvider;
         $this->secondProvider = $secondProvider;
-        parent::__construct($httpAdapter);
     }
 
     public function fetchRate(CurrencyPair $currencyPair)
@@ -76,7 +76,7 @@ class CurrencyRateMultiProvider extends AbstractProvider
         $min = min($rates);
         $max = max($rates);
         return new Rate(
-            $max - $min >= $max / 100 * $this->criticalDifference ? $max : $rates[0],
+            $max - $min >= $max * $this->criticalDifference / 100 ? $max : $rates[0],
             new \DateTime()
         );
     }
