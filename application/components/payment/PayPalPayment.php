@@ -20,6 +20,7 @@ use PayPal\Api\Transaction;
 use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Rest\ApiContext;
 use yii\helpers\Url;
+use yii\web\BadRequestHttpException;
 
 class PayPalPayment extends AbstractPayment
 {
@@ -138,24 +139,40 @@ class PayPalPayment extends AbstractPayment
 
     /**
      * @inheritdoc
+     * @throws BadRequestHttpException
      */
     public function checkResult($hash = '')
     {
-        $this->executePayment();
+        if (false === $this->executePayment()) {
+            throw new BadRequestHttpException();
+        }
+
+        return $this->redirect(
+            $this->createSuccessUrl()
+        );
     }
 
     /**
      * @inheritdoc
+     * @throws BadRequestHttpException
      */
     public function customCheck()
     {
-        $this->executePayment();
+        if (false === $this->executePayment()) {
+            throw new BadRequestHttpException();
+        }
+
+        return $this->redirect(
+            $this->createSuccessUrl()
+        );
     }
 
     /**
+     * @return bool
      */
     private function executePayment()
     {
+        $result = false;
         try {
             $request = \Yii::$app->request;
 
@@ -176,9 +193,14 @@ class PayPalPayment extends AbstractPayment
                 if (null !== $orderTransaction = OrderTransaction::findOne(['id' => $transaction->getInvoiceNumber()])) {
                     /** @var OrderTransaction $orderTransaction */
                     $orderTransaction->updateStatus($status);
+                    $this->transaction = $orderTransaction;
+
+                    $result = OrderTransaction::TRANSACTION_SUCCESS === $status ? true : false;
                 }
             }
         } catch (\Exception $e) {
         }
+
+        return $result;
     }
 }
