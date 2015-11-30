@@ -8,17 +8,17 @@ use yii\web\AssetBundle;
  * Backend asset class defining common needed assets for admin panel.
  *
  *
- * > **Note:** 
- * > Backend uses commercial bootstrap 3 theme - SmartAdmin. 
- * > Therefore theme assets(js, css, images, etc.) are loaded in backend 
- * > from third-party static domains(st-[1-4].dotplant.ru). 
- * > 
+ * > **Note:**
+ * > Backend uses commercial bootstrap 3 theme - SmartAdmin.
+ * > Therefore theme assets(js, css, images, etc.) are loaded in backend
+ * > from third-party static domains(st-[1-4].dotplant.ru).
+ * >
  * > Please consider buying SmartAdmin license
- * > at https://wrapbootstrap.com/theme/smartadmin-responsive-webapp-WB0573SK0?ref=dotplant_ru_cms) 
+ * > at https://wrapbootstrap.com/theme/smartadmin-responsive-webapp-WB0573SK0?ref=dotplant_ru_cms)
  * > for your project if you want to modify original files or relocate them to another domain.
- * > 
+ * >
  * > Until you don't change this assets location you don't need to buy separate license.
- * 
+ *
  */
 class BackendAsset extends AssetBundle
 {
@@ -50,5 +50,6 @@ class BackendAsset extends AssetBundle
         'yii\jui\JuiAsset',
         '\kartik\icons\FontAwesomeAsset',
         'app\backend\assets\LaddaAsset',
+        'app\backend\assets\HeartbeatAsset',
     ];
 }

@@ -7,6 +7,7 @@ use app\backend\widgets\FloatingPanel;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Module;
+use yii\helpers\Url;
 use yii\web\Application;
 use yii\web\View;
 
@@ -53,11 +54,11 @@ class BackendModule extends Module implements BootstrapInterface
             Application::EVENT_BEFORE_ACTION,
             function () use ($app) {
                 if (
-                    Yii::$app->request->isAjax === false &&
-                    Yii::$app->requestedAction->controller->module instanceof BackendModule === false &&
-                    Yii::$app->requestedAction->controller instanceof BackendController === false
+                    $app->request->isAjax === false &&
+                    $app->requestedAction->controller->module instanceof BackendModule === false &&
+                    $app->requestedAction->controller instanceof BackendController === false
                 ) {
-                    if (Yii::$app->user->can('administrate')) {
+                    if ($app->user->can('administrate')) {
                         /*
                          * Apply floating panel only if requested action is not a part of backend
                          */
@@ -68,7 +69,18 @@ class BackendModule extends Module implements BootstrapInterface
                             }
                         );
                     }
+                } elseif (
+                    $app->requestedAction->controller->module instanceof BackendModule ||
+                    $app->requestedAction->controller instanceof BackendController
+                ) {
+                    $app->getView()->registerJs(
+                        'var heartbeatUrl = "' . Url::to(
+                            '/' . Yii::$app->requestedAction->controller->module->id . '/' . Yii::$app->requestedAction->controller->id . '/heartbeat'
+                        ) . '";',
+                        View::POS_BEGIN
+                    );
                 }
+
             }
         );
     }
