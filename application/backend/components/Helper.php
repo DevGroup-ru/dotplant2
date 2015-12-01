@@ -33,7 +33,6 @@ class Helper
                     }
                 }
             }
-            VarDumper::dump($returnUrlParams, 4, true);
             if (count($returnUrlParams) > 0) {
                 self::$returnUrl = $url['path'] . '?' . implode('&', $returnUrlParams);
             } else {
