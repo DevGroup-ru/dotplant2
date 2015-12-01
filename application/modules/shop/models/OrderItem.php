@@ -3,6 +3,7 @@
 namespace app\modules\shop\models;
 
 use app\behaviors\Tree;
+use app\modules\shop\components\AbstractEntity;
 use app\modules\shop\components\AddonOrderItemEntityFactory;
 use app\modules\shop\components\CustomOrderItemEntityFactory;
 use app\modules\shop\components\EntityFactory;
@@ -34,6 +35,7 @@ use yii\db\ActiveRecord;
  * @property OrderItem $parent
  * @property Product|HasProperties $product
  * @property Addon $addon
+ * @property AbstractEntity $entity
  */
 class OrderItem extends ActiveRecord
 {
@@ -168,6 +170,9 @@ class OrderItem extends ActiveRecord
         }
     }
 
+    /**
+     * @return \app\modules\shop\components\AbstractEntity
+     */
     public function getEntity()
     {
         return EntityFactory::getEntityByModel($this);
