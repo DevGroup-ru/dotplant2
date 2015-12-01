@@ -24,7 +24,8 @@ $this->title = Yii::t('app', 'Search') . ': ' . $model->q;
 $pageUrl = Json::encode(Url::to(['/page/page/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]));
 $productUrl = Json::encode(Url::to(['/shop/product/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]));
 $js = <<<JS
-/*global $:false, bootbox, console, alert, document */
+(function($) {
+    /*global $:false, bootbox, console, alert, document */
     "use strict";
 
 
@@ -53,23 +54,26 @@ $js = <<<JS
             return false;
         });
     });
+})(jQuery);
 JS;
 $this->registerJs($js);
 
 
 $js = <<<JS
-$(".product-item .product-image,.product-item .product-announce").click(function(){
-    var that = $(this),
-        parent = null;
-    if (that.hasClass('product-image')) {
-        parent = that.parent();
-    } else {
-        parent = that.parent().parent();
-    }
-
-    document.location = parent.find('a.product-name').attr('href');
-    return false;
-})
+(function($) {
+    $(".product-item .product-image,.product-item .product-announce").click(function(){
+        var that = $(this),
+            parent = null;
+        if (that.hasClass('product-image')) {
+            parent = that.parent();
+        } else {
+            parent = that.parent().parent();
+        }
+    
+        document.location = parent.find('a.product-name').attr('href');
+        return false;
+    });
+})(jQuery);
 JS;
 $this->registerJs($js);
 
