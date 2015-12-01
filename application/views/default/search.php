@@ -9,12 +9,14 @@ use yii\helpers\Url;
 $this->title = Yii::t('app', 'Search') . ': ' . $model->q;
 ?>
     <h1 style="font-size: 24px; font-weight: normal;"><?=Yii::t('app', 'Search results')?></h1>
+    
+    <h3 style="font-size: 16px; font-weight: bold;"><?=Yii::t('app', 'Pages')?>:</h3>
     <div id="pages-list">
         <div style="text-align: center;">
 
         </div>
     </div>
-    <h3 style="font-size: 16px; font-weight: bold;"><?=Yii::t('app', 'Products and services')?></h3>
+    <h3 style="font-size: 16px; font-weight: bold;"><?=Yii::t('app', 'Products and services')?>:</h3>
     <div id="products-list">
         <div style="text-align: center;">
 
