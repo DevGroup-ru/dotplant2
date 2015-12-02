@@ -20,12 +20,14 @@ class Helper
                     $pieces = explode('=', $part);
                     $returnUrls = [];
                     if (strpos($part, 'returnUrl') !== false) {
-                        $temp = explode('&', urldecode($part));
+                        $items = array_values(array_filter(explode('returnUrl', $part), function ($item) {
+                            return $item !== '';
+                        }));
                         do {
-                            $returnUrls[] = $temp[$level];
+                            $returnUrls[] = 'returnUrl' . $items[$level];
                             $level++;
-                        } while ($level < $depth);
-                        $returnUrlParams[] = urlencode(implode($returnUrls));
+                        } while ($level < count($items) && $level < $depth);
+                        $returnUrlParams[] = implode($returnUrls);
                         continue;
                     }
                     if (count($pieces) == 2 && strlen($pieces[1]) > 0) {
@@ -41,4 +43,5 @@ class Helper
         }
         return self::$returnUrl;
     }
+
 }
