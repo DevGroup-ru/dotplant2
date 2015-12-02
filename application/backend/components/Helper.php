@@ -20,9 +20,14 @@ class Helper
                     $pieces = explode('=', $part);
                     $returnUrls = [];
                     if (strpos($part, 'returnUrl') !== false) {
-                        $items = array_values(array_filter(explode('returnUrl', $part), function ($item) {
-                            return $item !== '';
-                        }));
+                        $items = array_values(
+                            array_filter(
+                                explode('returnUrl', $part),
+                                function ($item) {
+                                    return $item !== '';
+                                }
+                            )
+                        );
                         do {
                             $returnUrls[] = 'returnUrl' . $items[$level];
                             $level++;
