@@ -5,6 +5,7 @@ namespace app\modules\shop\components\GoogleMerchants;
 use app\modules\shop\helpers\CurrencyHelper;
 use app\modules\shop\models\Currency;
 use app\modules\shop\models\Product;
+use Yii;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
@@ -20,6 +21,7 @@ class GoogleMerchants
     protected $title = 'Site title';
     protected $description = 'Site description';
     protected $mainCurrency;
+    protected $fileName = 'feed.xml';
 
     protected function getHeader()
     {
@@ -68,21 +70,24 @@ FOOTER;
             '.',
             ''
         ) . ' ' . $this->mainCurrency->iso_code;
-        return <<<ITEM
-		<item>
-			<title>{$product['name']}</title>
-			<description>{$product['content']}</description>
-			<link>{$this->host}{$url}</link>
-			<g:id>{$product['id']}</g:id>
-			<g:image_link>{$image}</g:image_link>
-			<g:condition>new</g:condition>
-			<g:availability>{$inStock}</g:availability>
-			<g:price>{$price}</g:price>
-			<g:item_group_id>{$product->parent_id}</g:item_group_id>
-		</item>
-
-ITEM;
-
+        $result = Html::beginTag('item');
+        $result .= Html::tag('title', $product->name)
+            . Html::tag('description', $product->announce)
+            . Html::tag('link', $this->host . $url)
+            . Html::tag('g:id', $product->id)
+            . Html::tag('g:image_link', $image)
+            . Html::tag('g:condition', 'new')
+            . Html::tag('g:availability', $inStock)
+            . Html::tag('g:price', $price);
+        if ($product->parent_id !== 0) {
+            Html::tag('g:item_group_id', $product->parent_id);
+        }
+        $result .= Html::endTag('item') . "\n";
+        // get product options
+        foreach ($product->children as $child) {
+            $result .= $this->getItem($child);
+        }
+        return $result;
     }
 
     public function generate()
@@ -93,6 +98,6 @@ ITEM;
             $s .= $this->getItem($product);
         }
         $s .= $this->getFooter();
-        file_put_contents('/home/fps/feed.xml', $s);
+        file_put_contents(Yii::getAlias('@webroot/' . $this->fileName), $s);
     }
 }
