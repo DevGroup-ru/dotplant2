@@ -7,9 +7,13 @@ use yii\console\Controller;
 
 class GoogleMerchantsController extends Controller
 {
-    public function actionGenerate()
+    public function actionGenerate($host, $siteName = '', $siteDescription = '', $fileName = 'feed.xml')
     {
-        $gm = new GoogleMerchants();
-        return true === $gm->generate() ? 0 : 1;
+        $gm = new GoogleMerchants([
+            'host' => $host,
+            'title' => $siteName,
+            'description' => $siteDescription
+        ]);
+        return true === $gm->saveFeedInFs() ? 0 : 1;
     }
 }
