@@ -218,7 +218,16 @@ class UserController extends Controller
             if ($model->id != Yii::$app->user->id) {
                 throw new ErrorException(Yii::t('app', "This service is already binded to another user"));
             } else {
-                throw new ErrorException(Yii::t('app', 'This service is already binded.'));
+                $attributes = AuthClientHelper::mapUserAttributesWithService($client);
+                if (isset($attributes['service']['service_id'])) {
+                    UserService::deleteAll(
+                        [
+                            'user_id' => $model->id,
+                            'service_type' => $client->className(),
+                            'service_id' => '' . $attributes['service']['service_id'],
+                        ]
+                    );
+                }
             }
         }
         TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
