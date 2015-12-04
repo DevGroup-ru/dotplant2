@@ -27,7 +27,7 @@ use yii\helpers\Html;
     $tplFooter = <<< 'TPL'
     <div class="file-thumbnail-footer">
         <div style="margin:5px 0">
-            <input class="kv-input kv-new form-control input-sm" value="{caption}" placeholder="Введите описание..." />
+            <input class="kv-input kv-new form-control input-sm" type="hidden" value="{caption}" />
         </div>
         {actions}
     </div>
@@ -94,8 +94,12 @@ TPL;
             'pluginEvents' => [
                 'fileuploaded' => 'function(event, data, previewId, index) {
                     var name = data.files[index]["name"];
-                    var i = $(\'form div[title="\'+name+\'"] input[value="\'+name+\'"]\')[0];
-                    $(\'<input type="hidden" />\').attr("name", event.target.name).val(name).after(i);
+                    try {
+                        jQuery(".file-thumbnail-footer input[value=\"" + name + "\"]")
+                            .last()
+                            .attr("name", event.target.name)
+                            .val(data.response[name]["fileName"]);
+                    } catch ($e) {}
                 }',
 //                'fileloaded' => sprintf($_js, $model->formName().'['.$property_key.'][]'),
             ],

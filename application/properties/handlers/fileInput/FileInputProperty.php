@@ -146,6 +146,10 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
         $files = UploadedFile::getInstancesByName($formProperties.'['.$property->key.']');
         foreach ($files as $file) {
             $fileName = $file->baseName . '.' . $file->extension;
+            $item = [
+                'originalFileName' => $fileName,
+                'fileName' => $fileName,
+            ];
             if (false === \Yii::$app->getModule('core')->overwriteUploadedFiles && is_file($this->uploadDir . DIRECTORY_SEPARATOR . $fileName)) {
                 $fileName = $file->baseName . substr(md5($fileName . microtime()), 0, 6) . '.' . $file->extension;
             }
@@ -154,7 +158,9 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
                 $modelEav->isNewRecord = true;
                 $modelEav->value = $fileName;
                 $modelEav->save();
+                $item['fileName'] = $fileName;
             }
+            $result[$item['originalFileName']] = $item;
         }
         AbstractPropertyEavModel::setTableName(null);
 
