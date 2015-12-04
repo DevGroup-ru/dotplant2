@@ -44,7 +44,20 @@ TPL;
         }
         $_preview = \yii\helpers\FileHelper::getMimeType(Yii::getAlias($additional['uploadDir']) . '/' . $file);
         $_preview =  false !== strpos(strval($_preview), 'image/')
-            ? Html::img($uploadDir.$file, ['class' => 'file-preview-image', 'alt' => $file, 'title' => $file])
+            ? Html::img(
+                [
+                    'property-handler',
+                    'handler_action' => 'show-file',
+                    'fileName' => $file,
+                    'property_id' => $property_id,
+                    'model_id' => $model->ownerModel->id
+                ],
+                [
+                    'class' => 'file-preview-image',
+                    'alt' => $file,
+                    'title' => $file
+                ]
+            )
             : \kartik\icons\Icon::show('file', ['style' => 'font-size: 42px']);
         $initialPreview[] = $_preview . Html::hiddenInput($model->formName().'['.$property_key.'][]', $file);
         $initialPreviewConfig[] = [

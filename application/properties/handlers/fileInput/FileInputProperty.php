@@ -5,6 +5,9 @@ namespace app\properties\handlers\fileInput;
 use Yii;
 use app\properties\AbstractPropertyEavModel;
 use yii\helpers\FileHelper;
+use yii\helpers\VarDumper;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 class FileInputProperty extends \app\properties\handlers\AbstractHandler
@@ -168,5 +171,24 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
 
         return $result;
     }
+
+    public function actionDownloadFile($params = [])
+    {
+        $filePath = $this->uploadDir . DIRECTORY_SEPARATOR . Yii::$app->request->get('fileName', null);
+        if (!file_exists($filePath)) {
+            throw new NotFoundHttpException();
+        }
+        return Yii::$app->response->sendFile($filePath);
+    }
+
+    public function actionShowFile($params = [])
+    {
+        $filePath = $this->uploadDir . DIRECTORY_SEPARATOR . Yii::$app->request->get('fileName', null);
+        if (!file_exists($filePath)) {
+            throw new NotFoundHttpException();
+        }
+        Yii::$app->response->format = Response::FORMAT_RAW;
+        Yii::$app->response->headers->setDefault('Content-Type', FileHelper::getMimeTypeByExtension($filePath));
+        return file_get_contents($filePath);
+    }
 }
-?>
