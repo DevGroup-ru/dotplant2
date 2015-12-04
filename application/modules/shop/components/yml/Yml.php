@@ -111,9 +111,8 @@ class Yml extends Component
                 }, []));
             $this->trigger(static::EVENT_PROCESS_OFFER, $eventOffer);
 
-            $outputParams['offers'] = array_merge($outputParams['offers'], $eventOffer->getOffers());
+            $outputParams['offers'] = array_merge($outputParams['offers'], array_column($eventOffer->getOffers(), 'result'));
         }
-        $outputParams['offers'] = array_column($outputParams['offers'], 'result');
 
         $output = $view->renderFile($this->viewFile, $outputParams);
 
