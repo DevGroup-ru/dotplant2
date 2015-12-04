@@ -116,6 +116,12 @@ class ShopModule extends BaseModule implements BootstrapInterface
     public $ymlConfig = [];
 
     /**
+     * @var array
+     */
+    public $googleFeedConfig = [];
+
+
+    /**
      * @var bool Show filter links in breadcrumbs
      */
     public $showFiltersInBreadcrumbs = false;

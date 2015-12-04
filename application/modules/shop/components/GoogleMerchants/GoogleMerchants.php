@@ -21,12 +21,13 @@ class GoogleMerchants extends Component
     public $title = 'Site title';
     public $description = 'Site description';
     public $fileName = 'feed.xml';
-    public $mainCurrency = null;
+
     public $handlers = [
         'app\modules\shop\components\GoogleMerchants\DefaultHandler'
     ];
+    public $brand_property = 'manufacturer';
 
-
+    public $mainCurrency = null;
     protected $data = [];
 
     const MODIFICATION_DATA = 'modification_data';
@@ -54,7 +55,11 @@ class GoogleMerchants extends Component
     {
         if ($this->data === []) {
             $event = new ModificationDataEvent();
-            foreach (Product::find()->where(['active' => 1])->limit(2)->all() as $product) {
+            $query = Product::find()
+                ->where(['active' => 1])
+                ->limit(3);
+
+            foreach ($query->each() as $product) {
                 $event->model = $product;
                 $this->trigger(self::MODIFICATION_DATA, $event);
                 $this->data[] = $event->data;
@@ -96,7 +101,7 @@ class GoogleMerchants extends Component
         } else {
             $content = $data;
         }
-        return static::tag($tag,$content);
+        return static::tag($tag, $content);
     }
 
     protected static function tag($name, $content = '', $options = [])
