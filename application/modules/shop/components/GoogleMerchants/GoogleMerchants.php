@@ -3,10 +3,12 @@
 namespace app\modules\shop\components\GoogleMerchants;
 
 use app\modules\shop\models\Currency;
+use app\modules\shop\models\GoogleFeed;
 use app\modules\shop\models\Product;
 use Yii;
 use yii\base\Component;
 use yii\helpers\Html;
+use yii\helpers\Json;
 
 
 /**
@@ -17,10 +19,12 @@ use yii\helpers\Html;
 class GoogleMerchants extends Component
 {
 
-    public $host = 'https://localhost';
-    public $title = 'Site title';
-    public $description = 'Site description';
-    public $fileName = 'feed.xml';
+    protected static $modelSetting;
+
+    public $host = null;
+    public $title = null;
+    public $description = null;
+    public $fileName = null;
 
     public $handlers = [
         'app\modules\shop\components\GoogleMerchants\DefaultHandler'
@@ -34,15 +38,36 @@ class GoogleMerchants extends Component
 
     public function init()
     {
-        if ($this->mainCurrency === null) {
-            $this->mainCurrency = Currency::getMainCurrency();
-        }
+        self::$modelSetting = new GoogleFeed();
+        self::$modelSetting->loadConfig();
+
+        $this->handlers = Json::decode(self::$modelSetting->feed_handlers);
+
         foreach ($this->handlers as $handler) {
             if (is_subclass_of($handler, ModificationDataInterface::class)) {
                 $this->on(self::MODIFICATION_DATA, [$handler, 'processData']);
             }
         }
-        return parent::init();
+        parent::init();
+
+
+        if ($this->mainCurrency === null) {
+            $this->mainCurrency = Currency::findOne(['iso_code' => self::$modelSetting->shop_main_currency]);
+        }
+
+        if ($this->host === null) {
+            $this->host = self::$modelSetting->shop_host;
+        }
+        if ($this->title === null) {
+            $this->title = self::$modelSetting->shop_name;
+        }
+        if ($this->description === null) {
+            $this->description = self::$modelSetting->shop_description;
+        }
+        if ($this->fileName === null) {
+            $this->fileName = self::$modelSetting->feed_file_name;
+        }
+
     }
 
 
@@ -62,7 +87,7 @@ class GoogleMerchants extends Component
             foreach ($query->each() as $product) {
                 $event->model = $product;
                 $this->trigger(self::MODIFICATION_DATA, $event);
-                $this->data[] = $event->data;
+                $this->data[] = $event->dataArray;
             }
         }
         return $this->data;

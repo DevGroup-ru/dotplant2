@@ -3,17 +3,14 @@
 namespace app\modules\shop\commands;
 
 use app\modules\shop\components\GoogleMerchants\GoogleMerchants;
+use app\modules\shop\models\GoogleFeed;
 use yii\console\Controller;
 
 class GoogleMerchantsController extends Controller
 {
-    public function actionGenerate($host, $siteName = '', $siteDescription = '', $fileName = 'feed.xml')
+    public function actionGenerate()
     {
-        $gm = new GoogleMerchants([
-            'host' => $host,
-            'title' => $siteName,
-            'description' => $siteDescription
-        ]);
+        $gm = new GoogleMerchants();
         return true === $gm->saveFeedInFs() ? 0 : 1;
     }
 }

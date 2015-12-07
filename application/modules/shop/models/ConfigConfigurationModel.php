@@ -267,6 +267,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             'modules' => [
                 'shop' => [
                     'ymlConfig' => $this->ymlConfig,
+                    'googleFeedConfig' => $this->googleFeedConfig
                 ]
             ]
         ];

@@ -16,5 +16,5 @@ use yii\base\Event;
 class ModificationDataEvent extends Event
 {
     public $model;
-    public $data = [];
+    public $dataArray = [];
 }

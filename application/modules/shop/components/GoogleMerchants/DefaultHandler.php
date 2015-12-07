@@ -3,9 +3,12 @@
 namespace app\modules\shop\components\GoogleMerchants;
 
 
+use app\models\Property;
 use app\modules\shop\helpers\CurrencyHelper;
 use app\modules\shop\models\Category;
+use app\modules\shop\models\GoogleFeed;
 use app\modules\shop\models\Product;
+use yii\console\Exception;
 use yii\helpers\Url;
 
 
@@ -14,48 +17,89 @@ class DefaultHandler implements ModificationDataInterface
 
     protected static $breadcrumbsData = [];
 
+    protected static $modelSetting = null;
+
 
     public static function processData(ModificationDataEvent $event)
     {
-        $event->data = [
-            'title' => $event->model->name,
-            'description' => $event->model->announce,
+        if (!self::$modelSetting) {
+            self::$modelSetting = new GoogleFeed();
+            self::$modelSetting->loadConfig();
+        }
+        $event->dataArray = [
+            'title' => self::getRelation($event->model, 'item_title', $event->model->name),
+            'description' => self::getRelation($event->model, 'item_description', $event->model->announce),
             'link' => $event->sender->host . htmlspecialchars(Url::toRoute(['@product', 'model' => $event->model])),
             'g:id' => $event->model->id,
-            'g:condition' => 'new',
+            'g:condition' => self::$modelSetting->item_condition,
             'g:product_type' => self::getProductType($event->model),
             'g:availability' => static::getAvailability($event->model),
+            'g:shipping' => static::getShipping()
         ];
+        if ($manufacturer = self::getRelation($event->model, 'item_brand', false)) {
+            $event->dataArray['g:brand'] = htmlspecialchars($manufacturer);
+        }
+        if ($gin = self::getRelation($event->model, 'item_gtin', false)) {
+            $event->dataArray['g:gtin'] = htmlspecialchars($gin);
+        }
+        if ($mpn = self::getRelation($event->model, 'item_mpn', false)) {
+            $event->dataArray['g:mpn'] = htmlspecialchars($mpn);
+        }
 
-
-        if ($manufacturer = $event->model->property($event->sender->brand_property)) {
-            $event->data['g:brand'] = htmlspecialchars($manufacturer);
+        if ($item_google_product_category = self::getRelation($event->model, 'item_google_product_category', false)) {
+            $event->dataArray['g:google_product_category'] = htmlspecialchars($item_google_product_category);
         }
 
         if (!empty($event->model->old_price) && $event->model->old_price > $event->model->price) {
-            $event->data['g:price'] = static::getPrice($event->model,
+            $event->dataArray['g:price'] = static::getPrice($event->model,
                 $event->sender->mainCurrency,
                 $event->model->old_price
             );
-            $event->data['g:g:sale_price'] = static::getPrice($event->model,
+            $event->dataArray['g:g:sale_price'] = static::getPrice($event->model,
                 $event->sender->mainCurrency,
                 $event->model->price
             );
         } else {
-            $event->data['g:price'] = static::getPrice($event->model,
+
+            $event->dataArray['g:price'] = static::getPrice($event->model,
                 $event->sender->mainCurrency,
                 $event->model->price
             );
         }
         $imageObject = $event->model->image;
         if ($imageObject) {
-            $event->data['g:image_link'] = htmlspecialchars(
+            $event->dataArray['g:image_link'] = htmlspecialchars(
                 $event->sender->host . $event->model->image->getOriginalUrl()
             );
         }
         if ($event->model->parent_id !== 0) {
-            $event->data['g:item_group_id'] = $event->model->parent_id;
+            $event->dataArray['g:item_group_id'] = $event->model->parent_id;
         }
+    }
+
+
+    protected static function getRelation($model, $relationName, $default_value = '')
+    {
+        $result = $default_value;
+        $relation = self::$modelSetting->$relationName;
+
+        if ($relation['type'] === 'field' && !empty($relation['key'])) {
+            try {
+                $result = $model->{$relation['key']};
+            } catch (Exception $e) {
+            }
+        } elseif ($relation['type'] === 'property' && !empty($relation['key'])) {
+            try {
+                $propertyKey = Property::find()->select('key')->where(['id' => $relation['key']])->asArray()->scalar();
+                $result = $model->property($propertyKey);
+            } catch (Exception $e) {
+            }
+        } elseif ($relation['type'] === 'relation' && !empty($relation['key']) && !empty($relation['value'])) {
+            $relModel = $model->{$relation['key']}();
+            $result = $relModel->$relation['value'];
+        }
+
+        return $result;
     }
 
 
@@ -98,6 +142,18 @@ class DefaultHandler implements ModificationDataInterface
             }
         }
         return $inStock;
+    }
+
+    protected static function getShipping()
+    {
+        $data = explode(':', self::$modelSetting->shop_delivery_price);
+
+        return [
+            'g:country' => $data[0],
+            'g:service' => $data[1],
+            'g:price' => $data[2]
+        ];
+
     }
 
 

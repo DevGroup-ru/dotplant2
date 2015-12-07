@@ -30,11 +30,13 @@ class GoogleFeed extends Model
                     'shop_delivery_price',
                     'item_delivery_cost',
                     'feed_file_name',
+                    'feed_handlers'
                 ],
                 'required'
             ],
             [['item_delivery_cost'], 'integer'],
-            [['shop_name'], 'string', 'length' => [1, 255]],
+            [['shop_name',], 'string', 'length' => [1, 255]],
+            [$this->getOfferElements(), 'safe']
         ];
 
         return $rules;
@@ -86,17 +88,19 @@ class GoogleFeed extends Model
         parent::init();
 
         $this->attrStorage = [
-            'shop_host' => Yii::$app->request->getHostInfo(),
+            'shop_host' => 'http://localhost.dev',
             'shop_name' => 'shop name',
             'shop_description' => 'shop description',
-            'shop_delivery_price' => 0,
+            'shop_delivery_price' => 'GB:Standard:100 GBP',
+            'shop_main_currency' => 0,
             'item_price' => ['type' => 'field', 'key' => 'price'],
             'item_condition' => 'new',
             'item_title' => ['type' => 'field', 'key' => 'name'],
             'item_description' => ['type' => 'field', 'key' => 'announce'],
             'item_gtin' => ['type' => 'field', 'key' => 'sku'],
-            'item_brand' =>  ['type' => 'field', 'key' => 'name'],
-            'shop_main_currency' => 0,
+            'item_google_product_category' => ['type' => 'field'],
+            'item_mpn' => ['type' => 'field'],
+            'item_brand' => ['type' => 'field', 'key' => 'name'],
             'item_delivery_cost' => 0,
             'feed_handlers' => yii\helpers\Json::encode([
                 'app\modules\shop\components\GoogleMerchants\DefaultHandler'
@@ -148,6 +152,8 @@ class GoogleFeed extends Model
             'item_title',
             'item_description',
             'item_gtin',
+            'item_mpn',
+            'item_google_product_category',
             'item_brand'
         ];
     }

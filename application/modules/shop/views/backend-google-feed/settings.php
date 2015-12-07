@@ -32,7 +32,7 @@ $currencies = ArrayHelper::map(
 <?php
 $feed_relations = [
     'getImage' => \app\modules\image\models\Image::className(),
-    'getCategory' => \app\modules\shop\models\Category::className(),
+    'getMainCategory' => \app\modules\shop\models\Category::className(),
 ];
 
 $feed_settings = [];
@@ -104,7 +104,7 @@ $feed_settings['properties_map'] = array_reduce(
             ['class' => 'btn btn-primary']
         ); ?>
         <?= Html::a(
-            Icon::show('code') . Yii::t('app', 'Create YML'),
+            Icon::show('code') . Yii::t('app', 'Create Google feed'),
             ['create'],
             ['class' => 'btn btn-primary']
         ); ?>
