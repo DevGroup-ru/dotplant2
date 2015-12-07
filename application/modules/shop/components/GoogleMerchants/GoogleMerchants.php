@@ -81,8 +81,7 @@ class GoogleMerchants extends Component
         if ($this->data === []) {
             $event = new ModificationDataEvent();
             $query = Product::find()
-                ->where(['active' => 1])
-                ->limit(3);
+                ->where(['active' => 1]);
 
             foreach ($query->each() as $product) {
                 $event->model = $product;
