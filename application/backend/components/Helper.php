@@ -8,7 +8,6 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\Html;
 use kartik\icons\Icon;
-use yii\helpers\VarDumper;
 
 class Helper
 {
