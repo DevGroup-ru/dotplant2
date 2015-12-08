@@ -8,40 +8,27 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\Html;
 use kartik\icons\Icon;
+use yii\helpers\VarDumper;
 
 class Helper
 {
     private static $returnUrl;
+    public static $returnUrlWithoutHistory = false;
 
     /**
      * @param int $depth
      * @return string
      */
-    public static function getReturnUrl($depth = 2)
+    public static function getReturnUrl()
     {
         if (is_null(self::$returnUrl)) {
             $url = parse_url(Yii::$app->request->url);
             $returnUrlParams = [];
-            $level = 0;
             if (isset($url['query'])) {
                 $parts = explode('&', $url['query']);
                 foreach ($parts as $part) {
                     $pieces = explode('=', $part);
-                    $returnUrls = [];
-                    if (strpos($part, 'returnUrl') !== false) {
-                        $items = array_values(
-                            array_filter(
-                                explode('returnUrl', $part),
-                                function ($item) {
-                                    return $item !== '';
-                                }
-                            )
-                        );
-                        do {
-                            $returnUrls[] = 'returnUrl' . $items[$level];
-                            $level++;
-                        } while ($level < count($items) && $level < $depth);
-                        $returnUrlParams[] = implode($returnUrls);
+                    if (static::$returnUrlWithoutHistory && count($pieces) == 2 && $pieces[0] === 'returnUrl') {
                         continue;
                     }
                     if (count($pieces) == 2 && strlen($pieces[1]) > 0) {
