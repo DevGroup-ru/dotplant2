@@ -66,7 +66,7 @@ $ php ../composer.phar install --prefer-dist --optimize-autoloader
 
 Your virtual server DocumentRoot directory should point to `application/web`.
 
-Then go to http://YOUR_HOSTNAME/installer.php or run `./install` in application folder.
+Then run `./installer` in application folder.
 
 Backend is located at http://YOUR_HOSTNAME/backend/
 
