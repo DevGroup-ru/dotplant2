@@ -19,18 +19,6 @@ class DefaultController extends Controller
     /**
      * @inheritdoc
      */
-    public function behaviors()
-    {
-        return [
-            'seo' => [
-                'class' => MetaBehavior::className()
-            ],
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function actions()
     {
         return [

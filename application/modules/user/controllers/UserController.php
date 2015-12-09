@@ -3,7 +3,6 @@
 namespace app\modules\user\controllers;
 
 use app\components\AuthClientHelper;
-use app\modules\seo\behaviors\MetaBehavior;
 use app\modules\user\actions\AuthAction;
 use app\modules\user\models\LoginForm;
 use app\modules\user\models\PasswordResetRequestForm;
@@ -34,9 +33,6 @@ class UserController extends Controller
     public function behaviors()
     {
         return [
-            'seo' => [
-                'class' => MetaBehavior::className()
-            ],
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['change-password', 'signup', 'profile'],

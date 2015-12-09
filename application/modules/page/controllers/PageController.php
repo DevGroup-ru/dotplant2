@@ -20,15 +20,6 @@ class PageController extends Controller
 {
     use LoadModel;
 
-    public function behaviors()
-    {
-        return [
-            'seo' => [
-                'class' => MetaBehavior::className()
-            ],
-        ];
-    }
-
     /**
      * @param $id
      * @return string
