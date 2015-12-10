@@ -57,10 +57,17 @@ class CoreModule extends BaseModule implements BootstrapInterface
     public $immediateNoticeLimitPerUrl = 10;
     public $httpCodesForImmediateNotify = '404,500';
 
-    public $handlersSearchProductByDescription = [
-        'app\components\search\SearchProductsByDescriptionHandler'
+    public $searchHandlers = [
+        'query_search_products_by_description' => [
+            'app\components\search\SearchProductsByDescriptionHandler'
+        ],
+        'query_search_products_by_property' => [
+            'app\components\search\SearchProductsByPropertyHandler'
+        ],
+        'query_search_pages_by_description' => [
+            'app\components\search\SearchPagesByDescriptionHandler'
+        ]
     ];
-
 
     public $emailConfig = [
         'transport' => 'Swift_MailTransport',
