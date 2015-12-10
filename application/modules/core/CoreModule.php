@@ -10,6 +10,7 @@ use app\modules\core\models\ContentDecorator;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
+
 /**
  * Core module handles base DotPlant2 functions
  * @package app\modules\user
@@ -55,6 +56,11 @@ class CoreModule extends BaseModule implements BootstrapInterface
     public $immediateNotice = false;
     public $immediateNoticeLimitPerUrl = 10;
     public $httpCodesForImmediateNotify = '404,500';
+
+    public $handlersSearchProductByDescription = [
+        'app\components\search\SearchProductsByDescriptionHandler'
+    ];
+
 
     public $emailConfig = [
         'transport' => 'Swift_MailTransport',

@@ -2,8 +2,9 @@
 
 namespace app\models;
 
+use app\components\search\SearchEvent;
+use app\components\search\SearchInterface;
 use app\modules\page\models\Page;
-use app\modules\shop\models\Product;
 use Yii;
 use yii\base\Model;
 use yii\db\Query;
@@ -11,6 +12,8 @@ use yii\helpers\ArrayHelper;
 
 class Search extends Model
 {
+
+    const QUERY_SEARCH_BY_DESCRIPTION = 'query_search_by_description';
     public $q = '';
 
     public function attributeLabels()
@@ -48,31 +51,21 @@ class Search extends Model
 
     public function searchProductsByDescription()
     {
-        /** @var \app\modules\shop\ShopModule $module */
-        $module = Yii::$app->modules['shop'];
 
-        $query = (new Query())
-            ->select('`id`')
-            ->from(Product::tableName())
-            ->orWhere('`name` LIKE :q')
-            ->orWhere('`h1` LIKE :q')
-            ->orWhere('`content` LIKE :q')
-            ->orWhere('`sku` LIKE :q')
-            ->addParams([':q' => '%' . $this->q . '%'])
-            ->andWhere(
-                [
-                    'active' => 1,
-                ]
-            );
-        if ($module->allowSearchGeneratedProducts != 1) {
-            $query->andWhere(
-                [
-                    'parent_id' => 0
-                ]
-            );
+        $module = Yii::$app->getModule('core');
+
+        foreach ($module->handlersSearchProductByDescription as $class) {
+            if (is_subclass_of($class, SearchInterface::class)) {
+                $this->on(self::QUERY_SEARCH_BY_DESCRIPTION, [$class, 'editQuery']);
+            }
         }
 
-        return ArrayHelper::getColumn($query->all(), 'id');
+        $event = new SearchEvent();
+        $event->q = $this->q;
+        $event->activeQuery = (new Query());
+        $this->trigger(self::QUERY_SEARCH_BY_DESCRIPTION, $event);
+
+        return ArrayHelper::getColumn($event->activeQuery->all(), 'id');
     }
 
     public function searchPagesByDescription()
