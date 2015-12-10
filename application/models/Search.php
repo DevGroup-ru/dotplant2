@@ -2,15 +2,19 @@
 
 namespace app\models;
 
-use app\modules\page\models\Page;
-use app\modules\shop\models\Product;
+use app\components\search\SearchEvent;
+use app\components\search\SearchInterface;
 use Yii;
 use yii\base\Model;
 use yii\db\Query;
-use yii\helpers\ArrayHelper;
 
 class Search extends Model
 {
+
+    const QUERY_SEARCH_PRODUCTS_BY_DESCRIPTION = 'query_search_products_by_description';
+    const QUERY_SEARCH_PRODUCTS_BY_PROPERTY = 'query_search_products_by_property';
+    const QUERY_SEARCH_PAGES_BY_DESCRIPTION = 'query_search_pages_by_description';
+
     public $q = '';
 
     public function attributeLabels()
@@ -27,66 +31,42 @@ class Search extends Model
         ];
     }
 
+    public function searchByKey($key)
+    {
+
+        $result = [];
+        $module = Yii::$app->getModule('core');
+
+        if (!empty($module->searchHandlers[$key])) {
+            foreach ($module->searchHandlers[$key] as $class) {
+                if (is_subclass_of($class, SearchInterface::class)) {
+                    $this->on($key, [$class, 'editQuery']);
+                }
+            }
+            $event = new SearchEvent();
+            $event->q = $this->q;
+            $event->activeQuery = (new Query());
+            $this->trigger($key, $event);
+            $result = $event->getAll();
+        }
+
+        return $result;
+
+    }
+
+
     public function searchProductsByProperty()
     {
-        $result = (new Query())
-            ->select('`id`')
-            ->from(PropertyStaticValues::tableName())
-            ->where('`name` LIKE :q')
-            ->addParams([':q' => '%' . $this->q . '%'])
-            ->all();
-        $result = (new Query())
-            ->select('`object_model_id`')
-            ->distinct(true)
-            ->from(ObjectStaticValues::tableName())
-            ->where('`object_id` = :objectId')
-            ->addParams([':objectId' => 1])
-            ->andWhere(['in', '`property_static_value_id`', ArrayHelper::getColumn($result, 'id')])
-            ->all();
-        return ArrayHelper::getColumn($result, 'object_model_id');
+        return $this->searchByKey(self::QUERY_SEARCH_PRODUCTS_BY_PROPERTY);
     }
 
     public function searchProductsByDescription()
     {
-        /** @var \app\modules\shop\ShopModule $module */
-        $module = Yii::$app->modules['shop'];
-
-        $query = (new Query())
-            ->select('`id`')
-            ->from(Product::tableName())
-            ->orWhere('`name` LIKE :q')
-            ->orWhere('`h1` LIKE :q')
-            ->orWhere('`content` LIKE :q')
-            ->orWhere('`sku` LIKE :q')
-            ->addParams([':q' => '%' . $this->q . '%'])
-            ->andWhere(
-                [
-                    'active' => 1,
-                ]
-            );
-        if ($module->allowSearchGeneratedProducts != 1) {
-            $query->andWhere(
-                [
-                    'parent_id' => 0
-                ]
-            );
-        }
-
-        return ArrayHelper::getColumn($query->all(), 'id');
+        return $this->searchByKey(self::QUERY_SEARCH_PRODUCTS_BY_DESCRIPTION);
     }
 
     public function searchPagesByDescription()
     {
-        $result = (new Query())
-            ->select('`id`')
-            ->from(Page::tableName())
-            ->orWhere('`title` LIKE :q')
-            ->orWhere('`h1` LIKE :q')
-            ->orWhere('`content` LIKE :q')
-            ->addParams([':q' => '%' . $this->q . '%'])
-            ->andWhere('published=1')
-            ->andWhere('searchable=1')
-            ->all();
-        return ArrayHelper::getColumn($result, 'id');
+        return $this->searchByKey(self::QUERY_SEARCH_PAGES_BY_DESCRIPTION);
     }
 }
