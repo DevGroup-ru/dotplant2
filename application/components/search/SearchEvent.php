@@ -23,8 +23,12 @@ class SearchEvent extends Event
     }
     public function getAll()
     {
-        $method = $this->functionSearch;
-        return $method($this->activeQuery);
+        $result = [];
+        if(is_callable($this->functionSearch)) {
+            $method = $this->functionSearch;
+            $result = $method($this->activeQuery);
+        }
+        return $result;
     }
 
 }

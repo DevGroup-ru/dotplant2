@@ -4,11 +4,9 @@ namespace app\models;
 
 use app\components\search\SearchEvent;
 use app\components\search\SearchInterface;
-use app\modules\page\models\Page;
 use Yii;
 use yii\base\Model;
 use yii\db\Query;
-use yii\helpers\ArrayHelper;
 
 class Search extends Model
 {
