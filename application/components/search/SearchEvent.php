@@ -11,20 +11,22 @@ class SearchEvent extends Event
 
     public $activeQuery = null;
     public $q = null;
-    public $functionSearch;
+    public $functionSearch = null;
 
     public function init()
     {
-        $this->functionSearch = function($activeQuery){
-          return ArrayHelper::getColumn($activeQuery->all(), 'id');
-        };
-
+        if ($this->functionSearch === null) {
+            $this->functionSearch = function ($activeQuery) {
+                return ArrayHelper::getColumn($activeQuery->all(), 'id');
+            };
+        }
         parent::init();
     }
+
     public function getAll()
     {
         $result = [];
-        if(is_callable($this->functionSearch)) {
+        if (is_callable($this->functionSearch)) {
             $method = $this->functionSearch;
             $result = $method($this->activeQuery);
         }

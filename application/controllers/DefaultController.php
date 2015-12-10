@@ -5,9 +5,9 @@ namespace app\controllers;
 use app\actions\SubmitFormAction;
 use app\backend\actions\PropertyHandler;
 use app\models\Form;
+use app\models\Search;
 use app\modules\core\components\MailComponent;
 use app\modules\shop\models\Product;
-use app\models\Search;
 use app\modules\seo\behaviors\MetaBehavior;
 use Yii;
 use yii\helpers\Url;
@@ -64,14 +64,18 @@ class DefaultController extends Controller
     public function actionAutoCompleteSearch($term)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $query = Product::find()
-            ->select(['id', 'name', 'main_category_id', 'slug', 'sku'])
-            ->orderBy(['sort_order' => SORT_ASC, 'id' => SORT_DESC]);
-        foreach (['name', 'content', 'sku'] as $attribute) {
-            $query->orWhere(['like', $attribute, $term]);
-        }
-        $query->andWhere(['active'=>1]);
-        $products = $query->limit(Yii::$app->getModule('core')->autoCompleteResultsCount)->all();
+        $search = new Search();
+        $search->q = $term;
+        $search->on(Search::QUERY_SEARCH_PRODUCTS_BY_DESCRIPTION, function ($event) {
+            $event->functionSearch = function ($activeQuery) {
+                $activeQuery->limit(Yii::$app->getModule('core')->autoCompleteResultsCount);
+                return Product::find()
+                    ->select(['id', 'name', 'main_category_id', 'slug', 'sku'])
+                    ->where(['id' => $activeQuery->all()])
+                    ->all();
+            };
+        });
+        $products = $search->searchProductsByDescription();
         $result = [];
 
         foreach ($products as $product) {
