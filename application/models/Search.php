@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\components\search\SearchEvent;
 use app\components\search\SearchInterface;
+use app\modules\core\CoreModule;
 use Yii;
 use yii\base\Model;
 use yii\db\Query;
@@ -35,6 +36,9 @@ class Search extends Model
     {
 
         $result = [];
+        /**
+         * @var $module CoreModule;
+         */
         $module = Yii::$app->getModule('core');
 
         if (!empty($module->searchHandlers[$key])) {
