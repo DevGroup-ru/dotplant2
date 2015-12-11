@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\actions\SubmitFormAction;
 use app\backend\actions\PropertyHandler;
+use app\components\search\SearchEvent;
 use app\models\Form;
 use app\models\Search;
 use app\modules\core\components\MailComponent;
@@ -66,14 +67,14 @@ class DefaultController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
         $search = new Search();
         $search->q = $term;
-        $search->on(Search::QUERY_SEARCH_PRODUCTS_BY_DESCRIPTION, function ($event) {
-            $event->functionSearch = function ($activeQuery) {
+        $search->on(Search::QUERY_SEARCH_PRODUCTS_BY_DESCRIPTION, function (SearchEvent $event) {
+            $event->setFunctionSearch(function ($activeQuery) {
                 $activeQuery->limit(Yii::$app->getModule('core')->autoCompleteResultsCount);
                 return Product::find()
                     ->select(['id', 'name', 'main_category_id', 'slug', 'sku'])
                     ->where(['id' => $activeQuery->all()])
                     ->all();
-            };
+            });
         });
         $products = $search->searchProductsByDescription();
         $result = [];
