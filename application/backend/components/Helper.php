@@ -12,8 +12,10 @@ use kartik\icons\Icon;
 class Helper
 {
     private static $returnUrl;
+    public static $returnUrlWithoutHistory = false;
 
     /**
+     * @param int $depth
      * @return string
      */
     public static function getReturnUrl()
@@ -25,6 +27,9 @@ class Helper
                 $parts = explode('&', $url['query']);
                 foreach ($parts as $part) {
                     $pieces = explode('=', $part);
+                    if (static::$returnUrlWithoutHistory && count($pieces) == 2 && $pieces[0] === 'returnUrl') {
+                        continue;
+                    }
                     if (count($pieces) == 2 && strlen($pieces[1]) > 0) {
                         $returnUrlParams[] = $part;
                     }

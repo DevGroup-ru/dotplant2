@@ -2,7 +2,7 @@
 
 namespace app\modules\user\controllers;
 
-use app;
+use app\components\AuthClientHelper;
 use app\modules\user\actions\AuthAction;
 use app\modules\user\models\LoginForm;
 use app\modules\user\models\PasswordResetRequestForm;
@@ -10,7 +10,6 @@ use app\modules\user\models\RegistrationForm;
 use app\modules\user\models\ResetPasswordForm;
 use app\modules\user\models\User;
 use app\modules\user\models\UserService;
-use app\modules\seo\behaviors\MetaBehavior;
 use Yii;
 use yii\base\ErrorException;
 use yii\base\InvalidParamException;
@@ -21,7 +20,6 @@ use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use app\components\AuthClientHelper;
 
 /**
  * Base DotPlant2 controller for handling user's login/signup/logout and etc. functions
@@ -35,12 +33,9 @@ class UserController extends Controller
     public function behaviors()
     {
         return [
-            'seo' => [
-                'class' => MetaBehavior::className()
-            ],
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup', 'profile'],
+                'only' => ['change-password', 'signup', 'profile'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -48,7 +43,7 @@ class UserController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'profile'],
+                        'actions' => ['profile', 'change-password'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -81,7 +76,6 @@ class UserController extends Controller
         if (\Yii::$app->user->isGuest === false) {
             $this->goHome();
         }
-
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack($returnUrl);
@@ -101,8 +95,10 @@ class UserController extends Controller
      */
     public function actionLogout()
     {
-        TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
-        Yii::$app->user->logout();
+        if (!Yii::$app->user->isGuest) {
+            TagDependency::invalidate(Yii::$app->cache, ['Session:' . Yii::$app->session->id]);
+            Yii::$app->user->logout();
+        }
         return $this->goHome();
     }
 
@@ -117,7 +113,6 @@ class UserController extends Controller
         $model = new RegistrationForm();
         if ($model->load(Yii::$app->request->post())) {
             $user = $model->signup();
-
             if ($user !== null) {
                 if (Yii::$app->getUser()->login($user)) {
                     return $this->goHome();
@@ -125,9 +120,7 @@ class UserController extends Controller
             } else {
                 // there were errors
             }
-
         }
-
         return $this->render('signup', [
             'model' => $model,
         ]);
@@ -141,19 +134,15 @@ class UserController extends Controller
     {
         /** @var \app\modules\user\models\User $model */
         $model = Yii::$app->user->identity;
-
         if (intval($model->username_is_temporary) === 1) {
             // reset username
             $model->username = '';
         }
         $model->setScenario('completeRegistration');
         $model->load(Yii::$app->request->post());
-
         if (Yii::$app->request->isPost && $model->validate()) {
-
             $model->username_is_temporary = 0;
             $model->save();
-
             $auth_action = new AuthAction('post-registration', $this);
             return $auth_action->redirect('/');
         } else {
@@ -176,40 +165,28 @@ class UserController extends Controller
         if (is_object($model) === false) {
             // user not found, retrieve additional data
             $client = AuthClientHelper::retrieveAdditionalData($client);
-
             $attributes = AuthClientHelper::mapUserAttributesWithService($client);
-
             // check if it is anonymous user
             if (Yii::$app->user->isGuest === true) {
                 $model = new User(['scenario' => 'registerService']);
                 $security = Yii::$app->security;
-
-
-
                 $model->setAttributes($attributes['user']);
                 $model->status = User::STATUS_ACTIVE;
-
                 if (empty($model->username) === true) {
                     // if we doesn't have username - generate unique random temporary username
                     // it will be needed for saving purposes
                     $model->username = $security->generateRandomString(18);
                     $model->username_is_temporary = 1;
                 }
-
                 $model->setPassword($security->generateRandomString(16));
-
                 $model->generateAuthKey();
-
-
                 if ($model->save() === false) {
-
                     if (isset($model->errors['username'])) {
                         // regenerate username
                         $model->username = $security->generateRandomString(18);
                         $model->username_is_temporary = 1;
                         $model->save();
                     }
-
                     if (isset($model->errors['email'])) {
                         // empty email
                         $model->email = null;
@@ -224,7 +201,6 @@ class UserController extends Controller
                 /** @var \app\modules\user\models\User $model */
                 $model = Yii::$app->user->identity;
             }
-
             $service = new UserService();
             $service->service_type = $client->className();
             $service->service_id = '' . $attributes['service']['service_id'];
@@ -232,24 +208,30 @@ class UserController extends Controller
             if ($service->save() === false) {
                 throw new ErrorException(Yii::t('app', "Temporary error saving social service"));
             }
-
         } elseif (Yii::$app->user->isGuest === false) {
             // service exists and user logged in
             // check if this service is binded to current user
             if ($model->id != Yii::$app->user->id) {
                 throw new ErrorException(Yii::t('app', "This service is already binded to another user"));
             } else {
-                throw new ErrorException(Yii::t('app', 'This service is already binded.'));
+                $attributes = AuthClientHelper::mapUserAttributesWithService($client);
+                if (isset($attributes['service']['service_id'])) {
+                    UserService::deleteAll(
+                        [
+                            'user_id' => $model->id,
+                            'service_type' => $client->className(),
+                            'service_id' => '' . $attributes['service']['service_id'],
+                        ]
+                    );
+                }
             }
         }
         TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
         Yii::$app->user->login($model, 86400);
-
         if ($model->username_is_temporary == 1 || empty($model->email)) {
             // show post-registration form
             $this->layout = $this->module->postRegistrationLayout;
             $model->setScenario('completeRegistration');
-
             echo $this->render('post-registration', [
                 'model' => $model,
             ]);
@@ -271,7 +253,6 @@ class UserController extends Controller
                     'success',
                     Yii::t('app', 'Check your email for further instructions.')
                 );
-
                 return $this->goHome();
             } else {
                 Yii::$app->getSession()->setFlash(
@@ -323,7 +304,6 @@ class UserController extends Controller
         /** @var \app\modules\user\models\User|app\properties\HasProperties $model */
         $model = User::findIdentity(Yii::$app->user->id);
         $model->scenario = 'updateProfile';
-
         $model->getPropertyGroups(false, false, true);
         $model->abstractModel->setAttributesValues(Yii::$app->request->post());
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->abstractModel->validate()) {
@@ -378,5 +358,4 @@ class UserController extends Controller
         }
         return $this->render('change-password', ['model' => $model]);
     }
-
 }

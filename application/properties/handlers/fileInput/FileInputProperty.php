@@ -5,6 +5,9 @@ namespace app\properties\handlers\fileInput;
 use Yii;
 use app\properties\AbstractPropertyEavModel;
 use yii\helpers\FileHelper;
+use yii\helpers\VarDumper;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 class FileInputProperty extends \app\properties\handlers\AbstractHandler
@@ -146,6 +149,10 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
         $files = UploadedFile::getInstancesByName($formProperties.'['.$property->key.']');
         foreach ($files as $file) {
             $fileName = $file->baseName . '.' . $file->extension;
+            $item = [
+                'originalFileName' => $fileName,
+                'fileName' => $fileName,
+            ];
             if (false === \Yii::$app->getModule('core')->overwriteUploadedFiles && is_file($this->uploadDir . DIRECTORY_SEPARATOR . $fileName)) {
                 $fileName = $file->baseName . substr(md5($fileName . microtime()), 0, 6) . '.' . $file->extension;
             }
@@ -154,7 +161,9 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
                 $modelEav->isNewRecord = true;
                 $modelEav->value = $fileName;
                 $modelEav->save();
+                $item['fileName'] = $fileName;
             }
+            $result[$item['originalFileName']] = $item;
         }
         AbstractPropertyEavModel::setTableName(null);
 
@@ -162,5 +171,24 @@ class FileInputProperty extends \app\properties\handlers\AbstractHandler
 
         return $result;
     }
+
+    public function actionDownloadFile($params = [])
+    {
+        $filePath = $this->uploadDir . DIRECTORY_SEPARATOR . Yii::$app->request->get('fileName', null);
+        if (!file_exists($filePath)) {
+            throw new NotFoundHttpException();
+        }
+        return Yii::$app->response->sendFile($filePath);
+    }
+
+    public function actionShowFile($params = [])
+    {
+        $filePath = $this->uploadDir . DIRECTORY_SEPARATOR . Yii::$app->request->get('fileName', null);
+        if (!file_exists($filePath)) {
+            throw new NotFoundHttpException();
+        }
+        Yii::$app->response->format = Response::FORMAT_RAW;
+        Yii::$app->response->headers->setDefault('Content-Type', FileHelper::getMimeTypeByExtension($filePath));
+        return file_get_contents($filePath);
+    }
 }
-?>

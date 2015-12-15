@@ -7,12 +7,29 @@
 
 use kartik\editable\Editable;
 use kartik\helpers\Html;
+use app\modules\shop\components\ProductEntity;
+use app\modules\shop\models\Product;
 
 ?>
 <?php foreach ($items as $item): ?>
-    <?php if (empty($item->product)) continue; ?>
+    <?php
+        if (false === $item->entity instanceof ProductEntity) {
+            continue ;
+        }
+        /** @var Product $product */
+        $product = $item->entity->model;
+        $_url = null === $product
+            ? null
+            : \yii\helpers\Url::toRoute(['/shop/backend-product/edit', 'id' => $product->id]);
+    ?>
     <tr>
-        <td><?=$item->entity->getName()?></td>
+        <td>
+        <?php if (null === $_url): ?>
+            <?=$item->entity->getName()?>
+        <?php else: ?>
+            <a href="<?= $_url; ?>" target="_blank"><?=$item->entity->getName()?></a>
+        <?php endif; ?>
+        </td>
         <td><?=$item->product->convertedPrice()?></td>
         <td>
             <?=

@@ -13,11 +13,15 @@ class AnalyticsHandler extends Object
     const CURRENCY_MAIN = -1;
     const CURRENCY_USER = -2;
 
+    /**
+     * @param ActionEvent $event
+     */
     static public function handleBeforeAction(ActionEvent $event)
     {
         /** @var SeoModule $seoModule */
         $seoModule = \Yii::$app->getModule('seo');
 
+        /** @TODO remove */
         if ('payment' === $event->action->controller->id && 'success' === $event->action->id) {
             \Yii::$app->getView()->on(
                 View::EVENT_END_BODY,
@@ -31,12 +35,15 @@ class AnalyticsHandler extends Object
             );
         }
 
-        if (1 === intval($seoModule->analytics['ecGoogle']['active'])) {
-            GoogleEcommerceHandler::installHandlers($event);
-        }
+        /** Only frontend */
+        if (true === $seoModule->isFrontend(\Yii::$app)) {
+            if (1 === intval($seoModule->analytics['ecGoogle']['active'])) {
+                GoogleEcommerceHandler::installHandlers($event);
+            }
 
-        if (1 === intval($seoModule->analytics['ecYandex']['active'])) {
-            YandexEcommerceHandler::installHandlers($event);
+            if (1 === intval($seoModule->analytics['ecYandex']['active'])) {
+                YandexEcommerceHandler::installHandlers($event);
+            }
         }
     }
 }

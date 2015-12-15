@@ -7,12 +7,13 @@ use app\modules\shop\models\OrderItem;
 class AddonEntity extends AbstractEntity
 {
     /**
-     * @param OrderItem $orderItem
+     * @inheritdoc
      */
-    public function __construct($orderItem)
+    public function init()
     {
-        parent::__construct($orderItem);
-        $this->model = $orderItem->addon;
+        parent::init();
+
+        $this->model = $this->orderItem->addon;
     }
 
     /**

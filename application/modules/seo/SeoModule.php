@@ -4,9 +4,11 @@ namespace app\modules\seo;
 use app\components\BaseModule;
 use app\modules\seo\handlers\AnalyticsHandler;
 use app\modules\seo\models\Counter;
+use app\modules\seo\models\Meta;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\web\Application;
+use yii\web\Controller;
 use yii\web\View;
 
 class SeoModule extends BaseModule implements BootstrapInterface
@@ -67,12 +69,14 @@ class SeoModule extends BaseModule implements BootstrapInterface
                 if ($app->getModule('seo')->redirectTrailingSlash == 1) {
                     self::redirectSlash();
                 }
+
                 $app->getView()->on(View::EVENT_END_BODY, [Counter::className(), 'renderCounters'], $this->include);
             }
         );
 
         // Analytics
         $app->on(Application::EVENT_BEFORE_ACTION, [AnalyticsHandler::className(), 'handleBeforeAction']);
+        $app->on(Application::EVENT_BEFORE_ACTION, [Meta::className(), 'registrationMeta']);
     }
 
     /**

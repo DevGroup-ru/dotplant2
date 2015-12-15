@@ -11,10 +11,10 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "devgroup/dotplant": "dev-master"
+        "devgroup/dotplant": "0.0.1"
     },
     "require-dev": {
-        "devgroup/dotplant-dev": "dev-master"
+        "devgroup/dotplant-dev": "0.0.1"
     },
     "scripts": {
         "post-install-cmd": [

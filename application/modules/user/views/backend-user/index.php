@@ -7,6 +7,7 @@
  */
 
 use app\backend\components\ActionColumn;
+use app\modules\user\models\User;
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
@@ -33,7 +34,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'email:email',
                 [
                     'attribute' => 'status',
-                    'filter' => \app\modules\user\models\User::getStatuses(),
+                    'filter' => User::getStatuses(),
+                    'value' => function ($data) {
+                        return isset(User::getStatuses()[$data->status])
+                            ? User::getStatuses()[$data->status]
+                            : $data->status;
+                    },
                 ],
                 'create_time:datetime',
                 [

@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?=
 Html::a(
     Icon::show('arrow-circle-left') . Yii::t('app', 'Back'),
-    Yii::$app->request->get('returnUrl', ['/backend/properties/group', 'property_group_id' => $model->property_group_id]),
+    Yii::$app->request->get('returnUrl', ['/backend/properties/group', 'id' => $model->property_group_id]),
     ['class' => 'btn btn-danger']
 )
 ?>

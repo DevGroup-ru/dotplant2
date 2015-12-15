@@ -2,6 +2,8 @@
 
 namespace app\modules\seo\models;
 
+use app\backend\BackendModule;
+use app\backend\components\BackendController;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\base\Event;
 use yii\caching\TagDependency;
@@ -59,8 +61,11 @@ class Counter extends \yii\db\ActiveRecord
 
     public static function renderCounters(Event $event)
     {
-        if (isset($event->sender->context->module)
-            && in_array($event->sender->context->module->id.'/'.$event->sender->context->id, $event->data)) {
+        if (
+            \Yii::$app->request->isAjax === false &&
+            \Yii::$app->controller->module instanceof BackendModule === false &&
+            \Yii::$app->controller instanceof BackendController === false
+        ) {
             $counter_str = '';
             /* @var $counters Counter[] */
             if (false === $counters = \Yii::$app->getCache()->get(\Yii::$app->getModule('seo')->cacheConfig['counterCache']['name'])) {
@@ -87,7 +92,8 @@ class Counter extends \yii\db\ActiveRecord
         }
     }
 
-    public function scenarios()
+    public
+    function scenarios()
     {
         return [
             'default' => ['id', 'name', 'description', 'code'],
@@ -100,8 +106,10 @@ class Counter extends \yii\db\ActiveRecord
      * @param $params
      * @return ActiveDataProvider
      */
-    public function search($params)
-    {
+    public
+    function search(
+        $params
+    ) {
         $this->load($params);
         $query = self::find();
         foreach ($this->attributes as $name => $value) {

@@ -27,7 +27,7 @@ use yii\helpers\Html;
     $tplFooter = <<< 'TPL'
     <div class="file-thumbnail-footer">
         <div style="margin:5px 0">
-            <input class="kv-input kv-new form-control input-sm" value="{caption}" placeholder="Введите описание..." />
+            <input class="kv-input kv-new form-control input-sm" type="hidden" value="{caption}" />
         </div>
         {actions}
     </div>
@@ -44,7 +44,20 @@ TPL;
         }
         $_preview = \yii\helpers\FileHelper::getMimeType(Yii::getAlias($additional['uploadDir']) . '/' . $file);
         $_preview =  false !== strpos(strval($_preview), 'image/')
-            ? Html::img($uploadDir.$file, ['class' => 'file-preview-image', 'alt' => $file, 'title' => $file])
+            ? Html::img(
+                [
+                    'property-handler',
+                    'handler_action' => 'show-file',
+                    'fileName' => $file,
+                    'property_id' => $property_id,
+                    'model_id' => $model->ownerModel->id
+                ],
+                [
+                    'class' => 'file-preview-image',
+                    'alt' => $file,
+                    'title' => $file
+                ]
+            )
             : \kartik\icons\Icon::show('file', ['style' => 'font-size: 42px']);
         $initialPreview[] = $_preview . Html::hiddenInput($model->formName().'['.$property_key.'][]', $file);
         $initialPreviewConfig[] = [
@@ -94,8 +107,12 @@ TPL;
             'pluginEvents' => [
                 'fileuploaded' => 'function(event, data, previewId, index) {
                     var name = data.files[index]["name"];
-                    var i = $(\'form div[title="\'+name+\'"] input[value="\'+name+\'"]\')[0];
-                    $(\'<input type="hidden" />\').attr("name", event.target.name).val(name).after(i);
+                    try {
+                        jQuery(".file-thumbnail-footer input[value=\"" + name + "\"]")
+                            .last()
+                            .attr("name", event.target.name)
+                            .val(data.response[name]["fileName"]);
+                    } catch ($e) {}
                 }',
 //                'fileloaded' => sprintf($_js, $model->formName().'['.$property_key.'][]'),
             ],

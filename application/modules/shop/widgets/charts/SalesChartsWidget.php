@@ -1,10 +1,11 @@
 <?php
-
 namespace app\modules\shop\widgets\charts;
 
 use app\modules\user\models\User;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Connection;
 use yii\helpers\Json;
 use app\modules\shop\models\Currency;
 use yii\base\Widget;
@@ -15,138 +16,242 @@ use app\modules\shop\widgets\charts\assets\SalesChartsAsset;
 
 class SalesChartsWidget extends Widget
 {
+    /**
+     * @property string $period
+     * @property string $viewFile
+     * @property string $statsDate
+     * @property string $userDate
+     * @property string $dateFormat
+     * @property Currency|string $currency Object or ISO-4217 code
+     * @property string|null $jsTooltip
+     */
     public $period = self::LAST_MONTH;
     public $viewFile = 'dashboard';
     public $statsDate = self::LAST_YEAR;
     public $userDate = self::LAST_MONTH;
     public $dateFormat = "%y-%0m-%0d";
-    public $currencyCode = 'GBP';
+    public $currency = null;
+    public $jsTooltip = null;
 
-    private $startDate;
-    private $periodTotalSold = 0;
+    protected $startDate;
 
     /** @var   ActiveRecord */
-    private static $ordersQuery;
-    /** @var  Currency */
-    private $currency;
+    static private $ordersQuery;
 
     const LAST_YEAR = 'year';
     const LAST_MONTH = 'month';
     const LAST_WEEK = 'week';
 
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
-        $this->currency = CurrencyHelper::findCurrencyByIso($this->currencyCode);
-        $this->startDate = self::getPeriodTs($this->period);
-        self::$ordersQuery = OrderTransaction::getDb()->cache(function ($db) {
-            return OrderTransaction::find()
-                ->select('UNIX_TIMESTAMP(`end_date`) as ts, status, end_date, total_sum, order_id')
-                ->where(['status' => 5])
-                ->asArray()
-                ->orderBy(['end_date' => SORT_ASC]);
-        });
+        parent::init();
         SalesChartsAsset::register($this->view);
-        return parent::init();
+
+        if (false === $this->currency instanceof Currency) {
+            $this->currency = CurrencyHelper::findCurrencyByIso($this->currency);
+        }
+
+        $this->startDate = $this->getPeriodTs($this->period);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
-        return $this->render(
+        $cacheKey = implode(':', [
+            $this->className(),
             $this->viewFile,
-            [
-                'salesChart' => $this->prepareSalesChart(),
-                'statistics' => $this->prepareStatistics(),
-                'userData' => $this->prepareUserData(),
-            ]
-        );
+        ]);
+
+        if (false !== $cache = Yii::$app->cache->get($cacheKey)) {
+            return $cache;
+        }
+
+        $salesChart = $this->prepareSalesChart();
+        $salesChart = [
+            'header' => $salesChart['header'],
+            'js' => 'window.DotplantSalesCharts = ' . Json::encode($salesChart) . ';',
+        ];
+        $result = $this->render($this->viewFile, [
+            'salesChart' => $salesChart,
+            'statistics' => $this->prepareStatistics(),
+            'userData' => $this->prepareUserData(),
+        ]);
+
+        return $result;
     }
 
-    private function prepareStatistics()
+    /**
+     * @return array Where key = Shop Title, value = array with Shop Statistics
+     */
+    protected function prepareStatistics()
     {
+        return [
+            Yii::t('app', 'Main shop') => $this->getOrderStatistics(Yii::$app->db, $this->currency),
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    protected function prepareSalesChart()
+    {
+        $tooltip = null !== $this->jsTooltip
+            ? $this->jsTooltip
+            : Yii::t('app', 'Your sales for <b>{date}</b> was <span>{price} {code}</span>', [
+                'date' => '%x',
+                'price' => '%y',
+                'code' => CurrencyHelper::getCurrencySymbol($this->currency),
+            ]);
+
+        $shops = $this->getOrderSalesChart(Yii::$app->db, $this->currency);
+        $periodTotalSold = $shops['totalSum'];
+        $shops = [['label' => Yii::t('app', 'Main shop'), 'data' => $shops['orders'],],];
+
+        $header = Yii::t('app', 'Last {period} sold for:', ['period' => Yii::t('app', $this->period)])
+            . ' ' . $this->currency->format($periodTotalSold);
+
+        $data = [
+            'tooltip' => $tooltip,
+            'header' => $header,
+            'dateFormat' => $this->dateFormat,
+            'shops' => $shops,
+        ];
+        return $data;
+    }
+
+    /**
+     * @return array
+     */
+    protected function prepareUserData()
+    {
+        return [
+            Yii::t('app', 'Main shop') => $this->getUserStatistics(Yii::$app->db),
+        ];
+    }
+
+    /**
+     * @param string $period
+     * @return int
+     */
+    protected function getPeriodTs($period)
+    {
+        return strtotime("-1 " . $period);
+    }
+
+    /**
+     * @param OrderTransaction $transaction
+     * @param Currency $currency
+     * @return float|int
+     */
+    protected function getTotalSumOrderTransaction(OrderTransaction $transaction, Currency $currency)
+    {
+        return CurrencyHelper::convertFromMainCurrency($transaction->total_sum, $currency);
+    }
+
+    /**
+     * @param Connection $db
+     * @param Currency $currency
+     * @return array
+     */
+    protected function getOrderStatistics(Connection $db, Currency $currency)
+    {
+        /** @var ActiveQuery $query */
+        $query = OrderTransaction::find()
+            ->where(['status' => OrderTransaction::TRANSACTION_SUCCESS])
+            ->orderBy(['end_date' => SORT_ASC]);
+
         $statistics = [];
-        $totalOrders = self::$ordersQuery->all();
-        $statistics = array_merge($statistics, $this->prepareOrders($totalOrders));
-        $ordersLastYear = self::$ordersQuery
-            ->andWhere(['>=', 'UNIX_TIMESTAMP(`end_date`)', self::getPeriodTs($this->statsDate)])
-            ->all();
-        $statistics = array_merge($statistics, $this->prepareOrders($ordersLastYear, $this->statsDate));
+        $_totalOrders = 0;
+        $_totalSales = 0;
+        foreach ($query->each(100, $db) as $transaction) {
+            $_totalOrders++;
+            $_totalSales += $this->getTotalSumOrderTransaction($transaction, $currency);
+        }
+        $statistics = array_merge(
+            $statistics,
+            [
+                Yii::t('app', 'Total orders') => $_totalOrders,
+                Yii::t('app', 'Total sales') => $currency->format($_totalSales),
+            ]
+        );
+
+        $query = $query->andWhere(['>=', 'UNIX_TIMESTAMP(`end_date`)', self::getPeriodTs($this->statsDate)]);
+        $_totalOrders = 0;
+        $_totalSales = 0;
+        foreach ($query->each(100, $db) as $transaction) {
+            $_totalOrders++;
+            $_totalSales += $this->getTotalSumOrderTransaction($transaction, $currency);
+        }
+        $statistics = array_merge(
+            $statistics,
+            [
+                Yii::t('app', 'Total orders') . ' ' . Yii::t('app', $this->statsDate) => $_totalOrders,
+                Yii::t('app', 'Total sales') . ' ' . Yii::t('app', $this->statsDate) => $currency->format($_totalSales),
+            ]
+        );
+
         return $statistics;
     }
 
-    private function prepareSalesChart()
+    /**
+     * @param Connection $db
+     * @param Currency $currency
+     * @return array
+     */
+    protected function getOrderSalesChart(Connection $db, Currency $currency)
     {
-        $jsOrders = [];
-        $orders = self::$ordersQuery->andWhere(['>=', 'UNIX_TIMESTAMP(`end_date`)', $this->startDate])->all();
-        foreach ($orders as $order) {
-            /** @var  $order OrderTransaction */
-            $convertedPrice = CurrencyHelper::convertCurrencies($order['total_sum'], CurrencyHelper::getMainCurrency(), $this->currency);
-            $jsOrders[] = [strtotime($order['end_date']) * 1000, $convertedPrice];
-            $this->periodTotalSold += $convertedPrice;
+        /** @var ActiveQuery $query */
+        $query = OrderTransaction::find()
+            ->where(['status' => OrderTransaction::TRANSACTION_SUCCESS])
+            ->andWhere(['>=', 'UNIX_TIMESTAMP(`end_date`)', $this->startDate])
+            ->orderBy(['end_date' => SORT_ASC]);
+
+        $orders = [];
+        $totalSum = 0;
+        /** @var OrderTransaction $transaction */
+        foreach ($query->each(100, $db) as $transaction) {
+            $t = $this->getTotalSumOrderTransaction($transaction, $currency);
+            $totalSum += $t;
+            $orders[] = [strtotime($transaction->end_date) * 1000, $t];
         }
-        $jsOrders = Json::encode($jsOrders);
-        $chartData = [
-            'salesHeader' => Yii::t('app', 'Last {period} sold for:', ['period' => Yii::t('app', $this->period)])
-                . ' ' . $this->currency->format($this->periodTotalSold),
-            'tooltipTpl' => Yii::t('app', 'Your sales for <b>{date}</b> was <span>{price} {code}</span>', [
-                'date' => '%x',
-                'price' => '%y',
-                'code' => $this->getSign(),
-            ]),
-            'dateFormat' => $this->dateFormat,
-            'jsOrders' => $jsOrders,
+
+        return [
+            'totalSum' => $totalSum,
+            'orders' => $orders,
         ];
-        return $chartData;
     }
 
-    private function prepareUserData()
+    /**
+     * @param Connection $db
+     * @return array
+     */
+    protected function getUserStatistics(Connection $db)
     {
-        $usersIds = User::find()->select('id')->column();
-        $activeUsers = Order::getDb()->cache(function ($db) use ($usersIds){
-           return Order::find()
-               ->select('user_id')
-               ->innerJoin(
-                   OrderTransaction::tableName(),
-                   Order::tableName() . '.id = ' . OrderTransaction::tableName() . '.order_id'
-               )
-               ->where([
-                   'status' => 5,
-                   'user_id' => $usersIds
-               ])
-               ->count();
-        });
-        $lastRegistered = User::getDb()->cache(function ($db) {
-           return User::find()
-               ->where(['>=', 'create_time', $this->getPeriodTs($this->userDate)])
-               ->count();
-        });
+        $usersIds = User::find()->select('id')->column($db);
+        $activeUsers = Order::find()
+            ->select('user_id')
+            ->innerJoin(
+                OrderTransaction::tableName(),
+                Order::tableName() . '.id = ' . OrderTransaction::tableName() . '.order_id'
+            )
+            ->where([
+                'status' => 5,
+                'user_id' => $usersIds
+            ])
+            ->count('*', $db);
+        $lastRegistered = User::find()
+            ->where(['>=', 'create_time', $this->getPeriodTs($this->userDate)])
+            ->count('*', $db);
         $userData = [
             Yii::t('app', 'Registered customers') => count($usersIds),
             Yii::t('app', 'Active registered customers') => $activeUsers,
             Yii::t('app', 'New registered customers for last {period}', ['period' => Yii::t('app', $this->userDate)]) => $lastRegistered,
         ];
         return $userData;
-    }
-
-    private function getSign()
-    {
-        return preg_replace('%[\d\s,]%i', '', $this->currency->format(0));
-    }
-
-    private static function getPeriodTs($period)
-    {
-        return strtotime("-1 " . $period);
-    }
-
-    private function prepareOrders($orders, $period = '')
-    {
-        $output = [];
-        if (false === empty($orders)) {
-            $ordersKey = empty($period) ? Yii::t('app', 'Total orders') : Yii::t('app', 'Total orders this') . ' ' . Yii::t('app', $period);
-            $salesKey = empty($period) ? Yii::t('app', 'Total sales') : Yii::t('app', 'Total sales this') . ' ' . Yii::t('app', $period);
-            $output[$ordersKey] = count($orders);
-            $prices = array_column($orders, 'total_sum');
-            $output[$salesKey] = $this->currency->format(array_sum($prices));
-        }
-        return $output;
     }
 }

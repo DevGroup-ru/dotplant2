@@ -87,7 +87,7 @@ class User extends ActiveRecord implements IdentityInterface
 
             'registerService' => ['email', 'first_name', 'last_name'],
             'updateProfile' => ['email', 'first_name', 'last_name'],
-            'completeRegistration' => ['first_name', 'last_name', 'username'],
+            'completeRegistration' => ['first_name', 'last_name', 'username', 'email'],
             'changePassword' => ['password', 'newPassword', 'confirmPassword'],
             // admin
             'search' => ['id', 'username', 'email', 'status', 'create_time', 'first_name', 'last_name'],

@@ -9,12 +9,14 @@ use yii\helpers\Url;
 $this->title = Yii::t('app', 'Search') . ': ' . $model->q;
 ?>
     <h1 style="font-size: 24px; font-weight: normal;"><?=Yii::t('app', 'Search results')?></h1>
+    
+    <h3 style="font-size: 16px; font-weight: bold;"><?=Yii::t('app', 'Pages')?>:</h3>
     <div id="pages-list">
         <div style="text-align: center;">
 
         </div>
     </div>
-    <h3 style="font-size: 16px; font-weight: bold;"><?=Yii::t('app', 'Products and services')?></h3>
+    <h3 style="font-size: 16px; font-weight: bold;"><?=Yii::t('app', 'Products and services')?>:</h3>
     <div id="products-list">
         <div style="text-align: center;">
 
@@ -24,7 +26,8 @@ $this->title = Yii::t('app', 'Search') . ': ' . $model->q;
 $pageUrl = Json::encode(Url::to(['/page/page/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]));
 $productUrl = Json::encode(Url::to(['/shop/product/search', \yii\helpers\Html::getInputName($model, 'q') => $model->q]));
 $js = <<<JS
-/*global $:false, bootbox, console, alert, document */
+(function($) {
+    /*global $:false, bootbox, console, alert, document */
     "use strict";
 
 
@@ -53,23 +56,26 @@ $js = <<<JS
             return false;
         });
     });
+})(jQuery);
 JS;
 $this->registerJs($js);
 
 
 $js = <<<JS
-$(".product-item .product-image,.product-item .product-announce").click(function(){
-    var that = $(this),
-        parent = null;
-    if (that.hasClass('product-image')) {
-        parent = that.parent();
-    } else {
-        parent = that.parent().parent();
-    }
-
-    document.location = parent.find('a.product-name').attr('href');
-    return false;
-})
+(function($) {
+    $(".product-item .product-image,.product-item .product-announce").click(function(){
+        var that = $(this),
+            parent = null;
+        if (that.hasClass('product-image')) {
+            parent = that.parent();
+        } else {
+            parent = that.parent().parent();
+        }
+    
+        document.location = parent.find('a.product-name').attr('href');
+        return false;
+    });
+})(jQuery);
 JS;
 $this->registerJs($js);
 
