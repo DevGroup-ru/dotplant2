@@ -9,12 +9,16 @@
 
 use app\backend\components\ActionColumn;
 use app\backend\components\Helper;
+use app\modules\core\models\ContentBlockGroup;
 use devgroup\JsTreeWidget\ContextMenuHelper;
 use devgroup\JsTreeWidget\TreeWidget;
 use kartik\dynagrid\DynaGrid;
 use kartik\grid\BooleanColumn;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
+use yii\bootstrap\ActiveForm;
+use yii\bootstrap\Modal;
+use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Content Blocks');
 $this->params['breadcrumbs'][] = $this->title;
@@ -66,8 +70,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'delete' => [
                     'label' => 'Delete',
                     'icon' => 'fa fa-trash-o',
-                    'action' => ContextMenuHelper::actionUrl(
-                        ['/core/backend-chunk-group/delete', 'returnUrl' => Helper::getReturnUrl()]
+                    'action' => new \yii\web\JsExpression(
+                        "function(node) {
+                                jQuery('#confirm_delete')
+                                    .modal('toggle');
+
+                                jQuery('#confirm_delete form').attr('action', '/core/backend-chunk-group/delete?id=' + jQuery(node.reference[0]).data('id'))
+                                return true;
+                            }"
                     ),
                 ],
             ],
@@ -160,3 +170,29 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
     </div>
 </div>
+
+<?php Modal::begin([
+    'id' => 'confirm_delete',
+    'header' => Yii::t('app', 'Confirm delete item')
+]); ?>
+
+<?php $form = ActiveForm::begin([
+    'options' => [
+        'action' => Url::to(['/core/backend-chunk-group/delete', 'returnUrl' => Helper::getReturnUrl()])
+    ]
+]); ?>
+<?php
+$contentBlockModel = new ContentBlockGroup();
+?>
+
+<?= $form->field($contentBlockModel, 'id')->hiddenInput()->label(false) ?>
+<?= $form->field($contentBlockModel, 'deleteMethod')->dropDownList([
+    ContentBlockGroup::DELETE_METHOD_PARENT_ROOT => Yii::t('app', 'Remove child chunks to parent group'),
+    ContentBlockGroup::DELETE_METHOD_ALL => Yii::t('app', 'Delete all child chunks'),
+]) ?>
+
+<?= Html::submitButton(Yii::t('app', 'Delete'), ['class' => ['btn btn-danger']]); ?>
+
+
+<?php ActiveForm::end(); ?>
+<?php Modal::end(); ?>

@@ -175,7 +175,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'after' => $this->blocks['add-button'],
 
                     ],
-                    
                 ]
             ]);
         ?>

@@ -19,6 +19,11 @@ class ContentBlockGroup extends \yii\db\ActiveRecord
 {
 
     const DEFAULT_PARENT_ID = 1;
+    const DELETE_METHOD_ALL = 1;
+    const DELETE_METHOD_PARENT_ROOT = 2;
+
+    public $deleteMethod = null;
+
 
     /**
      * @inheritdoc
@@ -46,11 +51,12 @@ class ContentBlockGroup extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['parent_id', 'sort_order'], 'integer'],
+            [['parent_id', 'sort_order', 'deleteMethod'], 'integer'],
             [['name', 'sort_order', 'parent_id'], 'required'],
             [['name'], 'string', 'max' => 250],
             [['sort_order'], 'default', 'value' => 0],
-            [['parent_id'], 'default', 'value' => self::DEFAULT_PARENT_ID]
+            [['parent_id'], 'default', 'value' => self::DEFAULT_PARENT_ID],
+            [['deleteMethod'], 'in', 'range' => [self::DELETE_METHOD_ALL, self::DELETE_METHOD_PARENT_ROOT]]
         ];
     }
 
@@ -64,6 +70,7 @@ class ContentBlockGroup extends \yii\db\ActiveRecord
             'parent_id' => Yii::t('app', 'Parent ID'),
             'name' => Yii::t('app', 'Name'),
             'sort_order' => Yii::t('app', 'Sort Order'),
+            'deleteMethod' => Yii::t('app', 'Delete Method'),
         ];
     }
 
@@ -120,9 +127,14 @@ class ContentBlockGroup extends \yii\db\ActiveRecord
         foreach ($this->child as $model) {
             $model->delete();
         }
+
         foreach ($this->contentBlocks as $block) {
-            $block->group_id = self::DEFAULT_PARENT_ID;
-            $block->save();
+            if ($this->deleteMethod == self::DELETE_METHOD_ALL) {
+                $block->delete();
+            } else {
+                $block->group_id = self::DEFAULT_PARENT_ID;
+                $block->save();
+            }
         }
         return parent::afterDelete();
     }

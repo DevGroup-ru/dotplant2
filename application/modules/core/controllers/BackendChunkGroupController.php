@@ -20,6 +20,12 @@ class BackendChunkGroupController extends BackendController
     public function behaviors()
     {
         return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
         ];
     }
 
@@ -106,11 +112,13 @@ class BackendChunkGroupController extends BackendController
      */
     public function actionDelete($id, $returnUrl = null)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->load(Yii::$app->request->post());
+        $model->delete();
         if ($returnUrl) {
             return $this->redirect($returnUrl);
         }
-        return $this->redirect(['index']);
+        return $this->redirect(['/core/backend-chunk/index']);
     }
 
     /**
