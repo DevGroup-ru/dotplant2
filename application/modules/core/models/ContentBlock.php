@@ -59,6 +59,7 @@ class ContentBlock extends \yii\db\ActiveRecord
             'key' => Yii::t('app', 'Key'),
             'value' => Yii::t('app', 'Value'),
             'preload' => Yii::t('app', 'Preload'),
+            'group_id' => Yii::t('app', 'Group Id'),
             'newGroup' => Yii::t('app', 'New Group'),
         ];
     }

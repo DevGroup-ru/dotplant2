@@ -187,7 +187,7 @@ $contentBlockModel = new ContentBlockGroup();
 
 <?= $form->field($contentBlockModel, 'id')->hiddenInput()->label(false) ?>
 <?= $form->field($contentBlockModel, 'deleteMethod')->dropDownList([
-    ContentBlockGroup::DELETE_METHOD_PARENT_ROOT => Yii::t('app', 'Remove child chunks to parent group'),
+    ContentBlockGroup::DELETE_METHOD_PARENT_ROOT => Yii::t('app', 'Move child chunks to root group'),
     ContentBlockGroup::DELETE_METHOD_ALL => Yii::t('app', 'Delete all child chunks'),
 ]) ?>
 
