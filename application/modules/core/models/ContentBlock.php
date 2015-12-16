@@ -15,9 +15,16 @@ use Yii;
  * @property string $key
  * @property string $value
  * @property integer $preload
+ * @property integer $group_id
  */
 class ContentBlock extends \yii\db\ActiveRecord
 {
+
+    /**
+     * @var null|string
+     */
+    public $newGroup = null;
+
     /**
      * @inheritdoc
      */
@@ -33,9 +40,11 @@ class ContentBlock extends \yii\db\ActiveRecord
     {
         return [
             [['value'], 'string'],
-            [['preload'], 'integer'],
+            [['preload', 'group_id'], 'integer'],
             [['key'], 'unique'],
-            [['name', 'key'], 'string', 'max' => 255]
+            [['group_id'], 'default', 'value' => 1],
+            [['name', 'key'], 'string', 'max' => 255],
+            [['newGroup'], 'safe']
         ];
     }
 
@@ -50,6 +59,7 @@ class ContentBlock extends \yii\db\ActiveRecord
             'key' => Yii::t('app', 'Key'),
             'value' => Yii::t('app', 'Value'),
             'preload' => Yii::t('app', 'Preload'),
+            'newGroup' => Yii::t('app', 'New Group'),
         ];
     }
 
@@ -65,10 +75,19 @@ class ContentBlock extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @param $params
+     * @return ActiveDataProvider
+     */
     public function search($params)
     {
         /* @var $query \yii\db\ActiveQuery */
         $query = self::find();
+
+        if ($this->group_id) {
+            $query->andWhere(['group_id' => $this->group_id]);
+        }
+
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
@@ -98,5 +117,14 @@ class ContentBlock extends \yii\db\ActiveRecord
     public static function getChunk($key, $valueOnly = true, $defaultValue = null)
     {
         return ContentBlockHelper::getChunk($key);
+    }
+
+
+    /**
+     * @return ContentBlockGroup[]
+     */
+    public function getGroup()
+    {
+        return $this->hasOne(ContentBlockGroup::className(), ['id' => 'group_id']);
     }
 }
