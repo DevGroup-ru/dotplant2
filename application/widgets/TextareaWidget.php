@@ -5,15 +5,26 @@ namespace app\widgets;
 use yii\bootstrap\Html;
 use yii\bootstrap\Widget;
 
-class TextareaWidget extends Widget {
+class TextareaWidget extends Widget
+{
 
     public $model;
     public $attribute;
-    public $width = 600;
-    public $height = 400;
+    public $defaultHtmlOptions = [
+        'style' => [
+            'width: 600px; height: 400px'
+        ]
+    ];
+    public $htmlOptions;
 
-    public function run() {
+    public function run()
+    {
         parent::run();
-        return Html::activeTextarea($this->model, $this->attribute, ["style" => "display: block; width: {$this->width}px; height: {$this->height}px"]);
+        $this->htmlOptions = array_merge($this->defaultHtmlOptions, $this->htmlOptions);
+        return Html::activeTextarea(
+            $this->model,
+            $this->attribute,
+            $this->htmlOptions
+        );
     }
 }

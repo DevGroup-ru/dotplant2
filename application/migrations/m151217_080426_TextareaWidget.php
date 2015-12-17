@@ -9,10 +9,12 @@ class m151217_080426_TextareaWidget extends Migration
     {
         $wysiwyg = new Wysiwyg();
         $wysiwyg->class_name = 'app\widgets\TextareaWidget';
-        $wysiwyg->configuration_model = '';
-        $wysiwyg->configuration_view = '';
         $wysiwyg->name = 'Textarea';
-        $wysiwyg->params = json_encode(['width' => 600, 'height' => 400]);
+        $wysiwyg->params = json_encode([
+            'htmlOptions' => [
+                'style' => 'width: 821px; height: 400px'
+            ]
+        ]);
         $wysiwyg->save();
     }
 
