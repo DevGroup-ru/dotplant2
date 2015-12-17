@@ -79,8 +79,7 @@ class BackendStageController extends \app\backend\components\BackendController
         }
 
         $events = array_reduce(Events::find()->all(),
-            function ($result, $item)
-            {
+            function ($result, $item) {
                 /** @var Events $item */
                 $result[$item->event_name] = $item->event_name;
                 return $result;
@@ -127,15 +126,13 @@ class BackendStageController extends \app\backend\components\BackendController
         }
 
         $stages = array_reduce(OrderStage::find()->all(),
-            function ($result, $item)
-            {
+            function ($result, $item) {
                 $result[$item->id] = $item->name;
                 return $result;
             }, []);
 
         $events = array_reduce(Events::find()->all(),
-            function ($result, $item)
-            {
+            function ($result, $item) {
                 /** @var Events $item */
                 $result[$item->event_name] = $item->event_name;
                 return $result;
@@ -160,7 +157,8 @@ class BackendStageController extends \app\backend\components\BackendController
         $model = $this->loadModel(OrderStageLeaf::className(), $id);
         $model->delete();
 
-        Yii::$app->session->setFlash('info', Yii::t('app', 'Leaf successfully deleted. Check your stages and leafs for correct workflow!'));
+        Yii::$app->session->setFlash('info',
+            Yii::t('app', 'Leaf successfully deleted. Check your stages and leafs for correct workflow!'));
 
         return $this->redirect('leaf-index');
     }
@@ -177,14 +175,39 @@ class BackendStageController extends \app\backend\components\BackendController
         $model = $this->loadModel(OrderStage::className(), $id);
         $model->delete();
 
-        Yii::$app->session->setFlash('info', Yii::t('app', 'Stage successfully deleted. Check your stages and leafs for correct workflow!'));
+        Yii::$app->session->setFlash('info',
+            Yii::t('app', 'Stage successfully deleted. Check your stages and leafs for correct workflow!'));
 
         return $this->redirect('stage-index');
     }
 
     public function actionRenderGraph()
     {
-        return $this->render('render-graph');
+
+        $stages = array_reduce(
+            OrderStage::find()->asArray()->all(),
+            function ($arr, $i) {
+                $parent = OrderStageLeaf::find()
+                    ->select(['stage_from_id'])
+                    ->where(['stage_to_id' => $i['id']])
+                    ->scalar();
+
+                $arr[] = [
+                    [
+                        'v' => $i['id'],
+                        'f' => $i['name_frontend']
+                    ],
+                    $parent ? $parent: '',
+                    $i['event_name']
+                ];
+
+                return $arr;
+            }
+        );
+
+
+        return $this->render('render-graph', ['stages'=>$stages]);
     }
 }
+
 ?>
