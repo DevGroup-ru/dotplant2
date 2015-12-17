@@ -52,18 +52,14 @@ class Submission extends \yii\db\ActiveRecord
         $params = array_reduce(
             array_keys($this->abstractModel->getAttributes()),
             function ($arr, $i) {
-                $arr[$i] = $this->property($i);
+                $arr['{'.$i.'}'] = $this->property($i);
                 return $arr;
             },
             []
         );
-        $params['id'] = $this->id;
-        $params['form_name'] = $this->form->name;
-        $p = [];
-        foreach ((array)$params as $name => $value) {
-            $p['{' . $name . '}'] = $value;
-        }
-        return ($p === []) ? $message : strtr($message, $p);
+        $params['{id}'] = $this->id;
+        $params['{form_name}'] = $this->form->name;
+        return strtr($message, $params);
 
     }
 
