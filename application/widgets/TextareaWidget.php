@@ -11,7 +11,7 @@ namespace app\widgets;
 use yii\bootstrap\Html;
 use yii\bootstrap\Widget;
 
-class TextareaWidget extends \yii\bootstrap\Widget {
+class TextareaWidget extends Widget {
 
     public $model;
     public $attribute;

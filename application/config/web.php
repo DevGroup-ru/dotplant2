@@ -11,7 +11,6 @@ $config = [
         'seo',
         'backend',
         'app\components\UserPreferencesBootstrap',
-        'site',
         'shop',
         'DefaultTheme',
     ],
@@ -41,9 +40,6 @@ $config = [
         ],
         'seo' => [
             'class' => 'app\modules\seo\SeoModule',
-        ],
-        'site' => [
-            'class' => 'app\modules\ThemeModule',
         ],
         'review' => [
             'class' => 'app\modules\review\ReviewModule',
