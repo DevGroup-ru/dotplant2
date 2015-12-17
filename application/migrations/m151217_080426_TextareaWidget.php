@@ -12,7 +12,8 @@ class m151217_080426_TextareaWidget extends Migration
         $wysiwyg->name = 'Textarea';
         $wysiwyg->params = json_encode([
             'htmlOptions' => [
-                'style' => 'width: 821px; height: 400px'
+                'class' => 'form-control',
+                'style' => 'height: 200px;'
             ]
         ]);
         $wysiwyg->save();
