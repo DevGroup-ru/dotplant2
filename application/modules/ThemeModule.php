@@ -5,7 +5,6 @@ namespace app\modules;
 use Yii;
 use yii\base\Module;
 use yii\base\BootstrapInterface;
-use yii\base\Application;
 
 class ThemeModule extends Module implements BootstrapInterface
 {
