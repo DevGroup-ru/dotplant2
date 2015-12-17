@@ -39,15 +39,14 @@ class ObjectRule implements UrlRuleInterface
         if (isset($params['model'])) {
             /** @var ActiveRecord $handler_model */
             $handler_model = $params['model'];
-
-            $cacheKey = 'ObjectRule:'.$handler_model->tableName().':' . $handler_model->id;
+            unset($params['model']);
+            $cacheKey = 'ObjectRule:'.$handler_model->tableName().':' . $handler_model->id . json_encode($params);
             $cached = Yii::$app->cache->get($cacheKey);
             if ($cached !== false) {
                 return $cached;
             }
 
             $handler_object = Object::getForClass(get_class($handler_model));
-            unset($params['model']);
         }
 
         $cacheTags = [];
