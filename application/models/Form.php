@@ -20,6 +20,7 @@ use devgroup\TagDependencyHelper\ActiveRecordHelper;
  * @property string $email_notification_view
  * @property string $form_open_analytics_action_id
  * @property string $form_submit_analytics_action_id
+ * @property string $subject_template
  * @property AbstractModel $abstractModel
  */
 class Form extends \yii\db\ActiveRecord
@@ -52,9 +53,16 @@ class Form extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'email_notification_addresses'], 'required'],
+            [['name', 'email_notification_addresses', 'subject_template'], 'required'],
             [
-                ['name', 'form_view', 'form_success_view', 'email_notification_addresses', 'email_notification_view'],
+                [
+                    'name',
+                    'form_view',
+                    'form_success_view',
+                    'email_notification_addresses',
+                    'email_notification_view',
+                    'subject_template'
+                ],
                 'string'
             ],
             [['form_open_analytics_action_id', 'form_submit_analytics_action_id'], 'integer']
@@ -76,6 +84,15 @@ class Form extends \yii\db\ActiveRecord
             'form_open_analytics_action_id' => Yii::t('app', 'Form Open Analytics Action ID'),
             'form_submit_analytics_action_id' => Yii::t('app', 'Form Submit Analytics Action ID'),
             'properties' => Yii::t('app', 'Properties'),
+            'subject_template' => Yii::t('app', 'Subject Template'),
+        ];
+    }
+
+    public function attributeHints()
+    {
+        return [
+            'subject_template' => Yii::t('app',
+                'You can use properties {keys}, submission id as {id}, form name as {form_name}'),
         ];
     }
 

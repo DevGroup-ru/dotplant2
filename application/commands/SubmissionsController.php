@@ -7,64 +7,28 @@ use app\models\ObjectStaticValues;
 use app\models\Submission;
 use app\modules\review\models\Review;
 use Yii;
+use yii\base\Event;
 use yii\console\Controller;
 
 class SubmissionsController extends Controller
 {
+
+    const EVENT_SEND_SUBMISSIONS = 'event_send_submission';
+
     /**
      * Send submissions method
      * @param Submission[] $submissions
-     * @param int $errorStatus
      */
-    private function sendSubmissions($submissions, $errorStatus = Submission::STATUS_ERROR)
+    private function sendSubmissions($submissions)
     {
         foreach ($submissions as $submission) {
             echo "Sending {$submission->id}\n";
             if ($submission->form === null) {
                 $submission->processed = Submission::STATUS_FATAL_ERROR;
             } else {
-                $submission->sending_status = Submission::STATUS_SUCCESS;
-                if (!empty($submission->form->email_notification_addresses)) {
-                    try {
-                        $emailView = !empty($submission->form->email_notification_view)
-                            ? $submission->form->email_notification_view
-                            : '@app/widgets/form/views/email-template.php';
-
-                        /** @var \app\modules\core\components\MailComponent $mail */
-                        $mail = Yii::$app->mail;
-                        $msg = $mail->compose(
-                            $emailView,
-                            [
-                                'form' => $submission->form,
-                                'submission' => $submission,
-                            ]
-                        )->setTo(explode(',', $submission->form->email_notification_addresses))->setFrom(
-                            Yii::$app->mail->getMailFrom()
-                        )->setSubject($submission->form->name . ' #' . $submission->id);
-
-                        if (Yii::$app->getModule('core')->attachFilePropertiesToFormEmail === true) {
-                            $properties = $submission->abstractModel->getPropertiesModels();
-                            $basePath = Yii::getAlias(Yii::$app->getModule('core')->visitorsFileUploadPath) . '/';
-                            foreach ($properties as $property) {
-                                /** @var \app\models\Property $property */
-                                if (stripos($property->getHandler()->handler_class_name, 'FileInput') !== false) {
-                                    $filename = $basePath . $submission->property($property->key);
-                                    $msg = $msg->attach($filename);
-                                }
-                            }
-                        }
-
-                        $msg->send();
-
-                    } catch (\Exception $e) {
-                        echo "Exception\n";
-                        $submission->sending_status = $errorStatus;
-                        $submission->internal_comment = $e->getMessage() ."\n\n".$e->getFile().":".$e->getLine();
-                        echo $e->getMessage() ."\n\n".$e->getFile().":".$e->getLine();
-                    }
-                } else {
-                    echo "No email\n";
-                }
+                $event = new Event();
+                $event->sender = $submission;
+                $this->trigger('event_send_submission', $event);
             }
             $submission->save(true, ['sending_status']);
         }

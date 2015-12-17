@@ -14,6 +14,9 @@ if (file_exists(__DIR__ . '/aliases.php')) {
 
 return [
     'timeZone' => 'Europe/Moscow',
+    'bootstrap' => [
+        'mail'
+    ],
     'modules' => [
         'data' => [
             'class' => 'app\data\Module',

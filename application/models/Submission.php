@@ -6,6 +6,7 @@ use app\properties\AbstractModel;
 use app\properties\HasProperties;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "submission".
@@ -40,6 +41,40 @@ class Submission extends \yii\db\ActiveRecord
     const STATUS_HOPELESS_ERROR = -2;
     const STATUS_FATAL_ERROR = -3;
 
+    protected $subject = null;
+
+    /**
+     * @return null
+     */
+    public function getSubject()
+    {
+        $message = $this->form->subject_template;
+        $params = array_reduce(
+            array_keys($this->abstractModel->getAttributes()),
+            function ($arr, $i) {
+                $arr[$i] = $this->property($i);
+                return $arr;
+            },
+            []
+        );
+        $params['id'] = $this->id;
+        $params['form_name'] = $this->form->name;
+        $p = [];
+        foreach ((array)$params as $name => $value) {
+            $p['{' . $name . '}'] = $value;
+        }
+        return ($p === []) ? $message : strtr($message, $p);
+
+    }
+
+    /**
+     * @param null $subject
+     */
+    public function setSubject($subject)
+    {
+        $this->subject = $subject;
+    }
+
     /**
      * @inheritdoc
      */
@@ -55,7 +90,10 @@ class Submission extends \yii\db\ActiveRecord
     {
         return [
             [['form_id'], 'required'],
-            [['form_id', 'processed_by_user_id', 'processed', 'form_fill_time', 'is_deleted', 'sending_status'], 'integer'],
+            [
+                ['form_id', 'processed_by_user_id', 'processed', 'form_fill_time', 'is_deleted', 'sending_status'],
+                'integer'
+            ],
             [['date_received', 'date_viewed', 'date_processed', 'visit_start_date'], 'safe'],
             [
                 [

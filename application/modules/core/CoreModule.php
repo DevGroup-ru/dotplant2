@@ -4,9 +4,7 @@ namespace app\modules\core;
 
 use app;
 use app\components\BaseModule;
-use app\components\Controller;
 use app\modules\core\models\ContentDecorator;
-
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;

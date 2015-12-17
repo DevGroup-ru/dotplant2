@@ -2,12 +2,34 @@
 
 namespace app\modules\core\components;
 
-use app\modules\core\CoreModule;
+use app\commands\SubmissionsController;
+use app\modules\core\components\mail\SendMailHandler;
+use yii\base\BootstrapInterface;
+use yii\base\Event;
 use yii\swiftmailer\Mailer;
 
-class MailComponent extends Mailer
+class MailComponent extends Mailer implements BootstrapInterface
 {
     private $componentConfig = [];
+
+    /**
+     * Bootstrap method to be called during application bootstrap stage.
+     * @param Application $app the application currently running
+     */
+    public function bootstrap($app)
+    {
+        if ($app instanceof \yii\console\Application === true) {
+            Event::on(
+                SubmissionsController::className(),
+                SubmissionsController::EVENT_SEND_SUBMISSIONS,
+                [
+                    SendMailHandler::class,
+                    'submissionsSendMail'
+                ]
+            );
+        }
+    }
+
 
     /**
      * @inheritdoc
