@@ -32,6 +32,25 @@ class PropertyPart extends UrlPart
     }
 
     /**
+     * Helper method to properly populate $this->params
+     *
+     * @param string $paramName
+     * @param null $paramValue
+     */
+    private function addParam($paramName = "", $paramValue = null)
+    {
+        if (empty($paramName)) {
+            throw new \InvalidArgumentException("Parameter name must be present");
+        }
+
+        if (isset($this->parameters[$paramName])) {
+            $this->parameters[$paramName][] = $paramValue;
+        } else {
+            $this->parameters[$paramName] = [$paramValue];
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public function getNextPart($full_url, $next_part, &$previous_parts)
@@ -60,10 +79,10 @@ class PropertyPart extends UrlPart
                         ];
                     }
                     if (!empty($value['title_append'])) {
-                        if (isset($this->parameters['title_append'])) {
-                            $this->parameters['title_append'][] = $value['title_append'];
+                        if ($value["title_prepend"] == 1) {
+                            $this->addParam("title_prepend", $value["title_append"]);
                         } else {
-                            $this->parameters['title_append'] = [$value['title_append']];
+                            $this->addParam("title_append", $value["title_append"]);
                         }
                     }
                     $cacheTags[] = ActiveRecordHelper::getObjectTag(PropertyStaticValues::className(), $value['id']);

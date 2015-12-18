@@ -73,6 +73,7 @@ class PropertyStaticValues extends ActiveRecord
         return [
             [['property_id', 'name', 'value'], 'required'],
             [['property_id', 'sort_order', 'dont_filter'], 'integer'],
+            [['title_prepend'], 'boolean'],
             [['name', 'value', 'slug', 'title_append'], 'string']
         ];
     }
@@ -90,6 +91,7 @@ class PropertyStaticValues extends ActiveRecord
             'slug' => Yii::t('app', 'Slug'),
             'sort_order' => Yii::t('app', 'Sort Order'),
             'title_append' => Yii::t('app', 'Title append'),
+            'title_prepend' => Yii::t('app', 'Prepend title?'),
             'dont_filter' => Yii::t('app', 'Don\'t filter (for FilterWidget only)'),
         ];
     }
@@ -164,6 +166,8 @@ class PropertyStaticValues extends ActiveRecord
      * Внимание! Это массивы, а не объекты!
      * Это сделано для экономии памяти.
      * Используется identity_map
+     *
+     * @return array
      */
     public static function getValuesForPropertyId($property_id)
     {
