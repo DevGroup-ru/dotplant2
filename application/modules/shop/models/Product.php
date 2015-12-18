@@ -9,6 +9,7 @@ use app\modules\image\models\Image;
 use app\models\Object;
 use app\modules\data\components\ImportableInterface;
 use app\modules\data\components\ExportableInterface;
+use app\modules\shop\traits\HasAddonTrait;
 use app\modules\shop\ShopModule;
 use app\properties\HasProperties;
 use app\traits\GetImages;
@@ -59,6 +60,8 @@ use yii\data\Pagination;
 class Product extends ActiveRecord implements ImportableInterface, ExportableInterface, \JsonSerializable
 {
     use GetImages;
+    use HasAddonTrait;
+
     private static $identity_map = [];
     private static $slug_to_id = [];
     private $category_ids = null;

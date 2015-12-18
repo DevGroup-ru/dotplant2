@@ -13,6 +13,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $mainPage;
     public $redirectWWW = SeoModule::NO_REDIRECT;
     public $redirectTrailingSlash = false;
+    public $analytics;
 
     public function attributeLabels()
     {
@@ -28,7 +29,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     {
         return [
             //            [['cacheConfig'], 'each', 'rule' => ['each', 'rule' => ['string']]],
-            [['mainPage', 'include', 'cacheConfig', 'redirectWWW', 'redirectTrailingSlash'], 'safe'],
+            [['mainPage', 'include', 'cacheConfig', 'redirectWWW', 'redirectTrailingSlash', 'analytics'], 'safe'],
         ];
     }
 

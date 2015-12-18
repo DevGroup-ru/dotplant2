@@ -18,6 +18,7 @@ use yii\helpers\Json;
  * @property string $class_name
  * @property string $params
  * @property string $configuration_model
+ * @property string $configuration_view
  */
 class Wysiwyg extends \yii\db\ActiveRecord
 {

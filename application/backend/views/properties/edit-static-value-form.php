@@ -22,4 +22,10 @@
         "#product-breadcrumbs_label",
     ]
 ])?>
+
+<?= $form->field(
+    $model,
+    "title_prepend"
+)->checkbox() ?>
+
 <?= $form->field($model, 'dont_filter')->checkbox() ?>

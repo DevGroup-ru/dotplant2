@@ -425,6 +425,9 @@ class Order extends \yii\db\ActiveRecord
         return self::$order;
     }
 
+    /**
+     *
+     */
     public static function clearStaticOrder()
     {
         self::$order = null;

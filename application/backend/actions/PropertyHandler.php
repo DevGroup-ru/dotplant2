@@ -5,8 +5,8 @@ namespace app\backend\actions;
 use app\models\Object;
 use app\models\Property;
 use app\properties\PropertyHandlers;
-use yii\base\Action;
 use yii;
+use yii\base\Action;
 
 class PropertyHandler extends Action
 {
@@ -19,7 +19,14 @@ class PropertyHandler extends Action
     public function init()
     {
         parent::init();
-
+        \yii\helpers\VarDumper::dump(
+            [
+                'modelname' => $this->modelName
+            ],
+            10,
+            true
+        );
+        \Yii::$app->end();
         if (null === $this->modelName) {
             throw new yii\web\ServerErrorHttpException('Model name should be set in controller actions');
         }

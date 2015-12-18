@@ -1,5 +1,7 @@
 <?php
 
+use app\modules\core\models\ContentBlockGroup;
+use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use kartik\icons\Icon;
@@ -31,10 +33,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php $form = ActiveForm::begin(['id' => 'chunk-form']); ?>
                 <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
                 <?= $form->field($model, 'key')->textInput(['maxlength' => 255]) ?>
-                <?=$form->field($model, 'value')->widget(
+                <?= $form->field($model, 'value')->widget(
                     Yii::$app->getModule('core')->wysiwyg_class_name(),
                     Yii::$app->getModule('core')->wysiwyg_params()
-                );?>
+                ); ?>
+                <?= $form->field($model, 'group_id')->dropDownList(ArrayHelper::map(
+                    ContentBlockGroup::find()->all()
+                    , 'id', 'name'
+                )) ?>
+
+                <?= $form->field($model, 'newGroup'); ?>
+
                 <?= $form->field($model, 'preload')->checkbox() ?>
                 <?= $this->blocks['submit'] ?>
                 <?php ActiveForm::end(); ?>

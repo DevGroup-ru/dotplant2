@@ -104,6 +104,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $ymlConfig = [];
 
     /**
+     * @var array
+     */
+    public $googleFeedConfig = [];
+
+    /**
      * @var bool Show filter links in breadcrumbs
      */
     public $showFiltersInBreadcrumbs = false;
@@ -262,6 +267,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             'modules' => [
                 'shop' => [
                     'ymlConfig' => $this->ymlConfig,
+                    'googleFeedConfig' => $this->googleFeedConfig
                 ]
             ]
         ];

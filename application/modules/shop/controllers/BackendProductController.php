@@ -10,6 +10,7 @@ use app\modules\shop\models\Category;
 use app\modules\image\models\Image;
 use app\models\Object;
 use app\models\ObjectPropertyGroup;
+use app\modules\shop\models\Currency;
 use app\modules\shop\models\Product;
 use app\models\Property;
 use app\models\PropertyStaticValues;
@@ -179,6 +180,7 @@ class BackendProductController extends BackendController
         if (null === $id) {
             $model = new Product();
             $model->loadDefaultValues();
+            $model->currency_id = Currency::getMainCurrency()->id;
             $parent_id = Yii::$app->request->get('owner_id', 0);
             if (0 !== intval($parent_id) && null !== Product::findById($parent_id)) {
                 $model->parent_id = $parent_id;
@@ -551,6 +553,19 @@ class BackendProductController extends BackendController
                     'Properties_Product_' . $newModel->id => $newModelProps,
                 ]
             );
+
+            // addons cloning
+            foreach ($model->bindedAddons as $index => $addon) {
+                $newModel->link(
+                    'bindedAddons',
+                    $addon,
+                    [
+                        'sort_order'=>$index,
+                        'appliance_object_id' => $object->id,
+                    ]
+                );
+            }
+
             Yii::$app->session->setFlash('success', Yii::t('app', 'Product has been cloned successfully.'));
             $this->redirect(['edit', 'id' => $newModel->id, 'returnUrl' => $returnUrl]);
         }

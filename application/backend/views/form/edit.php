@@ -83,6 +83,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model, 'form_success_view')?>
             <?= $form->field($model, 'email_notification_addresses')?>
             <?= $form->field($model, 'email_notification_view')?>
+            <?= $form->field($model, 'subject_template')?>
             <?= $form->field($model, 'form_open_analytics_action_id')?>
             <?= $form->field($model, 'form_submit_analytics_action_id')?>
             <?php BackendWidget::end(); ?>

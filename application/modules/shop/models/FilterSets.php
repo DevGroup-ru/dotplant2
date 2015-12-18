@@ -4,7 +4,9 @@ namespace app\modules\shop\models;
 
 use app\models\Property;
 use app\traits\SortModels;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
+use yii\caching\TagDependency;
 
 /**
  * This is the model class for table "{{%filter_sets}}".
@@ -16,6 +18,8 @@ use Yii;
  * @property integer $is_filter_by_price
  * @property integer $is_range_slider
  * @property integer $delegate_to_children
+ * @property integer $multiple
+ * @property Property $property
  */
 class FilterSets extends \yii\db\ActiveRecord
 {
@@ -60,6 +64,7 @@ class FilterSets extends \yii\db\ActiveRecord
                 'integer'
             ],
             [['category_id', 'property_id'], 'unique', 'targetAttribute' => ['category_id', 'property_id']],
+            [['multiple'], 'boolean'],
         ];
     }
 
@@ -75,7 +80,8 @@ class FilterSets extends \yii\db\ActiveRecord
             'property_id' => Yii::t('app', 'Property ID'),
             'is_filter_by_price' => Yii::t('app', 'Is Filter By Price'),
             'delegate_to_children' => Yii::t('app', 'Delegate To Children'),
-            'is_range_slider' => Yii::t('app', 'Is Range Slider')
+            'is_range_slider' => Yii::t('app', 'Is Range Slider'),
+            'multiple' => Yii::t('app', 'Multiple'),
         ];
     }
 
@@ -92,12 +98,18 @@ class FilterSets extends \yii\db\ActiveRecord
         }
         $categoryIds = $category->getParentIds();
 
-        $filter_sets = FilterSets::find()
-            ->where(['in', 'category_id', $categoryIds])
-            ->andWhere(['delegate_to_children' => 1])
-            ->orWhere(['category_id' => $category->id])
-            ->orderBy(['sort_order' => SORT_ASC])
-            ->all();
+        $filter_sets = Yii::$app->db->cache(function($db) use ($categoryIds, $category){
+            return FilterSets::find()
+                ->where(['in', 'category_id', $categoryIds])
+                ->andWhere(['delegate_to_children' => 1])
+                ->orWhere(['category_id' => $category->id])
+                ->orderBy(['sort_order' => SORT_ASC])
+                ->all();
+        }, 86400, new TagDependency([
+            'tags' => [
+                ActiveRecordHelper::getCommonTag(static::className())
+            ]
+        ]));
         Yii::endProfile('FilterSets.GetForCategory ' . $categoryId);
         return $filter_sets;
     }

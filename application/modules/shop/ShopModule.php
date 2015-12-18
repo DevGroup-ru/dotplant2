@@ -8,7 +8,6 @@ use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
-use yii\web\UserEvent;
 
 /**
  * Shop module is the base core module of DotPlant2 CMS handling all common e-commerce features
@@ -24,6 +23,7 @@ class ShopModule extends BaseModule implements BootstrapInterface
      */
     public $controllerMap = [
         'backend-filter-sets' => 'app\modules\shop\backend\FilterSetsController',
+        'backend-addons' => 'app\modules\shop\backend\AddonsController',
     ];
 
     /**
@@ -116,6 +116,12 @@ class ShopModule extends BaseModule implements BootstrapInterface
     public $ymlConfig = [];
 
     /**
+     * @var array
+     */
+    public $googleFeedConfig = [];
+
+
+    /**
      * @var bool Show filter links in breadcrumbs
      */
     public $showFiltersInBreadcrumbs = false;
@@ -151,18 +157,7 @@ class ShopModule extends BaseModule implements BootstrapInterface
         Event::on(
             \yii\web\User::className(),
             \yii\web\User::EVENT_AFTER_LOGIN,
-            function ($event) {
-                /** @var UserEvent $event */
-                $orders = \Yii::$app->session->get('orders', []);
-                foreach ($orders as $k => $id) {
-                    /** @var app\modules\shop\models\Order $order */
-                    $order = app\modules\shop\models\Order::findOne(['id' => $id]);
-                    if (!empty($order) && 0 === intval($order->user_id)) {
-                        $order->user_id = $event->identity->id;
-                        $order->save();
-                    }
-                }
-            }
+            [app\modules\shop\handlers\UserHandler::className(), 'moveOrdersGuestToRegistered']
         );
     }
 

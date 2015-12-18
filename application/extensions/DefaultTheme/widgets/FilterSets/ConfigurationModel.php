@@ -8,6 +8,8 @@ class ConfigurationModel extends WidgetConfigurationModel
 {
     public $viewFile = 'filter-sets';
     public $hideEmpty = true;
+    public $usePjax = true;
+    public $useNewFilter = false;
 
     /**
      * @inheritdoc
@@ -16,7 +18,7 @@ class ConfigurationModel extends WidgetConfigurationModel
     {
         return [
             ['viewFile', 'string'],
-            ['hideEmpty', 'filter', 'filter' => 'boolval'],
+            [['hideEmpty', 'usePjax', 'useNewFilter'], 'filter', 'filter' => 'boolval'],
         ];
     }
 }

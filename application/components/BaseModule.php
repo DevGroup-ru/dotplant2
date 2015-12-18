@@ -1,8 +1,10 @@
 <?php
-
 namespace app\components;
 
+use yii\base\Application;
 use yii\base\Module;
+use app\backend\BackendModule;
+use app\backend\components\BackendController;
 
 /**
  * BaseModule is the base module for core DotPlant2 modules.
@@ -27,5 +29,15 @@ class BaseModule extends Module
             }
         }
         return null;
+    }
+
+    /**
+     * @param Application $app
+     * @return bool
+     */
+    public function isFrontend(Application $app)
+    {
+        return false === $app->requestedAction->controller->module instanceof BackendModule
+            && false === $app->requestedAction->controller instanceof BackendController;
     }
 }

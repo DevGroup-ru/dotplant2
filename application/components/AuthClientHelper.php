@@ -10,7 +10,8 @@ use yii\base\ErrorException;
  * AuthClientHelper is a helper class for serving login through social networks and retrieving needed information by api
  * @package app\components
  */
-class AuthClientHelper {
+class AuthClientHelper
+{
     public static $ServiceIdMapping = [
         'app\modules\user\authclients\GitHub' => 'id',
         'yii\authclient\clients\YandexOpenId' => 'id',
@@ -19,6 +20,7 @@ class AuthClientHelper {
         'app\modules\user\authclients\VKontakte' => 'uid',
         'yii\authclient\clients\YandexOAuth' => 'id',
         'yii\authclient\clients\GoogleOAuth' => 'id',
+        'app\modules\user\authclients\PayPal' => 'user_id'
     ];
 
     /**

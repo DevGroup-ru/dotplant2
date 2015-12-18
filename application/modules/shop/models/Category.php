@@ -61,7 +61,7 @@ class Category extends ActiveRecord implements \JsonSerializable
      * Used by findById
      * @var array
      */
-    private static $identity_map = [];
+    public static $identity_map = [];
 
     /**
      * Special caching for findBySlug

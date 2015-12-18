@@ -38,6 +38,7 @@ class Yml extends Model
             ['shop_url', 'url', 'defaultScheme' => 'http'],
             [['shop_name', 'shop_company'], 'string', 'length' => [1, 255]],
             ['offer_description', 'safe'],
+            [['shop_local_delivery_cost',], 'number',],
         ];
 
         return $rules;

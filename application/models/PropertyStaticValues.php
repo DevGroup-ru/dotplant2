@@ -11,7 +11,9 @@ use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "property_static_values".
@@ -71,6 +73,7 @@ class PropertyStaticValues extends ActiveRecord
         return [
             [['property_id', 'name', 'value'], 'required'],
             [['property_id', 'sort_order', 'dont_filter'], 'integer'],
+            [['title_prepend'], 'boolean'],
             [['name', 'value', 'slug', 'title_append'], 'string']
         ];
     }
@@ -88,6 +91,7 @@ class PropertyStaticValues extends ActiveRecord
             'slug' => Yii::t('app', 'Slug'),
             'sort_order' => Yii::t('app', 'Sort Order'),
             'title_append' => Yii::t('app', 'Title append'),
+            'title_prepend' => Yii::t('app', 'Prepend title?'),
             'dont_filter' => Yii::t('app', 'Don\'t filter (for FilterWidget only)'),
         ];
     }
@@ -162,6 +166,8 @@ class PropertyStaticValues extends ActiveRecord
      * Внимание! Это массивы, а не объекты!
      * Это сделано для экономии памяти.
      * Используется identity_map
+     *
+     * @return array
      */
     public static function getValuesForPropertyId($property_id)
     {
@@ -184,57 +190,117 @@ class PropertyStaticValues extends ActiveRecord
         return $result;
     }
 
-    public static function getValuesForFilter($property_id, $category_id, $properties)
+    /**
+     * @param $property_id
+     * @param $category_id
+     * @param $properties
+     * @return PropertyStaticValues[]
+     */
+    public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false, $parentsOnly = true)
     {
-        $cacheKey = "getValuesForFilter:" . json_encode([$property_id, $category_id, $properties]);
-
-        if (false === $values = Yii::$app->cache->get($cacheKey)) {
-            $query = static::find()
-                ->leftJoin(
+        $priceMin = Yii::$app->request->get('price_min');
+        $priceMax = Yii::$app->request->get('price_max');
+        $cacheKey = "getValuesForFilter:" . json_encode([$property_id, $category_id, $properties, $priceMin, $priceMax]);
+        if (false === $allSelections = Yii::$app->cache->get($cacheKey)) {
+            $joinCondition = (true === $parentsOnly) ?
+                'p.id = {{%product_category}}.object_model_id AND p.active = 1 AND p.parent_id = 0'
+                : 'p.id = {{%product_category}}.object_model_id AND p.active = 1';
+            $objectModel = Object::getForClass(Product::className());
+            $objectId = $objectModel !== null ? $objectModel->id : 0;
+            $allSelections = static::find()
+                ->asArray(true)
+                ->select([self::tableName() . '.id', self::tableName() . '.name', 'value', self::tableName() . '.slug'])
+                ->innerJoin(
                     ObjectStaticValues::tableName(),
                     ObjectStaticValues::tableName() . '.property_static_value_id=' . self::tableName() . '.id'
                 )
-                ->leftJoin(
+                ->innerJoin(
                     '{{%product_category}}',
                     '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
+                )
+                ->innerJoin(
+                    Product::tableName() . ' p',
+                    $joinCondition
                 )
                 ->where(
                     [
                         self::tableName() . '.property_id' => $property_id,
                         self::tableName() . '.dont_filter' => 0,
-                        '{{%product_category}}.category_id' => $category_id
+                        '{{%product_category}}.category_id' => $category_id,
                     ]
                 )
                 ->orderBy(
                     [
                         self::tableName() . '.sort_order' => SORT_ASC,
-                        self::tableName() . '.name' => SORT_ASC
+                        self::tableName() . '.name' => SORT_ASC,
                     ]
-                );
-            if ($properties) {
-                $listProperty = [];
-                foreach ($properties as $selectProperties) {
-                    $listProperty += is_array($selectProperties) ? $selectProperties : [$selectProperties];
+                )
+                ->all();
+            /** @var ActiveQuery $query */
+            $query = ObjectStaticValues::find()
+                ->distinct(true)
+                ->select(ObjectStaticValues::tableName() . '.object_model_id')
+                ->where(['object_id' => $objectId]);
+            if (false === empty($properties)) {
+                foreach ($properties as $propertyId => $propertyStaticValues) {
+                    $subQuery = self::initSubQuery($category_id, $joinCondition);
+                    $subQuery->andWhere(['property_static_value_id' => $propertyStaticValues,]);
+                    $subQueryOptimisation = Yii::$app->db->cache(function($db) use ($subQuery) {
+                        $ids = implode(', ', $subQuery->createCommand($db)->queryColumn());
+                        return empty($ids) === true ? '(-1)' : "($ids)";
+                    }, 86400, new TagDependency([
+                        'tags' => [
+                            ActiveRecordHelper::getCommonTag(ObjectStaticValues::className()),
+                        ]
+                    ]));
+                    $query->andWhere(new Expression('`object_model_id` IN ' . $subQueryOptimisation));
                 }
-                $query->leftJoin(
-                    ObjectStaticValues::tableName() . ' as osv',
-                    'osv.object_model_id={{%product_category}}.object_model_id'
-                );
-                $query->andWhere(
-                    [
-                        'osv.property_static_value_id' => $listProperty
-                    ]
-                );
-
             }
-
-
-            $values = $query->asArray()->all();
-
-            if (null !== $values) {
+            if (false === empty($priceMin) && false === empty($priceMax)) {
+                $subQuery = self::initSubQuery($category_id, $joinCondition);
+                $subQuery
+                    ->andWhere(['>=', 'p.price', $priceMin])
+                    ->andWhere(['<=', 'p.price', $priceMax]);
+                $subQueryOptimisation = Yii::$app->db->cache(function($db) use ($subQuery) {
+                    $ids = implode(', ', $subQuery->createCommand($db)->queryColumn());
+                    return empty($ids) === true ? '(-1)' : "($ids)";
+                }, 86400, new TagDependency([
+                    'tags' => [
+                        ActiveRecordHelper::getCommonTag(ObjectStaticValues::className()),
+                    ]
+                ]));
+                $query->andWhere(new Expression('`object_model_id` IN ' . $subQueryOptimisation));
+            }
+            $selectedQuery = static::find()
+                ->select(static::tableName() . '.id')
+                ->asArray(true)
+                ->innerJoin(
+                    ObjectStaticValues::tableName(),
+                    ObjectStaticValues::tableName() . '.property_static_value_id = ' . static::tableName() . '.id'
+                )
+                ->where([
+                    'property_id' => $property_id,
+                ])
+                ->andWhere(
+                    new Expression(
+                        ObjectStaticValues::tableName() . '.object_model_id IN (' . $query->createCommand()->getRawSql() . ')'
+                    )
+                );
+            if (false == $multiple) {
+                if (isset($properties[$property_id])) {
+                    $selectedQuery->andWhere([self::tableName() . '.id' => $properties[$property_id]]);
+                }
+            } else {
+                unset($properties[$property_id]);
+            }
+            $selected = $selectedQuery->column();
+            foreach ($allSelections as $index => $selection) {
+                $allSelections[$index]['active'] = in_array($selection['id'], $selected);
+            }
+            if (null !== $allSelections) {
                 Yii::$app->cache->set(
                     $cacheKey,
-                    $values,
+                    $allSelections,
                     0,
                     new TagDependency(
                         [
@@ -248,9 +314,26 @@ class PropertyStaticValues extends ActiveRecord
                 );
             }
         }
-        return $values;
+        return $allSelections;
     }
 
+    private static function initSubQuery($category_id, $joinCondition)
+    {
+        $subQuery = ObjectStaticValues::find();
+        return $subQuery
+            ->select(ObjectStaticValues::tableName() . '.object_model_id')
+            ->innerJoin(
+                '{{%product_category}}',
+                '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
+            )->innerJoin(
+                Product::tableName() . ' p',
+                $joinCondition
+            )->where(
+                [
+                    'category_id' => $category_id,
+                ]
+            );
+    }
     /**
      * Аналогично getValuesForPropertyId
      * Но identity_map не используется

@@ -16,10 +16,11 @@ var Shop = {
             'url' : '/shop/cart/add'
         });
     },
-    'addToCart' : function(productId, quantity, callback, children) {
+    'addToCart' : function(productId, quantity, callback, children, customName) {
         var item = {
             'id' : productId,
-            'quantity' : typeof(quantity) !== 'undefined' ? quantity : 1
+            'quantity' : typeof(quantity) !== 'undefined' ? quantity : 1,
+            'customName' : typeof(customName) !== 'undefined' ? customName : ''
         };
         if (typeof(children) !== 'undefined') {
             item.children = children;
@@ -41,6 +42,32 @@ var Shop = {
             },
             'type' : 'post',
             'url' : '/shop/cart/change-quantity'
+        });
+    },
+    'removeFromCart': function(orderItemId, callback) {
+        $.ajax({
+            'data' : {'id': orderItemId},
+            'dataType' : 'json',
+            'success' : function(data) {
+                if (typeof(callback) === 'function') {
+                    callback(data);
+                }
+            },
+            'type' : 'get',
+            'url' : '/shop/cart/delete?id=' + orderItemId
+        });
+    },
+    'clearCart': function(callback) {
+        $.ajax({
+            'data' : {},
+            'dataType' : 'json',
+            'success' : function(data) {
+                if (typeof(callback) === 'function') {
+                    callback(data);
+                }
+            },
+            'type' : 'get',
+            'url' : '/shop/cart/clear'
         });
     }
 };
@@ -114,22 +141,56 @@ $(function() {
         window.print();
         return false;
     });
+
     $('[data-action=delete]').click(function() {
-        var $link = $(this);
-        $.ajax({
-            'dataType' : 'json',
-            'success' : function(data) {
-                if (data['success']) {
-                    location.reload();
-                }
-            },
-            'url' : $link.data('url')
+        //var $link = $(this);
+        //$.ajax({
+        //    'dataType' : 'json',
+        //    'success' : function(data) {
+        //        if (data['success']) {
+        //            location.reload();
+        //        }
+        //    },
+        //    'url' : $link.data('url')
+        //});
+        var $this = $(this);
+        var $body = $('body');
+        $body.trigger({
+            'type': 'removeFromCartClicked',
+            'orderItemId': $this.data('id'),
+            'button': $this
         });
+        Shop.removeFromCart($this.data('id'), function(data) {
+            $body.trigger({
+                'type': 'removeFromCart',
+                'orderItemId': $this.data('id'),
+                'orderData': data,
+                'button': $this
+            });
+            window.location.reload();
+        });
+
         return false;
     });
+
+    $('[data-action="clear-cart"]').click(function(event) {
+        var $this = $(this);
+        var $body = $('body');
+
+        Shop.clearCart(function(data) {
+            $body.trigger({
+                'type': 'clearCart',
+                'orderData': data,
+                'button': $this
+            });
+            window.location.reload();
+        });
+    });
+
     $('body').on('click', '[data-action="add-to-cart"]', function() {
         var $this = $(this);
         var quantity = typeof($this.data('quantity')) !== 'undefined' ? parseFloat($this.data('quantity')) : 1;
+        var customName = typeof($this.data('custom-name')) !== 'undefined' ? $this.data('custom-name') : '';
         if (isNaN(quantity) || quantity < 1) {
             quantity = 1;
         }
@@ -194,11 +255,12 @@ $(function() {
             return false;
 
 
-        });
+        }, [], customName);
         return false;
     });
 
     $('input[data-type=quantity]').blur(function() {
+        var $body = $('body');
         var $input = $(this);
         var quantity = parseFloat($input.val());
         var nominal = parseFloat($input.data('nominal'));
@@ -206,6 +268,13 @@ $(function() {
             quantity = nominal;
         }
         Shop.changeAmount($input.data('id'), quantity, function(data) {
+            $body.trigger({
+                'type': 'cartChangeQuantity',
+                'orderItemId': $input.data('id'),
+                'orderData': data,
+                'button': $input
+            });
+
             if (data.success) {
                 $('#cart-table .total-price, #cart-info-widget .total-price').html(data.totalPrice);
                 $('#cart-table .items-count, #cart-info-widget .items-count').html(data.itemsCount);
@@ -214,7 +283,9 @@ $(function() {
             }
         });
     });
+
     $('#cart-table [data-action="change-quantity"]').click(function() {
+        var $body = $('body');
         var $this = $(this);
         var $input = $this.parents('td').eq(0).find('input[data-type=quantity]');
         var quantity = parseFloat($input.val());
@@ -230,6 +301,13 @@ $(function() {
             }
         }
         Shop.changeAmount($input.data('id'), quantity, function(data) {
+            $body.trigger({
+                'type': 'cartChangeQuantity',
+                'orderItemId': $this.data('id'),
+                'orderData': data,
+                'button': $this
+            });
+
             if (data.success) {
                 $('#cart-table .total-price, #cart-info-widget .total-price').html(data.totalPrice);
                 $('#cart-table .items-count, #cart-info-widget .items-count').html(data.itemsCount);

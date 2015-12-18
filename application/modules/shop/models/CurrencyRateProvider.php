@@ -59,11 +59,19 @@ class CurrencyRateProvider extends \yii\db\ActiveRecord
     public function getImplementationInstance(HttpAdapterInterface $httpAdapter)
     {
         $reflection_class = new \ReflectionClass($this->class_name);
-        $params = ['httpAdapter'=>$httpAdapter];
-        if (!empty($this->params)){
-            $params = ArrayHelper::merge($params, Json::decode($this->params));
+        $params = ['httpAdapter' => $httpAdapter];
+        if (!empty($this->params)) {
+            $additionalParams = Json::decode($this->params);
+            foreach ($reflection_class->getMethod('__construct')->getParameters() as $parameter) {
+                if ($parameter->name === 'httpAdapter') {
+                    continue;
+                }
+                $params[$parameter->name] = isset($additionalParams[$parameter->name])
+                    ? $additionalParams[$parameter->name]
+                    : null;
+            }
+            $additionalParams = null;
         }
-
         return $reflection_class->newInstanceArgs($params);
     }
 
@@ -90,9 +98,6 @@ class CurrencyRateProvider extends \yii\db\ActiveRecord
         $query->andFilterWhere(['id' => $this->id]);
         $query->andFilterWhere(['like', 'name', $this->name]);
         $query->andFilterWhere(['like', 'class_name', $this->iso_code]);
-
-
-
         return $dataProvider;
     }
 }

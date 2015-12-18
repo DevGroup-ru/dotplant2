@@ -1,13 +1,14 @@
 <?php
-
 namespace app\modules\seo;
 
 use app\components\BaseModule;
-use app\modules\seo\controllers\ManageController;
+use app\modules\seo\handlers\AnalyticsHandler;
 use app\modules\seo\models\Counter;
+use app\modules\seo\models\Meta;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\web\Application;
+use yii\web\Controller;
 use yii\web\View;
 
 class SeoModule extends BaseModule implements BootstrapInterface
@@ -40,6 +41,20 @@ class SeoModule extends BaseModule implements BootstrapInterface
      */
     public $redirectTrailingSlash = false;
 
+    public $analytics = [
+        'ecGoogle' => [
+            'active' => 0,
+            'currency' => AnalyticsHandler::CURRENCY_MAIN,
+        ],
+        'ecYandex' => [
+            'active' => 0,
+            'currency' => AnalyticsHandler::CURRENCY_MAIN,
+        ],
+    ];
+
+    /**
+     * @inheritdoc
+     */
     public function bootstrap($app)
     {
         if (is_string($this->include)) {
@@ -54,26 +69,14 @@ class SeoModule extends BaseModule implements BootstrapInterface
                 if ($app->getModule('seo')->redirectTrailingSlash == 1) {
                     self::redirectSlash();
                 }
+
                 $app->getView()->on(View::EVENT_END_BODY, [Counter::className(), 'renderCounters'], $this->include);
             }
         );
-        $app->on(
-            Application::EVENT_BEFORE_ACTION,
-            function () use ($app) {
-                if ('payment' === $app->requestedAction->controller->id && 'success' === $app->requestedAction->id) {
-                    $app->getView()->on(
-                        View::EVENT_END_BODY,
-                        [Counter::className(), 'renderCounters'],
-                        [$app->requestedAction->controller->module->id . '/' . $app->requestedAction->controller->id]
-                    );
-                    $app->getView()->on(
-                        View::EVENT_END_BODY,
-                        [ManageController::className(), 'renderEcommerceCounters'],
-                        ['transactionId' => intval(Yii::$app->request->get('id'))]
-                    );
-                }
-            }
-        );
+
+        // Analytics
+        $app->on(Application::EVENT_BEFORE_ACTION, [AnalyticsHandler::className(), 'handleBeforeAction']);
+        $app->on(Application::EVENT_BEFORE_ACTION, [Meta::className(), 'registrationMeta']);
     }
 
     /**
@@ -111,7 +114,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
         if ($type != self::NO_REDIRECT) {
             $readirArr = [
                 self::FROM_WITHOUT_WWW => function () {
-                    if (preg_match('#^www\.#i', Yii::$app->request->serverName) === 0) {
+                    if (preg_match('#^(http|https):\/\/www\.#i', Yii::$app->request->hostInfo) === 0) {
                         Yii::$app->response->redirect(
                             str_replace('://', '://www.', Yii::$app->request->absoluteUrl),
                             301
@@ -120,7 +123,7 @@ class SeoModule extends BaseModule implements BootstrapInterface
                     }
                 },
                 self::FROM_WWW => function () {
-                    if (preg_match('#^www\.#i', Yii::$app->request->serverName) === 1) {
+                    if (preg_match('#^(http|https):\/\/www\.#i', Yii::$app->request->hostInfo) === 1) {
                         Yii::$app->response->redirect(
                             str_replace('://www.', '://', Yii::$app->request->absoluteUrl),
                             301

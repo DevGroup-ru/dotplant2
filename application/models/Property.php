@@ -15,7 +15,7 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
 
 
 /**
- * This is the model class for table "property".
+ * This is the model class for table "{{%property}}".
  * @property integer $id
  * @property integer $property_group_id
  * @property string $name
@@ -29,6 +29,11 @@ use \devgroup\TagDependencyHelper\ActiveRecordHelper;
  * @property integer $multiple
  * @property integer $sort_order
  * @property string $handler_additional_params
+ * @property integer $display_only_on_depended_property_selected
+ * @property integer $depends_on_property_id
+ * @property string $depended_property_values
+ * @property integer $depends_on_category_group_id
+ * @property boolean $dont_filter
  * @property integer $required
  * @property integer $interpret_as
  * @property integer $captcha
@@ -229,7 +234,7 @@ class Property extends ActiveRecord
 
     /**
      * @param $group_id
-     * @return null|array<Property>
+     * @return null|Property[]
      */
     public static function getForGroupId($group_id)
     {
