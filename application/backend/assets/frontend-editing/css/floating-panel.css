@@ -1,4 +1,5 @@
-/* line 6, ../sass/floating-panel.scss */
+@charset "UTF-8";
+/* line 8, ../sass/floating-panel.scss */
 #dotplant-floating-panel {
   position: fixed;
   top: 0;
@@ -11,94 +12,98 @@
   border-bottom: 1px solid #a2a2a2;
   color: #fff;
 }
-/* line 17, ../sass/floating-panel.scss */
+/* line 19, ../sass/floating-panel.scss */
 #dotplant-floating-panel.open {
   width: 100%;
 }
-/* line 20, ../sass/floating-panel.scss */
+/* line 22, ../sass/floating-panel.scss */
 #dotplant-floating-panel.open span.panel-toggler:before {
-  content: "<";
+  content: "←";
 }
-/* line 27, ../sass/floating-panel.scss */
+/* line 29, ../sass/floating-panel.scss */
 #dotplant-floating-panel.closed span.panel-toggler:before {
-  content: ">";
+  content: "→";
 }
-/* line 31, ../sass/floating-panel.scss */
+/* line 33, ../sass/floating-panel.scss */
 #dotplant-floating-panel.closed div.navbar-text, #dotplant-floating-panel.closed .navbar-nav {
   display: none;
 }
-/* line 35, ../sass/floating-panel.scss */
+/* line 37, ../sass/floating-panel.scss */
 #dotplant-floating-panel span.panel-toggler {
   float: left;
   display: block;
   line-height: 20px;
   margin: 15px;
   width: 20px;
-}
-/* line 41, ../sass/floating-panel.scss */
-#dotplant-floating-panel span.panel-toggler:hover {
-  cursor: pointer;
+  font-weight: bold;
+  font-size: 20px;
+  color: #78b5ea;
 }
 /* line 46, ../sass/floating-panel.scss */
+#dotplant-floating-panel span.panel-toggler:hover {
+  color: #bdd7ef;
+  cursor: pointer;
+}
+/* line 52, ../sass/floating-panel.scss */
 #dotplant-floating-panel .container-fluid {
   padding-right: 15px;
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
 }
-/* line 52, ../sass/floating-panel.scss */
+/* line 58, ../sass/floating-panel.scss */
 #dotplant-floating-panel a {
-  color: #337ab7;
+  color: #78b5ea;
   text-decoration: none;
 }
-/* line 55, ../sass/floating-panel.scss */
+/* line 61, ../sass/floating-panel.scss */
 #dotplant-floating-panel a:hover {
-  color: #23527c;
+  color: #bdd7ef;
   text-decoration: underline;
 }
-/* line 60, ../sass/floating-panel.scss */
+/* line 66, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-text {
   float: left;
   line-height: 20px;
   margin: 15px;
 }
-/* line 65, ../sass/floating-panel.scss */
+/* line 71, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav {
   float: left;
   margin: 0;
 }
-/* line 68, ../sass/floating-panel.scss */
+/* line 74, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav li {
   display: block;
   float: left;
   position: relative;
 }
-/* line 73, ../sass/floating-panel.scss */
+/* line 79, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav a, #dotplant-floating-panel .navbar-nav a:visited {
   color: #fff;
   display: block;
   line-height: 20px;
   padding: 15px;
 }
-/* line 78, ../sass/floating-panel.scss */
+/* line 84, ../sass/floating-panel.scss */
 #dotplant-floating-panel .navbar-nav a:hover, #dotplant-floating-panel .navbar-nav a:visited:hover {
   background: #fff;
   color: #000;
   text-decoration: none;
 }
-/* line 85, ../sass/floating-panel.scss */
+/* line 91, ../sass/floating-panel.scss */
 #dotplant-floating-panel.dotplant-floating-panel-bottom {
   top: auto;
   bottom: 0;
 }
 
 @media (max-width: 320px) {
-  /* line 96, ../sass/floating-panel.scss */
+  /* line 101, ../sass/floating-panel.scss */
   #dotplant-floating-panel {
     display: none;
   }
 
-  /* line 99, ../sass/floating-panel.scss */
+  /* line 104, ../sass/floating-panel.scss */
   body {
     padding-top: 0 !important;
   }

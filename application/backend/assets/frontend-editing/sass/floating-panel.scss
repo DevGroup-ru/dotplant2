@@ -2,6 +2,8 @@
 
 $panel-background-color: #222;
 $panel-height: 50px;
+$panel__link-color: #78b5ea;
+$panel__link-color--hover: #bdd7ef;
 
 #dotplant-floating-panel {
   position: fixed;
@@ -18,14 +20,14 @@ $panel-height: 50px;
     width: 100%;
     span.panel-toggler {
       &:before {
-        content: "<";
+        content: "←";
       }
     }
   }
   &.closed {
     span.panel-toggler {
       &:before {
-        content: ">";
+        content: "→";
       }
     }
     div.navbar-text, .navbar-nav {
@@ -38,7 +40,11 @@ $panel-height: 50px;
     line-height: 20px;
     margin: 15px;
     width: 20px;
+    font-weight: bold;
+    font-size: 20px;
+    color: $panel__link-color;
     &:hover {
+      color: $panel__link-color--hover;
       cursor: pointer;
     }
   }
@@ -50,10 +56,10 @@ $panel-height: 50px;
     margin-left: auto;
   }
   a {
-    color: #337ab7;
+    color: $panel__link-color;
     text-decoration: none;
     &:hover {
-      color: #23527c;
+      color: $panel__link-color--hover;
       text-decoration: underline;
     }
   }
