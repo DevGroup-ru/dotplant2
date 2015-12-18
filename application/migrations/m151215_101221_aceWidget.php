@@ -16,6 +16,9 @@ class m151215_101221_aceWidget extends Migration
                 'params' => Json::encode([
                     'mode' => 'html',
                     'theme' => 'chrome',
+                    'jsOptions' => [
+                        'wrap' => true,
+                    ],
                     'htmlOptions' => [
                         'width' => '100%',
                         'height' => '200px'
