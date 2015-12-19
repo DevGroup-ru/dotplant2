@@ -1041,6 +1041,7 @@ return [
     'Timestamp' => 'Дата',
     'Title' => 'Заголовок',
     'Title Append' => 'Добавочный заголовок',
+    'Prepend title?' => 'Подставлять в начало заголовка?',
     'To' => 'На',
     'Import properties to YML' => 'Выводить свойства в YML',
     'Today\'s deals' => '',

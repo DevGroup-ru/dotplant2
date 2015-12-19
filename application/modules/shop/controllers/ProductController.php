@@ -7,14 +7,14 @@ use app\extensions\DefaultTheme\components\BaseWidget;
 use app\extensions\DefaultTheme\models\ThemeActiveWidgets;
 use app\extensions\DefaultTheme\models\ThemeWidgets;
 use app\extensions\DefaultTheme\widgets\FilterSets\Widget;
+use app\models\Object;
 use app\models\PropertyStaticValues;
+use app\models\Search;
 use app\modules\core\helpers\EventTriggeringHelper;
 use app\modules\shop\events\ProductPageShowed;
 use app\modules\shop\exceptions\EmptyFilterHttpException;
 use app\modules\shop\models\Category;
-use app\models\Object;
 use app\modules\shop\models\Product;
-use app\models\Search;
 use app\traits\DynamicContentTrait;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
@@ -59,6 +59,12 @@ class ProductController extends Controller
         if (!empty($title_append)) {
             $title_append = is_array($title_append) ? implode(' ', $title_append) : $title_append;
             unset($_GET['title_append']);
+        }
+
+        $title_prepend = $request->get("title_prepend", "");
+        if (!empty($title_prepend)) {
+            $title_prepend = is_array($title_prepend) ? implode(" ", $title_prepend) : $title_prepend;
+            unset($_GET["title_prepend"]);
         }
 
         $values_by_property_id = $request->get('properties', []);
@@ -139,6 +145,10 @@ class ProductController extends Controller
 
         if (!empty($title_append)) {
             $this->view->title .= " " . $title_append;
+        }
+
+        if (!empty($title_prepend)) {
+            $this->view->title = "{$title_prepend} {$this->view->title}";
         }
 
         $this->view->blocks['h1'] = $selected_category->h1;
