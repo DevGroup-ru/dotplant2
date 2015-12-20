@@ -62,7 +62,7 @@ $review = \app\modules\review\models\Review::findOne(['submission_id' => $submis
         Yii::t('app', 'See review details ')
         . \kartik\helpers\Html::a(
             Yii::t('app', 'here'),
-            'http://' . Yii::$app->getModule('core')->serverName
+            'http://' . Yii::$app->getModule('core')->getBaseUrl()
                 . \yii\helpers\Url::to(['/review/backend-review/view', 'id' => $review->id])
         )
     ?>

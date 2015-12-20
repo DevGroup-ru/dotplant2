@@ -161,6 +161,7 @@ class InstallerHelper
             'modules' => [
                 'core' => [
                     'serverName' => $model->serverName,
+                    'serverPort' => $model->serverPort
                 ],
             ],
         ];

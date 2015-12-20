@@ -38,6 +38,7 @@ class CoreModule extends BaseModule implements BootstrapInterface
     public $spamCheckerApiKey;
 
     public $serverName = 'localhost';
+    public $serverPort = 80;
 
     public $daysToStoreSubmissions = 28;
 
@@ -178,5 +179,23 @@ class CoreModule extends BaseModule implements BootstrapInterface
         }
         $this->wysiwyg_class_name = $data['class_name'];
         $this->wysiwyg_params = $data['params'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getServerPort()
+    {
+        return $this->serverPort == 80 ? "" : ":{$this->serverPort}";
+    }
+
+    /**
+     * Returns compiled baseUrl without schema servername:port
+     *
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return $this->serverName . $this->getServerPort();
     }
 }

@@ -220,7 +220,7 @@ class InstallerController extends Controller
         }
 
         if (Yii::$app->request->serverPort !== 80) {
-            $model->serverName .= ':' . Yii::$app->request->serverPort;
+            $model->serverPort = Yii::$app->request->serverPort;
         }
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
 

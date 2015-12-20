@@ -33,6 +33,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $spamCheckerApiKey;
 
     public $serverName = 'localhost';
+    public $serverPort = 80;
 
     public $daysToStoreSubmissions;
 
@@ -70,6 +71,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                     'internalEncoding',
                     'fileUploadPath',
                     'serverName',
+                    'serverPort'
                 ],
                 'required',
             ],

@@ -15,6 +15,7 @@ use kartik\widgets\SwitchInput;
     <div class="col-md-5 col-sm-12">
         <?php BackendWidget::begin(['title' => Yii::t('app', 'Main settings'), 'options' => ['class' => 'visible-header']]); ?>
         <?= $form->field($model, 'serverName') ?>
+        <?= $form->field($model, 'serverPort') ?>
         <?= $form->field($model, 'composerHomeDirectory') ?>
         <?= $form->field($model, 'internalEncoding') ?>
         <?= $form->field($model, 'autoCompleteResultsCount') ?>

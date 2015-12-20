@@ -28,13 +28,13 @@ use yii\helpers\Url;
         if (isset($val['value'])) {
             if ($model->getOwnerModel()->className() === \app\modules\shop\models\Order::className())
             {
-                echo Html::tag('dd', Html::a($val['value'], 'http://'. Yii::$app->getModule('core')->serverName . Url::to([
+                echo Html::tag('dd', Html::a($val['value'], 'http://'. Yii::$app->getModule('core')->getBaseUrl() . Url::to([
                     '/shop/backend-order/download-file',
                     'key' => $val['key'],
                     'orderId' => $values->object_model_id
                 ])));
             } else {
-                echo Html::tag('dd', Html::a($val['value'], 'http://'. Yii::$app->getModule('core')->serverName . Url::to([
+                echo Html::tag('dd', Html::a($val['value'], 'http://'. Yii::$app->getModule('core')->getBaseUrl() . Url::to([
                     '/backend/form/download',
                     'key' => $val['key'],
                     'submissionId' => $values->object_model_id

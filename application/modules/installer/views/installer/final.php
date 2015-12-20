@@ -28,6 +28,7 @@ $form = ActiveForm::begin([
         </h2>
 
         <?= $form->field($model, 'serverName')->hint(Yii::t('app', 'This is the hostname that your site will be using.')) ?>
+        <?= $form->field($model, 'serverPort')->hint(Yii::t('app', 'This is port that your site will be using.')) ?>
 
         <h2>
             <?= Yii::t('app', 'Cache settings:') ?>

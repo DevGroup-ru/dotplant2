@@ -40,7 +40,9 @@ class PageRule implements UrlRuleInterface
      */
     public function parseRequest($manager, $request)
     {
-        if ($request->serverName == Yii::$app->getModule('core')->serverName) {
+        if ($request->serverName == Yii::$app->getModule('core')->serverName
+            && $request->port == Yii::$app->getModule('core')->serverPort
+        ) {
             $_path = $request->getPathInfo();
         } else {
             $_path = $request->absoluteUrl;
