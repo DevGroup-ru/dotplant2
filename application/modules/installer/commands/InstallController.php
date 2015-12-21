@@ -190,7 +190,7 @@ class InstallController extends Controller
             $model->serverName = getenv('DP2_SERVER_NAME');
         }
         if (getenv('DP2_SERVER_PORT')) {
-            $model->serverPort = getenv('DP2_SERVER_PORT');
+            $model->serverPort = intval(getenv('DP2_SERVER_PORT'));
         }
         if (InstallerHelper::writeCommonConfig($model) && InstallerHelper::updateConfigurables()) {
             file_put_contents(Yii::getAlias('@app/installed.mark'), '1');
