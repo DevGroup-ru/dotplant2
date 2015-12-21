@@ -30,6 +30,7 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
+use app\backend\actions\MassPublishAction;
 
 class BackendProductController extends BackendController
 {
@@ -127,6 +128,11 @@ class BackendProductController extends BackendController
             'property-handler' => [
                 'class' => PropertyHandler::className(),
                 'modelName' => Product::className()
+            ],
+            'publish-switch' => [
+                'class' => MassPublishAction::className(),
+                'modelName' => Product::className(),
+                'attribute' => 'active',
             ]
         ];
     }

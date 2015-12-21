@@ -24,6 +24,7 @@ use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
+use app\backend\actions\MassPublishAction;
 
 class PageController extends \app\backend\components\BackendController
 {
@@ -83,6 +84,11 @@ class PageController extends \app\backend\components\BackendController
                 'class' => TreeNodesReorderAction::className(),
                 'className' => Page::className(),
             ],
+            'publish-switch' => [
+                'class' => MassPublishAction::className(),
+                'modelName' => Page::className(),
+                'attribute' => 'published',
+            ]
         ];
     }
 

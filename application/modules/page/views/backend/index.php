@@ -95,6 +95,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 )
                 ?>
             </div>
+            <?= \app\backend\widgets\PublishSwitchButtons::widget([
+                'url' => \yii\helpers\Url::toRoute(['publish-switch']),
+                'gridSelector' => '.grid-view',
+            ]) ?>
             <?= \app\backend\widgets\RemoveAllButton::widget([
                 'url' => \yii\helpers\Url::toRoute(['/page/backend/remove-all', 'parent_id' => (is_object($model) ? $model->id : 0)]),
                 'gridSelector' => '.grid-view',

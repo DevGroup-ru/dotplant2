@@ -29,6 +29,10 @@ $this->beginBlock('add-button');
     <?=Icon::show('plus')?>
     <?=Yii::t('app', 'Add')?>
 </a>
+<?= \app\backend\widgets\PublishSwitchButtons::widget([
+    'url' => Url::toRoute(['publish-switch']),
+    'gridSelector' => '.grid-view',
+]) ?>
 <?=\app\backend\widgets\RemoveAllButton::widget(
     [
         'url' => Url::toRoute(['remove-all', 'parent_id' => $parent_id]),

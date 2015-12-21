@@ -167,6 +167,33 @@ Icon::map($this);
     <?php
     \yii\bootstrap\Modal::begin(
         [
+            'id' => 'mass-publish-confirmation',
+            'footer' =>
+                Html::button(
+                    Yii::t('app', 'Yes'),
+                    [
+                        'class' => 'btn btn-danger',
+                        'data-action' => 'confirm',
+                    ]
+                )
+                . Html::button(
+                    Yii::t('app', 'Cancel'),
+                    [
+                        'class' => 'btn btn-default',
+                        'data-dismiss' => 'modal',
+                    ]
+                ),
+            'header' => Yii::t('app', 'Mass publish/unpublish items'),
+        ]
+    )
+    ?>
+    <div class="alert alert-info">
+        <div id="mass-publish-modal-text"></div>
+    </div>
+    <?php \yii\bootstrap\Modal::end() ?>
+    <?php
+    \yii\bootstrap\Modal::begin(
+        [
             'id' => 'delete-category-confirmation',
             'footer' =>
                 Html::button(
