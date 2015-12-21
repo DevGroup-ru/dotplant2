@@ -18,6 +18,7 @@ class Controller extends \yii\web\Controller
 
     protected function renderDecorator($methodName, $view, $params = [])
     {
+        /** @var \app\components\Response $response */
         $response = Yii::$app->response;
         if (!empty($response->title)) {
             $this->view->title = $response->title;
