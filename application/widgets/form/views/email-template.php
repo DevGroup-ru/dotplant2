@@ -18,6 +18,10 @@
         <td>User-Agent</td>
         <td><?=$submission->user_agent;?></td>
     </tr>
+    <tr>
+        <td>Submission referrer:</td>
+        <td><?= $submission->submission_referrer ?></td>
+    </tr>
 
 
 </table>
