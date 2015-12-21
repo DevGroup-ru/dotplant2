@@ -14,7 +14,7 @@
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href="http://<?=Yii::$app->getModule('core')->serverName?>">
+    <base href="http://<?=Yii::$app->getModule('core')->getBaseUrl() ?>">
     <title><?= \yii\helpers\Html::encode($this->title) ?></title>
 
     <?= \yii\helpers\Html::csrfMetaTags() ?>

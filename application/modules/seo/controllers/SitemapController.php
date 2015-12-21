@@ -63,7 +63,7 @@ class SitemapController extends Controller
 
     public function actionGenerateSitemapBeta()
     {
-        $this->sitemap = new SitemapXML(Yii::getAlias('@webroot/'), 'http://' . Yii::$app->getModule('core')->serverName);
+        $this->sitemap = new SitemapXML(Yii::getAlias('@webroot/'), 'http://' . Yii::$app->getModule('core')->getBaseUrl());
         $this->sitemap->addUrl('');
         $this->pagesSitemap();
         $this->categoriesSitemap();

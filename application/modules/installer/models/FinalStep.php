@@ -7,6 +7,7 @@ use Yii;
 class FinalStep extends \yii\base\Model
 {
     public $serverName = 'localhost';
+    public $serverPort = 80;
     public $cacheClass = 'yii\caching\FileCache';
     public $useMemcached = false;
     public $keyPrefix = 'dp2';
@@ -20,6 +21,7 @@ class FinalStep extends \yii\base\Model
             [
                 [
                     'serverName',
+                    'serverPort',
                     'cacheClass',
                     'keyPrefix',
                 ],
