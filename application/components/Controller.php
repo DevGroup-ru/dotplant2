@@ -18,21 +18,23 @@ class Controller extends \yii\web\Controller
 
     protected function renderDecorator($methodName, $view, $params = [])
     {
-        if (!empty(Yii::$app->response->title)) {
-            $this->view->title = Yii::$app->response->title;
+        $response = Yii::$app->response;
+        if (!empty($response->title)) {
+            $this->view->title = $response->title;
         }
-        foreach (Yii::$app->response->blocks as $block_name => $value) {
+        foreach ($response->blocks as $block_name => $value) {
             $this->view->blocks[$block_name] = $value;
         }
-        if (!empty(Yii::$app->response->meta_description)) {
+        if (!empty($response->meta_description)) {
             $this->view->registerMetaTag(
                 [
                     'name' => 'description',
-                    'content' => Yii::$app->response->meta_description,
+                    'content' => $response->meta_description,
                 ],
                 'meta_description'
             );
         }
+
         $preDecoratorEvent = new ViewEvent();
         $preDecoratorEvent->viewFile = $view;
         $preDecoratorEvent->params = &$params;
