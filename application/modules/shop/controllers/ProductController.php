@@ -10,7 +10,9 @@ use app\extensions\DefaultTheme\widgets\FilterSets\Widget;
 use app\models\Object;
 use app\models\PropertyStaticValues;
 use app\models\Search;
+use app\modules\core\helpers\ContentBlockHelper;
 use app\modules\core\helpers\EventTriggeringHelper;
+use app\modules\core\models\ContentBlock;
 use app\modules\shop\events\ProductPageShowed;
 use app\modules\shop\exceptions\EmptyFilterHttpException;
 use app\modules\shop\models\Category;
@@ -130,11 +132,23 @@ class ProductController extends Controller
                         $this->view->registerMetaTag(
                             [
                                 'name' => 'description',
-                                'content' => $selected_category->meta_description,
+                                'content' => ContentBlockHelper::compileContentString(
+                                    $selected_category->meta_description,
+                                    Product::className() . ":{$selected_category->id}:meta_description",
+                                    new TagDependency(
+                                        [
+                                            'tags' => [
+                                                ActiveRecordHelper::getCommonTag(ContentBlock::className()),
+                                                ActiveRecordHelper::getCommonTag(Category::className())
+                                            ]
+                                        ]
+                                    )
+                                )
                             ],
                             'meta_description'
                         );
                     }
+
                     $this->view->title = $selected_category->title;
                 }
             }
@@ -284,7 +298,18 @@ class ProductController extends Controller
             $this->view->registerMetaTag(
                 [
                     'name' => 'description',
-                    'content' => $product->meta_description,
+                    'content' => ContentBlockHelper::compileContentString(
+                        $product->meta_description,
+                        Product::className() . ":{$product->id}:meta_description",
+                        new TagDependency(
+                            [
+                                'tags' => [
+                                    ActiveRecordHelper::getCommonTag(ContentBlock::className()),
+                                    ActiveRecordHelper::getCommonTag(Product::className())
+                                ]
+                            ]
+                        )
+                    )
                 ],
                 'meta_description'
             );
