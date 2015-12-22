@@ -3,6 +3,8 @@
 namespace app\modules\page\controllers;
 
 use app\components\Controller;
+use app\modules\core\helpers\ContentBlockHelper;
+use app\modules\core\models\ContentBlock;
 use app\modules\page\models\Page;
 use app\models\Search;
 use app\modules\seo\behaviors\MetaBehavior;
@@ -32,15 +34,7 @@ class PageController extends Controller
             throw new NotFoundHttpException;
         }
 
-        if (!empty($model->meta_description)) {
-            $this->view->registerMetaTag(
-                [
-                    'name' => 'description',
-                    'content' => $model->meta_description,
-                ],
-                'meta_description'
-            );
-        }
+        $this->registerMetaDescription($model);
 
         $this->view->title = $model->title;
         if (!empty($model->h1)) {
@@ -69,15 +63,8 @@ class PageController extends Controller
         if (null === $model = Page::findById($id)) {
             throw new NotFoundHttpException;
         }
-        if (!empty($model->meta_description)) {
-            $this->view->registerMetaTag(
-                [
-                    'name' => 'description',
-                    'content' => $model->meta_description,
-                ],
-                'meta_description'
-            );
-        }
+
+        $this->registerMetaDescription($model);
 
         $cacheKey = 'PagesList:'.$model->id;
 
@@ -264,5 +251,32 @@ class PageController extends Controller
         unset($breadcrumbs[count($breadcrumbs) - 1]['url']); // last item is not a link
 
         return $breadcrumbs;
+    }
+
+    /**
+     * @param Page $model
+     */
+    private function registerMetaDescription($model)
+    {
+        if (!empty($model->meta_description)) {
+            $this->view->registerMetaTag(
+                [
+                    'name' => 'description',
+                    'content' => ContentBlockHelper::compileContentString(
+                        $model->meta_description,
+                        Page::className() . ":{$model->id}:meta_description",
+                        new TagDependency(
+                            [
+                                'tags' => [
+                                    ActiveRecordHelper::getCommonTag(ContentBlock::className()),
+                                    ActiveRecordHelper::getCommonTag(Page::className())
+                                ]
+                            ]
+                        )
+                    )
+                ],
+                'meta_description'
+            );
+        }
     }
 }

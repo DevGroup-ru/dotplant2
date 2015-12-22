@@ -86,4 +86,14 @@ class BackendModule extends Module implements BootstrapInterface
             ]
         ];
     }
+
+    /**
+     * Check if current request is being served by backend
+     *
+     * @return bool true - backend, false - frontend
+     */
+    public static function isBackend()
+    {
+        return Yii::$app->controller instanceof BackendController === true;
+    }
 }
