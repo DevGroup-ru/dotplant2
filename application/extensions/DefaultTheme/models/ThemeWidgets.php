@@ -127,8 +127,8 @@ class ThemeWidgets extends \yii\db\ActiveRecord
         $query->andFilterWhere(['like', 'name', $this->name]);
         $query->andFilterWhere(['like', 'widget', $this->widget]);
         $query->andFilterWhere(['like', 'cache_tags', $this->cache_tags]);
-        $query->andFilterWhere(['cache_vary_by_session', $this->cache_vary_by_session]);
-        $query->andFilterWhere(['cache_lifetime', $this->cache_lifetime]);
+        $query->andFilterWhere(['cache_vary_by_session' => $this->cache_vary_by_session]);
+        $query->andFilterWhere(['cache_lifetime' => $this->cache_lifetime]);
 
         return $dataProvider;
     }
