@@ -31,6 +31,7 @@ use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 use app\backend\actions\MassPublishAction;
+use app\backend\actions\CategoryMovementsAction;
 
 class BackendProductController extends BackendController
 {
@@ -133,6 +134,9 @@ class BackendProductController extends BackendController
                 'class' => MassPublishAction::className(),
                 'modelName' => Product::className(),
                 'attribute' => 'active',
+            ],
+            'categoryMovements' => [
+                'class' => CategoryMovementsAction::className(),
             ]
         ];
     }

@@ -19,10 +19,13 @@ $parent_id = Yii::$app->request->get('parent_id', app\modules\shop\models\Catego
     ]
 );?>
 
-
 <?php
 $this->beginBlock('add-button');
 ?>
+<?=\app\backend\widgets\CategoryMovementsButtons::widget([
+    'url' => Url::toRoute(['categoryMovements']),
+    'gridSelector' => '.grid-view',
+]) ?>
 <a href="<?=Url::toRoute(
     ['edit', 'parent_id' => $parent_id, 'returnUrl' => \app\backend\components\Helper::getReturnUrl()]
 )?>" class="btn btn-success">

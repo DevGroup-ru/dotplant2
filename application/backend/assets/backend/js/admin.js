@@ -205,6 +205,30 @@ $(function(){
         });
         return true;
     });
+    $('#mass-categories-actions [data-action="confirm"]').click(function() {
+        var $modal = $(this).closest('.modal');
+        var items = $modal.data('items'),
+            action = $modal.data('mc-action'),
+            categoryId = $modal.data('cat-id');
+        $(this).prop('disabled', true);
+        $.ajax({
+            'url': $modal.data('url'),
+            'type': 'post',
+            'data': {"mc-items" : items, "cat-id" : categoryId, "action" : action},
+            'success': function (data) {
+                $modal.modal('hide');
+                location.reload();
+            },
+            'error': function (data) {
+                if (typeof data.responseText !== 'undefined') {
+                    var $textContainer = $('#mass-categories-action-modal-text', $modal);
+                    $textContainer.closest('.alert').removeClass('alert-info').addClass('alert-danger');
+                    $textContainer.text(data.responseText);
+                }
+            }
+        });
+        return true;
+    });
     $('body').on('click', 'a[data-action="post"]', function(){
         var that = $(this);
 

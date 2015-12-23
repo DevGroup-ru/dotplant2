@@ -277,40 +277,37 @@ article.backend-edit-grid.col-md-4 .widget-footer .btn, article.backend-edit-gri
   padding: 1px 5px;
 }
 
-/* line 249, ../sass/admin.scss */
 div.table .file-row > div {
   display: block;
   box-sizing: border-box;
   margin-left: 100px;
 }
-/* line 253, ../sass/admin.scss */
 div.table .file-row > div.preview-div {
   width: 96px;
   margin-left: 0;
   float: left;
   background: #eee;
 }
-/* line 259, ../sass/admin.scss */
 div.table .file-row > div.fn {
   background: #eee;
 }
-/* line 263, ../sass/admin.scss */
 div.table .file-row > div:after {
   content: ' ';
   clear: both;
 }
 
-/* line 270, ../sass/admin.scss */
 div.table .file-row > div.title label {
   float: left;
 }
 
-/* line 275, ../sass/admin.scss */
 div.files.dropzone {
   margin-top: 0;
 }
 
-/* line 278, ../sass/admin.scss */
 .select2-search {
   z-index: initial;
+}
+
+.m-bottom-10 {
+  margin-bottom: 10px;
 }
