@@ -5,6 +5,7 @@ use app\modules\core\models\ContentBlock;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii;
 use app;
 
@@ -55,7 +56,7 @@ class ContentBlockHelper
      * @param  string $chunk_key ContentBlock key string to prevent endless recursion
      * @return string
      */
-    public static function processData($content, $content_key, $dependency, $chunk_key = '', $preprocess = true)
+    private static function processData($content, $content_key, $dependency, $chunk_key = '', $preprocess = true)
     {
         $matches = [];
         $replacement = '';
@@ -67,11 +68,11 @@ class ContentBlockHelper
                     $content = str_replace($matches[0][$k], '', $content);
                     continue;
                 }
+                $cacheKey = $content_key . $chunkData['key'] . serialize($chunkData);
                 switch ($chunkData['token']) {
                     case '$':
                         if ($preprocess === false) break;
                         $chunk = self::fetchChunkByKey($chunkData['key']);
-                        $cacheKey = $content_key . $chunkData['key'] . serialize($chunkData);
                         $replacement = Yii::$app->cache->get($cacheKey);
                         if ($replacement === false) {
                             $replacement = static::compileChunk($chunk, $chunkData, $chunkData['key'], $content_key, $dependency);
@@ -90,6 +91,19 @@ class ContentBlockHelper
                         }
                         $replacement = static::replaceForms($chunkData);
                         break;
+                    case '~' :
+                        if ($preprocess === false) break;
+                        $replacement = Yii::$app->cache->get($cacheKey);
+                        if ($replacement === false) {
+                            $replacement = static::renderUrl($chunkData);
+                            Yii::$app->cache->set(
+                                $content_key,
+                                $replacement,
+                                84600,
+                                $dependency
+                            );
+                        }
+                        break;
                 }
                 $content = str_replace($matches[0][$k], $replacement, $content);
             }
@@ -101,7 +115,7 @@ class ContentBlockHelper
      * @param array $chunkData
      * @return mixed
      */
-    public static function replaceForms($chunkData)
+    private static function replaceForms($chunkData)
     {
         $regexp = '/^(?P<formId>\d+)(#(?P<id>[\w\d\-_]+))?(;(?P<isModal>isModal))?$/Usi';
         return preg_replace_callback(
@@ -121,6 +135,39 @@ class ContentBlockHelper
             },
             $chunkData['key']
         );
+    }
+
+    /**
+     * renders url according to given data
+     * @param $chunkData
+     * @return string
+     */
+    private static function renderUrl($chunkData)
+    {
+        $expression = '%(?P<objectName>[^#]+?)#(?P<objectId>[\d]+?)$%';
+        $output = '';
+        preg_match($expression, $chunkData['key'], $m);
+        if (true === isset($m['objectName'], $m['objectId'])) {
+            $id = (int)$m['objectId'];
+            switch (strtolower($m['objectName'])) {
+                case "page" :
+                    if (null !== $model = app\modules\page\models\Page::findById($id)) {
+                        $output = Url::to(['@article', 'id' => $id]);
+                    }
+                    break;
+                case "category" :
+                    if (null !== $model = app\modules\shop\models\Category::findById($id)) {
+                        $output = Url::to(['@category', 'last_category_id' => $id]);
+                    }
+                    break;
+                case "product" :
+                    if (null !== $model = app\modules\shop\models\Product::findById($id)) {
+                        $output = Url::to(['@product', 'model' => $model]);
+                    }
+                    break;
+            }
+        }
+        return $output;
     }
 
     /**
@@ -183,7 +230,7 @@ class ContentBlockHelper
      * @param  string $key ContentBlock key string to prevent endless recursion
      * @return string Result string ready for replacing
      */
-    public static function compileChunk($chunk, $arguments, $key, $content_key, $dependency)
+    private static function compileChunk($chunk, $arguments, $key, $content_key, $dependency)
     {
         $matches = [];
         preg_match_all('%\[\[(?P<token>[\+\*])(?P<paramName>[^\s\:\]]+)\:?(?P<format>[^\,\]]+)?\,?(?P<params>[^\]]+)?\]\]%ui', $chunk, $matches);
@@ -242,7 +289,7 @@ class ContentBlockHelper
      * @param $key string Chunk key field
      * @return string Chunk value field
      */
-    public static function fetchChunkByKey($key)
+    private static function fetchChunkByKey($key)
     {
         if (!array_key_exists($key, static::$chunksByKey)) {
             $dependency = new TagDependency([
@@ -267,7 +314,7 @@ class ContentBlockHelper
      *
      * @return array|void
      */
-    public static function preloadChunks()
+    private static function preloadChunks()
     {
         if (is_null(static::$chunksByKey)) {
             $dependency = new TagDependency([

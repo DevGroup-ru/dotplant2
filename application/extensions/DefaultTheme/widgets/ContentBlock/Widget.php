@@ -16,7 +16,7 @@ class Widget extends BaseWidget
      */
     public function widgetRun()
     {
-        $contentBlock = ContentBlockHelper::fetchChunkByKey($this->key);
+        $contentBlock = ContentBlockHelper::getChunk($this->key);
         if ($contentBlock === null) {
             return '';
         }
