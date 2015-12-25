@@ -11,7 +11,6 @@ use devgroup\TagDependencyHelper\ActiveRecordHelper;
 
 class ContentBlock extends PreDecorator
 {
-
     /**
      * Handle decoration
      * @param \yii\base\Controller $controller
@@ -21,9 +20,11 @@ class ContentBlock extends PreDecorator
      */
     public function decorate($controller, $viewFile, $params)
     {
-        if (!Yii::$app->getModule("backend")->isBackend())
-        {
-            $baseContentKey = get_class($params['model']) . ":{$params['model']->id}:";
+        if (!Yii::$app->getModule("backend")->isBackend()) {
+            $baseContentKey = get_class($params['model'])
+                . ':'
+                . (isset($params['model']->id) ? $params['model']->id : '')
+                . ':';
             $view = $controller->view;
             $dependency = new TagDependency([
                 'tags' => [
@@ -31,14 +32,11 @@ class ContentBlock extends PreDecorator
                     ActiveRecordHelper::getCommonTag(get_class($params['model']))
                 ]
             ]);
-
-
             $view->title = $this->processChunks(
                 $view->title,
                 $baseContentKey . "title",
                 $dependency
             );
-
             if (!empty($view->blocks["content"])) {
                 $view->blocks["content"] = $this->processChunks(
                     $view->blocks["content"],
@@ -46,7 +44,6 @@ class ContentBlock extends PreDecorator
                     $dependency
                 );
             }
-
             if (!empty($view->blocks["announce"])) {
                 $view->blocks["announce"] = $this->processChunks(
                     $view->blocks["announce"],
