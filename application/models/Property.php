@@ -88,7 +88,7 @@ class Property extends ActiveRecord
     public function rules()
     {
         return [
-            [['property_group_id', 'name', 'property_handler_id', 'handler_additional_params'], 'required'],
+            [['property_group_id', 'name', 'property_handler_id', 'handler_additional_params', 'key'], 'required'],
             [
                 [
                     'property_group_id',
