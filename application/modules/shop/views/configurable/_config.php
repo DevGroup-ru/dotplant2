@@ -35,6 +35,10 @@ use app\components\Helper;
 
         <?= $form->field($model, 'showFiltersInBreadcrumbs')->widget(SwitchInput::className()) ?>
 
+        <?= $form->field($model, 'itemView') ?>
+
+        <?= $form->field($model, 'listView') ?>
+
         <?php BackendWidget::end() ?>
 
     </div>

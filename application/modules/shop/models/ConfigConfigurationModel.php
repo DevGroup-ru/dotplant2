@@ -119,6 +119,16 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public $useCeilQuantity = true;
 
     /**
+     * @var string View file for render product item content block
+     */
+    public $itemView = '@app/modules/shop/views/product/item-row';
+
+    /**
+     * @var string View file for render product list content block
+     */
+    public $listView = '@app/modules/shop/views/product/item-list';
+
+    /**
      * @inheritdoc
      */
     public function rules()

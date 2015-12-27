@@ -1,7 +1,10 @@
 <?php
 namespace app\modules\core\helpers;
 
+use app\models\Property;
+use app\models\PropertyStaticValues;
 use app\modules\core\models\ContentBlock;
+use app\modules\shop\models\Product;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
@@ -96,6 +99,21 @@ class ContentBlockHelper
                         $replacement = Yii::$app->cache->get($cacheKey);
                         if ($replacement === false) {
                             $replacement = static::renderUrl($chunkData);
+                            Yii::$app->cache->set(
+                                $content_key,
+                                $replacement,
+                                84600,
+                                $dependency
+                            );
+                        }
+                        break;
+                    case '*':
+                        if ($preprocess === false) {
+                            break;
+                        }
+                        $replacement = Yii::$app->cache->get($cacheKey);
+                        if ($replacement === false) {
+                            $replacement = static::renderProducts($chunkData, $dependency);
                             Yii::$app->cache->set(
                                 $content_key,
                                 $replacement,
@@ -358,5 +376,124 @@ class ContentBlockHelper
             $rawChunk = self::compileChunk($rawChunk, $params, $key, $content_key, $dependency);
         }
         return self::compileContentString($rawChunk, $content_key, $dependency);
+    }
+
+    private static function renderProducts($chunkData, &$dependency)
+    {
+        $params = [
+            'itemView' => Yii::$app->getModule('shop')->itemView,
+            'type' => 'show',
+            'object' => 'product',
+            'where' => [],
+            'limit' => 0,
+            'listView' => Yii::$app->getModule('shop')->listView,
+        ];
+        switch ($chunkData['key']) {
+            case 'product':
+                if (ArrayHelper::keyExists('sku', $chunkData)) {
+                    $params['where'] = ['sku' => $chunkData['sku']];
+                }
+                break;
+            case 'productList':
+                $params['type'] = 'list';
+                break;
+            default:
+                $expression = '%(?P<objectName>[^#]+?)#(?P<objectId>[\d]+?)$%';
+                if (preg_match($expression, $chunkData['key'], $matches)) {
+                    $params['where']['id'] = $matches['objectId'];
+                }
+                break;
+        }
+        switch ($params['object']) {
+            case 'product':
+                $query = Product::find();
+                if (!empty($chunkData['categoryId'])) {
+                    $query->leftJoin('{{%product_category}}', Product::tableName() . '.id = {{%product_category}}.object_model_id')
+                        ->andWhere(['{{%product_category}}.category_id' => $chunkData['categoryId']]);
+                }
+                if (!empty($chunkData['property'])) {
+                    $expression = '%(?P<propertyKey>[^:]+?):(?P<propertyValue>.+?)$%';
+                    if (preg_match($expression, $chunkData['property'], $matches)) {
+                        $property = Property::findOne(['key' => $matches['propertyKey']]);
+                        if (!is_null($property)) {
+                            /** @var Property $property */
+                            if ($property->is_eav == 1) {
+                                $query->leftJoin('{{%product_eav}}', Product::tableName() . '.id = {{%product_eav}}.object_model_id')
+                                    ->andWhere([
+                                        '{{%product_eav}}.key' => $matches['propertyKey'],
+                                        '{{%product_eav}}.value' => $matches['propertyValue']
+                                    ]);
+                            } elseif ($property->has_static_values == 1) {
+                                $psv = PropertyStaticValues::findOne([
+                                    'property_id' => $property->id,
+                                    'value' => $matches['propertyValue']
+                                ]);
+                                if (!is_null($psv)) {
+                                    $query->leftJoin('{{%object_static_values}}', Product::tableName() . '.id = {{%object_static_values}}.object_model_id')
+                                        ->andWhere([
+                                            'object_id' =>3,
+                                            '{{%object_static_values}}.property_static_value_id' => $psv->id,
+                                        ]);
+                                } else {
+                                    return '';
+                                }
+                            }
+                            /** @todo add column_stored */
+                        } else {
+                            return '';
+                        }
+                    }
+                }
+                break;
+            default:
+                $query = Product::find();
+                break;
+        }
+        $params = ArrayHelper::merge($params, array_intersect_key($chunkData, $params));
+        if (!empty($params['where'])) {
+            $query->andWhere($params['where']);
+        }
+        if (!empty($params['limit'])) {
+            $query->limit($params['limit']);
+        }
+
+        if ($params['type'] === 'list') {
+            $view = $params['listView'];
+            switch ($params['object']) {
+                case 'product':
+                    $viewParams = ['products' => $query->all()];
+                    break;
+                default:
+                    $viewParams = ['products' => $query->all()];
+                    break;
+            }
+        } else {
+            $view = $params['itemView'];
+            $object = $query->one();
+            if (is_null($object)) {
+                return '';
+            }
+            switch ($params['object']) {
+                case 'product':
+                    $viewParams = ['product' => $object, 'url' => Url::to(
+                        [
+                            '@product',
+                            'model' => $object,
+                            'category_group_id' => $object->getMainCategory()->category_group_id,
+                        ]
+                    )];
+                    break;
+                default:
+                    $viewParams = ['product' => $object, 'url' => Url::to(
+                        [
+                            '@product',
+                            'model' => $object,
+                            'category_group_id' => $object->getMainCategory()->category_group_id,
+                        ]
+                    )];
+                    break;
+            }
+        }
+        return Yii::$app->view->render($view, $viewParams);
     }
 }
