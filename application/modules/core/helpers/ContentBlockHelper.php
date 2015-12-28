@@ -80,7 +80,7 @@ class ContentBlockHelper
                         if ($replacement === false) {
                             $replacement = static::compileChunk($chunk, $chunkData, $chunkData['key'], $content_key, $dependency);
                             Yii::$app->cache->set(
-                                $content_key,
+                                $cacheKey,
                                 $replacement,
                                 84600,
                                 $dependency
@@ -100,7 +100,7 @@ class ContentBlockHelper
                         if ($replacement === false) {
                             $replacement = static::renderUrl($chunkData);
                             Yii::$app->cache->set(
-                                $content_key,
+                                $cacheKey,
                                 $replacement,
                                 84600,
                                 $dependency
@@ -115,7 +115,7 @@ class ContentBlockHelper
                         if ($replacement === false) {
                             $replacement = static::renderProducts($chunkData, $dependency);
                             Yii::$app->cache->set(
-                                $content_key,
+                                $cacheKey,
                                 $replacement,
                                 84600,
                                 $dependency
