@@ -1,9 +1,11 @@
 <?php
 namespace app\modules\core\helpers;
 
+use app;
 use app\models\Property;
 use app\models\PropertyStaticValues;
 use app\modules\core\models\ContentBlock;
+use app\modules\page\models\Page;
 use app\modules\shop\models\Category;
 use app\modules\shop\models\Product;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -11,7 +13,6 @@ use yii\caching\TagDependency;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii;
-use app;
 
 /**
  * Class ContentBlockHelper
@@ -99,7 +100,7 @@ class ContentBlockHelper
                         if ($preprocess === false) break;
                         $replacement = Yii::$app->cache->get($cacheKey);
                         if ($replacement === false) {
-                            $replacement = static::renderUrl($chunkData);
+                            $replacement = static::renderUrl($chunkData, $dependency);
                             Yii::$app->cache->set(
                                 $cacheKey,
                                 $replacement,
@@ -159,9 +160,10 @@ class ContentBlockHelper
     /**
      * renders url according to given data
      * @param $chunkData
+     * @param TagDependency $dependency
      * @return string
      */
-    private static function renderUrl($chunkData)
+    private static function renderUrl($chunkData, &$dependency)
     {
         $expression = '%(?P<objectName>[^#]+?)#(?P<objectId>[\d]+?)$%';
         $output = '';
@@ -170,17 +172,23 @@ class ContentBlockHelper
             $id = (int)$m['objectId'];
             switch (strtolower($m['objectName'])) {
                 case "page" :
-                    if (null !== $model = app\modules\page\models\Page::findById($id)) {
+                    if (null !== $model = Page::findById($id)) {
+                        $dependency->tags [] = ActiveRecordHelper::getCommonTag(Page::className());
+                        $dependency->tags [] = $model->objectTag();
                         $output = Url::to(['@article', 'id' => $id]);
                     }
                     break;
                 case "category" :
-                    if (null !== $model = app\modules\shop\models\Category::findById($id)) {
+                    if (null !== $model = Category::findById($id)) {
+                        $dependency->tags [] = ActiveRecordHelper::getCommonTag(Category::className());
+                        $dependency->tags [] = $model->objectTag();
                         $output = Url::to(['@category', 'last_category_id' => $id]);
                     }
                     break;
                 case "product" :
                     if (null !== $model = app\modules\shop\models\Product::findById($id)) {
+                        $dependency->tags [] = ActiveRecordHelper::getCommonTag(Product::className());
+                        $dependency->tags [] = $model->objectTag();
                         $output = Url::to(['@product', 'model' => $model]);
                     }
                     break;
