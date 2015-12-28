@@ -4,6 +4,7 @@ namespace app\modules\core\helpers;
 use app\models\Property;
 use app\models\PropertyStaticValues;
 use app\modules\core\models\ContentBlock;
+use app\modules\shop\models\Category;
 use app\modules\shop\models\Product;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\caching\TagDependency;
@@ -406,10 +407,18 @@ class ContentBlockHelper
         }
         switch ($params['object']) {
             case 'product':
+                $dependency->tags[] = ActiveRecordHelper::getCommonTag(Product::className());
                 $query = Product::find();
                 if (!empty($chunkData['categoryId'])) {
-                    $query->leftJoin('{{%product_category}}', Product::tableName() . '.id = {{%product_category}}.object_model_id')
-                        ->andWhere(['{{%product_category}}.category_id' => $chunkData['categoryId']]);
+                    $query->leftJoin(
+                        '{{%product_category}}',
+                        Product::tableName() . '.id = {{%product_category}}.object_model_id'
+                    )->andWhere(['{{%product_category}}.category_id' => $chunkData['categoryId']]);
+                    $dependency->tags[] = ActiveRecordHelper::getCommonTag(Category::className());
+                    $dependency->tags[] = ActiveRecordHelper::getObjectTag(
+                        Category::className(),
+                        $chunkData['categoryId']
+                    );
                 }
                 if (!empty($chunkData['property'])) {
                     $expression = '%(?P<propertyKey>[^:]+?):(?P<propertyValue>.+?)$%';
@@ -417,23 +426,37 @@ class ContentBlockHelper
                         $property = Property::findOne(['key' => $matches['propertyKey']]);
                         if (!is_null($property)) {
                             /** @var Property $property */
+                            $dependency->tags[] = ActiveRecordHelper::getCommonTag(Property::className());
+                            $dependency->tags[] = $property->objectTag();
                             if ($property->is_eav == 1) {
-                                $query->leftJoin('{{%product_eav}}', Product::tableName() . '.id = {{%product_eav}}.object_model_id')
-                                    ->andWhere([
-                                        '{{%product_eav}}.key' => $matches['propertyKey'],
-                                        '{{%product_eav}}.value' => $matches['propertyValue']
-                                    ]);
+                                $query->leftJoin(
+                                    '{{%product_eav}}',
+                                    Product::tableName() . '.id = {{%product_eav}}.object_model_id'
+                                )->andWhere(
+                                        [
+                                            '{{%product_eav}}.key' => $matches['propertyKey'],
+                                            '{{%product_eav}}.value' => $matches['propertyValue']
+                                        ]
+                                    );
                             } elseif ($property->has_static_values == 1) {
-                                $psv = PropertyStaticValues::findOne([
-                                    'property_id' => $property->id,
-                                    'value' => $matches['propertyValue']
-                                ]);
+                                $psv = PropertyStaticValues::findOne(
+                                    [
+                                        'property_id' => $property->id,
+                                        'value' => $matches['propertyValue']
+                                    ]
+                                );
                                 if (!is_null($psv)) {
-                                    $query->leftJoin('{{%object_static_values}}', Product::tableName() . '.id = {{%object_static_values}}.object_model_id')
-                                        ->andWhere([
-                                            'object_id' =>3,
-                                            '{{%object_static_values}}.property_static_value_id' => $psv->id,
-                                        ]);
+                                    $dependency->tags[] = ActiveRecordHelper::getCommonTag(PropertyStaticValues::className());
+                                    $dependency->tags[] = $psv->objectTag();
+                                    $query->leftJoin(
+                                        '{{%object_static_values}}',
+                                        Product::tableName() . '.id = {{%object_static_values}}.object_model_id'
+                                    )->andWhere(
+                                            [
+                                                'object_id' => 3,
+                                                '{{%object_static_values}}.property_static_value_id' => $psv->id,
+                                            ]
+                                        );
                                 } else {
                                     return '';
                                 }
@@ -459,12 +482,16 @@ class ContentBlockHelper
 
         if ($params['type'] === 'list') {
             $view = $params['listView'];
+            $objects = $query->all();
+            foreach ($objects as $object) {
+                $dependency->tags[] = $object->objectTag();
+            }
             switch ($params['object']) {
                 case 'product':
-                    $viewParams = ['products' => $query->all()];
+                    $viewParams = ['products' => $objects];
                     break;
                 default:
-                    $viewParams = ['products' => $query->all()];
+                    $viewParams = ['products' => $objects];
                     break;
             }
         } else {
@@ -473,24 +500,31 @@ class ContentBlockHelper
             if (is_null($object)) {
                 return '';
             }
+            $dependency->tags[] = $object->objectTag();
             switch ($params['object']) {
                 case 'product':
-                    $viewParams = ['product' => $object, 'url' => Url::to(
-                        [
-                            '@product',
-                            'model' => $object,
-                            'category_group_id' => $object->getMainCategory()->category_group_id,
-                        ]
-                    )];
+                    $viewParams = [
+                        'product' => $object,
+                        'url' => Url::to(
+                            [
+                                '@product',
+                                'model' => $object,
+                                'category_group_id' => $object->getMainCategory()->category_group_id,
+                            ]
+                        )
+                    ];
                     break;
                 default:
-                    $viewParams = ['product' => $object, 'url' => Url::to(
-                        [
-                            '@product',
-                            'model' => $object,
-                            'category_group_id' => $object->getMainCategory()->category_group_id,
-                        ]
-                    )];
+                    $viewParams = [
+                        'product' => $object,
+                        'url' => Url::to(
+                            [
+                                '@product',
+                                'model' => $object,
+                                'category_group_id' => $object->getMainCategory()->category_group_id,
+                            ]
+                        )
+                    ];
                     break;
             }
         }
