@@ -379,6 +379,13 @@ class ContentBlockHelper
         return self::compileContentString($rawChunk, $content_key, $dependency);
     }
 
+    /**
+     * renders product item and list.
+     * possible can render all objects, but need for few logic change
+     * @param array $chunkData params for select and render
+     * @param TagDependency $dependency
+     * @return mixed
+     */
     private static function renderProducts($chunkData, &$dependency)
     {
         $params = [
@@ -433,11 +440,11 @@ class ContentBlockHelper
                                     '{{%product_eav}}',
                                     Product::tableName() . '.id = {{%product_eav}}.object_model_id'
                                 )->andWhere(
-                                        [
-                                            '{{%product_eav}}.key' => $matches['propertyKey'],
-                                            '{{%product_eav}}.value' => $matches['propertyValue']
-                                        ]
-                                    );
+                                    [
+                                        '{{%product_eav}}.key' => $matches['propertyKey'],
+                                        '{{%product_eav}}.value' => $matches['propertyValue']
+                                    ]
+                                );
                             } elseif ($property->has_static_values == 1) {
                                 $psv = PropertyStaticValues::findOne(
                                     [
@@ -446,17 +453,19 @@ class ContentBlockHelper
                                     ]
                                 );
                                 if (!is_null($psv)) {
-                                    $dependency->tags[] = ActiveRecordHelper::getCommonTag(PropertyStaticValues::className());
+                                    $dependency->tags[] = ActiveRecordHelper::getCommonTag(
+                                        PropertyStaticValues::className()
+                                    );
                                     $dependency->tags[] = $psv->objectTag();
                                     $query->leftJoin(
                                         '{{%object_static_values}}',
                                         Product::tableName() . '.id = {{%object_static_values}}.object_model_id'
                                     )->andWhere(
-                                            [
-                                                'object_id' => 3,
-                                                '{{%object_static_values}}.property_static_value_id' => $psv->id,
-                                            ]
-                                        );
+                                        [
+                                            'object_id' => 3,
+                                            '{{%object_static_values}}.property_static_value_id' => $psv->id,
+                                        ]
+                                    );
                                 } else {
                                     return '';
                                 }
