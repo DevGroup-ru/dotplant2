@@ -216,6 +216,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                     }
                 }
             ],
+            [['itemView', 'listView'], 'string'],
         ];
     }
 
