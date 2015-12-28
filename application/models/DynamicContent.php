@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
@@ -31,6 +32,15 @@ class DynamicContent extends ActiveRecord
     public static function tableName()
     {
         return '{{%dynamic_content}}';
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => ActiveRecordHelper::className(),
+            ],
+        ];
     }
 
     /**
