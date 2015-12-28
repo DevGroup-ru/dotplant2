@@ -3,7 +3,9 @@
 
 namespace app\modules\user\models;
 
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "{{%user_activity}}".
@@ -22,6 +24,22 @@ class UserActivity extends ActiveRecord
     public static function tableName()
     {
         return 'user_activity';
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'date_added',
+                'updatedAtAttribute' => 'date_modified',
+                'value' => new Expression('NOW()'),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['last_heartbeat'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['last_heartbeat'],
+                ],
+            ],
+        ];
     }
 
     /**

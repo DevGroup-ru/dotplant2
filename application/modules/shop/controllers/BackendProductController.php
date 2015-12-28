@@ -15,6 +15,7 @@ use app\modules\shop\models\Product;
 use app\models\Property;
 use app\models\PropertyStaticValues;
 use app\models\ViewObject;
+use app\modules\user\actions\HeartbeatAction;
 use app\properties\HasProperties;
 use app\modules\image\widgets\RemoveAction;
 use app\modules\image\widgets\SaveInfoAction;
@@ -127,7 +128,11 @@ class BackendProductController extends BackendController
             'property-handler' => [
                 'class' => PropertyHandler::className(),
                 'modelName' => Product::className()
-            ]
+            ],
+            'heartbeat' => [
+                'class' => HeartbeatAction::className(),
+                'objectId' => Object::getForClass(Product::className())->id,
+            ],
         ];
     }
 

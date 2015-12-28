@@ -73,12 +73,14 @@ class BackendModule extends Module implements BootstrapInterface
                     $app->requestedAction->controller->module instanceof BackendModule ||
                     $app->requestedAction->controller instanceof BackendController
                 ) {
-                    $app->getView()->registerJs(
-                        'var heartbeatUrl = "' . Url::to(
-                            '/' . Yii::$app->requestedAction->controller->module->id . '/' . Yii::$app->requestedAction->controller->id . '/heartbeat'
-                        ) . '";',
-                        View::POS_BEGIN
-                    );
+                    if($app->requestedAction->id === 'edit'){
+                        $app->getView()->registerJs(
+                            'var heartbeatUrl = "' . Url::to(
+                                '/' . Yii::$app->requestedAction->controller->module->id . '/' . Yii::$app->requestedAction->controller->id . '/heartbeat'
+                            ) . '", modelId = "' . Yii::$app->request->get('id') . '", activate = true;',
+                            View::POS_BEGIN
+                        );
+                    }
                 }
 
             }

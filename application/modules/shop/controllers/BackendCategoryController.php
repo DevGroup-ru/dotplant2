@@ -9,6 +9,7 @@ use app\modules\image\widgets\views\AddImageAction;
 use app\modules\shop\models\Category;
 use app\models\Object;
 use app\models\ViewObject;
+use app\modules\user\actions\HeartbeatAction;
 use app\properties\HasProperties;
 use app\modules\image\widgets\RemoveAction;
 use app\modules\image\widgets\SaveInfoAction;
@@ -80,7 +81,11 @@ class BackendCategoryController extends BackendController
             'property-handler' => [
                 'class' => PropertyHandler::className(),
                 'modelName' => Category::className()
-            ]
+            ],
+            'heartbeat' => [
+                'class' => HeartbeatAction::className(),
+                'objectId' => Object::getForClass(Category::className())->id,
+            ],
         ];
     }
 

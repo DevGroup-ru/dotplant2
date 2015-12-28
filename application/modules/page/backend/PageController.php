@@ -11,6 +11,7 @@ use app\modules\image\models\Image;
 use app\modules\image\widgets\views\AddImageAction;
 use app\modules\page\models\Page;
 use app\models\ViewObject;
+use app\modules\user\actions\HeartbeatAction;
 use app\properties\HasProperties;
 use app\modules\image\widgets\RemoveAction;
 use app\modules\image\widgets\SaveInfoAction;
@@ -82,6 +83,10 @@ class PageController extends \app\backend\components\BackendController
             'reorder' => [
                 'class' => TreeNodesReorderAction::className(),
                 'className' => Page::className(),
+            ],
+            'heartbeat' => [
+                'class' => HeartbeatAction::className(),
+                'objectId' => Object::getForClass(Page::className())->id,
             ],
         ];
     }
