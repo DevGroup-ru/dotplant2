@@ -19,6 +19,13 @@ use yii\web\Response;
 
 class BackendReviewController extends \app\backend\components\BackendController
 {
+
+    const BACKEND_REVIEW_EDIT = 'backend-review-edit';
+    const BACKEND_REVIEW_EDIT_SAVE = 'backend-review-edit-save';
+    const BACKEND_REVIEW_EDIT_FORM = 'backend-review-edit-form';
+    const BACKEND_REVIEW_AFTER_SAVE = 'backend-review-after-save';
+
+
     public function behaviors()
     {
         return [

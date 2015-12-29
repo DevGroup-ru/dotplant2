@@ -4,6 +4,7 @@ namespace app\behaviors;
 
 use app\modules\shop\models\Category;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\base\Behavior;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
@@ -167,6 +168,10 @@ class Tree extends Behavior
             }
             $index++;
             $tree_item['items'] = static::rowsArrayToMenuTree($rows, $index, $item['id'], $native_menu_mode);
+
+            if (empty($tree_item['visible']) && in_array(true, ArrayHelper::getColumn($tree_item['items'], 'visible'))) {
+                $tree_item['visible'] = true;
+            }
             $tree[] = $tree_item;
         }
         return $tree;
