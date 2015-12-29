@@ -231,7 +231,9 @@ JSCODE;
     </div>
 </div>
 <?php
-    $form->end();
+$event = new \app\backend\events\BackendEntityEditFormEvent($form, $review);
+$this->trigger(\app\modules\review\controllers\BackendReviewController::BACKEND_REVIEW_EDIT_FORM, $event);
+$form->end();
 
 $_js = <<<'JSCODE'
 $(function(){
