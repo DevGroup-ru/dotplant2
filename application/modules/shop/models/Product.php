@@ -1148,4 +1148,3 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         return ($this->className() . ':' . $this->id);
     }
 }
-?>

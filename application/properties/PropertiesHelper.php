@@ -6,6 +6,7 @@ namespace app\properties;
 use app\models\Object;
 use app\models\ObjectStaticValues;
 use app\models\Property;
+use app\modules\shop\models\ConfigConfigurationModel;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
@@ -25,7 +26,8 @@ class PropertiesHelper
         $object,
         &$query,
         $values_by_property_id,
-        $dynamic_values_by_property_id = []
+        $dynamic_values_by_property_id = [],
+        $multiFilterMode = 'union'
     ) {
 
         /** @avr $object Object */
@@ -44,7 +46,9 @@ class PropertiesHelper
             // values может быть просто строкой(одно значение), а может уже прийти массивом
             $values = (array) $values;
             $property = Property::findById($property_id);
-            if ($property===null) continue;
+            if ($property === null) {
+                continue;
+            }
             if ($property->is_eav) {
                 $by_storage['eav'][] = [
                     'property' => $property,
@@ -93,7 +97,13 @@ class PropertiesHelper
                     Yii::$app->db->quoteColumnName($property->key) . " = " .
                     Yii::$app->db->quoteValue($val);
             }
-            $ti_clauses[] = implode(" OR ", $or_clauses);
+            switch ($multiFilterMode) {
+                case ConfigConfigurationModel::MULTI_FILTER_MODE_INTERSECTION:
+                    $ti_clauses[] = implode(" AND ", $or_clauses);
+                    break;
+                default:
+                    $ti_clauses[] = implode(" OR ", $or_clauses);
+            }
         }
         foreach ($dynamic_by_storage['table_inheritance'] as $item) {
             $property = $item['property'];

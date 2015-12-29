@@ -71,6 +71,11 @@ class ShopModule extends BaseModule implements BootstrapInterface
     public $filterOnlyByParentProduct = true;
 
     /**
+     * @var string Filtration mode
+     */
+    public $multiFilterMode = 'union';
+
+    /**
      * @var int How much last viewed products ID's to store in session
      */
     public $maxLastViewedProducts = 9;
