@@ -70,7 +70,9 @@ class PayUPayment extends AbstractPayment
             'ORDER_PRICE[]' => [],
             'ORDER_QTY[]' => [],
             'ORDER_VAT[]' => [],
-            'ORDER_SHIPPING' => null !== $this->order->shippingOption ? $this->order->shippingOption->cost : 0,
+            'ORDER_SHIPPING' => null !== $this->order->orderDeliveryInformation
+                ? $this->order->orderDeliveryInformation->shipping_price
+                : 0,
             'PRICES_CURRENCY' => null !== Currency::getMainCurrency() ? Currency::getMainCurrency()->iso_code : 'RUB',
             'ORDER_PRICE_TYPE[]' => [],
         ];
