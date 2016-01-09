@@ -7,4 +7,4 @@ use app;
 class MaskedInputPropertyWidget extends app\properties\handlers\AbstractHandlerWidget
 {
 }
-?>
+

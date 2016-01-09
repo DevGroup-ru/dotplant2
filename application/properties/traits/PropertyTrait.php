@@ -18,4 +18,4 @@ trait PropertyTrait
         return $result;
     }
 }
-?>
+

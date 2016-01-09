@@ -578,4 +578,4 @@ class XmlFileReader
         return $defaultValue;
     }
 }
-?>
+

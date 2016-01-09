@@ -291,4 +291,4 @@ class PropertyGroup extends ActiveRecord
         return $result;
     }
 }
-?>
+

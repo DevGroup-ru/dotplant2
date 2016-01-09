@@ -116,4 +116,4 @@ class RobokassaPayment extends AbstractPayment
 
 }
 
-?>
+

@@ -71,4 +71,4 @@ class ObjectPropertyGroup extends ActiveRecord
         return $this->hasOne(PropertyGroup::className(), ['id' => 'property_group_id']);
     }
 }
-?>
+

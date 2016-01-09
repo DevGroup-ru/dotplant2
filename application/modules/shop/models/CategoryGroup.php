@@ -65,4 +65,4 @@ class CategoryGroup extends ActiveRecord
         return static::$firstModel = $model;
     }
 }
-?>
+

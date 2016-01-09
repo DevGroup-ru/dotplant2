@@ -7,4 +7,4 @@ use app;
 class TextPropertyWidget extends app\properties\handlers\AbstractHandlerWidget
 {
 }
-?>
+

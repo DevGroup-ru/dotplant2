@@ -14,4 +14,4 @@ class KoAsset extends AssetBundle
 
     public $jsOptions = ['position' => View::POS_HEAD];
 }
-?>
+

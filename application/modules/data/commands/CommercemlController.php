@@ -47,4 +47,4 @@ class CommercemlController extends Controller
         return 0;
     }
 }
-?>
+

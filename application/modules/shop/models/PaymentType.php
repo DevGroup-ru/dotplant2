@@ -124,4 +124,4 @@ class PaymentType extends ActiveRecord
         return $models->all();
     }
 }
-?>
+

@@ -156,4 +156,4 @@ abstract class AbstractPayment extends Widget
         return \Yii::$app->response->redirect($url);
     }
 }
-?>
+

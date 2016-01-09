@@ -25,4 +25,4 @@ class m150403_101144_config_value_type_change extends Migration
         return true;
     }
 }
-?>
+

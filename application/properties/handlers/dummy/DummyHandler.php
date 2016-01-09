@@ -26,4 +26,4 @@ class DummyHandler extends AbstractHandler
         return '';
     }
 }
-?>
+

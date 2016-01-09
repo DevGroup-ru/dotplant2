@@ -76,4 +76,4 @@ class OrderChat extends ActiveRecord
         return true;
     }
 }
-?>
+

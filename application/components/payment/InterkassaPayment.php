@@ -70,4 +70,4 @@ class InterkassaPayment extends AbstractPayment
         throw new BadRequestHttpException();
     }
 }
-?>
+

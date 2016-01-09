@@ -39,4 +39,4 @@ class Customer extends Widget
         ]);
     }
 }
-?>
+
