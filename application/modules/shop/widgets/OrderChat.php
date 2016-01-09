@@ -27,4 +27,4 @@ class OrderChat extends Widget
         ]);
     }
 }
-?>
+

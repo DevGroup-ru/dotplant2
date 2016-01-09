@@ -7,4 +7,4 @@ use app;
 class RedactorProperty extends app\properties\handlers\AbstractHandler
 {
 }
-?>
+

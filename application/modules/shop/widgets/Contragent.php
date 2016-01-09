@@ -54,4 +54,4 @@ class Contragent extends Widget
         ]);
     }
 }
-?>
+

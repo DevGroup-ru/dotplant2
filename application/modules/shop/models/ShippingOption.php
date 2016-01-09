@@ -82,4 +82,4 @@ class ShippingOption extends ActiveRecord
         return static::find()->where(['active' => 1])->orderBy(['sort' => SORT_ASC, 'id' => SORT_ASC])->one();
     }
 }
-?>
+

@@ -7,4 +7,4 @@ use app;
 class RedactorPropertyWidget extends app\properties\handlers\AbstractHandlerWidget
 {
 }
-?>
+

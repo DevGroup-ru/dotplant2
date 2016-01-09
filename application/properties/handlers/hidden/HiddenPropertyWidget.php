@@ -7,4 +7,4 @@ use app;
 class HiddenPropertyWidget extends app\properties\handlers\AbstractHandlerWidget
 {
 }
-?>
+

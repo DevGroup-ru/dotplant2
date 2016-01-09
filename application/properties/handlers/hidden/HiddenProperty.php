@@ -7,4 +7,4 @@ use app;
 class HiddenProperty extends app\properties\handlers\AbstractHandler
 {
 }
-?>
+

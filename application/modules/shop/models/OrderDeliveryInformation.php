@@ -198,4 +198,4 @@ class OrderDeliveryInformation extends \yii\db\ActiveRecord
         return $model;
     }
 }
-?>
+

@@ -6,4 +6,4 @@ class StagePaymentPay extends OrderStageEvent
 {
 
 }
-?>
+

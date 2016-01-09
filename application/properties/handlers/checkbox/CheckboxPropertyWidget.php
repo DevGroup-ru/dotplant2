@@ -7,4 +7,4 @@ use app;
 class CheckboxPropertyWidget extends app\properties\handlers\AbstractHandlerWidget
 {
 }
-?>
+

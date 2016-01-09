@@ -19,4 +19,4 @@ class m150601_111734_order_in_cart extends Migration
         return false;
     }
 }
-?>
+

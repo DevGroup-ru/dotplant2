@@ -41,4 +41,4 @@ class AbstractHandlerWidget extends Widget
         return 'props['.$this->property_key.'][]';
     }
 }
-?>
+

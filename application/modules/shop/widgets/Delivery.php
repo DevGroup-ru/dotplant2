@@ -45,4 +45,4 @@ class Delivery extends Widget
         ]);
     }
 }
-?>
+

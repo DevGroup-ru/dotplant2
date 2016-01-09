@@ -64,4 +64,4 @@ class PropertyHandler extends Action
         return $propertyHandler->runAction($handler_action, $actionParams);
     }
 }
-?>
+

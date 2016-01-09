@@ -68,4 +68,4 @@ class IntellectMoneyPayment extends AbstractPayment
         throw new BadRequestHttpException();
     }
 }
-?>
+

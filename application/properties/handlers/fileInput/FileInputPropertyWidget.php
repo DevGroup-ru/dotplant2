@@ -7,4 +7,4 @@ use app\properties\handlers\AbstractHandlerWidget;
 class FileInputPropertyWidget extends AbstractHandlerWidget
 {
 }
-?>
+

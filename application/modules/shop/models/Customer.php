@@ -271,4 +271,4 @@ class Customer extends \yii\db\ActiveRecord
     }
 }
 
-?>
+

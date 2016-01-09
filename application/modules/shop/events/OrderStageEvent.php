@@ -26,4 +26,4 @@ class OrderStageEvent extends SpecialEvent
         $this->eventData = array_merge($this->eventData, $eventData);
     }
 }
-?>
+

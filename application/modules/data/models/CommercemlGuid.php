@@ -70,4 +70,4 @@ class CommercemlGuid extends \yii\db\ActiveRecord
         return $this->hasOne(Product::className(), ['id' => 'model_id']);
     }
 }
-?>
+

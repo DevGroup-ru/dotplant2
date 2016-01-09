@@ -45,4 +45,4 @@ class Notification extends Widget
     }
 }
 
-?>
+

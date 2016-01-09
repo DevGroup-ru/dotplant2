@@ -174,4 +174,4 @@ class Contragent extends \yii\db\ActiveRecord
         return $model;
     }
 }
-?>
+

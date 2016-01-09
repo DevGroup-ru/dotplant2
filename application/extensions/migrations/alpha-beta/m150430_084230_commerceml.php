@@ -30,4 +30,4 @@ class m150430_084230_commerceml extends Migration
         return true;
     }
 }
-?>
+

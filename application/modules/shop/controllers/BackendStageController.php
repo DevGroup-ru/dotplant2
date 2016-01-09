@@ -187,4 +187,4 @@ class BackendStageController extends \app\backend\components\BackendController
         return $this->render('render-graph');
     }
 }
-?>
+

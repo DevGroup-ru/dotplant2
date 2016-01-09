@@ -7,4 +7,4 @@ use app;
 class SelectProperty extends app\properties\handlers\AbstractHandler
 {
 }
-?>
+
