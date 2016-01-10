@@ -288,14 +288,23 @@ class m150605_094805_demo_data extends Migration
         $imagesPath = Yii::getAlias('@webroot/files/');
         $imgsFile = $imagesPath.DIRECTORY_SEPARATOR .'imgs.zip';
         if (file_exists($imgsFile) === false) {
+            $time = 0;
             $fp = fopen($imgsFile, 'w+');
             $ch = curl_init($imgUrl);
+            curl_setopt($ch, CURLOPT_NOPROGRESS, false);
+            curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function ($res, $dnSize, $dn, $upSize, $up) use (&$time) {
+                if ($time + 0.1 < microtime(true)) {
+                    \yii\helpers\Console::updateProgress($dn, $dnSize, 'Downloading demo files... ');
+                    $time = microtime(true);
+                }
+            });
             curl_setopt($ch, CURLOPT_TIMEOUT, 600);
             curl_setopt($ch, CURLOPT_FILE, $fp);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             curl_exec($ch);
             curl_close($ch);
             fclose($fp);
+            \yii\helpers\Console::endProgress(true, false);
         }
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             echo "\n\nWow! You are running windows! Please unzip $imgsFile to $imagesPath \n\n";
