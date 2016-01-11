@@ -139,7 +139,15 @@ $editable_formOptions = [
                     'class' => 'yii\grid\DataColumn',
                     'attribute' => 'id',
                 ],
-                'sort_order',
+                [
+                    'attribute' =>'sort_order',
+                    'class' => \kartik\grid\EditableColumn::className(),
+                    'editableOptions' => [
+                        'inputType' => Editable::INPUT_TEXT,
+                        'formOptions' => $editable_formOptions,
+                        'placement' => PopoverX::ALIGN_BOTTOM,
+                    ],
+                ],
                 [
                     'attribute' => 'image',
                     'class' => '\app\components\ImageColumn',
