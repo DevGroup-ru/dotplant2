@@ -5,6 +5,7 @@ namespace app\backend\controllers;
 use app\backend\actions\FlushCacheAction;
 use app\backend\models\Notification;
 use app\components\Helper;
+use app\modules\image\actions\UpdateNameAction;
 use vova07\imperavi\actions\GetAction;
 use Yii;
 use yii\filters\AccessControl;
@@ -56,6 +57,9 @@ class DashboardController extends Controller
                 'url' => $uploadDir,
                 'path' => '@webroot' . $uploadDir,
                 'type' => GetAction::TYPE_IMAGES,
+            ],
+            'rename-image' => [
+                'class' => UpdateNameAction::className(),
             ],
         ];
     }
