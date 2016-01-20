@@ -16,6 +16,7 @@ class JSSelectableTreeGetTree extends Action
     public $additional_search_conditions = [];
     public $query_parent_attribute = 'id';
     public $vary_by_type_attribute = 'show_type';
+    public $order = [];
 
 
     public function init()
@@ -81,7 +82,8 @@ class JSSelectableTreeGetTree extends Action
         $query->select($fields)
             ->from($modelName::tableName())
             ->where([$this->parent_attribute => $_GET[$this->query_parent_attribute]])
-            ->andWhere($this->additional_search_conditions);
+            ->andWhere($this->additional_search_conditions)
+            ->orderBy($this->order);
 
         $rows = $query
             ->all();
