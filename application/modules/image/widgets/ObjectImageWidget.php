@@ -59,6 +59,9 @@ class ObjectImageWidget extends Widget
 
     public function run()
     {
+        if (is_null($this->model) || empty($this->model->object)) {
+            return '';
+        }
         $cacheKey = static::className() . ':' . implode(
                 "_",
                 [
