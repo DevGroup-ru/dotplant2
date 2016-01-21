@@ -1,26 +1,28 @@
 <?php
-
 namespace app\modules\shop\helpers;
 
-
 use app\modules\shop\events\OrderCalculateEvent;
+use app\modules\shop\models\AbstractDiscountType;
 use app\modules\shop\models\Currency;
-use app\modules\shop\models\DeliveryInformation;
 use app\modules\shop\models\Discount;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\Product;
 use app\modules\shop\models\SpecialPriceList;
 use app\modules\shop\models\SpecialPriceObject;
-use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
-use yii\caching\TagDependency;
-use yii\helpers\ArrayHelper;
 
 class PriceHandlers
 {
-    private static $allDiscounts = [];
+    /**
+     * @var array|null
+     */
+    static protected $discountsByAppliance = null;
 
-    public static function getFinalDeliveryPrice(Order $order)
+    /**
+     * @param Order $order
+     * @return float
+     */
+    static public function getFinalDeliveryPrice(Order $order)
     {
         $finalCost = $order->shippingOption->cost;
         foreach ($order->specialPriceObjects as $spo) {
@@ -32,62 +34,67 @@ class PriceHandlers
         return $finalCost;
     }
 
-
-    public static function getCurrencyPriceProduct(
+    /**
+     * @param Product $product
+     * @param Order|null $order
+     * @param SpecialPriceList $specialPrice
+     * @param $price
+     * @return float
+     */
+    static public function getCurrencyPriceProduct(
         Product $product,
         Order $order = null,
         SpecialPriceList $specialPrice,
         $price
     ) {
-        $currency = Currency::getMainCurrency();
-        if ($product->currency_id !== $currency->id) {
-            $foreignCurrency = Currency::findById($product->currency_id);
-            $price = $price / $foreignCurrency->convert_nominal * $foreignCurrency->convert_rate;
-        }
-        return round($price, 2);
+        return CurrencyHelper::convertToMainCurrency($price, $product->currency);
     }
 
 
     /***
      * @param Product $product
      * @param null|Order $order
+     * @param SpecialPriceList $specialPrice
      * @param $price
      * @return mixed
      */
-    public static function getDiscountPriceProduct(
+    static public function getDiscountPriceProduct(
         Product $product,
         Order $order = null,
         SpecialPriceList $specialPrice,
         $price
     ) {
-        self::getAllDiscounts();
-        if (isset(self::$allDiscounts['products'])) {
-            foreach (self::$allDiscounts['products'] as $discount) {
-                $discountFlag = false;
-                foreach (Discount::getTypeObjects() as $discountTypeObject) {
-                    $discountFlag = $discountTypeObject
-                        ->checkDiscount(
-                            $discount,
-                            $product,
-                            $order
-                        );
+        static $discounts = null;
+        if (null === $discounts) {
+            $discounts = self::getDiscountsByAppliance(['products']);
+        }
 
-                    if ($discountFlag === false) {
-                        break;
-                    }
-                }
-
-                if ($discountFlag === true) {
-                    $oldPrice = $price;
-                    $price = $discount->getDiscountPrice($oldPrice);
+        foreach ($discounts as $discount) {
+            /** @var Discount $discount */
+            $discountFlag = 0;
+            foreach (Discount::getTypeObjects() as $discountTypeObject) {
+                /** @var AbstractDiscountType $discountTypeObject */
+                if (true === $discountTypeObject->checkDiscount($discount, $product, $order)) {
+                    $discountFlag++;
                 }
             }
+
+            if ($discountFlag > 0) {
+                $oldPrice = $price;
+                $price = $discount->getDiscountPrice($oldPrice);
+            }
         }
+
         return $price;
     }
 
-
-    public static function getDiscountPriceOrder(
+    /**
+     * @param Order $order
+     * @param SpecialPriceList $specialPrice
+     * @param $price
+     * @return float
+     */
+    static public function getDiscountPriceOrder(
         Order $order,
         SpecialPriceList $specialPrice,
         $price
@@ -110,7 +117,13 @@ class PriceHandlers
         return $price + $discountPrice;
     }
 
-    public static function getDeliveryPriceOrder(
+    /**
+     * @param Order $order
+     * @param SpecialPriceList $specialPrice
+     * @param $price
+     * @return float
+     */
+    static public function getDeliveryPriceOrder(
         Order $order,
         SpecialPriceList $specialPrice,
         $price
@@ -130,104 +143,105 @@ class PriceHandlers
     }
 
     /**
-     * @return array|mixed
+     * @param array $types
+     * @return array
      */
-    private static function getAllDiscounts()
+    static protected function getDiscountsByAppliance($types = [])
     {
-        if (self::$allDiscounts === []) {
-            $cacheKey = 'getAllDiscounts';
-            self::$allDiscounts = Yii::$app->cache->get($cacheKey);
-            if (is_array(self::$allDiscounts) === false) {
-                self::$allDiscounts = [];
-                $discounts = Discount::find()->all();
-                foreach ($discounts as $discount) {
-                    self::$allDiscounts[$discount->appliance][] = $discount;
-                }
-                Yii::$app->cache->set(
-                    $cacheKey,
-                    self::$allDiscounts,
-                    86400,
-                    new TagDependency([
-                        'tags' => [
-                            ActiveRecordHelper::getCommonTag(Discount::className())
-                        ]
-                    ])
-                );
+        if (true === empty($types)) {
+            return [];
+        }
+
+        if (null === static::$discountsByAppliance) {
+            static::$discountsByAppliance = [];
+            foreach (Discount::find()->all() as $model) {
+                /** @var Discount $model */
+                static::$discountsByAppliance[$model->appliance][$model->id] = $model;
             }
         }
-        return self::$allDiscounts;
+
+        $result = [];
+
+        foreach ($types as $type) {
+            if (true === isset(static::$discountsByAppliance[$type])) {
+                $result = array_merge($result, static::$discountsByAppliance[$type]);
+            }
+        }
+
+        return $result;
     }
 
-
-    public static function handleSaveDiscounts(OrderCalculateEvent $event)
+    /**
+     * @param OrderCalculateEvent $event
+     * @return null
+     */
+    static public function handleSaveDiscounts(OrderCalculateEvent $event)
     {
         if (OrderCalculateEvent::BEFORE_CALCULATE !== $event->state) {
             return null;
         }
 
-        self::getAllDiscounts();
-        foreach (self::$allDiscounts as $discountTypeName => $discountType) {
-            if (in_array($discountTypeName, ['order_without_delivery', 'order_with_delivery', 'delivery'])) {
-                foreach ($discountType as $discount) {
-                    $discountFlag = false;
-                    foreach (Discount::getTypeObjects() as $discountTypeObject) {
-                        $discountFlag = $discountTypeObject
-                            ->checkDiscount(
-                                $discount,
-                                null,
-                                $event->order
-                            );
+        static $discounts = null;
+        if (null === $discounts) {
+            $discounts = self::getDiscountsByAppliance(['order_without_delivery', 'order_with_delivery', 'delivery']);
+        }
 
-                        if ($discountFlag === false) {
-                            break;
-                        }
-
-                    }
-
-                    $special_price_list_id = SpecialPriceList::find()
-                    ->where([
-                        'handler' => 'getDiscountPriceOrder',
-                        'object_id' => $event->order->object->id
-                    ])
-                    ->one()
-                    ->id;
-
-                    if ($discountFlag === true
-                        && $event->price > 0
-                        && (
-                            $discount->apply_order_price_lg !== -1
-                            && $event->order->total_price > $discount->apply_order_price_lg
-                        )
-                    ) {
-                        $oldPrice = $event->price;
-                        $deliveryPrice = SpecialPriceObject::getSumPrice(
-                            $event->order->id,
-                            SpecialPriceList::TYPE_DELIVERY
-                        );
-                        $price = $discount->getDiscountPrice($oldPrice, $deliveryPrice);
-                        $discountPrice = $price - $oldPrice;
-
-                        SpecialPriceObject::setObject(
-                            $special_price_list_id,
-                            $event->order->id,
-                            $discountPrice,
-                            $discount->name
-                        );
-
-                    } else {
-                        SpecialPriceObject::deleteAll([
-                            'special_price_list_id' => $special_price_list_id,
-                            'object_model_id' => $event->order->id
-                        ]);
-                    }
+        foreach ($discounts as $discount) {
+            /** @var Discount $discount */
+            $discountFlag = 0;
+            foreach (Discount::getTypeObjects() as $discountTypeObject) {
+                /** @var AbstractDiscountType $discountTypeObject */
+                if (true === $discountTypeObject->checkDiscount($discount, null, $event->order)) {
+                    $discountFlag++;
                 }
             }
 
-        }
+            $special_price_list_id = SpecialPriceList::find()
+            ->where([
+                'handler' => 'getDiscountPriceOrder',
+                'object_id' => $event->order->object->id
+            ])
+            ->one()
+            ->id;
 
+            if ($discountFlag > 0
+                && $event->price > 0
+                && (
+                    $discount->apply_order_price_lg !== -1
+                    && $event->order->total_price > $discount->apply_order_price_lg
+                )
+            ) {
+                $oldPrice = $event->price;
+                $deliveryPrice = SpecialPriceObject::getSumPrice(
+                    $event->order->id,
+                    SpecialPriceList::TYPE_DELIVERY
+                );
+                $price = $discount->getDiscountPrice($oldPrice, $deliveryPrice);
+                $discountPrice = $price - $oldPrice;
+
+                SpecialPriceObject::setObject(
+                    $special_price_list_id,
+                    $event->order->id,
+                    $discountPrice,
+                    $discount->name
+                );
+
+            }
+            /** Данный кусок удаляет все объекты, если одна из скидок не применилась! */
+            /* else {
+                SpecialPriceObject::deleteAll([
+                    'special_price_list_id' => $special_price_list_id,
+                    'object_model_id' => $event->order->id
+                ]);
+            } */
+        }
     }
 
-    public static function handleSaveDelivery(OrderCalculateEvent $event)
+    /**
+     * @param OrderCalculateEvent $event
+     * @return null
+     */
+    static public function handleSaveDelivery(OrderCalculateEvent $event)
     {
         if (OrderCalculateEvent::BEFORE_CALCULATE !== $event->state) {
             return null;
@@ -249,14 +263,15 @@ class PriceHandlers
                 $shippingOption->cost,
                 $shippingOption->name
             );
-        } else {
+        }
+        /** Сомнительно! */
+        /* else {
             SpecialPriceObject::deleteAll(
                 [
                     'special_price_list_id' => $special_price_list->id,
                     'object_model_id' => $event->order->id
                 ]
             );
-        }
-
+        } */
     }
 }

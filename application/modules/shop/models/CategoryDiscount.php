@@ -3,6 +3,7 @@
 namespace app\modules\shop\models;
 
 use Yii;
+use yii\db\Query;
 
 /**
  * This is the model class for table "{{%category_discount}}".
@@ -14,40 +15,42 @@ use Yii;
  */
 class CategoryDiscount extends AbstractDiscountType
 {
-
+    /**
+     * @inheritdoc
+     */
     public function getFullName()
     {
-        return $this->category->name;
+        $category = $this->category;
+        return null === $category ? '(none)' : $category->name;
     }
 
+    /**
+     * @return Category|\yii\db\ActiveQuery
+     */
     public function getCategory()
     {
         return $this->hasOne(Category::className(),['id'=>'category_id']);
     }
 
-
+    /**
+     * @inheritdoc
+     */
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
-        $result = false;
-        if (intval(self::find()->where(['discount_id'=>$discount->id])->count()) === 0) {
-            $result = true;
-        } else {
-           if( self::find()
-                ->leftJoin(
-                    '{{%product_category%}}',
-                    '{{%product_category%}}.category_id = '.self::tableName().'.category_id'
-                )
-                ->where(
-                    [
-                        self::tableName().'.discount_id'=>$discount->id,
-                        '{{%product_category%}}.object_model_id' => $product->id
-                    ]
-                )
-                ->count() > 0) {
-               $result = true;
-           }
+        if (null === $product) {
+            return false;
         }
-        return $result;
+
+        $q = (new Query())
+            ->from(self::tableName() . ' cd')
+            ->leftJoin('{{%product_category%}} pc', 'pc.category_id = cd.category_id')
+            ->where(['cd.discount_id' => $discount->id, 'pc.object_model_id' => $product->id])
+            ->count();
+        if (0 === intval($q)) {
+            return false;
+        }
+
+        return true;
     }
     /**
      * @inheritdoc
