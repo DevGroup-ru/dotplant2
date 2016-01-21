@@ -14,25 +14,31 @@ use Yii;
  */
 class OrderDiscount extends AbstractDiscountType
 {
+    /**
+     * @inheritdoc
+     */
     public function getFullName()
     {
         return $this->order_id;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
-        $result = false;
-        if (intval(self::find()->where(['discount_id'=>$discount->id])->count()) === 0)
-        {
-            $result = true;
-        } elseif (
-            $order !== null &&
-            intval(self::find()->where(['discount_id'=>$discount->id, 'order_id'=>$order->id])->count()) === 1
-        ) {
-            $result = true;
+        if (null === $order) {
+            return false;
         }
-        return $result;
+
+        $q = self::find()->where(['discount_id' => $discount->id, 'order_id' => $order->id])->count();
+        if (0 === intval($q)) {
+            return false;
+        }
+
+        return true;
     }
+
     /**
      * @inheritdoc
      */

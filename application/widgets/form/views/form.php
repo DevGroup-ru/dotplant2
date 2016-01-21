@@ -9,6 +9,7 @@
 
 use app\models\Property;
 use kartik\widgets\ActiveForm;
+use yii\captcha\Captcha;
 
 ?>
 <?php
@@ -27,7 +28,22 @@ use kartik\widgets\ActiveForm;
         <?php endif; ?>
         <?php $properties = Property::getForGroupId($group->id); ?>
         <?php foreach ($properties as $property): ?>
-            <?= $property->handler($form, $model->abstractModel, [], 'frontend_edit_view'); ?>
+            <?php
+                if($property->captcha) {
+                    echo Captcha::widget(
+                        [
+                            'model'         => $model->abstractModel,
+                            'attribute'     => $property->key,
+                            'captchaAction' => 
+                            [
+                                'default/captcha'
+                            ]
+                        ]
+                    );
+                } else {
+                    echo $property->handler($form, $model->abstractModel, [], 'frontend_edit_view');
+                } 
+            ?>
         <?php endforeach; ?>
     <?php endforeach; ?>
     <?= \kartik\helpers\Html::submitButton(Yii::t('app', 'Send'), ['class' => 'btn btn-primary']) ?>
