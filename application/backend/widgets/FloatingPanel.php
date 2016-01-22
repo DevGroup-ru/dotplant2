@@ -27,7 +27,7 @@ class FloatingPanel extends Widget
         $reviews = Review::getForObjectModel($modelId, $objectId, 1);
         if (!empty($reviews)) {
             return [
-                "label" => Icon::show("pencil") . Yii::t("app", "Edit reviews"),
+                "label" => Icon::show("pencil") . Yii::t("app", "Edit reviews") . " (" . count($reviews) . ")",
                 "url" => [
                     "/review/backend-review/index",
                     "SearchModel" => [
