@@ -90,6 +90,7 @@ class Review extends \yii\db\ActiveRecord
             'search' => [
                 'object_id',
                 'status',
+                'object_model_id'
             ]
         ];
     }

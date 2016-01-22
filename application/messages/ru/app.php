@@ -362,6 +362,7 @@ return [
     'Edit order stage leaf' => '',
     'Edit page' => 'Редактировать страницу',
     'Edit product' => 'Редактировать продукт',
+    'Edit reviews' => 'Редактировать отзывы',
     'Edit subscribe' => 'Редактировать подписку',
     'Editing rating group {groupname}' => 'Редактируем группу {groupname}',
     'Either URL or Route should be set.' => 'Адрес или маршрут должны быть установлены.',

@@ -2,6 +2,8 @@
 
 namespace app\backend\widgets;
 
+use app\models\Object;
+use app\modules\review\models\Review;
 use Yii;
 use yii\base\Widget;
 use app;
@@ -11,6 +13,34 @@ use yii\helpers\Json;
 class FloatingPanel extends Widget
 {
     public $bottom = false;
+
+    /**
+     * Check if model has any reviews and if so - generate link to edit them
+     *
+     * @param string $objectName
+     * @param int $modelId
+     * @return array
+     */
+    private function getReviewEditParams($objectName, $modelId)
+    {
+        $objectId = array_search($objectName, Object::getSelectArray());
+        $reviews = Review::getForObjectModel($modelId, $objectId, 1);
+        if (!empty($reviews)) {
+            return [
+                "label" => Icon::show("pencil") . Yii::t("app", "Edit reviews") . " (" . count($reviews) . ")",
+                "url" => [
+                    "/review/backend-review/index",
+                    "SearchModel" => [
+                        "object_id" => $objectId,
+                        "object_model_id" => $modelId
+                    ]
+                ],
+                "target" => "_blank"
+            ];
+        } else {
+            return [];
+        }
+    }
 
     public function run()
     {
@@ -49,7 +79,7 @@ class FloatingPanel extends Widget
                                     'DynamicContent' => [
                                         'apply_if_params' => Json::encode($apply_if_params),
                                         'apply_if_last_category_id' => $_GET['last_category_id'],
-                                        'object_id' => app\models\Object::getForClass(app\modules\shop\models\Product::className())->id,
+                                        'object_id' => Object::getForClass(app\modules\shop\models\Product::className())->id,
                                         'route' => 'shop/product/list',
                                     ]
                                 ],
@@ -62,6 +92,7 @@ class FloatingPanel extends Widget
                     // no properties selected - go to category edit page
 
                     if (isset($_GET['last_category_id'])) {
+                        $reviewsLink = $this->getReviewEditParams("Category", intval($_GET['last_category_id']));
                         $cat = app\modules\shop\models\Category::findById($_GET['last_category_id']);
                         $items[] = [
                             'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit category'),
@@ -77,12 +108,12 @@ class FloatingPanel extends Widget
                 break;
             case 'shop/product/show':
                 if (isset($_GET['model_id'])) {
+                    $reviewsLink = $this->getReviewEditParams("Product", intval($_GET['model_id']));
                     $items[] = [
                         'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit product'),
                         'url' => [
                             '/shop/backend-product/edit',
                             'id' => intval($_GET['model_id'])
-
                         ],
                     ];
                 }
@@ -92,6 +123,7 @@ class FloatingPanel extends Widget
             case '/page/page/list':
                 if (isset($_GET['id'])) {
                     $page = app\modules\page\models\Page::findById($_GET['id']);
+                    $reviewsLink = $this->getReviewEditParams("Page", $_GET['id']);
                     $items[] = [
                         'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit page'),
                         'url' => [
@@ -105,6 +137,9 @@ class FloatingPanel extends Widget
                 break;
         }
 
+        if (!empty($reviewsLink)) {
+            $items[] = $reviewsLink;
+        }
 
         return $this->render(
             'floating-panel',
