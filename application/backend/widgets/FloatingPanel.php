@@ -34,7 +34,8 @@ class FloatingPanel extends Widget
                         "object_id" => $objectId,
                         "object_model_id" => $modelId
                     ]
-                ]
+                ],
+                "target" => "_blank"
             ];
         } else {
             return [];
