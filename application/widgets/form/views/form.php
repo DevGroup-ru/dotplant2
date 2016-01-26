@@ -36,7 +36,7 @@ use yii\captcha\Captcha;
                             'attribute'     => $property->key,
                             'captchaAction' => 
                             [
-                                'default/captcha'
+                                '/default/captcha'
                             ]
                         ]
                     );
