@@ -150,7 +150,7 @@ class Review extends \yii\db\ActiveRecord
      */
     public static function getForObjectModel($object_model_id, $object_id, $formId, $sort = SORT_ASC)
     {
-        $cacheKey = 'Reviews: ' . (int)$object_model_id . ':' . (int)$formId . ':' . (int)$sort;
+        $cacheKey = implode(':', ['Reviews', $object_id, $object_model_id, $formId, $sort]);
         $models = Yii::$app->cache->get($cacheKey);
         if (false === $models) {
             $models = Review::find()
@@ -163,7 +163,7 @@ class Review extends \yii\db\ActiveRecord
                     ]
                 )
                 ->all();
-            if (false!== empty($models)) {
+            if (!empty($models)) {
                 Yii::$app->cache->set(
                     $cacheKey,
                     $models,
