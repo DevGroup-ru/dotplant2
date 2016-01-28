@@ -318,6 +318,7 @@ class ProductController extends Controller
         $selected_category = ($selected_category_id > 0) ? Category::findById($selected_category_id) : null;
 
         $this->view->title = $product->title;
+        $this->view->blocks['h1'] = $product->h1;
         $this->view->blocks['announce'] = $product->announce;
         $this->view->blocks['content'] = $product->content;
         $this->view->blocks['title'] = $product->title;
