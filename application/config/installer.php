@@ -92,7 +92,7 @@ $config = [
         ],
         'assetManager' => [
             'class' => 'yii\web\AssetManager',
-            'linkAssets' => true,
+            'linkAssets' => YII_DEBUG && stripos(PHP_OS, 'win')!==0,
         ],
         'i18n' => [
             'translations' => [
