@@ -359,7 +359,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 }
             )
             ->innerJoin('{{%related_product}}','related_product.product_id=:id AND related_product.related_product_id =product.id',[':id'=>$this->id])
-            ->orderBy('related_product.sort_order ASC');
+            ->orderBy('related_product.sort_order ASC')
+            ->andWhere(["active" => 1]);
     }
 
     public function getImage()
