@@ -165,7 +165,7 @@ class ContentBlockHelper
      */
     private static function renderUrl($chunkData, &$dependency)
     {
-        $expression = '%(?P<objectName>[^#]+?)#(?P<objectId>[\d]+?)(:(?P<categoryGroupId>\d+))?$%';
+        $expression = '%(?P<objectName>[^#]+?)#(?P<objectId>[\d]+?)$%';
         $output = '';
         preg_match($expression, $chunkData['key'], $m);
         if (true === isset($m['objectName'], $m['objectId'])) {
@@ -182,12 +182,11 @@ class ContentBlockHelper
                     if (null !== $model = Category::findById($id)) {
                         $dependency->tags [] = ActiveRecordHelper::getCommonTag(Category::className());
                         $dependency->tags [] = $model->objectTag();
-                        $categoryGroupId = !empty($m['categoryGroupId']) ? intval($m['categoryGroupId']) : 1;
                         $output = Url::to(
                             [
                                 '@category',
                                 'last_category_id' => $id,
-                                'category_group_id' => $categoryGroupId
+                                'category_group_id' => $model->category_group_id
                             ]
                         );
                     }
