@@ -8,6 +8,8 @@ use app\models\ObjectStaticValues;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyStaticValues;
+use app\modules\core\helpers\ContentBlockHelper;
+use app\modules\core\models\ContentBlock;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Behavior;
@@ -356,7 +358,22 @@ class HasProperties extends Behavior
         foreach ($propertyValue->values as $value) {
             $values[] = $value['value'];
         }
-        return $asString ? implode($delimiter, $values) : $values;
+        if ($asString) {
+            return ContentBlockHelper::compileContentString(
+                implode($delimiter, $values),
+                "{$this->owner->className()}:{$this->owner->id}:property={$key}",
+                new TagDependency(
+                    [
+                        'tags' => [
+                            $this->owner->objectTag(),
+                            ActiveRecordHelper::getCommonTag(ContentBlock::className())
+                        ]
+                    ]
+                )
+            );
+        } else {
+            return $values;
+        }
     }
 
     public function getPropertyValuesByPropertyId($property_id)
