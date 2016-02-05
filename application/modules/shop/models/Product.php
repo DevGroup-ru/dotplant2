@@ -245,8 +245,11 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      */
     public static function findById($id, $isActive = 1)
     {
+        if (!is_numeric($id)) {
+            return null;
+        }
         if (!isset(static::$identity_map[$id])) {
-            $cacheKey = static::tableName() . ":$id";
+            $cacheKey = static::tableName() . ":$id:$isActive";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
                 $model = static::find()->where(['id' => $id])->with('images', 'relatedProducts');
                 if (null !== $isActive) {
@@ -292,7 +295,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                         'slug' => $slug,
                         'active' => $isActive,
                     ]
-                )->with('images');
+                )->with('images', 'relatedProducts');
                 if (!is_null($inCategoryId)) {
                     $query->andWhere(['main_category_id' => $inCategoryId]);
                     $tags[] = ActiveRecordHelper::getObjectTag(Category::className(), $inCategoryId);
