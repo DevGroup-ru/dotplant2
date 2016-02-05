@@ -252,24 +252,7 @@ class ProductController extends Controller
             throw new ServerErrorHttpException('Object not found.');
         }
 
-        $cacheKey = 'Product:' . $model_id;
-        if (false === $product = Yii::$app->cache->get($cacheKey)) {
-            if (null === $product = Product::findById($model_id)) {
-                throw new NotFoundHttpException;
-            }
-            Yii::$app->cache->set(
-                $cacheKey,
-                $product,
-                86400,
-                new TagDependency(
-                    [
-                        'tags' => [
-                            ActiveRecordHelper::getObjectTag(Product::className(), $model_id),
-                        ]
-                    ]
-                )
-            );
-        }
+        $product = Product::findById($model_id);
 
         $request = Yii::$app->request;
 

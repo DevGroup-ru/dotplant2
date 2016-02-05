@@ -248,7 +248,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (!isset(static::$identity_map[$id])) {
             $cacheKey = static::tableName() . ":$id";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
-                $model = static::find()->where(['id' => $id])->with('images');
+                $model = static::find()->where(['id' => $id])->with('images', 'relatedProducts');
                 if (null !== $isActive) {
                     $model->andWhere(['active' => $isActive]);
                 }
