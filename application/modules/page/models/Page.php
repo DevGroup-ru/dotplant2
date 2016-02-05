@@ -197,7 +197,7 @@ class Page extends ActiveRecord implements \JsonSerializable
             $cacheKey = "Page:$id:$is_published";
             static::$identity_map[$id] = Yii::$app->cache->get($cacheKey);
             if (!is_object(static::$identity_map[$id])) {
-                static::$identity_map[$id] = Page::findOne(['id' => $id, 'published' => $is_published]);
+                static::$identity_map[$id] = Page::find()->where(['id' => $id, 'published' => $is_published])->with('images')->one();
 
                 if (is_object(static::$identity_map[$id])) {
                     Yii::$app->cache->set(
