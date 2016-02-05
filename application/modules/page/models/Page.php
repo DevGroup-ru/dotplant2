@@ -189,6 +189,9 @@ class Page extends ActiveRecord implements \JsonSerializable
      */
     public static function findById($id, $is_published = 1)
     {
+        if (!is_numeric($id)) {
+            return null;
+        }
         if (!isset(static::$identity_map[$id])) {
 
             $cacheKey = "Page:$id:$is_published";

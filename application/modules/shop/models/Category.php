@@ -244,8 +244,11 @@ class Category extends ActiveRecord implements \JsonSerializable
      */
     public static function findById($id, $isActive = 1)
     {
+        if (!is_numeric($id)) {
+            return null;
+        }
         if (!isset(static::$identity_map[$id])) {
-            $cacheKey = static::tableName() . ":$id";
+            $cacheKey = static::tableName() . ":$id:$isActive";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
                 $model = static::find()->where(['id' => $id])->with('images');
                 if (null !== $isActive) {
