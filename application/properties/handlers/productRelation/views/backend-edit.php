@@ -18,7 +18,7 @@ use yii\helpers\ArrayHelper;
 $productIds = ArrayHelper::getColumn($values->values, 'value');
 $data = [];
 foreach ($values->values as $value) {
-    $product = Product::findOne($value['value']);
+    $product = Product::findById($value['value']);
     if (is_object($product)) {
         $data [$product->id] = $product->name;
     }

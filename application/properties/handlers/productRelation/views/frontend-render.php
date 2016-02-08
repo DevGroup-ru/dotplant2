@@ -21,14 +21,17 @@ $productIds = ArrayHelper::getColumn($values->values, 'value');
 /** @var Product[] $products */
 $products = [];
 foreach ($productIds as $id) {
-    $products[] = Product::findOne($id);
+    $product = Product::findById($id);
+    if ($product !== null) {
+        $products[] = $product;
+    }
 }
 
 ?>
 
 <dl>
     <?php
-    if (count($productIds) == 0) {
+    if (count($products) == 0) {
         return;
     }
     $property = Property::findById($property_id);
