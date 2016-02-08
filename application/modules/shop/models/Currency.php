@@ -278,7 +278,7 @@ class Currency extends \yii\db\ActiveRecord
      */
     public function formatWithoutFormatString($price)
     {
-        return $this->getFormatter()->asDecimal($price);;
+        return $this->getFormatter()->asDecimal($price);
     }
 
     /**
