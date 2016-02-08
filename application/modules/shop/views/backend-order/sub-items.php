@@ -14,7 +14,7 @@ $level = isset($level) ? $level : 1;
 <?php foreach ($items as $item): ?>
     <tr class="warning">
         <td><?= str_repeat('<i class="fa fa-level-up fa-rotate-90"></i>&nbsp;', $level)?><?=$item->product->name?></td>
-        <td><?=$item->product->convertedPrice()?></td>
+        <td><?=$item->price_per_pcs?></td>
         <td>
             <?=
             Editable::widget(
@@ -35,10 +35,7 @@ $level = isset($level) ? $level : 1;
             )
             ?>
         </td>
-        <td><?=Yii::$app->formatter->asDecimal(
-                $item->quantity * $item->product->convertedPrice(),
-                2
-            )?></td>
+        <td><?=$item->total_price?></td>
         <td><?=Html::a(
                 \kartik\icons\Icon::show('remove'),
                 ['delete-order-item', 'id' => $item->id],

@@ -272,6 +272,16 @@ class Currency extends \yii\db\ActiveRecord
     }
 
     /**
+     * Formats price with current currency settings but without format string
+     * @param $price
+     * @return float
+     */
+    public function formatWithoutFormatString($price)
+    {
+        return $this->getFormatter()->asDecimal($price);;
+    }
+
+    /**
      * Returns Currency instance by name
      * @param $name
      * @return array|mixed|null|\yii\db\ActiveRecord

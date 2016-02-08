@@ -80,7 +80,7 @@ class CurrencyHelper
             }
         }
 
-        return round($input, 2);
+        return $to->formatWithoutFormatString($input);
     }
 
     /**
