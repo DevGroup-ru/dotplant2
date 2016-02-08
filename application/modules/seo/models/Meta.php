@@ -87,11 +87,7 @@ class Meta extends ActiveRecord
 
     public static function registrationMeta()
     {
-        if (
-            Yii::$app->request->isAjax === false &&
-            Yii::$app->controller->module instanceof BackendModule === false &&
-            Yii::$app->controller instanceof BackendController === false
-        ) {
+        if (Yii::$app->request->isAjax === false && !BackendModule::isBackend()) {
             $cacheName = Yii::$app->getModule('seo')->cacheConfig['metaCache']['name'];
             $cacheExpire = Yii::$app->getModule('seo')->cacheConfig['metaCache']['expire'];
             $metas = Yii::$app->getCache()->get($cacheName);
