@@ -278,7 +278,17 @@ class Currency extends \yii\db\ActiveRecord
      */
     public function formatWithoutFormatString($price)
     {
-        return $this->getFormatter()->asDecimal($price);
+        $formatter = Yii::createObject([
+            'class' => '\yii\i18n\Formatter',
+            'currencyCode' => $this->iso_code,
+            'decimalSeparator' => '.',
+            'thousandSeparator' => '',
+            'numberFormatterOptions' => [
+                7 => $this->min_fraction_digits, // min
+                6 => $this->max_fraction_digits, // max
+            ]
+        ]);
+        return $formatter->asDecimal($price);
     }
 
     /**
