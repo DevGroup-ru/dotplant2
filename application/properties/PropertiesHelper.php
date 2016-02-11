@@ -7,6 +7,7 @@ use app\models\Object;
 use app\models\ObjectStaticValues;
 use app\models\Property;
 use Yii;
+use yii\db\Query;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
 
@@ -56,10 +57,7 @@ class PropertiesHelper
                     'values' => $values,
                 ];
             } elseif ($property->has_static_values) {
-                $by_storage['static_values'][] = [
-                    'property' => $property,
-                    'values' => $values,
-                ];
+                $by_storage['static_values'] = array_merge($by_storage['static_values'], $values);
             } else {
                 throw new \Exception("Wrong property type for ".$property->id);
             }
@@ -122,27 +120,24 @@ class PropertiesHelper
                 " AND " . $ti_clauses
             );
         }
-        if (count($by_storage['static_values'])) {
-            foreach ($by_storage['static_values'] as $item) {
-                $joinTableName = 'OSVJoinTable'.$item['property']->id;
-                if (count($item['values']) > 0) {
-                    $query = $query->innerJoin(
-                        ObjectStaticValues::tableName() . " " . $joinTableName,
-                        "$joinTableName.object_id = " . intval($object->id) .
-                        " AND $joinTableName.object_model_id = " .
-                        Yii::$app->db->quoteTableName($object->object_table_name) . ".id "
-                    );
 
-                    $query = $query->andWhere(
-                        new Expression(
-                            '`' . $joinTableName . '`.`property_static_value_id` in (' .
-                            implode(', ', array_map('intval', $item['values'])) .
-                            ')'
-                        )
-                    );
-                }
-            }
+        if (count($by_storage['static_values'])) {
+            $query->innerJoin([
+                'osvm' => (new Query)
+                    ->select('object_model_id')
+                    ->distinct()
+                    ->from(ObjectStaticValues::tableName() . ' osv')
+                    ->where([
+                        'object_id' => $object->id,
+                        'property_static_value_id' => $by_storage['static_values']
+                    ])
+                    ->groupBy('object_model_id')
+                    ->having('count(object_model_id) = ' . count($by_storage['static_values']))
+                ],
+                'osvm.object_model_id = product.id'
+            );
         }
+
         if (count($by_storage['eav'])) {
             foreach ($by_storage['eav'] as $item) {
                 $joinTableName = 'EAVJoinTable'.$item['property']->id;

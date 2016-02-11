@@ -95,48 +95,45 @@ class FilterWidget extends Widget
                 if ($data === false) {
                     $data = [];
                     Yii::beginProfile("ObjectIds for this category");
-                    $query = new Query();
-                    $query = $query->select($object->categories_table_name . '.object_model_id')
-                        ->distinct()
-                        ->from($object->categories_table_name)
-                        ->join(
-                            "JOIN",
-                            Product::tableName(),
-                            sprintf("%s.`id` = %s.`object_model_id`",
-                                Product::tableName(),
-                                $object->categories_table_name
-                            )
-                        )
-                        ->andWhere([Product::tableName() . ".`active`" => 1])
-                        ->andWhere(['category_id' => $this->currentSelections['last_category_id']]);
 
-                    if (count($this->currentSelections['properties']) > 0) {
-                        Yii::beginProfile("Apply currency selections(properties)");
-                        foreach ($this->currentSelections['properties'] as $property_id => $values) {
-
-                            $joinTableName = 'OSVJoinTable'.$property_id;
-                            $query->join(
-                                'JOIN',
-                                ObjectStaticValues::tableName() . ' '.$joinTableName,
-                                $joinTableName.'.object_id = :objectId AND '
-                                . $joinTableName.'.object_model_id = ' . $object->categories_table_name . '.object_model_id  ',
-                                [
-                                    ':objectId' => $object->id,
-                                ]
-                            );
-
-
-                            $query->andWhere(['in', '`'.$joinTableName.'`.`property_static_value_id`', $values]);
+                    $psv = [];
+                    array_walk_recursive($this->currentSelections['properties'], function ($item) use (&$psv) {
+                        if (is_array($item)) {
+                            continue;
                         }
-                        Yii::endProfile("Apply currency selections(properties)");
+                        $psv[] = $item;
+                    });
+
+                    $query = (new Query)
+                        ->select('pc.object_model_id')
+                        ->from($object->categories_table_name . ' pc')
+                        ->innerJoin(Product::tableName() . ' product', 'product.id = pc.object_model_id')
+                        ->where([
+                            'pc.category_id' => $this->currentSelections['last_category_id'],
+                            'product.active' => 1,
+                        ]);
+
+                    if (count($this->currentSelections['properties'])) {
+                        $query->innerJoin([
+                            'osvm' => (new Query)
+                                ->select('object_model_id')
+                                ->distinct()
+                                ->from(ObjectStaticValues::tableName())
+                                ->where([
+                                    'object_id' => $object->id,
+                                    'property_static_value_id' => $psv
+                                ])
+                                ->groupBy('object_model_id')
+                                ->having(['count(object_model_id)' => count($psv)])
+                            ],
+                            'osvm.object_model_id = pc.object_model_id'
+                        );
                     }
+
                     Yii::endProfile("ObjectIds for this category");
 
-
                     $ids = array_map('intval', $query->column());
-
                     $query = null;
-
 
                     Yii::beginProfile("all PSV ids");
                     $data['propertyStaticValueIds'] = [];
