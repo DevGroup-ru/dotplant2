@@ -3,6 +3,7 @@
 namespace app\properties;
 
 
+use app\modules\shop\models\Product;
 use app\models\Object;
 use app\models\ObjectStaticValues;
 use app\models\Property;
@@ -134,7 +135,7 @@ class PropertiesHelper
                     ->groupBy('object_model_id')
                     ->having('count(object_model_id) = ' . count($by_storage['static_values']))
                 ],
-                'osvm.object_model_id = product.id'
+                'osvm.object_model_id = ' . \Yii::$app->db->quoteTableName($object->object_table_name) . '.id'
             );
         }
 
