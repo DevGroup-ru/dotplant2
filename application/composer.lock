@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2709021e23b9094b349cc4accfd44abe",
-    "content-hash": "8ad2f2bff2c5b412f772cd9bf0dfefa3",
+    "hash": "25b8c7f353647adfd9aeb0f941fb8ee1",
+    "content-hash": "613469dbc134bbc7995a35b4642a90dd",
     "packages": [
         {
             "name": "bower-asset/ace-builds",
@@ -527,7 +527,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cebe/markdown/zipball/e14d3da8f84eefa3792fd22b5b5ecba9c98d2e18",
+                "url": "https://api.github.com/repos/cebe/markdown/zipball/e4499350d8a94c4c693a7e784295eff7a717ae67",
                 "reference": "e14d3da8f84eefa3792fd22b5b5ecba9c98d2e18",
                 "shasum": ""
             },
@@ -587,7 +587,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lipis/flag-icon-css/zipball/3cd183cb1729d26482080db9a60fb589ba383cfc",
+                "url": "https://api.github.com/repos/lipis/flag-icon-css/zipball/bc91153f32e6f7e4bcb275429f747be37de0950f",
                 "reference": "3cd183cb1729d26482080db9a60fb589ba383cfc",
                 "shasum": ""
             },
@@ -1098,7 +1098,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egeloen/ivory-http-adapter/zipball/3ad0ec827641089724cbdef6501dcfe7af75f7b8",
+                "url": "https://api.github.com/repos/egeloen/ivory-http-adapter/zipball/f8514a0f23228087ac00d06e9a71533edcdf185c",
                 "reference": "3ad0ec827641089724cbdef6501dcfe7af75f7b8",
                 "shasum": ""
             },
@@ -1280,7 +1280,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FortAwesome/Font-Awesome/zipball/1c9beb741dff2dd73e7ba50d98b16f36bd8c7815",
+                "url": "https://api.github.com/repos/FortAwesome/Font-Awesome/zipball/260e2151492183c3aab94dc3023fc6777c27f244",
                 "reference": "1c9beb741dff2dd73e7ba50d98b16f36bd8c7815",
                 "shasum": ""
             },
@@ -1572,7 +1572,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/bootstrap-star-rating/zipball/40cee13ce3caec22ee64d2894640df0937c316d8",
+                "url": "https://api.github.com/repos/kartik-v/bootstrap-star-rating/zipball/621b7189b39480de308d0b853c7c27ba1a0674fb",
                 "reference": "40cee13ce3caec22ee64d2894640df0937c316d8",
                 "shasum": ""
             },
@@ -1655,7 +1655,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/php-date-formatter/zipball/7d3dc3495dd10bd1909c0dfdecd673967019cc21",
+                "url": "https://api.github.com/repos/kartik-v/php-date-formatter/zipball/8765bc84943e08aaae2d4865c026f57089206986",
                 "reference": "7d3dc3495dd10bd1909c0dfdecd673967019cc21",
                 "shasum": ""
             },
@@ -2042,7 +2042,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-grid/zipball/9b41c992b445557a2475af2d29cafab80c45540a",
+                "url": "https://api.github.com/repos/kartik-v/yii2-grid/zipball/ea7bd283f086b06bec2f5705f642855cfca9088e",
                 "reference": "9b41c992b445557a2475af2d29cafab80c45540a",
                 "shasum": ""
             },
@@ -2416,7 +2416,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-affix/zipball/4e4c88a0fed1274b292c45e6472b5156a63de3fb",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-affix/zipball/e11b2eb80893a3b1a0dd7ce50ea3256ebb55da84",
                 "reference": "4e4c88a0fed1274b292c45e6472b5156a63de3fb",
                 "shasum": ""
             },
@@ -2515,7 +2515,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-colorinput/zipball/c00c3fc46a63a738b038366febc08a21112ff9f2",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-colorinput/zipball/18537fcdab0f5491d5eebff8e2464ef6a616ee4c",
                 "reference": "c00c3fc46a63a738b038366febc08a21112ff9f2",
                 "shasum": ""
             },
@@ -2564,7 +2564,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-datepicker/zipball/98ba4680c5cc7bc1de68fff18199857b08a803a8",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-datepicker/zipball/6038daa7d4e61175fdda85a71cb2a6a94d4868c1",
                 "reference": "98ba4680c5cc7bc1de68fff18199857b08a803a8",
                 "shasum": ""
             },
@@ -2613,7 +2613,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-datetimepicker/zipball/09481656cbb8a7097e50ac3baf3a1159758a14c8",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-datetimepicker/zipball/f4e7024e31da40460d1b36dc880c2ec20a21bf6e",
                 "reference": "09481656cbb8a7097e50ac3baf3a1159758a14c8",
                 "shasum": ""
             },
@@ -2662,7 +2662,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-depdrop/zipball/40bbe95d8d5afe4eef5eecc4c2f1a5a21f9edf43",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-depdrop/zipball/6918ca6f7d7be153c80f6aa9c261f9b333293e9c",
                 "reference": "40bbe95d8d5afe4eef5eecc4c2f1a5a21f9edf43",
                 "shasum": ""
             },
@@ -2711,7 +2711,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-fileinput/zipball/084447f095888ddb09a95a1a363842ca87e01c9d",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-fileinput/zipball/36f9f493c2d814529f2a195422a8af2e020fc80c",
                 "reference": "084447f095888ddb09a95a1a363842ca87e01c9d",
                 "shasum": ""
             },
@@ -2859,7 +2859,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-rating/zipball/8cef8386952a2aa224a2ad4ebfa1901553ab1830",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-rating/zipball/dddcb31650a496be7b5196ca4461122955c1da87",
                 "reference": "8cef8386952a2aa224a2ad4ebfa1901553ab1830",
                 "shasum": ""
             },
@@ -2910,7 +2910,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/abb84cce09229cdb9fa7f1916d3162d3cba49918",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/3230a095cb088446ca227de71202fa15590727f0",
                 "reference": "abb84cce09229cdb9fa7f1916d3162d3cba49918",
                 "shasum": ""
             },
@@ -3055,7 +3055,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-switchinput/zipball/cb80052e1fb0e2800b294eebdbad0ad54a9b4d0e",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-switchinput/zipball/7d8ee999d79bcdc1601da5cd59439ac7eb1f5ea6",
                 "reference": "cb80052e1fb0e2800b294eebdbad0ad54a9b4d0e",
                 "shasum": ""
             },
@@ -3105,7 +3105,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-timepicker/zipball/b6538d1559e60cc65c39757e63ca684599d7dba1",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-timepicker/zipball/fa230caf281fbf6abea29a5dc1c28ebc005e4438",
                 "reference": "b6538d1559e60cc65c39757e63ca684599d7dba1",
                 "shasum": ""
             },
@@ -3154,7 +3154,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-touchspin/zipball/f41a1feec3c6379a140a5dd4792383d2b2fc1a60",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-touchspin/zipball/afc56f68d87c65c9659b76ac82ae4ae8160634c6",
                 "reference": "f41a1feec3c6379a140a5dd4792383d2b2fc1a60",
                 "shasum": ""
             },
@@ -3314,7 +3314,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/packagist-api/zipball/02cf8778f528ac0b889f991d9992dbf1e942d50f",
+                "url": "https://api.github.com/repos/KnpLabs/packagist-api/zipball/908dbdaedf5334eb14b0099cf2e952427229220c",
                 "reference": "02cf8778f528ac0b889f991d9992dbf1e942d50f",
                 "shasum": ""
             },
@@ -3366,7 +3366,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafo/scssphp/zipball/3eaa3f8df021f3dcbe19f814540c941308a9668f",
+                "url": "https://api.github.com/repos/leafo/scssphp/zipball/b1905524a27fa62c8fec709c14008ef75048cae7",
                 "reference": "3eaa3f8df021f3dcbe19f814540c941308a9668f",
                 "shasum": ""
             },
@@ -3419,7 +3419,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/0888b18acf3d21197756516cffdc4a70ed9e9eb3",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/39fbfeec0eb00cd9fa2e6b93d13e2c6e6a42dfcb",
                 "reference": "0888b18acf3d21197756516cffdc4a70ed9e9eb3",
                 "shasum": ""
             },
@@ -3540,6 +3540,54 @@
             "time": "2015-08-18 21:07:17"
         },
         {
+            "name": "paypal/rest-api-sdk-php",
+            "version": "v1.6.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paypal/PayPal-PHP-SDK.git",
+                "reference": "06837d290c4906578cfd92786412dff330a1429c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paypal/PayPal-PHP-SDK/zipball/06837d290c4906578cfd92786412dff330a1429c",
+                "reference": "06837d290c4906578cfd92786412dff330a1429c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PayPal": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache2"
+            ],
+            "authors": [
+                {
+                    "name": "PayPal",
+                    "homepage": "https://github.com/paypal/rest-api-sdk-php/contributors"
+                }
+            ],
+            "description": "PayPal's PHP SDK for REST APIs",
+            "homepage": "http://paypal.github.io/PayPal-PHP-SDK/",
+            "keywords": [
+                "payments",
+                "paypal",
+                "rest",
+                "sdk"
+            ],
+            "time": "2016-01-20 17:45:52"
+        },
+        {
             "name": "phpoffice/phpexcel",
             "version": "1.8.0",
             "source": {
@@ -3655,7 +3703,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/6522539daf0a7bdada1cc2dccb7ec37dc0712136",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/fffbc0e2a7e376dbb0a4b5f2ff6847330f20ccf9",
                 "reference": "6522539daf0a7bdada1cc2dccb7ec37dc0712136",
                 "shasum": ""
             },
@@ -3708,7 +3756,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/a5eb815363c0388e83247e7e9853e5dbc14999cc",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/78c468665c9568c3faaa9c416a7134308f2d85c3",
                 "reference": "a5eb815363c0388e83247e7e9853e5dbc14999cc",
                 "shasum": ""
             },
@@ -3879,7 +3927,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/61210a524fda6c984a2ff830bd19e625514ba90b",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/f8301c3e976ad85856e8bfae0f487ba3dbf39e0c",
                 "reference": "61210a524fda6c984a2ff830bd19e625514ba90b",
                 "shasum": ""
             },
@@ -3973,7 +4021,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-authclient/zipball/4248a5ddb425103488ee4c1bdb5d9a5730627775",
+                "url": "https://api.github.com/repos/yiisoft/yii2-authclient/zipball/13a051cebdaa19703a97a8e3a124e77cf29dd143",
                 "reference": "4248a5ddb425103488ee4c1bdb5d9a5730627775",
                 "shasum": ""
             },
@@ -4021,7 +4069,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-bootstrap/zipball/e7b4df436f09ca00f44615928909fa9cc2a78ae7",
+                "url": "https://api.github.com/repos/yiisoft/yii2-bootstrap/zipball/ef941bc83ea63326e44769b922476dc1035ea551",
                 "reference": "e7b4df436f09ca00f44615928909fa9cc2a78ae7",
                 "shasum": ""
             },
@@ -4071,7 +4119,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-composer/zipball/574dcb1d101ae55be230e0c00a2428af6ec4c5c1",
+                "url": "https://api.github.com/repos/yiisoft/yii2-composer/zipball/d33d1046a5951f2f7823fe343f28ddc58b3421a4",
                 "reference": "574dcb1d101ae55be230e0c00a2428af6ec4c5c1",
                 "shasum": ""
             },
@@ -4166,7 +4214,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-jui/zipball/7ab7ff56bd54500212523e38f5fe3b9210325041",
+                "url": "https://api.github.com/repos/yiisoft/yii2-jui/zipball/1425ab29929dd195f468d3c4eb340ab509f28b83",
                 "reference": "7ab7ff56bd54500212523e38f5fe3b9210325041",
                 "shasum": ""
             },
@@ -4266,7 +4314,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/64cdc57b544d396b68b2db3513d3f4e701e8f3a9",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/c866b82a964a82aaa40b971fd344f882ca9b92d9",
                 "reference": "64cdc57b544d396b68b2db3513d3f4e701e8f3a9",
                 "shasum": ""
             },
@@ -4470,7 +4518,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/150efc56f56bd58ca8d1aae195b2f11223cf8b40",
+                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/e30ded9067f595b5e6d3536ec1365353b826b300",
                 "reference": "150efc56f56bd58ca8d1aae195b2f11223cf8b40",
                 "shasum": ""
             },
@@ -4517,7 +4565,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/d25bd944c5b835520608a42b66598ead86cb079e",
+                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/06d71ba20ccb6a6dbcf568020e93047f0bdc80bd",
                 "reference": "d25bd944c5b835520608a42b66598ead86cb079e",
                 "shasum": ""
             },
