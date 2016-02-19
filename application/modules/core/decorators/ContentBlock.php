@@ -20,7 +20,7 @@ class ContentBlock extends PreDecorator
      */
     public function decorate($controller, $viewFile, $params)
     {
-        if (!Yii::$app->getModule("backend")->isBackend()) {
+        if (!Yii::$app->getModule("backend")->isBackend() && !empty($params['model'])) {
             $baseContentKey = get_class($params['model'])
                 . ':'
                 . (isset($params['model']->id) ? $params['model']->id : '')
