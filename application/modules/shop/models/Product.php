@@ -430,6 +430,17 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     }
 
     /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        static::$identity_map[$this->id] = $this;
+
+    }
+
+    /**
      * Preparation to delete product.
      * Deleting all inserted products.
      * @return bool

@@ -257,6 +257,17 @@ class Page extends ActiveRecord implements \JsonSerializable
     }
 
     /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        static::$identity_map[$this->id] = $this;
+
+    }
+
+    /**
      * Compiles url for subdomain's links like http://subdomain.example.com
      *
      * Respects schema, relies on Yii::$app->getModule("core")->serverName as main domain name
