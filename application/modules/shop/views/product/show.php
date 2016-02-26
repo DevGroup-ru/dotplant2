@@ -99,11 +99,7 @@ $propertiesShowedInAnnounce = false;
                         <?=Yii::t('app', 'Add to')?> <i class="fa fa-shopping-cart"></i>
                     </a>
                     <br/>
-                    <a href="<?=Url::to([
-                        '/shop/product-compare/add',
-                        'id' => $model->id,
-                        'backUrl' => Yii::$app->request->url,
-                    ])?>" class="btn-add-to-compare" rel="nofollow">
+                    <a href='#' class="btn-add-to-compare" rel="nofollow" data-action="add-to-compare" data-id="<?=$model->id?>">
                         <?= Yii::t('app', 'Add to compare') ?>
                     </a>
                 </div>
