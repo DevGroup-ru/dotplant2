@@ -236,14 +236,19 @@ class Image extends \yii\db\ActiveRecord
         /** @var string $src */
         $src = $thumb->file;
         if ($useWatermark === true) {
-            $watermark = Watermark::findOne($size->default_watermark_id);
-            if ($watermark !== null) {
-                $water = ThumbnailWatermark::getThumbnailWatermark($thumb, $watermark);
-                $src = $water->file;
-            } else {
-                throw new Exception(Yii::t('app', 'Set watermark id'));
+            try {
+                $watermark = Watermark::findOne($size->default_watermark_id);
+                if ($watermark !== null) {
+                    $water = ThumbnailWatermark::getThumbnailWatermark($thumb, $watermark);
+                    $src = $water->file;
+                } else {
+                    throw new Exception(Yii::t('app', 'Set watermark id'));
+                }
+            } catch (\Exception $e) {
+                if (YII_DEBUG) {
+                    throw $e;
+                }
             }
-
         }
         return $src;
     }
