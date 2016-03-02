@@ -69,7 +69,7 @@ class OptionGenerate extends Widget
         }
 
         $optionGenerate = Json::decode(self::_php7JsonPatch($this->model->option_generate));
-        if (!isset($optionGenerate['group']) or null === PropertyGroup::findOne($optionGenerate['group'])) {
+        if (!isset($optionGenerate['group']) || null === PropertyGroup::findOne($optionGenerate['group'])) {
             $this->model->option_generate = $optionGenerate = null;
         }
         $groupModel = null;
