@@ -117,11 +117,12 @@ $navStyles = '';
                     <?= $itemsCount ?>
                 </span>
             </a>
-            <?php if (is_array(Yii::$app->session->get('comparisonProductList')) && count(Yii::$app->session->get('comparisonProductList')) > 0): ?>
-                <a href="<?=Url::to(['/shop/product-compare/compare'])?>" class="btn btn-compare" title="<?=Yii::t('app', 'Compare products')?>">
-                    <?= Icon::show('tags') ?> <?=count(Yii::$app->session->get('comparisonProductList'))?>
-                </a>
-            <?php endif; ?>
+            <a href="<?=Url::to(['/shop/product-compare/compare'])?>" class="btn btn-compare" title="<?=Yii::t('app', 'Compare products')?>">
+                <i class="fa fa-tags"></i>
+                <span class="badge items-count">
+                    <?=count(Yii::$app->session->get('comparisonProductList')) ?>
+                </span>
+            </a>
         </div>
         <div class="pull-right search-area">
 

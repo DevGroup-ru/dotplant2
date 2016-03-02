@@ -9,6 +9,7 @@ use app\modules\shop\models\Product;
 use Yii;
 use yii\caching\TagDependency;
 use yii\web\Controller;
+use yii\web\Response;
 
 class ProductCompareController extends Controller
 {
@@ -25,14 +26,14 @@ class ProductCompareController extends Controller
     }
 
     /**
-     * @param $id
-     * @param null|string $backUrl
-     * @return bool|\yii\web\Response
+     * @return array
      */
-    public function actionAdd($id, $backUrl = null)
+    public function actionAdd()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $id = Yii::$app->request->post('id');
         ProductCompareHelper::addProductToList($id);
-        return $this->redirect($backUrl !== null ? $backUrl : Yii::$app->request->referrer);
+        return $result[] = ['items' => ProductCompareHelper::listLength()];
     }
 
     /**
