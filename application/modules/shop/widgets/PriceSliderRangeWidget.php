@@ -45,7 +45,10 @@ class PriceSliderRangeWidget extends SliderRangeWidget
                         ]
                 )->orderBy('product.price DESC')
                 ->one();
-            $data = ArrayHelper::merge($dataMax, $dataMin);
+
+            if (is_array($dataMax) && is_array($dataMin)) {
+                $data = ArrayHelper::merge($dataMax, $dataMin);
+            }
 
             if ($data) {
                 $data['min_price'] = (int) $data['min_price'];
