@@ -14,6 +14,7 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use app\modules\shop\models\Currency;
 
 /**
  * This is the model class for table "property_static_values".
@@ -259,8 +260,11 @@ class PropertyStaticValues extends ActiveRecord
             if (false === empty($priceMin) && false === empty($priceMax)) {
                 $subQuery = self::initSubQuery($category_id, $joinCondition);
                 $subQuery
-                    ->andWhere(['>=', 'p.price', $priceMin])
-                    ->andWhere(['<=', 'p.price', $priceMax]);
+                    ->andWhere('p.price >= (:min_price * currency.convert_nominal / currency.convert_rate)',
+                        [':min_price' => $priceMin])
+                    ->andWhere('p.price <= (:max_price * currency.convert_nominal / currency.convert_rate)',
+                        [':max_price' => $priceMax])
+                    ->leftJoin(Currency::tableName() . ' ON currency.id = p.currency_id');
                 $subQueryOptimisation = Yii::$app->db->cache(function($db) use ($subQuery) {
                     $ids = implode(', ', $subQuery->createCommand($db)->queryColumn());
                     return empty($ids) === true ? '(-1)' : "($ids)";
