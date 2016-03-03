@@ -12,6 +12,7 @@ use app\modules\data\components\ExportableInterface;
 use app\modules\shop\traits\HasAddonTrait;
 use app\modules\shop\ShopModule;
 use app\properties\HasProperties;
+use app\properties\PropertiesHelper;
 use app\traits\GetImages;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
@@ -25,6 +26,7 @@ use yii\db\Expression;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use yii\data\Pagination;
+use yii\web\ServerErrorHttpException;
 
 /**
  * This is the model class for table "product".
@@ -782,6 +784,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      * @param bool $apply_filterquery Should we apply filter query(filters based on query params ie. price_min/max)
      * @param bool $force_limit False to use Pagination, true to use $limit and ignore pagination
      * @param array $additional_filters Array of callables that will apply additional filters to query
+     * @return array
+     * @throws ServerErrorHttpException
+     * @throws \Exception
      */
     public static function filteredProducts(
         $category_group_id,
@@ -794,8 +799,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         array $additional_filters = []
     ) {
         Yii::beginProfile("FilteredProducts");
+        /** @var Object $object */
         if (null === $object = Object::getForClass(static::className())) {
-            throw new \yii\web\ServerErrorHttpException('Object not found.');
+            throw new ServerErrorHttpException('Object not found.');
         }
 
         /** @var \app\modules\shop\ShopModule $module */
@@ -850,7 +856,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         $productsPerPage = $limit === null ? UserPreferences::preferences()->getAttributes(
         )['productsPerPage'] : $limit;
 
-        \app\properties\PropertiesHelper::appendPropertiesFilters(
+        PropertiesHelper::appendPropertiesFilters(
             $object,
             $query,
             $values_by_property_id,

@@ -60,7 +60,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     /**
      * @var string Filtration mode
      */
-    public $multiFilterMode = 'union';
+    public $multiFilterMode = self::MULTI_FILTER_MODE_INTERSECTION;
 
     /**
      * @var int How much last viewed products ID's to store in session
@@ -331,8 +331,8 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     public static function getMultiFilterModes()
     {
         return [
-            static::MULTI_FILTER_MODE_UNION => 'Union',
-            static::MULTI_FILTER_MODE_INTERSECTION => 'Intersection',
+            self::MULTI_FILTER_MODE_UNION => 'Union',
+            self::MULTI_FILTER_MODE_INTERSECTION => 'Intersection',
         ];
     }
 }

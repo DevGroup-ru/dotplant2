@@ -3,11 +3,15 @@
 namespace app\modules\shop;
 
 use app;
+use app\backend\BackendModule;
 use app\components\BaseModule;
+use app\modules\shop\handlers\UserHandler;
+use app\modules\shop\models\ConfigConfigurationModel;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
+use yii\web\User;
 
 /**
  * Shop module is the base core module of DotPlant2 CMS handling all common e-commerce features
@@ -73,7 +77,7 @@ class ShopModule extends BaseModule implements BootstrapInterface
     /**
      * @var string Filtration mode
      */
-    public $multiFilterMode = 'union';
+    public $multiFilterMode = ConfigConfigurationModel::MULTI_FILTER_MODE_INTERSECTION;
 
     /**
      * @var int How much last viewed products ID's to store in session
@@ -170,9 +174,9 @@ class ShopModule extends BaseModule implements BootstrapInterface
          * Move orders/order params from guest to logged/signed user
          */
         Event::on(
-            \yii\web\User::className(),
-            \yii\web\User::EVENT_AFTER_LOGIN,
-            [app\modules\shop\handlers\UserHandler::className(), 'moveOrdersGuestToRegistered']
+            User::className(),
+            User::EVENT_AFTER_LOGIN,
+            [UserHandler::className(), 'moveOrdersGuestToRegistered']
         );
     }
 
@@ -182,7 +186,7 @@ class ShopModule extends BaseModule implements BootstrapInterface
     public function init()
     {
         parent::init();
-        if (\Yii::$app instanceof \yii\console\Application) {
+        if (Yii::$app instanceof \yii\console\Application) {
             $this->controllerMap = [];
         }
     }
@@ -192,12 +196,12 @@ class ShopModule extends BaseModule implements BootstrapInterface
     {
         return [
             [
-                'defaultValue' => app\backend\BackendModule::BACKEND_GRID_ONE_TO_ONE,
+                'defaultValue' => BackendModule::BACKEND_GRID_ONE_TO_ONE,
                 'key' => self::BACKEND_PRODUCT_GRID,
                 'label' => Yii::t('app', 'Product edit'),
             ],
             [
-                'defaultValue' => app\backend\BackendModule::BACKEND_GRID_ONE_TO_ONE,
+                'defaultValue' => BackendModule::BACKEND_GRID_ONE_TO_ONE,
                 'key' => self::BACKEND_CATEGORY_GRID,
                 'label' => Yii::t('app', 'Category edit'),
             ],

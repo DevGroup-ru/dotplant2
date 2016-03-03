@@ -3,7 +3,7 @@
 namespace app\properties;
 
 
-use app\models\Object;
+
 use app\models\ObjectStaticValues;
 use app\models\Property;
 use app\modules\shop\models\ConfigConfigurationModel;
@@ -20,6 +20,7 @@ class PropertiesHelper
      * @param $query ActiveQuery
      * @param $values_by_property_id array
      * @param array $dynamic_values_by_property_id array
+     * @param string $multiFilterMode
      * @throws \Exception
      */
     public static function appendPropertiesFilters(
@@ -27,7 +28,7 @@ class PropertiesHelper
         &$query,
         $values_by_property_id,
         $dynamic_values_by_property_id = [],
-        $multiFilterMode = 'union'
+        $multiFilterMode = ConfigConfigurationModel::MULTI_FILTER_MODE_INTERSECTION
     ) {
 
         /** @avr $object Object */

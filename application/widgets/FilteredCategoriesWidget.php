@@ -4,6 +4,7 @@ namespace app\widgets;
 
 use app\models\Object;
 use app\modules\shop\models\Category;
+use app\properties\PropertiesHelper;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\Widget;
@@ -36,14 +37,10 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
             $query->limit($this->limit);
         }
 
+        /** @var Object $object */
         $object = Object::getForClass(Category::className());
 
-        \app\properties\PropertiesHelper::appendPropertiesFilters(
-            $object,
-            $query,
-            $this->values_by_property_id,
-            []
-        );
+        PropertiesHelper::appendPropertiesFilters($object, $query, $this->values_by_property_id, []);
         $sql = $query->createCommand()->getRawSql();
         $cacheKey = "FilteredCategoriesWidget:".md5($sql);
         $result = Yii::$app->cache->get($cacheKey);
