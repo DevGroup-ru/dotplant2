@@ -4,7 +4,6 @@ namespace app\modules\shop\widgets;
 use yii\db\Query;
 use yii\helpers\ArrayHelper;
 use Yii;
-use app\modules\shop\models\Currency;
 
 
 class PriceSliderRangeWidget extends SliderRangeWidget
@@ -24,53 +23,43 @@ class PriceSliderRangeWidget extends SliderRangeWidget
         $cacheKey = 'priceRangeCategory' . $this->categoryId;
 
         if (!$data = Yii::$app->cache->get($cacheKey)) {
-            $dataMin = (new Query())->select('product.price as min_price, product.currency_id AS min_currency')
-                ->from(['product', 'product_category'])
-                ->where('product.id = product_category.object_model_id')
+            $dataMin = (new Query())->select([
+                    'MIN(product.price / currency.convert_nominal * currency.convert_rate) AS min_price',
+                    'product.currency_id AS min_currency',
+                ])
+                ->from(['product', 'product_category', 'currency'])
+                ->where('product.id = product_category.object_model_id AND (product.currency_id = currency.id)')
                 ->andWhere(
                     [
                         'product.active' => 1,
                         'product_category.category_id' => $this->categoryId
                     ]
-                )->orderBy('product.price ASC')
-                ->one();
+                )->one();
 
-            $dataMax = (new Query())->select('product.price as max_price, product.currency_id AS max_currency')
-                ->from(['product', 'product_category'])
-                ->where('product.id = product_category.object_model_id')
+            $dataMax = (new Query())->select([
+                'MAX(product.price / currency.convert_nominal * currency.convert_rate) AS max_price',
+                'product.currency_id AS max_currency',
+            ])
+                ->from(['product', 'product_category', 'currency'])
+                ->where('product.id = product_category.object_model_id AND (product.currency_id = currency.id)')
                 ->andWhere(
                         [
                             'product.active' => 1,
                             'product_category.category_id' => $this->categoryId
                         ]
-                )->orderBy('product.price DESC')
-                ->one();
+                )->one();
 
-            if (is_array($dataMax) && is_array($dataMin)) {
-                $data = ArrayHelper::merge($dataMax, $dataMin);
-            }
-
+            $data = ArrayHelper::merge($dataMax, $dataMin);
             if ($data) {
                 $data['min_price'] = (int) $data['min_price'];
                 $data['max_price'] = (int) $data['max_price'];
+                Yii::$app->cache->set($cacheKey, $data, 86400);
             }
 
         }
         if ($data && isset($data['min_price']) && isset($data['max_price'])) {
-            $currency = Currency::getMainCurrency();
-            if ($data['min_currency'] !== $currency->id) {
-                $foreignCurrency = Currency::findById($data['min_currency']);
-                $this->minValue = round($data['min_price'] / $foreignCurrency->convert_nominal * $foreignCurrency->convert_rate);
-            } else {
-                $this->minValue = $data['min_price'];
-            }
-            if ($data['max_currency'] !== $currency->id) {
-                $foreignCurrency = Currency::findById($data['max_currency']);
-                $this->maxValue = round($data['max_price'] / $foreignCurrency->convert_nominal * $foreignCurrency->convert_rate);
-            } else {
-                $this->maxValue = $data['max_price'];
-            }
-
+            $this->minValue = $data['min_price'];
+            $this->maxValue = $data['max_price'];
             $get = ArrayHelper::merge(Yii::$app->request->get(), Yii::$app->request->post());
 
             if (isset($get[$this->minAttribute]) && is_numeric($get[$this->minAttribute])) {
