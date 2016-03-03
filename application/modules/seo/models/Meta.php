@@ -4,6 +4,8 @@ namespace app\modules\seo\models;
 
 use app\backend\BackendModule;
 use app\backend\components\BackendController;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 
@@ -22,6 +24,16 @@ class Meta extends ActiveRecord
     public static function tableName()
     {
         return '{{%seo_meta}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'class' => ActiveRecordHelper::className(),
+        ];
     }
 
     /**
@@ -75,32 +87,23 @@ class Meta extends ActiveRecord
 
     public static function registrationMeta()
     {
-
-        if (
-            \Yii::$app->request->isAjax === false &&
-            \Yii::$app->controller->module instanceof BackendModule === false &&
-            \Yii::$app->controller instanceof BackendController === false
-        ) {
-           $cacheName = \Yii::$app->getModule('seo')->cacheConfig['metaCache']['name'];
-           $cacheExpire = \Yii::$app->getModule('seo')->cacheConfig['metaCache']['expire'];
-
-           if (\Yii::$app->getCache()->get($cacheName)) {
-               $metas = \Yii::$app->getCache()->get($cacheName);
-           } else {
-               $metas = Meta::find()->all();
-               \Yii::$app->getCache()->set($cacheName, $metas, $cacheExpire);
-           }
-           foreach ($metas as $meta) {
-               \Yii::$app->controller->getView()->registerMetaTag(
-                   [
-                       'name' => $meta->name,
-                       'content' => $meta->content,
-                   ],
-                   $meta->key
-               );
-           }
-       }
-
-
+        if (Yii::$app->request->isAjax === false && !BackendModule::isBackend()) {
+            $cacheName = Yii::$app->getModule('seo')->cacheConfig['metaCache']['name'];
+            $cacheExpire = Yii::$app->getModule('seo')->cacheConfig['metaCache']['expire'];
+            $metas = Yii::$app->getCache()->get($cacheName);
+            if ($metas === false) {
+                $metas = Meta::find()->all();
+                Yii::$app->getCache()->set($cacheName, $metas, $cacheExpire);
+            }
+            foreach ($metas as $meta) {
+                Yii::$app->controller->getView()->registerMetaTag(
+                    [
+                        'name' => $meta->name,
+                        'content' => $meta->content,
+                    ],
+                    $meta->key
+                );
+            }
+        }
     }
 }

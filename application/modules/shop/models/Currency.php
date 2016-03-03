@@ -4,6 +4,7 @@ namespace app\modules\shop\models;
 
 use app\modules\shop\models\CurrencyRateProvider;
 use app\modules\shop\components\SpecialPriceProductInterface;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\caching\TagDependency;
@@ -271,6 +272,26 @@ class Currency extends \yii\db\ActiveRecord
     }
 
     /**
+     * Formats price with current currency settings but without format string
+     * @param $price
+     * @return float
+     */
+    public function formatWithoutFormatString($price)
+    {
+        $formatter = Yii::createObject([
+            'class' => '\yii\i18n\Formatter',
+            'currencyCode' => $this->iso_code,
+            'decimalSeparator' => '.',
+            'thousandSeparator' => '',
+            'numberFormatterOptions' => [
+                7 => $this->min_fraction_digits, // min
+                6 => $this->max_fraction_digits, // max
+            ]
+        ]);
+        return $formatter->asDecimal($price);
+    }
+
+    /**
      * Returns Currency instance by name
      * @param $name
      * @return array|mixed|null|\yii\db\ActiveRecord
@@ -307,5 +328,23 @@ class Currency extends \yii\db\ActiveRecord
             static::$identity_map[$currency->id] = $currency;
         }
         return $currency;
+    }
+
+    /**
+     * @return array all ISO codes from DB
+     */
+    public static function getIsoCodes()
+    {
+        $column = Yii::$app->cache->get('ISO:column');
+        if ($column === false) {
+            $column = array_column(static::find()->select(['iso_code'])->asArray()->all(), 'iso_code');
+            Yii::$app->cache->set(
+                'ISO:column',
+                $column,
+                86400,
+                new TagDependency(['tags' => [ActiveRecordHelper::getCommonTag(static::className())]])
+            );
+        }
+        return $column;
     }
 }

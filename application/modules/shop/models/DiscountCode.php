@@ -1,9 +1,8 @@
 <?php
-
 namespace app\modules\shop\models;
 
 use Yii;
-use yii\helpers\ArrayHelper;
+use yii\db\Query;
 
 /**
  * This is the model class for table "{{%discount_code}}".
@@ -54,42 +53,47 @@ class DiscountCode extends AbstractDiscountType
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getFullName()
     {
-        return $this->code . ' from: ' . $this->valid_from . ' till ' . $this->valid_till . ' ' . $this->maximum_uses;
+        return "{$this->code} [{$this->valid_from} - {$this->valid_till}] [maximum: {$this->maximum_uses}]";
     }
 
+    /**
+     * @inheritdoc
+     */
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
-        $result = false;
-        if (intval(self::find()->where(['discount_id' => $discount->id])->count()) === 0) {
-            $result = true;
-        } else {
-            $discountsCode = self::find()->where(['discount_id' => $discount->id])->all();
-
-            $result = OrderCode::find()->where(
-                [
-                    'order_id' => $order->id,
-                    'discount_code_id' => ArrayHelper::map($discountsCode, 'id', 'id'),
-                    'status' => 1
-                ]
-            )->count() == 1;
-
+        if (null === $order) {
+            return false;
         }
-        return $result;
+
+        $q = (new Query())
+            ->from(OrderCode::tableName() . ' as oc')
+            ->leftJoin(self::tableName() . ' as dc', 'dc.id = oc.discount_code_id')
+            ->where(
+                'oc.order_id = :ocoid AND dc.discount_id = :dcdid AND oc.status = 1',
+                [
+                    ':ocoid' => $order->id,
+                    ':dcdid' => $discount->id
+                ]
+            )
+            ->count();
+        if (0 === intval($q)) {
+            return false;
+        }
+
+        return true;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function beforeDelete()
     {
-        OrderCode::updateAll(
-            [
-                'status' => 0
-            ],
-            [
-                'discount_code_id' => $this->id
-            ]
-        );
-
+        OrderCode::updateAll(['status' => 0], ['discount_code_id' => $this->id]);
         return parent::beforeDelete();
     }
 }

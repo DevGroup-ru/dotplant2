@@ -182,14 +182,26 @@ class ContentBlockHelper
                     if (null !== $model = Category::findById($id)) {
                         $dependency->tags [] = ActiveRecordHelper::getCommonTag(Category::className());
                         $dependency->tags [] = $model->objectTag();
-                        $output = Url::to(['@category', 'last_category_id' => $id]);
+                        $output = Url::to(
+                            [
+                                '@category',
+                                'last_category_id' => $id,
+                                'category_group_id' => $model->category_group_id
+                            ]
+                        );
                     }
                     break;
                 case "product" :
                     if (null !== $model = app\modules\shop\models\Product::findById($id)) {
                         $dependency->tags [] = ActiveRecordHelper::getCommonTag(Product::className());
                         $dependency->tags [] = $model->objectTag();
-                        $output = Url::to(['@product', 'model' => $model]);
+                        $output = Url::to(
+                            [
+                                '@product',
+                                'model' => $model,
+                                'category_group_id' => $model->getMainCategory()->category_group_id
+                            ]
+                        );
                     }
                     break;
             }

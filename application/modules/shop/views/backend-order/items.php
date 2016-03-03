@@ -30,7 +30,7 @@ use app\modules\shop\models\Product;
             <a href="<?= $_url; ?>" target="_blank"><?=$item->entity->getName()?></a>
         <?php endif; ?>
         </td>
-        <td><?=$item->product->convertedPrice()?></td>
+        <td><?=$item->price_per_pcs?></td>
         <td>
             <?=
             Editable::widget(
@@ -51,10 +51,7 @@ use app\modules\shop\models\Product;
             )
             ?>
         </td>
-        <td><?=Yii::$app->formatter->asDecimal(
-                $item->quantity * $item->product->convertedPrice(),
-                2
-            )?></td>
+        <td><?=$item->total_price?></td>
         <td><?=Html::a(
                 \kartik\icons\Icon::show('remove'),
                 ['delete-order-item', 'id' => $item->id],

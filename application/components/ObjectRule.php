@@ -121,6 +121,9 @@ class ObjectRule implements UrlRuleInterface
         if (isset($data['title'])) {
             Yii::$app->response->title = $data['title'];
         }
+        if (isset($data['meta_description'])) {
+            Yii::$app->response->meta_description = $data['meta_description'];
+        }
         if (isset($data['viewId'])) {
             Yii::$app->response->view_id = $data['viewId'];
         }
@@ -163,6 +166,9 @@ class ObjectRule implements UrlRuleInterface
             $data = ['blocks'=>[]];
             if (!empty($prefilteredPage['title'])) {
                 $data['title'] = $prefilteredPage['title'];
+            }
+            if (!empty($prefilteredPage['meta_description'])) {
+                $data['meta_description'] = $prefilteredPage['meta_description'];
             }
             $blocks = [
                 'content',

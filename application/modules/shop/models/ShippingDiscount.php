@@ -27,7 +27,8 @@ class ShippingDiscount extends \app\modules\shop\models\AbstractDiscountType
      * @inheritdoc
      */
     public function getFullName() {
-        return $this->shippingOption->name;
+        $model = $this->shippingOption;
+        return null === $model ? '(none)' : $model->name;
     }
 
     /**
@@ -35,23 +36,23 @@ class ShippingDiscount extends \app\modules\shop\models\AbstractDiscountType
      */
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
-        if (intval(self::find()->where(['discount_id' => $discount->id])->count()) === 0) {
-            return true;
+        $odi = $order->orderDeliveryInformation;
+        if (null === $order || null === $odi) {
+            return false;
         }
 
-        if (!is_null($order) && ($order->orderDeliveryInformation instanceof OrderDeliveryInformation)) {
-            $model_count = self::find()->where(
-                [
-                    'discount_id' => $discount->id,
-                    'shipping_option_id' => $order->orderDeliveryInformation->shipping_option_id
-                ]
-                )->count();
+        $q = self::find()->where(
+            [
+                'discount_id' => $discount->id,
+                'shipping_option_id' => $odi->shipping_option_id
+            ]
+        )->count();
 
-            if ($model_count > 0) {
-                return true;
-            }
+        if (0 === intval($q)) {
+            return false;
         }
-        return false;
+
+        return true;
     }
 
     /**

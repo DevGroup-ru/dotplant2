@@ -473,7 +473,7 @@ JSCODE;
                 <tr>
                     <th colspan="2"><?=Yii::t('app', 'Summary')?></th>
                     <th><?=$model->items_count?></th>
-                    <th colspan="2"><?=Yii::$app->formatter->asDecimal(PriceHelper::getOrderPrice($model), 2)?></th>
+                    <th colspan="2"><?=$model->total_price?></th>
                 </tr>
                 </tbody>
             </table>

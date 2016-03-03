@@ -393,15 +393,20 @@ class BackendProductController extends BackendController
             $model->slug = $parent->slug . '-' . implode('-', $slugAppend);
             $save_model = $model->save();
             if ($save_model) {
+                $groups = [
+                    [$parent->object->id, $model->id, $post['PropertyGroup']['id']]
+                ];
                 foreach (array_keys($parent->propertyGroups) as $key) {
-                    $opg = new ObjectPropertyGroup();
-                    $opg->attributes = [
-                        'object_id' => $parent->object->id,
-                        'object_model_id' => $model->id,
-                        'property_group_id' => $key,
-                    ];
-                    $opg->save();
+                    if ($key === $post['PropertyGroup']['id']) {
+                        continue;
+                    }
+                    $groups[] = [$parent->object->id, $model->id, $key];
                 }
+                Yii::$app->db->createCommand()->batchInsert(
+                    ObjectPropertyGroup::tableName(),
+                    ['object_id', 'object_model_id', 'property_group_id'],
+                    $groups
+                )->execute();
                 $newValues = array_merge($parent->abstractModel->attributes, $tempPost);
                 $model->saveProperties([
                     'Properties_Product_' . $model->id => $newValues,

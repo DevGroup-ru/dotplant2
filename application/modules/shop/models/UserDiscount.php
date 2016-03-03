@@ -15,32 +15,40 @@ use Yii;
  */
 class UserDiscount extends AbstractDiscountType
 {
-
+    /**
+     * @inheritdoc
+     */
     public function getFullName()
     {
-        return $this->user_id .' '.$this->user->first_name .' '.$this->user->last_name;
+        $user = $this->user;
+        return null === $user
+            ? $this->user_id
+            : "[{$this->user_id}] {$this->user->first_name} {$this->user->last_name}";
     }
 
-
+    /**
+     * @return User|\yii\db\ActiveQuery
+     */
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
-
+    /**
+     * @inheritdoc
+     */
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
-        $result = false;
-        if (intval(self::find()->where(['discount_id'=>$discount->id])->count()) === 0)
-        {
-            $result = true;
-        } elseif (
-            $order !== null &&
-            intval(self::find()->where(['discount_id'=>$discount->id, 'user_id'=>$order->user_id])->count()) === 1
-        ) {
-            $result = true;
+        if (null === $order) {
+            return false;
         }
-        return $result;
+
+        $q = self::find()->where(['discount_id' => $discount->id, 'user_id' => $order->user_id])->count();
+        if (0 === intval($q)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -21,7 +21,10 @@ $productIds = ArrayHelper::getColumn($values->values, 'value');
 /** @var Product[] $products */
 $products = [];
 foreach ($productIds as $id) {
-    $products[] = Product::findOne($id);
+    $product = Product::findById($id);
+    if ($product !== null) {
+        $products[] = $product;
+    }
 }
 
 ?>

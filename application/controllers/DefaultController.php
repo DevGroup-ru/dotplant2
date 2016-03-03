@@ -40,6 +40,18 @@ class DefaultController extends Controller
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => \yii\filters\VerbFilter::className(),
+                'actions' => [
+                    'submit-form' => ['post'],
+                ],
+            ]
+        ];
+    }
+
     public function actionIndex()
     {
         return $this->render('index');

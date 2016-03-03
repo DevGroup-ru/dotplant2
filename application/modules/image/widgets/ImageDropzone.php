@@ -100,6 +100,8 @@ class ImageDropzone extends DropZone
         parent::run();
 
         ImageDropzoneAsset::register($this->getView());
+
+        $this->getView()->registerJs('editNames();');
     }
 
     public function init()

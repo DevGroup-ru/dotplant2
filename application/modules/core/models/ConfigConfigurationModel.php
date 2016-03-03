@@ -100,6 +100,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 [
                     'removeUploadedFiles',
                     'overwriteUploadedFiles',
+                    'errorMonitorEnabled',
                 ],
                 'boolean'
             ],

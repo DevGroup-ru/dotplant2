@@ -59,7 +59,8 @@ class PriceHelper
                 $price = $class::$handler($product, $order, $specialPriceRow, $price);
         }
 
-        $resultingPrice = round($price * $quantity, 2);
+
+        $resultingPrice = $price*$quantity;
 
         // count product addons here
         /** @var \app\modules\shop\models\Addon[] $addons */
@@ -123,6 +124,6 @@ class PriceHelper
             $price = $class::$handler($order, $specialPriceRow, $price);
         }
 
-        return round($price, 2);
+        return $price;
     }
 }

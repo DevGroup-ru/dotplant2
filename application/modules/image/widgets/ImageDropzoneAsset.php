@@ -10,4 +10,7 @@ class ImageDropzoneAsset extends AssetBundle
     public $css = [
         'css/theme.css',
     ];
+    public $js = [
+        'js/addition.js',
+    ];
 }

@@ -14,36 +14,38 @@ use Yii;
  */
 class ProductDiscount extends AbstractDiscountType
 {
-
+    /**
+     * @inheritdoc
+     */
     public function getFullName()
     {
-        return $this->product->name;
+        $product = $this->product;
+        return null === $product ? '(none)' : $product->name;
     }
 
+    /**
+     * @return Product|\yii\db\ActiveQuery
+     */
     public function getProduct()
     {
         return $this->hasOne(Product::className(), ['id' => 'product_id']);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
-        $orderAttributes = $order->abstractModel->getAttributes();
-        if (intval(self::find()->where(['discount_id' => $discount->id])->count()) === 0) {
-            $result = true;
-        } else {
-            $query = self::find()->where(['discount_id' => $discount->id]);
-
-            if (isset($orderAttributes['promocode']) && $orderAttributes['promocode']) {
-                $query->andWhere(
-                    [
-                        'code' => $orderAttributes['promocode']
-                    ]
-                );
-            }
-
-            $result = $query->count() == 1;
+        if (null === $order || null === $product) {
+            return false;
         }
-        return $result;
+
+        $q = self::find()->where(['discount_id' => $discount->id, 'product_id' => $product->id])->count();
+        if (0 === intval($q)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

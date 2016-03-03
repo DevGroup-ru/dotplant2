@@ -19,14 +19,6 @@ class PropertyHandler extends Action
     public function init()
     {
         parent::init();
-        \yii\helpers\VarDumper::dump(
-            [
-                'modelname' => $this->modelName
-            ],
-            10,
-            true
-        );
-        \Yii::$app->end();
         if (null === $this->modelName) {
             throw new yii\web\ServerErrorHttpException('Model name should be set in controller actions');
         }
@@ -71,4 +63,3 @@ class PropertyHandler extends Action
         return $propertyHandler->runAction($handler_action, $actionParams);
     }
 }
-?>

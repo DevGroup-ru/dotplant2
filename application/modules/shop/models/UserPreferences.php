@@ -64,7 +64,7 @@ class UserPreferences extends Model {
             [
                 'userCurrency',
                 'in',
-                'range' => array_column(Currency::find()->select(['iso_code'])->asArray()->all(), 'iso_code'),
+                'range' => Currency::getIsoCodes(),
                 'strict' => true
             ],
         ];
