@@ -57,6 +57,9 @@ echo Html::tag(
     [
         'class' => 'range form-inline',
         'style' => 'padding: 10px;',
+        'data-min' => (int) $minValue,
+        'data-max' => (int) $maxValue,
+        'data-step' => (int) $step,
         'id' => 'range-widget-' . $id
     ]
 );

@@ -423,6 +423,29 @@ $(function() {
                 dataType: 'json',
                 success: function(data) {
                     form.html($(data.filters).find('form').html());
+
+                    $('.filter-property div[id ^= range-widget-]').each(function () {
+                        var slider = $(this).find('div[id ^= slider-id-]');
+                        var minInput = $(this).find('input[id $= _minAttribute]');
+                        var maxInput = $(this).find('input[id $= _maxAttribute]');
+
+                        slider.slider({
+                            min: $(this).data('min'),
+                            max: $(this).data('max'),
+                            values: [minInput.val(), maxInput.val()],
+                            range: true,
+                            step : $(this).data('step'),
+                            stop: function(event, ui) {
+                                minInput.val(slider.slider("values",0));
+                                maxInput.val(slider.slider("values",1));
+                            },
+                            slide: function(event, ui){
+                                minInput.val(slider.slider("values",0));
+                                maxInput.val(slider.slider("values",1));
+                            }
+                        });
+                    });
+
                     var elem = $(data.content);
                     block.empty().css('height', 'auto').append(elem);
                     document.title = data.title;
