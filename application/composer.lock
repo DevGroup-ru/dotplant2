@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "59608b060c46113d5255a9281babf8d5",
-    "content-hash": "4f665eda8309cd0cc851847e0fa918fa",
+    "hash": "909d7a561986cae03fe289f6c841d38b",
+    "content-hash": "55cad53d8236c8875e2044609e05cfe2",
     "packages": [
         {
             "name": "bower-asset/ace-builds",
@@ -4400,6 +4400,48 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "bazilio/yii2-stubs-generator",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bazilio91/yii2-stubs-generator.git",
+                "reference": "a80f60fb28ee1dab05f32b5136ac6454d3318372"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bazilio91/yii2-stubs-generator/zipball/a80f60fb28ee1dab05f32b5136ac6454d3318372",
+                "reference": "a80f60fb28ee1dab05f32b5136ac6454d3318372",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "bazilio\\stubsgenerator\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vasily Ostanin",
+                    "email": "bazilio91@gmail.com"
+                }
+            ],
+            "description": "Yii2 component stubs generator for Yii::$app",
+            "keywords": [
+                "autocomplete",
+                "phpstorm",
+                "stubs",
+                "yii2"
+            ],
+            "time": "2015-12-12 02:31:16"
+        },
         {
             "name": "bower-asset/typeahead.js",
             "version": "v0.11.1",
