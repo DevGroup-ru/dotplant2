@@ -5,6 +5,7 @@
 /** @var \app\extensions\DefaultTheme\models\ConfigurationModel $model */
 
 use app\backend\widgets\BackendWidget;
+use kartik\widgets\ColorInput;
 use yii\helpers\Html;
 use kartik\icons\Icon;
 
@@ -13,9 +14,9 @@ use kartik\icons\Icon;
 <div class="row">
     <div class="col-md-5 col-sm-12">
         <?php BackendWidget::begin(['title' => Yii::t('app', 'Colors'), 'options' => ['class' => 'visible-header']]); ?>
-            <?= $form->field($model, 'primary_color')->widget(\kartik\widgets\ColorInput::className()) ?>
-            <?= $form->field($model, 'secondary_color')->widget(\kartik\widgets\ColorInput::className()) ?>
-            <?= $form->field($model, 'action_color')->widget(\kartik\widgets\ColorInput::className()) ?>
+        <?=$form->field($model, 'primary_color')->widget(ColorInput::className(), ['type' => 'color'])?>
+        <?=$form->field($model, 'secondary_color')->widget(ColorInput::className(), ['type' => 'color'])?>
+        <?=$form->field($model, 'action_color')->widget(ColorInput::className(), ['type' => 'color'])?>
 
         <?php BackendWidget::end() ?>
     </div>
