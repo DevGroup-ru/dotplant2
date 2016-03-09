@@ -7,9 +7,7 @@ use app\modules\shop\models\Category;
 use app\properties\PropertiesHelper;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
-use yii\base\Widget;
-use yii\helpers\Json;
-use yii\helpers\Url;
+use yii\caching\TagDependency;
 
 class FilteredCategoriesWidget extends PlainCategoriesWidget
 {
@@ -37,7 +35,6 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
             $query->limit($this->limit);
         }
 
-        /** @var Object $object */
         $object = Object::getForClass(Category::className());
 
         PropertiesHelper::appendPropertiesFilters($object, $query, $this->values_by_property_id, []);
@@ -58,7 +55,7 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
                 $cacheKey,
                 $result,
                 86400,
-                new \yii\caching\TagDependency([
+                new TagDependency([
                     'tags' => ActiveRecordHelper::getCommonTag(Category::tableName())
                 ])
             );

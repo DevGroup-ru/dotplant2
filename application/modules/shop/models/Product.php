@@ -53,12 +53,14 @@ use yii\web\ServerErrorHttpException;
  * @property Product[] $relatedProducts
  * @property Measure $measure
  * @property string $sku
- * @property boolean unlimited_count
+ * @property boolean $unlimited_count
  * @property string $date_added
  * @property string $date_modified
  * Relations:
  * @property Category $category
+ * @property Product[] $children
  */
+
 class Product extends ActiveRecord implements ImportableInterface, ExportableInterface, \JsonSerializable
 {
     use GetImages;
@@ -191,7 +193,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 'class' => HasProperties::className(),
             ],
             [
-                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+                'class' => ActiveRecordHelper::className(),
             ],
             [
                 'class' => CleanRelations::className(),
@@ -242,7 +244,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     /**
      * Returns model instance by ID using per-request Identity Map and cache
      * @param $id
-     * @param int $is_active Return only active
+     * @param int $isActive Return only active
      * @return Product
      */
     public static function findById($id, $isActive = 1)
@@ -258,6 +260,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     $model->andWhere(['active' => $isActive]);
                 }
                 if (null !== $model = $model->one()) {
+                    /**
+                     * @var self $model
+                     */
                     static::$slug_to_id[$model->slug] = $id;
                     Yii::$app->cache->set(
                         $cacheKey,
@@ -266,7 +271,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                         new TagDependency(
                             [
                                 'tags' => [
-                                    \devgroup\TagDependencyHelper\ActiveRecordHelper::getCommonTag(static::className())
+                                    ActiveRecordHelper::getCommonTag(static::className())
                                 ]
                             ]
                         )
@@ -303,6 +308,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     $tags[] = ActiveRecordHelper::getObjectTag(Category::className(), $inCategoryId);
                 }
                 $model = $query->one();
+                /**
+                 * @var self|null $model
+                 */
                 if (is_null($model)) {
                     $tags[] = ActiveRecordHelper::getCommonTag(Product::className());
                 } else {
@@ -421,7 +429,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         }
         $object = Object::getForClass(static::className());
 
-        \yii\caching\TagDependency::invalidate(
+        TagDependency::invalidate(
             Yii::$app->cache,
             [
                 'Images:' . $object->id . ':' . $this->id
@@ -442,7 +450,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             return false;
         }
         foreach ($this->children as $child) {
-            /** @var Product $child */
             $child->delete();
         }
         return true;
@@ -507,7 +514,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     /**
      * Process fields before the actual model is saved(inserted or updated)
      * @param array $fields
-     * @return void
+     * @param $multipleValuesDelimiter
+     * @param array $additionalFields
      */
     public function processImportBeforeSave(array $fields, $multipleValuesDelimiter, array $additionalFields)
     {
@@ -547,7 +555,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     /**
      * Process fields after the actual model is saved(inserted or updated)
      * @param array $fields
-     * @return void
+     * @param $multipleValuesDelimiter
+     * @param array $additionalFields
      */
     public function processImportAfterSave(array $fields, $multipleValuesDelimiter, array $additionalFields)
     {
@@ -728,6 +737,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      * Returns additional fields data by field key.
      * If value of field is array it will be converted to string
      * using multipleValuesDelimiter specified in ImportModel
+     * @param array $configuration
      * @return array
      */
     public function getAdditionalFields(array $configuration)
@@ -799,7 +809,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         array $additional_filters = []
     ) {
         Yii::beginProfile("FilteredProducts");
-        /** @var Object $object */
+        /** @var \app\models\Object $object */
         if (null === $object = Object::getForClass(static::className())) {
             throw new ServerErrorHttpException('Object not found.');
         }

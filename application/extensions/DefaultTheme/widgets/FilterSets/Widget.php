@@ -222,7 +222,7 @@ class Widget extends BaseWidget
                         'multiple' => $filterSet->multiple,
                     ];
                     if ($filterSet->is_range_slider) {
-                        $item['max'] = 0;
+                        $item['max'] = PHP_INT_MIN;
                         $item['min'] = PHP_INT_MAX;
                         $item['property'] = $filterSet->property;
                     }
@@ -234,6 +234,38 @@ class Widget extends BaseWidget
                             if ((int)$selection['value'] < $item['min']) {
                                 $item['min'] = (int)$selection['value'];
                             }
+                        } elseif($item['multiple']) {
+                            $selectedPropertyIndex = $this->getSelectedPropertyIndex(
+                                $urlParams['properties'],
+                                $filterSet->property_id,
+                                $selection['id']
+                            );
+                            if ($selectedPropertyIndex !== false) {
+                                if (count($urlParams['properties'][$filterSet->property_id]) > 1) {
+                                    $routeParams = $urlParams;
+                                    unset($routeParams['properties'][$filterSet->property_id][$selectedPropertyIndex]);
+                                } else {
+                                    $routeParams = $urlParams;
+                                    unset($routeParams['properties'][$filterSet->property_id]);
+                                }
+                                if (isset($this->toUnset[$filterSet->property_id])) {
+                                    foreach ($this->toUnset[$filterSet->property_id] as $id) {
+                                        unset($routeParams['properties'][$id]);
+                                    }
+                                }
+                            } else {
+                                $routeParams = $this->mergeUrlProperties(
+                                    $urlParams,
+                                    ['properties' => [$filterSet->property_id => [$selection['id']]]]
+                                );
+                            }
+                            $item['selections'][] = [
+                                'id' => $selection['id'],
+                                'checked' => $selectedPropertyIndex !== false,
+                                'label' => $selection['name'],
+                                'url' =>  Url::toRoute($routeParams),
+                                'active' => $selection['active'],
+                            ];
                         } else {
                             $selectedPropertyIndex = $this->getSelectedPropertyIndex(
                                 $urlParams['properties'],

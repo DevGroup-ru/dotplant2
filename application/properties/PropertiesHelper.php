@@ -3,7 +3,6 @@
 namespace app\properties;
 
 
-
 use app\models\ObjectStaticValues;
 use app\models\Property;
 use app\modules\shop\models\ConfigConfigurationModel;
@@ -16,7 +15,7 @@ class PropertiesHelper
 
     /**
      * Добавляет к запросу фильтры по свойствам
-     * @param $object Object
+     * @param $object \app\models\Object
      * @param $query ActiveQuery
      * @param $values_by_property_id array
      * @param array $dynamic_values_by_property_id array
@@ -29,9 +28,8 @@ class PropertiesHelper
         $values_by_property_id,
         $dynamic_values_by_property_id = [],
         $multiFilterMode = ConfigConfigurationModel::MULTI_FILTER_MODE_INTERSECTION
-    ) {
-
-        /** @avr $object Object */
+    )
+    {
 
         // сначала сгруппируем свойства по типу хранения
         $by_storage = [
@@ -45,7 +43,7 @@ class PropertiesHelper
         ];
         foreach ($values_by_property_id as $property_id => $values) {
             // values может быть просто строкой(одно значение), а может уже прийти массивом
-            $values = (array) $values;
+            $values = (array)$values;
             $property = Property::findById($property_id);
             if ($property === null) {
                 continue;
@@ -66,7 +64,7 @@ class PropertiesHelper
                     'values' => $values,
                 ];
             } else {
-                throw new \Exception("Wrong property type for ".$property->id);
+                throw new \Exception("Wrong property type for " . $property->id);
             }
         }
         foreach ($dynamic_values_by_property_id as $property_id => $values) {
@@ -83,13 +81,14 @@ class PropertiesHelper
                         'values' => $values,
                     ];
                 } else {
-                    throw new \Exception("Wrong property type for ".$property->id);
+                    throw new \Exception("Wrong property type for " . $property->id);
                 }
             }
         }
-        $join_counter = 1;
+
         $ti_clauses = [];
-        $join_table_name = "PropertiesJoinTable".$join_counter++;
+        $join_table_name = "PropertiesJoinTable1";
+
         foreach ($by_storage['table_inheritance'] as $item) {
             $property = $item['property'];
             $or_clauses = [];
@@ -112,12 +111,12 @@ class PropertiesHelper
             if (isset($item['values']['min']) && strlen($item['values']['min'])) {
                 $clauses[] = "$join_table_name." .
                     Yii::$app->db->quoteColumnName($property->key) . " >= " .
-                    Yii::$app->db->quoteValue((double) ($item['values']['min']));
+                    Yii::$app->db->quoteValue((double)($item['values']['min']));
             }
             if (isset($item['values']['max']) && strlen($item['values']['max'])) {
                 $clauses[] = "$join_table_name." .
                     Yii::$app->db->quoteColumnName($property->key) . " <= " .
-                    Yii::$app->db->quoteValue((double) ($item['values']['max']));
+                    Yii::$app->db->quoteValue((double)($item['values']['max']));
             }
             if (!empty($clauses)) {
                 $ti_clauses[] = '(' . implode(" AND ", $clauses) . ')';
@@ -135,16 +134,14 @@ class PropertiesHelper
         }
         if (count($by_storage['static_values'])) {
             foreach ($by_storage['static_values'] as $item) {
-                $joinTableName = 'OSVJoinTable'.$item['property']->id;
+                $joinTableName = 'OSVJoinTable' . $item['property']->id;
                 if (count($item['values']) > 0) {
                     $query = $query->innerJoin(
                         ObjectStaticValues::tableName() . " " . $joinTableName,
                         "$joinTableName.object_id = " . intval($object->id) .
                         " AND $joinTableName.object_model_id = " .
                         Yii::$app->db->quoteTableName($object->object_table_name) . ".id "
-                    );
-
-                    $query = $query->andWhere(
+                    )->andWhere(
                         new Expression(
                             '`' . $joinTableName . '`.`property_static_value_id` in (' .
                             implode(', ', array_map('intval', $item['values'])) .
@@ -156,18 +153,17 @@ class PropertiesHelper
         }
         if (count($by_storage['eav'])) {
             foreach ($by_storage['eav'] as $item) {
-                $joinTableName = 'EAVJoinTable'.$item['property']->id;
+                $joinTableName = 'EAVJoinTable' . $item['property']->id;
                 if (count($item['values']) > 0) {
                     $query = $query->innerJoin(
                         $object->eav_table_name . " " . $joinTableName,
                         "$joinTableName.object_model_id = " .
                         Yii::$app->db->quoteTableName($object->object_table_name) . ".id "
-                    );
-                    $query = $query->andWhere(
+                    )->andWhere(
                         new Expression(
                             '`' . $joinTableName . '`.`value` in (' .
                             implode(', ', array_map('intval', $item['values'])) .
-                            ') AND `' . $joinTableName . '`.`key` = "'. $item['property']->key.'"'
+                            ') AND `' . $joinTableName . '`.`key` = "' . $item['property']->key . '"'
                         )
                     );
                 }
