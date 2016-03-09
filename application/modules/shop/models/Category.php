@@ -16,6 +16,7 @@ use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 /**
@@ -527,6 +528,9 @@ class Category extends ActiveRecord implements \JsonSerializable
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
+
+        static::$identity_map[$this->id] = $this;
+
         if (isset($changedAttributes['category_group_id'])) {
             foreach ($this->children as $child) {
                 $child->category_group_id = $this->category_group_id;

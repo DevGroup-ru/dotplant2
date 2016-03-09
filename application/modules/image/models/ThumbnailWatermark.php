@@ -68,6 +68,9 @@ class ThumbnailWatermark extends \yii\db\ActiveRecord
      */
     public static function getThumbnailWatermark($thumb, $water)
     {
+        if ($thumb->thumb_path === false) {
+            throw new Exception(Yii::t('app', 'Can\'t get watermark from nothing'));
+        }
         $watermark = static::findOne(['thumb_id' => $thumb->id, 'water_id' => $water->id]);
         if ($watermark === null) {
             $watermark = new ThumbnailWatermark();

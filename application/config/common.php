@@ -7,8 +7,8 @@ $params = require(__DIR__ . '/params.php');
 
 if (file_exists(__DIR__ . '/aliases.php')) {
     $aliases = require(__DIR__ . '/aliases.php');
-    foreach ($aliases as $alias => $path) {
-        Yii::setAlias($alias, $path);
+    foreach ($aliases as $alias => $value) {
+        Yii::setAlias($alias, $value);
     }
 }
 
@@ -45,4 +45,9 @@ return [
         ],
     ],
     'params' => $params,
+    'controllerMap' => [
+        'stubs' => [
+            'class' => 'bazilio\stubsgenerator\StubsController',
+        ],
+    ],
 ];

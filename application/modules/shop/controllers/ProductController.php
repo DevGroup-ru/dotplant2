@@ -226,6 +226,7 @@ class ProductController extends Controller
                     [
                         '/shop/product/list',
                         'last_category_id' => $selected_category_id,
+                        'category_group_id' => $category_group_id,
                         'properties' => $values_by_property_id
                     ]
                 ),

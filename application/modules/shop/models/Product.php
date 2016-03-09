@@ -255,7 +255,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (!isset(static::$identity_map[$id])) {
             $cacheKey = static::tableName() . ":$id:$isActive";
             if (false === $model = Yii::$app->cache->get($cacheKey)) {
-                $model = static::find()->where(['id' => $id])->with('images', 'relatedProducts');
+                $model = static::find()->where(['id' => $id])->with('images');
                 if (null !== $isActive) {
                     $model->andWhere(['active' => $isActive]);
                 }
@@ -437,6 +437,17 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         );
 
         return parent::beforeSave($insert);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        static::$identity_map[$this->id] = $this;
+
     }
 
     /**

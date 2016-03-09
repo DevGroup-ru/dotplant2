@@ -53,7 +53,7 @@ class CategoryGroup extends ActiveRecord
         if (null !== static::$firstModel) {
             return static::$firstModel;
         }
-        $model = static::find()->orderBy(['id' => SORT_ASC])->one();
+        $model = static::find()->orderBy(['id' => SORT_ASC])->limit(1)->one();
         if ($createNotExists && null === $model) {
             $model = new static();
             $model->name = Yii::t('app', 'Shop');
