@@ -881,7 +881,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $object,
             $query,
             $values_by_property_id,
-            Yii::$app->request->get('p', [])
+            Yii::$app->request->get('p', []),
+            $module->multiFilterMode
         );
 
 

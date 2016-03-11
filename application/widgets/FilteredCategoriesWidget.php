@@ -36,8 +36,8 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
         }
 
         $object = Object::getForClass(Category::className());
-
-        PropertiesHelper::appendPropertiesFilters($object, $query, $this->values_by_property_id, []);
+        $multiFilterMode = Yii::$app->getModule('shop')->multiFilterMode;
+        PropertiesHelper::appendPropertiesFilters($object, $query, $this->values_by_property_id, [], $multiFilterMode);
         $sql = $query->createCommand()->getRawSql();
         $cacheKey = "FilteredCategoriesWidget:".md5($sql);
         $result = Yii::$app->cache->get($cacheKey);

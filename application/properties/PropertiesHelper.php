@@ -95,13 +95,9 @@ class PropertiesHelper
                     Yii::$app->db->quoteColumnName($property->key) . " = " .
                     Yii::$app->db->quoteValue($val);
             }
-            switch ($multiFilterMode) {
-                case ConfigConfigurationModel::MULTI_FILTER_MODE_INTERSECTION:
-                    $ti_clauses[] = implode(" AND ", $or_clauses);
-                    break;
-                default:
-                    $ti_clauses[] = implode(" OR ", $or_clauses);
-            }
+
+            $ti_clauses[] = implode(" OR ", $or_clauses);
+
         }
         foreach ($dynamic_by_storage['table_inheritance'] as $item) {
             $property = $item['property'];
@@ -133,20 +129,33 @@ class PropertiesHelper
 
 
         if (count($by_storage['static_values'])) {
-            $query->innerJoin([
-                'osvm' => (new Query)
-                    ->select('object_model_id')
-                    ->distinct()
-                    ->from(ObjectStaticValues::tableName() . ' osv')
-                    ->where([
-                        'object_id' => $object->id,
-                        'property_static_value_id' => $by_storage['static_values']
-                    ])
-                    ->groupBy('object_model_id')
-                    ->having('count(object_model_id) = ' . count($by_storage['static_values']))
-            ],
-                'osvm.object_model_id = ' . Yii::$app->db->quoteTableName($object->object_table_name) . '.id'
-            );
+
+            switch ($multiFilterMode) {
+                case ConfigConfigurationModel::MULTI_FILTER_MODE_UNION:
+                    $subQuery = new Query();
+                    $lastQuery = $subQuery;
+                    $counter = 0;
+                    foreach ($by_storage['static_values'] as $staticValues) {
+                        $tmp = self::createSubQuery($object, $staticValues, ++$counter,$multiFilterMode);
+                        $lastQuery->innerJoin(
+                            ['osvm' . $counter => $tmp]
+                            , 'osvm' . $counter . '.object_model_id = ' . 'osv' . ($counter - 1) . '.object_model_id'
+                        );
+                        $lastQuery = $tmp;
+                    }
+
+                    $query->innerJoin(
+                        $subQuery->join[0][1]
+                        , 'osvm1.object_model_id = ' . Yii::$app->db->quoteTableName($object->object_table_name) . '.id'
+                    );
+
+                    break;
+                default:
+                    $query->innerJoin(
+                        ['osvm' => self::createSubQuery($object, $by_storage['static_values'])]
+                        , 'osvm.object_model_id = ' . Yii::$app->db->quoteTableName($object->object_table_name) . '.id'
+                    );
+            }
         }
 
         if (count($by_storage['eav'])) {
@@ -169,5 +178,29 @@ class PropertiesHelper
         }
 
 
+    }
+
+    public static function createSubQuery(\app\models\Object $object, $psvs = [], $counter = 1,$multiFilterMode = ConfigConfigurationModel::MULTI_FILTER_MODE_INTERSECTION)
+    {
+        $tableInner = 'osv' . $counter;
+        switch ($multiFilterMode) {
+            case ConfigConfigurationModel::MULTI_FILTER_MODE_UNION:
+                $having = "count($tableInner.object_model_id) BETWEEN 1 AND " . count($psvs);
+                break;
+            default:
+                $having = "count($tableInner.object_model_id) = " . count($psvs);
+        }
+        $subQuery = (new Query)
+            ->select("$tableInner.object_model_id")
+            ->distinct()
+            ->from(ObjectStaticValues::tableName() . " $tableInner")
+            ->where([
+                "$tableInner.object_id" => $object->id,
+                "$tableInner.property_static_value_id" => $psvs
+            ])
+            ->groupBy("$tableInner.object_model_id")
+            ->having($having);
+
+        return $subQuery;
     }
 }
