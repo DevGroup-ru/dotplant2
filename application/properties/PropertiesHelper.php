@@ -7,9 +7,9 @@ use app\models\ObjectStaticValues;
 use app\models\Property;
 use app\modules\shop\models\ConfigConfigurationModel;
 use Yii;
-use yii\db\Query;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
+use yii\db\Query;
 
 class PropertiesHelper
 {
@@ -136,7 +136,7 @@ class PropertiesHelper
                     $lastQuery = $subQuery;
                     $counter = 0;
                     foreach ($by_storage['static_values'] as $staticValues) {
-                        $tmp = self::createSubQuery($object, $staticValues, ++$counter,$multiFilterMode);
+                        $tmp = self::createSubQuery($object, $staticValues, ++$counter, $multiFilterMode);
                         $lastQuery->innerJoin(
                             ['osvm' . $counter => $tmp]
                             , 'osvm' . $counter . '.object_model_id = ' . 'osv' . ($counter - 1) . '.object_model_id'
@@ -180,7 +180,19 @@ class PropertiesHelper
 
     }
 
-    public static function createSubQuery(\app\models\Object $object, $psvs = [], $counter = 1,$multiFilterMode = ConfigConfigurationModel::MULTI_FILTER_MODE_INTERSECTION)
+    /**
+     * @param \app\models\Object $object
+     * @param array $psvs
+     * @param int $counter
+     * @param string $multiFilterMode
+     * @return Query
+     */
+    public static function createSubQuery(
+        \app\models\Object $object,
+        $psvs = [],
+        $counter = 1,
+        $multiFilterMode = ConfigConfigurationModel::MULTI_FILTER_MODE_INTERSECTION
+    )
     {
         $tableInner = 'osv' . $counter;
         switch ($multiFilterMode) {
