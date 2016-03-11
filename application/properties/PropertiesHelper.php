@@ -60,7 +60,13 @@ class PropertiesHelper
                     'values' => $values,
                 ];
             } elseif ($property->has_static_values) {
-                $by_storage['static_values'] = array_merge($by_storage['static_values'], $values);
+                switch($multiFilterMode){
+                    case ConfigConfigurationModel::MULTI_FILTER_MODE_UNION:
+                        $by_storage['static_values'][] = $values;
+                        break;
+                    default:
+                        $by_storage['static_values'] = array_merge($by_storage['static_values'], $values);
+                }
             } else {
                 throw new \Exception("Wrong property type for " . $property->id);
             }
@@ -195,12 +201,15 @@ class PropertiesHelper
     )
     {
         $tableInner = 'osv' . $counter;
+        $psvsCount = count($psvs);
         switch ($multiFilterMode) {
             case ConfigConfigurationModel::MULTI_FILTER_MODE_UNION:
-                $having = "count($tableInner.object_model_id) BETWEEN 1 AND " . count($psvs);
-                break;
+                if($psvsCount>1){
+                    $having = "count($tableInner.object_model_id) BETWEEN 1 AND $psvsCount";
+                    break;
+                }
             default:
-                $having = "count($tableInner.object_model_id) = " . count($psvs);
+                $having = "count($tableInner.object_model_id) = $psvsCount";
         }
         $subQuery = (new Query)
             ->select("$tableInner.object_model_id")
