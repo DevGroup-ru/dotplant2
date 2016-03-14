@@ -10,6 +10,7 @@ use app\modules\shop\models\Category;
 use app\modules\shop\models\Currency;
 use app\modules\shop\models\Product;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
+use Yii;
 use yii\base\Component;
 use app\modules\shop\models\Yml as YmlModel;
 use yii\caching\TagDependency;
@@ -65,19 +66,19 @@ class Yml extends Component
         }
 
         if (null === $this->viewFile) {
-            $this->viewFile = \Yii::$app->getModule('shop')->getViewPath() . '/backend-yml/generate/yml.php';
+            $this->viewFile = Yii::$app->getModule('shop')->getViewPath() . '/backend-yml/generate/yml.php';
         }
 
         /** @var YmlModel $config */
         $config = $this->model;
-        \Yii::$app->urlManager->setHostInfo($config->shop_url);
+        Yii::$app->urlManager->setHostInfo($config->shop_url);
         $this->currency = CurrencyHelper::findCurrencyByIso($config->currency_id);
 
         if (static::USE_OFFER_PARAM == $config->offer_param) {
             $this->prepareProperties();
         }
 
-        static::$_noImg = \Yii::$app->getModule('image')->noImageSrc;
+        static::$_noImg = Yii::$app->getModule('image')->noImageSrc;
     }
 
     /**
@@ -92,7 +93,7 @@ class Yml extends Component
         /** @var \app\modules\shop\models\Yml $yml */
         $config = $this->model;
         /** @var View $view */
-        $view = \Yii::$app->getView();
+        $view = Yii::$app->getView();
 
         $outputParams = [];
         $outputParams['shop'] = $this->generateSectionShop($config);
@@ -116,7 +117,7 @@ class Yml extends Component
 
         $output = $view->renderFile($this->viewFile, $outputParams);
 
-        $fileName = \Yii::getAlias('@webroot') . '/' . $config->general_yml_filename;
+        $fileName = Yii::getAlias('@webroot') . '/' . $config->general_yml_filename;
         $result = static::USE_GZIP === $config->use_gzip
             ? file_put_contents($fileName . '.gz', gzencode($output), 5)
             : file_put_contents($fileName, $output);
@@ -131,7 +132,7 @@ class Yml extends Component
      * @param string $default
      * @return mixed
      */
-    static public function getOfferValue(YmlModel $config, $name, Product $model, $default = '')
+    public static function getOfferValue(YmlModel $config, $name, Product $model, $default = '')
     {
         $param = $config->$name;
 
@@ -156,14 +157,17 @@ class Yml extends Component
     private function prepareProperties()
     {
         $props = Property::getDb()->cache(function ($db) {
-            return Property::find()
-                ->select('id, name, property_handler_id, key, property_group_id, has_static_values, is_eav, handler_additional_params')
-                ->all();
-        },
-            86400,
-            new TagDependency(['tags' => [
-                ActiveRecordHelper::getCommonTag(Property::className()),
-            ]]));
+            return Property::find()->select([
+                'id',
+                'name',
+                'property_handler_id',
+                'key',
+                'property_group_id',
+                'has_static_values',
+                'is_eav',
+                'handler_additional_params'
+            ])->all();
+        }, 86400, new TagDependency(['tags' => [ActiveRecordHelper::getCommonTag(Property::className()),]]));
         foreach ($props as $one) {
             $additionalParams = Json::decode($one['handler_additional_params']);
             if (false === empty($additionalParams['use_in_file'])) {
@@ -175,7 +179,7 @@ class Yml extends Component
                         'group_id' => $one['property_group_id'],
                         'handler_id' => $one['property_handler_id'],
                     ];
-                } else if (1 == $one['has_static_values'] && false === isset(self::$ymlStaticProperties[$one['id']])) {
+                } elseif (1 == $one['has_static_values'] && false === isset(self::$ymlStaticProperties[$one['id']])) {
                     self::$ymlStaticProperties[$one['id']] = [
                         'name' => $one['name'],
                         'unit' => empty($additionalParams['unit']) ? '' : $additionalParams['unit'],
@@ -190,22 +194,26 @@ class Yml extends Component
      * @param Product $model
      * @return array
      */
-    static public function getOfferParams(Product $model)
+    public static function getOfferParams(Product $model)
     {
         $params = [];
-        $eav = \Yii::$app->getDb()->cache(function ($db) use ($model) {
+        $eav = Yii::$app->getDb()->cache(function ($db) use ($model) {
+            /**
+             * @var \app\models\Object $object
+             */
+            $object = $model->object;
             return (new Query())
-                ->from($model->object->eav_table_name)
-                ->select(Property::tableName() . '.id, ' . $model->object->eav_table_name . '.value')
+                ->from($object->eav_table_name)
+                ->select(Property::tableName() . '.id, ' . $object->eav_table_name . '.value')
                 ->innerJoin(
                     Property::tableName(),
-                    Property::tableName() . '.property_group_id = ' . $model->object->eav_table_name . '.property_group_id'
-                    . ' AND ' . Property::tableName() . '.key = ' . $model->object->eav_table_name . '.key'
+                    Property::tableName() . '.property_group_id = ' . $object->eav_table_name . '.property_group_id'
+                    . ' AND ' . Property::tableName() . '.key = ' . $object->eav_table_name . '.key'
                 )
                 ->where([
                     'object_model_id' => $model->id,
-                    $model->object->eav_table_name . '.key' => array_column(static::$ymlEavProperties, 'key'),
-                    $model->object->eav_table_name . '.property_group_id' => array_column(static::$ymlEavProperties, 'group_id'),
+                    $object->eav_table_name . '.key' => array_column(static::$ymlEavProperties, 'key'),
+                    $object->eav_table_name . '.property_group_id' => array_column(static::$ymlEavProperties, 'group_id'),
                     Property::tableName() . '.id' => array_keys(static::$ymlEavProperties),
                 ])
                 ->andWhere(['<>','value', ''])
@@ -231,7 +239,7 @@ class Yml extends Component
             ];
         }
 
-        $psv = \Yii::$app->getDb()->cache(function ($db) use ($model) {
+        $psv = Yii::$app->getDb()->cache(function ($db) use ($model) {
             return  (new Query())
                 ->from(PropertyStaticValues::tableName())
                 ->innerJoin(
@@ -349,12 +357,18 @@ class Yml extends Component
         }
 
         $description = static::getOfferValue($config, 'offer_description', $model, null);
+
         if (false === empty($description)) {
+            $description = preg_replace("/([\r\n\t])/", ' ', $description);
+            $description = preg_replace("/[ ]{2,}/", '', $description);
+            $description = htmlspecialchars(trim(strip_tags($description)));
+
             if (mb_strlen($description) > 175) {
                 $description = mb_substr($description, 0, 175);
                 $description = mb_substr($description, 0, mb_strrpos($description, ' '));
             }
-            $values[] = new OfferTag('description', htmlspecialchars(trim(strip_tags($description))));
+
+            $values[] = new OfferTag('description', $description);
         }
 
         if (static::USE_OFFER_PARAM == $config->offer_param) {

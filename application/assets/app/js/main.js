@@ -459,6 +459,7 @@ $(function() {
                         }
                     }
                     overlay.hide();
+                    thatFilters.trigger('filtration', {'data':data});
                 }
             })
         };
