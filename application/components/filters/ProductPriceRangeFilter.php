@@ -32,13 +32,15 @@ class ProductPriceRangeFilter implements FilterQueryInterface
         $max = floatval(
             ArrayHelper::getValue($params, $this->maxAttribute, $this->maxValue)
         );
+        $joinFlag = false;
         if ($min !== floatval($this->minValue)) {
             $cacheKeyAppend .= "[MinPrice:$min]";
             $query = $query->andWhere(
                 Product::tableName() . '.price >=  FLOOR (:min_price * currency.convert_nominal / currency.convert_rate * POW(10, currency.max_fraction_digits)) / POW(10, currency.max_fraction_digits)',
                 [':min_price' => $min]
-            )->leftJoin(Currency::tableName() . ' ON currency.id = product.currency_id');
+            );
             $get[$this->minAttribute] = $min;
+            $joinFlag = true;
         }
         if ($max !== floatval($this->maxValue) && (double) 0 !== floatval($max)) {
             $cacheKeyAppend .= "[MaxPrice:$max]";
@@ -47,6 +49,10 @@ class ProductPriceRangeFilter implements FilterQueryInterface
                 [':max_price' => $max]
             );
             $get[$this->maxAttribute] = $max;
+            $joinFlag = true;
+        }
+        if ($joinFlag) {
+            $query = $query->leftJoin(Currency::tableName() . ' ON currency.id = product.currency_id');
         }
         Yii::$app->request->setQueryParams($get);
         return $query;
