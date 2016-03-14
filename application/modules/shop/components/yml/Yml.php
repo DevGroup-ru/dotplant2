@@ -349,12 +349,18 @@ class Yml extends Component
         }
 
         $description = static::getOfferValue($config, 'offer_description', $model, null);
+
         if (false === empty($description)) {
+            $description = preg_replace("/([\r\n\t])/", ' ', $description);
+            $description = preg_replace("/[ ]{2,}/", '', $description);
+            $description = htmlspecialchars(trim(strip_tags($description)));
+
             if (mb_strlen($description) > 175) {
                 $description = mb_substr($description, 0, 175);
                 $description = mb_substr($description, 0, mb_strrpos($description, ' '));
             }
-            $values[] = new OfferTag('description', htmlspecialchars(trim(strip_tags($description))));
+
+            $values[] = new OfferTag('description', $description);
         }
 
         if (static::USE_OFFER_PARAM == $config->offer_param) {
