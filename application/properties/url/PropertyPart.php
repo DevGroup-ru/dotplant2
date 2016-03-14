@@ -117,6 +117,12 @@ class PropertyPart extends UrlPart
     {
         if (isset($parameters['properties'])) {
             $used_params[] = 'properties';
+            foreach ($parameters['properties'] as $id => $values) {
+                if (count($values) > 1) {
+                    return '?' . http_build_query(['properties' => $parameters['properties']]);
+                }
+            }
+
             if (isset($parameters['properties'][$this->property_id]) &&
                 is_array($parameters['properties'][$this->property_id])
             ) {

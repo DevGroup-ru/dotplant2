@@ -60,7 +60,7 @@ class PropertiesHelper
                     'values' => $values,
                 ];
             } elseif ($property->has_static_values) {
-                switch($multiFilterMode){
+                switch ($multiFilterMode) {
                     case ConfigConfigurationModel::MULTI_FILTER_MODE_UNION:
                         $by_storage['static_values'][] = $values;
                         break;
@@ -204,10 +204,11 @@ class PropertiesHelper
         $psvsCount = count($psvs);
         switch ($multiFilterMode) {
             case ConfigConfigurationModel::MULTI_FILTER_MODE_UNION:
-                if($psvsCount>1){
+                if ($psvsCount > 1) {
                     $having = "count($tableInner.object_model_id) BETWEEN 1 AND $psvsCount";
                     break;
                 }
+                // no break in case of $psvsCount is 1 or 0
             default:
                 $having = "count($tableInner.object_model_id) = $psvsCount";
         }
