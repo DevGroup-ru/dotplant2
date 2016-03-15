@@ -128,6 +128,7 @@ class Widget extends BaseWidget
                         $a['properties'][$propertyId] = [$staticValue];
                     }
                 }
+                $a['properties'][$propertyId] = array_unique($a['properties'][$propertyId]);
             }
         }
         return $a;
