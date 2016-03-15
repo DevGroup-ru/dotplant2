@@ -4,11 +4,10 @@ namespace app\widgets;
 
 use app\models\Object;
 use app\modules\shop\models\Category;
+use app\properties\PropertiesHelper;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
-use yii\base\Widget;
-use yii\helpers\Json;
-use yii\helpers\Url;
+use yii\caching\TagDependency;
 
 class FilteredCategoriesWidget extends PlainCategoriesWidget
 {
@@ -37,13 +36,8 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
         }
 
         $object = Object::getForClass(Category::className());
-
-        \app\properties\PropertiesHelper::appendPropertiesFilters(
-            $object,
-            $query,
-            $this->values_by_property_id,
-            []
-        );
+        $multiFilterMode = Yii::$app->getModule('shop')->multiFilterMode;
+        PropertiesHelper::appendPropertiesFilters($object, $query, $this->values_by_property_id, [], $multiFilterMode);
         $sql = $query->createCommand()->getRawSql();
         $cacheKey = "FilteredCategoriesWidget:".md5($sql);
         $result = Yii::$app->cache->get($cacheKey);
@@ -61,7 +55,7 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
                 $cacheKey,
                 $result,
                 86400,
-                new \yii\caching\TagDependency([
+                new TagDependency([
                     'tags' => ActiveRecordHelper::getCommonTag(Category::tableName())
                 ])
             );

@@ -12,13 +12,16 @@
  * @var bool $usePjax
  */
 
+use app\modules\shop\models\ConfigConfigurationModel;
+use app\modules\shop\widgets\PropertiesSliderRangeWidget;
 use yii\helpers\Html;
-use yii\helpers\Url;
 
 $sidebarClass = $isInSidebar ? 'sidebar-widget' : '';
 if ($usePjax) {
     $this->registerJs("$('#{$id}').dotPlantSmartFilters();");
 }
+$filterMode = Yii::$app->getModule('shop')->multiFilterMode;
+
 ?>
 <?php if (false === empty($filtersArray)) : ?>
     <div class="filter-sets-widget <?= $sidebarClass ?>">
@@ -41,7 +44,7 @@ if ($usePjax) {
                 <div class="filter-property">
                     <?php if ($filter['isRange']): ?>
                         <?=
-                        \app\modules\shop\widgets\PropertiesSliderRangeWidget::widget(
+                        PropertiesSliderRangeWidget::widget(
                             [
                                 'property' => $filter['property'],
                                 'categoryId' => $urlParams['last_category_id'],
@@ -56,34 +59,92 @@ if ($usePjax) {
                         <ul class="property-values" data-multiple="<?= $filter['multiple'] ?>">
                             <?php foreach ($filter['selections'] as $selection): ?>
                                 <li>
-                                    <?=
-                                    Html::checkbox(
-                                        'properties[' . $filter['id'] . '][]',
-                                        $selection['checked'],
-                                        [
-                                            'value' => $selection['id'],
-                                            'class' => 'filter-check filter-check-property-' . $filter['id'],
-                                            'id' => 'filter-check-' . $selection['id'],
-                                            'data-property-id' => $filter['id'],
-                                            'disabled' => $selection['active'] === true || $selection['checked'] === true
-                                                ? null
-                                                : 'disabled',
-                                        ]
-                                    )
-                                    ?>
-                                    <?=
-                                    $selection['active'] === true || $selection['checked'] === true
-                                        ? Html::a(
-                                            $selection['label'],
-                                            $selection['url'],
+                                    <?php
+                                    if ($filter['multiple']) {
+                                        switch ($filterMode) {
+                                            case ConfigConfigurationModel::MULTI_FILTER_MODE_INTERSECTION:
+                                                echo Html::checkbox(
+                                                    'properties[' . $filter['id'] . '][]',
+                                                    $selection['checked'],
+                                                    [
+                                                        'value' => $selection['id'],
+                                                        'class' => 'filter-check filter-check-property-' . $filter['id'],
+                                                        'id' => 'filter-check-' . $selection['id'],
+                                                        'data-property-id' => $filter['id'],
+                                                        'disabled' => $selection['active'] === true || $selection['checked'] === true
+                                                            ? null
+                                                            : 'disabled',
+                                                    ]
+                                                );
+
+                                                echo $selection['active'] === true || $selection['checked'] === true
+                                                    ? Html::a(
+                                                        $selection['label'],
+                                                        $selection['url'],
+                                                        [
+                                                            'class' => 'filter-link',
+                                                            'data-selection-id' => $selection['id'],
+                                                            'data-property-id' => $filter['id'],
+                                                            'rel' => !$selection['checked'] ? null : 'nofollow',
+                                                        ]
+                                                    )
+                                                    : Html::tag('span', $selection['label'], ['class' => 'inactive-filter']);
+
+                                                break;
+                                            case ConfigConfigurationModel::MULTI_FILTER_MODE_UNION:
+                                                echo Html::checkbox(
+                                                    'properties[' . $filter['id'] . '][]',
+                                                    $selection['checked'],
+                                                    [
+                                                        'value' => $selection['id'],
+                                                        'class' => 'filter-check filter-check-property-' . $filter['id'],
+                                                        'id' => 'filter-check-' . $selection['id'],
+                                                        'data-property-id' => $filter['id'],
+                                                    ]
+                                                );
+
+                                                echo Html::a(
+                                                    $selection['label'],
+                                                    $selection['url'],
+                                                    [
+                                                        'class' => 'filter-link',
+                                                        'data-selection-id' => $selection['id'],
+                                                        'data-property-id' => $filter['id'],
+                                                        'rel' => !$selection['checked'] ? null : 'nofollow',
+                                                    ]
+                                                );
+
+                                                break;
+                                        }
+                                    } else {
+                                        echo Html::checkbox(
+                                            'properties[' . $filter['id'] . '][]',
+                                            $selection['checked'],
                                             [
-                                                'class' => 'filter-link',
-                                                'data-selection-id' => $selection['id'],
+                                                'value' => $selection['id'],
+                                                'class' => 'filter-check filter-check-property-' . $filter['id'],
+                                                'id' => 'filter-check-' . $selection['id'],
                                                 'data-property-id' => $filter['id'],
-                                                'rel' => !$selection['checked'] ? null : 'nofollow',
+                                                'disabled' => $selection['active'] === true || $selection['checked'] === true
+                                                    ? null
+                                                    : 'disabled',
                                             ]
-                                        )
-                                        : Html::tag('span', $selection['label'], ['class' => 'inactive-filter'])
+                                        );
+
+                                        echo $selection['active'] === true || $selection['checked'] === true
+                                            ? Html::a(
+                                                $selection['label'],
+                                                $selection['url'],
+                                                [
+                                                    'class' => 'filter-link',
+                                                    'data-selection-id' => $selection['id'],
+                                                    'data-property-id' => $filter['id'],
+                                                    'rel' => !$selection['checked'] ? null : 'nofollow',
+                                                ]
+                                            )
+                                            : Html::tag('span', $selection['label'], ['class' => 'inactive-filter']);
+                                    }
+
                                     ?>
                                 </li>
                             <?php endforeach; ?>
