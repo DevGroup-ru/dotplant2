@@ -4,9 +4,51 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "909d7a561986cae03fe289f6c841d38b",
-    "content-hash": "55cad53d8236c8875e2044609e05cfe2",
+    "hash": "86b11ed4c16f17175ce197c441b63ec6",
+    "content-hash": "637ac77711d5f39ee5d931f8d18d59cd",
     "packages": [
+        {
+            "name": "bazilio/yii2-stubs-generator",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bazilio91/yii2-stubs-generator.git",
+                "reference": "a80f60fb28ee1dab05f32b5136ac6454d3318372"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bazilio91/yii2-stubs-generator/zipball/a80f60fb28ee1dab05f32b5136ac6454d3318372",
+                "reference": "a80f60fb28ee1dab05f32b5136ac6454d3318372",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "bazilio\\stubsgenerator\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vasily Ostanin",
+                    "email": "bazilio91@gmail.com"
+                }
+            ],
+            "description": "Yii2 component stubs generator for Yii::$app",
+            "keywords": [
+                "autocomplete",
+                "phpstorm",
+                "stubs",
+                "yii2"
+            ],
+            "time": "2015-12-12 02:31:16"
+        },
         {
             "name": "bower-asset/ace-builds",
             "version": "v1.2.3",
@@ -132,36 +174,22 @@
         },
         {
             "name": "bower-asset/jquery",
-            "version": "2.1.4",
+            "version": "2.2.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jquery/jquery.git",
-                "reference": "7751e69b615c6eca6f783a81e292a55725af6b85"
+                "url": "https://github.com/jquery/jquery-dist.git",
+                "reference": "788eaba2f83e7b7445c7a83a50c81c0704423874"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jquery/jquery/zipball/7751e69b615c6eca6f783a81e292a55725af6b85",
-                "reference": "7751e69b615c6eca6f783a81e292a55725af6b85",
+                "url": "https://api.github.com/repos/jquery/jquery-dist/zipball/788eaba2f83e7b7445c7a83a50c81c0704423874",
+                "reference": "788eaba2f83e7b7445c7a83a50c81c0704423874",
                 "shasum": ""
-            },
-            "require-dev": {
-                "bower-asset/qunit": "1.14.0",
-                "bower-asset/requirejs": "2.1.10",
-                "bower-asset/sinon": "1.8.1",
-                "bower-asset/sizzle": "2.1.1-patch2"
             },
             "type": "bower-asset-library",
             "extra": {
                 "bower-asset-main": "dist/jquery.js",
                 "bower-asset-ignore": [
-                    "**/.*",
-                    "build",
-                    "dist/cdn",
-                    "speed",
-                    "test",
-                    "*.md",
-                    "AUTHORS.txt",
-                    "Gruntfile.js",
                     "package.json"
                 ]
             },
@@ -169,6 +197,7 @@
                 "MIT"
             ],
             "keywords": [
+                "browser",
                 "javascript",
                 "jquery",
                 "library"
@@ -583,12 +612,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/lipis/flag-icon-css.git",
-                "reference": "e6d655235ec00fc16f7ca19de60ca793d19d6d73"
+                "reference": "0cdf2c0bef2824b36910888dfee2ce4a0da98155"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lipis/flag-icon-css/zipball/e6d655235ec00fc16f7ca19de60ca793d19d6d73",
-                "reference": "e6d655235ec00fc16f7ca19de60ca793d19d6d73",
+                "url": "https://api.github.com/repos/lipis/flag-icon-css/zipball/0cdf2c0bef2824b36910888dfee2ce4a0da98155",
+                "reference": "0cdf2c0bef2824b36910888dfee2ce4a0da98155",
                 "shasum": ""
             },
             "type": "component",
@@ -613,7 +642,7 @@
                 }
             ],
             "description": "CSS for vector based country flags",
-            "time": "2016-03-07 11:30:24"
+            "time": "2016-03-13 02:12:04"
         },
         {
             "name": "creocoder/yii2-flysystem",
@@ -1176,16 +1205,16 @@
         },
         {
             "name": "ezyang/htmlpurifier",
-            "version": "v4.6.0",
+            "version": "v4.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ezyang/htmlpurifier.git",
-                "reference": "6f389f0f25b90d0b495308efcfa073981177f0fd"
+                "reference": "ae1828d955112356f7677c465f94f7deb7d27a40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/6f389f0f25b90d0b495308efcfa073981177f0fd",
-                "reference": "6f389f0f25b90d0b495308efcfa073981177f0fd",
+                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/ae1828d955112356f7677c465f94f7deb7d27a40",
+                "reference": "ae1828d955112356f7677c465f94f7deb7d27a40",
                 "shasum": ""
             },
             "require": {
@@ -1216,20 +1245,20 @@
             "keywords": [
                 "html"
             ],
-            "time": "2013-11-30 08:25:19"
+            "time": "2015-08-05 01:03:42"
         },
         {
             "name": "florianv/swap",
-            "version": "v2.3.0",
+            "version": "v2.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/florianv/swap.git",
-                "reference": "d44f939de412a291ea63eed5438f5034ecdf1098"
+                "reference": "19012069d993e2bb02305b1a11b1b588385908c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/florianv/swap/zipball/d44f939de412a291ea63eed5438f5034ecdf1098",
-                "reference": "d44f939de412a291ea63eed5438f5034ecdf1098",
+                "url": "https://api.github.com/repos/florianv/swap/zipball/19012069d993e2bb02305b1a11b1b588385908c9",
+                "reference": "19012069d993e2bb02305b1a11b1b588385908c9",
                 "shasum": ""
             },
             "require": {
@@ -1276,7 +1305,7 @@
                 "exchange rates",
                 "money"
             ],
-            "time": "2016-01-04 16:22:08"
+            "time": "2016-03-09 23:46:13"
         },
         {
             "name": "fortawesome/font-awesome",
@@ -1284,12 +1313,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FortAwesome/Font-Awesome.git",
-                "reference": "adcbe8eddad1b3423c38489708f7ff2707afa94c"
+                "reference": "03fd1951e930d4d4754204fdc532ca493e924a1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FortAwesome/Font-Awesome/zipball/adcbe8eddad1b3423c38489708f7ff2707afa94c",
-                "reference": "adcbe8eddad1b3423c38489708f7ff2707afa94c",
+                "url": "https://api.github.com/repos/FortAwesome/Font-Awesome/zipball/03fd1951e930d4d4754204fdc532ca493e924a1b",
+                "reference": "03fd1951e930d4d4754204fdc532ca493e924a1b",
                 "shasum": ""
             },
             "require-dev": {
@@ -1324,7 +1353,7 @@
                 "font",
                 "icon"
             ],
-            "time": "2016-03-03 19:00:22"
+            "time": "2016-03-10 18:47:19"
         },
         {
             "name": "guzzle/guzzle",
@@ -1484,12 +1513,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/bootstrap-fileinput.git",
-                "reference": "32b0ccb2562b9c83f12222ddd1406986a45450d1"
+                "reference": "16e4c250f77837e98e0db7f8cfc8b199b147a274"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/32b0ccb2562b9c83f12222ddd1406986a45450d1",
-                "reference": "32b0ccb2562b9c83f12222ddd1406986a45450d1",
+                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/16e4c250f77837e98e0db7f8cfc8b199b147a274",
+                "reference": "16e4c250f77837e98e0db7f8cfc8b199b147a274",
                 "shasum": ""
             },
             "type": "library",
@@ -1529,7 +1558,7 @@
                 "progress",
                 "upload"
             ],
-            "time": "2016-02-28 02:23:49"
+            "time": "2016-03-14 03:52:56"
         },
         {
             "name": "kartik-v/bootstrap-popover-x",
@@ -2946,12 +2975,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-widget-select2.git",
-                "reference": "4d03239c1e28ef8d3b96ab7fe360f5cbda34fb69"
+                "reference": "cb2a5992cb96bd2939e30ec1c76eba418d6a30af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/4d03239c1e28ef8d3b96ab7fe360f5cbda34fb69",
-                "reference": "4d03239c1e28ef8d3b96ab7fe360f5cbda34fb69",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/cb2a5992cb96bd2939e30ec1c76eba418d6a30af",
+                "reference": "cb2a5992cb96bd2939e30ec1c76eba418d6a30af",
                 "shasum": ""
             },
             "require": {
@@ -2991,7 +3020,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-02-17 11:49:30"
+            "time": "2016-03-10 11:33:59"
         },
         {
             "name": "kartik-v/yii2-widget-sidenav",
@@ -3460,12 +3489,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "b334d6c5f95364948e06d2f620ab93d084074c6e"
+                "reference": "e87a786e3ae12a25cf78a71bb07b4b384bfaa83a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/b334d6c5f95364948e06d2f620ab93d084074c6e",
-                "reference": "b334d6c5f95364948e06d2f620ab93d084074c6e",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/e87a786e3ae12a25cf78a71bb07b4b384bfaa83a",
+                "reference": "e87a786e3ae12a25cf78a71bb07b4b384bfaa83a",
                 "shasum": ""
             },
             "require": {
@@ -3535,7 +3564,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2016-03-07 21:01:43"
+            "time": "2016-03-14 21:54:11"
         },
         {
             "name": "league/flysystem-replicate-adapter",
@@ -3796,12 +3825,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "9116263e778f720dcdecffb8e66c4d6b8b1cfc49"
+                "reference": "47d2d8cade9b1c3987573d2943bb9352536cdb87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/9116263e778f720dcdecffb8e66c4d6b8b1cfc49",
-                "reference": "9116263e778f720dcdecffb8e66c4d6b8b1cfc49",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/47d2d8cade9b1c3987573d2943bb9352536cdb87",
+                "reference": "47d2d8cade9b1c3987573d2943bb9352536cdb87",
                 "shasum": ""
             },
             "require": {
@@ -3848,7 +3877,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-03-04 07:54:35"
+            "time": "2016-03-07 14:04:32"
         },
         {
             "name": "symfony/process",
@@ -3967,12 +3996,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "ceba70ecd601beaa8459bb89b3e3f1f4cb2f37f6"
+                "reference": "7d87dc78efb5fbbec3d94bce015e638b39ce5b4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/ceba70ecd601beaa8459bb89b3e3f1f4cb2f37f6",
-                "reference": "ceba70ecd601beaa8459bb89b3e3f1f4cb2f37f6",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/7d87dc78efb5fbbec3d94bce015e638b39ce5b4f",
+                "reference": "7d87dc78efb5fbbec3d94bce015e638b39ce5b4f",
                 "shasum": ""
             },
             "require": {
@@ -4053,7 +4082,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2016-03-08 22:01:53"
+            "time": "2016-03-15 22:53:48"
         },
         {
             "name": "yiisoft/yii2-authclient",
@@ -4401,48 +4430,6 @@
     ],
     "packages-dev": [
         {
-            "name": "bazilio/yii2-stubs-generator",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/bazilio91/yii2-stubs-generator.git",
-                "reference": "a80f60fb28ee1dab05f32b5136ac6454d3318372"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/bazilio91/yii2-stubs-generator/zipball/a80f60fb28ee1dab05f32b5136ac6454d3318372",
-                "reference": "a80f60fb28ee1dab05f32b5136ac6454d3318372",
-                "shasum": ""
-            },
-            "require": {
-                "yiisoft/yii2": "*"
-            },
-            "type": "yii2-extension",
-            "autoload": {
-                "psr-4": {
-                    "bazilio\\stubsgenerator\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Vasily Ostanin",
-                    "email": "bazilio91@gmail.com"
-                }
-            ],
-            "description": "Yii2 component stubs generator for Yii::$app",
-            "keywords": [
-                "autocomplete",
-                "phpstorm",
-                "stubs",
-                "yii2"
-            ],
-            "time": "2015-12-12 02:31:16"
-        },
-        {
             "name": "bower-asset/typeahead.js",
             "version": "v0.11.1",
             "source": {
@@ -4600,12 +4587,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-debug.git",
-                "reference": "a29ed1039604a576329c8d33138d29065d9f98d5"
+                "reference": "b258732b10a706d3fa41829f13be727e49dabd09"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/a29ed1039604a576329c8d33138d29065d9f98d5",
-                "reference": "a29ed1039604a576329c8d33138d29065d9f98d5",
+                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/b258732b10a706d3fa41829f13be727e49dabd09",
+                "reference": "b258732b10a706d3fa41829f13be727e49dabd09",
                 "shasum": ""
             },
             "require": {
@@ -4639,7 +4626,7 @@
                 "debugger",
                 "yii2"
             ],
-            "time": "2016-03-06 21:22:38"
+            "time": "2016-03-14 21:47:38"
         },
         {
             "name": "yiisoft/yii2-gii",
@@ -4647,12 +4634,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-gii.git",
-                "reference": "ce42838abcbef076ebaf46147671d518ae69d028"
+                "reference": "fed0f3b43b9dab333978e8394ee05cfd84d438b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/ce42838abcbef076ebaf46147671d518ae69d028",
-                "reference": "ce42838abcbef076ebaf46147671d518ae69d028",
+                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/fed0f3b43b9dab333978e8394ee05cfd84d438b2",
+                "reference": "fed0f3b43b9dab333978e8394ee05cfd84d438b2",
                 "shasum": ""
             },
             "require": {
@@ -4692,7 +4679,7 @@
                 "gii",
                 "yii2"
             ],
-            "time": "2016-02-21 20:39:29"
+            "time": "2016-03-15 09:53:13"
         }
     ],
     "aliases": [],
