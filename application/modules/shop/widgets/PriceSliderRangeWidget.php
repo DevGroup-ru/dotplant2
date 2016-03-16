@@ -23,9 +23,12 @@ class PriceSliderRangeWidget extends SliderRangeWidget
         $cacheKey = 'priceRangeCategory' . $this->categoryId;
 
         if (!$data = Yii::$app->cache->get($cacheKey)) {
-            $data = (new Query())->select('MIN(product.price) as min_price, MAX(product.price) as max_price')
-                ->from(['product', 'product_category'])
-                ->where('product.id = product_category.object_model_id')
+            $dataMin = (new Query())->select([
+                    'MIN(product.price / currency.convert_nominal * currency.convert_rate) AS min_price',
+                    'product.currency_id AS min_currency',
+                ])
+                ->from(['product', 'product_category', 'currency'])
+                ->where('product.id = product_category.object_model_id AND (product.currency_id = currency.id)')
                 ->andWhere(
                     [
                         'product.active' => 1,
@@ -33,7 +36,23 @@ class PriceSliderRangeWidget extends SliderRangeWidget
                     ]
                 )->one();
 
+            $dataMax = (new Query())->select([
+                'MAX(product.price / currency.convert_nominal * currency.convert_rate) AS max_price',
+                'product.currency_id AS max_currency',
+            ])
+                ->from(['product', 'product_category', 'currency'])
+                ->where('product.id = product_category.object_model_id AND (product.currency_id = currency.id)')
+                ->andWhere(
+                        [
+                            'product.active' => 1,
+                            'product_category.category_id' => $this->categoryId
+                        ]
+                )->one();
+
+            $data = ArrayHelper::merge($dataMax, $dataMin);
             if ($data) {
+                $data['min_price'] = (int) $data['min_price'];
+                $data['max_price'] = (int) $data['max_price'];
                 Yii::$app->cache->set($cacheKey, $data, 86400);
             }
 

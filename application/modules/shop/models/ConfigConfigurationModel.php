@@ -14,6 +14,9 @@ use Yii;
  */
 class ConfigConfigurationModel extends BaseConfigurationModel
 {
+    const MULTI_FILTER_MODE_UNION = 'union';
+    const MULTI_FILTER_MODE_INTERSECTION = 'intersection';
+
     /**
      * @var int How much products per page to show
      */
@@ -53,6 +56,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      * @var bool Filtration works only on parent products but not their children
      */
     public $filterOnlyByParentProduct = true;
+
+    /**
+     * @var string Filtration mode
+     */
+    public $multiFilterMode = self::MULTI_FILTER_MODE_INTERSECTION;
 
     /**
      * @var int How much last viewed products ID's to store in session
@@ -216,7 +224,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                     }
                 }
             ],
-            [['itemView', 'listView'], 'string'],
+            [['itemView', 'listView', 'multiFilterMode'], 'string'],
         ];
     }
 
@@ -231,6 +239,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             'countChildrenProducts' => Yii::t('app', 'Count children products'),
             'defaultMeasureId' => Yii::t('app', 'Default measure'),
             'registrationGuestUserInCart' => Yii::t('app', 'Registration Guest User In Cart'),
+            'multiFilterMode' => Yii::t('app', 'MultiFilter mode'),
         ];
     }
 
@@ -316,6 +325,14 @@ class ConfigConfigurationModel extends BaseConfigurationModel
             '@shop' => dirname(__FILE__) . '/../',
             '@category' => '/shop/product/list',
             '@product' => '/shop/product/show',
+        ];
+    }
+
+    public static function getMultiFilterModes()
+    {
+        return [
+            self::MULTI_FILTER_MODE_UNION => 'Union',
+            self::MULTI_FILTER_MODE_INTERSECTION => 'Intersection',
         ];
     }
 }

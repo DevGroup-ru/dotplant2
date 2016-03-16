@@ -1,5 +1,15 @@
 <?php
 namespace app\models;
+
+use app\modules\data\models\Export;
+use app\modules\data\models\Import;
+use Yii;
+use yii\caching\TagDependency;
+use yii\db\ActiveRecord;
+use yii\db\Query;
+use yii\helpers\ArrayHelper;
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
+
 /**
  * This is the model class for table "object".
  *
@@ -13,14 +23,6 @@ namespace app\models;
  * @property string $link_slug_category
  * @property string $link_slug_static_value
  */
-use app\modules\data\models\Export;
-use app\modules\data\models\Import;
-use Yii;
-use yii\caching\TagDependency;
-use yii\db\ActiveRecord;
-use yii\db\Query;
-use yii\helpers\ArrayHelper;
-use devgroup\TagDependencyHelper\ActiveRecordHelper;
 
 class Object extends ActiveRecord implements \JsonSerializable
 {
