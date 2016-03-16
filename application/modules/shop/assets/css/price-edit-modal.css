@@ -1,0 +1,57 @@
+#packet-price-edit-form,
+#packet-price-edit-form-confirm {
+	font-size: 16px;
+}
+#packet-price-edit-form .modal-header,
+#packet-price-edit-form-confirm .modal-header {
+	font-weight: bold;
+}
+#packet-price-edit-form .row {
+	margin-bottom: 5px;
+}
+#packet-price-edit-form .row label {
+	font-size: 15px;
+	margin-top: 6px;
+	text-align: right;
+}
+#packet-price-edit-form .inline {
+	display: inline-block;
+	width: auto;
+}
+#packet-price-edit-form #value .percent_text {
+	display: none;
+}
+#packet-price-edit-form #value #el_value {
+    text-align: right;
+    width: 100px;
+}
+#packet-price-edit-form input[type="checkbox"] {
+	width: 25px;
+	margin: 0;
+	cursor: pointer;
+}
+#packet-price-edit-form #round .round_options {
+	vertical-align: top;
+	margin-left: 20px;
+}
+#packet-price-edit-form #round .round_options input {
+	width: 80px;
+	text-align: right;
+}
+#packet-price-edit-form input.error {
+	border: 1px solid #f00;
+	color: #500;
+}
+#packet-price-edit-form-confirm .modal-dialog {
+    overflow-y: auto;
+    max-height: 700px;
+}
+#packet-price-edit-form-confirm .alert-danger,
+#packet-price-edit-form-confirm .alert-success {
+	display: none;
+}
+#packet-price-edit-form-confirm #close_rep,
+#packet-price-edit-form #apply_for span.relative
+{
+	display: none;
+}

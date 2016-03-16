@@ -32,6 +32,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 use app\backend\actions\MassPublishAction;
 use app\backend\actions\CategoryMovementsAction;
+use app\modules\shop\actions\PacketPriceEditAction;
 
 class BackendProductController extends BackendController
 {
@@ -137,6 +138,9 @@ class BackendProductController extends BackendController
             ],
             'categoryMovements' => [
                 'class' => CategoryMovementsAction::className(),
+            ],
+            'packet-price-edit' => [
+                'class' => PacketPriceEditAction::className(),
             ]
         ];
     }
