@@ -116,21 +116,6 @@ class ThemeParts extends \yii\db\ActiveRecord
     }
 
     /**
-     * Workaround for php 7
-     *
-     * In php7 json_decode(null) produces JSON_ERROR_SYNTAX
-     *
-     * @todo rewrite all json_decode calls in that manner
-     *
-     * @param null $json
-     * @return null|string
-     */
-    private static function _php7JsonPatch($json = null)
-    {
-        return $json === null ? '[]' : $json;
-    }
-
-    /**
      * Renders specified theme part with all it's widget corresponding current theme variation
      * @param string $key Theme part key(ie. header or pre-footer)
      * @param array $params
@@ -195,11 +180,11 @@ class ThemeParts extends \yii\db\ActiveRecord
                 $widgetModel = $activeWidget->widget;
                 /** @var BaseWidget $widgetClassName */
                 $widgetClassName =  $widgetModel->widget;
-                $widgetConfiguration = Json::decode(self::_php7JsonPatch($widgetModel->configuration_json), true);
+                $widgetConfiguration = Json::decode($widgetModel->configuration_json, true);
                 if (!is_array($widgetConfiguration)) {
                     $widgetConfiguration = [];
                 }
-                $activeWidgetConfiguration = Json::decode(self::_php7JsonPatch($activeWidget->configuration_json), true);
+                $activeWidgetConfiguration = Json::decode($activeWidget->configuration_json, true);
                 if (!is_array($activeWidgetConfiguration)) {
                     $activeWidgetConfiguration  = [];
                 }
