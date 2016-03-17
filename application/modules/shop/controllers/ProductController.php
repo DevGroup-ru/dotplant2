@@ -454,7 +454,7 @@ class ProductController extends Controller
             $params = [];
             foreach ($properties as $propertyId => $propertyStaticValues) {
                 $localParams = $params;
-                foreach ($propertyStaticValues as $propertyStaticValue) {
+                foreach ((array) $propertyStaticValues as $propertyStaticValue) {
                     $psv = PropertyStaticValues::findById($propertyStaticValue);
                     if (is_null($psv)) {
                         continue;
