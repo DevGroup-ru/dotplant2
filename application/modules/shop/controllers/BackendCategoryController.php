@@ -23,7 +23,7 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
-use app\modules\shop\actions\PacketPriceEditAction;
+use app\modules\shop\actions\BatchEditPriceAction;
 
 class BackendCategoryController extends BackendController
 {
@@ -82,8 +82,8 @@ class BackendCategoryController extends BackendController
                 'class' => PropertyHandler::className(),
                 'modelName' => Category::className()
             ],
-            'packet-price-edit' => [
-                'class' => PacketPriceEditAction::className(),
+            'batch-edit-price' => [
+                'class' => BatchEditPriceAction::className(),
             ]
         ];
     }

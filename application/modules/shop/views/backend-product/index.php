@@ -37,7 +37,7 @@ $this->beginBlock('add-button');
     'gridSelector' => '.grid-view',
 ]) ?>
 
-<?= \app\modules\shop\widgets\PacketPriceEditButton::widget([
+<?= \app\modules\shop\widgets\BatchEditPriceButton::widget([
     'context' => $this->context->id,
 ])?>
 <?=\app\backend\widgets\RemoveAllButton::widget(

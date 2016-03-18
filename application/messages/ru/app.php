@@ -1222,7 +1222,7 @@ return [
     'Corresponding models not found' => 'Не найдено соответствующих моделей',
     'Sorry. Corresponding models not found. Please contact our managers or go to catalog.' => 'Извините. Соответствующих моделей не найдено. Пожалуйста, обратитесь к нашему менеджеру или перейдите в каталог',
     'Previous step' => 'Вернуться на предыдущий шаг',
-    'Packet price editor' => 'Массовое редактирование цен',
+    'Batch editing prices' => 'Массовое редактирование цен',
     'Fixed' => 'Фиксированная наценка',
     'Percentage' => 'Процентная наценка',
     'Normal change' => 'Обычное изменение',

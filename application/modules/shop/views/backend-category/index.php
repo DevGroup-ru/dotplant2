@@ -91,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Icon::show('plus') ?>
                     <?= Yii::t('app', 'Add') ?>
                 </a>
-                <?= \app\modules\shop\widgets\PacketPriceEditButton::widget([
+                <?= \app\modules\shop\widgets\BatchEditPriceButton::widget([
                     'context' => $this->context->id,
                 ])?>
                 <?= \app\backend\widgets\RemoveAllButton::widget([
