@@ -98,7 +98,7 @@ class Measure extends \yii\db\ActiveRecord
      */
     public function ceilQuantity($quantity)
     {
-        if (Yii::$app->getModule('shop')->showFiltersInBreadcrumbs) {
+        if (Yii::$app->getModule('shop')->useCeilQuantity) {
             $accuracy = 1000000; // var_dump(round(16.8/1.2)==(16.8/1.2)); false
             $nQuantity = floor($quantity * $accuracy);
             $nominal = floor($this->nominal * $accuracy);

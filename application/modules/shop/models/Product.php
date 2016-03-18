@@ -930,6 +930,12 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                         'pageSizeLimit' => [],
                         'forcePageParam' => false,
                         'totalCount' => $products_query->count(),
+                        'params' => [
+                            '@category',
+                            'last_category_id' => $selected_category_id,
+                            'category_group_id' => $category_group_id,
+                            'properties' => $values_by_property_id
+                        ],
                     ]
                 );
 
