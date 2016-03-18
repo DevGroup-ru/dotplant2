@@ -29,7 +29,7 @@ $modalConfirmId = $modalFormId . '-confirm';
                     'data-dismiss' => 'modal',
                 ]
             ),
-        'header' => Yii::t('app', 'Packet price editor'),
+        'header' => Yii::t('app', 'Batch editing prices'),
     ]
 );
 ?>

@@ -10,7 +10,15 @@ use app\modules\shop\models\Product;
 
 class BatchEditPriceAction extends Action
 {
-    protected $pRound = []; // params of round
+    const BEP_CONTEXT_PRODUCT = 'backend-product';
+    const BEP_KIND_FIXED = 'fixed';
+    const BEP_TYPE_NORMAL = 'normal';
+    const BEP_FIELD_PRICE = 'price';
+    const BEP_FIELD_OLDPRICE = 'old_price';
+    const BEP_FIELD_ALL = 'all';
+    const BEP_INCREMENT = 'inc';
+
+    public $prm = [];
     
     public function run()
     {
@@ -18,7 +26,6 @@ class BatchEditPriceAction extends Action
             throw new NotFoundHttpException();
         }
 
-        ini_set('max_execution_time', 0);
         Yii::$app->response->format = Response::FORMAT_JSON;
         Yii::$app->log->flushInterval = 100;
         Yii::$app->log->traceLevel = 0;
@@ -29,6 +36,18 @@ class BatchEditPriceAction extends Action
                     'exportInterval' => 100
                 ]
             )
+        ];
+
+        $this->prm = [
+            'is_child_inc' => Yii::$app->request->post('is_child_inc'),
+            'kind' => Yii::$app->request->post('kind'),
+            'operation' => Yii::$app->request->post('operation'),
+            'is_round' => Yii::$app->request->post('is_round'),
+            'round_val' => Yii::$app->request->post('round_val'),
+            'sel_field' => Yii::$app->request->post('apply_for'),
+            'value' => Yii::$app->request->post('value'),
+            'type' => Yii::$app->request->post('type'),
+            'currency_id' => Yii::$app->request->post('currency_id'),
         ];
 
         return $this->editPrices(
@@ -44,18 +63,16 @@ class BatchEditPriceAction extends Action
      */
     protected function getParentCategories($list)
     {
-        $incChild = Yii::$app->request->post('is_child_inc', false);
         $count = count($list);
 
         // read child cats
-        if ($incChild) {
+        if ($this->prm['is_child_inc']) {
             for ($i = 0; $i < $count; $i++) {
                 $cats = Category::getByParentId($list[$i]);
                 foreach ($cats as $category) {
                     $list[] = $category->id;
                     $count ++;
                 }
-                // unset($cats);
             }
         }
         
@@ -68,11 +85,8 @@ class BatchEditPriceAction extends Action
      */
     protected function getCalculator()
     {
-        $kind = Yii::$app->request->post('kind');
-        $operation = Yii::$app->request->post('operation');
-
-        if ($kind == 'fixed') { // fixed value
-            if ($operation == 'inc') {
+        if ($this->prm['kind'] == self::BEP_KIND_FIXED) { // fixed value
+            if ($this->prm['operation'] == self::BEP_INCREMENT) {
                 $calculator = function ($subj, $value) {
                     return $subj + $value;
                 };
@@ -82,7 +96,7 @@ class BatchEditPriceAction extends Action
                  };
             }
         } else { // percent value
-            if ($operation == 'inc') {
+            if ($this->prm['operation'] == self::BEP_INCREMENT) {
                  $calculator = function ($subj, $value) {
                      return  $subj * (1 + $value / 100);
                  };
@@ -104,10 +118,10 @@ class BatchEditPriceAction extends Action
     protected function checkAndRound(&$price)
     {
         if ($price >= 0) {
-            if ($this->pRound['is_round']) {
+            if ($this->prm['is_round']) {
                 $price = round(
                     $price,
-                    $this->pRound['round_val']
+                    $this->prm['round_val']
                 );
             }
         } else {
@@ -126,15 +140,6 @@ class BatchEditPriceAction extends Action
     protected function editPrices($data, $context)
     {
         $calculator = $this->getCalculator();
-        $selectedField = Yii::$app->request->post('apply_for');
-        $value = Yii::$app->request->post('value');
-        $type = Yii::$app->request->post('type');
-        $currencyId = Yii::$app->request->post('currency_id');
-        $this->pRound = [
-            'is_round' => Yii::$app->request->post('is_round'),
-            'round_val' => Yii::$app->request->post('round_val'),
-        ];
-
         $report = [
             'all' => 0,
             'success' => 0,
@@ -143,20 +148,21 @@ class BatchEditPriceAction extends Action
             'errors' => []
         ];
 
-        if ($context == 'backend-product') {
-            $sql = ['in', 'id', $data];
+        if ($context == self::BEP_CONTEXT_PRODUCT) {
+            $condition = ['in', 'id', $data];
         } else {
-            $sql = ['in', 'main_category_id', $this->getParentCategories($data)];
+            $condition = ['in', 'main_category_id', $this->getParentCategories($data)];
         }
 
         $items = Product::find()
             ->select(['id', 'name', 'currency_id', 'price', 'old_price'])
-            ->where($sql)
+            ->where($condition)
             ->asArray()
             ->all();
 
         foreach ($items as $item) {
-            if ($item['currency_id'] != $currencyId) {
+            $report['all']++;
+            if ($item['currency_id'] != $this->prm['currency_id']) {
                 $report['skipped']++;
                 continue;
             }
@@ -167,40 +173,43 @@ class BatchEditPriceAction extends Action
             $calcPrice = $item['price'];
             $calcOldPrice = $item['old_price'];
 
-            if ($type == 'normal') {
+            if ($this->prm['type'] == self::BEP_TYPE_NORMAL) {
                 // price
-                if ($selectedField == 'price' || $selectedField == 'all') {
-                    $calcPrice = $calculator($calcPrice, $value);
+                if ($this->prm['sel_field'] == self::BEP_FIELD_PRICE
+                    || $this->prm['sel_field'] == self::BEP_FIELD_ALL
+                ) {
+                    $calcPrice = $calculator($calcPrice, $this->prm['value']);
                     if (!$this->checkAndRound($calcPrice)) {
                         $fError = true;
                         $report['errors'][$errorKey][Yii::t('app', 'Price')] = Yii::t('app', 'Сalculated value is less than zero');
                     }
                 }
                 // old price
-                if ($selectedField == 'old_price' || $selectedField == 'all') {
-                    $calcOldPrice = $calculator($calcOldPrice, $value);
+                if ($this->prm['sel_field'] == self::BEP_FIELD_OLDPRICE
+                    || $this->prm['sel_field'] == self::BEP_FIELD_ALL
+                ) {
+                    $calcOldPrice = $calculator($calcOldPrice, $this->prm['value']);
                     if (!$this->checkAndRound($calcOldPrice)) {
                         $fError = true;
                         $report['errors'][$errorKey][Yii::t('app', 'Old Price')] = Yii::t('app', 'Сalculated value is less than zero');
                     }
                 }
             } else { // type == relative
-                if ($selectedField == 'price') {
-                    $calcOldPrice = $calculator($calcPrice, $value);
+                if ($this->prm['sel_field'] == self::BEP_FIELD_PRICE) {
+                    $calcOldPrice = $calculator($calcPrice, $this->prm['value']);
                     if (!$this->checkAndRound($calcOldPrice)) {
                         $fError = true;
                         $report['errors'][$errorKey][Yii::t('app', 'Old Price')] = Yii::t('app', 'Сalculated value is less than zero');
                     }
                 } else {
-                    $calcPrice = $calculator($calcOldPrice, $value);
+                    $calcPrice = $calculator($calcOldPrice, $this->prm['value']);
                     if (!$this->checkAndRound($calcPrice)) {
                         $fError = true;
                         $report['errors'][$errorKey][Yii::t('app', 'Price')] = Yii::t('app', 'Сalculated value is less than zero');
                     }
                 }
             }
-             
-            $report['all']++;
+
             if ($fError) {
                 $report['error']++;
             } else {

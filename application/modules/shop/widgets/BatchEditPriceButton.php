@@ -24,8 +24,8 @@ class BatchEditPriceButton extends Widget
     public $context;
     public $btnHtmlOptions = [];
     public $gridSelector = '.grid-view';
-    public $modalFormId = 'batch-edit-price-form';
     public $modalView = '@app/modules/shop/widgets/views/BatchEditPriceModal';
+    private $modalFormId = 'batch-edit-price-form';
 
     public function init()
     {

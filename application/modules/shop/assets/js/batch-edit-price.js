@@ -1,4 +1,4 @@
-var    peModalForm = '#batch-edit-price-form ',
+var peModalForm = '#batch-edit-price-form ',
     peConfirmForm = '#batch-edit-price-form-confirm ';
 
 $(peModalForm + '#el_charge_kind').change(function () {
