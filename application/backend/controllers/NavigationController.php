@@ -63,7 +63,7 @@ class NavigationController extends Controller
         ];
     }
 
-    public function actionIndex($parent_id = 1)
+    public function actionIndex($parent_id = 0)
     {
         $searchModel = new Navigation(['scenario' => 'search']);
         $searchModel->parent_id = $parent_id;
