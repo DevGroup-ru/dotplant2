@@ -53,7 +53,7 @@ $(peModalForm + '[data-action="edit-prices"]').click(function () {
 
     if (isValid) {
         // prepare
-        var    data = {
+        var data = {
             context: $(peModalForm + '#el_context').val(),
             kind: $(peModalForm + '#el_charge_kind').val(),
             type: $(peModalForm + '#el_type').val(),
@@ -89,7 +89,6 @@ $(peConfirmForm + '[data-dismiss="edit-prices-cancel"]').click(function () {
 
 $(peConfirmForm + '[data-action="edit-prices-confirm"]').click(function () {
     lang = $(peModalForm).data('lang');
-    // send
     $(peConfirmForm + '#main_actions').hide();
     $(peConfirmForm + '.alert-info').html(lang.wait);
     $.ajax({
@@ -101,19 +100,7 @@ $(peConfirmForm + '[data-action="edit-prices-confirm"]').click(function () {
             $(peConfirmForm + '.alert-success').html(
                 lang.total + ': ' + response.all + '<br>'
                 + lang.updated + ': ' + response.success + '<br>'
-                + (response.skipped ? lang.missed + ': ' + response.skipped : '')
             ).show();
-            if (response.error) {
-                var html = lang.errors + ': ' + response.error + '<br>';
-                for(error in response.errors) {
-                    html += error + '<br>';
-                    for (key in response.errors[error])
-                        html += key + ': ' + response.errors[error][key] + '<br>';
-                    html += '<br>';
-                }
-
-                $(peConfirmForm + '.alert-danger').html(html).show();
-            }
 
             $(peConfirmForm + '#close_rep').show();
         },
