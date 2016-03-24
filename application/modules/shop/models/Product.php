@@ -9,6 +9,7 @@ use app\modules\image\models\Image;
 use app\models\Object;
 use app\modules\data\components\ImportableInterface;
 use app\modules\data\components\ExportableInterface;
+use app\modules\shop\data\FilterPagination;
 use app\modules\shop\traits\HasAddonTrait;
 use app\modules\shop\ShopModule;
 use app\properties\HasProperties;
@@ -924,18 +925,12 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $products_query->limit(null);
 
             if (false === $pages = Yii::$app->cache->get($cacheKey)) {
-                $pages = new Pagination(
+                $pages = new FilterPagination(
                     [
                         'defaultPageSize' => !is_null($query->limit) ? $query->limit : $productsPerPage,
                         'pageSizeLimit' => [],
                         'forcePageParam' => false,
                         'totalCount' => $products_query->count(),
-                        'params' => [
-                            '@category',
-                            'last_category_id' => $selected_category_id,
-                            'category_group_id' => $category_group_id,
-                            'properties' => $values_by_property_id
-                        ],
                     ]
                 );
 
