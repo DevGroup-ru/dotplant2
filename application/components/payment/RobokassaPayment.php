@@ -49,7 +49,7 @@ class RobokassaPayment extends AbstractPayment
 
         $this->redirect($url);
 
-        return false;
+        Yii::$app->end();
     }
 
     /**
