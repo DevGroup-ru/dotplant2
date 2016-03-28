@@ -47,7 +47,9 @@ class RobokassaPayment extends AbstractPayment
         $data['SignatureValue'] = $SignatureValue;
         $url = 'http://' . $this->merchantUrl . '/Index.aspx?' . http_build_query($data);
 
-        return $this->redirect($url);
+        $this->redirect($url);
+
+        \Yii::$app->end();
     }
 
     /**
