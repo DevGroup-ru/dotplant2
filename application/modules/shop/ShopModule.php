@@ -178,6 +178,15 @@ class ShopModule extends BaseModule implements BootstrapInterface
             User::EVENT_AFTER_LOGIN,
             [UserHandler::className(), 'moveOrdersGuestToRegistered']
         );
+
+        /**
+         * Move wishlists/wishlist params from guest to logged/signed user
+         */
+        Event::on(
+            User::className(),
+            User::EVENT_AFTER_LOGIN,
+            [UserHandler::className(), 'moveWishlistsGuestToRegistered']
+        );
     }
 
     /**
