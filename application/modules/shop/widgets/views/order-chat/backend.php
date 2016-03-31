@@ -76,6 +76,7 @@ $this->registerAssetBundle(\app\backend\assets\KoAsset::className());
                     },
                     function (data) {
                         if (1 == data.status) {
+                            self.newMessage('');
                             console.log(data);
                             self.listMessages.unshift(
                                 new modelMessage(data.message, data.user, data.gravatar, data.date)
