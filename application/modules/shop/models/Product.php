@@ -446,9 +446,13 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-
-        static::$identity_map[$this->id] = $this;
-
+        /**
+         * @todo Implement a good decision instead of this.
+         * It resolves a problem with Import (We keep data but do not use it. It produce a memory leak).
+         * Another decision is do not save data if it does not exist (if (isset(static::$identity_map[$this->id]) === true) {static::$identity_map[$this->id] = $this;}).
+         * Both decisions is not good. We think about it all day and all night but have no result. You may offer a true way :)
+         */
+        unset(static::$identity_map[$this->id]);
     }
 
     /**
