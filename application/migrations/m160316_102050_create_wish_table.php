@@ -1,30 +1,36 @@
 <?php
 
 use yii\db\Migration;
-use yii\db\Schema;
+use app\modules\shop\models\Wishlist;
+use app\modules\shop\models\WishlistProduct;
+use app\modules\user\models\User;
+use app\modules\shop\models\Product;
 
 class m160316_102050_create_wish_table extends Migration
 {
     public function safeUp()
     {
-        $this->createTable('{{%wishlist}}', [
-            'id' => Schema::TYPE_PK,
-            'user_id' => Schema::TYPE_INTEGER . ' NOT NULL',
-            'title' => Schema::TYPE_STRING . ' NOT NULL',
-            'default' => Schema::TYPE_BOOLEAN . ' NOT NULL DEFAULT \'1\'',
+        $this->createTable(Wishlist::tableName(), [
+            'id' => $this->primaryKey(),
+            'user_id' => $this->integer()->unsigned()->notNull(),
+            'title' => $this->string()->notNull(),
+            'default' => $this->boolean()->notNull()->defaultValue(true),
         ]);
 
-        $this->createTable('{{%wishlist_product}}', [
-            'id' => Schema::TYPE_PK,
-            'wishlist_id' => Schema::TYPE_INTEGER . ' NOT NULL',
-            'product_id' => Schema::TYPE_INTEGER . ' NOT NULL',
+        $this->createTable(WishlistProduct::tableName(), [
+            'id' => $this->primaryKey(),
+            'wishlist_id' => $this->integer()->notNull(),
+            'product_id' => $this->integer()->unsigned()->notNull(),
             'UNIQUE KEY `ix-wishlist_id-product_id` (`wishlist_id`, `product_id`)',
         ]);
+        $this->addForeignKey('wishlist_user_id', Wishlist::tableName(), 'user_id', User::tableName(), 'id', 'CASCADE');
+        $this->addForeignKey('wishlist_product_wishlist_id', WishlistProduct::tableName(), 'wishlist_id', Wishlist::tableName(), 'id', 'CASCADE');
+        $this->addForeignKey('wishlist_product_product_id', WishlistProduct::tableName(), 'product_id', Product::tableName(), 'id', 'CASCADE');
     }
 
     public function safeDown()
     {
-        $this->dropTable('{{%wishlist}}');
-        $this->dropTable('{{%wishlist_product}}');
+        $this->dropTable(WishlistProduct::tableName());
+        $this->dropTable(Wishlist::tableName());
     }
 }

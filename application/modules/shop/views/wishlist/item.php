@@ -27,7 +27,7 @@ use yii\helpers\Url;
             'right' => 0,
             'top' => '20px'
         ],
-    ])?>
+    ]) ?>
     <div class="product-item">
         <div class="product-image">
             <?=
@@ -40,19 +40,19 @@ use yii\helpers\Url;
             ?>
         </div>
         <div class="product">
-            <a href="<?=$url?>" class="product-name">
+            <a href="<?= $url ?>" class="product-name">
                 <?= Html::encode($product->name) ?>
             </a>
             <div class="product-price">
-                <?=$product->formattedPrice(null, false, false)?>
+                <?= $product->formattedPrice(null, false, false) ?>
             </div>
         </div>
         <div class="product-info">
             <div class="product-announce">
-                <?=$product->announce?>
+                <?= $product->announce ?>
             </div>
             <div class="cta">
-                <a class="btn btn-add-to-cart" href="#" data-action="add-to-cart" data-id="<?=$product->id?>">
+                <a class="btn btn-add-to-cart" href="#" data-action="add-to-cart" data-id="<?= $product->id ?>">
                     <?= Yii::t('app', 'Add to') ?>
                     <i class="fa fa-shopping-cart"></i>
                 </a>
@@ -60,22 +60,3 @@ use yii\helpers\Url;
         </div>
     </div>
 </div>
-
-<?php
-
-$js = <<<JS
-$(".product-item .product-image,.product-item .product-announce").click(function() {
-    var that = $(this),
-        parent = null;
-    if (that.hasClass('product-image')) {
-        parent = that.parent();
-    } else {
-        parent = that.parent().parent();
-    }
-
-    document.location = parent.find('a.product-name').attr('href');
-    return false;
-});
-JS;
-$this->registerJs($js, \app\components\WebView::POS_READY, 'product-item-click');
-

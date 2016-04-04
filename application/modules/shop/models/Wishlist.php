@@ -6,9 +6,7 @@ use yii\db\ActiveRecord;
 use Yii;
 use app\modules\user\models\User;
 use app\modules\shop\models\WishlistProduct;
-use yii\db\Query;
 use app\modules\shop\models\Currency;
-use app\modules\shop\models\Order;
 
 /**
  * This is the model class for table "{{%wishlist}}".
@@ -19,6 +17,7 @@ use app\modules\shop\models\Order;
  * @property bool $default
  * Relations:
  * @property User $user
+ * @property WishlistProduct[] $items
  */
 class Wishlist extends ActiveRecord
 {
@@ -90,50 +89,41 @@ class Wishlist extends ActiveRecord
     }
 
     /**
-     * @param $id
-     * @return Wishlist|null
-     */
-    public static function findById($id)
-    {
-        return self::findOne([
-            'id' => $id,
-            'user_id' => !Yii::$app->user->isGuest ? Yii::$app->user->id : 0,
-        ]);
-    }
-
-
-    /**
-     * @param $id
+     * @param $user_id
+     * @param array $wishlist_ids
      * @return array
      */
-    public static function findByUserId($id)
+    public static function getWishlist($user_id, $wishlist_ids)
     {
-        if ($id != 0){
-            return self::findAll(['user_id' => $id]);
+        if ($user_id != 0) {
+            return self::findAll(['user_id' => $user_id]);
         }
         return self::findAll([
-            'id' => Yii::$app->session->get('wishlists', []),
-            'user_id' => $id,
+            'id' => $wishlist_ids,
+            'user_id' => $user_id,
         ]);
     }
 
     /**
      * @param string $title
+     * @param $user_id
+     * @param array $wishlist_ids
      * @param bool $default
      * @return Wishlist|null
      */
-    public static function createWishlist($title, $default = true)
+    public static function createWishlist($title, $user_id, $wishlist_ids, $default = true)
     {
         $model = new static;
-        $model->user_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : 0;
+        $model->user_id = $user_id;
         $model->title = $title;
         $model->default = $default;
-        if ($model->validate() && $model->save()){
-            $sessionWishlists = Yii::$app->session->get('wishlists', []);
+        if ($model->save(true)) {
+            $sessionWishlists = $wishlist_ids;
             $sessionWishlists[] = $model->id;
             Yii::$app->session->set('wishlists', $sessionWishlists);
             return $model;
         }
+        Yii::error('Failed to save wishlist');
         return null;
     }
 
@@ -143,76 +133,70 @@ class Wishlist extends ActiveRecord
      */
     public function addToWishlist($productId)
     {
-        if ($productId !== null){
-            foreach ($this->items as $item){
-                if ($item->product_id == $productId){
+        if ($productId !== null) {
+            foreach ($this->items as $item) {
+                if ($item->product_id == $productId) {
                     return false;
                 }
             }
             $model = new WishlistProduct();
             $model->wishlist_id = $this->id;
             $model->product_id = $productId;
-            if ($model->validate() && $model->save()){
+            if ($model->save(true)) {
                 return true;
             }
+            Yii::error('Failed to save item in wishlist');
             return false;
         }
+        Yii::error('Incorrect product_id');
         return false;
     }
 
     /**
+     * @param $user_id
+     * @param array $wishlist_ids
      * @param $wishlistId
      * @return int
      */
-    public static function countItems($wishlistId = null)
+    public static function countItems($user_id, $wishlist_ids, $wishlistId = null)
     {
-        $query = new Query();
-        $query->from([Product::tableName(),WishlistProduct::tableName(), self::tableName()])
-            ->where(Product::tableName() . '.id = ' . WishlistProduct::tableName() . '.product_id AND (' . WishlistProduct::tableName() . '.wishlist_id = ' . self::tableName() . '.id)');
-        if (null !== $wishlistId){
-            $query->andWhere([
+        $query = Wishlist::find();
+        $query->where(['user_id' => $user_id])
+            ->joinWith('items', true, 'INNER JOIN');
+        if (null !== $wishlistId) {
+            $query->where([
                 self::tableName() . '.id' => $wishlistId,
             ]);
         }
-        if (Yii::$app->user->isGuest){
+        if ($user_id == 0) {
             $query->andWhere([
-                self::tableName() . '.id' => Yii::$app->session->get('wishlists', []),
+                self::tableName() . '.id' => $wishlist_ids,
             ]);
         }
-        $query->andWhere([
-            self::tableName() . '.user_id' => (!Yii::$app->user->isGuest ? Yii::$app->user->id : 0),
-        ]);
-        return count($query->all());
+        return $query->count();
     }
 
     /**
+     * @param $id
+     * @param $user_id
+     * @param array $wishlist_ids
      * @return bool
      */
-    public function deleteWishlist()
+    public static function setDefaultWishlist($id, $user_id, $wishlist_ids)
     {
-        /** @var WishlistProduct $item */
-        foreach ($this->items as $item){
-            $item->delete();
-        }
-        $this->delete();
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function setDefaultWishlist()
-    {
-        $wishlists = Wishlist::findByUserId(!Yii::$app->user->isGuest ? Yii::$app->user->id : 0);
-        foreach ($wishlists as $wishlist){
-            /** @var Wishlist $wishlist */
-            $wishlist->default = false;
-            if ($wishlist->id == $this->id){
-                $wishlist->default = true;
+        if (null !== $wishlists = Wishlist::getWishlist($user_id, $wishlist_ids)) {
+            foreach ($wishlists as $wishlist) {
+                /** @var Wishlist $wishlist */
+                $wishlist->default = false;
+                if ($wishlist->id == $id) {
+                    $wishlist->default = true;
+                }
+                $wishlist->save();
             }
-            $wishlist->save();
+            return true;
         }
-        return true;
+        Yii::error('Failed to set default wishlist');
+        return false;
     }
 
     /**
@@ -222,10 +206,7 @@ class Wishlist extends ActiveRecord
     public function renameWishlist($title)
     {
         $this->title = $title;
-        if ($this->validate() && $this->save()){
-            return true;
-        }
-        return false;
+        return $this->save(true, ['title']);
     }
 
     /**
@@ -235,13 +216,12 @@ class Wishlist extends ActiveRecord
     public function removeItem($itemId)
     {
         /** @var WishlistProduct $item */
-        foreach ($this->items as $item){
-            if ($item->product_id == $itemId){
-                $item->delete();
-                return true;
-            }
-        }
-        return false;
+
+        $item = WishlistProduct::findOne([
+            'wishlist_id' => $this->id,
+            'product_id' => $itemId
+        ]);
+        return $item->delete();
     }
 
     /**
@@ -249,46 +229,47 @@ class Wishlist extends ActiveRecord
      */
     public function clearWishlist()
     {
-        /** @var WishlistProduct $item */
-        foreach ($this->items as $item){
-            $item->delete();
-        }
+        WishlistProduct::deleteAll(['wishlist_id' => $this->id]);
         return true;
     }
 
     /**
+     * @param $user_id
+     * @param array $wishlist_ids
      * @param $wishlistId
      * @param array $selections
      * @return string
      */
-    public static function getTotalPrice($wishlistId = null, $selections = null)
+    public static function getTotalPrice($user_id, $wishlist_ids, $wishlistId = null, $selections = null)
     {
         /** @var WishlistProduct $item */
         $total_price = 0;
-        if (null !== $wishlistId){
-            $wishlist = static::findById($wishlistId);
+        if (null !== $wishlistId) {
+            /** @var Wishlist $wishlist */
+            $wishlist = static::findOne([
+                'id' => $wishlistId,
+                'user_id' => $user_id
+            ]);
             if (null !== $selections) {
-                foreach ($wishlist->items as $item){
+                foreach ($wishlist->items as $item) {
                     if (in_array($item->product_id, $selections)) {
                         $total_price += $item->product->convertedPrice(null, false);
                     }
                 }
             } else {
-                foreach ($wishlist->items as $item){
+                foreach ($wishlist->items as $item) {
                     $total_price += $item->product->convertedPrice(null, false);
                 }
             }
 
         } else {
-            $wishlists = static::findByUserId(!Yii::$app->user->isGuest ? Yii::$app->user->id : 0);
-            foreach ($wishlists as $wishlist){
-                foreach ($wishlist->items as $item){
+            $wishlists = static::getWishlist($user_id, $wishlist_ids);
+            foreach ($wishlists as $wishlist) {
+                foreach ($wishlist->items as $item) {
                     $total_price += $item->product->convertedPrice(null, false);
                 }
             }
         }
         return Currency::getMainCurrency()->format($total_price);
     }
-
-
 }

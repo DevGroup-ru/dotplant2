@@ -10,6 +10,7 @@ use yii\bootstrap\Modal;
 use yii\widgets\ActiveForm;
 use app\modules\shop\models\Wishlist;
 use yii\helpers\Html;
+use kartik\icons\Icon;
 
 Modal::begin([
     'header' => '<h4>' . Yii::t('app', 'Adding to Wish List') . '</h4>',
@@ -27,46 +28,46 @@ Modal::begin([
     ],
 ]);
 
-    $form = ActiveForm::begin([
-        'id' => 'wishlist-form',
-        'action' => null,
-    ]);
-    foreach ($wishlists as $wishlist){
-        /** @var Wishlist $wishlist */
-        echo Html::tag('div',
-             Html::label(Html::radio('wishlistId', ($wishlist->default) ? true : false, ['value' => $wishlist->id]) . Html::encode($wishlist->title) . '<span>(' . count($wishlist->items) . ')</span>'),
-            [
-                'class' => 'form-group',
-            ]
-        );
-    }
+$form = ActiveForm::begin([
+    'id' => 'wishlist-form',
+    'action' => null,
+]);
+foreach ($wishlists as $wishlist) {
+    /** @var Wishlist $wishlist */
     echo Html::tag('div',
-        Html::label(Html::radio('wishlistId', false, ['value' => 0]) . $form->field($model, 'title', [
-                'inputOptions' => [
-                    'placeholder' => Yii::t('app', 'Enter title'),
-                    'name' => 'title',
-                ],
-                'options' => [
-                    'style' => [
-                        'float' => 'right',
-                    ]
-                ]
-            ])->label('')),
+        Html::label(Html::radio('wishlistId', ($wishlist->default) ? true : false, ['value' => $wishlist->id]) . Html::encode($wishlist->title) . '<span>(' . count($wishlist->items) . ')</span>'),
         [
-            'class' => 'form-group required',
+            'class' => 'form-group',
         ]
     );
+}
+echo Html::tag('div',
+    Html::label(Html::radio('wishlistId', false, ['value' => 0]) . $form->field($model, 'title', [
+            'inputOptions' => [
+                'placeholder' => Yii::t('app', 'Enter title'),
+                'name' => 'title',
+            ],
+            'options' => [
+                'style' => [
+                    'float' => 'right',
+                ]
+            ]
+        ])->label('')),
+    [
+        'class' => 'form-group required',
+    ]
+);
 
-    echo Html::button(Yii::t('app', 'Save'), [
-        'class' => 'btn btn-success',
-        'data-action' => 'add-to-wishlist',
-        'data-id' => $id,
-        'style' => [
-            'margin' => '0 auto',
-            'display' => 'block',
-        ],
-    ]);
-    ActiveForm::end();
+echo Html::button(Icon::show('check') . Yii::t('app', 'Save'), [
+    'class' => 'btn btn-success',
+    'data-action' => 'add-to-wishlist',
+    'data-id' => $id,
+    'style' => [
+        'margin' => '0 auto',
+        'display' => 'block',
+    ],
+]);
+ActiveForm::end();
 Modal::end();
 
 $js = <<<JS

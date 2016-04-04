@@ -7,6 +7,8 @@ use Yii;
 use yii\web\Response;
 use app\modules\shop\models\Wishlist;
 use yii\web\NotFoundHttpException;
+use yii\web\BadRequestHttpException;
+use app\modules\shop\models\WishlistProduct;
 
 class WishlistController extends Controller
 {
@@ -15,7 +17,7 @@ class WishlistController extends Controller
      */
     public function actionIndex()
     {
-        $wishlists = Wishlist::findByUserId(!Yii::$app->user->isGuest ? Yii::$app->user->id : 0);
+        $wishlists = Wishlist::getWishlist((!Yii::$app->user->isGuest ? Yii::$app->user->id : 0), Yii::$app->session->get('wishlists', []));
         return $this->render('index',
             [
                 'wishlists' => $wishlists,
@@ -29,171 +31,236 @@ class WishlistController extends Controller
      */
     public function actionAdd()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $itemId = Yii::$app->request->post('id');
+        if (true === Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $itemId = Yii::$app->request->post('id');
+            $user_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : 0;
+            $wishlist_ids = Yii::$app->session->get('wishlists', []);
 
-        /** @var Wishlist $wishlist */
-        if (0 != Yii::$app->request->post('wishlistId')) {
+            /** @var Wishlist $wishlist */
+            if (0 != Yii::$app->request->post('wishlistId')) {
 
-            if (null !== $wishlist = Wishlist::findById(Yii::$app->request->post('wishlistId'))){
-                $wishlist->addToWishlist($itemId);
-                return $result[] = ['items' => Wishlist::countItems()];
-            }
-            throw new NotFoundHttpException();
-        } else {
-            $wishlists = Wishlist::findByUserId(!Yii::$app->user->isGuest ? Yii::$app->user->id : 0);
-            if (empty($wishlists)){
-                if (null !== $wishlist = Wishlist::createWishlist(Yii::$app->request->post('title'), true)){
+                if (null !== $wishlist = Wishlist::findOne([
+                        'id' => Yii::$app->request->post('wishlistId'),
+                        'user_id' => $user_id,
+                    ])
+                ) {
                     $wishlist->addToWishlist($itemId);
+                    return $result[] = [
+                        'items' => Wishlist::countItems($user_id, $wishlist_ids),
+                        'isSuccess' => true,
+                    ];
                 }
-                return $result[] = ['items' => Wishlist::countItems()];
+                return $result[] = [
+                    'items' => Wishlist::countItems($user_id, $wishlist_ids),
+                    'errorMessage' => Yii::t('app', 'Failed to add items'),
+                    'isSuccess' => false,
+                ];
             } else {
-                if (null !== $wishlist = Wishlist::createWishlist(Yii::$app->request->post('title'), false)){
-                    $wishlist->addToWishlist($itemId);
+                $wishlists = Wishlist::getWishlist($user_id, $wishlist_ids);
+                if (empty($wishlists)) {
+                    if (null !== $wishlist = Wishlist::createWishlist(Yii::$app->request->post('title'), $user_id, $wishlist_ids, true)) {
+                        $wishlist->addToWishlist($itemId);
+                    }
+                    return $result[] = [
+                        'items' => Wishlist::countItems($user_id, $wishlist_ids),
+                        'isSuccess' => true,
+                    ];
+                } else {
+                    if (null !== $wishlist = Wishlist::createWishlist(Yii::$app->request->post('title'), $user_id, $wishlist_ids, false)) {
+                        $wishlist->addToWishlist($itemId);
+                    }
+                    return $result[] = [
+                        'items' => Wishlist::countItems($user_id, $wishlist_ids),
+                        'isSuccess' => true,
+                    ];
                 }
-                return $result[] = ['items' => Wishlist::countItems()];
             }
         }
+        throw new NotFoundHttpException();
     }
 
     /**
      * @param $id
      * @return Response
-     * @throws NotFoundHttpException
      */
     public function actionDelete($id)
     {
-        if (null !== $wishlist = Wishlist::findById($id)){
-            $wishlist->deleteWishlist();
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Wishlist removed'));
+        /** @var Wishlist $wishlist */
+        if (null !== $wishlist = Wishlist::findOne([
+                'id' => $id,
+                'user_id' => !Yii::$app->user->isGuest ? Yii::$app->user->id : 0,
+            ])
+        ) {
+            $wishlist->delete();
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Wishlist has been removed'));
             return $this->redirect('index');
         }
-        throw new NotFoundHttpException();
+        Yii::$app->session->setFlash('warning', Yii::t('app', 'Failed to remove wishlist'));
+        return $this->redirect('index');
     }
 
     /**
      * @param $id
      * @return Response
-     * @throws NotFoundHttpException
      */
     public function actionDefault($id)
     {
-        if (null !== $wishlist = Wishlist::findById($id)){
-            $wishlist->setDefaultWishlist();
+        if (Wishlist::setDefaultWishlist($id, (!Yii::$app->user->isGuest ? Yii::$app->user->id : 0), Yii::$app->session->get('wishlists', []))) {
             Yii::$app->session->setFlash('success', Yii::t('app', 'Default wishlist changed'));
             return $this->redirect('index');
         }
-        throw new NotFoundHttpException();
+        Yii::$app->session->setFlash('warning', Yii::t('app', 'Failed to set default wishlist'));
+        return $this->redirect('index');
     }
 
 
     /**
      * @return Response
-     * @throws NotFoundHttpException
      */
     public function actionCreate()
     {
-        $wishlists = Wishlist::findByUserId(!Yii::$app->user->isGuest ? Yii::$app->user->id : 0);
-        if (null !== Wishlist::createWishlist(Yii::$app->request->post('title'), empty($wishlists) ? true : false)){
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Wishlist created'));
+        $wishlists = Wishlist::getWishlist((!Yii::$app->user->isGuest ? Yii::$app->user->id : 0), Yii::$app->session->get('wishlists', []));
+        if (null !== Wishlist::createWishlist(
+                Yii::$app->request->post('title'),
+                !Yii::$app->user->isGuest ? Yii::$app->user->id : 0,
+                Yii::$app->session->get('wishlists', []),
+                empty($wishlists) ? true : false)
+        ) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Wishlist has been created'));
             return $this->redirect('index');
         }
-        throw new NotFoundHttpException();
+        Yii::$app->session->setFlash('warning', Yii::t('app', 'Failed to create wishlist'));
+        return $this->redirect('index');
     }
 
     /**
      * @return Response
-     * @throws NotFoundHttpException
      */
     public function actionRename()
     {
-        if (null !== $wishlist = Wishlist::findById(Yii::$app->request->post('id'))){
+        /** @var Wishlist $wishlist */
+        if (null !== $wishlist = Wishlist::findOne([
+                'id' => Yii::$app->request->post('id'),
+                'user_id' => !Yii::$app->user->isGuest ? Yii::$app->user->id : 0,
+            ])
+        ) {
             $wishlist->renameWishlist(Yii::$app->request->post('title'));
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Wishlist created'));
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Wishlist has been renamed'));
             return $this->redirect('index');
         }
-        throw new NotFoundHttpException();
+        Yii::$app->session->setFlash('warning', Yii::t('app', 'Failed to rename wishlist'));
+        return $this->redirect('index');
     }
 
     /**
      * @param $id
      * @param $wishlistId
      * @return Response
-     * @throws NotFoundHttpException
      */
     public function actionRemove($id, $wishlistId)
     {
-        if (null !== $wishlist = Wishlist::findById($wishlistId)){
-            $wishlist->removeItem($id);
+        /** @var WishlistProduct $item */
+        if (null !== $item = WishlistProduct::findOne([
+                'wishlist_id' => $wishlistId,
+                'product_id' => $id
+            ])
+        ) {
+            $item->delete();
             Yii::$app->session->setFlash('success', Yii::t('app', 'Item removed from the list'));
             return $this->redirect('index');
         }
-        throw new NotFoundHttpException();
+        Yii::$app->session->setFlash('warning', Yii::t('app', 'Failed to remove item'));
+        return $this->redirect('index');
     }
 
     /**
      * @param $id
      * @return Response
-     * @throws NotFoundHttpException
      */
     public function actionClear($id)
     {
-        if (null !== $wishlist = Wishlist::findById($id)){
+        /** @var Wishlist $wishlist */
+        if (null !== $wishlist = Wishlist::findOne([
+                'id' => $id,
+                'user_id' => !Yii::$app->user->isGuest ? Yii::$app->user->id : 0,
+            ])
+        ) {
             if ($wishlist->clearWishlist()) {
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Wishlist cleared'));
+                Yii::$app->session->setFlash('success', Yii::t('app', 'Wishlist has been cleared'));
                 return $this->redirect('index');
             }
         }
-        throw new NotFoundHttpException();
+        Yii::$app->session->setFlash('warning', Yii::t('app', 'Failed to clear wishlist'));
+        return $this->redirect('index');
     }
 
     /**
      * @return Response
-     * @throws NotFoundHttpException
+     * @throws BadRequestHttpException
      */
     public function actionMove()
     {
-        if (null === Yii::$app->request->post('wishlistTo') || null === Yii::$app->request->post('wishlistFrom')) {
-            throw new NotFoundHttpException();
-        }
-        if ((null !== $wishlistFrom = Wishlist::findById(Yii::$app->request->post('wishlistFrom'))) &&
-            (null !== $wishlistTo = Wishlist::findById(Yii::$app->request->post('wishlistTo')))) {
+        $wishlistToId = Yii::$app->request->post('wishlistTo');
+        $wishlistFromId = Yii::$app->request->post('wishlistFrom');
+        $selections = Yii::$app->request->post('selection');
+        $user_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : 0;
 
-            if (null === Yii::$app->request->post('selection')) {
-                foreach ($wishlistFrom->items as $item){
+        if (null === $wishlistToId || null === $wishlistFromId) {
+            throw new BadRequestHttpException;
+        }
+        /** @var Wishlist $wishlistFrom */
+        /** @var Wishlist $wishlistTo */
+        if ((null !== $wishlistFrom = Wishlist::findOne([
+                    'id' => $wishlistFromId,
+                    'user_id' => $user_id,
+                ])) &&
+            (null !== $wishlistTo = Wishlist::findOne([
+                    'id' => $wishlistToId,
+                    'user_id' => $user_id,
+                ]))
+        ) {
+
+            if (null === $selections) {
+                foreach ($wishlistFrom->items as $item) {
                     $wishlistTo->addToWishlist($item->product_id);
                     $wishlistFrom->removeItem($item->product_id);
                 }
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Items moved'));
-                return $this->redirect('index');
             } else {
-                foreach ($wishlistFrom->items as $item){
-                    if (in_array($item->product_id, Yii::$app->request->post('selection'))) {
+                foreach ($wishlistFrom->items as $item) {
+                    if (in_array($item->product_id, $selections)) {
                         $wishlistTo->addToWishlist($item->product_id);
                         $wishlistFrom->removeItem($item->product_id);
                     }
                 }
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Items moved'));
-                return $this->redirect('index');
             }
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Items moved'));
+            return $this->redirect('index');
         }
-        throw new NotFoundHttpException();
+        Yii::$app->session->setFlash('warning', Yii::t('app', 'Failed to move items'));
+        return $this->redirect('index');
     }
 
     /**
      * @return Response
-     * @throws NotFoundHttpException
+     * @throws BadRequestHttpException
      */
     public function actionRemoveGroup()
     {
-        if (null === Yii::$app->request->post('wishlistFrom')) {
-            throw new NotFoundHttpException();
+        $wishlistFromId = Yii::$app->request->post('wishlistFrom');
+        if (null === $wishlistFromId) {
+            throw new BadRequestHttpException;
         }
-        if (null !== $wishlist = Wishlist::findById(Yii::$app->request->post('wishlistFrom'))) {
+        /** @var Wishlist $wishlist */
+        if (null !== $wishlist = Wishlist::findOne([
+                'id' => $wishlistFromId,
+                'user_id' => !Yii::$app->user->isGuest ? Yii::$app->user->id : 0,
+            ])
+        ) {
 
-            if (null !== Yii::$app->request->post('selection')) {
-                foreach ($wishlist->items as $item){
-                    if (in_array($item->product_id, Yii::$app->request->post('selection'))) {
+            if (null !== $selections = Yii::$app->request->post('selection')) {
+                foreach ($wishlist->items as $item) {
+                    if (in_array($item->product_id, $selections)) {
                         $wishlist->removeItem($item->product_id);
                     }
                 }
@@ -201,38 +268,35 @@ class WishlistController extends Controller
                 return $this->redirect('index');
             }
         }
-        throw new NotFoundHttpException();
+        Yii::$app->session->setFlash('warning', Yii::t('app', 'Failed to move items'));
+        return $this->redirect('index');
     }
 
     /**
      * @return string
      * @throws NotFoundHttpException
+     * @throws BadRequestHttpException
      */
     public function actionPrice()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if (null === Yii::$app->request->post('wishlistId')){
-            throw new NotFoundHttpException();
+        if (true === Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $selections = Yii::$app->request->post('selections');
+            $wishlistId = Yii::$app->request->post('wishlistId');
+            $user_id = !Yii::$app->user->isGuest ? Yii::$app->user->id : 0;
+            $wishlist_ids = Yii::$app->session->get('wishlists', []);
+            if (null === $wishlistId) {
+                throw new BadRequestHttpException;
+            }
+            if (null === $selections) {
+                $price = Wishlist::getTotalPrice($user_id, $wishlist_ids, $wishlistId);
+                $items = Wishlist::countItems($user_id, $wishlist_ids, $wishlistId);
+            } else {
+                $price = Wishlist::getTotalPrice($user_id, $wishlist_ids, $wishlistId, $selections);
+                $items = count($selections);
+            }
+            return $result = '<span class="wishlist-count">' . $items . '</span> ' . Yii::t('app', '{n, plural, one{item} other{items}} in the amount of', ['n' => $items]) . ' <span class="wishlist-price">' . $price . '</span>';
         }
-        if (null === Yii::$app->request->post('selections')) {
-            $price = Wishlist::getTotalPrice(Yii::$app->request->post('wishlistId'));
-            $items = Wishlist::countItems(Yii::$app->request->post('wishlistId'));
-        } else {
-            $price = Wishlist::getTotalPrice(Yii::$app->request->post('wishlistId'), Yii::$app->request->post('selections'));
-            $items = count(Yii::$app->request->post('selections'));
-        }
-        $ending = '';
-        //if($lang == 'ru'){
-        if($items%10 > 1 && $items%10 < 5){
-            $ending = 'а';
-        } elseif($items%10 == 1){
-            $ending = '';
-        } else {
-            $ending = 'ов';
-        }
-        //}
-        return $result = '<span class="wishlist-count">' . $items . '</span> ' . Yii::t('app', 'Item') . $ending . ' ' . Yii::t('app', 'in the amount of') . ' <span class="wishlist-price">' . $price . '</span>';
+        throw new NotFoundHttpException();
     }
-
 }

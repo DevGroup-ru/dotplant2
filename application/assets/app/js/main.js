@@ -72,7 +72,7 @@ var Shop = {
     },
     'addToWishlist': function(productId, wishlistId, title, callback) {
         $.ajax({
-            'data' : {'id': productId, 'wishlistId': wishlistId, 'title': title},
+            'data' : {'id' : productId, 'wishlistId' : wishlistId, 'title' : title},
             'dataType' : 'json',
             'success' : function(data) {
                 if (typeof(callback) === 'function') {
@@ -85,7 +85,7 @@ var Shop = {
     },
     'getPriceWishlist': function(wishlistId, selections, callback) {
         $.ajax({
-            'data' : {'wishlistId': wishlistId, 'selections': selections},
+            'data' : {'wishlistId' : wishlistId, 'selections' : selections},
             'dataType' : 'json',
             'success' : function(data) {
                 if (typeof(callback) === 'function') {
@@ -298,7 +298,7 @@ $(function() {
         return false;
     });
 
-    $('body').on('click', '[data-action="add-batch-to-cart"]', function() {
+    $('.wishlist-item').on('click', '[data-action="add-batch-to-cart"]', function() {
         var $this = $(this);
         var quantity = typeof($this.data('quantity')) !== 'undefined' ? parseFloat($this.data('quantity')) : 1;
         var customName = typeof($this.data('custom-name')) !== 'undefined' ? $this.data('custom-name') : '';
@@ -306,7 +306,7 @@ $(function() {
             quantity = 1;
         }
         var products = [];
-        var selections = $(this).parents('.wishlist-item').find('[type=checkbox]:checked');
+        var selections = $this.parents('.wishlist-item').find('[type=checkbox]:checked');
         if (selections.length !== 0){
             var items = [];
             $.each(selections, function(){
@@ -362,7 +362,7 @@ $(function() {
                             'z-index': '1000',
                             'transform': 'scale(0.5,0.5)'
                         })
-                        .appendTo($('body'))
+                        .appendTo($body)
                         .animate({
                             'top': $widget.offset().top + 10,
                             'left': $widget.offset().left + 30
@@ -550,6 +550,10 @@ $(function() {
         });
         Shop.addToWishlist(id, wishlistId, title, function(data) {
 
+            if (data.isSuccess === false) {
+                $('.content-part').prepend('<div id="w100-warning" class="alert-warning alert fade in"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + data.errorMessage +'</div>');
+                return false;
+            }
             $body.trigger({
                 'type': 'addToWishlist',
                 'productId': id,

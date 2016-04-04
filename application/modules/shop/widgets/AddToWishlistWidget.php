@@ -16,7 +16,7 @@ class AddToWishlistWidget extends Widget
 
     public function run()
     {
-        $wishlists = Wishlist::findByUserId(!Yii::$app->user->isGuest ? Yii::$app->user->id : 0);
+        $wishlists = Wishlist::getWishlist((!Yii::$app->user->isGuest ? Yii::$app->user->id : 0), Yii::$app->session->get('wishlists', []));
         $model = new Wishlist();
         return $this->render($this->viewFile,
             [

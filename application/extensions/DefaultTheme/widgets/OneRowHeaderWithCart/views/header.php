@@ -127,7 +127,7 @@ $navStyles = '';
             <a href="<?=Url::to(['/shop/wishlist'])?>" class="btn btn-wishlist">
                 <i class="fa fa-heart"></i>
                 <span class="badge items-count">
-                    <?= Wishlist::countItems() ?>
+                    <?= Wishlist::countItems((!Yii::$app->user->isGuest ? Yii::$app->user->id : 0), Yii::$app->session->get('wishlists', [])) ?>
                 </span>
             </a>
         </div>
