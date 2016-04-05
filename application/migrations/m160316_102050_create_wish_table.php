@@ -23,7 +23,6 @@ class m160316_102050_create_wish_table extends Migration
             'product_id' => $this->integer()->unsigned()->notNull(),
             'UNIQUE KEY `ix-wishlist_id-product_id` (`wishlist_id`, `product_id`)',
         ]);
-        $this->addForeignKey('wishlist_user_id', Wishlist::tableName(), 'user_id', User::tableName(), 'id', 'CASCADE');
         $this->addForeignKey('wishlist_product_wishlist_id', WishlistProduct::tableName(), 'wishlist_id', Wishlist::tableName(), 'id', 'CASCADE');
         $this->addForeignKey('wishlist_product_product_id', WishlistProduct::tableName(), 'product_id', Product::tableName(), 'id', 'CASCADE');
     }
