@@ -1,0 +1,57 @@
+#batch-edit-price-form,
+#batch-edit-price-form-confirm {
+	font-size: 16px;
+}
+#batch-edit-price-form .modal-header,
+#batch-edit-price-form-confirm .modal-header {
+	font-weight: bold;
+}
+#batch-edit-price-form .row {
+	margin-bottom: 5px;
+}
+#batch-edit-price-form .row label {
+	font-size: 15px;
+	margin-top: 6px;
+	text-align: right;
+}
+#batch-edit-price-form .inline {
+	display: inline-block;
+	width: auto;
+}
+#batch-edit-price-form #value .percent_text {
+	display: none;
+}
+#batch-edit-price-form #value #el_value {
+    text-align: right;
+    width: 100px;
+}
+#batch-edit-price-form input[type="checkbox"] {
+	width: 25px;
+	margin: 0;
+	cursor: pointer;
+}
+#batch-edit-price-form #round .round_options {
+	vertical-align: top;
+	margin-left: 20px;
+}
+#batch-edit-price-form #round .round_options input {
+	width: 80px;
+	text-align: right;
+}
+#batch-edit-price-form input.error {
+	border: 1px solid #f00;
+	color: #500;
+}
+#batch-edit-price-form-confirm .modal-dialog {
+    overflow-y: auto;
+    max-height: 700px;
+}
+#batch-edit-price-form-confirm .alert-danger,
+#batch-edit-price-form-confirm .alert-success {
+	display: none;
+}
+#batch-edit-price-form-confirm #close_rep,
+#batch-edit-price-form #apply_for span.relative
+{
+	display: none;
+}

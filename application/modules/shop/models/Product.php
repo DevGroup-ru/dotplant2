@@ -9,6 +9,7 @@ use app\modules\image\models\Image;
 use app\models\Object;
 use app\modules\data\components\ImportableInterface;
 use app\modules\data\components\ExportableInterface;
+use app\modules\shop\data\FilterPagination;
 use app\modules\shop\traits\HasAddonTrait;
 use app\modules\shop\ShopModule;
 use app\properties\HasProperties;
@@ -445,9 +446,13 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-
-        static::$identity_map[$this->id] = $this;
-
+        /**
+         * @todo Implement a good decision instead of this.
+         * It resolves a problem with Import (We keep data but do not use it. It produce a memory leak).
+         * Another decision is do not save data if it does not exist (if (isset(static::$identity_map[$this->id]) === true) {static::$identity_map[$this->id] = $this;}).
+         * Both decisions is not good. We think about it all day and all night but have no result. You may offer a true way :)
+         */
+        unset(static::$identity_map[$this->id]);
     }
 
     /**
@@ -924,7 +929,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
             $products_query->limit(null);
 
             if (false === $pages = Yii::$app->cache->get($cacheKey)) {
-                $pages = new Pagination(
+                $pages = new FilterPagination(
                     [
                         'defaultPageSize' => !is_null($query->limit) ? $query->limit : $productsPerPage,
                         'pageSizeLimit' => [],

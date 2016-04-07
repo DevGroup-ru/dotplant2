@@ -119,7 +119,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
     /**
      * @var bool Show filter links in breadcrumbs
      */
-    public $showFiltersInBreadcrumbs = false;
+    public $showFiltersInBreadcrumbs = true;
 
     /**
      * @var bool Use method ceilQuantity of Measure model

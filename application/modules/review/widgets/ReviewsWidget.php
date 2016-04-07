@@ -88,7 +88,6 @@ class ReviewsWidget extends Widget
             $pageSize = $maxPerPage;
         }
         $this->additionalParams['review-page'] = Yii::$app->request->get('review-page');
-        $this->additionalParams['review-per-page'] = Yii::$app->request->get('review-per-page');
         return $this->render(
             $this->viewFile,
             [
@@ -97,8 +96,9 @@ class ReviewsWidget extends Widget
                         'id' => 'review',
                         'allModels' => $models,
                         'pagination' => [
-                            'pageSize' => $pageSize,
+                            'defaultPageSize' => $pageSize,
                             'params' =>  $this->additionalParams,
+                            'forcePageParam' => false,
                         ],
                         'sort' => [
                             'attributes' => [

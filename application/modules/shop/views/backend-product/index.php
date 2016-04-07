@@ -36,6 +36,10 @@ $this->beginBlock('add-button');
     'url' => Url::toRoute(['publish-switch']),
     'gridSelector' => '.grid-view',
 ]) ?>
+
+<?= \app\modules\shop\widgets\BatchEditPriceButton::widget([
+    'context' => $this->context->id,
+])?>
 <?=\app\backend\widgets\RemoveAllButton::widget(
     [
         'url' => Url::toRoute(['remove-all', 'parent_id' => $parent_id]),

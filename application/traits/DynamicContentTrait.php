@@ -56,7 +56,8 @@ trait DynamicContentTrait
                     foreach ($model_selections as $property_id => $value) {
                         if (isset($selections['properties']) === true) {
                             if (isset($selections['properties'][$property_id]) === true) {
-                                if ($selections['properties'][$property_id][0] == $value) {
+                                if (isset($selections['properties'][$property_id][0]) === true &&
+                                    $selections['properties'][$property_id][0] == $value) {
                                     // all ok
                                 } else {
                                     $matches = false;

@@ -7,6 +7,8 @@ use yii\web\Controller;
 
 class DisableRobotIndexBehavior extends Behavior
 {
+    public $setSameOrigin = true;
+
     /**
      * @return array
      */
@@ -24,7 +26,9 @@ class DisableRobotIndexBehavior extends Behavior
     {
         $headers = \Yii::$app->response->getHeaders();
         $headers->set('X-Robots-Tag', 'none');
-        $headers->set('X-Frame-Options', 'SAMEORIGIN');
+        if ($this->setSameOrigin) {
+            $headers->set('X-Frame-Options', 'SAMEORIGIN');
+        }
         $headers->set('X-Content-Type-Options', 'nosniff');
     }
 }

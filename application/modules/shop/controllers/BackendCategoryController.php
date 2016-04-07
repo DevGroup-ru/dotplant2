@@ -23,6 +23,7 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
+use app\modules\shop\actions\BatchEditPriceAction;
 
 class BackendCategoryController extends BackendController
 {
@@ -80,6 +81,9 @@ class BackendCategoryController extends BackendController
             'property-handler' => [
                 'class' => PropertyHandler::className(),
                 'modelName' => Category::className()
+            ],
+            'batch-edit-price' => [
+                'class' => BatchEditPriceAction::className(),
             ]
         ];
     }
