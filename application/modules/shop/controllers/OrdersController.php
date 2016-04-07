@@ -35,6 +35,7 @@ class OrdersController extends Controller
             ],
             [
                 'class' => DisableRobotIndexBehavior::className(),
+                'setSameOrigin' => false
             ]
         ];
     }
