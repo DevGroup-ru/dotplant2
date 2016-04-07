@@ -4,6 +4,7 @@ use yii\db\Migration;
 use app\models\Slide;
 
 class m160407_120856_add_text_to_slides extends Migration
+
 {
     public function up()
     {
