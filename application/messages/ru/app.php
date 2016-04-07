@@ -1024,6 +1024,7 @@ return [
     'Temporary error saving social service' => '',
     'Temporary error signing up user' => '',
     'Test connection' => 'Тестировать соединение',
+    'Text' => 'Текст',
     'Text representation' => 'В виде текста',
     'The class you wanted to add as auth client doesn\'t exist.' => 'Класс, который Вы хотите добавить, не существует',
     'The object is placed in the cart' => 'Объект помещен в корзину',

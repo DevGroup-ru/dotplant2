@@ -13,6 +13,7 @@ use yii\data\ActiveDataProvider;
  * @property integer $sort_order
  * @property string $image
  * @property string $link
+ * @property string $text
  * @property string $custom_view_file
  * @property string $css_class
  */
@@ -45,6 +46,7 @@ class Slide extends \yii\db\ActiveRecord
             [['slider_id', 'sort_order', 'active'], 'integer'],
             [['image', 'link', 'custom_view_file', 'css_class'], 'string', 'max' => 255],
             [['active'], 'default', 'value'=>1],
+            [['text'], 'string']
         ];
     }
 
@@ -62,6 +64,7 @@ class Slide extends \yii\db\ActiveRecord
             'custom_view_file' => Yii::t('app', 'Custom View File'),
             'css_class' => Yii::t('app', 'Css Class'),
             'active' => Yii::t('app', 'Active'),
+            'text' => Yii::t('app', 'Text'),
         ];
     }
 

@@ -163,6 +163,15 @@ $editable_formOptions = [
                     ],
                 ],
                 [
+                    'attribute' => 'text',
+                    'class' => \kartik\grid\EditableColumn::className(),
+                    'editableOptions' => [
+                        'inputType' => Editable::INPUT_TEXT,
+                        'formOptions' => $editable_formOptions,
+                        'placement' => PopoverX::ALIGN_BOTTOM,
+                    ],
+                ],
+                [
                     'attribute' => 'custom_view_file',
                     'class' => \kartik\grid\EditableColumn::className(),
                     'editableOptions' => [
