@@ -50,6 +50,7 @@ class CartController extends Controller
         return [
             [
                 'class' => DisableRobotIndexBehavior::className(),
+                'setSameOrigin' => false
             ]
         ];
     }
