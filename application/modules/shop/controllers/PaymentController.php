@@ -17,6 +17,7 @@ class PaymentController extends Controller
         return [
             [
                 'class' => DisableRobotIndexBehavior::className(),
+                'setSameOrigin' => false
             ]
         ];
     }
