@@ -869,6 +869,7 @@ return [
     'Resize Big Images' => 'Изменить размер больших изображений',
     'Resize Small Images' => 'Изменить размер маленьких изображений',
     'Resize mode' => 'Режим смены разрешения',
+    'Resize' => 'Сжать',
     'Resource' => 'Ресурс',
     'Result Data' => 'Данные разультата',
     'Review #{reviewId}' => 'Отзыв #{reviewId}',
