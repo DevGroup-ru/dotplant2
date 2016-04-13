@@ -193,6 +193,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                     'filterOnlyByParentProduct',
                     'showDeletedOrders',
                     'showFiltersInBreadcrumbs',
+                    'useCeilQuantity',
                 ],
                 'boolean',
             ],
