@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\icons\Icon;
+use app\modules\shop\models\Wishlist;
 /** @var yii\web\View $this */
 /**
  * @var \app\modules\shop\models\Order $order
@@ -121,6 +122,12 @@ $navStyles = '';
                 <i class="fa fa-tags"></i>
                 <span class="badge items-count">
                     <?=count(Yii::$app->session->get('comparisonProductList')) ?>
+                </span>
+            </a>
+            <a href="<?=Url::to(['/shop/wishlist'])?>" class="btn btn-wishlist">
+                <i class="fa fa-heart"></i>
+                <span class="badge items-count">
+                    <?= Wishlist::countItems((!Yii::$app->user->isGuest ? Yii::$app->user->id : 0), Yii::$app->session->get('wishlists', [])) ?>
                 </span>
             </a>
         </div>
