@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\data\ActiveDataProvider;
 
@@ -16,16 +17,25 @@ use yii\data\ActiveDataProvider;
  * @property string $text
  * @property string $custom_view_file
  * @property string $css_class
+ * @property Slider|ActiveRecordHelper $slider
  */
 class Slide extends \yii\db\ActiveRecord
 {
     use \app\traits\FindById;
 
+    protected function invalidateSliderTags()
+    {
+        $slider = $this->slider;
+        if ($slider !== null) {
+            $slider->invalidateTags();
+        }
+    }
+
     public function behaviors()
     {
         return [
             [
-                'class' => \devgroup\TagDependencyHelper\ActiveRecordHelper::className(),
+                'class' => ActiveRecordHelper::className(),
             ],
         ];
     }
@@ -77,7 +87,7 @@ class Slide extends \yii\db\ActiveRecord
     {
         /* @var $query \yii\db\ActiveQuery */
         $query = static::find()
-            ->where(['slider_id'=>$this->slider_id])
+            ->where(['slider_id' => $this->slider_id])
             ->orderBy('sort_order');
         $dataProvider = new ActiveDataProvider(
             [
@@ -90,8 +100,32 @@ class Slide extends \yii\db\ActiveRecord
         if (!($this->load($params))) {
             return $dataProvider;
         }
-
-
         return $dataProvider;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSlider()
+    {
+        return $this->hasOne(Slider::class, ['id' => 'slider_id']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        $this->invalidateSliderTags();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        $this->invalidateSliderTags();
     }
 }

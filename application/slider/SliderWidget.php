@@ -28,7 +28,7 @@ class SliderWidget extends Widget
     public $slider_id = null;
 
     /**
-     * @var Slider slider model instance
+     * @var Slider|ActiveRecordHelper slider model instance
      */
     public $slider = null;
 
@@ -52,8 +52,6 @@ class SliderWidget extends Widget
      */
     public $css_class = "";
 
-
-
     /**
      * @inheritdoc
      */
@@ -68,17 +66,20 @@ class SliderWidget extends Widget
                 $this->slider = Yii::$app->cache->get("Slider:name:".$this->slider_name);
                 if ($this->slider === false) {
                     $this->slider = Slider::find()
-                        ->where(['name'=>$this->slider_name])
+                        ->where(['name' => $this->slider_name])
                         ->one();
-
-                    Yii::$app->cache->set(
-                        "Slider:name:".$this->slider_name,
-                        $this->slider,
-                        86400,
-                        new \yii\caching\TagDependency([
-                            'tags' => [ActiveRecordHelper::getCommonTag(Slider::className())]
-                        ])
-                    );
+                    if ($this->slider !== null) {
+                        Yii::$app->cache->set(
+                            "Slider:name:" . $this->slider_name,
+                            $this->slider,
+                            86400,
+                            new \yii\caching\TagDependency([
+                                'tags' => [
+                                    $this->slider->objectTag(),
+                                ]
+                            ])
+                        );
+                    }
                 }
             } else {
                 $this->slider = Slider::findById($this->slider_id);
@@ -123,4 +124,4 @@ class SliderWidget extends Widget
             'slider' => $this->slider,
         ]);
     }
-} 
+}
