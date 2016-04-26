@@ -539,7 +539,7 @@ class Category extends ActiveRecord implements \JsonSerializable
         }
 
         if (isset($changedAttributes['parent_id'])) {
-            if (is_null($this->parent) != 0) {
+            if (is_null($this->parent) === false) {
                 $this->category_group_id = $this->parent->category_group_id;
                 $this->save(true, ['category_group_id']);
             }
