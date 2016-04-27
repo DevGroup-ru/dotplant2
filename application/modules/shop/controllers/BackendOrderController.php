@@ -72,7 +72,7 @@ class BackendOrderController extends BackendController
         if (empty($prop->values) === false) {
             $fileName = Yii::getAlias(Yii::$app->getModule('core')->visitorsFileUploadPath) . DIRECTORY_SEPARATOR . ArrayHelper::getValue($prop, 'values.0.value', '');
             if (file_exists($fileName)) {
-                return $fileName;
+                return Yii::$app->response->sendFile($fileName);
             }
         }
         throw new NotFoundHttpException(Yii::t('app', 'File not found'));
