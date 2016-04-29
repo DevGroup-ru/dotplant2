@@ -29,10 +29,20 @@ use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
+use app\modules\seo\behaviors\SetCanonicalBehavior;
 
 class ProductController extends Controller
 {
     use DynamicContentTrait;
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => SetCanonicalBehavior::className()
+            ]
+        ];
+    }
 
     /**
      * Products listing by category with filtration support.
