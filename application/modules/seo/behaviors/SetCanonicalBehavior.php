@@ -49,7 +49,8 @@ class SetCanonicalBehavior extends Behavior
                 [
                     'rel' => 'canonical',
                     'href' => Url::toRoute($get, true)
-                ]
+                ],
+                'canonical'
             );
 
         }
