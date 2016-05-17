@@ -125,9 +125,9 @@ class Category extends ActiveRecord implements \JsonSerializable
     public static function deleteModesList()
     {
         return [
+            self::DELETE_MODE_MAIN_CATEGORY => Yii::t('app', 'Delete all products that relate to this category as main'),
             self::DELETE_MODE_SINGLE_CATEGORY => Yii::t('app', 'Delete only that products that exists ONLY in that category'),
             self::DELETE_MODE_ALL => Yii::t('app', 'Delete along with it no matter what'),
-            self::DELETE_MODE_MAIN_CATEGORY => Yii::t('app', 'Delete all products that relate to this category as main'),
         ];
     }
 
