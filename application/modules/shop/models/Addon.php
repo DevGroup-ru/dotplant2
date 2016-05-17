@@ -55,7 +55,7 @@ class Addon extends \yii\db\ActiveRecord
             [['name', 'addon_category_id'], 'required'],
             [['name'], 'string'],
             [['price'], 'number'],
-            [['currency_id', 'price_is_multiplier', 'is_product_id', 'add_to_order', 'addon_category_id', 'can_change_quantity', 'measure_id', 'sort_order'], 'integer'],
+            [['currency_id', 'price_is_multiplier', 'add_to_order', 'addon_category_id', 'can_change_quantity', 'measure_id', 'sort_order'], 'integer'],
             [['is_product_id',], 'default', 'value' => 0,],
         ];
     }
@@ -71,7 +71,6 @@ class Addon extends \yii\db\ActiveRecord
             'price' => Yii::t('app', 'Price'),
             'currency_id' => Yii::t('app', 'Currency ID'),
             'price_is_multiplier' => Yii::t('app', 'Price Is Multiplier'),
-            'is_product_id' => Yii::t('app', 'Is Product ID'),
             'add_to_order' => Yii::t('app', 'Add To Order'),
             'addon_category_id' => Yii::t('app', 'Addon Category ID'),
             'can_change_quantity' => Yii::t('app', 'Can Change Quantity'),
