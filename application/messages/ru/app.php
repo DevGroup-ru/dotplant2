@@ -1251,7 +1251,7 @@ return [
     'Registration Guest User In Cart' => 'Регистрация гостей в корзине',
     'Welcome to {appName}' => 'Добро пожаловать на сайт {appName}',
     'Welcome, {name}!' => 'Добро пожаловать, {name}!',
-    'Welcome to DotPlant2 administration panel!' => 'Добро пожаловать в административную палень DotPlant2!',
+    'Welcome to DotPlant2 administration panel!' => 'Добро пожаловать в административную панель DotPlant2!',
     '<strong>Your login:</strong> {username}' => '<strong>Ваш логин:</strong> {username}',
     '<strong>Your password:</strong> {password}' => '<strong>Ваш пароль:</strong> {password}',
     'Password reset for {appName}' => 'Сброс пароля на сайте {appName}',
