@@ -37,7 +37,7 @@
         $form
             ->field($model, $property_key)
             ->dropDownList(
-                [0 => Yii::t('app', 'Not selected')] + app\models\PropertyStaticValues::getSelectForPropertyId($property_id)
+                ['' => Yii::t('app', 'Not selected')] + app\models\PropertyStaticValues::getSelectForPropertyId($property_id)
             );
     ?>
 <?php endif; ?>
