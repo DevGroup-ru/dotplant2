@@ -4,10 +4,24 @@
  * @var $this yii\web\View
  */
 
-?>
-<h1>dashboard/index</h1>
+use yii\bootstrap\Alert;
 
-<p>
-    You may change the content of this page by modifying
-    the file <code><?= __FILE__; ?></code>.
-</p>
+?>
+<h1><?= Yii::t('app', 'Welcome to DotPlant2 administration panel!') ?></h1>
+
+<?= \app\backend\widgets\DoublesFinder\DoublesFinder::widget() ?>
+
+<?php
+Alert::begin(
+    [
+        'closeButton' => false,
+        'options' => [
+            'class' => 'alert-info',
+        ],
+    ]
+);
+?>
+
+<p><?= Yii::t('app', 'Path to web root') ?>: <code><?= Yii::getAlias('@webroot'); ?></code>.</p>
+
+<?php Alert::end() ?>

@@ -111,3 +111,7 @@ $(peConfirmForm + '[data-action="edit-prices-confirm"]').click(function () {
         }
     });
 });
+
+$(peConfirmForm).on('hide.bs.modal', function() {
+    window.location.reload();
+});

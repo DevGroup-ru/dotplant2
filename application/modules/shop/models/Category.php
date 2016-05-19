@@ -125,9 +125,9 @@ class Category extends ActiveRecord implements \JsonSerializable
     public static function deleteModesList()
     {
         return [
+            self::DELETE_MODE_MAIN_CATEGORY => Yii::t('app', 'Delete all products that relate to this category as main'),
             self::DELETE_MODE_SINGLE_CATEGORY => Yii::t('app', 'Delete only that products that exists ONLY in that category'),
             self::DELETE_MODE_ALL => Yii::t('app', 'Delete along with it no matter what'),
-            self::DELETE_MODE_MAIN_CATEGORY => Yii::t('app', 'Delete all products that relate to this category as main'),
         ];
     }
 
@@ -535,6 +535,13 @@ class Category extends ActiveRecord implements \JsonSerializable
             foreach ($this->children as $child) {
                 $child->category_group_id = $this->category_group_id;
                 $child->save(true, ['category_group_id']);
+            }
+        }
+
+        if (isset($changedAttributes['parent_id'])) {
+            if (is_null($this->parent) === false) {
+                $this->category_group_id = $this->parent->category_group_id;
+                $this->save(true, ['category_group_id']);
             }
         }
     }

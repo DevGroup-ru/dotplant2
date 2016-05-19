@@ -53,22 +53,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 ['title' => Yii::t('app', 'Addon'), 'icon' => 'cart-plus', 'footer' => $this->blocks['submit']]
             ); ?>
 
-            <?=
-            \app\backend\widgets\Select2Ajax::widget([
-                'initialData' => $model->is_product_id > 0 ? [
-                    $model->is_product_id => \app\modules\shop\models\Product::findById($model->is_product_id)->name
-                ] : [],
-                'form' => $form,
-                'model' => $model,
-                'modelAttribute' => 'is_product_id',
-                'multiple' => false,
-                'searchUrl' => '/shop/backend-product/ajax-related-product',
-                'additional' => [
-                    'placeholder' => 'Поиск продуктов ...',
-                ],
-            ]);
-            ?>
-
             <?=$form->field($model, 'name')?>
 
             <?= $form->field($model, 'price',[

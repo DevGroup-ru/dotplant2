@@ -259,8 +259,9 @@ class Customer extends \yii\db\ActiveRecord
                             )
                         )
                         ->send();
-
-                Yii::$app->user->login($user, 86400);
+                if (Yii::$app->user->isGuest){
+                    Yii::$app->user->login($user, 86400);
+                }
                 $this->user_id = $user->id;
             }
 

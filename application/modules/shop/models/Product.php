@@ -868,10 +868,18 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if ($force_sorting === false) {
             $allSorts = ProductListingSort::enabledSorts();
             if (isset($allSorts[$userSelectedSortingId])) {
-                $query->addOrderBy(
-                    $allSorts[$userSelectedSortingId]['sort_field'] . ' '
-                    . $allSorts[$userSelectedSortingId]['asc_desc']
-                );
+                if ($allSorts[$userSelectedSortingId]['sort_field'] == 'product.price') {
+                    $query->leftJoin(Currency::tableName() . ' currency_order ON currency_order.id = product.currency_id');
+                    $query->addOrderBy(
+                        'product.`price`*currency_order.`convert_rate`' . ' '
+                        . $allSorts[$userSelectedSortingId]['asc_desc']
+                    );
+                } else {
+                    $query->addOrderBy(
+                        $allSorts[$userSelectedSortingId]['sort_field'] . ' '
+                        . $allSorts[$userSelectedSortingId]['asc_desc']
+                    );
+                }
             } else {
                 $query->addOrderBy(static::tableName() . '.sort_order');
             }

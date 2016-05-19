@@ -17,10 +17,20 @@ use yii\db\ActiveQuery;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use app\modules\seo\behaviors\SetCanonicalBehavior;
 
 class PageController extends Controller
 {
     use LoadModel;
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => SetCanonicalBehavior::className()
+            ]
+        ];
+    }
 
     /**
      * @param $id

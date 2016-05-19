@@ -366,52 +366,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php endif; ?>
 
-    <?php if (!empty($model->options)) : ?>
-        <?php
-        BackendWidget::begin(
-            [
-                'title'=> Yii::t('app', 'Product Options'),
-                'icon'=>'shopping-cart',
-                'footer'=>$this->blocks['submit']
-            ]
-        ); ?>
-
-        <?=
-        GridView::widget([
-            'dataProvider' =>  $dataProvider = new ActiveDataProvider(
-                [
-                    'query' => Product::find()
-                        ->where(['parent_id' => $model->id]),
-                ]
-            ),
-            'columns' => [
-                [
-                    'class' => 'yii\grid\DataColumn',
-                    'attribute' => 'id',
-                ],
-                [
-                    'class' => 'app\backend\columns\TextWrapper',
-                    'attribute' => 'name',
-                    'callback_wrapper' => function ($content, $model, $key, $index, $parent) {
-
-                        return $content;
-                    }
-                ],
-                'price',
-                'old_price',
-                [
-                    'class' => 'app\backend\components\ActionColumn',
-                    'buttons' => function($model, $key, $index, $parent) {
-
-                        return null;
-                    }
-                ],
-            ],
-            'hover' => true,
-        ]);
-        ?>
-        <?php BackendWidget::end(); ?>
-    <?php endif; ?>
 </article>
 </div>
 </section>
@@ -420,3 +374,63 @@ $event = new \app\backend\events\BackendEntityEditFormEvent($form, $model);
 $this->trigger(BackendProductController::EVENT_BACKEND_PRODUCT_EDIT_FORM, $event);
 ?>
 <?php ActiveForm::end(); ?>
+<section>
+    <article>
+        <?php
+        if (!empty($model->options)) : ?>
+            <?php
+            BackendWidget::begin(
+                [
+                    'title'=> Yii::t('app', 'Product Options'),
+                    'icon'=>'shopping-cart',
+                    'footer'=>$this->blocks['submit']
+                ]
+            ); ?>
+
+            <?=
+            GridView::widget([
+                'dataProvider' =>  $dataProvider = new ActiveDataProvider(
+                    [
+                        'query' => Product::find()
+                            ->where(['parent_id' => $model->id]),
+                    ]
+                ),
+                'columns' => [
+                    [
+                        'class' => 'yii\grid\DataColumn',
+                        'attribute' => 'id',
+                    ],
+                    [
+                        'class' => 'app\backend\columns\TextWrapper',
+                        'attribute' => 'name',
+                        'callback_wrapper' => function ($content, $model, $key, $index, $parent) {
+
+                            return $content;
+                        }
+                    ],
+                    [
+                        'class' => \kartik\grid\EditableColumn::className(),
+                        'attribute' => 'price',
+                        'editableOptions' => [
+                            'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                            'formOptions' => [
+                                'action' => Url::toRoute('/shop/backend-product/update-editable'),
+                            ],
+                        ],
+                    ],
+                    'old_price',
+                    [
+                        'class' => 'app\backend\components\ActionColumn',
+                        'buttons' => function ($model, $key, $index, $parent) {
+                            return null;
+                        }
+                    ],
+                ],
+                'hover' => true,
+            ]);
+            ?>
+            <?php BackendWidget::end(); ?>
+        <?php
+        endif; ?>
+    </article>
+</section>

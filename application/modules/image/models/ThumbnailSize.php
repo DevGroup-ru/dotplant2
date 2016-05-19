@@ -18,6 +18,8 @@ use yii\db\ActiveRecord;
  */
 class ThumbnailSize extends ActiveRecord
 {
+    const RESIZE = 'resize';
+
     /**
      * @inheritdoc
      */
@@ -64,6 +66,7 @@ class ThumbnailSize extends ActiveRecord
         return [
             ManipulatorInterface::THUMBNAIL_INSET => Yii::t('app', 'Inset'),
             ManipulatorInterface::THUMBNAIL_OUTBOUND => Yii::t('app', 'Outbound'),
+            static::RESIZE => Yii::t('app', 'Resize'),
         ];
     }
 

@@ -106,7 +106,12 @@ class Thumbnail extends \yii\db\ActiveRecord
 
             $file = Imagine::getImagine()->read($fs->readStream($image->filename));
             /** @var ImageInterface $thumb */
-            $thumb = $file->thumbnail(new Box($size->width, $size->height), $size->resize_mode);
+            if($size->resize_mode == ThumbnailSize::RESIZE){
+                $thumb = $file->resize(new Box($size->width, $size->height));
+            }else{
+                $thumb = $file->thumbnail(new Box($size->width, $size->height), $size->resize_mode);    
+            }
+            
             $path = Yii::$app->getModule('image')->thumbnailsDirectory;
 
             if (!preg_match('#^(?<name>.+)\.(?<ext>[^\.]+)$#', $image->filename, $fileInfo)) {

@@ -119,22 +119,18 @@ class Redirect extends ActiveRecord
         $head .= " * This file is generated automatically\n";
         $head .= "*/\n";
         $redirects = [
-            'static' => ArrayHelper::map(
-                self::find()->where(
-                    'type = :type AND active = :active',
-                    [':type' => self::TYPE_STATIC, ':active' => true]
-                )->all(),
-                'from',
-                'to'
-            ),
-            'regular' => ArrayHelper::map(
-                self::find()->where(
-                    'type = :type AND active = :active',
-                    [':type' => self::TYPE_PREG, ':active' => true]
-                )->all(),
-                'from',
-                'to'
-            ),
+            'static' => static::find()
+                ->select(['to', 'from'])
+                ->where(['active' => true, 'type' => self::TYPE_STATIC])
+                ->asArray(true)
+                ->indexBy('from')
+                ->column(),
+            'regular' => static::find()
+                ->select(['to', 'from'])
+                ->where(['active' => true, 'type' => self::TYPE_PREG])
+                ->asArray(true)
+                ->indexBy('from')
+                ->column()
         ];
         $body = "return ".var_export($redirects, true).";\n";
         return file_put_contents(self::getFilename(), $head."\n".$body);

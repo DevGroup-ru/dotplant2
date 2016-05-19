@@ -96,7 +96,7 @@ class Slider extends \yii\db\ActiveRecord
                     86400,
                     new \yii\caching\TagDependency([
                         'tags' => [
-                            ActiveRecordHelper::getObjectTag(Slide::className(), $this->id)
+                            ActiveRecordHelper::getObjectTag(Slider::className(), $this->id)
                         ]
                     ])
                 );

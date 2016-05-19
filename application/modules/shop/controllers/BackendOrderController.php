@@ -69,11 +69,13 @@ class BackendOrderController extends BackendController
             throw new NotFoundHttpException('Order not found');
         }
         $prop = $order->getPropertyValuesByKey($key);
-        return \Yii::$app->response->sendFile(
-            Yii::getAlias(Yii::$app->getModule('core')->visitorsFileUploadPath) .
-            DIRECTORY_SEPARATOR .
-            $prop->values[0]['value']
-        );
+        if (empty($prop->values) === false) {
+            $fileName = Yii::getAlias(Yii::$app->getModule('core')->visitorsFileUploadPath) . DIRECTORY_SEPARATOR . ArrayHelper::getValue($prop, 'values.0.value', '');
+            if (file_exists($fileName)) {
+                return Yii::$app->response->sendFile($fileName);
+            }
+        }
+        throw new NotFoundHttpException(Yii::t('app', 'File not found'));
     }
 
 
