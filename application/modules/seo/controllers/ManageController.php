@@ -18,6 +18,7 @@ use yii\filters\AccessControl;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\helpers\Url;
+use app\modules\seo\models\RedirectDoublesFinder;
 use Yii;
 
 class ManageController extends BackendController
@@ -631,6 +632,18 @@ class ManageController extends BackendController
     public function actionDeleteRedirectFile()
     {
         echo (int)Redirect::deleteRedirectFile();
+    }
+
+    public function actionRedirectDoublesFinder()
+    {
+        $redirectDoublesFinder = new RedirectDoublesFinder();
+        $dataProvider = $redirectDoublesFinder->findDoubles();
+        return $this->render(
+            'redirect-doubles-finder',
+            [
+                'dataProvider' => $dataProvider,
+            ]
+        );
     }
 
     public function actionEcommerce()

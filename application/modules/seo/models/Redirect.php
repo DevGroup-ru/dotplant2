@@ -4,7 +4,6 @@ namespace app\modules\seo\models;
 
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
-use yii\helpers\ArrayHelper;
 use Yii;
 
 /**
