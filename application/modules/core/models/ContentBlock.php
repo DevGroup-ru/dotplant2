@@ -31,7 +31,7 @@ class ContentBlock extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'content_block';
+        return '{{%content_block}}';
     }
 
     /**
