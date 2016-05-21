@@ -52,7 +52,7 @@ class ContentBlock extends \yii\db\ActiveRecord
     public function scenarios()
     {
         return [
-            self::SCENARIO_SEARCH => ['name', 'key']
+            self::SCENARIO_SEARCH => ['name', 'key', 'preload']
         ];
     }
 
