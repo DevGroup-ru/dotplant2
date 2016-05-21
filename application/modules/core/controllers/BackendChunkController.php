@@ -54,7 +54,7 @@ class BackendChunkController extends BackendController
 
     public function actionIndex()
     {
-        $searchModel = new ContentBlock(['scenario' => 'search']);
+        $searchModel = new ContentBlock(['scenario' => ContentBlock::SCENARIO_SEARCH]);
         $group_id = Yii::$app->request->get('group_id', null);
         $searchModel->group_id = $group_id;
         $dataProvider = $searchModel->search($_GET);
