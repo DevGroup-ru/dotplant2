@@ -139,4 +139,23 @@ class Redirect extends ActiveRecord
     {
         return unlink(self::getFilename());
     }
+
+    public function findDoubles()
+    {
+
+        $query = self::find()
+            ->select(['type', 'from', 'COUNT(*) as count'])
+            ->groupBy('from')
+            ->having('COUNT(*) > 1');
+
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]
+        );
+        return $dataProvider;
+    }
 }

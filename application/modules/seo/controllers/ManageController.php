@@ -636,7 +636,7 @@ class ManageController extends BackendController
 
     public function actionRedirectDoublesFinder()
     {
-        $redirectDoublesFinder = new RedirectDoublesFinder();
+        $redirectDoublesFinder = new Redirect();
         $dataProvider = $redirectDoublesFinder->findDoubles();
         return $this->render(
             'redirect-doubles-finder',

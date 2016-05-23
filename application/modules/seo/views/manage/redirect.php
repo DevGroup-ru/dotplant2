@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Yii::t('app', 'Create Redirect'), ['create-redirect', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()], ['class' => 'btn btn-success']) ?>
         <?= Html::a(Yii::t('app', 'Create Redirects'), ['create-redirects', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()], ['class' => 'btn btn-warning']) ?>
         <?= Html::button(Yii::t('app', 'Delete selected'), ['class'=> 'btn btn-danger', 'id' => 'deleteRedirects']); ?>
-        <?= Html::a(Yii::t('app', 'Find doubles'), ['redirect-doubles-finder', 'returnUrl' => \app\backend\components\Helper::getReturnUrl()], ['class' => 'btn btn-warning']) ?>
+        <?= Html::a(Yii::t('app', 'Find doubles'), ['redirect-doubles-finder'], ['class' => 'btn btn-warning']) ?>
     </p>
 
     <?= $this->render('_redirectGrid', ['dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'id' => 'redirects']); ?>
