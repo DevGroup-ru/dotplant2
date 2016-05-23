@@ -7,7 +7,6 @@ use app\modules\shop\models\GoogleFeed;
 use app\modules\shop\models\Product;
 use Yii;
 use yii\base\Component;
-use yii\helpers\Html;
 use yii\helpers\Json;
 
 
@@ -94,43 +93,18 @@ class GoogleMerchants extends Component
 
     public function generateFeedByArray($data)
     {
-        $result = "<?xml version=\"1.0\"?><rss xmlns:g=\"http://base.google.com/ns/1.0\" version=\"2.0\">";
-        $result .= $this->generateItem(
-            'channel',
-            $this->generateItem('title', $this->title) .
-            $this->generateItem('link', $this->host) .
-            $this->generateItem('description', $this->description) .
-            $this->generateItems($data)
-        );
-        $result .= "</rss>";
-        return $result;
-    }
-
-    protected function generateItems($data)
-    {
-        $result = "";
+        $string = "<?xml version=\"1.0\"?><rss xmlns:g=\"http://base.google.com/ns/1.0\" version=\"2.0\"></rss>";
+        $xml = simplexml_load_string($string);
+        $channel = $xml->addChild('channel');
+        $channel->addChild('title', $this->title);
+        $channel->addChild('link', $this->host);
+        $channel->addChild('description', $this->description);
         foreach ($data as $item) {
-            $result .= $this->generateItem('item', $item);
-        }
-        return $result;
-    }
-
-    protected function generateItem($tag, $data)
-    {
-        $content = "";
-        if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                $content .= $this->generateItem($key, $value);
+            $currentItem = $channel->addChild("item");
+            foreach ($item as $key => $value) {
+                $currentItem->$key = $value;
             }
-        } else {
-            $content = $data;
         }
-        return static::tag($tag, $content);
+        return $xml->asXML();
     }
-
-    protected static function tag($name, $content = '', $options = [])
-    {
-        return "<$name" . Html::renderTagAttributes($options) . '>' . $content . "</$name>";
-    }
-
 }

@@ -33,35 +33,37 @@ class DefaultHandler implements ModificationDataInterface
             'g:id' => $event->model->id,
             'g:condition' => self::$modelSetting->item_condition,
             'g:product_type' => self::getProductType($event->model),
-            'g:availability' => static::getAvailability($event->model),
-            'g:shipping' => static::getShipping()
+            'g:availability' => static::getAvailability($event->model)
         ];
         if ($manufacturer = self::getRelation($event->model, 'item_brand', false)) {
-            $event->dataArray['g:brand'] = htmlspecialchars($manufacturer);
+            $event->dataArray['g:brand'] = $manufacturer;
         }
         if ($gin = self::getRelation($event->model, 'item_gtin', false)) {
-            $event->dataArray['g:gtin'] = htmlspecialchars($gin);
+            $event->dataArray['g:gtin'] = $gin;
         }
         if ($mpn = self::getRelation($event->model, 'item_mpn', false)) {
-            $event->dataArray['g:mpn'] = htmlspecialchars($mpn);
+            $event->dataArray['g:mpn'] = $mpn;
         }
 
         if ($item_google_product_category = self::getRelation($event->model, 'item_google_product_category', false)) {
-            $event->dataArray['g:google_product_category'] = htmlspecialchars($item_google_product_category);
+            $event->dataArray['g:google_product_category'] = $item_google_product_category;
         }
 
         if (!empty($event->model->old_price) && $event->model->old_price > $event->model->price) {
-            $event->dataArray['g:price'] = static::getPrice($event->model,
+            $event->dataArray['g:price'] = static::getPrice(
+                $event->model,
                 $event->sender->mainCurrency,
                 $event->model->old_price
             );
-            $event->dataArray['g:g:sale_price'] = static::getPrice($event->model,
+            $event->dataArray['g:sale_price'] = static::getPrice(
+                $event->model,
                 $event->sender->mainCurrency,
                 $event->model->price
             );
         } else {
 
-            $event->dataArray['g:price'] = static::getPrice($event->model,
+            $event->dataArray['g:price'] = static::getPrice(
+                $event->model,
                 $event->sender->mainCurrency,
                 $event->model->price
             );
@@ -120,8 +122,11 @@ class DefaultHandler implements ModificationDataInterface
     protected static function getPrice(Product $model, $mainCurrency, $price)
     {
         return number_format(
-            CurrencyHelper::convertCurrencies($price, $model->currency,
-                $mainCurrency),
+            CurrencyHelper::convertCurrencies(
+                $price,
+                $model->currency,
+                $mainCurrency
+            ),
             2,
             '.',
             ''
@@ -143,18 +148,4 @@ class DefaultHandler implements ModificationDataInterface
         }
         return $inStock;
     }
-
-    protected static function getShipping()
-    {
-        $data = explode(':', self::$modelSetting->shop_delivery_price);
-
-        return [
-            'g:country' => $data[0],
-            'g:service' => $data[1],
-            'g:price' => $data[2]
-        ];
-
-    }
-
-
 }
