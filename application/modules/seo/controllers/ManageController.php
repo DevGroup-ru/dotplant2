@@ -18,7 +18,6 @@ use yii\filters\AccessControl;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\helpers\Url;
-use app\modules\seo\models\RedirectDoublesFinder;
 use Yii;
 
 class ManageController extends BackendController
