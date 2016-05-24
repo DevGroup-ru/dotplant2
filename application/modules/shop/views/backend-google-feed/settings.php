@@ -95,7 +95,6 @@ $feed_settings['properties_map'] = array_reduce(
         <?= $form->field($model, 'shop_name') ?>
         <?= $form->field($model, 'shop_description')->textarea(); ?>
         <?= $form->field($model, 'feed_handlers')->widget(\devgroup\jsoneditor\Jsoneditor::className()); ?>
-        <?= $form->field($model, 'shop_delivery_price') ?>
         <?= $form->field($model, 'feed_file_name') ?>
 
 
