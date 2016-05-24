@@ -71,7 +71,7 @@ class GoogleMerchants extends Component
 
     public function saveFeedInFs()
     {
-        if (
+        if (false !==
             file_put_contents(
                 Yii::getAlias('@webroot/' . $this->fileName),
                 $this->generateFeedByArray($this->getData())
