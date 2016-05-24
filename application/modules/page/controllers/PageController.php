@@ -18,6 +18,7 @@ use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use app\modules\seo\behaviors\SetCanonicalBehavior;
+use yii\helpers\Url;
 
 class PageController extends Controller
 {
@@ -238,23 +239,36 @@ class PageController extends Controller
 
         // init
         $breadcrumbs = [];
-        $crumbs[$model->slug] = $model->breadcrumbs_label;
+        $crumbs[$model->slug] = [
+            'name' => $model->breadcrumbs_label,
+            'show_type' => $model->show_type,
+            'id' => $model->id
+        ];
 
         // get basic data
         $parent = Page::findById($model->parent_id);
         // if parent exists and not a main page
         while ($parent !== null && $parent->id != 1) {
-            $crumbs[$parent->slug] = $parent->breadcrumbs_label;
+            $crumbs[$parent->slug] = [
+                'name' => $parent->breadcrumbs_label,
+                'show_type' => $parent->show_type,
+                'id' => $parent->id
+            ];
             $parent = $parent->parent;
         }
 
         // build array for widget
         $url = '';
         $crumbs = array_reverse($crumbs, true);
-        foreach ($crumbs as $slug => $label) {
-            $url .= '/' . $slug;
+        foreach ($crumbs as $slug => $data) {
+            $url = Url::to(
+                [
+                    '/page/page/' . $data['show_type'],
+                    'id' => $data['id'],
+                ]
+            );
             $breadcrumbs[] = [
-                'label' => (string) $label,
+                'label' => (string) $data['name'],
                 'url' => $url
             ];
         }
