@@ -280,7 +280,7 @@ class Page extends ActiveRecord implements \JsonSerializable
     private function compileUrl($sub_domain, $slug = "")
     {
         $schema = Yii::$app->request->isSecureConnection ? "https://" : "http://";
-        $main_domain = Yii::$app->getModule("core")->getBaseUrl();
+        $main_domain = str_replace('www.', '', Yii::$app->getModule("core")->serverName);
 
         return "{$schema}{$sub_domain}.{$main_domain}/{$slug}";
     }
@@ -295,7 +295,7 @@ class Page extends ActiveRecord implements \JsonSerializable
         $parent_model = $this->parent;
 
         if (intval($this->slug_absolute) === 1) {
-            $slug = $this->slug === ":mainpage:" ? "" : $this->slug;
+            $slug = ($this->slug === ":mainpage:" || $this->slug === ":subdomainmainpage:") ? "" : $this->slug;
             $subdomain = null;
             if (empty($this->subdomain) === false) {
                 $subdomain = $this->subdomain;
