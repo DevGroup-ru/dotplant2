@@ -15,7 +15,6 @@ use yii\data\ActiveDataProvider;
  * @property double $price
  * @property integer $currency_id
  * @property integer $price_is_multiplier
- * @property integer $is_product_id
  * @property integer $add_to_order
  * @property integer $addon_category_id
  * @property integer $can_change_quantity
@@ -55,8 +54,7 @@ class Addon extends \yii\db\ActiveRecord
             [['name', 'addon_category_id'], 'required'],
             [['name'], 'string'],
             [['price'], 'number'],
-            [['currency_id', 'price_is_multiplier', 'add_to_order', 'addon_category_id', 'can_change_quantity', 'measure_id', 'sort_order'], 'integer'],
-            [['is_product_id',], 'default', 'value' => 0,],
+            [['currency_id', 'price_is_multiplier', 'add_to_order', 'addon_category_id', 'can_change_quantity', 'measure_id', 'sort_order'], 'integer']
         ];
     }
 
@@ -110,7 +108,6 @@ class Addon extends \yii\db\ActiveRecord
         $query->andFilterWhere(['like', 'name', $this->name]);
 
         $query->andFilterWhere(['add_to_order' => $this->add_to_order]);
-        $query->andFilterWhere(['is_product_id' => $this->is_product_id]);
         $query->andFilterWhere(['can_change_quantity' => $this->can_change_quantity]);
 
 
