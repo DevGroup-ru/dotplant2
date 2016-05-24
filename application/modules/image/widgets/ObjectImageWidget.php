@@ -24,6 +24,10 @@ class ObjectImageWidget extends Widget
      */
     public $viewFile = 'img';
     /**
+     * @var string
+     */
+    public $noImageViewFile = 'noimage';
+    /**
      * @var null|int
      */
     public $limit = null;
@@ -85,7 +89,7 @@ class ObjectImageWidget extends Widget
             }
             if ($this->noImageOnEmptyImages === true && count($images) === 0) {
                 return $this->render(
-                    'noimage',
+                    $this->noImageViewFile,
                     [
                         'model' => $this->model,
                         'thumbnailOnDemand' => $this->thumbnailOnDemand,
