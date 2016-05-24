@@ -8,8 +8,6 @@ use app\modules\shop\models\Product;
 use Yii;
 use yii\base\Component;
 use yii\helpers\Json;
-use yii\helpers\VarDumper;
-
 
 /**
  * Class GoogleMerchants
