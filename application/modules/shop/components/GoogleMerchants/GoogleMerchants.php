@@ -99,7 +99,7 @@ class GoogleMerchants extends Component
 
     public function generateFeedByArray($data)
     {
-        $string = '<?xml version="1.0"?><rss xmlns:g="http://base.google.com/ns/1.0" version="2.0"></rss>';
+        $string = '<?xml version="1.0" encoding="UTF-8"?><rss xmlns:g="http://base.google.com/ns/1.0" version="2.0"></rss>';
         $xml = simplexml_load_string($string);
         $channel = $xml->addChild('channel');
         $channel->addChild('title', $this->title);
