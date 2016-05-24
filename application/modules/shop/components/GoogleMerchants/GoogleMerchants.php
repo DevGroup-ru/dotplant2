@@ -9,7 +9,6 @@ use Yii;
 use yii\base\Component;
 use yii\helpers\Json;
 
-
 /**
  * Class GoogleMerchants
  * This implementation uses a rss 2.0 template
@@ -72,7 +71,14 @@ class GoogleMerchants extends Component
 
     public function saveFeedInFs()
     {
-        file_put_contents(Yii::getAlias('@webroot/' . $this->fileName), $this->generateFeedByArray($this->getData()));
+        if (false !==
+            file_put_contents(
+                Yii::getAlias('@webroot/' . $this->fileName),
+                $this->generateFeedByArray($this->getData())
+            )
+        ) {
+            return true;
+        }
     }
 
     public function getData()
