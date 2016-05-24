@@ -8,6 +8,7 @@ use app\modules\shop\models\Product;
 use Yii;
 use yii\base\Component;
 use yii\helpers\Json;
+use yii\helpers\VarDumper;
 
 
 /**
@@ -72,7 +73,14 @@ class GoogleMerchants extends Component
 
     public function saveFeedInFs()
     {
-        file_put_contents(Yii::getAlias('@webroot/' . $this->fileName), $this->generateFeedByArray($this->getData()));
+        if (
+            file_put_contents(
+                Yii::getAlias('@webroot/' . $this->fileName),
+                $this->generateFeedByArray($this->getData())
+            )
+        ) {
+            return true;
+        }
     }
 
     public function getData()

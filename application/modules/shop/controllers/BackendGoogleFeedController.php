@@ -48,7 +48,7 @@ class BackendGoogleFeedController extends BackendController
         BackgroundTasks::addTask(
             [
                 'name' => 'google_merchants_generate',
-                'description' => 'Creating YML file',
+                'description' => 'Creating GM file',
                 'action' => 'shop/google-merchants/generate',
                 'params' => '',
                 'init_event' => 'shop/google_merchants',
