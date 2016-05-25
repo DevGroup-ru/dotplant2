@@ -18,7 +18,7 @@ abstract class VariationMatcher
     /**
      * @param array $variationAttributes
      */
-    public function __construct(ThemeVariation $variationAttributes)
+    public function __construct(array $variationAttributes)
     {
         $this->variationAttributes = $variationAttributes;
     }
