@@ -19,8 +19,6 @@ use Yii;
  */
 class ContentBlock extends \yii\db\ActiveRecord
 {
-    const SCENARIO_SEARCH = 'search';
-
     /**
      * @var null|string
      */
@@ -45,14 +43,8 @@ class ContentBlock extends \yii\db\ActiveRecord
             [['key'], 'unique'],
             [['group_id'], 'default', 'value' => 1],
             [['name', 'key'], 'string', 'max' => 255],
-            [['newGroup'], 'safe']
-        ];
-    }
-
-    public function scenarios()
-    {
-        return [
-            self::SCENARIO_SEARCH => ['name', 'key', 'preload']
+            [['newGroup'], 'safe'],
+            [['name', 'key', 'preload'], 'safe', 'on' => 'search']
         ];
     }
 
