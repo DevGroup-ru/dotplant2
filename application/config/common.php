@@ -15,7 +15,8 @@ if (file_exists(__DIR__ . '/aliases.php')) {
 return [
     'timeZone' => 'Europe/Moscow',
     'bootstrap' => [
-        'mail'
+        'mail',
+        'event'
     ],
     'modules' => [
         'data' => [
@@ -31,6 +32,9 @@ return [
         'image' => [
             'class' => 'app\modules\image\ImageModule',
         ],
+        'event' => [
+            'class' => 'app\modules\event\EventModule'
+        ]
     ],
     'components' => [
         'db' => $db,
