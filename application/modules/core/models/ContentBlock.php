@@ -19,6 +19,8 @@ use Yii;
  */
 class ContentBlock extends \yii\db\ActiveRecord
 {
+    const SCENARIO_SEARCH = 'search';
+    
     /**
      * @var null|string
      */
