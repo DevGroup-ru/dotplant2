@@ -43,9 +43,9 @@ class EventModule extends BaseModule implements BootstrapInterface
             }
 
             if (
-                $class !== null
-                && class_exists($class, false)
-                && in_array(EventInterface::class, class_implements($class, false))
+                is_string($class)
+                && class_exists($class, true)
+                && in_array(EventInterface::class, class_implements($class, true))
             ) {
                 $class::attachEventsHandlers();
             }
