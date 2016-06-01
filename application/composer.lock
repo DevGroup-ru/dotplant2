@@ -4,51 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "86b11ed4c16f17175ce197c441b63ec6",
-    "content-hash": "637ac77711d5f39ee5d931f8d18d59cd",
+    "hash": "fd4722bdf52a981e0d835662559cb12b",
+    "content-hash": "9ef78f4eb091027a666f16dd9c1413d2",
     "packages": [
-        {
-            "name": "bazilio/yii2-stubs-generator",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/bazilio91/yii2-stubs-generator.git",
-                "reference": "a80f60fb28ee1dab05f32b5136ac6454d3318372"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/bazilio91/yii2-stubs-generator/zipball/a80f60fb28ee1dab05f32b5136ac6454d3318372",
-                "reference": "a80f60fb28ee1dab05f32b5136ac6454d3318372",
-                "shasum": ""
-            },
-            "require": {
-                "yiisoft/yii2": "*"
-            },
-            "type": "yii2-extension",
-            "autoload": {
-                "psr-4": {
-                    "bazilio\\stubsgenerator\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Vasily Ostanin",
-                    "email": "bazilio91@gmail.com"
-                }
-            ],
-            "description": "Yii2 component stubs generator for Yii::$app",
-            "keywords": [
-                "autocomplete",
-                "phpstorm",
-                "stubs",
-                "yii2"
-            ],
-            "time": "2015-12-12 02:31:16"
-        },
         {
             "name": "bower-asset/ace-builds",
             "version": "v1.2.3",
@@ -295,7 +253,8 @@
                     "dev-master": "1.0.0-dev"
                 }
             },
-            "description": "jQuery event that is fired as soon as an element appears in the user's viewport."
+            "description": "jQuery event that is fired as soon as an element appears in the user's viewport.",
+            "time": "2015-01-23 15:02:02"
         },
         {
             "name": "bower-asset/jsoneditor",
@@ -382,7 +341,8 @@
                 "jstree",
                 "tree",
                 "ui"
-            ]
+            ],
+            "time": "2015-08-24 06:51:54"
         },
         {
             "name": "bower-asset/ladda",
@@ -544,7 +504,8 @@
             },
             "license": [
                 "MIT"
-            ]
+            ],
+            "time": "2015-03-08 21:03:11"
         },
         {
             "name": "cebe/markdown",
@@ -712,16 +673,16 @@
         },
         {
             "name": "devgroup/dotplant",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DevGroup-ru/DotPlant.git",
-                "reference": "8ac78486c9640946c5af59d8ebc4e52bd592f85c"
+                "reference": "f946540bc7617730d3bc71569408828cf6f3fe1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DevGroup-ru/DotPlant/zipball/8ac78486c9640946c5af59d8ebc4e52bd592f85c",
-                "reference": "8ac78486c9640946c5af59d8ebc4e52bd592f85c",
+                "url": "https://api.github.com/repos/DevGroup-ru/DotPlant/zipball/f946540bc7617730d3bc71569408828cf6f3fe1a",
+                "reference": "f946540bc7617730d3bc71569408828cf6f3fe1a",
                 "shasum": ""
             },
             "require": {
@@ -733,7 +694,7 @@
                 "devgroup/yii2-ace-widget": "~1.0",
                 "devgroup/yii2-dropzone": "~1.0",
                 "devgroup/yii2-jsoneditor": "~1.0",
-                "devgroup/yii2-jstree-widget": "dev-master",
+                "devgroup/yii2-jstree-widget": "~0.1.0",
                 "devgroup/yii2-tag-dependency-helper": "0.0.3",
                 "florianv/swap": "~2.0@dev",
                 "kartik-v/yii2-builder": "~1.6.0",
@@ -788,7 +749,7 @@
                 "yii2 e-commerce",
                 "yii2 shop"
             ],
-            "time": "2015-09-19 21:30:29"
+            "time": "2016-06-01 10:31:47"
         },
         {
             "name": "devgroup/yii2-ace-widget",
@@ -953,7 +914,7 @@
         },
         {
             "name": "devgroup/yii2-jstree-widget",
-            "version": "dev-master",
+            "version": "0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DevGroup-ru/yii2-jstree-widget.git",
@@ -3613,54 +3574,6 @@
             "time": "2015-08-18 21:07:17"
         },
         {
-            "name": "paypal/rest-api-sdk-php",
-            "version": "v1.6.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/paypal/PayPal-PHP-SDK.git",
-                "reference": "06837d290c4906578cfd92786412dff330a1429c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/paypal/PayPal-PHP-SDK/zipball/06837d290c4906578cfd92786412dff330a1429c",
-                "reference": "06837d290c4906578cfd92786412dff330a1429c",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "3.7.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "PayPal": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache2"
-            ],
-            "authors": [
-                {
-                    "name": "PayPal",
-                    "homepage": "https://github.com/paypal/rest-api-sdk-php/contributors"
-                }
-            ],
-            "description": "PayPal's PHP SDK for REST APIs",
-            "homepage": "http://paypal.github.io/PayPal-PHP-SDK/",
-            "keywords": [
-                "payments",
-                "paypal",
-                "rest",
-                "sdk"
-            ],
-            "time": "2016-01-20 17:45:52"
-        },
-        {
             "name": "phpoffice/phpexcel",
             "version": "1.8.0",
             "source": {
@@ -4430,6 +4343,48 @@
     ],
     "packages-dev": [
         {
+            "name": "bazilio/yii2-stubs-generator",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bazilio91/yii2-stubs-generator.git",
+                "reference": "a80f60fb28ee1dab05f32b5136ac6454d3318372"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bazilio91/yii2-stubs-generator/zipball/a80f60fb28ee1dab05f32b5136ac6454d3318372",
+                "reference": "a80f60fb28ee1dab05f32b5136ac6454d3318372",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "bazilio\\stubsgenerator\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vasily Ostanin",
+                    "email": "bazilio91@gmail.com"
+                }
+            ],
+            "description": "Yii2 component stubs generator for Yii::$app",
+            "keywords": [
+                "autocomplete",
+                "phpstorm",
+                "stubs",
+                "yii2"
+            ],
+            "time": "2015-12-12 02:31:16"
+        },
+        {
             "name": "bower-asset/typeahead.js",
             "version": "v0.11.1",
             "source": {
@@ -4501,6 +4456,54 @@
                 "yii2 shop"
             ],
             "time": "2015-09-19 21:32:49"
+        },
+        {
+            "name": "paypal/rest-api-sdk-php",
+            "version": "v1.6.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paypal/PayPal-PHP-SDK.git",
+                "reference": "06837d290c4906578cfd92786412dff330a1429c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paypal/PayPal-PHP-SDK/zipball/06837d290c4906578cfd92786412dff330a1429c",
+                "reference": "06837d290c4906578cfd92786412dff330a1429c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PayPal": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache2"
+            ],
+            "authors": [
+                {
+                    "name": "PayPal",
+                    "homepage": "https://github.com/paypal/rest-api-sdk-php/contributors"
+                }
+            ],
+            "description": "PayPal's PHP SDK for REST APIs",
+            "homepage": "http://paypal.github.io/PayPal-PHP-SDK/",
+            "keywords": [
+                "payments",
+                "paypal",
+                "rest",
+                "sdk"
+            ],
+            "time": "2016-01-20 17:45:52"
         },
         {
             "name": "phpspec/php-diff",
