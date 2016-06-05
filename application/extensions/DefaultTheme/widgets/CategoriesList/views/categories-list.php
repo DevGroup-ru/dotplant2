@@ -27,12 +27,14 @@ if ($type === 'plain') {
         'root_category_id' => $rootCategoryId,
         'activeClass' => $activeClass,
         'activateParents' => $activateParents,
+        'categoryGroupId' => $categoryGroupId
     ]);
 } elseif ($type === 'tree') {
     echo \app\modules\shop\widgets\CategoriesList::widget([
         'rootCategory' => $rootCategoryId,
         'activeClass' => $activeClass,
         'activateParents' => $activateParents,
+        'categoryGroupId' => $categoryGroupId
     ]);
 }
 

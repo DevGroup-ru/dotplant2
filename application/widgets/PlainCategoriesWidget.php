@@ -13,6 +13,7 @@ class PlainCategoriesWidget extends Widget
     public $viewFile = 'categories-list';
     public $activeClass = '';
     public $activateParents = false;
+    public $categoryGroupId = 1;
 
     /**
      * @inheritdoc
@@ -29,6 +30,8 @@ class PlainCategoriesWidget extends Widget
                 [
                     'categories' => $categories,
                     'activeClass' => $this->activeClass,
+                    'categoryGroupId' => $this->categoryGroupId,
+                    'activateParents' => $this->activateParents,
                 ]
             );
             Yii::$app->cache->set(

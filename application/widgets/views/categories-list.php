@@ -8,7 +8,7 @@ Yii::beginProfile('Categories-list');
 <ul class="categories-list">
     <?php foreach ($categories as $category): ?>
         <?php
-        $url = Url::to(['/shop/product/list', 'last_category_id'=>$category->id]);
+        $url = Url::to(['/shop/product/list', 'last_category_id'=>$category->id, $categoryGroupId]);
         ?>
         <li<?= ($url === Yii::$app->request->url) ? " class='$activeClass'" : '' ?>>
             <a href="<?=$url?>">
