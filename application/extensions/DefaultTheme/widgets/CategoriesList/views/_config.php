@@ -11,10 +11,6 @@
     $configurationModel,
     'rootCategoryId'
 ) ?>
-<?= $form->field(
-    $configurationModel,
-    'categoryGroupId'
-) ?>
 
 <?= $form->field(
     $configurationModel,
