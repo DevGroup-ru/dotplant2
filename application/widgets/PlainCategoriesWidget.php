@@ -29,6 +29,7 @@ class PlainCategoriesWidget extends Widget
                 [
                     'categories' => $categories,
                     'activeClass' => $this->activeClass,
+                    'activateParents' => $this->activateParents,
                 ]
             );
             Yii::$app->cache->set(

@@ -26,13 +26,13 @@ if ($type === 'plain') {
     echo \app\widgets\PlainCategoriesWidget::widget([
         'root_category_id' => $rootCategoryId,
         'activeClass' => $activeClass,
-        'activateParents' => $activateParents,
+        'activateParents' => $activateParents
     ]);
 } elseif ($type === 'tree') {
     echo \app\modules\shop\widgets\CategoriesList::widget([
         'rootCategory' => $rootCategoryId,
         'activeClass' => $activeClass,
-        'activateParents' => $activateParents,
+        'activateParents' => $activateParents
     ]);
 }
 

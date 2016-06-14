@@ -7,7 +7,6 @@ use app\extensions\DefaultTheme\models\WidgetConfigurationModel;
 class ConfigurationModel extends WidgetConfigurationModel
 {
     public $rootCategoryId = 1;
-    public $categoryGroupId = 1;
     public $type = 'plain';
     public $activeClass = '';
     public $activateParents = false;
@@ -21,7 +20,6 @@ class ConfigurationModel extends WidgetConfigurationModel
             [
                 [
                     'rootCategoryId',
-                    'categoryGroupId',
                 ],
                 'integer',
             ],
@@ -33,7 +31,6 @@ class ConfigurationModel extends WidgetConfigurationModel
             [
                 [
                     'rootCategoryId',
-                    'categoryGroupId',
                 ],
                 'filter',
                 'filter' => 'intval',
