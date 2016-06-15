@@ -3,11 +3,13 @@
 namespace app\modules\core;
 
 use app;
+use app\backend\widgets\FloatingPanel;
 use app\components\BaseModule;
 use app\modules\core\models\ContentDecorator;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
+use yii\base\Event;
 
 /**
  * Core module handles base DotPlant2 functions

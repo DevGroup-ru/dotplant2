@@ -3,7 +3,7 @@
 namespace app\backend;
 
 use app\backend\components\BackendController;
-use app\backend\widgets\FloatingPanel;
+use app\modules\floatPanel\widgets\FloatingPanel;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\Module;

@@ -2,9 +2,7 @@
 /** @var $bottom bool
  * @var $this \yii\web\View
  */
-use yii\helpers\Html;
 use kartik\icons\Icon;
-
 
 ?>
 
@@ -13,7 +11,6 @@ use kartik\icons\Icon;
         <span class="panel-toggler"></span>
         <a href="/backend/" class="navbar-text">DotPlant2</a>
         <div class="navbar-text">
-
             <?= Yii::t('app', 'Logged as')?>:
             <?= Yii::$app->user->identity->username ?>
             <a href="/logout">
