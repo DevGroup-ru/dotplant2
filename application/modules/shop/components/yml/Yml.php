@@ -18,6 +18,7 @@ use yii\db\Query;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\View;
+use app\modules\image\models\Image;
 
 class Yml extends Component
 {
@@ -118,7 +119,7 @@ class Yml extends Component
         $output = $view->renderFile($this->viewFile, $outputParams);
 
         $fileName = Yii::getAlias('@webroot') . '/' . $config->general_yml_filename;
-        $result = static::USE_GZIP === $config->use_gzip
+        $result = static::USE_GZIP == $config->use_gzip
             ? file_put_contents($fileName . '.gz', gzencode($output), 5)
             : file_put_contents($fileName, $output);
 
@@ -323,7 +324,8 @@ class Yml extends Component
         if ($price <= 0 || $price >= 1000000000) {
             return null;
         }
-
+        $oldPrice = static::getOfferValue($config, 'offer_old_price', $model, 0);
+        $oldPrice = CurrencyHelper::convertCurrencies($oldPrice, $model->currency, $this->currency);
         $values = [];
 
         $name = static::getOfferValue($config, 'offer_name', $model, null);
@@ -336,6 +338,9 @@ class Yml extends Component
         }
         $values[] = new OfferTag('name', htmlspecialchars(trim(strip_tags($name))));
         $values[] = new OfferTag('price', $price);
+        if ($oldPrice > 0 && $oldPrice < 1000000000) {
+            $values[] = new OfferTag('oldprice', $oldPrice);
+        }
         $values[] = new OfferTag('currencyId', $this->currency->iso_code);
 
         /** @var Category $category */
@@ -349,11 +354,14 @@ class Yml extends Component
             'category_group_id' => $category->category_group_id,
         ], true));
 
-        $picture = static::getOfferValue($config, 'offer_picture', $model, static::$_noImg);
-        if (static::$_noImg !== $picture) {
-            $picture = htmlspecialchars(trim($picture, '/'));
-            $picture = implode('/', array_map('rawurlencode', explode('/', $picture)));
-            $values[] = new OfferTag('picture', trim($config->shop_url, '/') . '/' . $picture);
+        /** @var Image[] $model->images */
+        foreach ($model->images as $image) {
+            $picture = $image->file;
+            if (static::$_noImg !== $picture) {
+                $picture = htmlspecialchars(trim($picture, '/'));
+                $picture = implode('/', array_map('rawurlencode', explode('/', $picture)));
+                $values[] = new OfferTag('picture', trim($config->shop_url, '/') . '/' . $picture);
+            }
         }
 
         $description = static::getOfferValue($config, 'offer_description', $model, null);
