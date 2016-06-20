@@ -463,7 +463,7 @@ $(".properties-body").each(function(){
             },
             update: function(event, ui) {
                 var sortedIds = _.filter(
-                    psvTbody.sortable('toArray', {attribute:'psv-id'}),
+                    $(this).sortable('toArray', {attribute:'psv-id'}),
                     function (val) {
                         return val !== "";
                     }
