@@ -256,7 +256,7 @@ class ShopModule extends BaseModule implements BootstrapInterface, app\modules\e
                                             'DynamicContent' => [
                                                 'apply_if_params' => Json::encode($apply_if_params),
                                                 'apply_if_last_category_id' => $_GET['last_category_id'],
-                                                'object_id' => Object::getForClass(Product::className())->id,
+                                                'object_id' => Object::getForClass(Product::class)->id,
                                                 'route' => 'shop/product/list',
                                             ]
                                         ],
