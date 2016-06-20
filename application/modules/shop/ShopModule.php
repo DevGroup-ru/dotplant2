@@ -12,6 +12,7 @@ use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
+use yii\helpers\Json;
 use yii\web\User;
 
 /**
