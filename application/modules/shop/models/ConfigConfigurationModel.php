@@ -227,6 +227,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                     }
                 }
             ],
+            [
+                'productsFilteringMode',
+                'in',
+                'range' => array_keys($this->getFilterModes())
+            ],
             [['itemView', 'listView', 'multiFilterMode', 'productsFilteringMode'], 'string'],
         ];
     }
