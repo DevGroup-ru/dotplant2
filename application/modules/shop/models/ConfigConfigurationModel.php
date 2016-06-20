@@ -55,11 +55,6 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public $deleteOrdersAbility = false;
 
-    /**
-     * @var bool Filtration works only on parent products but not their children
-     * @deprecated
-     */
-    public $filterOnlyByParentProduct = true;
 
     /**
      * @var string the mode of products filtering
@@ -199,7 +194,6 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 [
                     'showProductsOfChildCategories',
                     'deleteOrdersAbility',
-                    'filterOnlyByParentProduct',
                     'showDeletedOrders',
                     'showFiltersInBreadcrumbs',
                     'useCeilQuantity',
@@ -210,7 +204,6 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 [
                     'showProductsOfChildCategories',
                     'deleteOrdersAbility',
-                    'filterOnlyByParentProduct',
                 ],
                 'filter',
                 'filter' => 'boolval',
@@ -234,7 +227,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                     }
                 }
             ],
-            [['itemView', 'listView', 'multiFilterMode'], 'string'],
+            [['itemView', 'listView', 'multiFilterMode', 'productsFilteringMode'], 'string'],
         ];
     }
 

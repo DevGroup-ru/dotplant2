@@ -12,6 +12,9 @@ use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
+use yii\helpers\Json;
+use app\models\Object;
+use app\modules\shop\models\Product;
 use yii\web\User;
 
 /**
@@ -71,9 +74,9 @@ class ShopModule extends BaseModule implements BootstrapInterface, app\modules\e
     public $deleteOrdersAbility = 0;
 
     /**
-     * @var bool Filtration works only on parent products but not their children
+     * @var string the mode of products filtering
      */
-    public $filterOnlyByParentProduct = true;
+    public $productsFilteringMode = ConfigConfigurationModel::FILTER_PARENTS_ONLY;
 
     /**
      * @var string Filtration mode
@@ -253,7 +256,7 @@ class ShopModule extends BaseModule implements BootstrapInterface, app\modules\e
                                             'DynamicContent' => [
                                                 'apply_if_params' => Json::encode($apply_if_params),
                                                 'apply_if_last_category_id' => $_GET['last_category_id'],
-                                                'object_id' => Object::getForClass(app\modules\shop\models\Product::className())->id,
+                                                'object_id' => Object::getForClass(Product::class)->id,
                                                 'route' => 'shop/product/list',
                                             ]
                                         ],
