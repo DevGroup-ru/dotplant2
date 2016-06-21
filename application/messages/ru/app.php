@@ -1288,4 +1288,6 @@ return [
     'Change prices' => 'Изменить цены',
     'Doubles searching results' => 'Результаты поиска дублей',
     'You have doubled slugs. Fix it please.' => 'У вас есть дублирующиеся урл. Исправьте это, пожалуйста.',
+    'Main' => 'Основное',
+    'Addons' => 'Дополнения',
 ];
