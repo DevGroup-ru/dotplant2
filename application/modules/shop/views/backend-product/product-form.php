@@ -453,3 +453,24 @@ $this->trigger(BackendProductController::EVENT_BACKEND_PRODUCT_EDIT_FORM, $event
         endif; ?>
     </article>
 </section>
+<?php
+$tab_errors = <<<JS
+jQuery('#product-form').on('afterValidate', function (e) {
+
+    jQuery('.nav-tabs a').removeClass('has-error');
+
+    \$errors = jQuery('#product-form').find('.form-group.has-error');
+    if ('undefined' !== typeof(\$errors) && \$errors.length > 0) {
+
+        \$errors.each(function(i, e) {
+
+            var tab_id = $(e).closest('.tab-pane').attr('id');
+            jQuery('#product-form').find('[data-toggle=tab][href="#' + tab_id + '"]').addClass('has-error');
+        });
+        return false;
+    }
+    return true;
+});
+JS;
+$this->registerJs($tab_errors);
+?>
