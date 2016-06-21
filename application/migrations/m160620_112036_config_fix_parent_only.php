@@ -103,7 +103,7 @@ class m160620_112036_config_fix_parent_only extends Migration
                 $writer->addValues($shopConfigurablesArray);
                 $writer->commit();
             } else {
-                echo " file@app/config/configurables-state/shop.php cannot be revert. \n";
+                echo "file @app/config/configurables-state/shop.php cannot be revert. \n";
             }
         }
 
