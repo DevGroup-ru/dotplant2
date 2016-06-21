@@ -5,6 +5,7 @@
 /** @var \app\modules\shop\models\ConfigConfigurationModel $model */
 
 use app\backend\widgets\BackendWidget;
+use app\modules\shop\models\ConfigConfigurationModel;
 use kartik\widgets\SwitchInput;
 use app\components\Helper;
 
@@ -44,7 +45,7 @@ use app\components\Helper;
         )
         ?>
             <?= $form->field($model, 'showFiltersInBreadcrumbs')->widget(SwitchInput::className()) ?>
-            <?= $form->field($model, 'filterOnlyByParentProduct')->widget(SwitchInput::className()) ?>
+            <?= $form->field($model, 'productsFilteringMode')->dropDownList(ConfigConfigurationModel::getFilterModes()) ?>
             <?=
             $form->field($model, 'multiFilterMode')
                 ->dropDownList(\app\modules\shop\models\ConfigConfigurationModel::getMultiFilterModes())

@@ -74,9 +74,9 @@ class ShopModule extends BaseModule implements BootstrapInterface, app\modules\e
     public $deleteOrdersAbility = 0;
 
     /**
-     * @var bool Filtration works only on parent products but not their children
+     * @var string the mode of products filtering
      */
-    public $filterOnlyByParentProduct = true;
+    public $productsFilteringMode = ConfigConfigurationModel::FILTER_PARENTS_ONLY;
 
     /**
      * @var string Filtration mode

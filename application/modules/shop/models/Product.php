@@ -833,14 +833,15 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         /** @var \app\modules\shop\ShopModule $module */
         $module = Yii::$app->getModule('shop');
 
-        $onlyParents = $module->filterOnlyByParentProduct;
+
         $query = static::find()->with('images');
-        if (true === $onlyParents) {
-            $query->andWhere([static::tableName() . '.parent_id' => 0, static::tableName() . '.active' => 1]);
-        } else {
+        if ($module->productsFilteringMode === ConfigConfigurationModel::FILTER_PARENTS_ONLY) {
+            $query->andWhere([static::tableName() . '.parent_id' => 0]);
+        } elseif ($module->productsFilteringMode === ConfigConfigurationModel::FILTER_CHILDREN_ONLY) {
             $query->andWhere(['!=', static::tableName() . '.parent_id', 0]);
-            $query->andWhere([static::tableName() . '.active' => 1]);
         }
+        $query->andWhere([static::tableName() . '.active' => 1]);
+
 
         if (null !== $selected_category_id) {
             $query->innerJoin(

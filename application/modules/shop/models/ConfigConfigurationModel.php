@@ -16,6 +16,9 @@ class ConfigConfigurationModel extends BaseConfigurationModel
 {
     const MULTI_FILTER_MODE_UNION = 'union';
     const MULTI_FILTER_MODE_INTERSECTION = 'intersection';
+    const FILTER_PARENTS_ONLY = 'parents_only';
+    const FILTER_CHILDREN_ONLY = 'children_only';
+    const FILTER_ALL = 'all';
 
     /**
      * @var int How much products per page to show
@@ -52,10 +55,11 @@ class ConfigConfigurationModel extends BaseConfigurationModel
      */
     public $deleteOrdersAbility = false;
 
+
     /**
-     * @var bool Filtration works only on parent products but not their children
+     * @var string the mode of products filtering
      */
-    public $filterOnlyByParentProduct = true;
+    public $productsFilteringMode = self::FILTER_PARENTS_ONLY;
 
     /**
      * @var string Filtration mode
@@ -190,7 +194,6 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 [
                     'showProductsOfChildCategories',
                     'deleteOrdersAbility',
-                    'filterOnlyByParentProduct',
                     'showDeletedOrders',
                     'showFiltersInBreadcrumbs',
                     'useCeilQuantity',
@@ -201,7 +204,6 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                 [
                     'showProductsOfChildCategories',
                     'deleteOrdersAbility',
-                    'filterOnlyByParentProduct',
                 ],
                 'filter',
                 'filter' => 'boolval',
@@ -225,7 +227,12 @@ class ConfigConfigurationModel extends BaseConfigurationModel
                     }
                 }
             ],
-            [['itemView', 'listView', 'multiFilterMode'], 'string'],
+            [
+                'productsFilteringMode',
+                'in',
+                'range' => array_keys($this->getFilterModes())
+            ],
+            [['itemView', 'listView', 'multiFilterMode', 'productsFilteringMode'], 'string'],
         ];
     }
 
@@ -334,6 +341,19 @@ class ConfigConfigurationModel extends BaseConfigurationModel
         return [
             self::MULTI_FILTER_MODE_UNION => 'Union',
             self::MULTI_FILTER_MODE_INTERSECTION => 'Intersection',
+        ];
+    }
+
+    /**
+     * Get dropdown list options for productsFilteringMode
+     * @return array
+     */
+    public static function getFilterModes()
+    {
+        return [
+            self::FILTER_PARENTS_ONLY => Yii::t('app', 'Parents only'),
+            self::FILTER_CHILDREN_ONLY => Yii::t('app', 'Children only'),
+            self::FILTER_ALL => Yii::t('app', 'Parents and children'),
         ];
     }
 }
