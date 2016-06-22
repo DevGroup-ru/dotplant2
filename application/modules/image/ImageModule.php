@@ -10,7 +10,7 @@ use Yii;
 class ImageModule extends BaseModule
 {
     public $defaultThumbnailSize = '80x80';
-    public $noImageSrc = 'http://placehold.it/300&text=Image+not+found';
+    public $noImageSrc = 'https://placeholdit.imgix.net/~text?txtsize=17&txt=Image+not+found&w=300&h=300';
     public $thumbnailsDirectory = 'thumbnail';
     public $useWatermark = 0;
     public $watermarkDirectory = 'watermark';
