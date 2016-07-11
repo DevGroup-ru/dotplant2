@@ -10,10 +10,10 @@ use yii\helpers\Url;
 
 /**
  * @var yii\web\View $this
- * @var app\modules\seo\models\Counter $model
+ * @var \app\modules\core\models\ContentBlock $model
  * @var yii\widgets\ActiveForm $form
  */
-$this->title = Yii::t('app', 'Create Chunk');
+$this->title = $model->isNewRecord ? Yii::t('app', 'Create Chunk') : Yii::t('app', 'Edit: content block');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Content Blocks'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 

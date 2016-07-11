@@ -358,6 +358,7 @@ return [
     'E-commerce counters management' => 'Управление e-commerce счетчиками',
     'E-mail' => '',
     'EAV Table Name' => '',
+    'Edit: content block' => 'Редактировать: контентный блок',
     'Edit' => 'Редактировать',
     'Edit Dynamic Content' => 'Редактировать динамический контент',
     'Edit category' => 'Редактировать категорию',
