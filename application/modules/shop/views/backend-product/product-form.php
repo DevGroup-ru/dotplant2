@@ -108,7 +108,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php if (false === $model->isNewRecord): ?><li><a href="#tab-images" data-toggle="tab"><?= Yii::t('app', 'Images') ?></a></li><?php endif; ?>
             <li><a href="#tab-properties" data-toggle="tab"><?= Yii::t('app', 'Properties') ?></a></li>
             <li><a href="#tab-addons" data-toggle="tab"><?= Yii::t('app', 'Addons') ?></a></li>
-            <?php if (!empty($model->options)): ?><li><a href="#tab-options" data-toggle="tab"><?= Yii::t('app', 'Product Options') ?></a></li><? endif; ?>
+            <?php if (!empty($model->options)): ?><li><a href="#tab-options" data-toggle="tab"><?= Yii::t('app', 'Product Options') ?></a></li><?php endif; ?>
         </ul>
     </div>
 </div>
