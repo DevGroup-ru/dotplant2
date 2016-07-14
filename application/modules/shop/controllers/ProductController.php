@@ -433,13 +433,19 @@ class ProductController extends Controller
 
         // init
         $breadcrumbs = [];
-        if ($product !== null) {
-            $crumbs[$product->slug] = !empty($product->breadcrumbs_label) ? $product->breadcrumbs_label : '';
+        if ($product !== null && !empty($selCat) && empty($product->breadcrumbs_label) === false) {
+            $crumbs[$product->breadcrumbs_label] = Url::to(
+                [
+                    '@product',
+                    'model' => $product,
+                    'category_group_id' => $selCat->category_group_id,
+                ]
+            );
         }
         // get basic data
         $parent = empty($selCat) === false ? $selCat : null;
         while ($parent !== null) {
-            $crumbs[$parent->breadcrumbs_label] =  [
+            $crumbs[$parent->breadcrumbs_label] = [
                 '@category',
                 'last_category_id' => $parent->id,
                 'category_group_id' => $parent->category_group_id,
