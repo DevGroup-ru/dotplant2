@@ -108,6 +108,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php if (false === $model->isNewRecord): ?><li><a href="#tab-images" data-toggle="tab"><?= Yii::t('app', 'Images') ?></a></li><?php endif; ?>
             <li><a href="#tab-properties" data-toggle="tab"><?= Yii::t('app', 'Properties') ?></a></li>
             <li><a href="#tab-addons" data-toggle="tab"><?= Yii::t('app', 'Addons') ?></a></li>
+            <?php if (!empty($model->options)): ?><li><a href="#tab-options" data-toggle="tab"><?= Yii::t('app', 'Product Options') ?></a></li><? endif; ?>
         </ul>
     </div>
 </div>
@@ -386,6 +387,68 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
     </div>
     </div>
+    <div class="tab-pane" id="tab-options" role="tabpanel">
+        <section class="col-md-12">
+            <article>
+                <?php
+                if (!empty($model->options)) : ?>
+                    <?php
+                    BackendWidget::begin(
+                        [
+                            'title'=> Yii::t('app', 'Product Options'),
+                            'icon'=>'shopping-cart',
+                            'footer'=>$this->blocks['submit']
+                        ]
+                    ); ?>
+
+                    <?=
+                    GridView::widget([
+                        'dataProvider' =>  $dataProvider = new ActiveDataProvider(
+                            [
+                                'query' => Product::find()
+                                    ->where(['parent_id' => $model->id]),
+                            ]
+                        ),
+                        'columns' => [
+                            [
+                                'class' => 'yii\grid\DataColumn',
+                                'attribute' => 'id',
+                            ],
+                            [
+                                'class' => 'app\backend\columns\TextWrapper',
+                                'attribute' => 'name',
+                                'callback_wrapper' => function ($content, $model, $key, $index, $parent) {
+
+                                    return $content;
+                                }
+                            ],
+                            [
+                                'class' => \kartik\grid\EditableColumn::className(),
+                                'attribute' => 'price',
+                                'editableOptions' => [
+                                    'inputType' => \kartik\editable\Editable::INPUT_TEXT,
+                                    'formOptions' => [
+                                        'action' => Url::toRoute('/shop/backend-product/update-editable'),
+                                    ],
+                                ],
+                            ],
+                            'old_price',
+                            [
+                                'class' => 'app\backend\components\ActionColumn',
+                                'buttons' => function ($model, $key, $index, $parent) {
+                                    return null;
+                                }
+                            ],
+                        ],
+                        'hover' => true,
+                    ]);
+                    ?>
+                    <?php BackendWidget::end(); ?>
+                    <?php
+                endif; ?>
+            </article>
+        </section>
+    </div>
 </div>
 
 <?php
@@ -393,66 +456,7 @@ $event = new \app\backend\events\BackendEntityEditFormEvent($form, $model);
 $this->trigger(BackendProductController::EVENT_BACKEND_PRODUCT_EDIT_FORM, $event);
 ?>
 <?php ActiveForm::end(); ?>
-<section>
-    <article>
-        <?php
-        if (!empty($model->options)) : ?>
-            <?php
-            BackendWidget::begin(
-                [
-                    'title'=> Yii::t('app', 'Product Options'),
-                    'icon'=>'shopping-cart',
-                    'footer'=>$this->blocks['submit']
-                ]
-            ); ?>
 
-            <?=
-            GridView::widget([
-                'dataProvider' =>  $dataProvider = new ActiveDataProvider(
-                    [
-                        'query' => Product::find()
-                            ->where(['parent_id' => $model->id]),
-                    ]
-                ),
-                'columns' => [
-                    [
-                        'class' => 'yii\grid\DataColumn',
-                        'attribute' => 'id',
-                    ],
-                    [
-                        'class' => 'app\backend\columns\TextWrapper',
-                        'attribute' => 'name',
-                        'callback_wrapper' => function ($content, $model, $key, $index, $parent) {
-
-                            return $content;
-                        }
-                    ],
-                    [
-                        'class' => \kartik\grid\EditableColumn::className(),
-                        'attribute' => 'price',
-                        'editableOptions' => [
-                            'inputType' => \kartik\editable\Editable::INPUT_TEXT,
-                            'formOptions' => [
-                                'action' => Url::toRoute('/shop/backend-product/update-editable'),
-                            ],
-                        ],
-                    ],
-                    'old_price',
-                    [
-                        'class' => 'app\backend\components\ActionColumn',
-                        'buttons' => function ($model, $key, $index, $parent) {
-                            return null;
-                        }
-                    ],
-                ],
-                'hover' => true,
-            ]);
-            ?>
-            <?php BackendWidget::end(); ?>
-        <?php
-        endif; ?>
-    </article>
-</section>
 <?php
 $tab_errors = <<<JS
 jQuery('#product-form').on('afterValidate', function (e) {
