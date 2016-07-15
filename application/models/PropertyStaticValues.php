@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\modules\shop\models\ConfigConfigurationModel;
 use app\modules\shop\models\Product;
 use app\properties\HasProperties;
 use app\traits\GetImages;
@@ -74,6 +75,7 @@ class PropertyStaticValues extends ActiveRecord
         return [
             [['property_id', 'name', 'value'], 'required'],
             [['property_id', 'sort_order', 'dont_filter'], 'integer'],
+            [['slug'], 'unique'],
             [['title_prepend'], 'boolean'],
             [['name', 'value', 'slug', 'title_append'], 'string']
         ];
@@ -197,15 +199,25 @@ class PropertyStaticValues extends ActiveRecord
      * @param $properties
      * @return PropertyStaticValues[]
      */
-    public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false, $parentsOnly = true)
+    public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false, $productsFilteringMode)
     {
         $priceMin = Yii::$app->request->get('price_min');
         $priceMax = Yii::$app->request->get('price_max');
         $cacheKey = "getValuesForFilter:" . json_encode([$property_id, $category_id, $properties, $priceMin, $priceMax]);
         if (false === $allSelections = Yii::$app->cache->get($cacheKey)) {
-            $joinCondition = (true === $parentsOnly) ?
-                'p.id = {{%product_category}}.object_model_id AND p.active = 1 AND p.parent_id = 0'
-                : 'p.id = {{%product_category}}.object_model_id AND p.active = 1';
+
+            switch($productsFilteringMode) {
+                case ConfigConfigurationModel::FILTER_PARENTS_ONLY:
+                    $joinCondition =  'p.id = {{%product_category}}.object_model_id AND p.active = 1 AND p.parent_id = 0';
+                    break;
+                case ConfigConfigurationModel::FILTER_CHILDREN_ONLY:
+                    $joinCondition =  'p.id = {{%product_category}}.object_model_id AND p.active = 1 AND p.parent_id != 0';
+                    break;
+                default:
+                    $joinCondition =  'p.id = {{%product_category}}.object_model_id AND p.active = 1';
+                    break;
+            }
+
             $objectModel = Object::getForClass(Product::className());
             $objectId = $objectModel !== null ? $objectModel->id : 0;
             $allSelections = static::find()
