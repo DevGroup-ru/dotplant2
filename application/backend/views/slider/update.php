@@ -264,7 +264,7 @@ $editable_formOptions = [
             <input type="file" name="file">
         </div>
         <button type="submit" class="btn btn-primary"><?= Icon::show('upload') . ' ' . Yii::t('app', 'Upload') ?></button>
-    </form>
+    <?php ActiveForm::end() ?>
 </section>
 <?php
 $script = <<< SCRIPT
