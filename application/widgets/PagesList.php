@@ -41,7 +41,7 @@ class PagesList extends Widget
         $children = Yii::$app->cache->get($cacheKey);
         if ($children === false) {
             $children = Page::find()
-                ->where(['parent_id' => $this->model->id])
+                ->where(['parent_id' => $this->model->id, 'published' => 1])
                 ->orderBy(['date_added' => SORT_DESC]);
             if (null !== $this->limit) {
                 $children->limit($this->limit);
