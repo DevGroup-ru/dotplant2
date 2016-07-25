@@ -14,10 +14,10 @@ class m160714_114125_warning_set_unique_static_value_key extends Migration
     {
         $svTable = PropertyStaticValues::tableName();
         $slugsArray = (new Query())
-            ->select($svTable . '.*, count(id) as count')
+            ->select($svTable . '.slug')
             ->from($svTable)
             ->groupBy($svTable . '.slug')
-            ->having('count > 1')
+            ->having('count(slug) > 1')
             ->all();
 
         $routs = Route::find()->asArray()->all();
@@ -35,6 +35,7 @@ class m160714_114125_warning_set_unique_static_value_key extends Migration
 
         foreach ($slugsArray as $item) {
             $this->fixSlug($item['slug'], $filterProperties);
+
         }
 
         $fp = fopen(dirname(__FILE__) . '/.fix_property_slugs.csv', 'w');
@@ -108,15 +109,4 @@ class m160714_114125_warning_set_unique_static_value_key extends Migration
 
         return false;
     }
-
-    /*
-    // Use safeUp/safeDown to run migration code within a transaction
-    public function safeUp()
-    {
-    }
-
-    public function safeDown()
-    {
-    }
-    */
 }
