@@ -107,7 +107,7 @@ Icon::map($this);
                 <i class="fa fa-arrow-circle-left hit"></i> 
             </span>
         </aside>
-    <div id="main" role="main">
+    <div id="main" class="clearfix" role="main">
         <div id="ribbon">
             <?= Breadcrumbs::widget([
                 'homeLink' => [
