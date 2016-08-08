@@ -176,7 +176,7 @@ class PropertiesController extends Controller
     {
         switch ($value_type) {
             case 'STRING':
-                return 'TINYTEXT';
+                return 'TEXT';
             case 'NUMBER':
                 return 'FLOAT';
             default:
@@ -200,13 +200,13 @@ class PropertiesController extends Controller
             if (!$propertyHandler->changePropertyType($model)) {
                 if ($model->is_column_type_stored) {
                     if ($model->isNewRecord) {
+                        $col_type = $this->getColumnType($model->value_type);
                         $object = Object::findById($model->group->object_id);
                         Yii::$app->db->createCommand()
-                            ->addColumn($object->column_properties_table_name, $model->key, "TINYTEXT")
+                            ->addColumn($object->column_properties_table_name, $model->key, $col_type)
                             ->execute();
                         if ($object->object_class == Form::className()) {
                             $submissionObject = Object::getForClass(Submission::className());
-                            $col_type = $this->getColumnType($model->value_type);
                             Yii::$app->db->createCommand()
                                 ->addColumn($submissionObject->column_properties_table_name, $model->key, $col_type)
                                 ->execute();
