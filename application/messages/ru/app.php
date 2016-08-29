@@ -981,6 +981,7 @@ return [
     'Show price changed notification' => '',
     'Show undeleted' => 'Показать неудаленные',
     'Show values' => 'Показать значения',
+    'Show pages inside this page' => 'Показать дочернии страницы',
     'Sign up' => 'Зарегистрироваться',
     'Signup' => 'Регистрация',
     'Site settings' => 'Настройки сайта',
