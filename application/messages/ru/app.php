@@ -1244,7 +1244,7 @@ return [
     'One to one' => 'Один к одному',
     'One to two' => 'Один к двум',
     'Two to one' => 'Два к одному',
-    'Backend edit grids' => 'Сетка ретакрирования админки',
+    'Backend edit grids' => 'Сетка редактирования админки',
     'Child view' => 'Представление внутрених страниц',
     'Request password reset' => 'Запрос на сброс пароля',
     'Reset password' => 'Сброс пароля',
