@@ -59,7 +59,7 @@ $allowRate = !empty($ratingGroupName);
                     'returnUrl' => Yii::$app->request->url,
                 ],
                 'id' => 'review-form',
-                'data-type' => 'form-widget'
+                'options' => ['data-type' => 'form-widget']
             ]
         );
         ?>
