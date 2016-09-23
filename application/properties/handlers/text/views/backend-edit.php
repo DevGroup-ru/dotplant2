@@ -17,25 +17,31 @@ use kartik\icons\Icon;
 
 ?>
 <?php if ($multiple) {
-    $totalCount = count($values->values);
-
-    foreach ($values->values as $index=>$val) {
+    $echoField = function ($index) use ($form, $model, $property_key) {
         echo $form->field($model, "{$property_key}[{$index}]", [
             'addon' => [
                 'append' => [
                     'content' =>
-                        Html::button(
-                            Icon::show('plus'),
-                            ['class'=>'btn btn-default add-property-'.$property_key]
-                        ) .
-                        Html::button(
-                            Icon::show('trash-o'),
-                            ['class'=>'btn btn-default remove-property-'.$property_key]
-                        ),
+                    Html::button(
+                        Icon::show('plus'),
+                        ['class'=>'btn btn-default add-property-'.$property_key]
+                    ) .
+                    Html::button(
+                        Icon::show('trash-o'),
+                        ['class'=>'btn btn-default remove-property-'.$property_key]
+                    ),
                     'asButton' => true,
                 ]
             ]
         ]);
+    };
+
+    if (count($values->values) > 0) {
+        foreach ($values->values as $index => $val) {
+            $echoField($index);
+        }
+    } else {
+        $echoField(0);
     }
     $formId = $form->id;
 
