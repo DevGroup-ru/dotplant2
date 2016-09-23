@@ -17,9 +17,7 @@ use kartik\icons\Icon;
 
 ?>
 <?php if ($multiple) {
-    $totalCount = count($values->values);
-
-    foreach ($values->values as $index=>$val) {
+    $echoField = function ($index) use ($form, $model, $property_key) {
         echo $form->field($model, "{$property_key}[{$index}]", [
             'addon' => [
                 'append' => [
@@ -36,6 +34,14 @@ use kartik\icons\Icon;
                 ]
             ]
         ]);
+    };
+
+    if (count($values->values) > 0) {
+        foreach ($values->values as $index => $val) {
+            $echoField($index);
+        }
+    } else {
+        $echoField(0);
     }
     $formId = $form->id;
 
