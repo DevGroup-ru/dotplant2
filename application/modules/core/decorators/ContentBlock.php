@@ -37,19 +37,14 @@ class ContentBlock extends PreDecorator
                 $baseContentKey . "title",
                 $dependency
             );
-            if (!empty($view->blocks["content"])) {
-                $view->blocks["content"] = $this->processChunks(
-                    $view->blocks["content"],
-                    $baseContentKey . "content",
-                    $dependency
-                );
-            }
-            if (!empty($view->blocks["announce"])) {
-                $view->blocks["announce"] = $this->processChunks(
-                    $view->blocks["announce"],
-                    $baseContentKey . "announce",
-                    $dependency
-                );
+            foreach ($view->blocks as $blockName => &$blockContent) {
+                if (!empty($blockContent)) {
+                    $blockContent = $this->processChunks(
+                            $blockContent,
+                            $baseContentKey . $blockName,
+                            $dependency
+                    );
+                }
             }
         }
     }
