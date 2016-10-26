@@ -98,9 +98,8 @@ class Helper
         $text = trim(strip_tags($text));
         $pos = mb_strrpos(mb_substr($text, 0, $length), ' ');
         $string = mb_substr($text, 0, $pos);
-        $string .= $dots;
         if (!empty($string)) {
-            return $string;
+            return $string.$dots;
         } else {
             return "";
         }
