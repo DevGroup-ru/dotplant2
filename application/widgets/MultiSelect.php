@@ -154,7 +154,7 @@ class MultiSelect extends Widget
                                         params.errorFunction(data);
                                     }
                                 },
-                                'tyte' : 'get',
+                                'type' : 'get',
                                 'url' : params.addUrl
                             });
                         }else{
