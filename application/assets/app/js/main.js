@@ -466,7 +466,7 @@ $(function() {
         return false;
     });
 
-    $('select[data-userpreference]').change(function(){
+    $('body').on('change', 'select[data-userpreference]', function(){
         var $this = $(this);
         DotPlant.setPreference($this.data('userpreference'), $this.val());
         return false;
