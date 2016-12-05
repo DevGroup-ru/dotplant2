@@ -20,6 +20,10 @@ class FullCategoryPathPart extends CategoryPart
         $used_params[] = $this->model_category_attribute;
 
         $attribute_name = $this->model_category_attribute;
+        if ($this->model === null && $route === "shop/product/show") {
+            $this->model = \app\modules\shop\models\Product::findById(intval($parameters["model_id"]));
+            $used_params[] = 'model_id';
+        }
         $category_id = $this->model->$attribute_name;
 
         /** @var Category $category */
