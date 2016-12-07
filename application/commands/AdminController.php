@@ -154,4 +154,30 @@ class AdminController extends Controller
             exec("cd $themeRoot ; npm install");
         }
     }
+    /**
+    * Parse url to route and corresponding params
+    *
+    * @param string $url
+    * @param bool $prettify
+    * @return string json_encode'd
+    */
+    public function actionParseUrl($url = "/", $prettify = false) {
+        $_SERVER["SERVER_NAME"] = \Yii::$app->getModule('core')->serverName;
+        $config = require(\Yii::getAlias("@app") . "/config/web.php");
+        $webApp = new \yii\web\Application($config);
+
+        $this->stdout(
+            json_encode(
+                $webApp->getUrlManager()->parseRequest(
+                    new \yii\web\Request(
+                        [
+                            "url" => $url,
+                            "pathInfo" => ltrim($url, "/")
+                        ]
+                    )
+                ),
+                $prettify ? JSON_PRETTY_PRINT : 0
+            )
+        );
+    }
 }
