@@ -164,7 +164,7 @@ class AdminController extends Controller
     public function actionParseUrl($url = "/", $prettify = false) {
         $_SERVER["SERVER_NAME"] = \Yii::$app->getModule('core')->serverName;
         $config = require(\Yii::getAlias("@app") . "/config/web.php");
-        $webApp = new \yii\web\Applicaion($config);
+        $webApp = new \yii\web\Application($config);
 
         $this->stdout(
             json_encode(
