@@ -344,7 +344,9 @@ class BackendProductController extends BackendController
 
         if (isset($post['GeneratePropertyValue'])) {
             $generateValues = $post['GeneratePropertyValue'];
-            $post[HasProperties::FIELD_ADD_PROPERTY_GROUP]['Product'] = $post['PropertyGroup']['id'];
+            if(empty($parent->propertyGroups[$post['PropertyGroup']['id']])){
+                $post[HasProperties::FIELD_ADD_PROPERTY_GROUP]['Product'] = $post['PropertyGroup']['id'];
+            }
         } else {
             $generateValues = [];
         }
