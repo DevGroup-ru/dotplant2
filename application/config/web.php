@@ -138,7 +138,6 @@ $config = [
             ],
         ],
         'errorHandler' => [
-//            'class' => 'app\components\DotplantErrorHandler',
             'errorAction' => 'default/error',
         ],
         'log' => [

@@ -7,7 +7,6 @@ use app\modules\core\helpers\ContentBlockHelper;
 use app\modules\core\models\ContentBlock;
 use app\modules\page\models\Page;
 use app\models\Search;
-use app\modules\seo\behaviors\MetaBehavior;
 use app\traits\LoadModel;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;

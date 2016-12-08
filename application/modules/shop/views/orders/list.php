@@ -14,19 +14,8 @@ $this->params['breadcrumbs'] = [
     ],
     $this->title,
 ];
-
-//
-//    echo \yii\helpers\Html::tag('p', 'Current order: '.$currentOrder);
-//    foreach ($orders as $order) {
-//        echo \yii\helpers\Html::tag(
-//            'p',
-//            \yii\helpers\Html::a(
-//                'Order: '.$order->id,
-//                \yii\helpers\Url::to(['/shop/orders/show', 'hash' => $order->hash])
-//            )
-//        );
-//    }
 ?>
+
 <h1>
     <?= Yii::t('app', 'Orders list') ?>
 </h1>
@@ -65,8 +54,6 @@ $this->params['breadcrumbs'] = [
             'dataProvider' => $dataProvider,
         ]);
     ?>
-
 <?php else: ?>
     <?= Yii::t('app', 'You have no complete orders') ?>
-
 <?php endif; ?>

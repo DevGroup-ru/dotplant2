@@ -58,7 +58,6 @@ class m141024_133439_background_tasks extends Migration
                 'name' => 'ErrorMonitor notifier',
                 'cron_expression' => '*/1 * * * *',
                 'status' => 'ACTIVE',
-                // 'ts' => time(),
             ]
         );
     }

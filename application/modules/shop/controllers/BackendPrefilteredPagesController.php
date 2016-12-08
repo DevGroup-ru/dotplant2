@@ -105,8 +105,6 @@ class BackendPrefilteredPagesController extends BackendController
                             )
                         );
                 }
-                //return $this->redirect(['/backend/prefiltered-pages/edit', 'id' => $model->id]);
-
             } else {
                 \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }

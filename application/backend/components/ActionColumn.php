@@ -160,8 +160,6 @@ class ActionColumn extends Column
                     ArrayHelper::merge(
                         isset($button['options']) ? $button['options'] : [],
                         [
-                            //'data-pjax' => 0,
-                            // 'data-action' => $button['url'],
                             'class' => $button['class'],
                             'title' => $button['label'],
                         ]

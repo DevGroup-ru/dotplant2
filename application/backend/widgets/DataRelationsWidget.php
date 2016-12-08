@@ -112,7 +112,6 @@ class DataRelationsWidget extends Widget
 
     protected function getProperties()
     {
-        $result = [];
         $query = new Query;
         $query->select(
             Property::tableName() . '.key, ' . Property::tableName() . '.name'

@@ -7,7 +7,7 @@
 
 use app\modules\shop\helpers\OrderStageHelper;
 use yii\helpers\Html;
-//yii\caching\TagDependency::invalidate(Yii::$app->cache, ['Session:'.Yii::$app->session->id]);
+
 $this->title = Html::encode($stage->name_frontend);
 ?>
 

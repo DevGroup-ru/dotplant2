@@ -132,14 +132,6 @@ class AuthClientHelper
                     'app\modules\user\authclients\VKontakte' => 'last_name',
                     'yii\authclient\clients\YandexOAuth' => 'last_name',
                 ],
-//                'name' => [
-//                    'app\modules\user\authclients\GitHub' => 'name',
-//                    'yii\authclient\clients\YandexOpenId' => 'name',
-//                    'yii\authclient\clients\Twitter' => 'name',
-//                    'app\modules\user\authclients\Facebook' => 'name',
-//                    'app\modules\user\authclients\VKontakte' => ['first_name', 'last_name'],
-//                    'yii\authclient\clients\YandexOAuth' => ['first_name', 'last_name'],
-//                ],
                 'avatar_url' => [
                     'app\modules\user\authclients\GitHub' => 'avatar_url',
                     'yii\authclient\clients\Twitter' => 'profile_image_url',

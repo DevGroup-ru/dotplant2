@@ -3,13 +3,9 @@
 namespace app\controllers;
 
 use app\actions\SubmitFormAction;
-use app\backend\actions\PropertyHandler;
 use app\components\search\SearchEvent;
-use app\models\Form;
 use app\models\Search;
-use app\modules\core\components\MailComponent;
 use app\modules\shop\models\Product;
-use app\modules\seo\behaviors\MetaBehavior;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -33,10 +29,6 @@ class DefaultController extends Controller
             'submit-form' => [
                 'class' => SubmitFormAction::className(),
             ],
-//            'property-handler' => [
-//                'class' => PropertyHandler::className(),
-//                'modelName' => Form::className()
-//            ]
         ];
     }
 

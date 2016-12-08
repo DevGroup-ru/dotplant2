@@ -87,11 +87,7 @@ class DynamicContentController extends BackendController
                 $model->object_id = intval($_GET['DynamicContent']['object_id']);
             }
         }
-        $property_groups_ids_for_object = (new Query)->select('id')->from(PropertyGroup::tableName())->where(
-            [
-                //                'object_id' => $model->object_id,
-            ]
-        )->column();
+        $property_groups_ids_for_object = (new Query)->select('id')->from(PropertyGroup::tableName())->where([])->column();
 
         $properties = Property::find()->where(
             [

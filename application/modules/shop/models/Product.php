@@ -610,15 +610,6 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                 $ids = explode($multipleValuesDelimiter, $fields['relatedProducts']);
                 $this->relatedProductsArray=$ids;
                 $this->saveRelatedProducts();
-//                $this->unlinkAll('relatedProducts', true);
-//
-//                foreach ($ids as $index => $id) {
-//                    $product = Product::findById($id);
-//                    $this->link('relatedProduct', $product, ['sort_order'=>$index]);
-//                }
-
-
-
             }
         }
     }

@@ -31,7 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'theme' => 'panel-default',
             'gridOptions' => [
                 'dataProvider' => $data_provider,
-//                'filterModel' => $searchModel,
                 'hover' => true,
                 'panel' => [
                     'heading' => Html::tag('h3', $this->title, ['class' => 'panel-title']),

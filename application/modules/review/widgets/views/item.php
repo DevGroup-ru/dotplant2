@@ -22,7 +22,6 @@ if (null !== $submission) {
         $user = \app\modules\user\models\User::findIdentity($submission->processed_by_user_id);
         $userName = Html::encode($user->getDisplayName());
     }
-//$model->submission->getPropertyGroups(true);
 } else {
     $userName = Yii::t('app', 'Guest');
 }

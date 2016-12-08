@@ -445,11 +445,7 @@ class Extensions extends \yii\db\ActiveRecord
                 $loader->setPsr4($prefix, $paths);
             }
         }
-        //try {
-            $result = $extension->activateExtension(false);
-//        } catch (\Exception $e) {
-//            throw new ErrorException(Yii::t('app', 'Unable to activate extension').': '.$e->getMessage());
-//        }
+        $result = $extension->activateExtension(false);
         if ($result) {
             $extension->is_active = 1;
             $extension->save();

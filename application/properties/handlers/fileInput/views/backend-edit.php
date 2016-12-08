@@ -114,7 +114,6 @@ TPL;
                             .val(data.response[name]["fileName"]);
                     } catch ($e) {}
                 }',
-//                'fileloaded' => sprintf($_js, $model->formName().'['.$property_key.'][]'),
             ],
         ]
     );

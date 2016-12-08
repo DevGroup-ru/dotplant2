@@ -10,8 +10,6 @@ use app\properties\HasProperties;
         $new_groups = [];
 
         foreach ($object_property_groups as $i => $opg) {
-
-
             $items[] = [
                 'label' => $opg->group->name . ' ' . Html::tag(
                         'i',
@@ -33,7 +31,6 @@ use app\properties\HasProperties;
                 ],
                 'encode' => false,
             ];
-
         }
 
         foreach ($property_groups_to_add as $id => $name) {
@@ -73,7 +70,6 @@ use app\properties\HasProperties;
                             'items' => $new_groups,
                         ],
                         'options' => [
-                            // 'class' => 'pull-right',
                             'class' => 'btn-xs',
                         ],
                     ]
@@ -92,11 +88,9 @@ use app\properties\HasProperties;
                 'header_append' => $this->blocks['header-append'],
                 'icon' => 'cubes',
                 'footer' => $this->blocks['submit'],
-
             ]
         ); ?>
         <div class="tab-content">
-
             <?php
             $model->getAbstractModel()->setArrayMode(true);
             foreach ($object_property_groups as $i => $opg) {
@@ -111,8 +105,6 @@ use app\properties\HasProperties;
                     if ($property_values = $model->getPropertyValuesByPropertyId($prop->id)) {
                         echo $prop->handler($form, $model->getAbstractModel(), $property_values, 'backend_edit_view');
                     }
-
-
                 }
                 echo "</div>";
             }

@@ -109,7 +109,6 @@ class ImageModule extends BaseModule
     {
         /** @var Filesystem $fs */
         $fs = Yii::$app->{$this->defaultComponent};
-//        $fs->addPlugin(new GetWithMetadata());
         return $fs;
     }
 

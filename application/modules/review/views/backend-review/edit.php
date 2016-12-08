@@ -188,8 +188,6 @@ JSCODE;
             <?=
                 \devgroup\JsTreeWidget\TreeWidget::widget([
                     'treeDataRoute' => ['ajax-get-tree', 'root_id' => $review->root_id, 'current_id' => $review->id],
-//                    'changeParentAction' => 'move',
-//                    'reorderAction' => 'reorder',
                     'doubleClickAction' => \devgroup\JsTreeWidget\ContextMenuHelper::actionUrl(
                         ['view']
                     ),
