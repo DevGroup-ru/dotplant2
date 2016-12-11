@@ -146,6 +146,7 @@ class ConfigConfigurationModel extends BaseConfigurationModel
         return [
             '@article' => '/page/page/show',
             '@articles' => '/page/page/list',
+            '@page' => '/page/page/show',
         ];
     }
 }
