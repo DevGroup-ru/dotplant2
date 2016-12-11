@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = [
 
                     <div class="padding-10">
                         <div class="tabs-left">
-                            <ul class="nav nav-tabs tabs-left">
+                            <ul class="nav nav-tabs tabs-left" id="config-control-tabs">
                                 <?php
                                     $counter=0;
                                     foreach ($models as $i => $model):
@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = [
                                         }
                                 ?>
                                 <li class="<?= $counter++===0 ? 'active' : '' ?>">
-                                    <a href="#tab-configurable-<?=$i?>" data-toggle="tab">
+                                    <a id="tab-<?= $i ?>" href="#tab-configurable-<?=$i?>" data-toggle="tab">
                                         <?= Yii::t('app', $model->section_name) ?>
                                     </a>
                                 </li>
@@ -126,3 +126,12 @@ $this->params['breadcrumbs'][] = [
     </article>
     <?php ActiveForm::end(); ?>
 </div>
+
+<?php
+$this->registerJs(<<<JS
+    jQuery(localStorage.getItem("configActiveTab")).click();
+    jQuery("#config-control-tabs").on("show.bs.tab", "a[data-toggle='tab']", function(event) {
+        localStorage.setItem("configActiveTab", "#" + event.target.id);
+    });
+JS
+);
