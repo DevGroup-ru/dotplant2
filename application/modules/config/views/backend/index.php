@@ -5,9 +5,7 @@ use app\backend\components\ActiveForm;
 use kartik\icons\Icon;
 $this->title = Yii::t('app', 'Configuration');
 $this->params['breadcrumbs'][] = [
-    'url' => [
-        '/config/backend/index',
-    ],
+    'url' => ['/config/backend/index'],
     'label' => $this->title
 ];
 ?>
@@ -19,31 +17,40 @@ $this->params['breadcrumbs'][] = [
         </h1>
     </div>
 </div>
+
 <div class="row">
-    <?php $form = ActiveForm::begin(['id' => 'config-form', 'type'=> ActiveForm::TYPE_VERTICAL, 'options' => ['enctype' => 'multipart/form-data']]); ?>
+    <?php
+        $form = ActiveForm::begin(
+                [
+                    'id' => 'config-form',
+                    'type'=> ActiveForm::TYPE_VERTICAL,
+                    'options' => ['enctype' => 'multipart/form-data']
+                ]
+        );
+    ?>
     <article class="col-xs-12 col-lg-12">
-
-        <div class="jarviswidget well jarviswidget-color-darken" id="wid-id-configurations" data-widget-sortable="false" data-widget-deletebutton="false" data-widget-editbutton="false" data-widget-colorbutton="false" role="widget" style="">
-
+        <div
+            class="jarviswidget well jarviswidget-color-darken"
+            id="wid-id-configurations"
+            data-widget-sortable="false"
+            data-widget-deletebutton="false"
+            data-widget-editbutton="false"
+            data-widget-colorbutton="false"
+            role="widget"
+        >
             <!-- widget div-->
             <div role="content">
-
                 <!-- widget edit box -->
                 <div class="jarviswidget-editbox">
                     <!-- This area used as dropdown edit box -->
-
                 </div>
                 <!-- end widget edit box -->
 
                 <!-- widget content -->
                 <div class="widget-body no-padding">
-
                     <div class="widget-body-toolbar">
-
                         <div class="row">
-
                             <div class="col-sm-4">
-
                                 <div class="input-group">
                                     <input class="form-control" type="text" placeholder="Type configuration name for searching (TBD)...">
                                     <div class="input-group-btn">
@@ -55,10 +62,8 @@ $this->params['breadcrumbs'][] = [
                             </div>
 
                             <div class="col-sm-8 text-align-right">
-
                                 <div class="btn-group">
                                     <a href="javascript:void(0)" class="btn btn-sm btn-success"> <i class="fa fa-plus"></i> Create New value @tbd </a>
-
                                     <?=
                                     Html::submitButton(
                                         Icon::show('save') . ' ' . Yii::t('app', 'Save'),
@@ -70,21 +75,20 @@ $this->params['breadcrumbs'][] = [
                                     )
                                     ?>
                                 </div>
-
                             </div>
-
                         </div>
-
                     </div>
 
                     <div class="padding-10">
-
-
                         <div class="tabs-left">
                             <ul class="nav nav-tabs tabs-left">
-                                <?php $counter=0; ?>
-                                <?php foreach ($models as $i => $model): ?>
-                                <?php if ($model->display_in_config === 0) continue; ?>
+                                <?php
+                                    $counter=0;
+                                    foreach ($models as $i => $model):
+                                        if ($model->display_in_config === 0) {
+                                            continue;
+                                        }
+                                ?>
                                 <li class="<?= $counter++===0 ? 'active' : '' ?>">
                                     <a href="#tab-configurable-<?=$i?>" data-toggle="tab">
                                         <?= Yii::t('app', $model->section_name) ?>
@@ -93,32 +97,31 @@ $this->params['breadcrumbs'][] = [
                                 <?php endforeach; ?>
                             </ul>
                             <div class="tab-content">
-                                <?php $counter = 0 ; ?>
-                                <?php foreach ($models as $i => $model): ?>
-                                <?php if ($model->display_in_config === 0) continue; ?>
-                                    <div class="tab-pane <?= $counter++===0 ? 'active' : '' ?>" id="tab-configurable-<?=$i?>">
-
-                                        <?= $this->render($model->getConfigurationView(), [
-                                            'configurable' => $model,
-                                            'form' => $form,
-                                            'model' => $model->getConfigurableModel(),
-                                        ]) ?>
-
+                                <?php
+                                    $counter = 0;
+                                    foreach ($models as $i => $model):
+                                        if ($model->display_in_config === 0) {
+                                            continue;
+                                        }
+                                    ?>
+                                    <div class="tab-pane <?= $counter++ === 0 ? 'active' : '' ?>" id="tab-configurable-<?=$i?>">
+                                        <?= $this->render(
+                                                $model->getConfigurationView(),
+                                            [
+                                                'configurable' => $model,
+                                                'form' => $form,
+                                                'model' => $model->getConfigurableModel(),
+                                            ])
+                                        ?>
                                     </div>
                                 <?php endforeach; ?>
                             </div>
                         </div>
-
-
-
                     </div>
-
                 </div>
                 <!-- end widget content -->
-
             </div>
             <!-- end widget div -->
-
         </div>
     </article>
     <?php ActiveForm::end(); ?>
