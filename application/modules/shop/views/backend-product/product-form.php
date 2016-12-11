@@ -102,13 +102,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="col-md-12">
     <div class="row">
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab-main" data-toggle="tab"><?= Yii::t('app', 'Main') ?></a></li>
-            <li><a href="#tab-seo" data-toggle="tab"><?= Yii::t('app', 'SEO') ?></a></li>
-            <?php if (false === $model->isNewRecord): ?><li><a href="#tab-images" data-toggle="tab"><?= Yii::t('app', 'Images') ?></a></li><?php endif; ?>
-            <li><a href="#tab-properties" data-toggle="tab"><?= Yii::t('app', 'Properties') ?></a></li>
-            <li><a href="#tab-addons" data-toggle="tab"><?= Yii::t('app', 'Addons') ?></a></li>
-            <?php if (!empty($model->options)): ?><li><a href="#tab-options" data-toggle="tab"><?= Yii::t('app', 'Product Options') ?></a></li><?php endif; ?>
+        <ul class="nav nav-tabs product-tabs">
+            <li class="active"><a id="product-tab-main" href="#tab-main" data-toggle="tab"><?= Yii::t('app', 'Main') ?></a></li>
+            <li><a id="product-tab-seo" href="#tab-seo" data-toggle="tab"><?= Yii::t('app', 'SEO') ?></a></li>
+            <?php if (false === $model->isNewRecord): ?><li><a id="product-tab-images" href="#tab-images" data-toggle="tab"><?= Yii::t('app', 'Images') ?></a></li><?php endif; ?>
+            <li><a id="product-tab-properties" href="#tab-properties" data-toggle="tab"><?= Yii::t('app', 'Properties') ?></a></li>
+            <li><a id="product-tab-addons" href="#tab-addons" data-toggle="tab"><?= Yii::t('app', 'Addons') ?></a></li>
+            <?php if (!empty($model->options)): ?><li><a id="product-tab-options" href="#tab-options" data-toggle="tab"><?= Yii::t('app', 'Product Options') ?></a></li><?php endif; ?>
         </ul>
     </div>
 </div>
@@ -475,6 +475,12 @@ jQuery('#product-form').on('afterValidate', function (e) {
     }
     return true;
 });
+
+jQuery(".product-tabs a[data-toggle='tab']").on("shown.bs.tab", function(e){
+    localStorage.setItem("productActiveTab", "#" + e.target.id);
+});
+
+jQuery(localStorage.getItem("productActiveTab")).click();
 JS;
 $this->registerJs($tab_errors);
 ?>
