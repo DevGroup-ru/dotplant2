@@ -60,6 +60,7 @@ use yii\web\ServerErrorHttpException;
  * Relations:
  * @property Category $category
  * @property Product[] $children
+ * @property Category $mainCategory
  */
 
 class Product extends ActiveRecord implements ImportableInterface, ExportableInterface, \JsonSerializable

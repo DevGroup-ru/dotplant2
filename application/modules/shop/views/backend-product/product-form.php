@@ -9,8 +9,6 @@ use kartik\icons\Icon;
 use app\backend\components\ActiveForm;
 use kartik\widgets\DateTimePicker;
 use yii\data\ActiveDataProvider;
-use app\backend\components\Helper;
-use app\modules\shop\ShopModule;
 use yii\helpers\Url;
 
 /**
@@ -98,7 +96,7 @@ $this->params['breadcrumbs'][] = $this->title;
     )
     ?>
 </div>
-<?php $this->endBlock('submit'); ?>
+<?php $this->endBlock(); ?>
 
 <div class="col-md-12">
     <div class="row">
@@ -460,14 +458,11 @@ $this->trigger(BackendProductController::EVENT_BACKEND_PRODUCT_EDIT_FORM, $event
 <?php
 $tab_errors = <<<JS
 jQuery('#product-form').on('afterValidate', function (e) {
-
     jQuery('.nav-tabs a').removeClass('has-error');
 
-    \$errors = jQuery('#product-form').find('.form-group.has-error');
+    var \$errors = jQuery('#product-form').find('.form-group.has-error');
     if ('undefined' !== typeof(\$errors) && \$errors.length > 0) {
-
         \$errors.each(function(i, e) {
-
             var tab_id = $(e).closest('.tab-pane').attr('id');
             jQuery('#product-form').find('[data-toggle=tab][href="#' + tab_id + '"]').addClass('has-error');
         });
@@ -476,11 +471,10 @@ jQuery('#product-form').on('afterValidate', function (e) {
     return true;
 });
 
-jQuery(".product-tabs a[data-toggle='tab']").on("shown.bs.tab", function(e){
-    localStorage.setItem("productActiveTab", "#" + e.target.id);
+jQuery(".product-tabs a[data-toggle='tab']").on("shown.bs.tab", function(event) {
+    localStorage.setItem("productActiveTab", "#" + event.target.id);
 });
 
 jQuery(localStorage.getItem("productActiveTab")).click();
 JS;
 $this->registerJs($tab_errors);
-?>
