@@ -335,7 +335,7 @@ class Widget extends BaseWidget
                 );
             }
             return $this->render(
-                $this->viewFile,
+                "filter-sets-new",
                 [
                     'filtersArray' => $filtersArray,
                     'id' => 'filter-set-' . $this->id,
