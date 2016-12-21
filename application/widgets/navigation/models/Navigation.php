@@ -21,6 +21,7 @@ use yii\data\ActiveDataProvider;
  * @property string $route_params
  * @property string $advanced_css_class
  * @property integer $sort_order
+ * @property boolean $active
  * @property Navigation[] $children
  * @property Navigation $parent
  */
@@ -59,6 +60,7 @@ class Navigation extends \yii\db\ActiveRecord
                 }
             }"],
             ['sort_order', 'default', 'value' => 0],
+            ['active', 'boolean']
         ];
     }
 
@@ -76,6 +78,7 @@ class Navigation extends \yii\db\ActiveRecord
             'route_params' => Yii::t('app', 'Route Params'),
             'advanced_css_class' => Yii::t('app', 'Advanced Css Class'),
             'sort_order' => Yii::t('app', 'Sort Order'),
+            'active' => Yii::t('app', 'Active')
         ];
     }
 
@@ -100,8 +103,8 @@ class Navigation extends \yii\db\ActiveRecord
     public function scenarios()
     {
         return [
-            'default' => ['parent_id', 'name', 'url', 'route', 'route_params', 'advanced_css_class', 'sort_order'],
-            'search' => ['parent_id', 'name', 'url', 'route', 'route_params', 'advanced_css_class', 'sort_order'],
+            'default' => ['parent_id', 'name', 'url', 'route', 'route_params', 'advanced_css_class', 'sort_order', 'active'],
+            'search' => ['parent_id', 'name', 'url', 'route', 'route_params', 'advanced_css_class', 'sort_order', 'active'],
         ];
     }
 
@@ -123,11 +126,14 @@ class Navigation extends \yii\db\ActiveRecord
         $this->addCondition($query, Navigation::tableName(), 'url', true);
         $this->addCondition($query, Navigation::tableName(), 'route', true);
         $this->addCondition($query, Navigation::tableName(), 'route_params', true);
+        $this->addCondition($query, Navigation::tableName(), 'active', true);
         return $dataProvider;
     }
 
     public function getChildren()
     {
-        return $this->hasMany(Navigation::className(), ['parent_id'=>'id'])->orderBy(['sort_order'=>SORT_ASC]);
+        return $this->hasMany(Navigation::className(), ['parent_id'=>'id'])
+            ->where(["active" => 1])
+            ->orderBy(['sort_order'=>SORT_ASC]);
     }
 }

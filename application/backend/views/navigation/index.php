@@ -132,6 +132,43 @@ $this->params['breadcrumbs'][] = $this->title;
                         'class' => 'yii\grid\DataColumn',
                         'attribute' => 'id',
                     ],
+                    [
+                        'class' => \kartik\grid\EditableColumn::className(),
+                        'attribute' => 'active',
+                        'editableOptions' => [
+                            'data' => [
+                                0 => Yii::t('app', 'Inactive'),
+                                1 => Yii::t('app', 'Active'),
+                            ],
+                            'inputType' => 'dropDownList',
+                            'placement' => 'left',
+                            'formOptions' => [
+                                'action' => 'update-editable',
+                            ],
+                        ],
+                        'filter' => [
+                            0 => Yii::t('app', 'Inactive'),
+                            1 => Yii::t('app', 'Active'),
+                        ],
+                        'format' => 'raw',
+                        'value' => function (\app\widgets\navigation\models\Navigation $model) {
+                            if ($model === null || $model->active === null) {
+                                return null;
+                            }
+                            if ($model->active === 1) {
+                                $label_class = 'label-success';
+                                $value = 'Active';
+                            } else {
+                                $value = 'Inactive';
+                                $label_class = 'label-default';
+                            }
+                            return \yii\helpers\Html::tag(
+                                'span',
+                                Yii::t('app', $value),
+                                ['class' => "label $label_class"]
+                            );
+                        },
+                    ],
                     'name',
                     'url',
                     'route',

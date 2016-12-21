@@ -2,6 +2,7 @@
 
 namespace app\backend\controllers;
 
+use app\backend\actions\UpdateEditable;
 use app\modules\image\widgets\RemoveAction;
 use app\modules\image\widgets\SaveInfoAction;
 use app\modules\image\widgets\UploadAction;
@@ -59,6 +60,29 @@ class NavigationController extends Controller
             ],
             'save-info' => [
                 'class' => SaveInfoAction::className(),
+            ],
+            'update-editable' => [
+                'class' => UpdateEditable::className(),
+                'modelName' => Navigation::className(),
+                'allowedAttributes' => [
+                    'active' => function (Navigation $model) {
+                        if ($model === null || $model->active === null) {
+                            return null;
+                        }
+                        if ($model->active === 1) {
+                            $label_class = 'label-success';
+                            $value = 'Active';
+                        } else {
+                            $value = 'Inactive';
+                            $label_class = 'label-default';
+                        }
+                        return \yii\helpers\Html::tag(
+                            'span',
+                            Yii::t('app', $value),
+                            ['class' => "label $label_class"]
+                        );
+                    },
+                ],
             ],
         ];
     }

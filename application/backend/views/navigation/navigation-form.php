@@ -78,6 +78,7 @@ $this->registerJs(
                 ['title' => Yii::t('app', 'Navigation item'), 'icon' => 'navicon', 'footer' => $this->blocks['submit']]
             ); ?>
 
+            <?= $form->field($model, 'active')->widget(\kartik\switchinput\SwitchInput::className()) ?>
             <?=$form->field($model, 'name');?>
             <?=$form->field($model, 'advanced_css_class');?>
             <?=$form->field($model, 'sort_order');?>
