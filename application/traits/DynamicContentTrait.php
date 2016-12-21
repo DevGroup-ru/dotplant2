@@ -4,6 +4,7 @@ namespace app\traits;
 
 use app\models\Object;
 use app\models\DynamicContent;
+use app\modules\core\helpers\ContentBlockHelper;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
@@ -80,10 +81,30 @@ trait DynamicContentTrait
                     if ($matches === true) {
                         $dynamicResult['model'] = $model;
                         if ($model->title) {
-                            $dynamicResult['title'] = $model->title;
+                            $dynamicResult['title'] = ContentBlockHelper::compileContentString(
+                                $model->title,
+                                self::class . "{$model->id}:title",
+                                new TagDependency(
+                                    [
+                                        "tags" => [
+                                            ActiveRecordHelper::getObjectTag($model, $model->id)
+                                        ]
+                                    ]
+                                )
+                            );
                         }
                         if ($model->meta_description) {
-                            $dynamicResult['meta_description'] = $model->meta_description;
+                            $dynamicResult['meta_description'] = ContentBlockHelper::compileContentString(
+                                $model->meta_description,
+                                self::class . ":{$model->id}:meta_description",
+                                new TagDependency(
+                                    [
+                                        "tags" => [
+                                            ActiveRecordHelper::getObjectTag($model, $model->id)
+                                        ]
+                                    ]
+                                )
+                            );
                         }
                         if ($model->h1) {
                             $dynamicResult['blocks']['h1'] = $model->h1;
