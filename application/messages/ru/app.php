@@ -34,6 +34,7 @@ return [
     'Add a new product to order' => 'Добавить новый товар к заказу',
     'Add auth client' => 'Добавить клиент идентификации',
     'Add condition' => 'Добавить условие',
+    'Add child page' => 'Добавить вложенную страницу',
     'Add files..' => 'Добавить файлы',
     'Add items to your wishlist' => 'Добавьте товары в список желаний',
     'Add new component' => 'Добавить новый компонент',

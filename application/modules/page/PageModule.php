@@ -75,7 +75,7 @@ class PageModule extends app\components\BaseModule implements EventInterface
             FloatingPanel::class,
             FloatingPanel::EVENT_BEFORE_RENDER,
             function($event) {
-                if (in_array(\Yii::$app->requestedRoute, ['/page/page/show', '/page/page/list']))
+                if (in_array(\Yii::$app->requestedRoute, ['/page/page/show', '/page/page/list'])) {
                     if (isset($_GET['id'])) {
                         $page = app\modules\page\models\Page::findById($_GET['id']);
                         $event->items[] = [
@@ -86,8 +86,18 @@ class PageModule extends app\components\BaseModule implements EventInterface
                                 'parent_id' =>$page->parent_id,
                             ],
                         ];
+                        if (Yii::$app->requestedRoute == "/page/page/list") {
+                            $event->items[] = [
+                                'label' => Icon::show('plus') .  Yii::t('app', 'Add child page'),
+                                'url' => [
+                                    '/page/backend/edit',
+                                    'parent_id' => $page->id
+                                ]
+                            ];
+                        }
                     }
                 }
-            );
+            }
+        );
     }
 }
