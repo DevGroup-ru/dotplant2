@@ -75,26 +75,24 @@ class PageModule extends app\components\BaseModule implements EventInterface
             FloatingPanel::class,
             FloatingPanel::EVENT_BEFORE_RENDER,
             function($event) {
-                if (in_array(\Yii::$app->requestedRoute, ['/page/page/show', '/page/page/list'])) {
-                    if (isset($_GET['id'])) {
-                        $page = app\modules\page\models\Page::findById($_GET['id']);
+                if (in_array(\Yii::$app->requestedRoute, ['/page/page/show', '/page/page/list']) && isset($_GET['id'])) {
+                    $page = app\modules\page\models\Page::findById($_GET['id']);
+                    $event->items[] = [
+                        'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit page'),
+                        'url' => [
+                            '/page/backend/edit',
+                            'id' => $page->id,
+                            'parent_id' =>$page->parent_id,
+                        ],
+                    ];
+                    if (Yii::$app->requestedRoute == "/page/page/list") {
                         $event->items[] = [
-                            'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit page'),
+                            'label' => Icon::show('plus') .  Yii::t('app', 'Add child page'),
                             'url' => [
                                 '/page/backend/edit',
-                                'id' => $page->id,
-                                'parent_id' =>$page->parent_id,
-                            ],
+                                'parent_id' => $page->id
+                            ]
                         ];
-                        if (Yii::$app->requestedRoute == "/page/page/list") {
-                            $event->items[] = [
-                                'label' => Icon::show('plus') .  Yii::t('app', 'Add child page'),
-                                'url' => [
-                                    '/page/backend/edit',
-                                    'parent_id' => $page->id
-                                ]
-                            ];
-                        }
                     }
                 }
             }
