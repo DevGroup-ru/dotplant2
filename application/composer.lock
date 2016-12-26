@@ -4,7 +4,6 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fd4722bdf52a981e0d835662559cb12b",
     "content-hash": "9ef78f4eb091027a666f16dd9c1413d2",
     "packages": [
         {
@@ -253,8 +252,7 @@
                     "dev-master": "1.0.0-dev"
                 }
             },
-            "description": "jQuery event that is fired as soon as an element appears in the user's viewport.",
-            "time": "2015-01-23 15:02:02"
+            "description": "jQuery event that is fired as soon as an element appears in the user's viewport."
         },
         {
             "name": "bower-asset/jsoneditor",
@@ -341,8 +339,7 @@
                 "jstree",
                 "tree",
                 "ui"
-            ],
-            "time": "2015-08-24 06:51:54"
+            ]
         },
         {
             "name": "bower-asset/ladda",
@@ -504,8 +501,7 @@
             },
             "license": [
                 "MIT"
-            ],
-            "time": "2015-03-08 21:03:11"
+            ]
         },
         {
             "name": "cebe/markdown",
@@ -565,7 +561,7 @@
                 "markdown",
                 "markdown-extra"
             ],
-            "time": "2016-02-09 22:09:46"
+            "time": "2016-02-09T22:09:46+00:00"
         },
         {
             "name": "components/flag-icon-css",
@@ -603,7 +599,7 @@
                 }
             ],
             "description": "CSS for vector based country flags",
-            "time": "2016-03-13 02:12:04"
+            "time": "2016-03-13T02:12:04+00:00"
         },
         {
             "name": "creocoder/yii2-flysystem",
@@ -669,7 +665,7 @@
                 "sftp",
                 "yii2"
             ],
-            "time": "2015-05-12 08:36:25"
+            "time": "2015-05-12T08:36:25+00:00"
         },
         {
             "name": "devgroup/dotplant",
@@ -749,7 +745,7 @@
                 "yii2 e-commerce",
                 "yii2 shop"
             ],
-            "time": "2016-06-01 10:31:47"
+            "time": "2016-06-01T10:31:47+00:00"
         },
         {
             "name": "devgroup/yii2-ace-widget",
@@ -802,7 +798,7 @@
                 "ace-editor",
                 "yii2"
             ],
-            "time": "2015-12-15 08:57:05"
+            "time": "2015-12-15T08:57:05+00:00"
         },
         {
             "name": "devgroup/yii2-dropzone",
@@ -856,20 +852,20 @@
                 "upload",
                 "yii2"
             ],
-            "time": "2015-11-02 06:26:37"
+            "time": "2015-11-02T06:26:37+00:00"
         },
         {
             "name": "devgroup/yii2-jsoneditor",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DevGroup-ru/yii2-jsoneditor.git",
-                "reference": "b4656d7953d78e513fc5dfe42b4c9515c07a0c67"
+                "reference": "09557ad962fc46ac19b859f5e629ab9165b3c157"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DevGroup-ru/yii2-jsoneditor/zipball/b4656d7953d78e513fc5dfe42b4c9515c07a0c67",
-                "reference": "b4656d7953d78e513fc5dfe42b4c9515c07a0c67",
+                "url": "https://api.github.com/repos/DevGroup-ru/yii2-jsoneditor/zipball/09557ad962fc46ac19b859f5e629ab9165b3c157",
+                "reference": "09557ad962fc46ac19b859f5e629ab9165b3c157",
                 "shasum": ""
             },
             "require": {
@@ -910,7 +906,7 @@
                 "jsoneditor",
                 "yii2"
             ],
-            "time": "2014-12-16 14:27:06"
+            "time": "2016-12-26T07:12:23+00:00"
         },
         {
             "name": "devgroup/yii2-jstree-widget",
@@ -961,7 +957,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-11-09 12:42:26"
+            "time": "2015-11-09T12:42:26+00:00"
         },
         {
             "name": "devgroup/yii2-tag-dependency-helper",
@@ -1009,7 +1005,7 @@
                 "cache",
                 "yii2"
             ],
-            "time": "2015-07-01 09:08:43"
+            "time": "2015-07-01T09:08:43+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -1076,7 +1072,7 @@
                 "singularize",
                 "string"
             ],
-            "time": "2015-11-06 14:35:42"
+            "time": "2015-11-06T14:35:42+00:00"
         },
         {
             "name": "egeloen/http-adapter",
@@ -1162,7 +1158,7 @@
                 "psr-7"
             ],
             "abandoned": "php-http/httplug",
-            "time": "2015-12-13 10:05:58"
+            "time": "2015-12-13T10:05:58+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -1206,7 +1202,7 @@
             "keywords": [
                 "html"
             ],
-            "time": "2015-08-05 01:03:42"
+            "time": "2015-08-05T01:03:42+00:00"
         },
         {
             "name": "florianv/swap",
@@ -1266,7 +1262,7 @@
                 "exchange rates",
                 "money"
             ],
-            "time": "2016-03-09 23:46:13"
+            "time": "2016-03-09T23:46:13+00:00"
         },
         {
             "name": "fortawesome/font-awesome",
@@ -1314,7 +1310,7 @@
                 "font",
                 "icon"
             ],
-            "time": "2016-03-10 18:47:19"
+            "time": "2016-03-10T18:47:19+00:00"
         },
         {
             "name": "guzzle/guzzle",
@@ -1409,7 +1405,8 @@
                 "rest",
                 "web service"
             ],
-            "time": "2015-04-29 17:06:53"
+            "abandoned": "guzzlehttp/guzzle",
+            "time": "2015-04-29T17:06:53+00:00"
         },
         {
             "name": "imagine/imagine",
@@ -1466,7 +1463,7 @@
                 "image manipulation",
                 "image processing"
             ],
-            "time": "2014-06-13 10:54:04"
+            "time": "2014-06-13T10:54:04+00:00"
         },
         {
             "name": "kartik-v/bootstrap-fileinput",
@@ -1519,7 +1516,7 @@
                 "progress",
                 "upload"
             ],
-            "time": "2016-03-14 03:52:56"
+            "time": "2016-03-14T03:52:56+00:00"
         },
         {
             "name": "kartik-v/bootstrap-popover-x",
@@ -1563,7 +1560,7 @@
                 "popover",
                 "popover-x"
             ],
-            "time": "2015-03-18 13:08:39"
+            "time": "2015-03-18T13:08:39+00:00"
         },
         {
             "name": "kartik-v/bootstrap-star-rating",
@@ -1607,7 +1604,7 @@
                 "star",
                 "svg"
             ],
-            "time": "2016-03-01 18:20:14"
+            "time": "2016-03-01T18:20:14+00:00"
         },
         {
             "name": "kartik-v/dependent-dropdown",
@@ -1649,7 +1646,7 @@
                 "option",
                 "select"
             ],
-            "time": "2015-12-16 18:15:01"
+            "time": "2015-12-16T18:15:01+00:00"
         },
         {
             "name": "kartik-v/php-date-formatter",
@@ -1698,7 +1695,7 @@
                 "php-date-formatter.js",
                 "time"
             ],
-            "time": "2016-02-11 12:51:14"
+            "time": "2016-02-11T12:51:14+00:00"
         },
         {
             "name": "kartik-v/yii2-builder",
@@ -1745,7 +1742,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-01-28 03:40:28"
+            "time": "2015-01-28T03:40:28+00:00"
         },
         {
             "name": "kartik-v/yii2-context-menu",
@@ -1792,7 +1789,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-04-21 15:06:54"
+            "time": "2015-04-21T15:06:54+00:00"
         },
         {
             "name": "kartik-v/yii2-datecontrol",
@@ -1839,7 +1836,7 @@
                 "yii",
                 "yii2"
             ],
-            "time": "2015-07-30 18:30:18"
+            "time": "2015-07-30T18:30:18+00:00"
         },
         {
             "name": "kartik-v/yii2-dropdown-x",
@@ -1886,7 +1883,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2014-12-08 04:31:32"
+            "time": "2014-12-08T04:31:32+00:00"
         },
         {
             "name": "kartik-v/yii2-dynagrid",
@@ -1941,7 +1938,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-05-22 15:03:16"
+            "time": "2015-05-22T15:03:16+00:00"
         },
         {
             "name": "kartik-v/yii2-editable",
@@ -1989,7 +1986,7 @@
                 "popover-x",
                 "widget"
             ],
-            "time": "2015-12-27 16:31:06"
+            "time": "2015-12-27T16:31:06+00:00"
         },
         {
             "name": "kartik-v/yii2-field-range",
@@ -2040,7 +2037,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2014-11-25 08:52:00"
+            "time": "2014-11-25T08:52:00+00:00"
         },
         {
             "name": "kartik-v/yii2-grid",
@@ -2089,7 +2086,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-03-08 04:08:06"
+            "time": "2016-03-08T04:08:06+00:00"
         },
         {
             "name": "kartik-v/yii2-helpers",
@@ -2135,7 +2132,7 @@
                 "yii",
                 "yii2"
             ],
-            "time": "2015-12-12 18:47:11"
+            "time": "2015-12-12T18:47:11+00:00"
         },
         {
             "name": "kartik-v/yii2-icons",
@@ -2183,7 +2180,7 @@
                 "yii",
                 "yii2"
             ],
-            "time": "2015-12-13 16:27:46"
+            "time": "2015-12-13T16:27:46+00:00"
         },
         {
             "name": "kartik-v/yii2-krajee-base",
@@ -2229,7 +2226,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-11-25 07:03:35"
+            "time": "2015-11-25T07:03:35+00:00"
         },
         {
             "name": "kartik-v/yii2-label-inplace",
@@ -2277,7 +2274,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-06-17 17:08:17"
+            "time": "2015-06-17T17:08:17+00:00"
         },
         {
             "name": "kartik-v/yii2-popover-x",
@@ -2325,7 +2322,7 @@
                 "popover",
                 "popover-x"
             ],
-            "time": "2016-01-12 16:59:09"
+            "time": "2016-01-12T16:59:09+00:00"
         },
         {
             "name": "kartik-v/yii2-sortable",
@@ -2372,7 +2369,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2014-11-10 18:37:03"
+            "time": "2014-11-10T18:37:03+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-activeform",
@@ -2419,7 +2416,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-12-11 19:07:50"
+            "time": "2015-12-11T19:07:50+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-affix",
@@ -2468,7 +2465,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-02-15 14:35:24"
+            "time": "2016-02-15T14:35:24+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-alert",
@@ -2518,7 +2515,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-04-21 15:32:57"
+            "time": "2015-04-21T15:32:57+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-colorinput",
@@ -2572,7 +2569,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-02-02 14:28:12"
+            "time": "2016-02-02T14:28:12+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-datepicker",
@@ -2626,7 +2623,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-02-28 17:19:12"
+            "time": "2016-02-28T17:19:12+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-datetimepicker",
@@ -2675,7 +2672,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-03-07 17:49:31"
+            "time": "2016-03-07T17:49:31+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-depdrop",
@@ -2724,7 +2721,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-01-10 17:30:48"
+            "time": "2016-01-10T17:30:48+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-fileinput",
@@ -2774,7 +2771,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-01-10 16:10:58"
+            "time": "2016-01-10T16:10:58+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-growl",
@@ -2823,7 +2820,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-05-03 08:23:04"
+            "time": "2015-05-03T08:23:04+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-rangeinput",
@@ -2872,7 +2869,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-11-22 06:52:44"
+            "time": "2015-11-22T06:52:44+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-rating",
@@ -2928,7 +2925,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-02-17 19:13:26"
+            "time": "2016-02-17T19:13:26+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-select2",
@@ -2981,7 +2978,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-03-10 11:33:59"
+            "time": "2016-03-10T11:33:59+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-sidenav",
@@ -3030,7 +3027,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-04-21 15:38:40"
+            "time": "2015-04-21T15:38:40+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-spinner",
@@ -3078,7 +3075,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-07-10 17:53:26"
+            "time": "2015-07-10T17:53:26+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-switchinput",
@@ -3128,7 +3125,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-01-10 16:47:35"
+            "time": "2016-01-10T16:47:35+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-timepicker",
@@ -3177,7 +3174,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-01-12 09:50:39"
+            "time": "2016-01-12T09:50:39+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-touchspin",
@@ -3227,7 +3224,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-01-10 17:10:39"
+            "time": "2016-01-10T17:10:39+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-typeahead",
@@ -3275,7 +3272,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2015-06-28 18:05:41"
+            "time": "2015-06-28T18:05:41+00:00"
         },
         {
             "name": "kartik-v/yii2-widgets",
@@ -3337,7 +3334,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2014-11-09 19:54:17"
+            "time": "2014-11-09T19:54:17+00:00"
         },
         {
             "name": "knplabs/packagist-api",
@@ -3389,7 +3386,7 @@
                 "composer",
                 "packagist"
             ],
-            "time": "2016-01-17 21:26:35"
+            "time": "2016-01-17T21:26:35+00:00"
         },
         {
             "name": "leafo/scssphp",
@@ -3442,7 +3439,7 @@
                 "scss",
                 "stylesheet"
             ],
-            "time": "2016-02-24 15:41:07"
+            "time": "2016-02-24T15:41:07+00:00"
         },
         {
             "name": "league/flysystem",
@@ -3525,7 +3522,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2016-03-14 21:54:11"
+            "time": "2016-03-14T21:54:11+00:00"
         },
         {
             "name": "league/flysystem-replicate-adapter",
@@ -3571,7 +3568,7 @@
                 }
             ],
             "description": "Flysystem adapter for Replica's",
-            "time": "2015-08-18 21:07:17"
+            "time": "2015-08-18T21:07:17+00:00"
         },
         {
             "name": "phpoffice/phpexcel",
@@ -3628,7 +3625,7 @@
                 "xls",
                 "xlsx"
             ],
-            "time": "2014-03-02 15:22:49"
+            "time": "2014-03-02T15:22:49+00:00"
         },
         {
             "name": "psr/http-message",
@@ -3677,7 +3674,7 @@
                 "request",
                 "response"
             ],
-            "time": "2015-05-04 20:22:00"
+            "time": "2015-05-04T20:22:00+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3730,7 +3727,7 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2016-01-03 15:42:47"
+            "time": "2016-01-03T15:42:47+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -3790,7 +3787,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-03-07 14:04:32"
+            "time": "2016-03-07T14:04:32+00:00"
         },
         {
             "name": "symfony/process",
@@ -3839,7 +3836,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2015-08-27 07:55:57"
+            "time": "2015-08-27T07:55:57+00:00"
         },
         {
             "name": "vova07/yii2-imperavi-widget",
@@ -3901,7 +3898,7 @@
                 "yii 2",
                 "yii2"
             ],
-            "time": "2015-12-10 21:16:23"
+            "time": "2015-12-10T21:16:23+00:00"
         },
         {
             "name": "yiisoft/yii2",
@@ -3995,7 +3992,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2016-03-15 22:53:48"
+            "time": "2016-03-15T22:53:48+00:00"
         },
         {
             "name": "yiisoft/yii2-authclient",
@@ -4043,7 +4040,7 @@
                 "oauth",
                 "yii2"
             ],
-            "time": "2016-02-27 21:03:45"
+            "time": "2016-02-27T21:03:45+00:00"
         },
         {
             "name": "yiisoft/yii2-bootstrap",
@@ -4093,7 +4090,7 @@
                 "bootstrap",
                 "yii2"
             ],
-            "time": "2016-03-04 00:48:53"
+            "time": "2016-03-04T00:48:53+00:00"
         },
         {
             "name": "yiisoft/yii2-composer",
@@ -4188,7 +4185,7 @@
                 "imagine",
                 "yii2"
             ],
-            "time": "2016-02-21 23:09:41"
+            "time": "2016-02-21T23:09:41+00:00"
         },
         {
             "name": "yiisoft/yii2-jui",
@@ -4238,7 +4235,7 @@
                 "jQuery UI",
                 "yii2"
             ],
-            "time": "2015-12-24 06:23:53"
+            "time": "2015-12-24T06:23:53+00:00"
         },
         {
             "name": "yiisoft/yii2-swiftmailer",
@@ -4288,7 +4285,7 @@
                 "swiftmailer",
                 "yii2"
             ],
-            "time": "2015-12-07 11:40:31"
+            "time": "2015-12-07T11:40:31+00:00"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -4338,7 +4335,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2016-03-07 15:48:32"
+            "time": "2016-03-07T15:48:32+00:00"
         }
     ],
     "packages-dev": [
@@ -4382,7 +4379,7 @@
                 "stubs",
                 "yii2"
             ],
-            "time": "2015-12-12 02:31:16"
+            "time": "2015-12-12T02:31:16+00:00"
         },
         {
             "name": "bower-asset/typeahead.js",
@@ -4455,7 +4452,7 @@
                 "yii2 e-commerce",
                 "yii2 shop"
             ],
-            "time": "2015-09-19 21:32:49"
+            "time": "2015-09-19T21:32:49+00:00"
         },
         {
             "name": "paypal/rest-api-sdk-php",
@@ -4503,7 +4500,7 @@
                 "rest",
                 "sdk"
             ],
-            "time": "2016-01-20 17:45:52"
+            "time": "2016-01-20T17:45:52+00:00"
         },
         {
             "name": "phpspec/php-diff",
@@ -4537,7 +4534,7 @@
                 }
             ],
             "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
-            "time": "2013-11-01 13:02:21"
+            "time": "2013-11-01T13:02:21+00:00"
         },
         {
             "name": "yiisoft/yii2-codeception",
@@ -4582,7 +4579,7 @@
                 "codeception",
                 "yii2"
             ],
-            "time": "2015-11-20 08:52:21"
+            "time": "2015-11-20T08:52:21+00:00"
         },
         {
             "name": "yiisoft/yii2-debug",
@@ -4629,7 +4626,7 @@
                 "debugger",
                 "yii2"
             ],
-            "time": "2016-03-14 21:47:38"
+            "time": "2016-03-14T21:47:38+00:00"
         },
         {
             "name": "yiisoft/yii2-gii",
@@ -4682,7 +4679,7 @@
                 "gii",
                 "yii2"
             ],
-            "time": "2016-03-15 09:53:13"
+            "time": "2016-03-15T09:53:13+00:00"
         }
     ],
     "aliases": [],
