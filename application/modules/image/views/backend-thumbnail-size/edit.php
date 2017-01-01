@@ -98,7 +98,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             function ($watermarks) {
                                 return Html::img($watermarks->file, ['style' => 'max-width:200px;']);
                             }
-                        )
+                        ),
+                        [
+                            "style" => "background-color: rgba(170, 170, 170, 0.5); padding: 10px;"
+                        ]
                     );
                 }
                 ?>
