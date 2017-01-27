@@ -64,6 +64,8 @@ use kartik\icons\Icon;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
 
+    <?= $form->field($model, 'position')->dropDownList($model->getPositionVariants()) ?>
+
     <?= $form->field($model, 'description')->textarea() ?>
 
     <?= $form->field($model, 'code')->textarea(['rows' => '30', 'data-editor' => 'html']) ?>

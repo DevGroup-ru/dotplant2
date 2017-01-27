@@ -70,7 +70,9 @@ class SeoModule extends BaseModule implements BootstrapInterface
                     self::redirectSlash();
                 }
 
-                $app->getView()->on(View::EVENT_END_BODY, [Counter::className(), 'renderCounters'], $this->include);
+                $app->getView()->on(View::EVENT_END_PAGE, [Counter::class, 'renderCountersAtHead'], $this->include);
+                $app->getView()->on(View::EVENT_BEGIN_BODY, [Counter::class, 'renderCountersAtBeginningOfBody'], $this->include);
+                $app->getView()->on(View::EVENT_END_BODY, [Counter::class, 'renderCountersAtEndOfBody'], $this->include);
             }
         );
 
