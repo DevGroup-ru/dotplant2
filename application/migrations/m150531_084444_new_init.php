@@ -1115,22 +1115,32 @@ class m150531_084444_new_init extends Migration
         $this->createTable(
             '{{%dynagrid}}',
             [
-                'id' => Schema::TYPE_STRING . ' DEFAULT \'\' PRIMARY KEY',
-                'filter_id' => Schema::TYPE_STRING,
-                'sort_id' => Schema::TYPE_STRING,
+                'id' => $this->string(100)->defaultValue(''),
+                'filter_id' => $this->string(100),
+                'sort_id' => $this->string(100),
                 'data' => Schema::TYPE_TEXT,
             ]
+        );
+        $this->addPrimaryKey(
+            'pk-id',
+            '{{%dynagrid}}',
+            'id'
         );
         $this->createTable(
             '{{%dynagrid_dtl}}',
             [
-                'id' => Schema::TYPE_STRING . ' DEFAULT \'\' PRIMARY KEY',
-                'category' => Schema::TYPE_STRING,
-                'name' => Schema::TYPE_STRING,
+                'id' => $this->string(128)->defaultValue(''),
+                'category' => $this->string(10),
+                'name' => $this->string(150),
                 'data' => Schema::TYPE_TEXT,
-                'dynagrid_id' => Schema::TYPE_STRING,
+                'dynagrid_id' => $this->string(100),
                 'UNIQUE `uniq_dtl` (`name`, `category`, `dynagrid_id`)',
             ]
+        );
+        $this->addPrimaryKey(
+            'pk-id',
+            '{{%dynagrid_dtl}}',
+            'id'
         );
         $this->createTable(
             CurrencyRateProvider::tableName(),
