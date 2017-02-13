@@ -78,7 +78,7 @@ class Helper
             "ы" => "y", "ь" => "", "э" => "e", "ю" => "yu", "я" => "ya",
             " " => "-", "." => "", "/" => "-", "_" => "-"
         ];
-        $source = preg_replace('#[^a-z0-9\-]#is', '', strtr($source, $translateArray));
+        $source = preg_replace('#[^a-z0-9\-_]#is', '', strtr($source, $translateArray));
         return trim(preg_replace('#-{2,}#is', '-', $source));
     }
 
