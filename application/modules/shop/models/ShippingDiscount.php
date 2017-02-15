@@ -36,10 +36,14 @@ class ShippingDiscount extends \app\modules\shop\models\AbstractDiscountType
      */
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
-        if (null === $order) return false;
+        if (null === $order) {
+            return false;
+        }
 
         $odi = $order->orderDeliveryInformation;
-        if (null === $odi) return false;
+        if (null === $odi) {
+            return false;
+        }
 
         $q = self::find()->where(
             [
