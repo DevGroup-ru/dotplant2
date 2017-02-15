@@ -36,8 +36,12 @@ class ShippingDiscount extends \app\modules\shop\models\AbstractDiscountType
      */
     public function checkDiscount(Discount $discount, Product $product = null, Order $order = null)
     {
+        if (null === $order) {
+            return false;
+        }
+
         $odi = $order->orderDeliveryInformation;
-        if (null === $order || null === $odi) {
+        if (null === $odi) {
             return false;
         }
 
