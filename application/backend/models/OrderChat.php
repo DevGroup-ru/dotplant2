@@ -65,11 +65,7 @@ class OrderChat extends ActiveRecord
 
     public function beforeSave($insert)
     {
-        if (false === parent::beforeSave($insert)) {
-            return false;
-        }
-
-        if (empty($this->message)) {
+        if (!parent::beforeSave($insert) || empty($this->message)) {
             return false;
         }
 
