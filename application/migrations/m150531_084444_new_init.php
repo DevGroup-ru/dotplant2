@@ -1290,7 +1290,6 @@ class m150531_084444_new_init extends Migration
                 'step_value' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 1',
                 'require_review' => Schema::TYPE_BOOLEAN . ' DEFAULT 0',
                 'allow_guest' => 'TINYINT(1) DEFAULT \'0\'',
-                'KEY `ix-rating_item-rating_group` (`rating_group`)',
             ]
         );
         $this->createTable(
@@ -1811,7 +1810,6 @@ class m150531_084444_new_init extends Migration
                 'model_name' => 'VARCHAR(255) NOT NULL',
                 'model_id' => 'VARCHAR(255) NOT NULL',
                 'KEY `ix-link_anchor_id` (`link_anchor_id`)',
-                'KEY `model_name` (`model_name`, `model_id`)',
             ],
             $tableOptions
         );
