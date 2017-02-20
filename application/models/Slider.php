@@ -53,7 +53,8 @@ class Slider extends \yii\db\ActiveRecord
         return [
             [['slider_handler_id', 'image_width', 'image_height', 'resize_big_images', 'resize_small_images'], 'integer'],
             [['params'], 'string'],
-            [['name', 'css_class', 'custom_slider_view_file', 'custom_slide_view_file'], 'string', 'max' => 255]
+            [['name', 'css_class', 'custom_slider_view_file', 'custom_slide_view_file'], 'string', 'max' => 255],
+            [['image_width', 'image_height'], 'default', 'value' => 300],
         ];
     }
 
