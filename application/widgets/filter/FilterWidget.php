@@ -98,10 +98,9 @@ class FilterWidget extends Widget
 
                     $psv = [];
                     array_walk_recursive($this->currentSelections['properties'], function ($item) use (&$psv) {
-                        if (is_array($item)) {
-                            continue;
+                        if (is_array($item) === false) {
+                            $psv[] = $item;
                         }
-                        $psv[] = $item;
                     });
 
                     $query = (new Query)
