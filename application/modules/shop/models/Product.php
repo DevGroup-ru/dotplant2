@@ -70,7 +70,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
     protected static $identity_map = [];
     protected static $slug_to_id = [];
-    private $category_ids = null;
+    protected $category_ids = null;
 
     public $relatedProductsArray = [];
 
@@ -626,7 +626,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      * @param array $additionalFields
      * @return array|bool
      */
-    private function unpackCategories(array $fields, $multipleValuesDelimiter, array $additionalFields)
+    protected function unpackCategories(array $fields, $multipleValuesDelimiter, array $additionalFields)
     {
         $categories = isset($fields['categories']) ? $fields['categories'] : (isset($fields['category']) ? $fields['category'] : false);
         if ($categories === false || empty($fields['categories'])) {

@@ -260,7 +260,7 @@ class BackendProductController extends BackendController
                     $modelAfterSaveEvent = new BackendEntityEditEvent($model);
                     $this->trigger(self::EVENT_BACKEND_PRODUCT_AFTER_SAVE, $modelAfterSaveEvent);
 
-                    $categories = isset($post['Product']['categories']) ? $post['Product']['categories'] : [];
+                    $categories = isset($post[$model->formName()]['categories']) ? $post[$model->formName()]['categories'] : [];
 
                     $model->saveCategoriesBindings($categories);
 
