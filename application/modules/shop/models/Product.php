@@ -68,8 +68,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     use GetImages;
     use HasAddonTrait;
 
-    private static $identity_map = [];
-    private static $slug_to_id = [];
+    protected static $identity_map = [];
+    protected static $slug_to_id = [];
     private $category_ids = null;
 
     public $relatedProductsArray = [];
@@ -77,7 +77,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     /**
      * @var null|WarehouseProduct[] Stores warehouses state of product. Use Product::getWarehousesState() to retrieve
      */
-    private $activeWarehousesState = null;
+    protected $activeWarehousesState = null;
 
     /**
      * @inheritdoc
