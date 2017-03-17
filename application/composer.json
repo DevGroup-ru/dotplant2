@@ -11,7 +11,9 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "devgroup/dotplant": "~0.0.1"
+        "devgroup/dotplant": "~0.0.1",
+        "paypal/rest-api-sdk-php": "dev-master",
+        "bazilio/yii2-stubs-generator": "dev-master"
     },
     "require-dev": {
         "devgroup/dotplant-dev": "0.0.1"

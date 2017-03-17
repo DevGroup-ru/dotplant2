@@ -60,8 +60,8 @@ class ProductController extends Controller
         if (null === $request->get('category_group_id')) {
             throw new NotFoundHttpException;
         }
-
-        if (null === $object = Object::getForClass(Product::className())) {
+        $product = Yii::$container->get(Product::class);
+        if (null === $object = Object::getForClass(get_class($product))) {
             throw new ServerErrorHttpException('Object not found.');
         }
 
@@ -110,7 +110,7 @@ class ProductController extends Controller
             $selected_category_id = intval($selected_category_id);
         }
 
-        $result = Product::filteredProducts(
+        $result = $product::filteredProducts(
             $category_group_id,
             $values_by_property_id,
             $selected_category_id,
@@ -144,7 +144,7 @@ class ProductController extends Controller
                                 'name' => 'description',
                                 'content' => ContentBlockHelper::compileContentString(
                                     $selected_category->meta_description,
-                                    Product::className() . ":{$selected_category->id}:meta_description",
+                                    get_class($product) . ":{$selected_category->id}:meta_description",
                                     new TagDependency(
                                         [
                                             'tags' => [
@@ -259,11 +259,12 @@ class ProductController extends Controller
      */
     public function actionShow($model_id = null)
     {
-        if (null === $object = Object::getForClass(Product::className())) {
+        $product = Yii::$container->get(Product::class);
+        if (null === $object = Object::getForClass(get_class($product))) {
             throw new ServerErrorHttpException('Object not found.');
         }
 
-        $product = Product::findById($model_id);
+        $productModel = $product::findById($model_id);
 
         $request = Yii::$app->request;
 
@@ -284,22 +285,22 @@ class ProductController extends Controller
         // trigger that we are to show product to user!
         // wow! such product! very events!
         $specialEvent = new ProductPageShowed([
-            'product_id' => $product->id,
+            'product_id' => $productModel->id,
         ]);
         EventTriggeringHelper::triggerSpecialEvent($specialEvent);
 
-        if (!empty($product->meta_description)) {
+        if (!empty($productModel->meta_description)) {
             $this->view->registerMetaTag(
                 [
                     'name' => 'description',
                     'content' => ContentBlockHelper::compileContentString(
-                        $product->meta_description,
-                        Product::className() . ":{$product->id}:meta_description",
+                        $productModel->meta_description,
+                        get_class($product) . ":{$productModel->id}:meta_description",
                         new TagDependency(
                             [
                                 'tags' => [
                                     ActiveRecordHelper::getCommonTag(ContentBlock::className()),
-                                    ActiveRecordHelper::getCommonTag(Product::className())
+                                    ActiveRecordHelper::getCommonTag(get_class($product))
                                 ]
                             ]
                         )
@@ -311,24 +312,24 @@ class ProductController extends Controller
 
         $selected_category = ($selected_category_id > 0) ? Category::findById($selected_category_id) : null;
 
-        $this->view->title = $product->title;
-        $this->view->blocks['h1'] = $product->h1;
-        $this->view->blocks['announce'] = $product->announce;
-        $this->view->blocks['content'] = $product->content;
-        $this->view->blocks['title'] = $product->title;
+        $this->view->title = $productModel->title;
+        $this->view->blocks['h1'] = $productModel->h1;
+        $this->view->blocks['announce'] = $productModel->announce;
+        $this->view->blocks['content'] = $productModel->content;
+        $this->view->blocks['title'] = $productModel->title;
 
 
         return $this->render(
-            $this->computeViewFile($product, 'show'),
+            $this->computeViewFile($productModel, 'show'),
             [
-                'model' => $product,
+                'model' => $productModel,
                 'category_group_id' => $category_group_id,
                 'values_by_property_id' => $values_by_property_id,
                 'selected_category_id' => $selected_category_id,
                 'selected_category' => $selected_category,
                 'selected_category_ids' => $selected_category_ids,
                 'object' => $object,
-                'breadcrumbs' => $this->buildBreadcrumbsArray($selected_category, $product)
+                'breadcrumbs' => $this->buildBreadcrumbsArray($selected_category, $productModel)
             ]
         );
     }
@@ -351,6 +352,7 @@ class ProductController extends Controller
         $model->load(Yii::$app->request->get());
         $cacheKey = 'ProductSearchIds: ' . $model->q;
         $ids = Yii::$app->cache->get($cacheKey);
+        $product = Yii::$container->get(Product::class);
         if ($ids === false) {
             $ids = ArrayHelper::merge(
                 $model->searchProductsByDescription(),
@@ -362,7 +364,7 @@ class ProductController extends Controller
                 86400,
                 new TagDependency(
                     [
-                        'tags' => ActiveRecordHelper::getCommonTag(Product::className()),
+                        'tags' => ActiveRecordHelper::getCommonTag(get_class($product)),
                     ]
                 )
             );
@@ -381,7 +383,7 @@ class ProductController extends Controller
         $cacheKey .= ' : ' . $pages->offset;
         $products = Yii::$app->cache->get($cacheKey);
         if ($products === false) {
-            $products = Product::find()->where(
+            $products = $product::find()->where(
                 [
                     'in',
                     '`id`',
@@ -398,7 +400,7 @@ class ProductController extends Controller
                 86400,
                 new TagDependency(
                     [
-                        'tags' => ActiveRecordHelper::getCommonTag(Product::className()),
+                        'tags' => ActiveRecordHelper::getCommonTag(get_class($product)),
                     ]
                 )
             );

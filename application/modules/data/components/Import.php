@@ -334,11 +334,11 @@ abstract class Import extends Component
             'value' => 'value',
             'id' => 'psv_id',
         ];
-
+        $product = Yii::$container->get(Product::class);
         if (
             isset($conditions['category']) &&
             is_array($conditions['category']) &&
-            $this->object->id == Object::getForClass(Product::className())->id
+            $this->object->id == Object::getForClass(get_class($product))->id
         ) {
             foreach ($conditions['category'] as $condition) {
                 $joinTableName = 'Category'.$condition['value'];

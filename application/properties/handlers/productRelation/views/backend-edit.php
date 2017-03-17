@@ -18,9 +18,10 @@ use yii\helpers\ArrayHelper;
 $productIds = ArrayHelper::getColumn($values->values, 'value');
 $data = [];
 foreach ($values->values as $value) {
-    $product = Product::findById($value['value']);
-    if (is_object($product)) {
-        $data [$product->id] = $product->name;
+    $product = Yii::$container->get(Product::class);
+    $productModel = $product::findById($value['value']);
+    if (is_object($productModel)) {
+        $data [$productModel->id] = $productModel->name;
     }
 }
 

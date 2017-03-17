@@ -220,8 +220,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      */
     public function search($params)
     {
+        $product = Yii::$container->get(Product::class);
         /* @var $query \yii\db\ActiveQuery */
-        $query = self::find()->where(['parent_id' => 0])->with('images');
+        $query = $product::find()->where(['parent_id' => 0])->with('images');
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => $query,
@@ -310,13 +311,14 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
                     $tags[] = ActiveRecordHelper::getObjectTag(Category::className(), $inCategoryId);
                 }
                 $model = $query->one();
+                $product = Yii::$container->get(Product::class);
                 /**
                  * @var self|null $model
                  */
                 if (is_null($model)) {
-                    $tags[] = ActiveRecordHelper::getCommonTag(Product::className());
+                    $tags[] = ActiveRecordHelper::getCommonTag(get_class($product));
                 } else {
-                    $tags[] = ActiveRecordHelper::getObjectTag(Product::className(), $model->id);
+                    $tags[] = ActiveRecordHelper::getObjectTag(get_class($product), $model->id);
                 }
                 Yii::$app->cache->set(
                     $cacheKey,
@@ -364,7 +366,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
      */
     public function getRelatedProducts()
     {
-        return $this->hasMany(Product::className(), ['id' => 'related_product_id'])
+        $product = Yii::$container->get(Product::class);
+        return $this->hasMany(get_class($product), ['id' => 'related_product_id'])
             ->viaTable(
                 RelatedProduct::tableName(),
                 ['product_id' => 'id'],
@@ -1155,9 +1158,9 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
     public function getCacheTags()
     {
-
+        $product = Yii::$container->get(Product::class);
         $tags = [
-            ActiveRecordHelper::getObjectTag(self::className(), $this->id),
+            ActiveRecordHelper::getObjectTag(get_class($product), $this->id),
         ];
         $category = $this->getMainCategory();
         $tags [] = ActiveRecordHelper::getObjectTag(Category::className(), $category->id);

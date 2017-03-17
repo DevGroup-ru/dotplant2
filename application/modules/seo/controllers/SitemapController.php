@@ -51,12 +51,13 @@ class SitemapController extends Controller
 
     protected function productsSitemap($categoryId, $categoryUrl)
     {
-        $product = Product::find()
+        $product = Yii::$container->get(Product::class);
+        $productModels = $product::find()
             ->select(['id', 'slug'])
             ->where(['main_category_id' => $categoryId, 'active' => 1])
             ->asArray(true)
             ->all();
-        array_reduce($product, function ($carry, $item) use ($categoryUrl) {
+        array_reduce($productModels, function ($carry, $item) use ($categoryUrl) {
             $this->sitemap->addUrl($categoryUrl . '/' . $item['slug']);
         });
     }

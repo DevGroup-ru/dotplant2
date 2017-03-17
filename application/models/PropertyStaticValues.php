@@ -217,8 +217,8 @@ class PropertyStaticValues extends ActiveRecord
                     $joinCondition =  'p.id = {{%product_category}}.object_model_id AND p.active = 1';
                     break;
             }
-
-            $objectModel = Object::getForClass(Product::className());
+            $product = Yii::$container->get(Product::class);
+            $objectModel = Object::getForClass(get_class($product));
             $objectId = $objectModel !== null ? $objectModel->id : 0;
             $allSelections = static::find()
                 ->asArray(true)
@@ -232,7 +232,7 @@ class PropertyStaticValues extends ActiveRecord
                     '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
                 )
                 ->innerJoin(
-                    Product::tableName() . ' p',
+                    $product::tableName() . ' p',
                     $joinCondition
                 )
                 ->where(
@@ -335,6 +335,7 @@ class PropertyStaticValues extends ActiveRecord
 
     private static function initSubQuery($category_id, $joinCondition)
     {
+        $product = Yii::$container->get(Product::class);
         $subQuery = ObjectStaticValues::find();
         return $subQuery
             ->select(ObjectStaticValues::tableName() . '.object_model_id')
@@ -342,7 +343,7 @@ class PropertyStaticValues extends ActiveRecord
                 '{{%product_category}}',
                 '{{%product_category}}.object_model_id = ' . ObjectStaticValues::tableName() . '.object_model_id'
             )->innerJoin(
-                Product::tableName() . ' p',
+                $product::tableName() . ' p',
                 $joinCondition
             )->where(
                 [

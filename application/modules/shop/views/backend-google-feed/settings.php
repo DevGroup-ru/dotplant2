@@ -36,7 +36,8 @@ $feed_relations = [
 ];
 
 $feed_settings = [];
-$feed_settings['product_fields'] = (new \app\modules\shop\models\Product())->attributeLabels();
+$product = \Yii::$container->get(\app\modules\shop\models\Product::class);
+$feed_settings['product_fields'] = $product->attributeLabels();
 $feed_settings['relations_keys'] = array_combine(array_keys($feed_relations), array_keys($feed_relations));
 $feed_settings['relations_map'] = [];
 foreach ($feed_relations as $key => $value) {
@@ -54,7 +55,8 @@ if (true === isset ($feed_settings['relations_map']['getImage'])) {
     $feed_settings['relations_map']['getImage']['html'] .= '<option value="file">' . Yii::t('app',
             'File') . '</option>';
 }
-$prop_group = \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id;
+$product = \Yii::$container->get(\app\modules\shop\models\Product::class);
+$prop_group = \app\models\Object::getForClass(get_class($product))->id;
 $provider = (new \yii\db\Query())
     ->select(['pg.name as pgname', 'p.name', 'p.id', 'p.handler_additional_params'])
     ->from(\app\models\Property::tableName() . ' as p', \app\models\PropertyGroup::tableName() . 'as pg')

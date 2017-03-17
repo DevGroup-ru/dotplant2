@@ -4,6 +4,7 @@ namespace app\modules\shop\controllers;
 
 use app\backend\components\BackendController;
 use app\components\SearchModel;
+use app\modules\shop\models\Product;
 use app\modules\shop\models\WarehouseEmail;
 use app\modules\shop\models\WarehouseOpeninghours;
 use app\modules\shop\models\WarehousePhone;
@@ -298,8 +299,9 @@ class BackendWarehouseController extends BackendController
             }
 
             $model->setAttributes(current($post));
+            $product = Yii::$container->get(Product::class);
             TagDependency::invalidate(Yii::$app->cache,
-                ActiveRecordHelper::getObjectTag(\app\modules\shop\models\Product::className(), $model->product_id));
+                ActiveRecordHelper::getObjectTag(get_class($product), $model->product_id));
             return $model->save();
 
 

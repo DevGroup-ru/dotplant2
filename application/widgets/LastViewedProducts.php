@@ -27,8 +27,9 @@ class LastViewedProducts extends Widget
             return "<!-- Can't render - session is not contains a products array -->";
         }
         $products = [];
+        $product = Yii::$container->get(Product::class);
         foreach ($productsInSession as $elem) {
-            $prod = Product::findById($elem['product_id']);
+            $prod = $product::findById($elem['product_id']);
             if (null !== $prod) {
                 $products[] = $prod;
             }

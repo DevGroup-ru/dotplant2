@@ -80,8 +80,8 @@ class XmlFileReader
                             return $result;
                         }, []);
                 }
-
-                $this->objectProduct = Object::getForClass(Product::className());
+                $product = \Yii::$container->get(Product::class);
+                $this->objectProduct = Object::getForClass(get_class($product));
             }
         }
     }
@@ -442,8 +442,7 @@ class XmlFileReader
         $guid = CommercemlGuid::findOne(['guid' => $item[static::ELEMENT_ID], 'type' => 'PRODUCT']);
         if (empty($guid) && $createNotExists) {
             $category = !empty($item['categories']) ? array_shift($item['categories']) : null;
-
-            $product = new Product();
+            $product = \Yii::$container->get(Product::class);
                 $product->name = $product->title = $product->h1 = $item[static::ELEMENT_NAIMENOVANIE];
                 $product->slug = Helper::createSlug($product->name);
                 $product->main_category_id = isset($this->categoryCache[$category]) ? $this->categoryCache[$category] : $this->rootCategoryCache;

@@ -74,7 +74,8 @@ class ErrorImage extends \yii\db\ActiveRecord
 
     protected function getProductLinks($id)
     {
-        $model = Product::findById($id, null);
+        $product = Yii::$container->get(Product::class);
+        $model = $product::findById($id, null);
         if (is_null($model)) {
             return false;
         }
@@ -108,6 +109,7 @@ class ErrorImage extends \yii\db\ActiveRecord
         if (is_null($image) || is_null($object = Object::findById($image->object_id))) {
             return false;
         }
+        $product = Yii::$container->get(Product::class);
         /** @var \app\models\Object $object */
         switch ($object->object_class) {
             case Page::className():
@@ -116,7 +118,7 @@ class ErrorImage extends \yii\db\ActiveRecord
             case Category::className():
                 $this->getCategoryLinks($image->object_model_id);
                 break;
-            case Product::className():
+            case get_class($product):
                 $this->getProductLinks($image->object_model_id);
                 break;
             default:

@@ -389,6 +389,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <section class="col-md-12">
             <article>
                 <?php
+                $product = Yii::$container->get(Product::class);
                 if (!empty($model->options)) : ?>
                     <?php
                     BackendWidget::begin(
@@ -403,7 +404,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     GridView::widget([
                         'dataProvider' =>  $dataProvider = new ActiveDataProvider(
                             [
-                                'query' => Product::find()
+                                'query' => $product::find()
                                     ->where(['parent_id' => $model->id]),
                             ]
                         ),

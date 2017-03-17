@@ -319,6 +319,7 @@ class Widget extends BaseWidget
                     $filtersArray[] = $item;
                     unset($item);
                 }
+                $product = Yii::$container->get(Product::class);
                 Yii::$app->cache->set(
                     $cacheKey,
                     $filtersArray,
@@ -327,7 +328,7 @@ class Widget extends BaseWidget
                         [
                             'tags' => [
                                 ActiveRecordHelper::getCommonTag(FilterSets::className()),
-                                ActiveRecordHelper::getCommonTag(Product::className()),
+                                ActiveRecordHelper::getCommonTag(get_class($product)),
                                 ActiveRecordHelper::getCommonTag(Property::className()),
                             ],
                         ]

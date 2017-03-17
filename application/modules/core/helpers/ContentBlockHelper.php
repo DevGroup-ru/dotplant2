@@ -192,8 +192,9 @@ class ContentBlockHelper
                     }
                     break;
                 case "product" :
-                    if (null !== $model = app\modules\shop\models\Product::findById($id)) {
-                        $dependency->tags [] = ActiveRecordHelper::getCommonTag(Product::className());
+                    $product = Yii::$container->get(Product::class);
+                    if (null !== $model = $product::findById($id)) {
+                        $dependency->tags [] = ActiveRecordHelper::getCommonTag(get_class($product));
                         $dependency->tags [] = $model->objectTag();
                         $output = Url::to(
                             [
@@ -408,6 +409,7 @@ class ContentBlockHelper
      */
     private static function renderProducts($chunkData, &$dependency)
     {
+        $product = Yii::$container->get(Product::class);
         $params = [
             'itemView' => Yii::$app->getModule('shop')->itemView,
             'type' => 'show',
@@ -434,12 +436,12 @@ class ContentBlockHelper
         }
         switch ($params['object']) {
             case 'product':
-                $dependency->tags[] = ActiveRecordHelper::getCommonTag(Product::className());
-                $query = Product::find();
+                $dependency->tags[] = ActiveRecordHelper::getCommonTag(get_class($product));
+                $query = $product::find();
                 if (!empty($chunkData['categoryId'])) {
                     $query->leftJoin(
                         '{{%product_category}}',
-                        Product::tableName() . '.id = {{%product_category}}.object_model_id'
+                        $product::tableName() . '.id = {{%product_category}}.object_model_id'
                     )->andWhere(['{{%product_category}}.category_id' => $chunkData['categoryId']]);
                     $dependency->tags[] = ActiveRecordHelper::getCommonTag(Category::className());
                     $dependency->tags[] = ActiveRecordHelper::getObjectTag(
@@ -458,7 +460,7 @@ class ContentBlockHelper
                             if ($property->is_eav == 1) {
                                 $query->leftJoin(
                                     '{{%product_eav}}',
-                                    Product::tableName() . '.id = {{%product_eav}}.object_model_id'
+                                    $product::tableName() . '.id = {{%product_eav}}.object_model_id'
                                 )->andWhere(
                                     [
                                         '{{%product_eav}}.key' => $matches['propertyKey'],
@@ -479,7 +481,7 @@ class ContentBlockHelper
                                     $dependency->tags[] = $psv->objectTag();
                                     $query->leftJoin(
                                         '{{%object_static_values}}',
-                                        Product::tableName() . '.id = {{%object_static_values}}.object_model_id'
+                                        $product::tableName() . '.id = {{%object_static_values}}.object_model_id'
                                     )->andWhere(
                                         [
                                             'object_id' => 3,
@@ -498,7 +500,7 @@ class ContentBlockHelper
                 }
                 break;
             default:
-                $query = Product::find();
+                $query = $product::find();
                 break;
         }
         $params = ArrayHelper::merge($params, array_intersect_key($chunkData, $params));

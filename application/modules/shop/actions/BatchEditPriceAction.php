@@ -166,12 +166,12 @@ class BatchEditPriceAction extends Action
     protected function editPrices()
     {
         $sqlStatements = $this->getSqlStatements();
-
-        $result['all'] = Product::find()
+        $product = Yii::$container->get(Product::class);
+        $result['all'] = $product::find()
             ->where($sqlStatements['condition_for_count'])
             ->count();
 
-        $result['success'] = Product::updateAll(
+        $result['success'] = $product::updateAll(
             $sqlStatements['rule'],
             $sqlStatements['condition'],
             [

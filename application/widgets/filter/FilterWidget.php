@@ -103,11 +103,11 @@ class FilterWidget extends Widget
                                 $psv[] = $item;
                             }
                         });
-
+                        $product = Yii::$container->get(Product::class);
                         $query = (new Query)
                             ->select('pc.object_model_id')
                             ->from($object->categories_table_name . ' pc')
-                            ->innerJoin(Product::tableName() . ' product', 'product.id = pc.object_model_id')
+                            ->innerJoin($product::tableName() . ' product', 'product.id = pc.object_model_id')
                             ->where([
                                 'pc.category_id' => $this->currentSelections['last_category_id'],
                                 'product.active' => 1,

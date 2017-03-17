@@ -25,12 +25,12 @@ class SearchProductsByPropertyHandler implements SearchInterface
             ->addParams([':q' => '%' . $event->q . '%'])
             ->all();
 
-
+        $product = \Yii::$container->get(Product::class);
         $event->activeQuery->select('{{%object_static_values}}.object_model_id')
             ->distinct(true)
             ->from(ObjectStaticValues::tableName())
             ->where('{{%object_static_values}}.object_id = :objectId')
-            ->addParams([':objectId' => Object::getForClass(Product::className())->id])
+            ->addParams([':objectId' => Object::getForClass($product::className())->id])
             ->andWhere([
                 'in',
                 '{{%object_static_values}}.property_static_value_id',

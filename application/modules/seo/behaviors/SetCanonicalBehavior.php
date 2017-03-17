@@ -42,7 +42,8 @@ class SetCanonicalBehavior extends Behavior
         if ($setCanonical) {
             $get[0] = '/' . Yii::$app->controller->getRoute();
             if ('/' . Yii::$app->requestedAction->controller->route === Yii::getAlias('@product')) {
-                $get['model'] = Product::findById(Yii::$app->request->get('model_id'));
+                $product = Yii::$container->get(Product::class);
+                $get['model'] = $product::findById(Yii::$app->request->get('model_id'));
                 unset($get['model_id']);
             }
             $this->owner->view->registerLinkTag(

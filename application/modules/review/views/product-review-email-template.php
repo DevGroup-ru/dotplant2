@@ -54,7 +54,8 @@ use yii\helpers\Url;
         </tr>
         <?php
         $row = '';
-        $obj = Product::findById($review->object_model_id);
+        $product = Yii::$container->get(Product::class);
+        $obj = $product::findById($review->object_model_id);
         if ($obj !== null) {
             $row = Html::tag(
                 'tr',

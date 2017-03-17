@@ -24,6 +24,7 @@ class ProductPriceRangeFilter implements FilterQueryInterface
      */
     public function filter(ActiveQuery $query, &$cacheKeyAppend)
     {
+        $product = Yii::$container->get(Product::class);
         $get = Yii::$app->request->get();
         $params = array_merge($get, Yii::$app->request->post());
         $min = floatval(
@@ -36,7 +37,7 @@ class ProductPriceRangeFilter implements FilterQueryInterface
         if ($min !== floatval($this->minValue)) {
             $cacheKeyAppend .= "[MinPrice:$min]";
             $query = $query->andWhere(
-                Product::tableName() . '.price >=  FLOOR (:min_price * currency.convert_nominal / currency.convert_rate * POW(10, currency.max_fraction_digits)) / POW(10, currency.max_fraction_digits)',
+                $product::tableName() . '.price >=  FLOOR (:min_price * currency.convert_nominal / currency.convert_rate * POW(10, currency.max_fraction_digits)) / POW(10, currency.max_fraction_digits)',
                 [':min_price' => $min]
             );
             $get[$this->minAttribute] = $min;
@@ -45,7 +46,7 @@ class ProductPriceRangeFilter implements FilterQueryInterface
         if ($max !== floatval($this->maxValue) && (double) 0 !== floatval($max)) {
             $cacheKeyAppend .= "[MaxPrice:$max]";
             $query = $query->andWhere(
-                Product::tableName() . '.price <= CEILING (:max_price * currency.convert_nominal / currency.convert_rate * POW(10, currency.max_fraction_digits)) / POW(10, currency.max_fraction_digits)',
+                $product::tableName() . '.price <= CEILING (:max_price * currency.convert_nominal / currency.convert_rate * POW(10, currency.max_fraction_digits)) / POW(10, currency.max_fraction_digits)',
                 [':max_price' => $max]
             );
             $get[$this->maxAttribute] = $max;

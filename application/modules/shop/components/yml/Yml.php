@@ -100,8 +100,9 @@ class Yml extends Component
         $outputParams['offers'] = [];
 
         $eventOffer = new YmlOffersEvent();
+        $product = Yii::$container->get(Product::class);
         /** @var Product $model */
-        foreach (Product::find()->where(['active' => 1])->batch() as $offers) {
+        foreach ($product::find()->where(['active' => 1])->batch() as $offers) {
             $eventOffer
                 ->clearHandled()
                 ->setOffers(array_reduce($offers, function ($r, $i) use ($config) {

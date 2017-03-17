@@ -21,9 +21,10 @@ $productIds = ArrayHelper::getColumn($values->values, 'value');
 /** @var Product[] $products */
 $products = [];
 foreach ($productIds as $id) {
-    $product = Product::findById($id);
-    if ($product !== null) {
-        $products[] = $product;
+    $product = Yii::$container->get(Product::class);
+    $productModel = $product::findById($id);
+    if ($productModel !== null) {
+        $products[] = $productModel;
     }
 }
 
@@ -36,8 +37,8 @@ foreach ($productIds as $id) {
     }
     $property = Property::findById($property_id);
     echo Html::tag('dt', $property->name);
-    foreach ($products as $product) {
-        echo Html::tag('dd', $product->name);
+    foreach ($products as $productModel) {
+        echo Html::tag('dd', $productModel->name);
     }
     ?>
 </dl>

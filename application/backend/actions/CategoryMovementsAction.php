@@ -39,7 +39,8 @@ class CategoryMovementsAction extends Action
             throw new ServerErrorHttpException("Can't find Category with id {$catId}");
         }
         if (true === empty(static::$object)) {
-            static::$object = Object::getForClass(Product::className());
+            $product = Yii::$container->get(Product::class);
+            static::$object = Object::getForClass(get_class($product));
         }
         $this->action = Yii::$app->request->post('action', '');
         $this->items = Yii::$app->request->post('mc-items', []);
@@ -62,7 +63,8 @@ class CategoryMovementsAction extends Action
         }
         $tags = [];
         foreach ($this->items as $id) {
-            $tags[] = ActiveRecordHelper::getObjectTag(Product::className(), $id);
+            $product = Yii::$container->get(Product::class);
+            $tags[] = ActiveRecordHelper::getObjectTag(get_class($product), $id);
         }
         TagDependency::invalidate(Yii::$app->cache, $tags);
         Yii::$app->session->setFlash('info', Yii::t('app', 'Items updated: {n}', ['n' => $n]));
@@ -74,7 +76,8 @@ class CategoryMovementsAction extends Action
     private function move()
     {
         $this->add();
-        return Product::updateAll(['main_category_id' => $this->categoryId],['id' => $this->items]);
+        $product = Yii::$container->get(Product::class);
+        return $product::updateAll(['main_category_id' => $this->categoryId],['id' => $this->items]);
     }
 
     /**

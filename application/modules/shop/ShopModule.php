@@ -249,6 +249,7 @@ class ShopModule extends BaseModule implements BootstrapInterface, app\modules\e
                                 ];
                             } else {
                                 if (isset($_GET['properties'], $_GET['last_category_id'])) {
+                                    $product = Yii::$container->get(Product::class);
                                     $event->items[] = [
                                         'label' => Icon::show('puzzle') . ' ' . Yii::t('app', 'Add Dynamic Content'),
                                         'url' => [
@@ -256,7 +257,7 @@ class ShopModule extends BaseModule implements BootstrapInterface, app\modules\e
                                             'DynamicContent' => [
                                                 'apply_if_params' => Json::encode($apply_if_params),
                                                 'apply_if_last_category_id' => $_GET['last_category_id'],
-                                                'object_id' => Object::getForClass(Product::class)->id,
+                                                'object_id' => Object::getForClass(get_class($product))->id,
                                                 'route' => 'shop/product/list',
                                             ]
                                         ],

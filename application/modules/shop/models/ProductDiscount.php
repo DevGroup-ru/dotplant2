@@ -28,7 +28,8 @@ class ProductDiscount extends AbstractDiscountType
      */
     public function getProduct()
     {
-        return $this->hasOne(Product::className(), ['id' => 'product_id']);
+        $product = Yii::$container->get(Product::class);
+        return $this->hasOne(get_class($product), ['id' => 'product_id']);
     }
 
     /**

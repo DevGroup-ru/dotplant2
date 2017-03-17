@@ -11,9 +11,9 @@ class SearchProductsByDescriptionHandler implements SearchInterface
     {
         /** @var \app\modules\shop\ShopModule $module */
         $module = \Yii::$app->modules['shop'];
-
+        $product = \Yii::$container->get(Product::class);
         $event->activeQuery->select('`id`')
-            ->from(Product::tableName())
+            ->from($product::tableName())
             ->orWhere('`name` LIKE :q')
             ->orWhere('`h1` LIKE :q')
             ->orWhere('`content` LIKE :q')

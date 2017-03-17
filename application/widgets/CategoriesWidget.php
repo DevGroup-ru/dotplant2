@@ -48,7 +48,8 @@ class CategoriesWidget extends Widget
         $allowed_category_ids = [];
 
         if ($this->onlyAvailableProducts) {
-            $object = Object::getForClass(Product::className());
+            $product = Yii::$container->get(Product::class);
+            $object = Object::getForClass(get_class($product));
             if (!is_null($object) && isset($this->current_selections['last_category_id'])) {
 
                 $cacheKey = 'CategoriesFilterWidget: ' . $object->id . ':' . $this->current_selections['last_category_id'] . ':'

@@ -37,8 +37,8 @@ class ProductsWidget extends Widget
         if (null === $this->category_group_id) {
             throw new InvalidConfigException("ProductsWidget.category_group_id should be set");
         }
-
-        $products = Product::filteredProducts(
+        $product = Yii::$container->get(Product::class);
+        $products = $product::filteredProducts(
             $this->category_group_id,
             $this->values_by_property_id,
             $this->selected_category_id,

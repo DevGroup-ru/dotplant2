@@ -83,8 +83,8 @@ class FilterSetsController extends BackendController
                 }
             }
         }
-
-        $groups = PropertyGroup::getForObjectId(Object::getForClass(Product::className())->id, false);
+        $product = Yii::$container->get(Product::class);
+        $groups = PropertyGroup::getForObjectId(Object::getForClass(get_class($product))->id, false);
         $propertiesDropdownItems = [];
         foreach ($groups as $group) {
             $item = [

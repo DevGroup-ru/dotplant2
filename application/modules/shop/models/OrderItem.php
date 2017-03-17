@@ -137,7 +137,8 @@ class OrderItem extends ActiveRecord
      */
     public function getProduct()
     {
-        return $this->hasOne(Product::className(), ['id' => 'product_id']);
+        $product = Yii::$container->get(Product::class);
+        return $this->hasOne(get_class($product), ['id' => 'product_id']);
     }
 
     /**
@@ -166,7 +167,8 @@ class OrderItem extends ActiveRecord
         if ($this->addon_id !== 0) {
             return Addon::findById($this->addon_id);
         } else {
-            return Product::findById($this->product_id);
+            $product = Yii::$container->get(Product::class);
+            return $product::findById($this->product_id);
         }
     }
 

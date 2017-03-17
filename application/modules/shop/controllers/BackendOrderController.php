@@ -469,20 +469,21 @@ class BackendOrderController extends BackendController
     public function actionAutoCompleteSearch($orderId, $term, $parentId = 0)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $query = Product::find()->orderBy('sort_order');
+        $product = Yii::$container->get(Product::class);
+        $query = $product::find()->orderBy('sort_order');
         foreach (['name', 'content'] as $attribute) {
             $query->orWhere(['like', $attribute, $term]);
         }
         $products = $query->limit(20)->all();
         $result = [];
-        /** @var Product $product */
-        foreach ($products as $product) {
+        /** @var Product $productModel */
+        foreach ($products as $productModel) {
             $result[] = [
-                'name' => $product->name,
+                'name' => $productModel->name,
                 'url' => Url::toRoute([
                     'add-product',
                     'orderId' => $orderId,
-                    'productId' => $product->id,
+                    'productId' => $productModel->id,
                     'parentId' => $parentId,
                 ]),
             ];
@@ -495,17 +496,18 @@ class BackendOrderController extends BackendController
         $order = $this->findModel($orderId);
         /** @var OrderItem $orderItem */
         $orderItem = OrderItem::findOne(['product_id' => $productId, 'order_id' => $orderId]);
-        /** @var Product $product */
-        $product = Product::findById($productId);
+        $product = Yii::$container->get(Product::class);
+        /** @var Product $productModel */
+        $productModel = $product::findById($productId);
         if (is_null($orderItem)) {
             $orderItem = new OrderItem;
             $orderItem->attributes = [
                 'parent_id' => $parentId,
                 'order_id' => $order->id,
-                'product_id' => $product->id,
-                'quantity' => $product->measure->nominal,
+                'product_id' => $productModel->id,
+                'quantity' => $productModel->measure->nominal,
                 'price_per_pcs' =>  PriceHelper::getProductPrice(
-                    $product,
+                    $productModel,
                     $order,
                     1,
                     SpecialPriceList::TYPE_CORE

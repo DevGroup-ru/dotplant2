@@ -66,6 +66,7 @@ class BackendProductController extends BackendController
      */
     public function actions()
     {
+        $product = Yii::$container->get(Product::class);
         return [
             'getTree' => [
                 'class' => AdjacencyFullTreeDataAction::className(),
@@ -94,7 +95,7 @@ class BackendProductController extends BackendController
             ],
             'update-editable' => [
                 'class' => UpdateEditable::className(),
-                'modelName' => Product::className(),
+                'modelName' => get_class($product),
                 'allowedAttributes' => [
                     'currency_id' => function (Product $model, $attribute) {
                         if ($model === null || $model->currency === null || $model->currency_id === 0) {
@@ -129,11 +130,11 @@ class BackendProductController extends BackendController
             ],
             'property-handler' => [
                 'class' => PropertyHandler::className(),
-                'modelName' => Product::className()
+                'modelName' => get_class($product)
             ],
             'publish-switch' => [
                 'class' => MassPublishAction::className(),
-                'modelName' => Product::className(),
+                'modelName' => get_class($product),
                 'attribute' => 'active',
             ],
             'categoryMovements' => [
@@ -151,13 +152,14 @@ class BackendProductController extends BackendController
      */
     public function actionIndex()
     {
-        $searchModel = new Product();
+        $product = Yii::$container->get(Product::class);
+        $searchModel = $product;
         $params = Yii::$app->request->get();
         /** @var ActiveDataProvider $dataProvider */
         $dataProvider = $searchModel->search($params);
         if (null !== $catId = Yii::$app->request->get('parent_id')) {
             $dataProvider->query->leftJoin(
-                Object::getForClass(Product::className())->categories_table_name . ' cp',
+                Object::getForClass(get_class($product))->categories_table_name . ' cp',
                 'cp.object_model_id=product.id'
             )->andWhere('product.parent_id=0 AND cp.category_id=:cur', [':cur' => $catId]);
         }
@@ -180,11 +182,12 @@ class BackendProductController extends BackendController
      */
     public function actionEdit($id = null)
     {
+        $product = Yii::$container->get(Product::class);
         /*
          * @todo Продумать механизм сохранения изображений для нового продукта.
          * Сейчас для нового продукта скрывается форма добавления изображений.
          */
-        if (null === $object = Object::getForClass(Product::className())) {
+        if (null === $object = Object::getForClass($product::className())) {
             throw new ServerErrorHttpException;
         }
 
@@ -192,18 +195,18 @@ class BackendProductController extends BackendController
         $model = null;
         $parent = null;
         if (null === $id) {
-            $model = new Product();
+            $model = $product;
             $model->loadDefaultValues();
             $model->currency_id = Currency::getMainCurrency()->id;
             $parent_id = Yii::$app->request->get('owner_id', 0);
-            if (0 !== intval($parent_id) && null !== Product::findById($parent_id)) {
+            if (0 !== intval($parent_id) && null !== $product::findById($parent_id)) {
                 $model->parent_id = $parent_id;
             }
             $model->measure_id = $this->module->defaultMeasureId;
         } else {
-            $model = Product::findById($id, null);
+            $model = $product::findById($id, null);
             if ((null !== $model) && ($model->parent_id > 0)) {
-                $parent = Product::findById($model->parent_id, null);
+                $parent = $product::findById($model->parent_id, null);
             }
         }
 
@@ -326,16 +329,17 @@ class BackendProductController extends BackendController
      */
     public function actionGenerate($id)
     {
+        $product = Yii::$container->get(Product::class);
         $post = \Yii::$app->request->post();
         if (!isset($post['GeneratePropertyValue'])) {
             throw new NotFoundHttpException();
         }
-        $parent = Product::findById($id, null);
+        $parent = $product::findById($id, null);
         if ($parent === null) {
             throw new NotFoundHttpException();
         }
 
-        $object = Object::getForClass(Product::className());
+        $object = Object::getForClass(get_class($product));
         $catIds = (new Query())->select('category_id')->from([$object->categories_table_name])->where(
             'object_model_id = :id',
             [':id' => $id]
@@ -370,8 +374,9 @@ class BackendProductController extends BackendController
         $optionProperty = self::generateOptions($postProperty);
 
         foreach ($optionProperty as $option) {
+            $product = Yii::$container->get(Product::class);
             /** @var Product|HasProperties $model */
-            $model = new Product;
+            $model = $product;
             $model->load($post);
 
             $model->parent_id = $parent->id;
@@ -471,14 +476,15 @@ class BackendProductController extends BackendController
      */
     public function actionClone($id, $returnUrl = ['index'])
     {
+        $product = Yii::$container->get(Product::class);
         /** @var Product|HasProperties $model */
-        $model = Product::findOne($id);
+        $model = $product::findOne($id);
         if ($model === null) {
             throw new NotFoundHttpException;
         }
 
         /** @var Product|HasProperties $newModel */
-        $newModel = new Product;
+        $newModel = $product;
         $newModel->setAttributes($model->attributes, false);
         $time = time();
         $newModel->name .= ' (copy ' . date('Y-m-d h:i:s', $time) . ')';
@@ -490,7 +496,7 @@ class BackendProductController extends BackendController
         if ($newModel->save()) {
             $object = Object::getForClass(get_class($newModel));
             // save categories
-            $categoriesTableName = Object::getForClass(Product::className())->categories_table_name;
+            $categoriesTableName = Object::getForClass(get_class($product))->categories_table_name;
             $query = new Query();
             $params = $query->select(['category_id', 'sort_order'])->from($categoriesTableName)->where(
                 ['object_model_id' => $model->id]
@@ -600,8 +606,9 @@ class BackendProductController extends BackendController
      */
     public function actionDelete($id)
     {
+        $product = Yii::$container->get(Product::class);
         /** @var Product $model */
-        if (null === $model = Product::findOne($id)) {
+        if (null === $model = $product::findOne($id)) {
             throw new NotFoundHttpException;
         }
 
@@ -631,7 +638,8 @@ class BackendProductController extends BackendController
     {
         $items = Yii::$app->request->post('items', []);
         if (!empty($items)) {
-            $items = Product::find()->where(['in', 'id', $items])->all();
+            $product = Yii::$container->get(Product::class);
+            $items = $product::find()->where(['in', 'id', $items])->all();
             foreach ($items as $item) {
                 $item->delete();
             }
@@ -727,7 +735,8 @@ class BackendProductController extends BackendController
         $search = Yii::$app->request->get('search');
         if (!empty($search['term'])) {
             $query = new \yii\db\Query();
-            $query->select('id, name AS text')->from(Product::tableName())->andWhere(
+            $product = Yii::$container->get(Product::class);
+            $query->select('id, name AS text')->from($product::tableName())->andWhere(
                 ['like', 'name', $search['term']]
             )->andWhere(['active' => 1])->orderBy(['sort_order' => SORT_ASC, 'name' => SORT_ASC]);
             $command = $query->createCommand();

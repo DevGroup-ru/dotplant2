@@ -67,7 +67,8 @@ class CommercemlGuid extends \yii\db\ActiveRecord
      */
     public function getProduct()
     {
-        return $this->hasOne(Product::className(), ['id' => 'model_id']);
+        $product = Yii::$container->get(Product::class);
+        return $this->hasOne(get_class($product), ['id' => 'model_id']);
     }
 }
 ?>

@@ -85,11 +85,12 @@ class GoogleMerchants extends Component
     {
         if ($this->data === []) {
             $event = new ModificationDataEvent();
-            $query = Product::find()
+            $product = Yii::$container->get(Product::class);
+            $query = $product::find()
                 ->where(['active' => 1]);
 
-            foreach ($query->each() as $product) {
-                $event->model = $product;
+            foreach ($query->each() as $productModel) {
+                $event->model = $productModel;
                 $this->trigger(self::MODIFICATION_DATA, $event);
                 $this->data[] = $event->dataArray;
             }

@@ -62,7 +62,8 @@ class ReviewModule extends BaseModule implements EventInterface
 
                 switch (\Yii::$app->requestedRoute) {
                     case "shop/product/show":
-                        $objectId = Object::getForClass(Product::class)->id;
+                        $product = \Yii::$container->get(Product::class);
+                        $objectId = Object::getForClass(get_class($product))->id;
                         $modelId = $_GET['model_id'];
                         break;
 

@@ -1,10 +1,10 @@
 <?php
 $form = \app\backend\components\ActiveForm::begin();
 
-
+$product = \Yii::$container->get(\app\modules\shop\models\Product::class);
 echo \app\backend\widgets\DataRelationsWidget::widget([
     'fields' => $openGraphFields,
-    'object' => \app\models\Object::getForClass(\app\modules\shop\models\Product::className()),
+    'object' => \app\models\Object::getForClass(get_class($product)),
     'data' => json_decode($model->relation_data),
     'relations' => $relationLinks
 ]);

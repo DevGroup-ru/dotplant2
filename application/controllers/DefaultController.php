@@ -74,7 +74,8 @@ class DefaultController extends Controller
         $search->on(Search::QUERY_SEARCH_PRODUCTS_BY_DESCRIPTION, function (SearchEvent $event) {
             $event->setFunctionSearch(function ($activeQuery) {
                 $activeQuery->limit(Yii::$app->getModule('core')->autoCompleteResultsCount);
-                return Product::find()
+                $product = Yii::$container->get(Product::class);
+                return $product::find()
                     ->select(['id', 'name', 'main_category_id', 'slug', 'sku'])
                     ->where(['id' => $activeQuery->all()])
                     ->all();

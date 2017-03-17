@@ -56,10 +56,10 @@ class BackendPrefilteredPagesController extends BackendController
         }
 
         $static_values_properties = [];
-
+        $product = Yii::$container->get(Product::class);
         $property_groups_ids_for_object = (new Query)->select('id')->from(PropertyGroup::tableName())->where(
                 [
-                    'object_id' => Object::getForClass(Product::className())->id,
+                    'object_id' => Object::getForClass($product::className())->id,
                 ]
             )->column();
 

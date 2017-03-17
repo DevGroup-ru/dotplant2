@@ -12,7 +12,8 @@ use \app\modules\shop\models\Product;
         <fieldset>
             <legend><?= Yii::t('app', 'Filter') ?></legend>
             <?php
-            if ($object->id == Object::getForClass(Product::className())->id) {
+            $product = Yii::$container->get(Product::class);
+            if ($object->id == Object::getForClass(get_class($product))->id) {
                 echo \app\backend\widgets\filterForm\filterFormCategory::widget();
             }
             ?>

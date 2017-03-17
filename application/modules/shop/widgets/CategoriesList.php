@@ -95,11 +95,11 @@ class CategoriesList extends Widget
                 ]];
             }
         }
-
+        $product = \Yii::$container->get(Product::class);
         if (true === $this->onlyNonEmpty) {
             $_sq1 = (new Query())->select('main_category_id')
                 ->distinct()
-                ->from(Product::tableName());
+                ->from($product::tableName());
             $_sq2 = (new Query())->select('category_id')
                 ->distinct()
                 ->from('{{%product_category}}');
@@ -131,7 +131,7 @@ class CategoriesList extends Widget
             new TagDependency([
                 'tags' => [
                     ActiveRecordHelper::getCommonTag(Category::className()),
-                    ActiveRecordHelper::getCommonTag(Product::className()),
+                    ActiveRecordHelper::getCommonTag(get_class($product)),
                 ],
             ])
         );

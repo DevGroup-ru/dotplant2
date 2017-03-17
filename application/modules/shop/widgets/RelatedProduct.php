@@ -44,14 +44,14 @@ class RelatedProduct extends Widget
             'products' => $this->product->relatedProducts,
             'additional' => $this->additional,
         ]);
-
+        $product = \Yii::$container->get(Product::class);
         \Yii::$app->cache->set(
             $cacheKey,
             $result,
             0,
             new TagDependency([
                 'tags' => [
-                    ActiveRecordHelper::getObjectTag(Product::className(), $this->product->id),
+                    ActiveRecordHelper::getObjectTag(get_class($product), $this->product->id),
                     ActiveRecordHelper::getCommonTag(\app\modules\shop\models\RelatedProduct::className()),
                 ]
             ])

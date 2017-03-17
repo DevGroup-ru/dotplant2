@@ -119,7 +119,8 @@ class CartController extends Controller
                     $addonModel = Addon::findById($product['addon_id']);
                 }
             } else {
-                $productModel = Product::findById($product['id']);
+                $product = Yii::$container->get(Product::class);
+                $productModel = $product::findById($product['id']);
             }
 
             if ($addonModel === null && $productModel === null) {

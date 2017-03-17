@@ -53,7 +53,8 @@ class ProductCompareController extends Controller
     public function actionCompare()
     {
         $products = ProductCompareHelper::getProductsList(true);
-        $object = Object::getForClass(Product::className());
+        $product = Yii::$container->get(Product::class);
+        $object = Object::getForClass(get_class($product));
         return $this->render(
             'compare',
             [
@@ -72,7 +73,8 @@ class ProductCompareController extends Controller
     {
         $this->layout = 'print';
         $products = ProductCompareHelper::getProductsList(true);
-        $object = Object::getForClass(Product::className());
+        $product = Yii::$container->get(Product::class);
+        $object = Object::getForClass(get_class($product));
         return $this->render(
             'print',
             [

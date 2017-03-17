@@ -275,7 +275,8 @@ class BackendReviewController extends \app\backend\components\BackendController
             function (&$val) use ($class)
             {
                 if (null !== $model = $class::findOne(['id' => $val['id']])) {
-                    if (Product::className() === $model->className()) {
+                    $product = Yii::$container->get(Product::class);
+                    if (get_class($product) === $model->className()) {
                         $val['url'] = Url::toRoute([
                             '@product',
                             'model' => $model,

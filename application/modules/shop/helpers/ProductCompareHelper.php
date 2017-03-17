@@ -20,7 +20,8 @@ class ProductCompareHelper
             return array_reduce($list,
                 function ($result, $item)
                 {
-                    if (null !== $model = Product::findById($item)) {
+                    $product = Yii::$container->get(Product::class);
+                    if (null !== $model = $product::findById($item)) {
                         $result[$item] = $model;
                     }
                     return $result;
@@ -36,7 +37,8 @@ class ProductCompareHelper
     public static function addProductToList($id)
     {
         $id = intval($id);
-        if (null === Product::findById($id)) {
+        $product = Yii::$container->get(Product::class);
+        if (null === $product::findById($id)) {
             return false;
         }
 
