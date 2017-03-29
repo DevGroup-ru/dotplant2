@@ -10,7 +10,6 @@ use app\modules\shop\helpers\PriceHelper;
 use app\modules\shop\events\OrderStageEvent;
 use app\modules\shop\events\OrderStageLeafEvent;
 use app\modules\shop\models\Addon;
-use app\modules\shop\models\Currency;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderCode;
 use app\modules\shop\models\OrderItem;
@@ -18,12 +17,10 @@ use app\modules\shop\models\OrderStage;
 use app\modules\shop\models\OrderStageLeaf;
 use app\modules\shop\models\Product;
 use app\modules\shop\models\SpecialPriceList;
-use app\modules\shop\models\UserPreferences;
 use app\modules\shop\ShopModule;
 use yii\base\Event;
 use yii\helpers\Url;
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -111,16 +108,16 @@ class CartController extends Controller
             }
         }
 
-        foreach ($products as $product) {
+        foreach ($products as $productArray) {
             $productModel = $addonModel = null;
 
-            if (!isset($product['id'])) {
-                if (isset($product['addon_id'])) {
-                    $addonModel = Addon::findById($product['addon_id']);
+            if (!isset($productArray['id'])) {
+                if (isset($productArray['addon_id'])) {
+                    $addonModel = Addon::findById($productArray['addon_id']);
                 }
             } else {
                 $product = Yii::$container->get(Product::class);
-                $productModel = $product::findById($product['id']);
+                $productModel = $product::findById($productArray['id']);
             }
 
             if ($addonModel === null && $productModel === null) {
