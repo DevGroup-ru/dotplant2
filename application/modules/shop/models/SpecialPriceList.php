@@ -40,9 +40,9 @@ class SpecialPriceList extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['object_id', 'class', 'type_id', 'handler'], 'required'],
-            [['object_id', 'active', 'sort_order', 'type_id'], 'integer'],
-            [['params'], 'string'],
+            [['object_id', 'class', 'type', 'handler'], 'required'],
+            [['object_id', 'active', 'sort_order'], 'integer'],
+            [['params', 'type'], 'string'],
             [['class'], 'string', 'max' => 255]
         ];
     }
