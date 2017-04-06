@@ -68,8 +68,8 @@ class OptionGenerate extends Widget
             $this->property_groups_to_add[$row['id']] = $row['name'];
         }
 
-        $optionGenerate = Json::decode($this->model->option_generate);
-        if (null === PropertyGroup::findOne($optionGenerate['group'])) {
+        $optionGenerate = Json::decode(self::_php7JsonPatch($this->model->option_generate));
+        if (!isset($optionGenerate['group']) || null === PropertyGroup::findOne($optionGenerate['group'])) {
             $this->model->option_generate = $optionGenerate = null;
         }
         $groupModel = null;
@@ -98,5 +98,20 @@ class OptionGenerate extends Widget
                 'footer' => $this->footer,
             ]
         );
+    }
+    
+    /**
+     * Workaround for php 7
+     *
+     * In php7 json_decode(null) produces JSON_ERROR_SYNTAX
+     *
+     * @todo rewrite all json_decode calls in that manner
+     *
+     * @param null $json
+     * @return null|string
+     */
+    private static function _php7JsonPatch($json = null)
+    {
+        return $json === null ? '[]' : $json;
     }
 }
