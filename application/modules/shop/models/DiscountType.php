@@ -34,7 +34,8 @@ class DiscountType extends \yii\db\ActiveRecord
             [['name', 'class', 'checking_class'], 'required'],
             [['active', 'sort_order'], 'integer'],
             [['checking_class'], 'string'],
-            [['name', 'class'], 'string', 'max' => 255]
+            [['name', 'class'], 'string', 'max' => 255],
+            [['custom_view', 'add_view'], 'string', 'max' => 255],
         ];
     }
 
