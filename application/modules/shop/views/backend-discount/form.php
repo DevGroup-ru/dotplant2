@@ -91,6 +91,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php /** @var \app\modules\shop\models\AbstractDiscountType $object */ ?>
                 <?php $form = ActiveForm::begin(['type' => ActiveForm::TYPE_HORIZONTAL]); ?>
                 <article class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <?php if( !is_null( $object->type->custom_view) ): ?>
+                <?php echo $this->render($object->type->custom_view,[
+            		'object'	=> $object,
+            		'form'		=> $form,
+            		'model'		=> $model,
+                ]); ?>
+                <?php else: ?>
                     <?php BackendWidget::begin([
                         'title' => Yii::t('app', $object->type->name),
                         'icon' => 'cog',
@@ -123,6 +130,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <?= $this->render($object->type->add_view, ['form' => $form, 'object' => $object]) ?>
                     <?php BackendWidget::end(); ?>
+                <?php endif; ?>
                 </article>
                 <?php if (($key + 1) % 2 === 0): ?>
                     <div class="clearfix"></div>
