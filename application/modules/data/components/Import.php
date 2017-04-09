@@ -427,15 +427,13 @@ abstract class Import extends Component
 
                 if (!is_object($value)) {
                     $value = '';
-                } elseif (count($value->values) > 1 && isset($fields_property[$field_id])) {
-                    if (isset($fields_property[$field_id]['processValuesAs'])) {
-                        $attributeToGet = $representationConversions[$fields_property[$field_id]['processValuesAs']];
-                        $newValues = [];
-                        foreach ($value->values as $val) {
-                            $newValues[] = $val[$attributeToGet];
-                        }
-                        $value = implode($this->multipleValuesDelimiter, $newValues);
+                } elseif (is_array($field) && count($value->values) >= 1 && isset($field['processValuesAs'])) {
+                    $attributeToGet = $representationConversions[$field['processValuesAs']];
+                    $newValues = [];
+                    foreach ($value->values as $val) {
+                        $newValues[] = $val[$attributeToGet];
                     }
+                    $value = implode($this->multipleValuesDelimiter, $newValues);
                 } else {
                     $value = (string) $value;
                 }
