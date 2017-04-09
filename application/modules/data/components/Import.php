@@ -22,6 +22,11 @@ abstract class Import extends Component
 {
     protected $object;
     protected $properties = null;
+    public $_processInternalId = true;
+    public $_dataHeaderProcessor = ['app\modules\data\components\DummyDHProcessor','processHeader'];
+    public $_importRoutine = 'processImport';
+    public $_exportRoutine = 'processExport';
+    public $_saveRoutine = 'save';
     public $filename;
     public $addPropertyGroups = [];
     public $createIfNotExists = false;
@@ -50,13 +55,13 @@ abstract class Import extends Component
 
             switch ($type) {
                 case 'csv':
-                    return new ImportCsv($config);
+                    return Yii::$container->get('app\modules\data\components\ImportCsv',[],$config);
                 case 'excelCsv':
-                    return new ImportExcelCsv($config);
+                    return Yii::$container->get('app\modules\data\components\ImportExcelCsv',[],$config);
                 case 'xls':
-                    return new ImportXlsx(array_merge(['fileType' => 'xls'], $config));
+                    return Yii::$container->get('app\modules\data\components\ImportXlsx',[],array_merge(['fileType' => 'xls'], $config));
                 case 'xlsx':
-                    return new ImportXlsx(array_merge(['fileType' => 'xlsx'], $config));
+                    return Yii::$container->get('app\modules\data\components\ImportXlsx',[],array_merge(['fileType' => 'xlsx'], $config));
                 default:
                     throw new \Exception('Unsupported type');
             }
@@ -291,7 +296,7 @@ abstract class Import extends Component
         $fields_property = isset($fields['property']) ? $fields['property'] : [];
         $fields_additional = isset($fields['additionalFields']) ? $fields['additionalFields'] : [];
 
-        $result['fields_object'] = $data_header = array_merge($fields_object, ['internal_id']);
+        $result['fields_object'] = $data_header = ($this->_processInternalId)? array_merge($fields_object, ['internal_id']) : $fields_object;
 
         $result['fields_property'] = array_filter($fields_property, function($input) use (&$data_header) {
             if (1 == $input['enabled']) {
@@ -309,9 +314,46 @@ abstract class Import extends Component
             return false;
         });
 
-        $result['fields_header'] = $data_header;
+        $result['fields_header'] = Yii::$container->invoke($this->_dataHeaderProcessor,['dh'=>$data_header]);
 
         return $result;
+    }
+    
+    
+    /**
+     * @param $objectId
+     * @param $object
+     * @param array $objectFields
+     * @param array $properties
+     * @param array $propertiesFields
+     * @param array $row
+     * @param array $titleFields
+     * @throws \Exception
+     */
+    public function saveInvk($objectId, $object, $objectFields = [], $properties = [], $propertiesFields = [], $row=[], $titleFields=[], $columnsCount = null)
+    {
+        return call_user_func([$this,$this->_saveRoutine],$objectId,$object,$objectFields,$properties,$propertiesFields,$row,$titleFields,$columnsCount);
+    }
+    /**
+     * @param $exportFields
+     * @param array $conditions
+     * @param int $batchSize
+     * @return bool
+     * @throws \Exception
+     */
+    public function processExportInvk($exportFields = [], $conditions = [], $batchSize = 100)
+    {
+        return call_user_func([$this,$this->_exportRoutine],$exportFields,$conditions,$batchSize);
+    }
+    /**
+     * @param array $importFields
+     * @return bool
+     * @throws \Exception
+     * @throws \yii\db\Exception
+     */
+    public function processImportInvk($importFields = [])
+    {
+        return call_user_func([$this,$this->_importRoutine],$importFields);
     }
 
     /**
@@ -415,7 +457,7 @@ abstract class Import extends Component
             $row = [];
 
             foreach ($fields['fields_object'] as $field) {
-                if ('internal_id' === $field) {
+                if ('internal_id' === $field && $this->_processInternalId) {
                     $row[] = $object->id;
                 } else {
                     $row[] = isset($object->$field) ? $object->$field : '';
@@ -524,7 +566,7 @@ abstract class Import extends Component
                 }
 
                 $objectId = isset($titleFields['internal_id']) ? $row[$titleFields['internal_id']] : 0;
-                $this->save(
+                $this->saveInvk(
                     $objectId,
                     $objData,
                     $fields['fields_object'],

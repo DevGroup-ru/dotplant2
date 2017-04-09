@@ -10,6 +10,13 @@ use yii\web\UploadedFile;
 
 class ImportModel extends Model implements \Serializable
 {
+    const EVENT_BEFORE_SERIALIZE 	= 'beforeSerialize';
+    const EVENT_AFTER_SERIALIZE  	= 'afterSerialize';
+    const EVENT_BEFORE_LOAD	 	= 'beforeLoad';
+    const EVENT_AFTER_LOAD	 	= 'afterLoad';
+    const EVENT_BEFORE_UNSERIALIZE	= 'beforeUnserialize';
+    const EVENT_AFTER_UNSERIALIZE	= 'afterUnserialize';
+    
     public $object;
     private $user = 0;
     /**
@@ -24,6 +31,8 @@ class ImportModel extends Model implements \Serializable
     public $filterByFields;
 
     public $conditions = [];
+    
+    public $_serializeArray = [];
 
     /**
      * Array of PropertyGroup's ids to add to each record
@@ -51,6 +60,11 @@ class ImportModel extends Model implements \Serializable
      */
     public $additionalFields = [];
 
+    public function behaviors()
+    {
+	    return array_merge(parent::behaviors(),[
+	    ]);
+    }
 
     public function getFilename($prefix = '')
     {
@@ -73,6 +87,12 @@ class ImportModel extends Model implements \Serializable
 
     public function load($data, $formName = null)
     {
+	    $this->trigger(self::EVENT_BEFORE_LOAD,Yii::createObject([
+	        'class' => '\app\modules\data\components\ImportModelLoadEvent',
+	        '_data'=>$data,
+	        '_formName'=>$formName
+	    ]));
+
         if (isset($data['ImportModel']) &&
             isset($data['ImportModel']['fields']) &&
             isset($data['ImportModel']['fields']['property']) &&
@@ -95,7 +115,15 @@ class ImportModel extends Model implements \Serializable
                 }
             }
         }
-        return parent::load($data, $formName = null);
+
+	    $this->trigger(self::EVENT_AFTER_LOAD,Yii::createObject([
+	        'class' => '\app\modules\data\components\ImportModelLoadEvent',
+	        '_data'=>$data,
+	        '_formName'=>$formName
+	        ]));
+
+
+        return parent::load($data, $formName);
     }
 
     /**
@@ -156,7 +184,8 @@ class ImportModel extends Model implements \Serializable
 
     public function serialize()
     {
-        return Json::encode([
+
+	    $this->_serializeArray = [
             'object' => $this->object,
             'fields' => $this->fields,
             'conditions' => $this->conditions,
@@ -166,11 +195,24 @@ class ImportModel extends Model implements \Serializable
             'createIfNotExists' => $this->createIfNotExists,
             'multipleValuesDelimiter' => $this->multipleValuesDelimiter,
             'additionalFields' => $this->additionalFields,
-        ]);
+        ];
+
+	    $this->trigger(self::EVENT_BEFORE_SERIALIZE);
+
+        $ret = Json::encode($this->_serializeArray);
+        
+        $this->trigger(self::EVENT_AFTER_SERIALIZE);
+
+        return $ret;
     }
 
     public function unserialize($serialized)
     {
+	    $this->trigger(self::EVENT_BEFORE_UNSERIALIZE,Yii::createObject([
+	        'class' => '\app\modules\data\components\ImportModelBUnserializeEvent',
+	        'serialized' => $serialized
+	    ]));
+	
         $fields = Json::decode($serialized);
 
         $this->object = $fields['object'];
@@ -182,6 +224,11 @@ class ImportModel extends Model implements \Serializable
         $this->createIfNotExists = $fields['createIfNotExists'];
         $this->multipleValuesDelimiter = $fields['multipleValuesDelimiter'];
         $this->additionalFields = isset($fields['fields']['additionalFields']) ? $fields['fields']['additionalFields'] : [];
+
+	    $this->trigger(self::EVENT_AFTER_UNSERIALIZE,Yii::createObject([
+	        'class' => '\app\modules\data\components\ImportModelAUnserializeEvent',
+	        'fields' => $fields
+	    ]));
 
     }
 }
