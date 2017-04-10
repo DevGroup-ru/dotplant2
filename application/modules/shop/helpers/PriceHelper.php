@@ -56,7 +56,7 @@ class PriceHelper
         foreach ($specialPriceList as $specialPriceRow) {
             $class = $specialPriceRow->class;
             $handler = $specialPriceRow->handler;
-                $price = $class::$handler($product, $order, $specialPriceRow, $price);
+            $price = $class::$handler($product, $order, $specialPriceRow, $price, $quantity);
         }
         $resultingPrice = $price*$quantity;
 

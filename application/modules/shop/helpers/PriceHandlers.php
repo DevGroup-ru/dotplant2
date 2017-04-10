@@ -38,14 +38,16 @@ class PriceHandlers
      * @param Product $product
      * @param Order|null $order
      * @param SpecialPriceList $specialPrice
-     * @param $price
+     * @param int $price
+     * @param int $quantity
      * @return float
      */
     static public function getCurrencyPriceProduct(
         Product $product,
         Order $order = null,
-        SpecialPriceList $specialPrice,
-        $price
+        SpecialPriceList $specialPrice = null,
+        $price = 0,
+        $quantity = 1
     ) {
         return CurrencyHelper::convertToMainCurrency($price, $product->currency);
     }
@@ -55,14 +57,16 @@ class PriceHandlers
      * @param Product $product
      * @param null|Order $order
      * @param SpecialPriceList $specialPrice
-     * @param $price
+     * @param int $price
+     * @param int $quantity
      * @return mixed
      */
     static public function getDiscountPriceProduct(
         Product $product,
         Order $order = null,
-        SpecialPriceList $specialPrice,
-        $price
+        SpecialPriceList $specialPrice = null,
+        $price = 0,
+        $quantity = 1
     ) {
         static $discounts = null;
         if (null === $discounts) {
