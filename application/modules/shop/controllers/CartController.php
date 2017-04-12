@@ -126,8 +126,8 @@ class CartController extends Controller
             }
 
             /** @var Product $productModel */
-            $quantity = isset($product['quantity']) && (double) $product['quantity'] > 0
-                ? (double) $product['quantity']
+            $quantity = isset($productArray['quantity']) && (double) $productArray['quantity'] > 0
+                ? (double) $productArray['quantity']
                 : 1;
 
             $condition = ['order_id' => $order->id, 'parent_id' => 0];
@@ -157,8 +157,8 @@ class CartController extends Controller
                         SpecialPriceList::TYPE_CORE
                     ),
                 ];
-                if (empty($product['customName']) === false) {
-                    $orderItem->custom_name = $product['customName'];
+                if (empty($productArray['customName']) === false) {
+                    $orderItem->custom_name = $productArray['customName'];
                 }
                 if ($productModel !== null) {
                     $orderItem->product_id = $thisItemModel->id;
@@ -191,8 +191,8 @@ class CartController extends Controller
                 ];
             }
 
-            if (isset($product['children']) && is_array($product['children'])) {
-                $result = $this->addProductsToOrder($order, $product['children'], $result, $orderItem->id);
+            if (isset($productArray['children']) && is_array($productArray['children'])) {
+                $result = $this->addProductsToOrder($order, $productArray['children'], $result, $orderItem->id);
             }
         }
 
