@@ -22,7 +22,7 @@ class BaseOrderStageHandlers
      */
     public static function handleCustomer(OrderStageLeafEvent $event)
     {
-        $event->setStatus(false);
+        $event->setStatus(true);
 
         if (\Yii::$app->request->isPost) {
             $order = Order::getOrder();

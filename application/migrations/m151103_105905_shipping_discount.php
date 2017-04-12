@@ -24,7 +24,7 @@ class m151103_105905_shipping_discount extends Migration
         $discountType->sort_order = 0;
         $discountType->add_view = '@app/modules/shop/views/backend-discount/_shipping_discount';
 
-        $discountType->save();
+        $discountType->save(false);
     }
 
     public function down()

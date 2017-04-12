@@ -26,7 +26,7 @@
 
     <?= $form->field($orderDeliveryInformation, 'shipping_option_id')
         ->dropDownList(
-            \app\components\Helper::getModelMap(\app\modules\shop\models\ShippingOption::className(), 'id', 'name'),
+            \app\components\Helper::getModelMap(\app\modules\shop\models\ShippingOption::className(), 'id', 'description'),
             ['readonly' => $immutable]
     ); ?>
 

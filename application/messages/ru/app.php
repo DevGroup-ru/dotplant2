@@ -779,8 +779,8 @@ return [
     'Payer information' => 'Информация о плательщике',
     'Payment' => 'Оплата',
     'Payment available' => 'Платеж доступен',
-    'Payment type' => 'Способ оплаты',
-    'Payment type ID' => 'ID способа оплаты',
+    'Payment Type' => 'Способ оплаты',
+    'Payment Type ID' => 'ID способа оплаты',
     'Payment types' => 'Способы оплаты',
     'Payment error' => 'Ошибка оплаты',
     'Payment method selection' => 'Выбор способа оплаты',
@@ -1293,4 +1293,5 @@ return [
     'You have doubled slugs. Fix it please.' => 'У вас есть дублирующиеся урл. Исправьте это, пожалуйста.',
     'Main' => 'Основное',
     'Addons' => 'Дополнения',
+    'Transaction success' => 'Успешная транзакция'
 ];
