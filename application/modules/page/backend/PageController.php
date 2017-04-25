@@ -153,6 +153,14 @@ class PageController extends \app\backend\components\BackendController
                 }
 
                 if ($save_result) {
+                    if (
+                        array_key_exists('date_added', $post[$model->formName()])
+                        && !empty($post[$model->formName()]['date_added'])
+                        && $post[$model->formName()]['date_added'] != $model->date_added
+                    ) {
+                        $model->date_added = $post[$model->formName()]['date_added'];
+                        $model->save(false);
+                    }
                     $modelAfterSaveEvent = new BackendEntityEditEvent($model);
                     $this->trigger(self::BACKEND_PAGE_AFTER_SAVE, $modelAfterSaveEvent);
 
