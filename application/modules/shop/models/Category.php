@@ -6,6 +6,7 @@ use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
 use app\components\Helper;
 use app\models\Object;
+use app\modules\data\components\ImportableInterface;
 use app\modules\shop\models\FilterSets;
 use app\properties\HasProperties;
 use app\traits\GetImages;
@@ -42,7 +43,7 @@ use yii\helpers\Url;
  * @property Category[] $children
  * @property Category $parent
  */
-class Category extends ActiveRecord implements \JsonSerializable
+class Category extends ActiveRecord implements \JsonSerializable, ImportableInterface
 {
     use GetImages;
 
@@ -751,5 +752,41 @@ class Category extends ActiveRecord implements \JsonSerializable
     public function jsonSerialize()
     {
         return ($this->className() . ':' . $this->id);
+    }
+
+    /**
+     * Process fields before the actual model is saved(inserted or updated)
+     * @param array $fields
+     * @param $multipleValuesDelimiter
+     * @param array $additionalFields
+     */
+    public function processImportBeforeSave(array $fields, $multipleValuesDelimiter, array $additionalFields)
+    {
+        $_attributes = $this->attributes();
+        foreach ($fields as $key => $value) {
+            if (in_array($key, $_attributes)) {
+                $this->$key = $value;
+            }
+        }
+
+        if (empty($this->slug)) {
+            $this->slug = Helper::createSlug($this->name);
+        } elseif (mb_strlen($this->slug) > 80) {
+            $this->slug = mb_substr($this->slug, 0, 80);
+        }
+
+        if (empty($this->name)) {
+            $this->name = 'unnamed-category';
+        }
+    }
+
+    /**
+     * Process fields after the actual model is saved(inserted or updated)
+     * @param array $fields
+     * @param $multipleValuesDelimiter
+     * @param array $additionalFields
+     */
+    public function processImportAfterSave(array $fields, $multipleValuesDelimiter, array $additionalFields)
+    {
     }
 }
