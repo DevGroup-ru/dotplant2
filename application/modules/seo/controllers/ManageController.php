@@ -2,6 +2,7 @@
 
 namespace app\modules\seo\controllers;
 
+use app\backend\actions\UpdateEditable;
 use app\backend\components\BackendController;
 use app\modules\shop\models\Category;
 use app\modules\shop\models\OrderTransaction;
@@ -54,6 +55,22 @@ class ManageController extends BackendController
               'duration' => 24 * 60 * 60,
               'dependency' => ActiveRecordHelper::getCommonTag(Config::className()),
             ]
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function actions()
+    {
+        return [
+            'update-editable-counter' => [
+                'class' => UpdateEditable::class,
+                'modelName' => get_class(Yii::$container->get(Counter::class)),
+                'allowedAttributes' => [
+                    'position' => [Counter::class, "updateInfoForEditable"],
+                ],
+            ],
         ];
     }
 

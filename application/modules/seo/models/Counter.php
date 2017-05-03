@@ -8,6 +8,7 @@ use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use yii\base\Event;
 use yii\caching\TagDependency;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveRecord;
 use yii\web\View;
 
 /**
@@ -18,11 +19,14 @@ use yii\web\View;
  * @property string $description
  * @property string $code
  */
-class Counter extends \yii\db\ActiveRecord
+class Counter extends ActiveRecord
 {
     const POSITION_AT_END_OF_BODY = 0;
     const POSITION_AT_BEGIN_OF_BODY = 1;
     const POSITION_AT_HEAD = 2;
+    const MESSAGE_END_OF_BODY_TAG = "End of body tag";
+    const MESSAGE_BEGINNING_OF_BODY_TAG = "Beginning of body tag";
+    const MESSAGE_INSIDE_OF_HEAD_TAG = "Inside of head tag";
 
     /**
      * @inheritdoc
@@ -96,13 +100,46 @@ class Counter extends \yii\db\ActiveRecord
         static::renderCounters($event, static::POSITION_AT_END_OF_BODY);
     }
 
-    public function getPositionVariants()
+    /**
+     * @return array
+     */
+    public static function getPositionVariants()
     {
         return [
-            self::POSITION_AT_END_OF_BODY => \Yii::t("app", "End of body tag"),
-            self::POSITION_AT_BEGIN_OF_BODY => \Yii::t("app", "Beginning of body tag"),
-            self::POSITION_AT_HEAD => \Yii::t("app", "Inside of head tag")
+            self::POSITION_AT_END_OF_BODY => \Yii::t("app", self::MESSAGE_END_OF_BODY_TAG),
+            self::POSITION_AT_BEGIN_OF_BODY => \Yii::t("app", self::MESSAGE_BEGINNING_OF_BODY_TAG),
+            self::POSITION_AT_HEAD => \Yii::t("app", self::MESSAGE_INSIDE_OF_HEAD_TAG)
         ];
+    }
+
+    /**
+     * @param Counter $model
+     * @return null|string
+     */
+    public static function updateInfoForEditable(Counter $model)
+    {
+        if ($model === null) {
+            return null;
+        }
+
+        switch($model->position) {
+            case Counter::POSITION_AT_BEGIN_OF_BODY:
+                $value = self::MESSAGE_BEGINNING_OF_BODY_TAG;
+                break;
+            case Counter::POSITION_AT_END_OF_BODY:
+                $value = self::MESSAGE_END_OF_BODY_TAG;
+                break;
+            case Counter::POSITION_AT_HEAD:
+                $value = self::MESSAGE_INSIDE_OF_HEAD_TAG;
+                break;
+            default:
+                $value = 'Unexpected value';
+                break;
+        }
+        return \yii\helpers\Html::tag(
+            'span',
+            \Yii::t('app', $value)
+        );
     }
 
     public static function renderCounters(Event $event, $mode = self::POSITION_AT_END_OF_BODY)
@@ -137,8 +174,7 @@ class Counter extends \yii\db\ActiveRecord
         }
     }
 
-    public
-    function scenarios()
+    public function scenarios()
     {
         return [
             'default' => ['id', 'name', 'description', 'code', 'position'],

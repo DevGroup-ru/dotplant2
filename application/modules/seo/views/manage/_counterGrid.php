@@ -1,7 +1,6 @@
 <?php
 
-use yii\grid\GridView;
-use yii\helpers\Html;
+use app\modules\seo\models\Counter;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 
@@ -16,11 +15,15 @@ use yii\widgets\Pjax;
 
 <?php Pjax::begin() ?>
 
-<?= GridView::widget([
-    'id' => $id,
-    'dataProvider' => $dataProvider,
-    'filterModel' => $searchModel,
-    'layout' => "{items}\n{summary}\n{pager}",
+<?= \kartik\dynagrid\DynaGrid::widget([
+    'gridOptions' => [
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'layout' => "{items}\n{summary}\n{pager}",
+    ],
+    'options' => [
+        'id' => $id,
+    ],
     'columns' => [
         [
             'class' => 'yii\grid\CheckboxColumn',
@@ -38,15 +41,19 @@ use yii\widgets\Pjax;
         'name',
         'description',
         [
-            'class' => 'yii\grid\DataColumn',
+            'class' => \kartik\grid\EditableColumn::className(),
+            'attribute' => 'position',
+            'editableOptions' => [
+                'data' => Counter::getPositionVariants(),
+                'inputType' => 'dropDownList',
+                'placement' => 'left',
+                'formOptions' => [
+                    'action' => 'update-editable-counter',
+                ],
+            ],
+            'filter' => Counter::getPositionVariants(),
             'format' => 'raw',
-            'value' => function ($data) {
-                return Html::textarea(
-                    'code',
-                    $data['code'],
-                    ['data-editor' => 'html', 'data-read-only' => 'true', 'rows' => 25, 'cols' => 125]
-                );
-            },
+            'value' => [Counter::class, "updateInfoForEditable"],
         ],
         [
             'class' => 'app\backend\components\ActionColumn',
@@ -76,9 +83,6 @@ use yii\widgets\Pjax;
             ],
         ],
     ],
-    'tableOptions' => [
-        'class' => 'table table-striped table-condensed table-hover',
-    ]
 ]); ?>
 
 <?php Pjax::end() ?>
