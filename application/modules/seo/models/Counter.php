@@ -18,12 +18,14 @@ use yii\web\View;
  * @property string $name
  * @property string $description
  * @property string $code
+ * @property int $position see POSITION_* constants for available options
  */
 class Counter extends ActiveRecord
 {
     const POSITION_AT_END_OF_BODY = 0;
     const POSITION_AT_BEGIN_OF_BODY = 1;
     const POSITION_AT_HEAD = 2;
+
     const MESSAGE_END_OF_BODY_TAG = "End of body tag";
     const MESSAGE_BEGINNING_OF_BODY_TAG = "Beginning of body tag";
     const MESSAGE_INSIDE_OF_HEAD_TAG = "Inside of head tag";
@@ -101,7 +103,7 @@ class Counter extends ActiveRecord
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public static function getPositionVariants()
     {
@@ -123,13 +125,13 @@ class Counter extends ActiveRecord
         }
 
         switch($model->position) {
-            case Counter::POSITION_AT_BEGIN_OF_BODY:
+            case self::POSITION_AT_BEGIN_OF_BODY:
                 $value = self::MESSAGE_BEGINNING_OF_BODY_TAG;
                 break;
-            case Counter::POSITION_AT_END_OF_BODY:
+            case self::POSITION_AT_END_OF_BODY:
                 $value = self::MESSAGE_END_OF_BODY_TAG;
                 break;
-            case Counter::POSITION_AT_HEAD:
+            case self::POSITION_AT_HEAD:
                 $value = self::MESSAGE_INSIDE_OF_HEAD_TAG;
                 break;
             default:
