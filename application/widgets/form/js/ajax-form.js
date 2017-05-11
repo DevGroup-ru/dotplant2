@@ -14,7 +14,7 @@ jQuery(function() {
             });
         }
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', $form.attr('action'), true );
+        xhr.open('POST', window.location.protocol + "//" + window.location.host + $form.attr('action'), true );
         xhr.send($formData);
         xhr.onreadystatechange = function(response) {
             if (xhr.readyState == 4) {
