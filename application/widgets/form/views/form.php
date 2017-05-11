@@ -15,7 +15,7 @@ use yii\captcha\Captcha;
 <?php
     $form = ActiveForm::begin([
         'id' => $id,
-        'action' => ['/default/submit-form', 'id' => $this->context->formId],
+        'action' => [\Yii::$app->getModule('core')->getBaseUrl() . '/default/submit-form', 'id' => $this->context->formId],
         'options' => $options,
     ]);
 ?>
