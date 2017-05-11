@@ -142,7 +142,12 @@ class AbstractModel extends Model
     public function setAttributesValues($values)
     {
         foreach ($this->values_by_property_key as $key => $value) {
+            /** @var PropertyValue $value */
             if (isset($values[$this->form_name][$key])) {
+                if (Property::findById($value->property_id)->is_eav) {
+                    continue;
+                }
+                
                 if (is_array($values[$this->form_name][$key])) {
                     $this->values_by_property_key[$key]->values = [];
                     foreach ($this->values_by_property_key[$key]->values as $val) {
