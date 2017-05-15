@@ -138,6 +138,7 @@ class BackendReviewController extends \app\backend\components\BackendController
             if (!is_null($review)) {
                 $review->status = Review::STATUS_NOT_APPROVED;
                 $review->save(true, ['status']);
+                $id = $review->id;
             }
         }
         if ($submission->save(true, ['spam'])) {
