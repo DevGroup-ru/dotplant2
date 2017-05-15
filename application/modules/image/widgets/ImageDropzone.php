@@ -88,7 +88,7 @@ class ImageDropzone extends DropZone
 
     protected function createDropzone()
     {
-		if (isset($this->options['url']) && is_array($this->options['url'])) {
+        if (isset($this->options['url']) && is_array($this->options['url'])) {
 			$this->options['url'] = Url::to($this->options['url']);
         }
         $this->getView()->registerJs(
