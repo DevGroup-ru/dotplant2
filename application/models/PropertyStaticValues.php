@@ -199,7 +199,7 @@ class PropertyStaticValues extends ActiveRecord
      * @param $properties
      * @return PropertyStaticValues[]
      */
-    public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false, $productsFilteringMode)
+    public static function getValuesForFilter($property_id, $category_id, $properties, $multiple = false, $productsFilteringMode = "")
     {
         $priceMin = Yii::$app->request->get('price_min');
         $priceMax = Yii::$app->request->get('price_max');
