@@ -179,7 +179,16 @@ class ProductController extends Controller
         $this->view->blocks['announce'] = $selected_category->announce;
         $this->view->blocks['content'] = $selected_category->content;
 
-        $this->loadDynamicContent($object->id, 'shop/product/list', $request->get());
+        /* 
+        не все запросы с фильтрами отдают данные в get параметрах. Фильтр в боковом меню использует пост данные для передачи информации о фильтрах
+        */
+        $requestParams = $request->get();
+        $postParams = $request->post();
+        if(!empty($postParams['properties'])){
+            $requestParams['properties'] = $postParams['properties'];
+        }
+        
+        $this->loadDynamicContent($object->id, 'shop/product/list', $requestParams);
 
         $params = [
             'model' => $selected_category,
@@ -232,6 +241,7 @@ class ProductController extends Controller
                 'content' => $content,
                 'filters' => $filters,
                 'title' => $this->view->title,
+                'h1' => $this->view->blocks['h1'],
                 'url' => Url::to(
                     [
                         '/shop/product/list',
