@@ -650,6 +650,11 @@ $(function() {
                     var elem = $(data.content);
                     block.empty().css('height', 'auto').append(elem);
                     document.title = data.title;
+                    var h1elem = document.getElementsByTagName('h1');
+                    if(h1elem.length > 0) {
+                        h1elem[0].innerText = data.h1;
+                    }
+                    
                     if (history) {
                         if (history.pushState) {
                             history.pushState(
