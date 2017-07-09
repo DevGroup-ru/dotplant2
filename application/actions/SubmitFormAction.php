@@ -34,6 +34,34 @@ class SubmitFormAction extends Action
         }
 
         $post = Yii::$app->request->post();
+
+        // удаляем required правило для файлов
+        $intersectKeys = [];
+        if (isset($_FILES[$form->abstractModel->formName()]) && isset($post[$form->abstractModel->formName()])) {
+            $intersectKeys = array_intersect_key(
+                $post[$form->abstractModel->formName()],
+                $_FILES[$form->abstractModel->formName()]['name']
+            );
+        }
+        
+        if(!empty($intersectKeys)) {
+            $intersectKeys = array_keys($intersectKeys);
+            $oldRulesModel = $form->abstractModel->getRules();
+            $newRulesModel = [];
+            foreach($oldRulesModel as $curRule){
+                if(!is_array($curRule[1])
+                    && $curRule[1] == 'required'
+                    && in_array($curRule[0], $intersectKeys)) {
+                    continue;
+                }
+                $newRulesModel[] = $curRule;
+            }
+            $form->abstractModel->clearRules();
+            $form->abstractModel->addRules($newRulesModel);
+        }
+        // удаляем required правило для файлов
+
+
         $form->abstractModel->setAttributesValues($post);
         /** @var AbstractModel|SpamCheckerBehavior $model */
         $model = $form->getAbstractModel();
