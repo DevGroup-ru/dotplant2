@@ -94,6 +94,11 @@ class AbstractModel extends Model
         );
     }
 
+    public function getRules()
+    {
+        return $this->rules;
+    }
+
     public function addRules($rules)
     {
         $this->rules = ArrayHelper::merge($this->rules, $rules);
