@@ -24,9 +24,10 @@ trait DynamicContentTrait
          * @var $this \yii\web\Controller
          */
 
-        $dynamicCacheKey = 'dynamicCacheKey'.json_encode([$object_id, $route, $selections]);
+        $dynamicCacheKey = 'dynamicCacheKey' . json_encode([$object_id, $route, $selections]);
 
         if (!$dynamicResult = Yii::$app->cache->get($dynamicCacheKey)) {
+            
             $dynamicResult = [];
             $models = DynamicContent::find()
                 ->where([
@@ -38,28 +39,36 @@ trait DynamicContentTrait
             if (isset($selections['properties']) === false) {
                 $selections['properties'] = [];
             }
+
             /**
              * @var $model DynamicContent
              */
             foreach ($models as $model) {
-                if (is_integer($model->apply_if_last_category_id) === true && $model->apply_if_last_category_id !== 0) {
-                    if (!isset($selections['last_category_id'])) {
-                        continue;
-                    } elseif ($selections['last_category_id'] != $model->apply_if_last_category_id) {
+                if (is_int($model->apply_if_last_category_id) === true && $model->apply_if_last_category_id !== 0) {
+                    if (!isset($selections['last_category_id']) || $selections['last_category_id'] != $model->apply_if_last_category_id) {
                         continue;
                     }
                 }
                 $model_selections = Json::decode($model->apply_if_params);
-                $matches = false;
                 if (is_array($model_selections) === true) {
-                    $matches = true;
-
-                    foreach ($model_selections as $property_id => $value) {
-                        if (isset($selections['properties']) === true) {
+                    if (isset($selections['properties']) === true) {
+                        $matches = true;
+                        foreach ($model_selections as $property_id => $values) {
+                            if (!is_array($values)) {
+                                $values = [$values];
+                            }
+                            sort($values);
+                            $values = array_unique($values);
                             if (isset($selections['properties'][$property_id]) === true) {
-                                if (isset($selections['properties'][$property_id][0]) === true &&
-                                    $selections['properties'][$property_id][0] == $value) {
-                                    // all ok
+                                if (count($values) === count($selections['properties'][$property_id])) {
+                                    if (
+                                        count(array_diff($values, $selections['properties'][$property_id])) === 0 &&
+                                        count(array_diff($selections['properties'][$property_id], $values)) === 0
+                                    ) {
+
+                                    } else {
+                                        $matches = false;
+                                    }
                                 } else {
                                     $matches = false;
                                 }
@@ -67,10 +76,10 @@ trait DynamicContentTrait
                                 $matches = false;
                                 break;
                             }
-                        } else {
-                            $matches = false;
-                            break;
+
                         }
+                    } else {
+                        $matches = false;
                     }
                     if ($matches === false) {
                         continue;
@@ -78,6 +87,7 @@ trait DynamicContentTrait
                     if (count($selections['properties']) != count($model_selections)) {
                         $matches = false;
                     }
+
                     if ($matches === true) {
                         $dynamicResult['model'] = $model;
                         if ($model->title) {
@@ -112,8 +122,6 @@ trait DynamicContentTrait
                         $dynamicResult['blocks']['announce'] = $model->announce;
                         $dynamicResult['blocks'][$model->content_block_name] = $model->content;
                     }
-                } else {
-                    $matches = true;
                 }
             }
 

@@ -5,7 +5,10 @@ namespace app\modules\shop;
 use app;
 use app\backend\BackendModule;
 use app\components\BaseModule;
+use app\modules\event\interfaces\EventInterface;
+use app\modules\floatPanel\widgets\FloatingPanel;
 use app\modules\shop\handlers\UserHandler;
+use app\modules\shop\models\Category;
 use app\modules\shop\models\ConfigConfigurationModel;
 use kartik\icons\Icon;
 use Yii;
@@ -21,7 +24,7 @@ use yii\web\User;
  * Shop module is the base core module of DotPlant2 CMS handling all common e-commerce features
  * @package app\modules\shop
  */
-class ShopModule extends BaseModule implements BootstrapInterface, app\modules\event\interfaces\EventInterface
+class ShopModule extends BaseModule implements BootstrapInterface, EventInterface
 {
     const BACKEND_PRODUCT_GRID = 'productEditGrid';
     const BACKEND_CATEGORY_GRID = 'categoryEditGrid';
@@ -227,17 +230,15 @@ class ShopModule extends BaseModule implements BootstrapInterface, app\modules\e
     public static function attachEventsHandlers()
     {
         Event::on(
-            app\modules\floatPanel\widgets\FloatingPanel::class,
-            app\modules\floatPanel\widgets\FloatingPanel::EVENT_BEFORE_RENDER,
+            FloatingPanel::class,
+            FloatingPanel::EVENT_BEFORE_RENDER,
             function ($event) {
                 switch (Yii::$app->requestedRoute) {
                     case 'shop/product/list':
                         if (isset($_GET['properties'])) {
                             $apply_if_params = [];
                             foreach ($_GET['properties'] as $property_id => $values) {
-                                if (isset($values[0])) {
-                                    $apply_if_params[$property_id] = $values[0];
-                                }
+                                $apply_if_params[$property_id] = $values;
                             }
                             if (Yii::$app->response->dynamic_content_trait === true) {
                                 $event->items[] = [
@@ -269,7 +270,7 @@ class ShopModule extends BaseModule implements BootstrapInterface, app\modules\e
                         } else {
                             // no properties selected - go to category edit page
                             if (isset($_GET['last_category_id'])) {
-                                $cat = app\modules\shop\models\Category::findById($_GET['last_category_id']);
+                                $cat = Category::findById($_GET['last_category_id']);
                                 $event->items[] = [
                                     'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit category'),
                                     'url' => [
@@ -287,7 +288,7 @@ class ShopModule extends BaseModule implements BootstrapInterface, app\modules\e
                                 'label' => Icon::show('pencil') . ' ' . Yii::t('app', 'Edit product'),
                                 'url' => [
                                     '/shop/backend-product/edit',
-                                    'id' => intval($_GET['model_id'])
+                                    'id' => (int)$_GET['model_id']
                                 ],
                             ];
                         }

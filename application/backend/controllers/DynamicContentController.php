@@ -82,9 +82,12 @@ class DynamicContentController extends BackendController
         }
 
         $static_values_properties = [];
-        if (isset($_GET['DynamicContent'])) {
-            if (isset($_GET['DynamicContent']['object_id'])) {
-                $model->object_id = intval($_GET['DynamicContent']['object_id']);
+        $get = Yii::$app->request->get();
+        $post = Yii::$app->request->post();
+        if (isset($get['DynamicContent'])) {
+            $post = $get;
+            if (isset($get['DynamicContent']['object_id'])) {
+                $model->object_id = (int)$get['DynamicContent']['object_id'];
             }
         }
         $property_groups_ids_for_object = (new Query)->select('id')->from(PropertyGroup::tableName())->where([])->column();
@@ -103,21 +106,16 @@ class DynamicContentController extends BackendController
             ];
         }
 
-        $post = \Yii::$app->request->post();
-        if (isset($_GET['DynamicContent'])) {
-            $post = $_GET;
-        }
-        if ($model->load($post) && $model->validate() && !isset($_GET['DynamicContent'])) {
+        if ($model->load($post) && $model->validate()&&!isset($get['DynamicContent'])) {
             $save_result = $model->save();
             if ($save_result) {
                 $saveStateEvent = new BackendEntityEditEvent($model);
                 $this->trigger(self::BACKEND_DYNAMIC_CONTENT_EDIT_SAVE, $saveStateEvent);
                 return $this->redirectUser($model->id);
-            } else {
-                \Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
             }
-        }
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Cannot update data'));
 
+        }
         return $this->render(
             'dynamic-content-form',
             [

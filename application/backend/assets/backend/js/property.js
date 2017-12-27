@@ -4,7 +4,7 @@ $(function () {
 //        console.log($("#parameter-template").html());
 
         var compiled = _.template($("#parameter-template").html());
-        var $property = $(compiled({ index: $('#properties .parameter').length  }));
+        var $property = $(compiled({index: $('#properties .parameter').length}));
         $property.find('.property_id').change(function () {
             var $select = $(this).parent().parent().find('.select'),
                 $input = $(this).parent().parent().find('input.property-value-input');
@@ -60,15 +60,23 @@ $(function () {
                 $input = $(this).find('input.property-value-input'),
                 value = $select.prop('disabled') ? $input.val() : $select.val();
 
-
-            serialized[key] = value;
+            if (!Array.isArray(serialized[key])) {
+                serialized[key] = [];
+            }
+            serialized[key].push(value);
         });
-
         $("#" + current_field_id).val(JSON.stringify(serialized));
 
         return true;
     });
     for (var c in current_selections) {
-        addProperty(c, current_selections[c]);
+        var selection = current_selections[c];
+        if (Array.isArray(selection)) {
+            selection.forEach(function (select) {
+                addProperty(c, select);
+            });
+        } else {
+            addProperty(c, selection);
+        }
     }
 });
