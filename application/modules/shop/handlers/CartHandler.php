@@ -5,7 +5,7 @@ use app\modules\shop\controllers\CartController;
 use app\modules\shop\events\CartActionEvent;
 use app\modules\shop\models\Order;
 use app\modules\shop\ShopModule;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\web\View;
 
 class CartHandler extends Object

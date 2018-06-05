@@ -13,7 +13,7 @@ use app\modules\shop\models\Product;
 use app\modules\shop\helpers\CurrencyHelper;
 use yii\base\ActionEvent;
 use yii\base\Event;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\helpers\Json;
 use yii\web\View;
 

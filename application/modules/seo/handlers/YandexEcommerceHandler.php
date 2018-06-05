@@ -12,7 +12,7 @@ use app\modules\shop\models\Order;
 use app\modules\shop\models\Product;
 use yii\base\ActionEvent;
 use yii\base\Event;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\helpers\Json;
 use yii\web\View;
 

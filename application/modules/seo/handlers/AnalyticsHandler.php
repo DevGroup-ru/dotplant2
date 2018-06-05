@@ -5,7 +5,7 @@ use app\modules\seo\controllers\ManageController;
 use app\modules\seo\models\Counter;
 use app\modules\seo\SeoModule;
 use yii\base\ActionEvent;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\web\View;
 
 class AnalyticsHandler extends Object

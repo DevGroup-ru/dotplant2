@@ -4,7 +4,7 @@ namespace app\properties\url;
 
 use app\models\Route;
 use Yii;
-use yii\base\Object;
+use yii\base\BaseObject;
 
 /**
  * Абстрактный класс части урла.

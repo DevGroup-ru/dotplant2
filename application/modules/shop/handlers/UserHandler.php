@@ -1,7 +1,7 @@
 <?php
 namespace app\modules\shop\handlers;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\web\UserEvent;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\Wishlist;
