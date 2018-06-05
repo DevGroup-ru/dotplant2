@@ -56,7 +56,7 @@ if (true === isset ($feed_settings['relations_map']['getImage'])) {
             'File') . '</option>';
 }
 $product = \Yii::$container->get(\app\modules\shop\models\Product::class);
-$prop_group = \app\models\Object::getForClass(get_class($product))->id;
+$prop_group = \app\models\BaseObject::getForClass(get_class($product))->id;
 $provider = (new \yii\db\Query())
     ->select(['pg.name as pgname', 'p.name', 'p.id', 'p.handler_additional_params'])
     ->from(\app\models\Property::tableName() . ' as p', \app\models\PropertyGroup::tableName() . 'as pg')

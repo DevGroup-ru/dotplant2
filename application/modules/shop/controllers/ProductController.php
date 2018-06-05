@@ -7,7 +7,7 @@ use app\extensions\DefaultTheme\components\BaseWidget;
 use app\extensions\DefaultTheme\models\ThemeActiveWidgets;
 use app\extensions\DefaultTheme\models\ThemeWidgets;
 use app\extensions\DefaultTheme\widgets\FilterSets\Widget;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\PropertyStaticValues;
 use app\models\Search;
 use app\modules\core\helpers\ContentBlockHelper;
@@ -61,7 +61,7 @@ class ProductController extends Controller
             throw new NotFoundHttpException;
         }
         $product = Yii::$container->get(Product::class);
-        if (null === $object = Object::getForClass(get_class($product))) {
+        if (null === $object = BaseObject::getForClass(get_class($product))) {
             throw new ServerErrorHttpException('Object not found.');
         }
 
@@ -270,7 +270,7 @@ class ProductController extends Controller
     public function actionShow($model_id = null)
     {
         $product = Yii::$container->get(Product::class);
-        if (null === $object = Object::getForClass(get_class($product))) {
+        if (null === $object = BaseObject::getForClass(get_class($product))) {
             throw new ServerErrorHttpException('Object not found.');
         }
 

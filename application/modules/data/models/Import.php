@@ -2,7 +2,7 @@
 
 namespace app\modules\data\models;
 
-use app\models\Object;
+use app\models\BaseObject;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 
@@ -69,6 +69,6 @@ class Import extends \yii\db\ActiveRecord
 
     public function getObject()
     {
-        return $this->hasOne(Object::className(), ['id' => 'object_id']);
+        return $this->hasOne(BaseObject::className(), ['id' => 'object_id']);
     }
 }

@@ -7,7 +7,7 @@ use app\backend\components\BackendController;
 use app\backend\events\BackendEntityEditEvent;
 use app\modules\image\widgets\views\AddImageAction;
 use app\modules\shop\models\Category;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ViewObject;
 use app\properties\HasProperties;
 use app\modules\image\widgets\RemoveAction;
@@ -118,7 +118,7 @@ class BackendCategoryController extends BackendController
             throw new NotFoundHttpException;
         }
 
-        if (null === $object = Object::getForClass(Category::className())) {
+        if (null === $object = BaseObject::getForClass(Category::className())) {
             throw new ServerErrorHttpException;
         }
 

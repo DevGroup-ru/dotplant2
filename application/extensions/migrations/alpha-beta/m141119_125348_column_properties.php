@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Object;
+use app\models\BaseObject;
 use yii\db\Migration;
 
 class m141119_125348_column_properties extends Migration
@@ -15,14 +15,14 @@ class m141119_125348_column_properties extends Migration
             ],
             $tableOptions
         );
-        $this->update(Object::tableName(), ['column_properties_table_name' => 'category_property'], ['id' => 2 ]);
-        $this->update(Object::tableName(), ['column_properties_table_name' => 'product_property'], ['id' => 3 ]);
+        $this->update(BaseObject::tableName(), ['column_properties_table_name' => 'category_property'], ['id' => 2 ]);
+        $this->update(BaseObject::tableName(), ['column_properties_table_name' => 'product_property'], ['id' => 3 ]);
     }
 
     public function down()
     {
         $this->dropTable('{{%category_property}}');
-        $this->update(Object::tableName(), ['column_properties_table_name' => 'category_properties'], ['id' => 2]);
-        $this->update(Object::tableName(), ['column_properties_table_name' => 'product_properties'], ['id' => 3]);
+        $this->update(BaseObject::tableName(), ['column_properties_table_name' => 'category_properties'], ['id' => 2]);
+        $this->update(BaseObject::tableName(), ['column_properties_table_name' => 'product_properties'], ['id' => 3]);
     }
 }

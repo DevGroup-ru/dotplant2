@@ -16,7 +16,7 @@ use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
 use yii\helpers\Json;
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\shop\models\Product;
 use yii\web\User;
 
@@ -258,7 +258,7 @@ class ShopModule extends BaseModule implements BootstrapInterface, EventInterfac
                                             'DynamicContent' => [
                                                 'apply_if_params' => Json::encode($apply_if_params),
                                                 'apply_if_last_category_id' => $_GET['last_category_id'],
-                                                'object_id' => Object::getForClass(get_class($product))->id,
+                                                'object_id' => BaseObject::getForClass(get_class($product))->id,
                                                 'route' => 'shop/product/list',
                                             ]
                                         ],

@@ -13,7 +13,7 @@ use app\models\ErrorUrl;
 use app\models\Form;
 use app\modules\image\models\Image;
 use app\models\Layout;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;
 use app\modules\shop\models\Order;
@@ -119,7 +119,7 @@ class m141023_084857_init extends Migration
             $tableOptions
         );
         $this->createTable(
-            Object::tableName(),
+            BaseObject::tableName(),
             [
                 'id' => 'INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT',
                 'name' => 'VARCHAR(255) NOT NULL',
@@ -849,7 +849,7 @@ class m141023_084857_init extends Migration
         );
         // Data
         $this->batchInsert(
-            Object::tableName(),
+            BaseObject::tableName(),
             [
                 'name',
                 'object_class',
@@ -887,7 +887,7 @@ class m141023_084857_init extends Migration
             ]
         );
         $this->insert(
-            Object::tableName(),
+            BaseObject::tableName(),
             [
                 'name' => 'Product',
                 'object_class' => Product::className(),
@@ -1245,7 +1245,7 @@ class m141023_084857_init extends Migration
             ]
         );
         $this->insert(
-            Object::tableName(),
+            BaseObject::tableName(),
             [
                 'name' => 'Order',
                 'object_class' => Order::className(),
@@ -1278,7 +1278,7 @@ class m141023_084857_init extends Migration
             ]
         );
         $this->batchInsert(
-            Object::tableName(),
+            BaseObject::tableName(),
             [
                 'name',
                 'object_class',
@@ -1316,7 +1316,7 @@ class m141023_084857_init extends Migration
             ]
         );
         $this->insert(
-            Object::tableName(),
+            BaseObject::tableName(),
             [
                 'name' => 'User',
                 'object_class' => User::className(),
@@ -1504,7 +1504,7 @@ class m141023_084857_init extends Migration
         }
         if ($demo == 'y') {
             echo "INFO: Installing demo data\n";
-            $object = Object::getForClass(Product::className());
+            $object = BaseObject::getForClass(Product::className());
             $propertyGroup = new PropertyGroup;
             $propertyGroup->attributes = [
                 'object_id' => $object->id,
@@ -1857,7 +1857,7 @@ class m141023_084857_init extends Migration
                     [$navigation->id, 'Контакты', '/contacts', '{}'],
                 ]
             );
-            $object = Object::getForClass(Form::className());
+            $object = BaseObject::getForClass(Form::className());
             $this->insert(
                 PropertyGroup::tableName(),
                 [
@@ -1902,7 +1902,7 @@ class m141023_084857_init extends Migration
                 ]
             );
             $viewId = Yii::$app->db->lastInsertID;
-            $object = Object::getForClass(Page::className());
+            $object = BaseObject::getForClass(Page::className());
             $this->insert(
                 ViewObject::tableName(),
                 [
@@ -1983,7 +1983,7 @@ class m141023_084857_init extends Migration
         $this->dropTable(PropertyGroup::tableName());
         $this->dropTable(ObjectStaticValues::tableName());
         $this->dropTable(ObjectPropertyGroup::tableName());
-        $this->dropTable(Object::tableName());
+        $this->dropTable(BaseObject::tableName());
         $this->dropTable(DynamicContent::tableName());
         $this->dropTable(Navigation::tableName());
         $this->dropTable(Image::tableName());

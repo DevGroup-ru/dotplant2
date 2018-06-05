@@ -5,7 +5,7 @@ namespace app\modules\data\commands;
 use app\modules\data\models\ImportModel;
 use app\modules\data\models\Export;
 use app\modules\data\models\Import;
-use app\models\Object;
+use app\models\BaseObject;
 use yii\console\Controller;
 use yii\console\Exception;
 
@@ -37,7 +37,7 @@ class FileController extends Controller
             $path = \Yii::$app->getModule('data')->importDir . '/' . $filename;
             if (file_exists($path)) {
                 try {
-                    $object = Object::findById($model->object);
+                    $object = BaseObject::findById($model->object);
                     if ($object === null) {
                         throw new Exception('Object not found');
                     }
@@ -95,7 +95,7 @@ class FileController extends Controller
             $exportStatus->save();
 
             try {
-                $object = Object::findById($model->object);
+                $object = BaseObject::findById($model->object);
                 if ($object === null) {
                     throw new Exception('Object not found');
                 }

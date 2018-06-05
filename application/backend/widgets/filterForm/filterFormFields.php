@@ -8,7 +8,7 @@
 
 namespace app\backend\widgets\filterForm;
 
-use app\models\Object;
+use app\models\BaseObject;
 use Yii;
 
 class filterFormFields extends filterForm {
@@ -27,7 +27,7 @@ class filterFormFields extends filterForm {
 
     public function getData() {
 
-        $objectClass = Object::findById($this->objectId)->object_class;
+        $objectClass = BaseObject::findById($this->objectId)->object_class;
         $object = new $objectClass;
         $this->data = $object->attributeLabels();
         return parent::getData();

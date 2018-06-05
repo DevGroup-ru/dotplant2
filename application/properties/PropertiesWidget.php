@@ -2,7 +2,7 @@
 
 namespace app\properties;
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ObjectPropertyGroup;
 use app\models\Property;
 use app\models\PropertyGroup;
@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
  * Class PropertiesWidget
  * @property ActiveRecord $model
  * @property ActiveForm $form
- * @property Object $object
+ * @property BaseObject $object
  * @property array $objectPropertyGroups
  * @property array $propertyGroupsToAdd
  * @property string $viewFile
@@ -40,7 +40,7 @@ class PropertiesWidget extends Widget
      */
     public function run()
     {
-        $this->object = Object::getForClass(get_class($this->model));
+        $this->object = BaseObject::getForClass(get_class($this->model));
         $cacheKey = 'PropertiesWidget: ' . get_class($this->model) . ':' . $this->model->id;
         $data = Yii::$app->cache->get($cacheKey);
         if ($data === false) {

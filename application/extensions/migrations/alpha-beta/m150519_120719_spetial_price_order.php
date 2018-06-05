@@ -2,7 +2,7 @@
 
 use yii\db\Schema;
 use yii\db\Migration;
-use \app\models\Object;
+use \app\models\BaseObject;
 use \app\modules\shop\models\Order;
 use \app\modules\shop\models\Product;
 
@@ -70,7 +70,7 @@ class m150519_120719_spetial_price_order extends Migration
         $this->insert(
             '{{%special_price_list}}',
             [
-                'object_id' => Object::getForClass(Order::className())->id,
+                'object_id' => BaseObject::getForClass(Order::className())->id,
                 'class' => 'app\modules\shop\models\Discount',
                 'active' => 1,
                 'sort_order' => 15,
@@ -121,7 +121,7 @@ class m150519_120719_spetial_price_order extends Migration
             ],
             [
                 'class' => 'app\modules\shop\models\Currency',
-                'object_id' => Object::getForClass(Product::className())->id
+                'object_id' => BaseObject::getForClass(Product::className())->id
             ]
         );
 
@@ -132,7 +132,7 @@ class m150519_120719_spetial_price_order extends Migration
             ],
             [
                 'class' => 'app\modules\shop\models\Discount',
-                'object_id' => Object::getForClass(Product::className())->id
+                'object_id' => BaseObject::getForClass(Product::className())->id
             ]
         );
 
@@ -141,7 +141,7 @@ class m150519_120719_spetial_price_order extends Migration
             '{{%special_price_list}}',
             [
                 'class' => 'app\modules\shop\models\Discount',
-                'object_id' => Object::getForClass(Order::className())->id
+                'object_id' => BaseObject::getForClass(Order::className())->id
             ]
         );
     }

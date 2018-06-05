@@ -4,7 +4,7 @@
 /* @var string $type */
 /* @var \app\modules\data\models\ImportModel $model */
 /* @var array $fields */
-/* @var \app\models\Object $object */
+/* @var \app\models\BaseObject $object */
 /* @var array $availablePropertyGroups */
 
 use app\backend\widgets\BackendWidget;

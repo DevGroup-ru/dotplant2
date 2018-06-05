@@ -82,7 +82,7 @@ Html::submitButton(
                     );
                 ?>
                     <?= $form->field($model, 'name') ?>
-                    <?= $form->field($model, 'object_id')->dropDownList(app\models\Object::getSelectArray())?>
+                    <?= $form->field($model, 'object_id')->dropDownList(app\models\BaseObject::getSelectArray())?>
                     <?= $form->field($model, 'is_internal')->checkbox() ?>
                     <?= $form->field($model, 'hidden_group_title')->checkbox() ?>
                     <?= $form->field($model, 'sort_order') ?>

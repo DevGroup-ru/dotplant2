@@ -2,7 +2,7 @@
 
 namespace app\modules\data\components;
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;
 use app\modules\shop\models\Product;
@@ -72,7 +72,7 @@ abstract class Import extends Component
     public static function getFields($objectId)
     {
         $fields = [];
-        $object = Object::findById($objectId);
+        $object = BaseObject::findById($objectId);
         if ($object) {
             $fields['object'] = array_diff((new $object->object_class)->attributes(), ['id']);
             $fields['object'] = array_combine($fields['object'], $fields['object']);
@@ -100,7 +100,7 @@ abstract class Import extends Component
     }
 
     /**
-     * @return Object
+     * @return BaseObject
      */
     public function getObject()
     {
@@ -117,8 +117,8 @@ abstract class Import extends Component
         }
         $this->object = $config['object'];
         if (is_numeric($this->object)) {
-            $this->object = Object::findById($this->object);
-        } elseif (!($this->object instanceof Object)) {
+            $this->object = BaseObject::findById($this->object);
+        } elseif (!($this->object instanceof BaseObject)) {
             throw new InvalidParamException('Parameter "object" not Object or numeric');
         }
         unset($config['object']);
@@ -338,7 +338,7 @@ abstract class Import extends Component
         if (
             isset($conditions['category']) &&
             is_array($conditions['category']) &&
-            $this->object->id == Object::getForClass(get_class($product))->id
+            $this->object->id == BaseObject::getForClass(get_class($product))->id
         ) {
             foreach ($conditions['category'] as $condition) {
                 $joinTableName = 'Category'.$condition['value'];

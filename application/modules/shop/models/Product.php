@@ -6,7 +6,7 @@ use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
 use app\components\Helper;
 use app\modules\image\models\Image;
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\data\components\ImportableInterface;
 use app\modules\data\components\ExportableInterface;
 use app\modules\shop\data\FilterPagination;
@@ -384,7 +384,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     public function getImage()
     {
         $result = $this->hasOne(Image::className(), ['object_model_id' => 'id']);
-        $object = Object::getForClass($this->className());
+        $object = BaseObject::getForClass($this->className());
         return $result->andWhere(['object_id' => $object->id]);
     }
 
@@ -432,7 +432,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (empty($this->title)) {
             $this->title = $this->name;
         }
-        $object = Object::getForClass(static::className());
+        $object = BaseObject::getForClass(static::className());
 
         TagDependency::invalidate(
             Yii::$app->cache,
@@ -477,7 +477,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
 
     public function saveCategoriesBindings(array $categories_ids)
     {
-        $object = Object::getForClass(static::className());
+        $object = BaseObject::getForClass(static::className());
         $catIds = $this->getCategoryIds();
 
         $remove = [];
@@ -522,7 +522,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
     public function getCategoryIds()
     {
         if ($this->category_ids === null) {
-            $object = Object::getForClass(static::className());
+            $object = BaseObject::getForClass(static::className());
             $this->category_ids = (new Query())->select('category_id')->from([$object->categories_table_name])->where(
                 'object_model_id = :id',
                 [':id' => $this->id]
@@ -778,7 +778,7 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         if (isset($configuration['images'], $configuration['images']['processValuesAs'])
             && $configuration['images']['enabled']
         ) {
-            $object = Object::getForClass($this->className());
+            $object = BaseObject::getForClass($this->className());
             $images = Image::getForModel($object->id, $this->id);
             $result['images'] = ArrayHelper::getColumn($images, $configuration['images']['processValuesAs']);
         }
@@ -820,8 +820,8 @@ class Product extends ActiveRecord implements ImportableInterface, ExportableInt
         array $additional_filters = []
     ) {
         Yii::beginProfile("FilteredProducts");
-        /** @var \app\models\Object $object */
-        if (null === $object = Object::getForClass(static::className())) {
+        /** @var \app\models\BaseObject $object */
+        if (null === $object = BaseObject::getForClass(static::className())) {
             throw new ServerErrorHttpException('Object not found.');
         }
 

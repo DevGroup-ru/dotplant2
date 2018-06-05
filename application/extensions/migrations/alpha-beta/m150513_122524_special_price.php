@@ -30,13 +30,13 @@ class m150513_122524_special_price extends Migration
             ],
             [
                 [
-                    \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id,
+                    \app\models\BaseObject::getForClass(\app\modules\shop\models\Product::className())->id,
                     \app\modules\shop\models\Currency::className(),
                     'core',
                     5
                 ],
                 [
-                    \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id,
+                    \app\models\BaseObject::getForClass(\app\modules\shop\models\Product::className())->id,
                     \app\modules\shop\models\Discount::className(),
                     'discount',
                     10

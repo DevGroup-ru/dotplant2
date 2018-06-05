@@ -2,7 +2,7 @@
 
 namespace app\commands;
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ObjectStaticValues;
 use app\models\Submission;
 use app\modules\review\models\Review;
@@ -44,8 +44,8 @@ class SubmissionsController extends Controller
         $time = new \DateTime();
         $days = Yii::$app->getModule('core')->daysToStoreSubmissions;
         $time->sub(new \DateInterval("P{$days}D"));
-        /** @var Object $object */
-        $object = Object::getForClass(Submission::className());
+        /** @var BaseObject $object */
+        $object = BaseObject::getForClass(Submission::className());
         if ($object !== null) {
             $submissionIds = Submission::find()
                 ->select(['id'])

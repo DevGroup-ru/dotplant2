@@ -40,9 +40,9 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'yii\grid\DataColumn',
                 'attribute' => 'object_id',
-                'filter' => app\models\Object::getSelectArray(),
+                'filter' => app\models\BaseObject::getSelectArray(),
                 'value' => function ($model, $key, $index, $widget) {
-                    $array = app\models\Object::getSelectArray();
+                    $array = app\models\BaseObject::getSelectArray();
                     return $array[$model->object_id];
                 }
             ],

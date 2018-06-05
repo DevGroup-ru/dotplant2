@@ -24,7 +24,7 @@ use devgroup\TagDependencyHelper\ActiveRecordHelper;
  * @property string $link_slug_static_value
  */
 
-class Object extends ActiveRecord implements \JsonSerializable
+class BaseObject extends ActiveRecord implements \JsonSerializable
 {
     private static $identity_map = [];
     private static $ids_for_class_name = [];
@@ -90,7 +90,7 @@ class Object extends ActiveRecord implements \JsonSerializable
     /**
      * Returns model instance by ID using IdentityMap
      * @param integer $id
-     * @return Object|null
+     * @return BaseObject|null
      */
     public static function findById($id)
     {
@@ -122,17 +122,17 @@ class Object extends ActiveRecord implements \JsonSerializable
 
     /**
      * @param string $class_name
-     * @return null|\app\models\Object
+     * @return null|\app\models\BaseObject
      */
     public static function getForClass($class_name)
     {
         if (isset(static::$ids_for_class_name[$class_name])) {
             $id = static::$ids_for_class_name[$class_name];
-            return Object::findById($id);
+            return BaseObject::findById($id);
         } else {
             $object = Yii::$app->cache->get('ObjectByClassName: ' . $class_name);
             if ($object === false) {
-                $object = Object::find()
+                $object = BaseObject::find()
                     ->where(
                         [
                             'object_class' => $class_name,
@@ -175,7 +175,7 @@ class Object extends ActiveRecord implements \JsonSerializable
             if (static::$select_array_cache === false) {
                 $rows = (new Query())
                     ->select('id, name')
-                    ->from(Object::tableName())
+                    ->from(BaseObject::tableName())
                     ->all();
                 static::$select_array_cache = ArrayHelper::map($rows, 'id', 'name');
             }

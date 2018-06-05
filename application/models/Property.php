@@ -393,7 +393,7 @@ class Property extends ActiveRecord
 
     public function afterDelete()
     {
-        $object = Object::findById($this->group->object_id);
+        $object = BaseObject::findById($this->group->object_id);
         $staticValues = PropertyStaticValues::find()->where(['property_id' => $this->id])->all();
         foreach ($staticValues as $psv) {
             $psv->delete();

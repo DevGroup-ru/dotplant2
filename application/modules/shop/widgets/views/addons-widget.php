@@ -6,7 +6,7 @@ use app\backend\widgets\BackendWidget;
 use app\modules\shop\widgets\AddonsListWidget;
 /**
  * @var \yii\web\View $this
- * @var \app\models\Object $object
+ * @var \app\models\BaseObject $object
  * @var \yii\db\ActiveRecord $model
  * @var array $addAddonTree
  * @var array $bindedAddons

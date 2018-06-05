@@ -6,7 +6,7 @@ use app\modules\data\components\ExportableInterface;
 use Yii;
 use app\modules\data\models\Import;
 use app\modules\data\models\Export;
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\data\models\ImportModel;
 use app\backgroundtasks\helpers\BackgroundTasks;
 use yii\base\ErrorException;
@@ -46,7 +46,7 @@ class FileController  extends \app\backend\components\BackendController
     public function actionIndex()
     {
         $objects = new ActiveDataProvider([
-            'query' => Object::find()->with(['lastExport', 'lastImport']),
+            'query' => BaseObject::find()->with(['lastExport', 'lastImport']),
             'pagination' => [
                 'pageSize' => 10,
             ],
@@ -65,7 +65,7 @@ class FileController  extends \app\backend\components\BackendController
      */
     private function unifiedAction($id, $importMode)
     {
-        $object = Object::findById($id);
+        $object = BaseObject::findById($id);
         /* @var $className \app\modules\data\models\Import */
         $className =
             $importMode ?

@@ -200,7 +200,7 @@ class Yml extends Component
         $params = [];
         $eav = Yii::$app->getDb()->cache(function ($db) use ($model) {
             /**
-             * @var \app\models\Object $object
+             * @var \app\models\BaseObject $object
              */
             $object = $model->object;
             return (new Query())

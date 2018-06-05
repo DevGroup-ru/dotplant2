@@ -3,7 +3,7 @@
 /**
  * @var $breadcrumbs array
  * @var $category_group_id integer
- * @var $object \app\models\Object
+ * @var $object \app\models\BaseObject
  * @var $pages \yii\data\Pagination
  * @var $products \app\modules\shop\models\Product[]
  * @var $selected_category \app\modules\shop\models\Category

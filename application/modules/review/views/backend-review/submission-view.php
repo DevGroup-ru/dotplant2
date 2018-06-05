@@ -5,7 +5,7 @@
  * @var $review \app\modules\review\models\Review
  */
 use kartik\helpers\Html;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\PropertyGroup;
 use app\models\Property;
 use app\models\Form;
@@ -19,7 +19,7 @@ use app\modules\review\models\Review;
         $this->title,
     ];
 
-    $formObject = Object::getForClass(Form::className());
+    $formObject = BaseObject::getForClass(Form::className());
     $groups = PropertyGroup::getForModel($formObject->id, $review->submission->form_id);
     $review->submission->getPropertyGroups(true);
 ?>
@@ -35,7 +35,7 @@ use app\modules\review\models\Review;
                         <div class="form-group field-page-name">
                             <p class="control-label col-md-2" ><?= Yii::t('app', 'Resource') ?></p>
                             <div class="col-md-10">
-                                <?php if (null !== $object = \app\models\Object::findById($review->object_id)) :?>
+                                <?php if (null !== $object = \app\models\BaseObject::findById($review->object_id)) :?>
                                 <?php $class = $object->object_class; ?>
                                 <?php $resource = $class::findById($review->object_model_id); ?>
                                     <?php if (null !== $resource) : ?>

@@ -3,7 +3,7 @@
 namespace app\modules\image\models;
 
 use app\behaviors\ImageExist;
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\image\widgets\ImageDropzone;
 use app\traits\FindById;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -104,7 +104,7 @@ class Image extends \yii\db\ActiveRecord
                         'id' => SORT_ASC
                     ]
                 )->all();
-                $object = Object::findById($objectId);
+                $object = BaseObject::findById($objectId);
                 if (is_null($object)) {
                     return self::$identityMap[$objectId][$objectModelId];
                 }
@@ -148,7 +148,7 @@ class Image extends \yii\db\ActiveRecord
      */
     public static function replaceForModel(\yii\db\ActiveRecord $model, array $images)
     {
-        $object = Object::getForClass($model->className());
+        $object = BaseObject::getForClass($model->className());
         if ($object) {
             $current_images = static::getForModel($object->id, $model->id);
 

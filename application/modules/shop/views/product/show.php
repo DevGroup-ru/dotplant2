@@ -4,7 +4,7 @@
  * @var $breadcrumbs array
  * @var $category_group_id integer
  * @var $model \app\modules\shop\models\Product
- * @var $object \app\models\Object
+ * @var $object \app\models\BaseObject
  * @var $selected_category \app\modules\shop\models\Category
  * @var $selected_category_id integer
  * @var $selected_category_ids integer[]

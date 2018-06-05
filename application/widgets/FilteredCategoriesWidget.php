@@ -2,7 +2,7 @@
 
 namespace app\widgets;
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\shop\models\Category;
 use app\properties\PropertiesHelper;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -35,7 +35,7 @@ class FilteredCategoriesWidget extends PlainCategoriesWidget
             $query->limit($this->limit);
         }
 
-        $object = Object::getForClass(Category::className());
+        $object = BaseObject::getForClass(Category::className());
         $multiFilterMode = Yii::$app->getModule('shop')->multiFilterMode;
         PropertiesHelper::appendPropertiesFilters($object, $query, $this->values_by_property_id, [], $multiFilterMode);
         $sql = $query->createCommand()->getRawSql();

@@ -2,7 +2,7 @@
 
 namespace app\modules\review\models;
 
-use app\models\Object;
+use app\models\BaseObject;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use app\models\Submission;
@@ -24,7 +24,7 @@ use yii\db\ActiveRecord;
  * @property integer $parent_id
  * @property integer $root_id
  *
- * @property Object $targetObject
+ * @property BaseObject $targetObject
  * @property ActiveRecord $targetObjectModel
  * @property Review[]|array $children
  * @property Review|null $child
@@ -235,12 +235,12 @@ class Review extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return Object|null
+     * @return BaseObject|null
      */
     public function getTargetObject()
     {
         if ($this->targetObject === null) {
-            $this->targetObject = Object::findById($this->object_id);
+            $this->targetObject = BaseObject::findById($this->object_id);
         }
         return $this->targetObject;
     }

@@ -9,7 +9,7 @@ use yii\base\InvalidParamException;
 use yii\base\Widget;
 use yii\data\ArrayDataProvider;
 use Yii;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\PropertyGroup;
 use yii\db\ActiveRecord;
 
@@ -74,7 +74,7 @@ class ReviewsWidget extends Widget
                 'canonical'
             );
         }
-        $formObject = Object::getForClass(Form::className());
+        $formObject = BaseObject::getForClass(Form::className());
         $groups = PropertyGroup::getForModel($formObject->id, $form->id);
         $models = Review::getForObjectModel($this->model->id, $this->model->object->id, $form->id);
 

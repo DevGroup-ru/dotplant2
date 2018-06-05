@@ -83,10 +83,10 @@ $this->endBlock();
                 ],
                 [
                     'attribute' => 'object_id',
-                    'filter' => \app\components\Helper::getModelMap(\app\models\Object::className(), 'id', 'name'),
+                    'filter' => \app\components\Helper::getModelMap(\app\models\BaseObject::className(), 'id', 'name'),
                     'label' => Yii::t('app', 'Object'),
                     'value' => function ($data) {
-                        $obj = \app\models\Object::findById($data->object_id);
+                        $obj = \app\models\BaseObject::findById($data->object_id);
                         return is_null($obj) ? Yii::t('yii', '(not set)') : $obj->name;
                     },
                 ],
@@ -94,8 +94,8 @@ $this->endBlock();
                     'class' => yii\grid\DataColumn::className(),
                     'attribute' => 'object_model_id',
                     'value' => function ($data) {
-                        /** @var $object \app\models\Object*/
-                        if (null !== $object = \app\models\Object::findById($data->object_id)) {
+                        /** @var $object \app\models\BaseObject*/
+                        if (null !== $object = \app\models\BaseObject::findById($data->object_id)) {
                             $class = $object->object_class;
                             $resource = $class::findById($data->object_model_id);
                             if (null !== $resource) {

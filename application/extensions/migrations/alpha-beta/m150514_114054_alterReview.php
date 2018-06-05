@@ -1,7 +1,7 @@
 <?php
 
 use app\backend\models\BackendMenu;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\Property;
 use app\models\PropertyGroup;
 use app\models\PropertyHandler;
@@ -15,7 +15,7 @@ class m150514_114054_alterReview extends Migration
 {
     public function up()
     {
-        $submissionObject = Object::getForClass(\app\models\Submission::className());
+        $submissionObject = BaseObject::getForClass(\app\models\Submission::className());
         /** @var PropertyHandler $propertyHandler */
         $propertyHandler = PropertyHandler::findOne(
             [

@@ -18,7 +18,7 @@ class AddonsWidget extends Widget
 
     public function run()
     {
-        $object = app\models\Object::getForClass($this->model->className());
+        $object = app\models\BaseObject::getForClass($this->model->className());
         /** @var \app\modules\shop\models\AddonCategory $addonCategories */
         $addonCategories = app\components\Helper::getModelMap(AddonCategory::className(), 'id', 'name');
 

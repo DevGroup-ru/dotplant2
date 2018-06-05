@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\widgets\navigation\models\Navigation;
 use yii\db\Schema;
 use yii\db\Migration;
@@ -10,7 +10,7 @@ class m150815_143352_navigation_object extends Migration
     public function up()
     {
         $this->insert(
-            Object::tableName(),
+            BaseObject::tableName(),
             [
                 'name' => 'Navigation',
                 'object_class' => Navigation::className(),

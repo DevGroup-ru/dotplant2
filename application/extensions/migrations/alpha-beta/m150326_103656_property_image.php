@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\Property;
 use app\models\PropertyStaticValues;
 use yii\db\Migration;
@@ -10,7 +10,7 @@ class m150326_103656_property_image extends Migration
     public function up()
     {
         $this->batchInsert(
-            Object::tableName(),
+            BaseObject::tableName(),
             [
                 'name',
                 'object_class',
@@ -52,7 +52,7 @@ class m150326_103656_property_image extends Migration
     public function down()
     {
         $this->delete(
-            Object::tableName(),
+            BaseObject::tableName(),
             [
                 'object_class' => [
                     Property::className(),

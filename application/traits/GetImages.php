@@ -14,7 +14,7 @@ trait GetImages
     public function getImages()
     {
         /**
-         * @var $object \app\models\Object
+         * @var $object \app\models\BaseObject
          * @var $model \app\properties\HasProperties | \yii\db\ActiveRecord
          * @return \yii\db\ActiveQueryInterface
          */

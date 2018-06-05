@@ -3,7 +3,7 @@
 namespace app\components;
 
 use app\modules\shop\models\Category;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\PrefilteredPages;
 use app\models\Route;
 use app\properties\url\StaticPart;
@@ -46,7 +46,7 @@ class ObjectRule implements UrlRuleInterface
                 return $cached;
             }
 
-            $handler_object = Object::getForClass(get_class($handler_model));
+            $handler_object = BaseObject::getForClass(get_class($handler_model));
         }
 
         $cacheTags = [];
@@ -213,7 +213,7 @@ class ObjectRule implements UrlRuleInterface
         foreach ($routes as $model) {
             /** @var UrlPart[] $handlers */
             $handlers = [];
-            $object = Object::findById($model->object_id);
+            $object = BaseObject::findById($model->object_id);
             foreach ($model->template as $t) {
                 $handler = Yii::createObject($t);
                 $handler->object = $object;

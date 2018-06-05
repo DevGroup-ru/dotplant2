@@ -28,7 +28,7 @@ class m150522_085644_order_calculate_event extends Migration
             ],
             [
                 'class' => 'app\modules\shop\models\Currency',
-                'object_id' => \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id
+                'object_id' => \app\models\BaseObject::getForClass(\app\modules\shop\models\Product::className())->id
             ]
         );
 
@@ -40,7 +40,7 @@ class m150522_085644_order_calculate_event extends Migration
             ],
             [
                 'class' => 'app\modules\shop\models\Discount',
-                'object_id' => \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id
+                'object_id' => \app\models\BaseObject::getForClass(\app\modules\shop\models\Product::className())->id
             ]
         );
 
@@ -52,14 +52,14 @@ class m150522_085644_order_calculate_event extends Migration
             ],
             [
                 'class' => 'app\modules\shop\models\Discount',
-                'object_id' => \app\models\Object::getForClass(\app\modules\shop\models\Order::className())->id
+                'object_id' => \app\models\BaseObject::getForClass(\app\modules\shop\models\Order::className())->id
             ]
         );
 
         $this->insert(
             '{{%special_price_list}}',
             [
-                'object_id' => \app\models\Object::getForClass(\app\modules\shop\models\Order::className())->id,
+                'object_id' => \app\models\BaseObject::getForClass(\app\modules\shop\models\Order::className())->id,
                 'class' => 'app\modules\shop\helpers\PriceHandlers',
                 'active' => 1,
                 'sort_order' => 12,

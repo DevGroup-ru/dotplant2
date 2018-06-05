@@ -3,7 +3,7 @@
 namespace app\behaviors;
 
 use app\modules\image\models\Image;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;
 use app\models\ViewObject;
@@ -41,7 +41,7 @@ class CleanRelations extends Behavior
         if (isset($this->owner->is_deleted) && (0 === intval($this->owner->is_deleted))) {
             return false;
         }
-        if (null === $object = Object::getForClass($this->owner->className())) {
+        if (null === $object = BaseObject::getForClass($this->owner->className())) {
             return false;
         }
         $whereDelete = [

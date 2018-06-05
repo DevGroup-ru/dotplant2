@@ -218,7 +218,7 @@ class PropertyStaticValues extends ActiveRecord
                     break;
             }
             $product = Yii::$container->get(Product::class);
-            $objectModel = Object::getForClass(get_class($product));
+            $objectModel = BaseObject::getForClass(get_class($product));
             $objectId = $objectModel !== null ? $objectModel->id : 0;
             $allSelections = static::find()
                 ->asArray(true)

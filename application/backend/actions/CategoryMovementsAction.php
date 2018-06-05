@@ -3,7 +3,7 @@
 namespace app\backend\actions;
 
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\shop\models\Category;
 use app\modules\shop\models\Product;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -20,7 +20,7 @@ class CategoryMovementsAction extends Action
     private $categoryId;
     private $items = [];
     private $action;
-    /** @var  Object */
+    /** @var  BaseObject */
     private static $object;
 
     /**
@@ -40,7 +40,7 @@ class CategoryMovementsAction extends Action
         }
         if (true === empty(static::$object)) {
             $product = Yii::$container->get(Product::class);
-            static::$object = Object::getForClass(get_class($product));
+            static::$object = BaseObject::getForClass(get_class($product));
         }
         $this->action = Yii::$app->request->post('action', '');
         $this->items = Yii::$app->request->post('mc-items', []);

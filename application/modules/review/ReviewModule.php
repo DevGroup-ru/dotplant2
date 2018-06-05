@@ -3,7 +3,7 @@
 namespace app\modules\review;
 
 use app\components\BaseModule;
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\event\interfaces\EventInterface;
 use app\modules\floatPanel\widgets\FloatingPanel;
 use app\modules\page\models\Page;
@@ -63,18 +63,18 @@ class ReviewModule extends BaseModule implements EventInterface
                 switch (\Yii::$app->requestedRoute) {
                     case "shop/product/show":
                         $product = \Yii::$container->get(Product::class);
-                        $objectId = Object::getForClass(get_class($product))->id;
+                        $objectId = BaseObject::getForClass(get_class($product))->id;
                         $modelId = $_GET['model_id'];
                         break;
 
                     case "shop/product/list":
-                        $objectId = Object::getForClass(Category::class)->id;
+                        $objectId = BaseObject::getForClass(Category::class)->id;
                         $modelId = $_GET['last_category_id'];
                         break;
 
                     case "/page/page/show":
                     case "/page/page/list":
-                        $objectId = Object::getForClass(Page::class)->id;
+                        $objectId = BaseObject::getForClass(Page::class)->id;
                         $modelId = $_GET['id'];
                         break;
                 }

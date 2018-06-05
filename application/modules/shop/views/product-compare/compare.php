@@ -3,7 +3,7 @@
 /**
  * @var $error integer
  * @var $message string
- * @var $object \app\models\Object
+ * @var $object \app\models\BaseObject
  * @var $products \app\modules\shop\models\Product[]
  * @var $this \yii\web\View
  */

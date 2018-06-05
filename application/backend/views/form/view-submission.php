@@ -7,7 +7,7 @@
 use app\backend\widgets\BackendWidget;
 use app\backend\components\ActiveForm;
 use app\models\Property;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\Form;
 use app\models\PropertyGroup;
 use yii\helpers\Html;
@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = [
     'label' => Yii::t('app', 'Submissions')
 ];
 $this->params['breadcrumbs'][] = $this->title;
-$formObject = Object::getForClass(Form::className());
+$formObject = BaseObject::getForClass(Form::className());
 $groups = PropertyGroup::getForModel($formObject->id, $submission->form_id);
 $submission->getPropertyGroups(true);
 ?>

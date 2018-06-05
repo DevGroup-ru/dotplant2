@@ -1,7 +1,7 @@
 <?php
 
 use app\models\DynamicContent;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\Route;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\OrderItem;
@@ -81,17 +81,17 @@ class m150507_064204_new_order extends Migration
         );
         // Update Object model data
         $this->update(
-            Object::tableName(),
+            BaseObject::tableName(),
             ['object_class' => 'app\modules\shop\models\Category'],
             ['object_class' => 'app\models\Category']
         );
         $this->update(
-            Object::tableName(),
+            BaseObject::tableName(),
             ['object_class' => 'app\modules\shop\models\Product'],
             ['object_class' => 'app\models\Product']
         );
         $this->update(
-            Object::tableName(),
+            BaseObject::tableName(),
             ['object_class' => 'app\modules\shop\models\Order'],
             ['object_class' => 'app\models\Order']
         );

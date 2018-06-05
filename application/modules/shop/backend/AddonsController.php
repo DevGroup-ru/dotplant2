@@ -3,7 +3,7 @@
 namespace app\modules\shop\backend;
 
 use app\backend\components\BackendController;
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\shop\models\Addon;
 use app\modules\shop\models\AddonBindings;
 use app\modules\shop\models\Currency;
@@ -252,7 +252,7 @@ SQL;
 
         TagDependency::invalidate(Yii::$app->cache, [Addon::className()]);
 
-        $object = Object::findById($object_id);
+        $object = BaseObject::findById($object_id);
         if ($object === null) {
             throw new NotFoundHttpException;
         }
@@ -286,7 +286,7 @@ SQL;
 
 
         $addon = Addon::findById($addon_id);
-        $object = Object::findById($object_id);
+        $object = BaseObject::findById($object_id);
         if ($addon === null || $object === null) {
             throw new NotFoundHttpException;
         }

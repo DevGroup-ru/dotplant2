@@ -6,7 +6,7 @@ use app\modules\shop\models\Product;
 use app\models\PropertyGroup;
 use app\models\Property;
 use app\models\PropertyStaticValues;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ObjectStaticValues;
 use app\models\ObjectPropertyGroup;
 use app\models\PropertyHandler;
@@ -78,7 +78,7 @@ class m150605_094805_demo_data extends Migration
         $this->insert(
             ObjectStaticValues::tableName(),
             [
-                'object_id' => Object::getForClass(Product::className())->id,
+                'object_id' => BaseObject::getForClass(Product::className())->id,
                 'object_model_id' => $id,
                 'property_static_value_id' => $this->values[$value],
             ]
@@ -89,7 +89,7 @@ class m150605_094805_demo_data extends Migration
     {
         mb_internal_encoding(Yii::$app->getModule('core')->internalEncoding);
         $data = include __DIR__ . DIRECTORY_SEPARATOR . 'demo-data.php';
-        $productObject = Object::getForClass(Product::className());
+        $productObject = BaseObject::getForClass(Product::className());
         /** @var PropertyHandler $handler */
         $handler = PropertyHandler::findOne(['handler_class_name' => 'app\properties\handlers\text\TextProperty']);
         if (!is_null($handler)) {

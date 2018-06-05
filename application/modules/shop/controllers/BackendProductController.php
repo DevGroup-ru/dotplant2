@@ -8,7 +8,7 @@ use app\backend\events\BackendEntityEditEvent;
 use app\modules\image\widgets\views\AddImageAction;
 use app\modules\shop\models\Category;
 use app\modules\image\models\Image;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ObjectPropertyGroup;
 use app\modules\shop\models\Currency;
 use app\modules\shop\models\Product;
@@ -159,7 +159,7 @@ class BackendProductController extends BackendController
         $dataProvider = $searchModel->search($params);
         if (null !== $catId = Yii::$app->request->get('parent_id')) {
             $dataProvider->query->leftJoin(
-                Object::getForClass(get_class($product))->categories_table_name . ' cp',
+                BaseObject::getForClass(get_class($product))->categories_table_name . ' cp',
                 'cp.object_model_id=product.id'
             )->andWhere('product.parent_id=0 AND cp.category_id=:cur', [':cur' => $catId]);
         }
@@ -187,7 +187,7 @@ class BackendProductController extends BackendController
          * @todo Продумать механизм сохранения изображений для нового продукта.
          * Сейчас для нового продукта скрывается форма добавления изображений.
          */
-        if (null === $object = Object::getForClass($product::className())) {
+        if (null === $object = BaseObject::getForClass($product::className())) {
             throw new ServerErrorHttpException;
         }
 
@@ -339,7 +339,7 @@ class BackendProductController extends BackendController
             throw new NotFoundHttpException();
         }
 
-        $object = Object::getForClass(get_class($product));
+        $object = BaseObject::getForClass(get_class($product));
         $catIds = (new Query())->select('category_id')->from([$object->categories_table_name])->where(
             'object_model_id = :id',
             [':id' => $id]
@@ -494,9 +494,9 @@ class BackendProductController extends BackendController
             $newModel->slug = substr(uniqid() . "-" . $model->slug, 0, 80);
         }
         if ($newModel->save()) {
-            $object = Object::getForClass(get_class($newModel));
+            $object = BaseObject::getForClass(get_class($newModel));
             // save categories
-            $categoriesTableName = Object::getForClass(get_class($product))->categories_table_name;
+            $categoriesTableName = BaseObject::getForClass(get_class($product))->categories_table_name;
             $query = new Query();
             $params = $query->select(['category_id', 'sort_order'])->from($categoriesTableName)->where(
                 ['object_model_id' => $model->id]

@@ -3,7 +3,7 @@
 namespace app\modules\data\models;
 
 use app\backgroundtasks\models\Task;
-use app\models\Object;
+use app\models\BaseObject;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 
@@ -70,6 +70,6 @@ class Export extends \yii\db\ActiveRecord
 
     public function getObject()
     {
-        return $this->hasOne(Object::className(), ['id' => 'object_id']);
+        return $this->hasOne(BaseObject::className(), ['id' => 'object_id']);
     }
 }

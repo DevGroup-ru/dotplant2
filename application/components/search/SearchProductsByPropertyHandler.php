@@ -3,7 +3,7 @@
 namespace app\components\search;
 
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ObjectStaticValues;
 use app\models\PropertyStaticValues;
 use app\modules\shop\models\Product;
@@ -30,7 +30,7 @@ class SearchProductsByPropertyHandler implements SearchInterface
             ->distinct(true)
             ->from(ObjectStaticValues::tableName())
             ->where('{{%object_static_values}}.object_id = :objectId')
-            ->addParams([':objectId' => Object::getForClass($product::className())->id])
+            ->addParams([':objectId' => BaseObject::getForClass($product::className())->id])
             ->andWhere([
                 'in',
                 '{{%object_static_values}}.property_static_value_id',

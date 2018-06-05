@@ -16,7 +16,7 @@ class PropertiesHelper
 
     /**
      * Добавляет к запросу фильтры по свойствам
-     * @param $object \app\models\Object
+     * @param $object \app\models\BaseObject
      * @param $query ActiveQuery
      * @param $values_by_property_id array
      * @param array $dynamic_values_by_property_id array
@@ -187,14 +187,14 @@ class PropertiesHelper
     }
 
     /**
-     * @param \app\models\Object $object
+     * @param \app\models\BaseObject $object
      * @param array $psvs
      * @param int $counter
      * @param string $multiFilterMode
      * @return Query
      */
     public static function createSubQuery(
-        \app\models\Object $object,
+        \app\models\BaseObject $object,
         $psvs = [],
         $counter = 1,
         $multiFilterMode = ConfigConfigurationModel::MULTI_FILTER_MODE_INTERSECTION

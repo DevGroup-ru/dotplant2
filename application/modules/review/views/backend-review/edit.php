@@ -4,7 +4,7 @@
  * @var app\backgroundtasks\models\Task $searchModel
  * @var \app\modules\review\models\Review|\app\properties\HasProperties $review
  */
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\PropertyGroup;
 use app\models\Form;
 use kartik\form\ActiveForm;
@@ -23,7 +23,7 @@ use app\components\Helper;
     /** @var \app\models\Submission|\app\properties\HasProperties $submission */
     $submission = $review->submission;
     if (null !== $submission) {
-        $formObject = Object::getForClass(Form::className());
+        $formObject = BaseObject::getForClass(Form::className());
         $groups = PropertyGroup::getForModel($formObject->id, $submission->form_id);
         $submission->getPropertyGroups(true);
     } else {
@@ -84,7 +84,7 @@ use app\components\Helper;
             <?= $form->field($review, 'object_id')->dropDownList(
                 array_merge(
                     [0 => ''],
-                    Helper::getModelMap(Object::className(), 'id', 'name', true, true)
+                    Helper::getModelMap(BaseObject::className(), 'id', 'name', true, true)
                 )
             ); ?>
             <?php

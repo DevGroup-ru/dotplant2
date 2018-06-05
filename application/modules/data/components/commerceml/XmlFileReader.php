@@ -5,7 +5,7 @@ namespace app\modules\data\components\commerceml;
 use app\components\Helper;
 use app\modules\data\models\CommercemlGuid;
 use app\modules\shop\models\Category;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ObjectPropertyGroup;
 use app\models\ObjectStaticValues;
 use app\modules\shop\models\CategoryGroup;
@@ -24,7 +24,7 @@ class XmlFileReader
     protected $rootCategoryCache = 1;
     static protected $propertiesCache = [];
     protected $productCache = [];
-    /** @var \app\models\Object|null $objectProduct */
+    /** @var \app\models\BaseObject|null $objectProduct */
     protected $objectProduct = null;
 
     const NODE_CLASSIFICATOR = 'Классификатор';
@@ -81,7 +81,7 @@ class XmlFileReader
                         }, []);
                 }
                 $product = \Yii::$container->get(Product::class);
-                $this->objectProduct = Object::getForClass(get_class($product));
+                $this->objectProduct = BaseObject::getForClass(get_class($product));
             }
         }
     }

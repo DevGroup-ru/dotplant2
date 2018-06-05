@@ -8,12 +8,12 @@ class m150320_080911_eav_property_group_id_add extends Migration
 
     public function up()
     {
-        $objects = \app\models\Object::find()->asArray()->all();
+        $objects = \app\models\BaseObject::find()->asArray()->all();
         foreach ($objects as $object) {
             if ($object['name'] == 'Submission'){
                 continue;
             } else if ($object['name'] == 'Form') {
-                $submissionObject = \app\models\Object::findOne(['name' => 'Submission']);
+                $submissionObject = \app\models\BaseObject::findOne(['name' => 'Submission']);
                 $this->addColumn($object['eav_table_name'], 'property_group_id', 'INT UNSIGNED NOT NULL AFTER `object_model_id`');
                 $this->addColumn($submissionObject->eav_table_name, 'property_group_id', 'INT UNSIGNED NOT NULL AFTER `object_model_id`');
                 $groups = \app\models\PropertyGroup::find()
@@ -73,7 +73,7 @@ class m150320_080911_eav_property_group_id_add extends Migration
 
     public function down()
     {
-        $objects = \app\models\Object::find()->asArray()->all();
+        $objects = \app\models\BaseObject::find()->asArray()->all();
         foreach ($objects as $object) {
             $this->dropColumn($object['eav_table_name'], 'property_group_id');
         }

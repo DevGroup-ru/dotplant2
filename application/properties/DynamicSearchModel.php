@@ -3,7 +3,7 @@
 namespace app\properties;
 
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\Property;
 use app\models\PropertyStaticValues;
 use Yii;
@@ -60,7 +60,7 @@ class DynamicSearchModel extends DynamicModel
             return $dataProvider;
         }
 
-        $object = Object::getForClass($this->baseModel->className());
+        $object = BaseObject::getForClass($this->baseModel->className());
         $baseModelTableName = $this->baseModel->tableName();
 
         $eavJoinsCount = 0;

@@ -3,7 +3,7 @@
 namespace app\modules\image\models;
 
 use app\backend\components\Helper;
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\page\models\Page;
 use app\modules\shop\models\Category;
 use app\modules\shop\models\Product;
@@ -106,11 +106,11 @@ class ErrorImage extends \yii\db\ActiveRecord
         }
         /** @var Image $image */
         $image = Image::findById($this->img_id);
-        if (is_null($image) || is_null($object = Object::findById($image->object_id))) {
+        if (is_null($image) || is_null($object = BaseObject::findById($image->object_id))) {
             return false;
         }
         $product = Yii::$container->get(Product::class);
-        /** @var \app\models\Object $object */
+        /** @var \app\models\BaseObject $object */
         switch ($object->object_class) {
             case Page::className():
                 $this->getPageLinks($image->object_model_id);

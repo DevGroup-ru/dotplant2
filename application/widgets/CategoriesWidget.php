@@ -4,7 +4,7 @@ namespace app\widgets;
 
 use app\models\ObjectStaticValues;
 use app\modules\shop\models\Product;
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\shop\models\Category;
 use Yii;
 use yii\base\Widget;
@@ -49,7 +49,7 @@ class CategoriesWidget extends Widget
 
         if ($this->onlyAvailableProducts) {
             $product = Yii::$container->get(Product::class);
-            $object = Object::getForClass(get_class($product));
+            $object = BaseObject::getForClass(get_class($product));
             if (!is_null($object) && isset($this->current_selections['last_category_id'])) {
 
                 $cacheKey = 'CategoriesFilterWidget: ' . $object->id . ':' . $this->current_selections['last_category_id'] . ':'

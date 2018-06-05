@@ -6,7 +6,7 @@
 /** @var boolean $displayHeader */
 /** @var string $header  */
 /** @var string $id */
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\shop\models\Product;
 use yii\db\Query;
 use yii\helpers\Html;

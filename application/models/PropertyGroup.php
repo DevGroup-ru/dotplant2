@@ -84,7 +84,7 @@ class PropertyGroup extends ActiveRecord
      */
     public function getObject()
     {
-        return $this->hasOne(Object::className(), ['id' => 'object_id']);
+        return $this->hasOne(BaseObject::className(), ['id' => 'object_id']);
     }
 
     /**
@@ -177,7 +177,7 @@ class PropertyGroup extends ActiveRecord
                     $query = $query->with('properties');
                 }
                 static::$groups_by_object_id[$object_id] = $query->all();
-                if (null !== $object = Object::findById($object_id)) {
+                if (null !== $object = BaseObject::findById($object_id)) {
                     $tags = [
                         ActiveRecordHelper::getObjectTag($object, $object_id)
                     ];
@@ -231,7 +231,7 @@ class PropertyGroup extends ActiveRecord
             if (null === $groups = static::find()->where(['in', 'id', $group_ids])->all()) {
                 return null;
             }
-            if (null !== $object = Object::findById($object_id)) {
+            if (null !== $object = BaseObject::findById($object_id)) {
                 Yii::$app->cache->set(
                     $cacheKey,
                     $groups,
@@ -275,7 +275,7 @@ class PropertyGroup extends ActiveRecord
      */
     public function appendToObjectModel(ActiveRecord $model, $idAttribute = 'id')
     {
-        $object = Object::getForClass($model::className());
+        $object = BaseObject::getForClass($model::className());
         if (null === $object || !$model->hasAttribute($idAttribute)) {
             return false;
         }

@@ -54,7 +54,7 @@ class ViewObject extends ActiveRecord
     /**
      * Поиск представления по модели
      *
-     * @param Object $model
+     * @param BaseObject $model
      * @return string|null Возвращает имя файла или null, если ничего не найдено
      */
     public static function getViewByModel($model = null, $childView = false)
@@ -63,7 +63,7 @@ class ViewObject extends ActiveRecord
             return null;
         }
 
-        if (null === $object = Object::getForClass($model::className())) {
+        if (null === $object = BaseObject::getForClass($model::className())) {
             return null;
         }
 
@@ -113,7 +113,7 @@ class ViewObject extends ActiveRecord
             return null;
         }
 
-        if (null === $object = Object::getForClass($model::className())) {
+        if (null === $object = BaseObject::getForClass($model::className())) {
             return null;
         }
 

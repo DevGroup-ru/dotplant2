@@ -5,7 +5,7 @@ namespace app\modules\shop\models;
 use app\behaviors\CleanRelations;
 use app\behaviors\Tree;
 use app\components\Helper;
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\data\components\ImportableInterface;
 use app\modules\shop\models\FilterSets;
 use app\properties\HasProperties;
@@ -558,7 +558,7 @@ class Category extends ActiveRecord implements \JsonSerializable, ImportableInte
             return false;
         }
         $product = Yii::$container->get(Product::class);
-        $productObject = Object::getForClass(get_class($product));
+        $productObject = BaseObject::getForClass(get_class($product));
         switch ($this->deleteMode) {
             case self::DELETE_MODE_ALL:
                 $products =

@@ -49,17 +49,17 @@ class m150602_095853_openGraphObject extends Migration
             ],
             [
                 [
-                    \app\models\Object::getForClass(\app\modules\page\models\Page::className())->id,
+                    \app\models\BaseObject::getForClass(\app\modules\page\models\Page::className())->id,
                     1,
                     json_encode($data)
                 ],
                 [
-                    \app\models\Object::getForClass(\app\modules\shop\models\Category::className())->id,
+                    \app\models\BaseObject::getForClass(\app\modules\shop\models\Category::className())->id,
                     1,
                     json_encode($data)
                 ],
                 [
-                    \app\models\Object::getForClass(\app\modules\shop\models\Product::className())->id,
+                    \app\models\BaseObject::getForClass(\app\modules\shop\models\Product::className())->id,
                     1,
                     json_encode($data)
                 ],

@@ -2,7 +2,7 @@
 
 namespace app\backend\actions;
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\Property;
 use app\properties\PropertyHandlers;
 use yii;
@@ -27,7 +27,7 @@ class PropertyHandler extends Action
             throw new yii\web\ServerErrorHttpException('Model class does not exists');
         }
 
-        $this->objectId = Object::getForClass($this->modelName);
+        $this->objectId = BaseObject::getForClass($this->modelName);
         if (null === $this->objectId) {
             throw new yii\web\ServerErrorHttpException('Object does not exists for model.');
         }

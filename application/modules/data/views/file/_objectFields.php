@@ -5,7 +5,7 @@ use \yii\helpers\Html;
 /* @var $fields array */
 /* @var \app\modules\data\models\ImportModel $model */
 
-$objectClass = \app\models\Object::findById($model->object)->object_class;
+$objectClass = \app\models\BaseObject::findById($model->object)->object_class;
 
 $object = new $objectClass;
 

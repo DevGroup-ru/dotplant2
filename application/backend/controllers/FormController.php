@@ -3,7 +3,7 @@
 namespace app\backend\controllers;
 
 use app\models\Form;
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ObjectPropertyGroup;
 use app\models\PropertyGroup;
 use app\models\Submission;
@@ -55,8 +55,8 @@ class FormController extends Controller
             $model = Form::findOne($id);
         }
 
-        /** @var \app\models\Object $object */
-        $object = Object::getForClass(Form::className());
+        /** @var \app\models\BaseObject $object */
+        $object = BaseObject::getForClass(Form::className());
 
         $propIds = (new Query())->select('property_group_id')->from([ObjectPropertyGroup::tableName()])->where(
             [

@@ -1,10 +1,10 @@
 <?php
 /***
- * @var $object \app\models\Object;
+ * @var $object \app\models\BaseObject;
  * @var $model \app\modules\data\models\ImportModel
  */
 
-use app\models\Object;
+use app\models\BaseObject;
 use \app\modules\shop\models\Product;
 ?>
 <div class="form-group row">
@@ -13,7 +13,7 @@ use \app\modules\shop\models\Product;
             <legend><?= Yii::t('app', 'Filter') ?></legend>
             <?php
             $product = Yii::$container->get(Product::class);
-            if ($object->id == Object::getForClass(get_class($product))->id) {
+            if ($object->id == BaseObject::getForClass(get_class($product))->id) {
                 echo \app\backend\widgets\filterForm\filterFormCategory::widget();
             }
             ?>

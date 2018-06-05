@@ -2,7 +2,7 @@
 
 namespace app\widgets\form;
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\PropertyGroup;
 use kartik\helpers\Html;
 use kartik\widgets\Widget;
@@ -47,7 +47,7 @@ class Form extends Widget
 
     public function run()
     {
-        $object = Object::getForClass(\app\models\Form::className());
+        $object = BaseObject::getForClass(\app\models\Form::className());
         $groups = PropertyGroup::getForModel($object->id, $this->formId);
         $view = !empty($this->model->form_view) ? $this->model->form_view : 'form';
         $successView = !empty($this->model->form_success_view) ? $this->model->form_success_view : 'success';

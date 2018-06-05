@@ -11,7 +11,7 @@ use yii\base\Widget;
 use yii\db\ActiveRecord;
 
 /**
- * @property \app\models\Object  $object
+ * @property \app\models\BaseObject  $object
  * @property ActiveRecord  $model
  */
 class DataRelationsWidget extends Widget

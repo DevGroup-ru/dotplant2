@@ -2,7 +2,7 @@
 
 namespace app\modules\shop\controllers;
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\core\behaviors\DisableRobotIndexBehavior;
 use app\modules\shop\helpers\ProductCompareHelper;
 use app\modules\shop\models\Product;
@@ -54,7 +54,7 @@ class ProductCompareController extends Controller
     {
         $products = ProductCompareHelper::getProductsList(true);
         $product = Yii::$container->get(Product::class);
-        $object = Object::getForClass(get_class($product));
+        $object = BaseObject::getForClass(get_class($product));
         return $this->render(
             'compare',
             [
@@ -74,7 +74,7 @@ class ProductCompareController extends Controller
         $this->layout = 'print';
         $products = ProductCompareHelper::getProductsList(true);
         $product = Yii::$container->get(Product::class);
-        $object = Object::getForClass(get_class($product));
+        $object = BaseObject::getForClass(get_class($product));
         return $this->render(
             'print',
             [

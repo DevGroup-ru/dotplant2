@@ -2,7 +2,7 @@
 
 namespace app\modules\seo\models;
 
-use app\models\Object;
+use app\models\BaseObject;
 use Yii;
 
 /**
@@ -12,7 +12,7 @@ use Yii;
  * @property integer $object_id
  * @property integer $active
  * @property string $relation_data
- * @property Object $object
+ * @property BaseObject $object
  */
 class OpenGraphObject extends \yii\db\ActiveRecord
 {
@@ -28,7 +28,7 @@ class OpenGraphObject extends \yii\db\ActiveRecord
 
     public function getObject()
     {
-        return $this->hasOne(Object::className(), ['id'=>'object_id']);
+        return $this->hasOne(BaseObject::className(), ['id'=>'object_id']);
     }
 
     /**

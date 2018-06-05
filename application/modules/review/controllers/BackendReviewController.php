@@ -2,7 +2,7 @@
 
 namespace app\modules\review\controllers;
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\modules\page\models\Page;
 use app\modules\review\models\Review;
 use app\modules\shop\models\Category;
@@ -256,13 +256,13 @@ class BackendReviewController extends \app\backend\components\BackendController
             'results' => []
         ];
 
-        if (null === $object = Object::findById($object)) {
+        if (null === $object = BaseObject::findById($object)) {
             return $result;
         }
 
         /** @var ActiveRecord $class */
         $class = $object->object_class;
-        $list = Object::find()->select("object_class")->column();
+        $list = BaseObject::find()->select("object_class")->column();
         if (!in_array($class, $list)) {
             return $result;
         }

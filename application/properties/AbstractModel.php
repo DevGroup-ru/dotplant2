@@ -2,7 +2,7 @@
 
 namespace app\properties;
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\ObjectStaticValues;
 use app\models\Property;
 use Yii;
@@ -282,7 +282,7 @@ class AbstractModel extends Model
         }
         Yii::$app->cache->delete("PSV:".$object_id.":".$object_model_id);
         if (count($column_type_updates) > 1) {
-            $table_name = Object::findById($object_id)->column_properties_table_name;
+            $table_name = BaseObject::findById($object_id)->column_properties_table_name;
             $exists = Yii::$app->db->createCommand('select object_model_id from '.$table_name . ' where object_model_id=:object_model_id')
                 ->bindValue(':object_model_id', $object_model_id)
                 ->queryScalar();
@@ -305,13 +305,13 @@ class AbstractModel extends Model
             }
         }
         if (count($eav_ids_to_delete) > 0) {
-            $table_name = Object::findById($object_id)->eav_table_name;
+            $table_name = BaseObject::findById($object_id)->eav_table_name;
             Yii::$app->db->createCommand()
                 ->delete($table_name, ['in', 'id', $eav_ids_to_delete])
                 ->execute();
         }
         if (count($new_eav_values) > 0) {
-            $table_name = Object::findById($object_id)->eav_table_name;
+            $table_name = BaseObject::findById($object_id)->eav_table_name;
             Yii::$app->db->createCommand()
                 ->batchInsert($table_name, ['object_model_id', 'property_group_id', 'key', 'value', 'sort_order'], $new_eav_values)
                 ->execute();

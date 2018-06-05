@@ -2,7 +2,7 @@
 
 namespace app\traits;
 
-use app\models\Object;
+use app\models\BaseObject;
 use app\models\DynamicContent;
 use app\modules\core\helpers\ContentBlockHelper;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
@@ -133,7 +133,7 @@ trait DynamicContentTrait
                     [
                         'tags' => [
                             ActiveRecordHelper::getCommonTag(DynamicContent::className()),
-                            ActiveRecordHelper::getObjectTag(Object::className(), $object_id),
+                            ActiveRecordHelper::getObjectTag(BaseObject::className(), $object_id),
                             $route,
                         ]
                     ]
