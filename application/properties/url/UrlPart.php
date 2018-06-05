@@ -9,7 +9,7 @@ use yii\base\BaseObject;
 /**
  * Абстрактный класс части урла.
  */
-abstract class UrlPart extends Object
+abstract class UrlPart extends BaseObject
 {
 
     /**

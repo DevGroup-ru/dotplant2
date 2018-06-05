@@ -16,7 +16,7 @@ use yii\base\BaseObject;
 use yii\helpers\Json;
 use yii\web\View;
 
-class YandexEcommerceHandler extends Object
+class YandexEcommerceHandler extends BaseObject
 {
     /** @var Currency $currency */
     static protected $currency = null;

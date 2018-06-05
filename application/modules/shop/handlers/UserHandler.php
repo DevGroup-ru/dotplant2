@@ -6,7 +6,7 @@ use yii\web\UserEvent;
 use app\modules\shop\models\Order;
 use app\modules\shop\models\Wishlist;
 
-class UserHandler extends Object
+class UserHandler extends BaseObject
 {
     /**
      * Move orders/order params from guest to logged/signed user

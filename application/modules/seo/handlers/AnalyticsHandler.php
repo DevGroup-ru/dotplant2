@@ -8,7 +8,7 @@ use yii\base\ActionEvent;
 use yii\base\BaseObject;
 use yii\web\View;
 
-class AnalyticsHandler extends Object
+class AnalyticsHandler extends BaseObject
 {
     const CURRENCY_MAIN = -1;
     const CURRENCY_USER = -2;

@@ -8,7 +8,7 @@ use app\modules\shop\ShopModule;
 use yii\base\BaseObject;
 use yii\web\View;
 
-class CartHandler extends Object
+class CartHandler extends BaseObject
 {
     /**
      * @param CartActionEvent $event

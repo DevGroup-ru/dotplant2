@@ -17,7 +17,7 @@ use yii\base\BaseObject;
 use yii\helpers\Json;
 use yii\web\View;
 
-class GoogleEcommerceHandler extends Object
+class GoogleEcommerceHandler extends BaseObject
 {
     /** @var Currency $currency */
     static protected $currency = null;
