@@ -1,0 +1,30 @@
+version: '2'
+services:
+  php:
+    image: yiisoftware/yii2-php:7.2-apache
+    environment:
+      - GITHUB_API_TOKEN
+    volumes:
+      - ./application:/app
+      - ./docker/server/log:/var/log/apache2
+      - ./docker/config/cron:/root/cron
+      - ./docker/config/php/php.ini:/usr/local/etc/php/php.ini
+#      - ./docker/config/apache/docker-php7.conf:/etc/apache2/conf-available/docker-php7.conf
+      # composer-cache on host-volume
+      - ~/.composer-docker/cache:/root/.composer/cache
+    ports:
+      - 8080:80
+    links:
+      - db
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./docker/server/mysql:/var/lib/mysql
+      - ./docker/config/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+

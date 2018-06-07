@@ -1,10 +1,18 @@
-# Created by .gitignore support plugin (hsz.mobi)
-### JetBrains template
-# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
+# phpstorm project files
+.idea
 
-## Directory-based project format
-.idea/
-/*.iml
+# netbeans project files
+nbproject
 
-sitemap.xml
-cgi-bin
+# zend studio for eclipse project files
+.buildpath
+.project
+.settings
+
+# windows thumbnail cache
+Thumbs.db
+
+# Mac DS_Store Files
+.DS_Store
+
+.env
