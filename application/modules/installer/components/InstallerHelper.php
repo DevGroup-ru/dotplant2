@@ -150,8 +150,12 @@ class InstallerHelper
 
     public static function writeCommonConfig(FinalStep $model)
     {
+        /**
+         * @var $sessionHelper SessionHelper
+         */
+        $sessionHelper = Yii::$app->get('sessionHelper');
         $common_config = [
-            'language' => Yii::$app->session->get('language'),
+            'language' => $sessionHelper->get('language'),
             'components' => [
                 'cache' => [
                     'class' => $model->cacheClass,
@@ -177,7 +181,11 @@ class InstallerHelper
 
     public static function updateConfigurables()
     {
-        Yii::$app->set('db', Yii::createObject(InstallerHelper::createDatabaseConfig(Yii::$app->session->get('db-config'))));
+        /**
+         * @var $sessionHelper SessionHelper
+         */
+        $sessionHelper = Yii::$app->get('sessionHelper');
+        Yii::$app->set('db', Yii::createObject(InstallerHelper::createDatabaseConfig($sessionHelper->get('db-config'))));
         Yii::$app->db->open();
         $conf = Configurable::find()->all();
         return ConfigurationUpdater::updateConfiguration($conf, false);

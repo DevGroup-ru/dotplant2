@@ -13,8 +13,11 @@ class InstallerFilter extends ActionFilter
         if (file_get_contents(Yii::getAlias('@app/installed.mark'))==='1') {
             throw new ForbiddenHttpException("DotPlant2 is already installed");
         }
-
-        Yii::$app->language = Yii::$app->session->get('language', 'en');
+        /**
+         * @var $sessionHelper SessionHelper
+         */
+        $sessionHelper = Yii::$app->get('sessionHelper');
+        Yii::$app->language = $sessionHelper->get('language', 'en');
 
         return true;
     }

@@ -1,5 +1,7 @@
 <?php
 
+use app\modules\installer\components\SessionHelper;
+
 $config = [
     'id' => 'dotplant2-installer',
     'basePath' => dirname(__DIR__),
@@ -101,10 +103,17 @@ $config = [
                 ],
             ],
         ],
+        'sessionHelper' => [
+            'class' => SessionHelper::class
+        ]
 
     ],
     'params' => [
         'icon-framework' => 'fa',
+    ],
+    'aliases' => [
+        '@bower' => '@vendor/bower-asset',
+        '@npm'   => '@vendor/npm-asset',
     ],
 ];
 
@@ -113,9 +122,6 @@ if (YII_CONSOLE) {
     unset($config['components']['request']);
     $config['defaultRoute'] = 'install/index';
     $config['controllerNamespace'] = 'app\modules\installer\commands';
-    $config['components']['session'] = [
-        'class' => 'app\modules\installer\components\StaticSession',
-    ];
 }
 
 return $config;

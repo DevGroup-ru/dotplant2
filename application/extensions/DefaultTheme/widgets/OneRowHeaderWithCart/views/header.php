@@ -121,7 +121,7 @@ $navStyles = '';
             <a href="<?=Url::to(['/shop/product-compare/compare'])?>" class="btn btn-compare" title="<?=Yii::t('app', 'Compare products')?>">
                 <i class="fa fa-tags"></i>
                 <span class="badge items-count">
-                    <?=count(Yii::$app->session->get('comparisonProductList')) ?>
+                    <?=count(Yii::$app->session->get('comparisonProductList', [])) ?>
                 </span>
             </a>
             <a href="<?=Url::to(['/shop/wishlist'])?>" class="btn btn-wishlist">

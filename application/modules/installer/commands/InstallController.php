@@ -3,14 +3,13 @@
 namespace app\modules\installer\commands;
 
 use app\modules\core\helpers\UpdateHelper;
+use app\modules\installer\components\SessionHelper;
 use app\modules\installer\models\AdminUser;
 use app\modules\installer\models\DbConfig;
 use app\modules\installer\components\InstallerFilter;
 use app\modules\installer\components\InstallerHelper;
 use app\modules\installer\models\FinalStep;
-use app\modules\installer\models\MigrateModel;
 use Yii;
-use yii\base\DynamicModel;
 use yii\console\Controller;
 use yii\helpers\Console;
 
@@ -25,7 +24,7 @@ class InstallController extends Controller
     {
         return [
             'installer' => [
-                'class' => InstallerFilter::className(),
+                'class' => InstallerFilter::class,
             ],
         ];
     }
@@ -59,7 +58,11 @@ class InstallController extends Controller
 
     private function language()
     {
-        Yii::$app->session->set('language', $this->prompt('Enter language(ie. ru, zh-CN, en)',[
+        /**
+         * @var $sessionHelper SessionHelper
+         */
+        $sessionHelper = Yii::$app->get('sessionHelper');
+        $sessionHelper->set('language', $this->prompt('Enter language(ie. ru, zh-CN, en)',[
             'required' => true,
             'default' => 'en',
         ]));
@@ -106,7 +109,11 @@ class InstallController extends Controller
             $this->stderr("Could not connect to databse!\n", Console::FG_RED);
             $this->dbConfig();
         }
-        Yii::$app->session->set('db-config', $config);
+        /**
+         * @var $sessionHelper SessionHelper
+         */
+        $sessionHelper = Yii::$app->get('sessionHelper');
+        $sessionHelper->set('db-config', $config);
         return $this->migration();
 
     }
@@ -220,7 +227,11 @@ class InstallController extends Controller
 
     private function getDbConfigFromSession()
     {
-        return Yii::$app->session->get('db-config', [
+        /**
+         * @var $sessionHelper SessionHelper
+         */
+        $sessionHelper = Yii::$app->get('sessionHelper');
+        return $sessionHelper->get('db-config', [
             'db_host' => 'localhost',
             'db_name' => 'dotplant2',
             'username' => 'root',

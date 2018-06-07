@@ -54,4 +54,8 @@ return [
             'class' => 'bazilio\stubsgenerator\StubsController',
         ],
     ],
+    'aliases' => [
+        '@bower' => '@vendor/bower-asset',
+        '@npm'   => '@vendor/npm-asset',
+    ],
 ];

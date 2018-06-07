@@ -3,6 +3,7 @@
 namespace app\modules\installer\controllers;
 
 use app\modules\core\helpers\UpdateHelper;
+use app\modules\installer\components\SessionHelper;
 use app\modules\installer\models\AdminUser;
 use app\modules\installer\models\DbConfig;
 use app\modules\installer\components\InstallerFilter;
@@ -50,10 +51,14 @@ class InstallerController extends Controller
     {
         $model = new DynamicModel(['language']);
         $model->addRule(['language'], 'required');
-        $model->setAttributes(['language' => Yii::$app->session->get('language', 'en')]);
+        /**
+         * @var $sessionHelper SessionHelper
+         */
+        $sessionHelper = Yii::$app->get('sessionHelper');
+        $model->setAttributes(['language' => $sessionHelper->get('language', 'en')]);
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            Yii::$app->session->set('language', $model->language);
+            $sessionHelper->set('language', $model->language);
             return $this->redirect(['db-config']);
         }
         return $this->render(
@@ -71,6 +76,10 @@ class InstallerController extends Controller
 
         $model = new DbConfig();
         $model->setAttributes($config);
+        /**
+         * @var $sessionHelper SessionHelper
+         */
+        $sessionHelper = Yii::$app->get('sessionHelper');
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $config = $model->getAttributes();
             $config['connectionOk'] = false;
@@ -81,13 +90,13 @@ class InstallerController extends Controller
 
                 Yii::$app->session->setFlash('success', Yii::t('app', 'Database connection - ok'));
                 if (isset($_POST['next'])) {
-                    Yii::$app->session->set('db-config', $config);
+                    $sessionHelper->set('db-config', $config);
                     return $this->redirect(['migrate']);
                 }
 
             }
 
-            Yii::$app->session->set('db-config', $config);
+            $sessionHelper->set('db-config', $config);
         }
 
         return $this->render(
@@ -101,7 +110,11 @@ class InstallerController extends Controller
 
     private function getDbConfigFromSession()
     {
-        return Yii::$app->session->get('db-config', [
+        /**
+         * @var $sessionHelper SessionHelper
+         */
+        $sessionHelper = Yii::$app->get('sessionHelper');
+        return $sessionHelper->get('db-config', [
             'db_host' => 'localhost',
             'db_name' => 'dotplant2',
             'username' => 'root',
@@ -116,14 +129,18 @@ class InstallerController extends Controller
     public function actionMigrate()
     {
         $model = new MigrateModel();
-        $model->ignore_time_limit_warning = Yii::$app->session->get('ignore_time_limit_warning', false);
+        /**
+         * @var $sessionHelper SessionHelper
+         */
+        $sessionHelper = Yii::$app->get('sessionHelper');
+        $model->ignore_time_limit_warning = $sessionHelper->get('ignore_time_limit_warning', false);
         $model->manual_migration_run = false;
-        $model->composerHomeDirectory = Yii::$app->session->get('composerHomeDirectory', './.composer/');
-        $model->updateComposer = Yii::$app->session->get('updateComposer', false);
+        $model->composerHomeDirectory = $sessionHelper->get('composerHomeDirectory', './.composer/');
+        $model->updateComposer = $sessionHelper->get('updateComposer', false);
         if ($model->load(Yii::$app->request->post())) {
             $model->validate();
             foreach ($model->getAttributes() as $key => $value) {
-                Yii::$app->session->set($key, $value);
+                $sessionHelper->set($key, $value);
             }
         }
 
