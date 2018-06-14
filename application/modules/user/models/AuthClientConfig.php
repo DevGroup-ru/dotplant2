@@ -106,7 +106,7 @@ class AuthClientConfig extends Model
         );
 
         $yii2_authclients = self::getClassNames(
-            Yii::getAlias('@vendor/yiisoft/yii2-authclient/clients/'),
+            Yii::getAlias('@vendor/yiisoft/yii2-authclient/src/clients/'),
             'yii\authclient\clients'
         );
 
