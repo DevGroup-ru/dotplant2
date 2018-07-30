@@ -2,34 +2,41 @@
 
 namespace app\components\filters;
 
-use app\components\filters\FilterQueryInterface;
 use app\models\Property;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
-use yii\db\Query;
 use Yii;
 
+/**
+ * Class FilterRangeProperty
+ * @package app\components\filters
+ */
 class FilterRangeProperty implements FilterQueryInterface
 {
-
-
     public $changeAttribute = 'changeValue';
     public $minValueAttribute = 'minValue';
     public $maxValueAttribute = 'maxValue';
 
+    /**
+     * @param ActiveQuery $query
+     * @param String $cacheKeyAppend
+     * @return ActiveQuery
+     */
     public function filter(ActiveQuery $query, &$cacheKeyAppend)
     {
-
-        $get = Yii::$app->request->post();
+        $get = ArrayHelper::merge(Yii::$app->request->post(), Yii::$app->request->get());
         if (isset($get['changeValue']) && is_array($get['changeValue'])) {
             foreach ($get['changeValue'] as $propertyId => $isActive) {
-                if ($isActive
-                    && isset($get[$this->minValueAttribute][$propertyId])
-                    && isset($get[$this->maxValueAttribute][$propertyId])
+                if (
+                    $isActive
+                    && isset($get[$this->minValueAttribute][$propertyId], $get[$this->maxValueAttribute][$propertyId])
                     && is_numeric($get[$this->minValueAttribute][$propertyId])
                     && is_numeric($get[$this->maxValueAttribute][$propertyId])
                 ) {
                     $property = Property::findById($propertyId);
+                    if ($property === null) {
+                        continue;
+                    }
                     if ($property->has_static_values) {
                         $query->innerJoin('{{%object_static_values}} as osvf' . $propertyId,
                             '{{%product}}.id=osvf' . $propertyId . '.object_model_id');
@@ -74,13 +81,38 @@ class FilterRangeProperty implements FilterQueryInterface
 
                             ]
                         );
+                    } elseif ($property->is_column_type_stored) {
+                        $tableAlias = 'ptable' . $propertyId;
+                        $query->innerJoin(
+                            '{{%product_property}} as ' . $tableAlias,
+                            '{{%product}}.id=' . $tableAlias . '.object_model_id'
+                        );
+                        $query->andWhere(
+                            [
+                                '>=',
+                                $tableAlias . '.' . $property->key,
+                                (int)$get[$this->minValueAttribute][$propertyId]
+                            ]
+                        );
+                        $query->andWhere(
+                            [
+                                '<=',
+                                $tableAlias . '.' . $property->key,
+                                (int)$get[$this->maxValueAttribute][$propertyId]
+                            ]
+                        );
                     }
-                    $cacheKeyAppend .= 'FilterRangeProperty:propertyId' . $propertyId . ':[min:' . (int)$get[$this->minValueAttribute][$propertyId]
-                        . ':max' . (int)$get[$this->maxValueAttribute][$propertyId] . ']';
+                    $cacheKeyAppend .= 'FilterRangeProperty:propertyId'
+                        . $propertyId
+                        . ':[min:'
+                        . (int)$get[$this->minValueAttribute][$propertyId]
+                        . ':max'
+                        . (int)$get[$this->maxValueAttribute][$propertyId]
+                        . ']';
                 }
             }
         }
         return $query;
     }
 
-} 
+}

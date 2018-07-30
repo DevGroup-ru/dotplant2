@@ -10,8 +10,13 @@ use app\modules\shop\models\Product;
 use devgroup\TagDependencyHelper\ActiveRecordHelper;
 use Yii;
 use yii\caching\TagDependency;
+use yii\helpers\Json;
 use yii\helpers\Url;
 
+/**
+ * Class Widget
+ * @package app\extensions\DefaultTheme\widgets\FilterSets
+ */
 class Widget extends BaseWidget
 {
     protected $toUnset = [];
@@ -23,7 +28,7 @@ class Widget extends BaseWidget
     /**
      * Remove lost dependencies from url params.
      * Also this method builds toUnset array.
-     * @param FilterSets $filterSets
+     * @param FilterSets[] $filterSets
      * @param array $urlParams
      * @return array
      */
@@ -32,7 +37,7 @@ class Widget extends BaseWidget
         $depends = [];
         $this->toUnset = [];
         foreach ($filterSets as $set) {
-            if (false == empty($set->property->depends_on_property_id)) {
+            if (empty($set->property->depends_on_property_id) === false) {
                 if (isset($this->toUnset[$set->property->depends_on_property_id])) {
                     $this->toUnset[$set->property->depends_on_property_id][] = $set->property->id;
                 } else {
@@ -53,16 +58,20 @@ class Widget extends BaseWidget
             if (isset($urlParams['properties'][$prop_id])) {
                 if (false === isset($urlParams['properties'][$key])) {
                     unset($urlParams['properties'][$prop_id]);
-                } else {
-                    if (false === in_array($depend[$key], $urlParams['properties'][$key])) {
-                        unset($urlParams['properties'][$prop_id]);
-                    }
+                } elseif (in_array($depend[$key], $urlParams['properties'][$key], true) === false) {
+                    unset($urlParams['properties'][$prop_id]);
                 }
             }
         }
         return $urlParams;
     }
 
+    /**
+     * @param Property $property
+     * @param $urlParams
+     * @return array|null
+     * @throws \yii\db\Exception
+     */
     public function getEavSliderFilter(Property $property, $urlParams)
     {
         $result = null;
@@ -95,6 +104,44 @@ class Widget extends BaseWidget
         return $result;
     }
 
+    /**
+     * @param Property $property
+     * @param $urlParams
+     * @return array|null
+     * @throws \yii\db\Exception
+     */
+    protected function getTableInheritanceFilter(Property $property, $urlParams)
+    {
+        $result = null;
+        $key = $property->key;
+        $tableCategoryData = Yii::$app->db->createCommand(
+            'SELECT MAX({{%product_property}}.[[' . $key . ']]) as max, MIN({{%product_property}}.[[' . $key . ']]) as min
+              FROM {{%product_property}}
+              LEFT JOIN {{%product_category}} ON ({{%product_category}}.object_model_id = {{%product_property}}.object_model_id)
+              WHERE {{%product_category}}.category_id=:category_id'
+        )
+            ->bindParam(':category_id', $urlParams['last_category_id'])
+            ->queryOne();
+
+        if ($tableCategoryData['max'] !== null &&
+            $tableCategoryData['min'] !== null
+        ) {
+            $result = [
+                'id' => $property->id,
+                'name' => $property->name,
+                'isRange' => 1,
+                'selections' => [],
+                'multiple' => 0,
+                'max' => $tableCategoryData['max'],
+                'min' => $tableCategoryData['min'],
+                'property' => $property,
+                'step' => 1
+            ];
+        }
+        return $result;
+    }
+
+
 
     /**
      * Get selected property index
@@ -108,7 +155,7 @@ class Widget extends BaseWidget
         if (!isset($properties[$propertyId])) {
             return false;
         }
-        return array_search($propertyValueId, $properties[$propertyId]);
+        return array_search($propertyValueId, $properties[$propertyId], true);
     }
 
     /**
@@ -138,6 +185,9 @@ class Widget extends BaseWidget
      * Actual run function for all widget classes extending BaseWidget
      *
      * @return mixed
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\db\Exception
+     * @throws \yii\di\NotInstantiableException
      */
     public function widgetRun()
     {
@@ -176,7 +226,7 @@ class Widget extends BaseWidget
             $newGet['properties'] = $properties;
             Yii::$app->request->setQueryParams($newGet);
             ksort($properties);
-            $cacheKey = 'FilterSets:' . $categoryId . ':' . json_encode($urlParams);
+            $cacheKey = 'FilterSets:' . $categoryId . ':' . Json::encode($urlParams);
             unset($properties);
             if (false === $filtersArray = Yii::$app->cache->get($cacheKey)) {
                 $filtersArray = [];
@@ -188,22 +238,32 @@ class Widget extends BaseWidget
                             $filtersArray[] = $filter;
                         }
                         continue;
-                    } elseif ($filterSet->property->has_static_values === 0) {
+                    }
+
+                    if ($filterSet->is_range_slider && $filterSet->property->is_column_type_stored) {
+                        $filter = $this->getTableInheritanceFilter($filterSet->property, $urlParams);
+                        if ($filter) {
+                            $filtersArray[] = $filter;
+                        }
                         continue;
                     }
-                    if (!empty($filterSet->property->depends_on_property_id)
-                        && !empty($filterSet->property->depended_property_values)
-                    ) {
-                        if (
-                            $this->getSelectedPropertyIndex(
-                                $urlParams['properties'],
-                                $filterSet->property->depends_on_property_id,
-                                $filterSet->property->depended_property_values
-                            ) === false
-                        ) {
-                            continue;
-                        }
+
+                    if ($filterSet->property->has_static_values === 0) {
+                        continue;
                     }
+
+                    if (
+                        !empty($filterSet->property->depends_on_property_id)
+                        && !empty($filterSet->property->depended_property_values)
+                        && $this->getSelectedPropertyIndex(
+                            $urlParams['properties'],
+                            $filterSet->property->depends_on_property_id,
+                            $filterSet->property->depended_property_values
+                        ) === false
+                    ) {
+                        continue;
+                    }
+
                     $selections = PropertyStaticValues::getValuesForFilter(
                         $filterSet->property->id,
                         $urlParams['last_category_id'],
@@ -310,10 +370,10 @@ class Widget extends BaseWidget
                         $i = 1;
                         $n = $item['max'] - $item['min'];
                         while ($n >= 10) {
-                            $n = $n / 10;
+                            $n /= 10;
                             $i++;
                         }
-                        $item['step'] = $i > 3 ? (int)pow(10, $i - 3) : 1;
+                        $item['step'] = $i > 3 ? 10 ** ($i - 3) : 1;
                         unset($i, $n);
                     }
                     $filtersArray[] = $item;
@@ -327,16 +387,16 @@ class Widget extends BaseWidget
                     new TagDependency(
                         [
                             'tags' => [
-                                ActiveRecordHelper::getCommonTag(FilterSets::className()),
+                                ActiveRecordHelper::getCommonTag(FilterSets::class),
                                 ActiveRecordHelper::getCommonTag(get_class($product)),
-                                ActiveRecordHelper::getCommonTag(Property::className()),
+                                ActiveRecordHelper::getCommonTag(Property::class),
                             ],
                         ]
                     )
                 );
             }
             return $this->render(
-                "filter-sets-new",
+                'filter-sets-new',
                 [
                     'filtersArray' => $filtersArray,
                     'id' => 'filter-set-' . $this->id,
