@@ -82,7 +82,7 @@ return [
     'Applied discount code:' => 'Примененный код скидки:',
     'Apply If Last Category ID' => 'Применить, если ID категории',
     'Apply If Params' => 'Применить, если параметры',
-    'Apply Order Price Lg' => '',
+    'Apply Order Price Lg' => 'Применять при сумме заказа более',
     'Apply code' => 'Применить код',
     'Approved' => 'Одобрено',
     'Are you sure you want to delete a selected category?' => 'Вы уверены, что хотите удалить выбранную категорию?',
