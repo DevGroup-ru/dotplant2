@@ -3,7 +3,7 @@
 use app\backend\widgets\BackendWidget;
 use app\modules\image\models\Watermark;
 use app\widgets\Alert;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use kartik\icons\Icon;

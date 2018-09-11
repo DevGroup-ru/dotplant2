@@ -7,7 +7,7 @@
 use app\backend\widgets\BackendWidget;
 use app\models\SpamChecker;
 use app\components\Helper;
-use kartik\widgets\SwitchInput;
+use kartik\switchinput\SwitchInput;
 
 ?>
 

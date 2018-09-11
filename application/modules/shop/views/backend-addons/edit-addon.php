@@ -5,7 +5,7 @@
  */
 /** @var \app\modules\shop\models\AddonCategory $addonCategory */
 use app\backend\widgets\BackendWidget;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\helpers\Html;

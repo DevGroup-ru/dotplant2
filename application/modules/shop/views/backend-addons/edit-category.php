@@ -5,7 +5,7 @@
  */
 
 use app\backend\widgets\BackendWidget;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JsExpression;

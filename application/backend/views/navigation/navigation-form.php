@@ -4,7 +4,7 @@ use app\backend\widgets\BackendWidget;
 use app\modules\image\widgets\ImageDropzone;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\helpers\Url;
 
 \app\backend\assets\NavigationAsset::register($this);

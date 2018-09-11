@@ -91,7 +91,7 @@ $yml_settings['properties_map'] = array_reduce(
 );
 ?>
 
-<?php $form = \kartik\widgets\ActiveForm::begin(['id' => 'yml-form', 'type' => \kartik\widgets\ActiveForm::TYPE_HORIZONTAL]); ?>
+<?php $form = \kartik\form\ActiveForm::begin(['id' => 'yml-form', 'type' => \kartik\form\ActiveForm::TYPE_HORIZONTAL]); ?>
 <div class="row">
     <div class="col-md-6">
         <?php BackendWidget::begin(['title'=> Yii::t('app', 'Settings for shop section'), 'icon' => 'cogs']); ?>
@@ -284,7 +284,7 @@ $yml_settings['properties_map'] = array_reduce(
         ?>
     </div>
 </div>
-<?php \kartik\widgets\ActiveForm::end(); ?>
+<?php \kartik\form\ActiveForm::end(); ?>
 
 <?php $this->beginBlock('jsValues') ?>
     var $url = '<?= \yii\helpers\Url::toRoute(['/shop/backend-yml/save-property-unit'])?>';

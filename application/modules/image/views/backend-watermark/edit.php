@@ -3,8 +3,8 @@
 use app\backend\widgets\BackendWidget;
 use app\modules\image\models\Watermark;
 use app\widgets\Alert;
-use kartik\widgets\ActiveForm;
-use kartik\widgets\FileInput;
+use kartik\form\ActiveForm;
+use kartik\file\FileInput;
 use yii\helpers\Html;
 use kartik\icons\Icon;
 use yii\helpers\Url;

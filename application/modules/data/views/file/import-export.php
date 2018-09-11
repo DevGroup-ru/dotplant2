@@ -10,7 +10,7 @@
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use \app\modules\data\assets\DataAsset;
 
 DataAsset::register($this);

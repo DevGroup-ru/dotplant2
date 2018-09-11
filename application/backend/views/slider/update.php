@@ -7,7 +7,7 @@
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use kartik\editable\Editable;
 use kartik\popover\PopoverX;
 

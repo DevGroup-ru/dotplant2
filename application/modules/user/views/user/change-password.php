@@ -6,7 +6,7 @@
  */
 
 use kartik\helpers\Html;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 
 $this->title = Yii::t('app', 'Change a password');
 $this->params['breadcrumbs'] = [

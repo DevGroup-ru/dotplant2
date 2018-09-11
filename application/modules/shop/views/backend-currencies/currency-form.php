@@ -6,7 +6,7 @@
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 
 $this->title = $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update');
 $this->params['breadcrumbs'] = [
@@ -52,7 +52,7 @@ $this->params['breadcrumbs'] = [
         ?>
             <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
             <?= $form->field($model, 'iso_code')->textInput(['maxlength' => 4]) ?>
-            <?= $form->field($model, 'is_main')->textInput()->widget(\kartik\widgets\SwitchInput::className()) ?>
+            <?= $form->field($model, 'is_main')->textInput()->widget(\kartik\switchinput\SwitchInput::className()) ?>
             <?= $form->field($model, 'convert_nominal') ?>
             <?= $form->field($model, 'currency_rate_provider_id')->dropDownList(
                 [0=>'-']+app\components\Helper::getModelMap(\app\modules\shop\models\CurrencyRateProvider::className(), 'id', 'name')
@@ -122,7 +122,7 @@ BackendWidget::begin(
     ]
 );
 ?>
-<?= $form->field($model, 'intl_formatting')->textInput()->widget(\kartik\widgets\SwitchInput::className()) ?>
+<?= $form->field($model, 'intl_formatting')->textInput()->widget(\kartik\switchinput\SwitchInput::className()) ?>
 <?= $form->field($model, 'min_fraction_digits') ?>
 <?= $form->field($model, 'max_fraction_digits') ?>
 <?= $form->field($model, 'dec_point') ?>

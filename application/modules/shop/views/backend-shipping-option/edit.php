@@ -8,7 +8,7 @@
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 
 $this->title = $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update');
 $this->params['breadcrumbs'] = [
@@ -57,7 +57,7 @@ $this->params['breadcrumbs'] = [
             <?= $form->field($model, 'price_to')->textInput() ?>
             <?= $form->field($model, 'cost')->textInput() ?>
             <?= $form->field($model, 'sort')->textInput() ?>
-            <?= $form->field($model, 'active')->widget(\kartik\widgets\SwitchInput::className()) ?>
+            <?= $form->field($model, 'active')->widget(\kartik\switchinput\SwitchInput::className()) ?>
         <?php BackendWidget::end(); ?>
     <?php ActiveForm::end(); ?>
 </div>

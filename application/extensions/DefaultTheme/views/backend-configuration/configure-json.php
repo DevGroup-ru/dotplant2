@@ -4,7 +4,7 @@
 /** @var boolean $isAjax */
 /** @var \yii\web\View $this */
 /** @var \app\extensions\DefaultTheme\models\ThemeActiveWidgets $model */
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 ?>
 <?= \app\widgets\Alert::widget() ?>
 <?php $form = ActiveForm::begin(['id' => 'configure-widget-json-form', 'type'=>ActiveForm::TYPE_HORIZONTAL]); ?>

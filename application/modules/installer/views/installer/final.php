@@ -34,7 +34,7 @@ $form = ActiveForm::begin([
             <?= Yii::t('app', 'Cache settings:') ?>
         </h2>
         <?=
-        \kartik\widgets\TypeaheadBasic::widget([
+        \kartik\typeahead\TypeaheadBasic::widget([
             'model' => $model,
             'attribute' => "cacheClass",
             'data' => $cacheClasses,

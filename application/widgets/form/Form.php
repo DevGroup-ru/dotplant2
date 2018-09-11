@@ -5,7 +5,7 @@ namespace app\widgets\form;
 use app\models\BaseObject;
 use app\models\PropertyGroup;
 use kartik\helpers\Html;
-use kartik\widgets\Widget;
+use kartik\base\Widget;
 use yii\bootstrap\Modal;
 
 class Form extends Widget

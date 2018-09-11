@@ -1,7 +1,7 @@
 <?php
 use \yii\helpers\Html;
 
-/* @var $form \kartik\widgets\ActiveForm */
+/* @var $form \kartik\form\ActiveForm */
 /* @var $fields array */
 /* @var \app\modules\data\models\ImportModel $model */
 

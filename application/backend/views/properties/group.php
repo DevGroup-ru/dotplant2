@@ -11,7 +11,7 @@ use app\backend\widgets\BackendWidget;
 use kartik\dynagrid\DynaGrid;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 
 $this->title = Yii::t('app', 'Update');
 $this->params['breadcrumbs'][] = ['url' => ['/backend/properties/index'], 'label' => Yii::t('app', 'Properties')];

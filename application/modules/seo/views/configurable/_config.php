@@ -7,7 +7,7 @@
  */
 use app\backend\widgets\BackendWidget;
 use app\modules\seo\SeoModule;
-use kartik\widgets\SwitchInput;
+use kartik\switchinput\SwitchInput;
 use app\modules\shop\models\Currency;
 
     if (is_array($model->include)) {

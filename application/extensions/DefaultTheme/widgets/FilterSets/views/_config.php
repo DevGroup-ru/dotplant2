@@ -5,7 +5,7 @@
 /** @var boolean $isAjax */
 /** @var \yii\web\View $this */
 /** @var \app\extensions\DefaultTheme\models\ThemeActiveWidgets $model */
-/** @var \kartik\widgets\ActiveForm $form */
+/** @var \kartik\form\ActiveForm $form */
 
 ?>
 <?= $form->field($configurationModel, 'viewFile') ?>

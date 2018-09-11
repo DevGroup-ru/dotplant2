@@ -2,7 +2,7 @@
 
 namespace app\backend\widgets;
 
-class Select2 extends \kartik\widgets\Select2
+class Select2 extends \kartik\select2\Select2
 {
     public function registerAssets()
     {

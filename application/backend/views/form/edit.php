@@ -1,7 +1,7 @@
 <?php
 
 use app\backend\widgets\BackendWidget;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\helpers\Html;
 use kartik\icons\Icon;
 

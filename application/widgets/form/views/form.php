@@ -8,7 +8,7 @@
  */
 
 use app\models\Property;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\captcha\Captcha;
 
 ?>

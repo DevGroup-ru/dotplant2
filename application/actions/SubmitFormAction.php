@@ -12,7 +12,7 @@ use app\models\SpamChecker;
 use app\models\Submission;
 use app\properties\AbstractModel;
 use app\properties\HasProperties;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\base\Action;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;

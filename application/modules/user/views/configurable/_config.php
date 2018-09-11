@@ -53,7 +53,7 @@ $authClientConfigModel = new AuthClientConfig();
             <div class="row">
                 <div class="col-md-10 col-sm-12">
                     <?=
-                        \kartik\widgets\TypeaheadBasic::widget([
+                        \kartik\typeahead\TypeaheadBasic::widget([
                             'model' => $config,
                             'attribute' => "[$index]class_name",
                             'data' => AuthClientConfig::classNameAutoComplete(),
@@ -84,7 +84,7 @@ $authClientConfigModel = new AuthClientConfig();
 //                        ],
 //                    ]
 //                )->label(false)->widget(
-//                    \kartik\widgets\TypeaheadBasic::className(),
+//                    \kartik\typeahead\TypeaheadBasic::className(),
 //                    [
 //                        'data' => AuthClientConfig::classNameAutoComplete(),
 //                        'pluginOptions' => ['highlight'=>true],
@@ -161,7 +161,7 @@ $authClientConfigModel = new AuthClientConfig();
                     $authClientConfigModel,
                     "[-1]class_name"
                 )->widget(
-                    \kartik\widgets\TypeaheadBasic::className(),
+                    \kartik\typeahead\TypeaheadBasic::className(),
                     [
                         'data' => AuthClientConfig::classNameAutoComplete(),
                         'pluginOptions' => ['highlight'=>true],

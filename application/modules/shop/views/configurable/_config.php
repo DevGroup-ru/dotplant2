@@ -6,7 +6,7 @@
 
 use app\backend\widgets\BackendWidget;
 use app\modules\shop\models\ConfigConfigurationModel;
-use kartik\widgets\SwitchInput;
+use kartik\switchinput\SwitchInput;
 use app\components\Helper;
 
 ?>

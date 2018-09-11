@@ -14,7 +14,7 @@ use yii\web\JsExpression;
  * Example:
  *
  */
-class AutoCompleteSearch extends \kartik\widgets\Typeahead
+class AutoCompleteSearch extends \kartik\typeahead\Typeahead
 {
     /**
      * @var string|array the route to search action

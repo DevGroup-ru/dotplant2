@@ -1,6 +1,6 @@
 <?php
 
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\helpers\Html;
 
 /**
