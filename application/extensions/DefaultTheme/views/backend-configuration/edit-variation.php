@@ -3,7 +3,7 @@
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\helpers\Url;
 /** @var $this \yii\web\View */
 $this->title = Yii::t('app', 'Theme variation edit');

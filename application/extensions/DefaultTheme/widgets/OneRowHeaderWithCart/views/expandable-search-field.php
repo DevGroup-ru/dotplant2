@@ -1,7 +1,7 @@
 <?php
 /** @var bool $autocomplete */
 /** @var bool $useFontAwesome */
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\helpers\Html;
 
 $form = ActiveForm::begin(

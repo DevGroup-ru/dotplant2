@@ -83,7 +83,7 @@ TPL;
 <div class="file_input_preview">
 <?=
     $form->field($model, $prop)->widget(
-        \kartik\widgets\FileInput::classname(),
+        \kartik\file\FileInput::classname(),
         [
             'options' => [
                 'multiple' => $multiple,

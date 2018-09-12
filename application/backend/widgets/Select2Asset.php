@@ -4,7 +4,7 @@ namespace app\backend\widgets;
 
 use Yii;
 
-class Select2Asset extends \kartik\widgets\AssetBundle
+class Select2Asset extends \kartik\base\AssetBundle
 {
     public function init()
     {

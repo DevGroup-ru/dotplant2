@@ -12,7 +12,7 @@
  * @var $values array
  */
 
-use kartik\widgets\DatePicker;
+use kartik\date\DatePicker;
 
 echo $form->field($model, $property_key)->widget(
     DatePicker::classname(),

@@ -13,7 +13,7 @@ use app\backend\widgets\BackendWidget;
 use app\models\BaseObject;
 use app\modules\shop\models\Category;
 use app\widgets\Alert;
-use kartik\widgets\Select2;
+use kartik\select2\Select2;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use app\backend\components\ActiveForm;

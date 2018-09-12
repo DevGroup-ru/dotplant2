@@ -5,7 +5,7 @@
 /** @var \app\backgroundtasks\models\ConfigConfigurationModel $model */
 
 use app\backend\widgets\BackendWidget;
-use kartik\widgets\SwitchInput;
+use kartik\switchinput\SwitchInput;
 use app\components\Helper;
 
 ?>

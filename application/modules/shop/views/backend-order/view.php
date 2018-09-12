@@ -73,7 +73,7 @@ if ($sum_transactions < $model->total_price):
     </div>
 <?php endif; ?>
 <?php
-    $form = \kartik\widgets\ActiveForm::begin(
+    $form = \kartik\form\ActiveForm::begin(
         [
             'action' => ['', 'id' => $model->id],
             'method' => 'post',

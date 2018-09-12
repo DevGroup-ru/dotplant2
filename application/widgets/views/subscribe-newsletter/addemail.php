@@ -1,5 +1,5 @@
 <?php
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 
 ?>
 

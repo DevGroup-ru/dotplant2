@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Html;
-use \kartik\widgets\ActiveForm;
+use \kartik\form\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */

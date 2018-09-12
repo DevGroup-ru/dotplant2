@@ -4,7 +4,7 @@ use app\backend\widgets\BackendWidget;
 use app\backend\components\ActiveForm;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\DateTimePicker;
+use kartik\datetime\DateTimePicker;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\helpers\Url;
 

@@ -20,7 +20,7 @@ foreach (array_keys($model->components) as $value) {
             'title' => Yii::t('app', 'Main settings'),
             'options' => ['class' => 'visible-header']
         ]); ?>
-        <?= $form->field($model, 'useWatermark')->widget(\kartik\widgets\SwitchInput::className()) ?>
+        <?= $form->field($model, 'useWatermark')->widget(\kartik\switchinput\SwitchInput::className()) ?>
         <?= $form->field($model, 'defaultThumbnailSize') ?>
         <?= $form->field($model, 'noImageSrc') ?>
         <?= $form->field($model, 'thumbnailsDirectory') ?>
@@ -51,7 +51,7 @@ foreach (array_keys($model->components) as $value) {
                     $necessaryConfName
                 );
                 if (is_bool($necessaryConfVal) === true || $necessaryConfName === 'active') {
-                    $content = $content->widget(\kartik\widgets\SwitchInput::className());
+                    $content = $content->widget(\kartik\switchinput\SwitchInput::className());
                 }
                 $necessaryContent .= $content;
             }
@@ -103,7 +103,7 @@ foreach (array_keys($model->components) as $value) {
                     $necessaryConfName
                 );
                 if (is_bool($necessaryConfVal) === true || $necessaryConfName === 'active') {
-                    $content = $content->widget(\kartik\widgets\SwitchInput::className());
+                    $content = $content->widget(\kartik\switchinput\SwitchInput::className());
                 }
                 $necessaryContent .= $content;
             }

@@ -2,7 +2,7 @@
 
 use app\backend\widgets\BackendWidget;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Newsletter config');
@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php BackendWidget::begin(['title'=> Yii::t('app', 'Edit subscribe'), 'icon'=>'edit', 'footer'=>$this->blocks['submit']]); ?>
                 <?= $form->field($model, 'name')->textInput() ?>
                 <?= $form->field($model, 'email')->textInput() ?>
-                <?= $form->field($model, 'is_active')->textInput()->widget(\kartik\widgets\SwitchInput::className()); ?>
+                <?= $form->field($model, 'is_active')->textInput()->widget(\kartik\switchinput\SwitchInput::className()); ?>
             <?php BackendWidget::end(); ?>
 
             <?php $form = ActiveForm::end(); ?>

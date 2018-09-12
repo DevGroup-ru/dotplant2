@@ -3,7 +3,7 @@
 use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 
 $this->title = Yii::t('app', 'Config');
 $this->params['breadcrumbs'][] = [
@@ -48,8 +48,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'footer' => $this->blocks['submit']
                 ]
             ); ?>
-                <?= $form->field($model, 'errorMonitorEnabled')->textInput()->widget(\kartik\widgets\SwitchInput::className()); ?>
-                <?= $form->field($model, 'emailNotifyEnabled')->textInput()->widget(\kartik\widgets\SwitchInput::className()); ?>
+                <?= $form->field($model, 'errorMonitorEnabled')->textInput()->widget(\kartik\switchinput\SwitchInput::className()); ?>
+                <?= $form->field($model, 'emailNotifyEnabled')->textInput()->widget(\kartik\switchinput\SwitchInput::className()); ?>
                 <?= $form->field($model, 'devmail')->textInput() ?>
                 <?= $form->field($model, 'notifyOnlyHttpCodes')->textInput() ?>
                 <?= $form->field($model, 'numberElementsToStore')->textInput() ?>
@@ -77,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'footer' => $this->blocks['submit']
                 ]
             ); ?>
-                <?= $form->field($model, 'immediateNotice')->textInput()->widget(\kartik\widgets\SwitchInput::className()); ?>
+                <?= $form->field($model, 'immediateNotice')->textInput()->widget(\kartik\switchinput\SwitchInput::className()); ?>
                 <?= $form->field($model, 'immediateNoticeLimitPerUrl')->textInput() ?>
                 <?= $form->field($model, 'httpCodesForImmediateNotify')->textInput() ?>
             <?php BackendWidget::end(); ?>

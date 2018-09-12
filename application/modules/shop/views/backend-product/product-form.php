@@ -7,7 +7,7 @@ use app\backend\widgets\GridView;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use app\backend\components\ActiveForm;
-use kartik\widgets\DateTimePicker;
+use kartik\datetime\DateTimePicker;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 

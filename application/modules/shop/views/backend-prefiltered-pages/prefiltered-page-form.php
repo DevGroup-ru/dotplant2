@@ -8,7 +8,7 @@ use app\backend\widgets\BackendWidget;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use kartik\select2\Select2;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use vova07\imperavi\Widget as ImperaviWidget;
 use yii\helpers\Json;
 use yii\helpers\Url;

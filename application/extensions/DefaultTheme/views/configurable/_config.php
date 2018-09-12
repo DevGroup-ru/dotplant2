@@ -5,7 +5,7 @@
 /** @var \app\extensions\DefaultTheme\models\ConfigurationModel $model */
 
 use app\backend\widgets\BackendWidget;
-use kartik\widgets\ColorInput;
+use kartik\color\ColorInput;
 use yii\helpers\Html;
 use kartik\icons\Icon;
 

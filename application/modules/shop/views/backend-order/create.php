@@ -12,7 +12,7 @@ use yii\helpers\Html;
     $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Orders'), 'url' => ['index']];
     $this->params['breadcrumbs'][] = $this->title;
 
-    $form = \kartik\widgets\ActiveForm::begin(
+    $form = \kartik\form\ActiveForm::begin(
         [
             'method' => 'post',
             'type' => \kartik\form\ActiveForm::TYPE_HORIZONTAL,

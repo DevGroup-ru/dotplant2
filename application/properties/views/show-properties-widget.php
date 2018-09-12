@@ -3,7 +3,7 @@
  * @var \app\models\View $this
  * @var string $widget_id
  * @var \app\models\Submission $model
- * @var \kartik\widgets\ActiveForm $form
+ * @var \kartik\form\ActiveForm $form
  */
 ?>
 

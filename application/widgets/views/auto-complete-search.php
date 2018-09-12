@@ -6,6 +6,6 @@
 
 
 ?>
-<?=\kartik\widgets\Typeahead::widget($widgetParams)?>
+<?=\kartik\typeahead\Typeahead::widget($widgetParams)?>
 
 

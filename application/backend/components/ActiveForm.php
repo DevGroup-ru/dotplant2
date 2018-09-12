@@ -7,7 +7,7 @@ namespace app\backend\components;
  * (mostly through \app\backend\components\ActiveField)
  * @package app\backend\components
  */
-class ActiveForm extends \kartik\widgets\ActiveForm
+class ActiveForm extends \kartik\form\ActiveForm
 {
     public function initForm()
     {

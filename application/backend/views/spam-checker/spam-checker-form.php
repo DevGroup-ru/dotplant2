@@ -7,7 +7,7 @@
 use app\backend\widgets\BackendWidget;
 use app\widgets\Alert;
 use kartik\icons\Icon;
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Spam checker edit');

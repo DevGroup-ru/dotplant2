@@ -7,7 +7,7 @@
  * @var $this yii\web\View
  */
 
-use kartik\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use yii\authclient\widgets\AuthChoice;
 use yii\helpers\Html;
 

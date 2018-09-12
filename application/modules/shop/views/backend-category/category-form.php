@@ -5,7 +5,7 @@ use app\modules\shop\controllers\BackendCategoryController;
 use kartik\helpers\Html;
 use kartik\icons\Icon;
 use app\backend\components\ActiveForm;
-use kartik\widgets\DateTimePicker;
+use kartik\datetime\DateTimePicker;
 use yii\helpers\ArrayHelper;
 use app\backend\components\Helper;
 use app\modules\shop\ShopModule;
