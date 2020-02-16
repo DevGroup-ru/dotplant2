@@ -723,6 +723,7 @@ return [
     'Offer delivery' => 'Доставка',
     'Offer description' => 'Описание',
     'Offer name' => 'Наименование',
+    'Offer old price' => 'Старая цена',
     'Offer pickup' => 'Самовывоз',
     'Offer picture' => 'Изображение',
     'Offer price' => 'Цена',
