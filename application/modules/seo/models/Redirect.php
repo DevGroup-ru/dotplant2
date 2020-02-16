@@ -4,7 +4,6 @@ namespace app\modules\seo\models;
 
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
-use yii\helpers\ArrayHelper;
 use Yii;
 
 /**
@@ -139,5 +138,24 @@ class Redirect extends ActiveRecord
     public static function deleteRedirectFile()
     {
         return unlink(self::getFilename());
+    }
+
+    public function findDoubles()
+    {
+
+        $query = self::find()
+            ->select(['type', 'from', 'COUNT(*) as count'])
+            ->groupBy('from')
+            ->having('COUNT(*) > 1');
+
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]
+        );
+        return $dataProvider;
     }
 }

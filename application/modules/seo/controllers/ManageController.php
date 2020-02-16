@@ -650,6 +650,18 @@ class ManageController extends BackendController
         echo (int)Redirect::deleteRedirectFile();
     }
 
+    public function actionRedirectDoublesFinder()
+    {
+        $redirectDoublesFinder = new Redirect();
+        $dataProvider = $redirectDoublesFinder->findDoubles();
+        return $this->render(
+            'redirect-doubles-finder',
+            [
+                'dataProvider' => $dataProvider,
+            ]
+        );
+    }
+
     public function actionEcommerce()
     {
         $yaCounter = $gaCounter = ['id' => '', 'active' => 0];
