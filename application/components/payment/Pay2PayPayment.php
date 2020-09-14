@@ -55,6 +55,9 @@ class Pay2PayPayment extends AbstractPayment
 
     public function checkResult($hash = '')
     {
+        if (function_exists("libxml_disable_entity_loader")) {
+            libxml_disable_entity_loader(true);
+        }
         if (isset($_POST['xml'], $_POST['sign'])) {
             $xml = base64_decode(str_replace(' ', '+', $_POST['xml']));
             $sign = base64_decode(str_replace(' ', '+', $_POST['sign']));
